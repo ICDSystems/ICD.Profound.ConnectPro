@@ -64,12 +64,50 @@
     <Compile Include="KrangPlugin.cs" />
     <None Include="ObfuscationSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Themes\AbstractConnectProUserInterfaceFactory.cs" />
+    <Compile Include="Themes\IConnectProUserInterfaceFactory.cs" />
+    <Compile Include="Themes\IUserInterface.cs" />
+    <Compile Include="Themes\ConnectProTheme.cs" />
+    <Compile Include="Themes\ConnectProThemeSettings.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\INavigationController.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\IPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IViews\IView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\IViewFactory.cs" />
+    <Compile Include="Themes\UserInterface\ConnectProUserInterface.cs" />
+    <Compile Include="Themes\UserInterface\ConnectProUserInterfaceFactory.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\AbstractComponentPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\AbstractListItemFactory.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\AbstractPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\ConnectProNavigationController.cs" />
+    <Compile Include="Themes\UserInterface\Views\AbstractComponentView.cs" />
+    <Compile Include="Themes\UserInterface\Views\AbstractView.cs" />
+    <Compile Include="Themes\UserInterface\Views\ConnectProViewFactory.cs" />
     <None Include="Properties\ControlSystem.cfg" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\ICD.Common.Utils\ICD.Common.Utils\ICD.Common.Utils_SimplSharp.csproj">
       <Project>{CB4055C6-D59E-479E-9C56-2C92335A7D9A}</Project>
       <Name>ICD.Common.Utils_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Panels\ICD.Connect.Panels\ICD.Connect.Panels_SimplSharp.csproj">
+      <Project>{A441FE98-6A8E-4EF3-98F0-D17041D2E118}</Project>
+      <Name>ICD.Connect.Panels_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Partitioning\ICD.Connect.Partitioning\ICD.Connect.Partitioning_SimplSharp.csproj">
+      <Project>{42FB8CF0-6AE6-4C70-AFDD-DF95F07E077F}</Project>
+      <Name>ICD.Connect.Partitioning_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Settings\ICD.Connect.Settings\ICD.Connect.Settings_SimplSharp.csproj">
+      <Project>{5B84EB3C-1C3A-4C4D-98C2-69F67CF51D5A}</Project>
+      <Name>ICD.Connect.Settings_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Themes\ICD.Connect.Themes\ICD.Connect.Themes_SimplSharp.csproj">
+      <Project>{7D599445-C1F9-4BBD-ACC4-DC80E3311376}</Project>
+      <Name>ICD.Connect.Themes_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.UI\ICD.Connect.UI\ICD.Connect.UI_SimplSharp.csproj">
+      <Project>{89BF27D5-374B-4863-AD92-D217924D6D8F}</Project>
+      <Name>ICD.Connect.UI_SimplSharp</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
