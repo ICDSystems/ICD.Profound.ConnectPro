@@ -1,8 +1,7 @@
 ﻿using System.Reflection;
 
 [assembly: AssemblyTitle("ICD.Profound.ConnectPRO")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("ICD Systems")]
 [assembly: AssemblyProduct("ICD.Profound.ConnectPRO")]
-[assembly: AssemblyCopyright("Copyright ©  2017")]
+[assembly: AssemblyCopyright("Copyright © ICD Systems 2017")]
 [assembly: AssemblyVersion("1.0.0.*")]
-

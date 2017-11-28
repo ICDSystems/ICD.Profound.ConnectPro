@@ -8,7 +8,8 @@ using ICD.Connect.Settings;
 
 namespace ICD.Profound.ConnectPRO.Themes
 {
-	public abstract class AbstractConnectProUserInterfaceFactory<TUserInterface, TOriginator> : IConnectProUserInterfaceFactory
+	public abstract class AbstractConnectProUserInterfaceFactory<TUserInterface, TOriginator> :
+		IConnectProUserInterfaceFactory
 		where TUserInterface : IUserInterface
 		where TOriginator : IOriginator
 	{

@@ -1,8 +1,6 @@
 ﻿using System;
-using ICD.Profound.ConnectPRO.Themes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 {
