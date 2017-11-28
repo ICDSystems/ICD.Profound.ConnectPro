@@ -135,12 +135,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			OnEnabledChanged.Raise(this, new BoolEventArgs(enabled));
 		}
 
-		/// <summary>
-		/// Gets the child controls.
-		/// </summary>
-		/// <returns></returns>
-		protected abstract IEnumerable<IVtProControl> GetChildren();
-
 		#endregion
 
 		#region Private Methods
@@ -152,6 +146,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 		/// <param name="parent"></param>
 		/// <param name="index"></param>
 		protected abstract void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index);
+
+		/// <summary>
+		/// Gets the child controls.
+		/// </summary>
+		/// <returns></returns>
+		protected abstract IEnumerable<IVtProControl> GetChildren();
 
 		/// <summary>
 		/// Generates child views for the given subpage reference list. Sets the number of items in the SRL.

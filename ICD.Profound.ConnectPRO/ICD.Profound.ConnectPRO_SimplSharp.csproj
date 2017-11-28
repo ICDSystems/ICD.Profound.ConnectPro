@@ -71,6 +71,8 @@
     <Compile Include="Themes\ConnectProThemeSettings.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\INavigationController.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Colors.cs" />
+    <Compile Include="Themes\UserInterface\IViews\IIcon.cs" />
     <Compile Include="Themes\UserInterface\IViews\Popups\IAppleTvView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Displays\IDisplaysView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IEndMeetingView.cs" />
@@ -96,6 +98,14 @@
     <Compile Include="Themes\UserInterface\Presenters\ConnectProNavigationController.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractComponentView.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Displays\DisplaysView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Displays\DisplaysView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Displays\ReferenceDisplaysView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Displays\ReferenceDisplaysView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\EndMeetingView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\EndMeetingView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\HeaderView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\HeaderView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\ConnectProViewFactory.cs" />
     <None Include="Properties\ControlSystem.cfg" />
   </ItemGroup>
@@ -132,6 +142,10 @@
       <Project>{89BF27D5-374B-4863-AD92-D217924D6D8F}</Project>
       <Name>ICD.Connect.UI_SimplSharp</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Themes\UserInterface\Views\Common\Options\" />
+    <Folder Include="Themes\UserInterface\Views\Common\Sources\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
   <PropertyGroup>
