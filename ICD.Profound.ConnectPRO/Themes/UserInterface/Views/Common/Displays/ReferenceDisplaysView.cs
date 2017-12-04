@@ -39,11 +39,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		/// Sets the color style of the entire view.
 		/// </summary>
 		/// <param name="color"></param>
-		public void SetColorMode(eSourceColor color)
+		public void SetColor(eDisplayColor color)
 		{
-			bool grey = color == eSourceColor.Grey;
-			bool green = color == eSourceColor.Green;
-			bool yellow = color == eSourceColor.Yellow;
+			bool grey = color == eDisplayColor.Grey;
+			bool green = color == eDisplayColor.Green;
+			bool yellow = color == eDisplayColor.Yellow;
 
 			m_GreyIconButton.Show(grey);
 			m_GreyLine1Label.Show(grey);

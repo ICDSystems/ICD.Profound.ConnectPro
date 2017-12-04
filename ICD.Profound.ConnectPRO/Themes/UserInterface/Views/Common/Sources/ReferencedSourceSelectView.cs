@@ -1,6 +1,8 @@
 ﻿using System;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
@@ -21,22 +23,38 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		{
 		}
 
+		#region Methods
+
 		/// <summary>
 		/// Sets the color style of the entire view.
 		/// </summary>
 		/// <param name="color"></param>
-		public void SetColorMode(ushort color)
+		public void SetColor(eSourceColor color)
 		{
-			throw new NotImplementedException();
+			bool grey = color == eSourceColor.Grey || color == eSourceColor.Yellow || color == eSourceColor.White;
+			bool green = color == eSourceColor.Green;
+
+			m_GreyIconButton.Show(grey);
+			m_GreyLine1Label.Show(grey);
+			m_GreyLine2Label.Show(grey);
+			m_GreyFeedbackLabel.Show(grey);
+
+			m_GreenIconButton.Show(green);
+			m_GreenLine1Label.Show(green);
+			m_GreenLine2Label.Show(green);
+			m_GreenFeedbackLabel.Show(green);
 		}
 
 		/// <summary>
 		/// Sets the icon for the button.
 		/// </summary>
 		/// <param name="icon"></param>
-		public void SetIconMode(ushort icon)
+		public void SetIcon(ISourceIcon icon)
 		{
-			throw new NotImplementedException();
+			ushort mode = icon.Mode;
+
+			m_GreenIconButton.SetMode(mode);
+			m_GreyIconButton.SetMode(mode);
 		}
 
 		/// <summary>
@@ -45,7 +63,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		/// <param name="text"></param>
 		public void SetLine1Text(string text)
 		{
-			throw new NotImplementedException();
+			m_GreyLine1Label.SetLabelText(text);
+			m_GreenLine1Label.SetLabelText(text);
 		}
 
 		/// <summary>
@@ -54,7 +73,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		/// <param name="text"></param>
 		public void SetLine2Text(string text)
 		{
-			throw new NotImplementedException();
+			m_GreyLine2Label.SetLabelText(text);
+			m_GreenLine2Label.SetLabelText(text);
 		}
 
 		/// <summary>
@@ -63,7 +83,44 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		/// <param name="text"></param>
 		public void SetFeedbackText(string text)
 		{
-			throw new NotImplementedException();
+			m_GreyFeedbackLabel.SetLabelText(text);
+			m_GreenFeedbackLabel.SetLabelText(text);
 		}
+
+		#endregion
+
+		#region Control Callbacks
+
+		/// <summary>
+		/// Subscribes to the view controls.
+		/// </summary>
+		protected override void SubscribeControls()
+		{
+			base.SubscribeControls();
+
+			m_BackgroundButton.OnPressed += BackgroundButtonOnPressed;
+		}
+
+		/// <summary>
+		/// Unsubscribes from the view controls.
+		/// </summary>
+		protected override void UnsubscribeControls()
+		{
+			base.UnsubscribeControls();
+
+			m_BackgroundButton.OnPressed -= BackgroundButtonOnPressed;
+		}
+
+		/// <summary>
+		/// Called when the user presses the button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void BackgroundButtonOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnButtonPressed.Raise(this);
+		}
+
+		#endregion
 	}
 }

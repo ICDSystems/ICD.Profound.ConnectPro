@@ -13,13 +13,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources
 		/// Sets the color style of the entire view.
 		/// </summary>
 		/// <param name="color"></param>
-		void SetColorMode(ushort color);
+		void SetColor(eSourceColor color);
 
 		/// <summary>
 		/// Sets the icon for the button.
 		/// </summary>
 		/// <param name="icon"></param>
-		void SetIconMode(ushort icon);
+		void SetIcon(ISourceIcon icon);
 
 		/// <summary>
 		/// Sets the text for the first label.

@@ -8,4 +8,8 @@
 	public interface IDisplayIcon : IModeIcon
 	{
 	}
+
+	public interface ISourceIcon : IModeIcon
+	{
+	}
 }
