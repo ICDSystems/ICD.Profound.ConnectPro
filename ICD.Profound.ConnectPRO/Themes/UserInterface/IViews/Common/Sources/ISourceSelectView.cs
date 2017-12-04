@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources
 {
-	public interface ISourceSelectView
+	public interface ISourceSelectView : IView
 	{
 		/// <summary>
 		/// Returns child views for list items.
