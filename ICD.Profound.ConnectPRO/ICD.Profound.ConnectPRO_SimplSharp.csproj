@@ -121,8 +121,13 @@
     <Compile Include="Themes\UserInterface\Views\Common\EndMeetingView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\HeaderView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\HeaderView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Sources\AbstractSourceSelectView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\ReferencedSourceSelectView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\ReferencedSourceSelectView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Sources\SourceSelectDualView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Sources\SourceSelectDualView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Sources\SourceSelectSingleView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Sources\SourceSelectSingleView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\ConnectProViewFactory.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\AbstractPopupView.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\AppleTvView.cs" />
