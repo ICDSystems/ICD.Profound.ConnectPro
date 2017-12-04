@@ -121,6 +121,15 @@
     <Compile Include="Themes\UserInterface\Views\Common\EndMeetingView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\HeaderView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\HeaderView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Options\AbstractOptionView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Options\OptionVolumeView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Options\OptionVolumeView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Options\OptionPrivacyMuteView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Options\OptionPrivacyMuteView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Options\OptionMasterMicView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Options\OptionMasterMicView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Options\OptionContactsView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Options\OptionContactsView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\AbstractSourceSelectView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\ReferencedSourceSelectView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\ReferencedSourceSelectView.generated.cs" />
@@ -167,9 +176,6 @@
       <Project>{89BF27D5-374B-4863-AD92-D217924D6D8F}</Project>
       <Name>ICD.Connect.UI_SimplSharp</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Themes\UserInterface\Views\Common\Options\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
   <PropertyGroup>
