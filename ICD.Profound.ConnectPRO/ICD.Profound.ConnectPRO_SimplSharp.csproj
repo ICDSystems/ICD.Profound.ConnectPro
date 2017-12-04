@@ -111,6 +111,8 @@
     <Compile Include="Themes\UserInterface\Presenters\AbstractListItemFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\ConnectProNavigationController.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Popups\AbstractPopupPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Popups\AppleTvPresenter.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractComponentView.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\DisplaysView.cs" />

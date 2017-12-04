@@ -1,9 +1,13 @@
-﻿using ICD.Connect.Panels;
+﻿using System;
+using ICD.Connect.Panels;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 {
-	public abstract class AbstractPopupView : AbstractView
+	public abstract class AbstractPopupView : AbstractView, IPopupView
 	{
+		public abstract event EventHandler OnCloseButtonPressed;
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
