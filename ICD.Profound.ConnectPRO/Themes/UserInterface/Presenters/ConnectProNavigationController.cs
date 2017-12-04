@@ -1,11 +1,11 @@
-﻿using System;
+﻿#if !SIMPLSHARP
+using System.Reflection;
+#endif
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
-#if !SIMPLSHARP
-using System.Reflection;
-#endif
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
