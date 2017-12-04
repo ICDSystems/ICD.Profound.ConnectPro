@@ -71,6 +71,8 @@
     <Compile Include="Themes\ConnectProThemeSettings.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IReferencedDisplaysPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\IEndMeetingPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\IHeaderPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionContactsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionMasterMicPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionPresenter.cs" />
