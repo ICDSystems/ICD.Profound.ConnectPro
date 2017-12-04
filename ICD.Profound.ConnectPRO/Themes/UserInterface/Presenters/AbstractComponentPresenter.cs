@@ -58,7 +58,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <returns></returns>
 		protected override T InstantiateView()
 		{
-			throw new InvalidOperationException("Component presenters can not create their own views.");
+			throw new InvalidOperationException(string.Format("{0} can not create its own view.", GetType().Name));
 		}
 	}
 }
