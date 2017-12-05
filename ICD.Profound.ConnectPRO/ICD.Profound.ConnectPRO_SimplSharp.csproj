@@ -110,6 +110,8 @@
     <Compile Include="Themes\UserInterface\Presenters\AbstractComponentPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractListItemFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Displays\DisplaysPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Displays\ReferencedDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\AbstractOptionPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionContactsPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionMasterMicPresenter.cs" />
