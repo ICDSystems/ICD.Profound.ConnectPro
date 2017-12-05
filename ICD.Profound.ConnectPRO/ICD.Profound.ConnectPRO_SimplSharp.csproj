@@ -110,6 +110,11 @@
     <Compile Include="Themes\UserInterface\Presenters\AbstractComponentPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractListItemFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Options\AbstractOptionPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionContactsPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionMasterMicPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionPrivacyMutePresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionVolumePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\ConnectProNavigationController.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\AbstractPopupPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\AppleTvPresenter.cs" />
