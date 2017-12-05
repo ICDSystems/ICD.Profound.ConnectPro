@@ -117,6 +117,10 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionMasterMicPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionPrivacyMutePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionVolumePresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Sources\AbstractSourceSelectPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Sources\ReferencedSourceSelectPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Sources\SourceSelectDualPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Sources\SourceSelectSinglePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\ConnectProNavigationController.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\AbstractPopupPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\AppleTvPresenter.cs" />
