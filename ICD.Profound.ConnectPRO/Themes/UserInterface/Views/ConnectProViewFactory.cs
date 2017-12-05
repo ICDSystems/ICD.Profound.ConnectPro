@@ -6,6 +6,14 @@ using ICD.Connect.Panels.SmartObjects;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Lists;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 {
@@ -27,10 +35,30 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 		private readonly Dictionary<Type, ComponentFactoryMethod> m_ComponentViewFactories = new Dictionary
 			<Type, ComponentFactoryMethod>
 		{
+			// Sources
+			{typeof(IReferencedSourceSelectView), (nav, views, theme, index) => new ReferencedSourceSelectView(nav, views, theme, index)},
+
+			// Displays
+			{typeof(IReferencedDisplaysView), (nav, views, theme, index) => new ReferencedDisplaysView(nav, views, theme, index)},
 		};
 
 		private readonly Dictionary<Type, FactoryMethod> m_ViewFactories = new Dictionary<Type, FactoryMethod>
 		{
+			// Popups
+			{typeof(IAppleTvView), (panel, theme) => new AppleTvView(panel, theme)},
+
+			// Displays
+			{typeof(IDisplaysView), (panel, theme) => new DisplaysView(panel, theme)},
+
+			// Options
+			{typeof(IOptionContactsView), (panel, theme) => new OptionContactsView(panel, theme)},
+			{typeof(IOptionMasterMicView), (panel, theme) => new OptionMasterMicView(panel, theme)},
+			{typeof(IOptionPrivacyMuteView), (panel, theme) => new OptionPrivacyMuteView(panel, theme)},
+			{typeof(IOptionVolumeView), (panel, theme) => new OptionVolumeView(panel, theme)},
+
+			// Sources
+			{typeof(ISourceSelectDualView), (panel, theme) => new SourceSelectDualView(panel, theme)},
+			{typeof(ISourceSelectSingleView), (panel, theme) => new SourceSelectSingleView(panel, theme)}
 		};
 
 		private readonly IPanelDevice m_Panel;

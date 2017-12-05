@@ -8,7 +8,15 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Options;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Displays;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 {
@@ -21,6 +29,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 
 		private readonly Dictionary<Type, PresenterFactory> m_PresenterFactories = new Dictionary<Type, PresenterFactory>
 		{
+			// Popups
+			{typeof(IAppleTvPresenter), (nav, views, theme) => new AppleTvPresenter(nav, views, theme)},
+
+			// Displays
+			{typeof(IDisplaysPresenter), (nav, views, theme) => new DisplaysPresenter(nav, views, theme)},
+			{typeof(IReferencedDisplaysPresenter), (nav, views, theme) => new ReferencedDisplaysPresenter(nav, views, theme)},
+
+			// Options
+			{typeof(IOptionContactsPresenter), (nav, views, theme) => new OptionContactsPresenter(nav, views, theme)},
+			{typeof(IOptionMasterMicPresenter), (nav, views, theme) => new OptionMasterMicPresenter(nav, views, theme)},
+			{typeof(IOptionPrivacyMutePresenter), (nav, views, theme) => new OptionPrivacyMutePresenter(nav, views, theme)},
+			{typeof(IOptionVolumePresenter), (nav, views, theme) => new OptionVolumePresenter(nav, views, theme)},
+
+			// Sources
+			{typeof(ISourceSelectDualPresenter), (nav, views, theme) => new SourceSelectDualPresenter(nav, views, theme)},
+			{typeof(ISourceSelectSinglePresenter), (nav, views, theme) => new SourceSelectSinglePresenter(nav, views, theme)},
+			{typeof(IReferencedSourceSelectPresenter), (nav, views, theme) => new ReferencedSourceSelectPresenter(nav, views, theme)}
 		};
 
 		private readonly Dictionary<Type, IPresenter> m_Cache;
