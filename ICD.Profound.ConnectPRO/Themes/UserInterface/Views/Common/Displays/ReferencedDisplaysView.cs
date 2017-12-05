@@ -7,7 +7,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 {
-	public sealed partial class ReferenceDisplaysView : AbstractComponentView, IReferencedDisplaysView
+	public sealed partial class ReferencedDisplaysView : AbstractComponentView, IReferencedDisplaysView
 	{
 		public event EventHandler OnButtonPressed;
 
@@ -18,7 +18,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		/// <param name="theme"></param>
 		/// <param name="parent"></param>
 		/// <param name="index"></param>
-		public ReferenceDisplaysView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index)
+		public ReferencedDisplaysView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index)
 			: base(panel, theme, parent, index)
 		{
 		}

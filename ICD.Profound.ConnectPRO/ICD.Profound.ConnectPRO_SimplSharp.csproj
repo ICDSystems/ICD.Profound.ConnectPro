@@ -128,8 +128,8 @@
     <Compile Include="Themes\UserInterface\Views\AbstractView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\DisplaysView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\DisplaysView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\Common\Displays\ReferenceDisplaysView.cs" />
-    <Compile Include="Themes\UserInterface\Views\Common\Displays\ReferenceDisplaysView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Displays\ReferencedDisplaysView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Displays\ReferencedDisplaysView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\EndMeetingView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\EndMeetingView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\HeaderView.cs" />

@@ -7,7 +7,7 @@ using ICD.Connect.UI.Controls.TextControls;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 {
-	public sealed partial class ReferenceDisplaysView
+	public sealed partial class ReferencedDisplaysView
 	{
 		private VtProSubpage m_Subpage;
 		private VtProAdvancedButton m_BackgroundButton;
