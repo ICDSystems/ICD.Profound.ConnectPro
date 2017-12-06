@@ -118,6 +118,7 @@
     <Compile Include="Themes\UserInterface\Presenters\AbstractPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\DisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\ReferencedDisplaysPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Displays\ReferencedDisplaysPresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\EndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\HeaderPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\AbstractOptionPresenter.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionVolumePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\AbstractSourceSelectPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\ReferencedSourceSelectPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Sources\ReferencedSourceSelectPresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\SourceSelectDualPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\SourceSelectSinglePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\StartMeetingPresenter.cs" />
