@@ -1,11 +1,15 @@
-﻿using ICD.Common.Services;
+﻿using System.Linq;
+using ICD.Common.Services;
 using ICD.Common.Services.Logging;
 using ICD.Common.Utils;
+using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Panels;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VisibilityTree;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters;
@@ -22,7 +26,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		private readonly INavigationController m_NavigationController;
 
-		private IRoom m_Room;
+		private IConnectProRoom m_Room;
 
 		private DefaultVisibilityNode m_MeetingButtons;
 
@@ -85,11 +89,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (room == m_Room)
 				return;
 
+			Unsubscribe(m_Room);
+
 			ServiceProvider.GetService<ILoggerService>()
 			               .AddEntry(eSeverity.Informational, "{0} setting room to {1}", this, room);
 
 			m_Room = room;
 			m_NavigationController.SetRoom(room);
+
+			Subscribe(m_Room);
+
+			UpdateMeetingPresenters();
 		}
 
 		/// <summary>
@@ -101,6 +111,65 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			ReprBuilder builder = new ReprBuilder(this);
 			builder.AppendProperty("Panel", m_Panel);
 			return builder.ToString();
+		}
+
+		#endregion
+
+		#region Room Callbacks
+
+		/// <summary>
+		/// Subscribe to the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		private void Subscribe(IConnectProRoom room)
+		{
+			if (room == null)
+				return;
+
+			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		private void Unsubscribe(IConnectProRoom room)
+		{
+			if (room == null)
+				return;
+
+			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
+		}
+
+		/// <summary>
+		/// Called when the room enters/exits a meeting.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="boolEventArgs"></param>
+		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs boolEventArgs)
+		{
+			UpdateMeetingPresenters();
+		}
+
+		/// <summary>
+		/// Sets the visibility of the subpages based on the meeting state.
+		/// </summary>
+		private void UpdateMeetingPresenters()
+		{
+			bool isInMeeting = m_Room != null && m_Room.IsInMeeting;
+
+			// Set the visibility of the meeting buttons
+			m_NavigationController.LazyLoadPresenter<IStartMeetingPresenter>().ShowView(!isInMeeting);
+			m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>().ShowView(isInMeeting);
+
+			// Set the visibility of the source a display subpages
+			bool dualSourceVisible = isInMeeting && m_Room.Routing.GetDisplayDestinations().Count() > 1;
+			bool singleSourceVisible = isInMeeting && !dualSourceVisible;
+			bool displaysVisible = isInMeeting && dualSourceVisible;
+
+			m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>().ShowView(singleSourceVisible);
+			m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>().ShowView(dualSourceVisible);
+			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().ShowView(displaysVisible);
 		}
 
 		#endregion
