@@ -30,7 +30,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		/// <param name="name"></param>
 		public void SetRoomName(string name)
 		{
-			m_RoomNameLabel.SetLabelText(name);
+			//m_RoomNameLabel.SetLabelText(name);
 		}
 	}
 }
