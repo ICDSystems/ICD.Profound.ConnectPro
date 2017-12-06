@@ -1,6 +1,5 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Partitioning.Rooms;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
