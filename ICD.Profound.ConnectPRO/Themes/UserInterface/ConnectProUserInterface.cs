@@ -4,6 +4,7 @@ using ICD.Common.Utils;
 using ICD.Connect.Panels;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views;
@@ -33,6 +34,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			IViewFactory viewFactory = new ConnectProViewFactory(panel, theme);
 			m_NavigationController = new ConnectProNavigationController(viewFactory, theme);
+
+			// These presenters are initially visible.
+			m_NavigationController.NavigateTo<IHeaderPresenter>();
 		}
 
 		/// <summary>
