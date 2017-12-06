@@ -73,6 +73,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IReferencedDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IEndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IHeaderPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\IStartMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionContactsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionMasterMicPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionPresenter.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\Popups\IAppleTvPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Popups\IPopupPresenter.cs" />
     <Compile Include="Themes\UserInterface\IViews\Colors.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\IStartMeetingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IIcon.cs" />
     <Compile Include="Themes\UserInterface\IViews\Popups\IAppleTvView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Displays\IDisplaysView.cs" />
@@ -123,6 +125,7 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\ReferencedSourceSelectPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\SourceSelectDualPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\SourceSelectSinglePresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\StartMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\ConnectProNavigationController.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\AbstractPopupPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\AppleTvPresenter.cs" />
@@ -152,6 +155,8 @@
     <Compile Include="Themes\UserInterface\Views\Common\Sources\SourceSelectDualView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\SourceSelectSingleView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\SourceSelectSingleView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\StartMeetingView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\StartMeetingView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\ConnectProViewFactory.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\AbstractPopupView.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\AppleTvView.cs" />

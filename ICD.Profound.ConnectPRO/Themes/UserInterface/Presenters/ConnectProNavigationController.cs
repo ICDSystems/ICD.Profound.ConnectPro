@@ -51,7 +51,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 
 			// Common
 			{typeof(IEndMeetingPresenter), (nav, views, theme) => new EndMeetingPresenter(nav, views, theme)},
-			{typeof(IHeaderPresenter), (nav, views, theme) => new HeaderPresenter(nav, views, theme)}
+			{typeof(IHeaderPresenter), (nav, views, theme) => new HeaderPresenter(nav, views, theme)},
+			{typeof(IStartMeetingPresenter), (nav, views, theme) => new StartMeetingPresenter(nav, views, theme)}
 		};
 
 		private readonly Dictionary<Type, IPresenter> m_Cache;

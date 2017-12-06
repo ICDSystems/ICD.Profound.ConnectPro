@@ -64,7 +64,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 
 			// Common
 			{typeof(IEndMeetingView), (panel, theme) => new EndMeetingView(panel, theme)},
-			{typeof(IHeaderView), (panel, theme) => new HeaderView(panel, theme)}
+			{typeof(IHeaderView), (panel, theme) => new HeaderView(panel, theme)},
+			{typeof(IStartMeetingView), (panel, theme) => new StartMeetingView(panel, theme)},
 		};
 
 		private readonly IPanelDevice m_Panel;
