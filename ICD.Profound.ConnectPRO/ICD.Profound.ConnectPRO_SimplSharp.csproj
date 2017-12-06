@@ -64,6 +64,9 @@
     <Compile Include="KrangPlugin.cs" />
     <None Include="ObfuscationSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rooms\ConnectProRoom.cs" />
+    <Compile Include="Rooms\ConnectProRoomSettings.cs" />
+    <Compile Include="Rooms\IConnectProRoom.cs" />
     <Compile Include="Themes\AbstractConnectProUserInterfaceFactory.cs" />
     <Compile Include="Themes\IConnectProUserInterfaceFactory.cs" />
     <Compile Include="Themes\IUserInterface.cs" />
