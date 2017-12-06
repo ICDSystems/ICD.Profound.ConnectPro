@@ -114,7 +114,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			Room = room;
 			Subscribe(Room);
 
-			RefreshIfVisible();
+			Refresh();
 		}
 
 		/// <summary>
