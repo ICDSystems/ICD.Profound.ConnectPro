@@ -6,10 +6,12 @@ using ICD.Connect.Panels.SmartObjects;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Lists;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources;
@@ -58,7 +60,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 
 			// Sources
 			{typeof(ISourceSelectDualView), (panel, theme) => new SourceSelectDualView(panel, theme)},
-			{typeof(ISourceSelectSingleView), (panel, theme) => new SourceSelectSingleView(panel, theme)}
+			{typeof(ISourceSelectSingleView), (panel, theme) => new SourceSelectSingleView(panel, theme)},
+
+			// Common
+			{typeof(IEndMeetingView), (panel, theme) => new EndMeetingView(panel, theme)},
+			{typeof(IHeaderView), (panel, theme) => new HeaderView(panel, theme)}
 		};
 
 		private readonly IPanelDevice m_Panel;
