@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
@@ -75,6 +78,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			if (Room != null)
 				Room.IsInMeeting = false;
+		}
+
+		/// <summary>
+		/// Called when the view visibility changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			base.ViewOnVisibilityChanged(sender, args);
+
+			// Set the visibility of the source a display subpages
+			bool dualSourceVisible = Room != null && Room.Routing.GetDisplayDestinations().Count() > 1;
+			bool singleSourceVisible = Room != null && !dualSourceVisible;
+			bool displaysVisible = Room != null && dualSourceVisible;
+
+			Navigation.LazyLoadPresenter<ISourceSelectSinglePresenter>().ShowView(singleSourceVisible && IsViewVisible);
+			Navigation.LazyLoadPresenter<ISourceSelectDualPresenter>().ShowView(dualSourceVisible && IsViewVisible);
+			Navigation.LazyLoadPresenter<IDisplaysPresenter>().ShowView(displaysVisible && IsViewVisible);
 		}
 
 		#endregion

@@ -6,6 +6,7 @@ using ICD.Connect.Partitioning.Rooms;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VisibilityTree;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views;
@@ -22,6 +23,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private readonly INavigationController m_NavigationController;
 
 		private IRoom m_Room;
+
+		private DefaultVisibilityNode m_MeetingButtons;
 
 		#region Properties
 
@@ -41,9 +44,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			IViewFactory viewFactory = new ConnectProViewFactory(panel, theme);
 			m_NavigationController = new ConnectProNavigationController(viewFactory, theme);
 
+			BuildVisibilityTree();
+		}
+
+		/// <summary>
+		/// Builds the rules for view visibility, e.g. prevent certain items from being visible at the same time.
+		/// </summary>
+		private void BuildVisibilityTree()
+		{
+			// Only allow one of the start/end buttons to be visible at any given time
+			m_MeetingButtons = new DefaultVisibilityNode(m_NavigationController.LazyLoadPresenter<IStartMeetingPresenter>());
+			m_MeetingButtons.AddPresenter(m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>());
+
 			// These presenters are initially visible.
 			m_NavigationController.NavigateTo<IHeaderPresenter>();
-			
+
 			// These presenters control their own visibility.
 			m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>();
 			m_NavigationController.LazyLoadPresenter<IStartMeetingPresenter>();

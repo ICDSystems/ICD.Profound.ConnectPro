@@ -67,6 +67,7 @@
     <Compile Include="Rooms\ConnectProRoom.cs" />
     <Compile Include="Rooms\ConnectProRoomSettings.cs" />
     <Compile Include="Rooms\IConnectProRoom.cs" />
+    <Compile Include="Routing\ConnectProRouting.cs" />
     <Compile Include="Themes\AbstractConnectProUserInterfaceFactory.cs" />
     <Compile Include="Themes\IConnectProUserInterfaceFactory.cs" />
     <Compile Include="Themes\IUserInterface.cs" />
@@ -164,6 +165,10 @@
     <Compile Include="Themes\UserInterface\Views\Popups\AbstractPopupView.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\AppleTvView.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\AppleTvView.generated.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\AbstractVisibilityNode.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\DefaultVisibilityNode.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\IVisibilityNode.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\SingleVisibilityNode.cs" />
     <None Include="Properties\ControlSystem.cfg" />
   </ItemGroup>
   <ItemGroup>

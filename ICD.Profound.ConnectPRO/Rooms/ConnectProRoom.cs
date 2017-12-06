@@ -2,14 +2,19 @@
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Profound.ConnectPRO.Routing;
 
 namespace ICD.Profound.ConnectPRO.Rooms
 {
 	public sealed class ConnectProRoom : AbstractRoom<ConnectProRoomSettings>, IConnectProRoom
 	{
-		public event EventHandler<BoolEventArgs> OnIsInMeetingChanged; 
+		public event EventHandler<BoolEventArgs> OnIsInMeetingChanged;
+
+		private readonly ConnectProRouting m_Routing;
 
 		private bool m_IsInMeeting;
+
+		#region Properties
 
 		public bool IsInMeeting
 		{
@@ -23,6 +28,18 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 				OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
 			}
+		}
+
+		public ConnectProRouting Routing { get { return m_Routing; } }
+
+		#endregion
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public ConnectProRoom()
+		{
+			m_Routing = new ConnectProRouting(this);
 		}
 	}
 }
