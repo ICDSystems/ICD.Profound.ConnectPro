@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using ICD.Connect.Partitioning.Rooms;
+using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters
 {
@@ -13,7 +13,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters
 		/// Sets the room for the presenters to represent.
 		/// </summary>
 		/// <param name="room"></param>
-		void SetRoom(IRoom room);
+		void SetRoom(IConnectProRoom room);
 
 		/// <summary>
 		/// Instantiates or returns an existing presenter of the given type.

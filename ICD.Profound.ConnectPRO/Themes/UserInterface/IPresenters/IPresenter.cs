@@ -1,6 +1,7 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters
@@ -21,7 +22,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters
 		/// Sets the room for the presenter to represent.
 		/// </summary>
 		/// <param name="room"></param>
-		void SetRoom(IRoom room);
+		void SetRoom(IConnectProRoom room);
 
 		/// <summary>
 		/// Sets the visibility of the view.

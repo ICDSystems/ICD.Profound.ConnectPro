@@ -1,5 +1,5 @@
 ﻿using System;
-using ICD.Connect.Partitioning.Rooms;
+using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes
 {
@@ -9,6 +9,6 @@ namespace ICD.Profound.ConnectPRO.Themes
 		/// Updates the UI to represent the given room.
 		/// </summary>
 		/// <param name="room"></param>
-		void SetRoom(IRoom room);
+		void SetRoom(IConnectProRoom room);
 	}
 }

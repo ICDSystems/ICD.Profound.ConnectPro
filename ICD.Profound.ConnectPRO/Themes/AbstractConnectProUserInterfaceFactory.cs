@@ -5,6 +5,7 @@ using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings;
+using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes
 {
@@ -83,13 +84,13 @@ namespace ICD.Profound.ConnectPRO.Themes
 		/// <summary>
 		/// Assigns the rooms to the existing user interfaces.
 		/// </summary>
-		public void AssignUserInterfaces(IEnumerable<IRoom> rooms)
+		public void AssignUserInterfaces(IEnumerable<IConnectProRoom> rooms)
 		{
 			m_UserInterfacesSection.Enter();
 
 			try
 			{
-				foreach (IRoom room in rooms)
+				foreach (IConnectProRoom room in rooms)
 				{
 					foreach (TUserInterface ui in m_UserInterfaces)
 					{
@@ -127,9 +128,9 @@ namespace ICD.Profound.ConnectPRO.Themes
 		/// Gets the rooms for the user interfaces. Combine rooms will override any child individual rooms.
 		/// </summary>
 		/// <returns></returns>
-		private IEnumerable<IRoom> GetRooms()
+		private IEnumerable<IConnectProRoom> GetRooms()
 		{
-			return m_Theme.Core.Originators.GetChildren<IRoom>();
+			return m_Theme.Core.Originators.GetChildren<IConnectProRoom>();
 		}
 
 		#endregion

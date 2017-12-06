@@ -3,6 +3,7 @@ using ICD.Common.Services.Logging;
 using ICD.Common.Utils;
 using ICD.Connect.Panels;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -17,11 +18,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 	public sealed class ConnectProUserInterface : IUserInterface
 	{
 		private readonly IPanelDevice m_Panel;
+
 		private readonly INavigationController m_NavigationController;
 
 		private IRoom m_Room;
 
+		#region Properties
+
 		public IPanelDevice Panel { get { return m_Panel; } }
+
+		#endregion
 
 		/// <summary>
 		/// Constructor.
@@ -39,6 +45,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_NavigationController.NavigateTo<IHeaderPresenter>();
 		}
 
+		#region Methods
+
 		/// <summary>
 		/// Release resources.
 		/// </summary>
@@ -53,7 +61,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// Updates the UI to represent the given room.
 		/// </summary>
 		/// <param name="room"></param>
-		public void SetRoom(IRoom room)
+		public void SetRoom(IConnectProRoom room)
 		{
 			if (room == m_Room)
 				return;
@@ -75,5 +83,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			builder.AppendProperty("Panel", m_Panel);
 			return builder.ToString();
 		}
+
+		#endregion
 	}
 }

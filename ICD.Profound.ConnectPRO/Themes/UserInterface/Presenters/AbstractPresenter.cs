@@ -6,6 +6,7 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
@@ -38,7 +39,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// Gets the room.
 		/// </summary>
 		[CanBeNull]
-		public IRoom Room { get; private set; }
+		public IConnectProRoom Room { get; private set; }
 
 		/// <summary>
 		/// Gets the view factory.
@@ -104,7 +105,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// Sets the room for this presenter to represent.
 		/// </summary>
 		/// <param name="room"></param>
-		public virtual void SetRoom(IRoom room)
+		public virtual void SetRoom(IConnectProRoom room)
 		{
 			if (room == Room)
 				return;
@@ -298,7 +299,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// Subscribe to the room events.
 		/// </summary>
 		/// <param name="room"></param>
-		protected virtual void Subscribe(IRoom room)
+		protected virtual void Subscribe(IConnectProRoom room)
 		{
 		}
 
@@ -306,7 +307,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// Unsubscribe from the room events.
 		/// </summary>
 		/// <param name="room"></param>
-		protected virtual void Unsubscribe(IRoom room)
+		protected virtual void Unsubscribe(IConnectProRoom room)
 		{
 		}
 

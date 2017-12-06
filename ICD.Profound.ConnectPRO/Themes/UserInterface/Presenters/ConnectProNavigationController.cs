@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
-using ICD.Connect.Partitioning.Rooms;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
@@ -60,7 +60,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		private readonly IViewFactory m_ViewFactory;
 		private readonly ConnectProTheme m_Theme;
 
-		private IRoom m_Room;
+		private IConnectProRoom m_Room;
 
 		#region Constructors
 
@@ -86,7 +86,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// Updates the presenters to track the given room.
 		/// </summary>
 		/// <param name="room"></param>
-		public void SetRoom(IRoom room)
+		public void SetRoom(IConnectProRoom room)
 		{
 			if (room == m_Room)
 				return;

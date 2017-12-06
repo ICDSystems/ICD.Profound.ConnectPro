@@ -6,6 +6,7 @@ using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 #if !SIMPLSHARP
 using System.Reflection;
@@ -116,7 +117,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// Convenience method for updating the room on all of the instantiated presenters.
 		/// </summary>
 		/// <param name="room"></param>
-		public void SetRoom(IRoom room)
+		public void SetRoom(IConnectProRoom room)
 		{
 			foreach (TPresenter presenter in GetPresenters())
 				presenter.SetRoom(room);
