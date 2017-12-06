@@ -43,6 +43,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			// These presenters are initially visible.
 			m_NavigationController.NavigateTo<IHeaderPresenter>();
+			
+			// These presenters control their own visibility.
+			m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>();
+			m_NavigationController.LazyLoadPresenter<IStartMeetingPresenter>();
 		}
 
 		#region Methods

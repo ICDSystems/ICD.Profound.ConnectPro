@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -10,6 +11,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
 	public sealed class EndMeetingPresenter : AbstractPresenter<IEndMeetingView>, IEndMeetingPresenter
 	{
+		private readonly SafeCriticalSection m_RefreshSection;
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -19,6 +22,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		public EndMeetingPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
+			m_RefreshSection = new SafeCriticalSection();
+		}
+
+		protected override void Refresh(IEndMeetingView view)
+		{
+			base.Refresh(view);
+
+			m_RefreshSection.Enter();
+
+			try
+			{
+				bool show = Room != null && Room.IsInMeeting;
+				ShowView(show);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
 		}
 
 		#region View Callbacks
@@ -68,6 +89,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			base.Subscribe(room);
 
+			if (room == null)
+				return;
+
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
 		}
 
@@ -79,6 +103,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			base.Unsubscribe(room);
 
+			if (room == null)
+				return;
+
 			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
 		}
 
@@ -89,8 +116,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="boolEventArgs"></param>
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs boolEventArgs)
 		{
-			bool show = Room != null && Room.IsInMeeting;
-			ShowView(show);
+			Refresh();
 		}
 
 		#endregion
