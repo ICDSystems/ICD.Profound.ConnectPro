@@ -28,6 +28,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		protected override void BindMvpTriad(IDestination model, IReferencedDisplaysPresenter presenter,
 											 IReferencedDisplaysView view)
 		{
+			presenter.Destination = model;
 			presenter.SetView(view);
 		}
 	}

@@ -9,6 +9,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 {
 	public sealed partial class ReferencedDisplaysView : AbstractComponentView, IReferencedDisplaysView
 	{
+		private const ushort MODE_GREY = 0;
+		private const ushort MODE_YELLOW = 1;
+		private const ushort MODE_GREEN = 2;
+
 		public event EventHandler OnButtonPressed;
 
 		/// <summary>
@@ -56,6 +60,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 			m_YellowIconButton.Show(yellow);
 			m_YellowLine1Label.Show(yellow);
 			m_YellowLine2Label.Show(yellow);
+
+			switch (color)
+			{
+				case eDisplayColor.Grey:
+					m_BackgroundButton.SetMode(MODE_GREY);
+					break;
+				case eDisplayColor.Yellow:
+					m_BackgroundButton.SetMode(MODE_YELLOW);
+					break;
+				case eDisplayColor.Green:
+					m_BackgroundButton.SetMode(MODE_GREEN);
+					break;
+				default:
+					throw new ArgumentOutOfRangeException("color");
+			}
 		}
 
 		/// <summary>
