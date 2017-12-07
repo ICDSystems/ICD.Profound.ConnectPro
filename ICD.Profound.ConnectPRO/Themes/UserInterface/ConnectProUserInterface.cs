@@ -4,7 +4,7 @@ using ICD.Common.Services.Logging;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Panels;
-using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
@@ -162,8 +162,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_NavigationController.LazyLoadPresenter<IStartMeetingPresenter>().ShowView(!isInMeeting);
 			m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>().ShowView(isInMeeting);
 
+			IDestination[] displayDestinations =
+				m_Room == null ? new IDestination[0] : m_Room.Routing.GetDisplayDestinations().ToArray();
+
 			// Set the visibility of the source a display subpages
-			bool dualSourceVisible = isInMeeting && m_Room.Routing.GetDisplayDestinations().Count() > 1;
+			bool dualSourceVisible = isInMeeting && displayDestinations.Length > 1;
 			bool singleSourceVisible = isInMeeting && !dualSourceVisible;
 			bool displaysVisible = isInMeeting && dualSourceVisible;
 

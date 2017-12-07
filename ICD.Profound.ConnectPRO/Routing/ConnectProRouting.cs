@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ICD.Common.Utils.Extensions;
 using ICD.Connect.Displays;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Connections;
@@ -34,7 +33,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			return m_Room.Originators
 			             .GetInstancesRecursive<IDestination>()
 			             .Where(d => d.ConnectionType.HasFlag(eConnectionType.Video))
-						 .Where(d => m_Room.Core.Originators.GetChild(d.Id) is IDisplay)
+						 .Where(d => m_Room.Core.Originators.GetChild(d.Endpoint.Device) is IDisplay)
 			             .OrderBy(d => d.Order)
 			             .ThenBy(d => d.GetNameOrDeviceName(combine))
 						 .Take(2);
