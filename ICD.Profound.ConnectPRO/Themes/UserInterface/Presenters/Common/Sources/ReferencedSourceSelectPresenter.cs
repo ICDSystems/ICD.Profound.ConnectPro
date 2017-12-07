@@ -52,9 +52,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			try
 			{
 				bool combine = Room != null && Room.IsCombineRoom();
+				IRoom room = Room == null ? null : Room.Routing.GetRoomForSource(m_Source);
 
 				view.SetColor(eSourceColor.Yellow);
-				view.SetFeedbackText("Feedback Text");
+				view.SetFeedbackText(room == null ? string.Empty : room.GetName(combine));
 				view.SetLine1Text(m_Source == null ? string.Empty : m_Source.GetName(combine));
 				view.SetLine2Text(m_Source == null ? string.Empty : m_Source.GetName(combine));
 			}

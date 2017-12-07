@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using ICD.Common.Properties;
 using ICD.Connect.Displays;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints;
@@ -48,6 +50,29 @@ namespace ICD.Profound.ConnectPRO.Routing
 			             .Originators
 			             .GetChildren<ISource>()
 			             .OrderBy(s => s.Order);
+		}
+
+		/// <summary>
+		/// Gets the room for the given source.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <returns></returns>
+		[CanBeNull]
+		public IRoom GetRoomForSource(ISource source)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			// This room takes precendence
+			if (m_Room.Originators.ContainsRecursive(source.Id))
+				return m_Room;
+
+			return m_Room.Core
+			             .Originators
+			             .GetChildren<IRoom>()
+			             .Where(r => r.Originators.ContainsRecursive(source.Id))
+			             .OrderBy(r => r.IsCombineRoom())
+			             .FirstOrDefault();
 		}
 	}
 }
