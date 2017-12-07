@@ -9,6 +9,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 {
 	public sealed partial class ReferencedSourceSelectView : AbstractComponentView, IReferencedSourceSelectView
 	{
+		private const ushort MODE_GREY = 0;
+		private const ushort MODE_WHITE = 1;
+		private const ushort MODE_YELLOW = 2;
+		private const ushort MODE_GREEN = 3;
+
 		public event EventHandler OnButtonPressed;
 
 		/// <summary>
@@ -43,6 +48,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 			m_GreenLine1Label.Show(green);
 			m_GreenLine2Label.Show(green);
 			m_GreenFeedbackLabel.Show(green);
+
+			switch (color)
+			{
+				case eSourceColor.White:
+					m_BackgroundButton.SetMode(MODE_WHITE);
+					break;
+				case eSourceColor.Grey:
+					m_BackgroundButton.SetMode(MODE_GREY);
+					break;
+				case eSourceColor.Yellow:
+					m_BackgroundButton.SetMode(MODE_YELLOW);
+					break;
+				case eSourceColor.Green:
+					m_BackgroundButton.SetMode(MODE_GREEN);
+					break;
+				default:
+					throw new ArgumentOutOfRangeException("color");
+			}
 		}
 
 		/// <summary>
