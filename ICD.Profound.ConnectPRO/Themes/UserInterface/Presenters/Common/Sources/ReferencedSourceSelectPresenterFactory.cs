@@ -1,11 +1,12 @@
-﻿using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
+﻿using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 {
 	public sealed class ReferencedSourceSelectPresenterFactory :
-		AbstractListItemFactory<object, IReferencedSourceSelectPresenter, IReferencedSourceSelectView>
+		AbstractListItemFactory<ISource, IReferencedSourceSelectPresenter, IReferencedSourceSelectView>
 	{
 		/// <summary>
 		/// Constructor.
@@ -24,9 +25,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// <param name="model"></param>
 		/// <param name="presenter"></param>
 		/// <param name="view"></param>
-		protected override void BindMvpTriad(object model, IReferencedSourceSelectPresenter presenter,
+		protected override void BindMvpTriad(ISource model, IReferencedSourceSelectPresenter presenter,
 		                                     IReferencedSourceSelectView view)
 		{
+			presenter.Source = model;
 			presenter.SetView(view);
 		}
 	}

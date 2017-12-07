@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
+using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.Pages;
 
@@ -10,6 +11,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 	{
 		private VtProSubpage m_Subpage;
 		private VtProSubpageReferenceList m_SourceList;
+		private VtProButton m_LeftArrowButton;
+		private VtProButton m_RightArrowButton;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -31,6 +34,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 				AnalogJoinIncrement = 2,
 				SerialJoinIncrement = 3
 			};
+
+			m_LeftArrowButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalVisibilityJoin = 1
+			};
+
+			m_RightArrowButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalVisibilityJoin = 1
+			};
 		}
 
 		/// <summary>
@@ -41,6 +54,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		{
 			yield return m_Subpage;
 			yield return m_SourceList;
+			yield return m_LeftArrowButton;
+			yield return m_RightArrowButton;
 		}
 	}
 }

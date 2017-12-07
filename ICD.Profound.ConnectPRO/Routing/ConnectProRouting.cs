@@ -2,9 +2,9 @@
 using System.Linq;
 using ICD.Connect.Displays;
 using ICD.Connect.Partitioning.Rooms;
-using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Destinations;
+using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Routing
@@ -32,11 +32,22 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			return m_Room.Originators
 			             .GetInstancesRecursive<IDestination>()
-			             .Where(d => d.ConnectionType.HasFlag(eConnectionType.Video))
-						 .Where(d => m_Room.Core.Originators.GetChild(d.Endpoint.Device) is IDisplay)
+			             .Where(d => m_Room.Core.Originators.GetChild(d.Endpoint.Device) is IDisplay)
 			             .OrderBy(d => d.Order)
 			             .ThenBy(d => d.GetNameOrDeviceName(combine))
-						 .Take(2);
+			             .Take(2);
+		}
+
+		/// <summary>
+		/// Returns all of the sources available in the core.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<ISource> GetCoreSources()
+		{
+			return m_Room.Core
+			             .Originators
+			             .GetChildren<ISource>()
+			             .OrderBy(s => s.Order);
 		}
 	}
 }
