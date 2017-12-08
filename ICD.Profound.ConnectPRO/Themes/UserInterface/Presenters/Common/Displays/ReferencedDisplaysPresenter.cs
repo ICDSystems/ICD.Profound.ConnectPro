@@ -102,16 +102,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				string text = m_ActiveSource == null ? destinationName : string.Format("PRESS TO SHOW SELECTION ON {0}", destinationName);
 				text = text.ToUpper();
 
-				string line1 = string.Empty;
-				string line2 = string.Empty;
+				string line1;
+				string line2;
 
 				if (text.Length <= MAX_LINE_WIDTH)
+				{
 					line1 = text;
+					line2 = string.Empty;
+				}
 				else
 				{
 					// Find the space closest to the middle of the text and split.
 					int middleIndex = text.Length / 2;
-					int splitIndex = text.FindIndices(c => char.IsWhiteSpace(c)).GetClosest(i => i - middleIndex);
+					int splitIndex = text.FindIndices(char.IsWhiteSpace).GetClosest(i => i - middleIndex);
 
 					line1 = text.Substring(0, splitIndex).Trim();
 					line2 = text.Substring(splitIndex + 1).Trim();
