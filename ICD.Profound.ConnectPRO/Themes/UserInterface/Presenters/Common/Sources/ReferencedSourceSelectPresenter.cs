@@ -14,6 +14,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 	public sealed class ReferencedSourceSelectPresenter : AbstractComponentPresenter<IReferencedSourceSelectView>,
 	                                                      IReferencedSourceSelectPresenter
 	{
+		private const int MAX_LINE_WIDTH = 10;
+
 		public event EventHandler OnPressed;
 
 		private readonly SafeCriticalSection m_RefreshSection;
@@ -89,10 +91,32 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 				bool combine = Room != null && Room.IsCombineRoom();
 				IRoom room = Room == null ? null : Room.Routing.GetRoomForSource(m_Source);
 
+				string sourceName =
+					m_Source == null
+						? string.Empty
+						: m_Source.GetName(combine) ?? string.Empty;
+
+				string text = sourceName.ToUpper();
+
+				string line1 = string.Empty;
+				string line2 = string.Empty;
+
+				if (text.Length <= MAX_LINE_WIDTH)
+					line1 = text;
+				else
+				{
+					// Find the space closest to the middle of the text and split.
+					int middleIndex = text.Length / 2;
+					int splitIndex = text.FindIndices(c => char.IsWhiteSpace(c)).GetClosest(i => i - middleIndex);
+
+					line1 = text.Substring(0, splitIndex).Trim();
+					line2 = text.Substring(splitIndex + 1).Trim();
+				}
+
 				view.SetColor(m_Selected ? eSourceColor.Yellow : eSourceColor.White);
 				view.SetFeedbackText(room == null ? string.Empty : room.GetName(combine));
-				view.SetLine1Text(m_Source == null ? string.Empty : m_Source.GetName(combine));
-				view.SetLine2Text(m_Source == null ? string.Empty : m_Source.GetName(combine));
+				view.SetLine1Text(line1);
+				view.SetLine2Text(line2);
 			}
 			finally
 			{

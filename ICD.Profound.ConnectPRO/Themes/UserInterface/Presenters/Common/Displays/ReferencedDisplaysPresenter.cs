@@ -15,6 +15,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 	public sealed class ReferencedDisplaysPresenter : AbstractComponentPresenter<IReferencedDisplaysView>,
 	                                                  IReferencedDisplaysPresenter
 	{
+		private const int MAX_LINE_WIDTH = 10;
+
 		public event EventHandler OnPressed;
 
 		private readonly SafeCriticalSection m_RefreshSection;
@@ -96,20 +98,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 						? string.Empty
 						: m_Destination.GetName(combine) ?? string.Empty;
 
-				destinationName = destinationName.ToUpper();
-
 				eDisplayColor color = m_ActiveSource == null ? eDisplayColor.Grey : eDisplayColor.Yellow;
+				string text = m_ActiveSource == null ? destinationName : string.Format("PRESS TO SHOW SELECTION ON {0}", destinationName);
+				text = text.ToUpper();
+
 				string line1 = string.Empty;
 				string line2 = string.Empty;
 
-				if (m_ActiveSource == null)
-				{
-					line1 = destinationName;
-				}
+				if (text.Length <= MAX_LINE_WIDTH)
+					line1 = text;
 				else
 				{
-					line1 = "PRESS TO SHOW SELECTION";
-					line2 = "ON " + destinationName;
+					// Find the space closest to the middle of the text and split.
+					int middleIndex = text.Length / 2;
+					int splitIndex = text.FindIndices(c => char.IsWhiteSpace(c)).GetClosest(i => i - middleIndex);
+
+					line1 = text.Substring(0, splitIndex).Trim();
+					line2 = text.Substring(splitIndex + 1).Trim();
 				}
 
 				view.SetColor(color);
