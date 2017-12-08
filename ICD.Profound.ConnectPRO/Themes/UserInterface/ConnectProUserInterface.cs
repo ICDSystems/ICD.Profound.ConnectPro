@@ -1,10 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using ICD.Common.Services;
 using ICD.Common.Services.Logging;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Panels;
 using ICD.Connect.Routing.Endpoints.Destinations;
+using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
@@ -29,6 +31,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private IConnectProRoom m_Room;
 
 		private DefaultVisibilityNode m_MeetingButtons;
+		private ISource m_ActiveSource;
 
 		#region Properties
 
@@ -49,6 +52,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_NavigationController = new ConnectProNavigationController(viewFactory, theme);
 
 			BuildVisibilityTree();
+			SubscribePresenters();
 		}
 
 		/// <summary>
@@ -76,6 +80,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// </summary>
 		public void Dispose()
 		{
+			UnsubscribePresenters();
+
 			SetRoom(null);
 
 			m_NavigationController.Dispose();
@@ -174,6 +180,154 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>().ShowView(singleSourceVisible);
 			m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>().ShowView(dualSourceVisible);
 			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().ShowView(displaysVisible);
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Subscribe to the presenter events.
+		/// </summary>
+		private void SubscribePresenters()
+		{
+			Subscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>());
+			Subscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>());
+			Subscribe(m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>());
+		}
+
+		/// <summary>
+		/// Unsubscribe from the presenter events.
+		/// </summary>
+		private void UnsubscribePresenters()
+		{
+			Unsubscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>());
+			Unsubscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>());
+			Unsubscribe(m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>());
+		}
+
+		#region SourceSelectSingle Callbacks
+
+		/// <summary>
+		/// Subscribe to the presenter events.
+		/// </summary>
+		/// <param name="presenter"></param>
+		private void Subscribe(ISourceSelectSinglePresenter presenter)
+		{
+			presenter.OnSourcePressed += SourceSelectSinglePresenterOnSourcePressed;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the presenter events.
+		/// </summary>
+		/// <param name="presenter"></param>
+		private void Unsubscribe(ISourceSelectSinglePresenter presenter)
+		{
+			presenter.OnSourcePressed -= SourceSelectSinglePresenterOnSourcePressed;
+		}
+
+		/// <summary>
+		/// Called when the user presses a source in the presenter.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="source"></param>
+		private void SourceSelectSinglePresenterOnSourcePressed(object sender, ISource source)
+		{
+			if (m_Room == null)
+				return;
+
+			m_Room.Routing.Route(source);
+
+			SetActiveSource(null);
+		}
+
+		#endregion
+
+		#region SourceSelectDual Callbacks
+
+		/// <summary>
+		/// Subscribe to the presenter events.
+		/// </summary>
+		/// <param name="presenter"></param>
+		private void Subscribe(ISourceSelectDualPresenter presenter)
+		{
+			presenter.OnSourcePressed += SourceSelectDualPresenterOnSourcePressed;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the presenter events.
+		/// </summary>
+		/// <param name="presenter"></param>
+		private void Unsubscribe(ISourceSelectDualPresenter presenter)
+		{
+			presenter.OnSourcePressed -= SourceSelectDualPresenterOnSourcePressed;
+		}
+
+		/// <summary>
+		/// Called when the user presses a source in the presenter.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="source"></param>
+		private void SourceSelectDualPresenterOnSourcePressed(object sender, ISource source)
+		{
+			// Toggle if the given source is already active
+			if (source == m_ActiveSource)
+				source = null;
+
+			SetActiveSource(source);
+		}
+
+		/// <summary>
+		/// Sets the source that is currently active for routing to the displays.
+		/// </summary>
+		/// <param name="source"></param>
+		private void SetActiveSource(ISource source)
+		{
+			if (source == m_ActiveSource)
+				return;
+
+			m_ActiveSource = source;
+
+			m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>().ActiveSource = m_ActiveSource;
+			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().ActiveSource = m_ActiveSource;
+		}
+
+		#endregion
+
+		#region Displays Callbacks
+
+		/// <summary>
+		/// Subscribe to the presenter events.
+		/// </summary>
+		/// <param name="presenter"></param>
+		private void Subscribe(IDisplaysPresenter presenter)
+		{
+			presenter.OnDestinationPressed += DisplaysPresenterOnDestinationPressed;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the presenter events.
+		/// </summary>
+		/// <param name="presenter"></param>
+		private void Unsubscribe(IDisplaysPresenter presenter)
+		{
+			presenter.OnDestinationPressed -= DisplaysPresenterOnDestinationPressed;
+		}
+
+		/// <summary>
+		/// Called when the user presses a destination in the presenter.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="destination"></param>
+		private void DisplaysPresenterOnDestinationPressed(object sender, IDestination destination)
+		{
+			if (m_ActiveSource == null)
+				return;
+
+			if (m_Room == null)
+				return;
+
+			m_Room.Routing.Route(m_ActiveSource, destination);
+
+			SetActiveSource(null);
 		}
 
 		#endregion

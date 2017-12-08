@@ -1,7 +1,9 @@
 ﻿using System;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Destinations;
+using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
@@ -13,9 +15,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 	public sealed class ReferencedDisplaysPresenter : AbstractComponentPresenter<IReferencedDisplaysView>,
 	                                                  IReferencedDisplaysPresenter
 	{
+		public event EventHandler OnPressed;
+
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private IDestination m_Destination;
+		private ISource m_ActiveSource;
+
+		#region Properties
 
 		/// <summary>
 		/// Gets/sets the destination for this presenter.
@@ -35,6 +42,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		}
 
 		/// <summary>
+		/// Gets/sets the source that is actively selected for routing.
+		/// </summary>
+		public ISource ActiveSource
+		{
+			get { return m_ActiveSource; }
+			set
+			{
+				if (value == m_ActiveSource)
+					return;
+
+				m_ActiveSource = value;
+
+				RefreshIfVisible();
+			}
+		}
+
+		#endregion
+
+		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="nav"></param>
@@ -46,6 +72,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			m_RefreshSection = new SafeCriticalSection();
 		}
 
+		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			OnPressed = null;
+
+			base.Dispose();
+		}
+
 		protected override void Refresh(IReferencedDisplaysView view)
 		{
 			base.Refresh(view);
@@ -55,10 +91,30 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			try
 			{
 				bool combine = Room != null && Room.IsCombineRoom();
+				string destinationName =
+					m_Destination == null
+						? string.Empty
+						: m_Destination.GetName(combine) ?? string.Empty;
 
-				view.SetColor(eDisplayColor.Yellow);
-				view.SetLine1Text(m_Destination == null ? string.Empty : m_Destination.GetName(combine));
-				view.SetLine2Text(m_Destination == null ? string.Empty : m_Destination.GetName(combine));
+				destinationName = destinationName.ToUpper();
+
+				eDisplayColor color = m_ActiveSource == null ? eDisplayColor.Grey : eDisplayColor.Yellow;
+				string line1 = string.Empty;
+				string line2 = string.Empty;
+
+				if (m_ActiveSource == null)
+				{
+					line1 = destinationName;
+				}
+				else
+				{
+					line1 = "PRESS TO SHOW SELECTION";
+					line2 = "ON " + destinationName;
+				}
+
+				view.SetColor(color);
+				view.SetLine1Text(line1);
+				view.SetLine2Text(line2);
 			}
 			finally
 			{
@@ -97,7 +153,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		/// <param name="eventArgs"></param>
 		private void ViewOnButtonPressed(object sender, EventArgs eventArgs)
 		{
-			
+			OnPressed.Raise(this);
 		}
 
 		#endregion

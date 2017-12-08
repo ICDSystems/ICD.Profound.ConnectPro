@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Connect.Routing.Endpoints.Destinations;
+using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -11,8 +13,28 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 {
 	public sealed class DisplaysPresenter : AbstractPresenter<IDisplaysView>, IDisplaysPresenter
 	{
+		public event DestinationPressedCallback OnDestinationPressed;
+
 		private readonly ReferencedDisplaysPresenterFactory m_ChildrenFactory;
 		private readonly SafeCriticalSection m_RefreshSection;
+		private ISource m_ActiveSource;
+
+		/// <summary>
+		/// Gets/sets the source that is currently active for routing.
+		/// </summary>
+		public ISource ActiveSource
+		{
+			get { return m_ActiveSource; }
+			set
+			{
+				if (value == m_ActiveSource)
+					return;
+
+				m_ActiveSource = value;
+
+				RefreshIfVisible();
+			}
+		}
 
 		/// <summary>
 		/// Constructor.
@@ -32,6 +54,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		/// </summary>
 		public override void Dispose()
 		{
+			OnDestinationPressed = null;
+
+			UnsubscribeChildren();
 			m_ChildrenFactory.Dispose();
 
 			base.Dispose();
@@ -51,7 +76,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 						: Room.Routing.GetDisplayDestinations();
 
 				foreach (IReferencedDisplaysPresenter presenter in m_ChildrenFactory.BuildChildren(destinations))
+				{
+					Subscribe(presenter);
+
+					presenter.ActiveSource = m_ActiveSource;
 					presenter.ShowView(true);
+				}
 			}
 			finally
 			{
@@ -59,9 +89,66 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			}
 		}
 
+		#region Perivate Methods
+
+		/// <summary>
+		/// Unsubscribes from all of the child presenters.
+		/// </summary>
+		private void UnsubscribeChildren()
+		{
+			foreach (IReferencedDisplaysPresenter presenter in m_ChildrenFactory)
+				Unsubscribe(presenter);
+		}
+
 		private IEnumerable<IReferencedDisplaysView> ItemFactory(ushort count)
 		{
 			return GetView().GetChildComponentViews(ViewFactory, count);
 		}
+
+		#endregion
+
+		#region Child Callbacks
+
+		/// <summary>
+		/// Subscribe to the child events.
+		/// </summary>
+		/// <param name="child"></param>
+		private void Subscribe(IReferencedDisplaysPresenter child)
+		{
+			if (child == null)
+				return;
+
+			child.OnPressed += ChildOnPressed;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the child events.
+		/// </summary>
+		/// <param name="child"></param>
+		private void Unsubscribe(IReferencedDisplaysPresenter child)
+		{
+			if (child == null)
+				return;
+
+			child.OnPressed -= ChildOnPressed;
+		}
+
+		/// <summary>
+		/// Called when the user presses the child source.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ChildOnPressed(object sender, EventArgs eventArgs)
+		{
+			IReferencedDisplaysPresenter child = sender as IReferencedDisplaysPresenter;
+			if (child == null)
+				return;
+
+			DestinationPressedCallback handler = OnDestinationPressed;
+			if (handler != null)
+				handler(this, child.Destination);
+		}
+
+		#endregion
 	}
 }

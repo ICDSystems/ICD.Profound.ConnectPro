@@ -1,5 +1,6 @@
 ﻿using System;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings;
@@ -13,9 +14,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 	public sealed class ReferencedSourceSelectPresenter : AbstractComponentPresenter<IReferencedSourceSelectView>,
 	                                                      IReferencedSourceSelectPresenter
 	{
+		public event EventHandler OnPressed;
+
 		private readonly SafeCriticalSection m_RefreshSection;
 		
 		private ISource m_Source;
+		private bool m_Selected;
+
+		#region Properties
 
 		public ISource Source
 		{
@@ -32,6 +38,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		}
 
 		/// <summary>
+		/// Gets/sets the selected state of the presenter.
+		/// </summary>
+		public bool Selected
+		{
+			get { return m_Selected; }
+			set
+			{
+				if (value == m_Selected)
+					return;
+
+				m_Selected = value;
+
+				RefreshIfVisible();
+			}
+		}
+
+		#endregion
+
+		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="nav"></param>
@@ -41,6 +66,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
+		}
+
+		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			OnPressed = null;
+
+			base.Dispose();
 		}
 
 		protected override void Refresh(IReferencedSourceSelectView view)
@@ -54,7 +89,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 				bool combine = Room != null && Room.IsCombineRoom();
 				IRoom room = Room == null ? null : Room.Routing.GetRoomForSource(m_Source);
 
-				view.SetColor(eSourceColor.Yellow);
+				view.SetColor(m_Selected ? eSourceColor.Yellow : eSourceColor.White);
 				view.SetFeedbackText(room == null ? string.Empty : room.GetName(combine));
 				view.SetLine1Text(m_Source == null ? string.Empty : m_Source.GetName(combine));
 				view.SetLine2Text(m_Source == null ? string.Empty : m_Source.GetName(combine));
@@ -96,6 +131,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// <param name="eventArgs"></param>
 		private void ViewOnButtonPressed(object sender, EventArgs eventArgs)
 		{
+			OnPressed.Raise(this);
 		}
 
 		#endregion
