@@ -1,11 +1,15 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using ICD.Common.Services;
 using ICD.Common.Services.Logging;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Panels;
+using ICD.Connect.Routing;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Connect.Routing.EventArguments;
+using ICD.Connect.Routing.Extensions;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
@@ -31,6 +35,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		private DefaultVisibilityNode m_MeetingButtons;
 		private ISource m_ActiveSource;
+		private IRoutingGraph m_RoutingGraph;
 
 		#region Properties
 
@@ -95,14 +100,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (room == m_Room)
 				return;
 
+			Unsubscribe(m_RoutingGraph);
 			Unsubscribe(m_Room);
 
 			ServiceProvider.GetService<ILoggerService>()
 			               .AddEntry(eSeverity.Informational, "{0} setting room to {1}", this, room);
 
 			m_Room = room;
+			m_RoutingGraph = m_Room == null ? null : m_Room.Core.GetRoutingGraph();
+
 			m_NavigationController.SetRoom(room);
 
+			Subscribe(m_RoutingGraph);
 			Subscribe(m_Room);
 
 			UpdateMeetingPresenters();
@@ -179,6 +188,56 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>().ShowView(singleSourceVisible);
 			m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>().ShowView(dualSourceVisible);
 			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().ShowView(displaysVisible);
+		}
+
+		#endregion
+
+		#region RoutingGraph Callbacks
+
+		/// <summary>
+		/// Subscribe to the routing graph events.
+		/// </summary>
+		/// <param name="routingGraph"></param>
+		private void Subscribe(IRoutingGraph routingGraph)
+		{
+			if (routingGraph == null)
+				return;
+
+			routingGraph.OnRouteChanged += RoutingGraphOnRouteChanged;
+			routingGraph.OnSourceDetectionStateChanged += RoutingGraphOnSourceDetectionStateChanged;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the routing graph events.
+		/// </summary>
+		/// <param name="routingGraph"></param>
+		private void Unsubscribe(IRoutingGraph routingGraph)
+		{
+			if (routingGraph == null)
+				return;
+
+			routingGraph.OnRouteChanged -= RoutingGraphOnRouteChanged;
+			routingGraph.OnSourceDetectionStateChanged -= RoutingGraphOnSourceDetectionStateChanged;
+		}
+
+		/// <summary>
+		/// Called when a switcher changes routing.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void RoutingGraphOnRouteChanged(object sender, EventArgs args)
+		{
+			// TODO - Update presenter routing states
+		}
+
+		/// <summary>
+		/// Called when a source is detected or loses detection.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void RoutingGraphOnSourceDetectionStateChanged(object sender, EndpointStateEventArgs args)
+		{
+			// TODO - Update source presenter states
 		}
 
 		#endregion
