@@ -7,9 +7,6 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
-#if !SIMPLSHARP
-using System.Reflection;
-#endif
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 {
