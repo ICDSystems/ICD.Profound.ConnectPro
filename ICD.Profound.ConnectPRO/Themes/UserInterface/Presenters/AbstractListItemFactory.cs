@@ -189,7 +189,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{
 				// Dispose the existing presenter if it does not match the requested type.
 				TPresenter existing = m_PresenterCache.GetDefault(cacheIndex, null);
-				if (existing != null && existing.GetType() != presenterType)
+				if (existing != null && !existing.GetType().IsAssignableTo(presenterType))
 				{
 					existing.ClearView();
 					existing.Dispose();
