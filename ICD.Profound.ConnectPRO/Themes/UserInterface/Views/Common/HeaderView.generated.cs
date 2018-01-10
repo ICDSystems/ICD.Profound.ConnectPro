@@ -24,7 +24,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index);
 
-			m_RoomNameLabel = new VtProSimpleLabel(panel, m_Subpage);
+			m_RoomNameLabel = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				IndirectTextJoin = 10
+			};
 		}
 
 		/// <summary>
