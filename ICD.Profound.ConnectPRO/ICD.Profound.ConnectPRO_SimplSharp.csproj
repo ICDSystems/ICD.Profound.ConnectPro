@@ -79,6 +79,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\IEndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IHeaderPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IStartMeetingPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\IVolumePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionContactsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionMasterMicPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionPresenter.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="Themes\UserInterface\IViews\Colors.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IStartMeetingView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\IVolumeView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IHardButtonsView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IIcon.cs" />
     <Compile Include="Themes\UserInterface\IViews\Popups\IAppleTvView.cs" />
@@ -137,6 +139,7 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\SourceSelectDualPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\SourceSelectSinglePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\StartMeetingPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\VolumePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\ConnectProNavigationController.cs" />
     <Compile Include="Themes\UserInterface\Presenters\HardButtonsPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\AbstractPopupPresenter.cs" />
@@ -171,6 +174,8 @@
     <Compile Include="Themes\UserInterface\Views\Common\Sources\SourceSelectSingleView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\StartMeetingView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\StartMeetingView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\VolumeView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\VolumeView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\ConnectProViewFactory.cs" />
     <Compile Include="Themes\UserInterface\Views\HardButtonsView.cs" />
     <Compile Include="Themes\UserInterface\Views\HardButtonsView.generated.cs" />
