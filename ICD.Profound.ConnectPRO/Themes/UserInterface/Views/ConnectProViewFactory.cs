@@ -63,6 +63,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(ISourceSelectSingleView), (panel, theme) => new SourceSelectSingleView(panel, theme)},
 
 			// Common
+			{typeof(IConfirmView), (panel, theme) => new ConfirmView(panel, theme)},
 			{typeof(IEndMeetingView), (panel, theme) => new EndMeetingView(panel, theme)},
 			{typeof(IHeaderView), (panel, theme) => new HeaderView(panel, theme)},
 			{typeof(IStartMeetingView), (panel, theme) => new StartMeetingView(panel, theme)},

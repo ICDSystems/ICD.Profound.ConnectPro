@@ -75,6 +75,7 @@
     <Compile Include="Themes\ConnectProThemeSettings.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IReferencedDisplaysPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IEndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IHeaderPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IStartMeetingPresenter.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\Popups\IAppleTvPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Popups\IPopupPresenter.cs" />
     <Compile Include="Themes\UserInterface\IViews\Colors.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\IConfirmView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IStartMeetingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IHardButtonsView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IIcon.cs" />
@@ -118,6 +120,7 @@
     <Compile Include="Themes\UserInterface\Presenters\AbstractComponentPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractListItemFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\DisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\ReferencedDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\ReferencedDisplaysPresenterFactory.cs" />
@@ -140,6 +143,8 @@
     <Compile Include="Themes\UserInterface\Presenters\Popups\AppleTvPresenter.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractComponentView.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\ConfirmView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\ConfirmView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\DisplaysView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\DisplaysView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\ReferencedDisplaysView.cs" />
