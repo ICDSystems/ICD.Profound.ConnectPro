@@ -30,6 +30,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 		}
 
+		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			OnYesButtonPressed = null;
+			OnCancelButtonPressed = null;
+
+			base.Dispose();
+		}
+
 		#region View Callbacks
 
 		/// <summary>
