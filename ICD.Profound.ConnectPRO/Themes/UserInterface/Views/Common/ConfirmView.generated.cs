@@ -27,12 +27,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 
 			m_YesButton = new VtProButton(panel, m_Subpage)
 			{
-				// TODO DigitalPressJoin = 0
+				DigitalPressJoin = 31
 			};
 
 			m_CancelButton = new VtProButton(panel, m_Subpage)
 			{
-				// TODO DigitalPressJoin = 0
+				DigitalPressJoin = 32
 			};
 		}
 
