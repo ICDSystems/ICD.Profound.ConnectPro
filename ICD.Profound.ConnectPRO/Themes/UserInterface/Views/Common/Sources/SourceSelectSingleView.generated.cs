@@ -21,7 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		{
 			m_Subpage = new VtProSubpage(panel, parent)
 			{
-				DigitalVisibilityJoin = 999
+				DigitalVisibilityJoin = 111
 			};
 
 			m_SourceList = new VtProSubpageReferenceList(3, panel as IPanelDevice, m_Subpage)

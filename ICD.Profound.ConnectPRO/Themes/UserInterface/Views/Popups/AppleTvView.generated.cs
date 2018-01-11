@@ -21,7 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 113
+				DigitalVisibilityJoin = 215
 			};
 
 			m_CloseButton = new VtProButton(panel, m_Subpage)
