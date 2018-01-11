@@ -1,5 +1,6 @@
 ﻿using System;
-using ICD.Common.Utils.Extensions;
+using ICD.Common.Utils.EventArguments;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -9,16 +10,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
 	public sealed class ConfirmPresenter : AbstractPresenter<IConfirmView>, IConfirmPresenter
 	{
-		/// <summary>
-		/// Raised when the user presses the Yes button.
-		/// </summary>
-		public event EventHandler OnYesButtonPressed;
-
-		/// <summary>
-		/// Raised when the user presses the Cancel button.
-		/// </summary>
-		public event EventHandler OnCancelButtonPressed;
-
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -30,16 +21,47 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 		}
 
-		/// <summary>
-		/// Release resources.
-		/// </summary>
-		public override void Dispose()
-		{
-			OnYesButtonPressed = null;
-			OnCancelButtonPressed = null;
+		#region Room Callbacks
 
-			base.Dispose();
+		/// <summary>
+		/// Subscribe to the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Subscribe(IConnectProRoom room)
+		{
+			base.Subscribe(room);
+
+			if (room == null)
+				return;
+
+			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
 		}
+
+		/// <summary>
+		/// Unsubscribe from the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Unsubscribe(IConnectProRoom room)
+		{
+			base.Unsubscribe(room);
+
+			if (room == null)
+				return;
+
+			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
+		}
+
+		/// <summary>
+		/// Called when the room enters/leaves meeting state.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs eventArgs)
+		{
+			ShowView(false);
+		}
+
+		#endregion
 
 		#region View Callbacks
 
@@ -74,7 +96,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="eventArgs"></param>
 		private void ViewOnCancelButtonPressed(object sender, EventArgs eventArgs)
 		{
-			OnCancelButtonPressed.Raise(this);
+			ShowView(false);
 		}
 
 		/// <summary>
@@ -84,7 +106,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="eventArgs"></param>
 		private void ViewOnYesButtonPressed(object sender, EventArgs eventArgs)
 		{
-			OnYesButtonPressed.Raise(this);
+			if (Room != null)
+				Room.IsInMeeting = false;
 		}
 
 		#endregion
