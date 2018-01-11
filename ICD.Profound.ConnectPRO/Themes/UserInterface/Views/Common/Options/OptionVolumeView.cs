@@ -29,6 +29,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options
 			base.Dispose();
 		}
 
+		/// <summary>
+		/// Sets the selected state of the option.
+		/// </summary>
+		/// <param name="selected"></param>
+		public override void SetSelected(bool selected)
+		{
+			m_Button.SetSelected(selected);
+		}
+
 		#region Control Callbacks
 
 		/// <summary>

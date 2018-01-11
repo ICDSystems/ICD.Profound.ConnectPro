@@ -17,5 +17,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options
 			: base(panel, theme)
 		{
 		}
+
+		/// <summary>
+		/// Sets the selected state of the option.
+		/// </summary>
+		/// <param name="selected"></param>
+		public abstract void SetSelected(bool selected);
 	}
 }
