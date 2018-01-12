@@ -5,8 +5,11 @@ using ICD.Common.Services;
 using ICD.Common.Services.Logging;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Connect.Conferencing.Cisco.Controls;
+using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.Routing;
+using ICD.Connect.Routing.Controls;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.EventArguments;
@@ -16,6 +19,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VisibilityTree;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters;
@@ -34,6 +38,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		private IConnectProRoom m_Room;
 
+		private IVisibilityNode m_VideoConferencingVisibility;
 		private DefaultVisibilityNode m_MeetingButtons;
 		private ISource m_ActiveSource;
 		private IRoutingGraph m_RoutingGraph;
@@ -65,6 +70,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// </summary>
 		private void BuildVisibilityTree()
 		{
+			// Video Conference node
+			m_VideoConferencingVisibility =
+				new SingleVisibilityNode();
+
+			m_VideoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcContactsPresenter>());
+			m_VideoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcCameraPresenter>());
+			m_VideoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcSharePresenter>());
+			m_VideoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcDtmfPresenter>());
+
 			// Only allow one of the start/end buttons to be visible at any given time
 			m_MeetingButtons = new DefaultVisibilityNode(m_NavigationController.LazyLoadPresenter<IStartMeetingPresenter>());
 			m_MeetingButtons.AddPresenter(m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>());
@@ -388,18 +402,28 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// Called when the user presses a destination in the presenter.
 		/// </summary>
 		/// <param name="sender"></param>
+		/// <param name="presenter"></param>
 		/// <param name="destination"></param>
-		private void DisplaysPresenterOnDestinationPressed(object sender, IDestination destination)
+		private void DisplaysPresenterOnDestinationPressed(object sender, IReferencedDisplaysPresenter presenter, IDestination destination)
 		{
-			if (m_ActiveSource == null)
-				return;
-
 			if (m_Room == null)
 				return;
 
-			m_Room.Routing.Route(m_ActiveSource, destination);
+			if (m_ActiveSource != null)
+			{
+				m_Room.Routing.Route(m_ActiveSource, destination);
+				SetActiveSource(null);
+				return;
+			}
 
-			SetActiveSource(null);
+			// Contextual
+			ISource routedSource = presenter.RoutedSource;
+			IRouteSourceControl sourceControl = m_Room.Core.GetControl<IRouteSourceControl>(routedSource.Endpoint.Device, routedSource.Endpoint.Control);
+
+			// TODO - VERY temporary
+			CiscoCodecRoutingControl codecControl = sourceControl as CiscoCodecRoutingControl;
+			if (codecControl != null)
+				m_NavigationController.NavigateTo<IVtcBasePresenter>();
 		}
 
 		#endregion

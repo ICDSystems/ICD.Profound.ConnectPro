@@ -42,6 +42,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 		/// <param name="factory"></param>
 		/// <param name="count"></param>
 		/// <returns></returns>
-		IEnumerable<IReferencedContactsView> GetChildComponentViews(IViewFactory factory, ushort count);
+		IEnumerable<IVtcReferencedContactsView> GetChildComponentViews(IViewFactory factory, ushort count);
 	}
 }

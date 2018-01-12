@@ -13,12 +13,14 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Options;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 {
@@ -55,6 +57,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IHeaderPresenter), (nav, views, theme) => new HeaderPresenter(nav, views, theme)},
 			{typeof(IStartMeetingPresenter), (nav, views, theme) => new StartMeetingPresenter(nav, views, theme)},
 			{typeof(IVolumePresenter), (nav, views, theme) => new VolumePresenter(nav, views, theme)},
+
+			// Video Conference
+			{typeof(IVtcBasePresenter), (nav, views, theme) => new VtcBasePresenter(nav, views, theme)},
+			{typeof(IVtcContactsPresenter), (nav, views, theme) => new VtcContactsPresenter(nav, views, theme)},
+			{typeof(IVtcCameraPresenter), (nav, views, theme) => new VtcCameraPresenter(nav, views, theme)},
+			{typeof(IVtcSharePresenter), (nav, views, theme) => new VtcSharePresenter(nav, views, theme)},
+			{typeof(IVtcDtmfPresenter), (nav, views, theme) => new VtcDtmfPresenter(nav, views, theme)},
 
 			// Panel
 			{typeof(IHardButtonsPresenter), (nav, views, theme) => new HardButtonsPresenter(nav, views, theme)}

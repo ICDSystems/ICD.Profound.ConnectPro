@@ -5,7 +5,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays
 {
-	public delegate void DestinationPressedCallback(object sender, IDestination destination);
+	public delegate void DestinationPressedCallback(object sender, IReferencedDisplaysPresenter presenter, IDestination destination);
 
 	public interface IDisplaysPresenter : IPresenter<IDisplaysView>
 	{

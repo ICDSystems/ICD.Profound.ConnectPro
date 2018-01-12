@@ -170,7 +170,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 			DestinationPressedCallback handler = OnDestinationPressed;
 			if (handler != null)
-				handler(this, child.Destination);
+				handler(this, sender as IReferencedDisplaysPresenter, child.Destination);
 		}
 
 		#endregion

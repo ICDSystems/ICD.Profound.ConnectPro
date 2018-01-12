@@ -96,6 +96,11 @@
     <Compile Include="Themes\UserInterface\IPresenters\IPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Popups\IAppleTvPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Popups\IPopupPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcBasePresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcCameraPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcContactsPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcDtmfPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcSharePresenter.cs" />
     <Compile Include="Themes\UserInterface\IViews\Colors.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IStartMeetingView.cs" />
@@ -121,10 +126,12 @@
     <Compile Include="Themes\UserInterface\IViews\IViewFactory.cs" />
     <Compile Include="Themes\UserInterface\ConnectProUserInterface.cs" />
     <Compile Include="Themes\UserInterface\ConnectProUserInterfaceFactory.cs" />
-    <Compile Include="Themes\UserInterface\IViews\VideoConference\IReferencedContactsView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcBaseView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcCameraView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcContactsView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcDtmfView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcReferencedContactsView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcShareView.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractComponentPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractListItemFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractPresenter.cs" />
@@ -150,6 +157,11 @@
     <Compile Include="Themes\UserInterface\Presenters\HardButtonsPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\AbstractPopupPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\AppleTvPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcBasePresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcCameraPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcContactsPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcDtmfPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcSharePresenter.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractComponentView.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmView.cs" />
@@ -192,6 +204,16 @@
     <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\DefaultVisibilityNode.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\IVisibilityNode.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\SingleVisibilityNode.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcBaseView.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcBaseView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcCameraView.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcCameraView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcContactsView.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcContactsView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcDtmfView.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcDtmfView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcShareView.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcShareView.generated.cs" />
     <None Include="Properties\ControlSystem.cfg" />
   </ItemGroup>
   <ItemGroup>

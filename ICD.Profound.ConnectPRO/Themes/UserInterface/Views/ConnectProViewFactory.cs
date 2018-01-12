@@ -11,11 +11,13 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 {
@@ -68,6 +70,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(IHeaderView), (panel, theme) => new HeaderView(panel, theme)},
 			{typeof(IStartMeetingView), (panel, theme) => new StartMeetingView(panel, theme)},
 			{typeof(IVolumeView), (panel, theme) => new VolumeView(panel, theme)},
+
+			// Video Conference
+			{typeof(IVtcBaseView), (panel, theme) => new VtcBaseView(panel, theme)},
+			{typeof(IVtcContactsView), (panel, theme) => new VtcContactsView(panel, theme)},
+			{typeof(IVtcCameraView), (panel, theme) => new VtcCameraView(panel, theme)},
+			{typeof(IVtcShareView), (panel, theme) => new VtcShareView(panel, theme)},
+			{typeof(IVtcDtmfView), (panel, theme) => new VtcDtmfView(panel, theme)},
 
 			// Panel
 			{typeof(IHardButtonsView), (panel, theme) => new HardButtonsView(panel, theme)}
