@@ -1,7 +1,6 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
-using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Profound.ConnectPRO.Routing;
 
@@ -14,8 +13,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		private readonly ConnectProRouting m_Routing;
 
 		private bool m_IsInMeeting;
-
-		private readonly IConferenceManager m_ConferenceManager;
 
 		#region Properties
 
