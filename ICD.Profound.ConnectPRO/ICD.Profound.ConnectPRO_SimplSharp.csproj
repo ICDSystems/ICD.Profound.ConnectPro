@@ -68,6 +68,8 @@
     <Compile Include="Rooms\ConnectProRoomSettings.cs" />
     <Compile Include="Rooms\IConnectProRoom.cs" />
     <Compile Include="Routing\ConnectProRouting.cs" />
+    <Compile Include="Routing\Endpoints\Sources\ConnectProSource.cs" />
+    <Compile Include="Routing\Endpoints\Sources\ConnectProSourceSettings.cs" />
     <Compile Include="Themes\AbstractConnectProUserInterfaceFactory.cs" />
     <Compile Include="Themes\IConnectProUserInterfaceFactory.cs" />
     <Compile Include="Themes\IUserInterface.cs" />
@@ -119,6 +121,10 @@
     <Compile Include="Themes\UserInterface\IViews\IViewFactory.cs" />
     <Compile Include="Themes\UserInterface\ConnectProUserInterface.cs" />
     <Compile Include="Themes\UserInterface\ConnectProUserInterfaceFactory.cs" />
+    <Compile Include="Themes\UserInterface\IViews\VideoConference\IReferencedContactsView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcBaseView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcCameraView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcContactsView.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractComponentPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractListItemFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractPresenter.cs" />
@@ -196,6 +202,14 @@
     <ProjectReference Include="..\..\ICD.Connect.API\ICD.Connect.API\ICD.Connect.API_SimplSharp.csproj">
       <Project>{727F5820-5A61-440D-8899-E454FE8238D7}</Project>
       <Name>ICD.Connect.API_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing.Cisco\ICD.Connect.Conferencing.Cisco_SimplSharp.csproj">
+      <Project>{B2DF3389-5C95-4CAF-BA30-3A4D0AAC9CE3}</Project>
+      <Name>ICD.Connect.Conferencing.Cisco_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing\ICD.Connect.Conferencing_SimplSharp.csproj">
+      <Project>{1CCA89DA-1F1C-4997-A94F-ABCE878BD6DE}</Project>
+      <Name>ICD.Connect.Conferencing_SimplSharp</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ICD.Connect.Devices\ICD.Connect.Devices\ICD.Connect.Devices_SimplSharp.csproj">
       <Project>{FD46A717-5836-4B73-ADD0-2706639DA8ED}</Project>
