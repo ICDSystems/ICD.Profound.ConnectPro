@@ -19,7 +19,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources
 		/// Sets the icon for the button.
 		/// </summary>
 		/// <param name="icon"></param>
-		void SetIcon(ISourceIcon icon);
+		void SetIcon(string icon);
 
 		/// <summary>
 		/// Sets the text for the first label.

@@ -4,6 +4,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings;
+using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -116,10 +117,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 					line2 = text.Substring(splitIndex + 1).Trim();
 				}
 
+				ConnectProSource source = m_Source as ConnectProSource;
+				string icon = source == null ? null : source.Icon;
 				view.SetColor(m_Selected ? eSourceColor.Yellow : eSourceColor.White);
 				view.SetFeedbackText(room == null ? string.Empty : room.GetName(combine));
 				view.SetLine1Text(line1);
 				view.SetLine2Text(line2);
+				view.SetIcon(icon);
 			}
 			finally
 			{

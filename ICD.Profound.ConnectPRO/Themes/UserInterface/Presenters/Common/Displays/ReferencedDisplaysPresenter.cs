@@ -5,6 +5,7 @@ using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings;
+using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -120,9 +121,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 					line2 = text.Substring(splitIndex + 1).Trim();
 				}
 
+				ConnectProSource source = m_RoutedSource as ConnectProSource;
+				string icon = source == null ? null : source.Icon;
+
 				view.SetColor(color);
 				view.SetLine1Text(line1);
 				view.SetLine2Text(line2);
+				view.SetIcon(icon);
 			}
 			finally
 			{

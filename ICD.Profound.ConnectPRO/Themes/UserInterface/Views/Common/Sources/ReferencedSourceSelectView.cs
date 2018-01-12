@@ -72,12 +72,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		/// Sets the icon for the button.
 		/// </summary>
 		/// <param name="icon"></param>
-		public void SetIcon(ISourceIcon icon)
+		public void SetIcon(string icon)
 		{
-			ushort mode = icon.Mode;
-
-			m_GreenIconButton.SetMode(mode);
-			m_GreyIconButton.SetMode(mode);
+			//m_GreenIconButton.SetIcon(icon);
+			//m_GreyIconButton.SetIcon(icon);
 		}
 
 		/// <summary>
