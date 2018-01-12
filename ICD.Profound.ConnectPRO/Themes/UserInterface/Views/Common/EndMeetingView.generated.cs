@@ -24,12 +24,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 40
+				DigitalVisibilityJoin = 39
 			};
 
 			m_EndMeetingButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 66
+				DigitalPressJoin = 30
 			};
 		}
 
