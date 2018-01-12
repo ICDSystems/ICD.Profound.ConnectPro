@@ -38,8 +38,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		private IConnectProRoom m_Room;
 
-		private IVisibilityNode m_VideoConferencingVisibility;
-		private DefaultVisibilityNode m_MeetingButtons;
+		private DefaultVisibilityNode m_RootVisibility;
 		private ISource m_ActiveSource;
 		private IRoutingGraph m_RoutingGraph;
 
@@ -70,18 +69,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// </summary>
 		private void BuildVisibilityTree()
 		{
+			// Only allow one of the start/end buttons to be visible at any given time
+			m_RootVisibility = new DefaultVisibilityNode(m_NavigationController.LazyLoadPresenter<IStartMeetingPresenter>());
+
 			// Video Conference node
-			m_VideoConferencingVisibility =
+			IVisibilityNode videoConferencingVisibility =
 				new SingleVisibilityNode();
 
-			m_VideoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcContactsPresenter>());
-			m_VideoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcCameraPresenter>());
-			m_VideoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcSharePresenter>());
-			m_VideoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcDtmfPresenter>());
+			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcContactsPresenter>());
+			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcCameraPresenter>());
+			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcSharePresenter>());
+			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcDtmfPresenter>());
 
-			// Only allow one of the start/end buttons to be visible at any given time
-			m_MeetingButtons = new DefaultVisibilityNode(m_NavigationController.LazyLoadPresenter<IStartMeetingPresenter>());
-			m_MeetingButtons.AddPresenter(m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>());
+			IVisibilityNode meetingVisibility = new VisibilityNode();
+			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>());
+			meetingVisibility.AddNode(videoConferencingVisibility);
+			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcBasePresenter>());
+
+			m_RootVisibility.AddNode(meetingVisibility);
 
 			// These presenters are initially visible.
 			m_NavigationController.NavigateTo<IHeaderPresenter>();

@@ -101,6 +101,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcContactsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcDtmfPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcSharePresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\VisibilityNode.cs" />
     <Compile Include="Themes\UserInterface\IViews\Colors.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IStartMeetingView.cs" />
