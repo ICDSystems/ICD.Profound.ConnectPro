@@ -1,4 +1,5 @@
-﻿using ICD.Connect.Routing.Endpoints.Destinations;
+﻿using System.Collections.Generic;
+using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 
@@ -17,5 +18,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displa
 		/// Gets/sets the source that is currently selected for routing.
 		/// </summary>
 		ISource ActiveSource { get; set; }
+
+		void SetRoutedSources(Dictionary<IDestination, ISource> routing);
 	}
 }

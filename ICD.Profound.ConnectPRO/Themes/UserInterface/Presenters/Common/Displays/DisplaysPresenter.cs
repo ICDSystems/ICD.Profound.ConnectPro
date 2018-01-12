@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -18,6 +19,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		private readonly ReferencedDisplaysPresenterFactory m_ChildrenFactory;
 		private readonly SafeCriticalSection m_RefreshSection;
 		private ISource m_ActiveSource;
+		private readonly Dictionary<IDestination, ISource> m_Routing;
 
 		/// <summary>
 		/// Gets/sets the source that is currently active for routing.
@@ -47,6 +49,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		{
 			m_RefreshSection = new SafeCriticalSection();
 			m_ChildrenFactory = new ReferencedDisplaysPresenterFactory(nav, ItemFactory);
+			m_Routing = new Dictionary<IDestination, ISource>();
 		}
 
 		/// <summary>
@@ -80,8 +83,27 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 					Subscribe(presenter);
 
 					presenter.ActiveSource = m_ActiveSource;
+					presenter.RoutedSource = m_Routing.GetDefault(presenter.Destination, null);
+
 					presenter.ShowView(true);
 				}
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+		}
+
+		public void SetRoutedSources(Dictionary<IDestination, ISource> routing)
+		{
+			m_RefreshSection.Enter();
+
+			try
+			{
+				m_Routing.Clear();
+				m_Routing.Update(routing);
+
+				RefreshIfVisible();
 			}
 			finally
 			{

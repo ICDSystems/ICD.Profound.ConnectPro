@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Properties;
+using ICD.Connect.Devices;
+using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Displays;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing;
 using ICD.Connect.Routing.Connections;
+using ICD.Connect.Routing.Controls;
 using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
@@ -110,6 +113,26 @@ namespace ICD.Profound.ConnectPRO.Routing
 				throw new ArgumentNullException("destination");
 
 			RoutingGraph.Route(source.Endpoint, destination.Endpoint, eConnectionType.Audio | eConnectionType.Video, m_Room.Id);
+		}
+
+		/// <summary>
+		/// Gets the displays that the given source is actively routed to.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <returns></returns>
+		public IEnumerable<IDestination> GetActiveDisplayDestinations(ISource source)
+		{
+			IRouteSourceControl sourceControl =
+				m_Room.Core.GetControl<IRouteSourceControl>(source.Endpoint.Device, source.Endpoint.Control);
+
+			IEnumerable<EndpointInfo> destinations =
+				RoutingGraph.GetActiveDestinationEndpoints(sourceControl, source.Endpoint.Address, eConnectionType.Video, false,
+				                                           false);
+
+			IDestination[] displayDestinations = GetDisplayDestinations().ToArray();
+
+			return destinations.Where(d => displayDestinations.Any(disp => disp.Endpoint == d))
+			                   .Select(d => displayDestinations.First(disp => disp.Endpoint == d));
 		}
 	}
 }

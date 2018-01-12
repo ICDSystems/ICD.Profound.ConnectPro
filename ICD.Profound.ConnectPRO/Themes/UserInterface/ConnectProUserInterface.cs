@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Services;
 using ICD.Common.Services.Logging;
@@ -227,7 +228,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="args"></param>
 		private void RoutingGraphOnRouteChanged(object sender, EventArgs args)
 		{
-			// TODO - Update presenter routing states
+			if (m_Room == null)
+				return;
+
+			Dictionary<IDestination, ISource> routing = new Dictionary<IDestination, ISource>();
+
+			foreach (ISource source in m_Room.Routing.GetCoreSources())
+			{
+				foreach (IDestination destination in m_Room.Routing.GetActiveDisplayDestinations(source))
+					routing[destination] = source;
+			}
+
+			m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>().SetRoutedSources(routing);
+			m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>().SetRoutedSources(routing);
+			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().SetRoutedSources(routing);
 		}
 
 		/// <summary>
