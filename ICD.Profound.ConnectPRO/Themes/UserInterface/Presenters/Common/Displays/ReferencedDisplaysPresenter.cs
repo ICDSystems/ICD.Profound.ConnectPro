@@ -1,7 +1,10 @@
 ﻿using System;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
+using ICD.Connect.Conferencing.Cisco.Controls;
+using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.Routing.Controls;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings;
@@ -147,6 +150,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				ConnectProSource source = m_RoutedSource as ConnectProSource;
 				string icon = source == null ? null : source.Icon;
 
+				// TODO - VERY temporary
+				CiscoCodecRoutingControl codecControl = GetSourceControl() as CiscoCodecRoutingControl;
+				if (codecControl != null)
+				{
+					line1 = "PRESS FOR CONTROLS";
+					line2 = string.Empty;
+				}
+
 				view.SetColor(color);
 				view.SetLine1Text(line1);
 				view.SetLine2Text(line2);
@@ -156,6 +167,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		private IRouteSourceControl GetSourceControl()
+		{
+			return Room == null || m_RoutedSource == null
+				       ? null
+				       : Room.Core.GetControl<IRouteSourceControl>(m_RoutedSource.Endpoint.Device, m_RoutedSource.Endpoint.Control);
 		}
 
 		#region View Callbacks
