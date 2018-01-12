@@ -100,6 +100,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcCameraPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcContactsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcDtmfPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcReferencedContactsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcSharePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\VisibilityNode.cs" />
     <Compile Include="Themes\UserInterface\IViews\Colors.cs" />
@@ -162,6 +163,7 @@
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcCameraPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcContactsPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcDtmfPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcReferencedContactsPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcSharePresenter.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractComponentView.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractView.cs" />
