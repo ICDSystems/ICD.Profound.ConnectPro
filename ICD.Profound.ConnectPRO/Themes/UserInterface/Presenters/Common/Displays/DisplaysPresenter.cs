@@ -73,6 +73,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 			try
 			{
+				UnsubscribeChildren();
+
 				IEnumerable<IDestination> destinations =
 					Room == null
 						? Enumerable.Empty<IDestination>()

@@ -94,6 +94,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 
 			try
 			{
+				UnsubscribeChildren();
+
 				m_Sources =
 					Room == null
 						? new ISource[0]
