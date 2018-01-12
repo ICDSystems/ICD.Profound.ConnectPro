@@ -24,6 +24,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private IDestination m_Destination;
 		private ISource m_ActiveSource;
+		private ISource m_RoutedSource;
 
 		#region Properties
 
@@ -56,6 +57,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 					return;
 
 				m_ActiveSource = value;
+
+				RefreshIfVisible();
+			}
+		}
+
+		/// <summary>
+		/// Gets/sets the source that is currently routed to the display.
+		/// </summary>
+		public ISource RoutedSource
+		{
+			get { return m_RoutedSource; }
+			set
+			{
+				if (value == m_RoutedSource)
+					return;
+
+				m_RoutedSource = value;
 
 				RefreshIfVisible();
 			}
@@ -99,7 +117,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 						? string.Empty
 						: m_Destination.GetName(combine) ?? string.Empty;
 
-				eDisplayColor color = m_ActiveSource == null ? eDisplayColor.Grey : eDisplayColor.Yellow;
+				eDisplayColor color = m_ActiveSource == null
+					                      ? m_RoutedSource == null
+						                        ? eDisplayColor.Grey
+						                        : eDisplayColor.Green
+					                      : eDisplayColor.Yellow;
+
 				string text = m_ActiveSource == null ? destinationName : string.Format("PRESS TO SHOW SELECTION ON {0}", destinationName);
 				text = text.ToUpper();
 

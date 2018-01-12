@@ -11,5 +11,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Source
 		ISource Source { get; set; }
 
 		bool Selected { get; set; }
+
+		bool Routed { get; set; }
 	}
 }

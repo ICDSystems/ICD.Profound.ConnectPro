@@ -23,6 +23,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		
 		private ISource m_Source;
 		private bool m_Selected;
+		private bool m_Routed;
 
 		#region Properties
 
@@ -52,6 +53,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 					return;
 
 				m_Selected = value;
+
+				RefreshIfVisible();
+			}
+		}
+
+		/// <summary>
+		/// Gets/sets the routed state of the source.
+		/// </summary>
+		public bool Routed
+		{
+			get { return m_Routed; }
+			set
+			{
+				if (value == m_Routed)
+					return;
+
+				m_Routed = value;
 
 				RefreshIfVisible();
 			}
@@ -119,7 +137,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 
 				ConnectProSource source = m_Source as ConnectProSource;
 				string icon = source == null ? null : source.Icon;
-				view.SetColor(m_Selected ? eSourceColor.Yellow : eSourceColor.White);
+
+				eSourceColor color = m_Selected
+					                     ? eSourceColor.Yellow
+					                     : m_Routed
+						                     ? eSourceColor.Green
+						                     : eSourceColor.White;
+
+				view.SetColor(color);
 				view.SetFeedbackText(room == null ? string.Empty : room.GetName(combine));
 				view.SetLine1Text(line1);
 				view.SetLine2Text(line2);

@@ -15,5 +15,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displa
 		/// Sets the source that is currently active for routing.
 		/// </summary>
 		ISource ActiveSource { get; set; }
+
+		/// <summary>
+		/// Gets/sets the source that is currently routed to the display.
+		/// </summary>
+		ISource RoutedSource { get; set; }
 	}
 }
