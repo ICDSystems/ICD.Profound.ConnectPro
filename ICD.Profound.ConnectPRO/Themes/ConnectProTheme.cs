@@ -1,7 +1,7 @@
-﻿using ICD.Common.Services;
-using ICD.Common.Utils;
+﻿using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.Extensions;
+using ICD.Common.Utils.Services;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings.Core;
 using ICD.Connect.Themes;

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Properties;
-using ICD.Connect.Devices;
 using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Displays;
 using ICD.Connect.Partitioning.Rooms;
@@ -13,6 +12,7 @@ using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.Extensions;
+using ICD.Connect.Settings;
 using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Routing
@@ -113,6 +113,15 @@ namespace ICD.Profound.ConnectPRO.Routing
 				throw new ArgumentNullException("destination");
 
 			RoutingGraph.Route(source.Endpoint, destination.Endpoint, eConnectionType.Audio | eConnectionType.Video, m_Room.Id);
+
+			IOriginator device = m_Room.Core.Originators.GetChild(destination.Endpoint.Device);
+			IDisplay display = device as IDisplay;
+
+			if (display != null)
+			{
+				display.PowerOn();
+				display.SetHdmiInput(destination.Endpoint.Address);
+			}
 		}
 
 		/// <summary>
