@@ -215,6 +215,8 @@
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcContactsView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcDtmfView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcDtmfView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcReferencedContactsView.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcReferencedContactsView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcShareView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcShareView.generated.cs" />
     <None Include="Properties\ControlSystem.cfg" />
