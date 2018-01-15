@@ -56,12 +56,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		public ConnectProUserInterface(IPanelDevice panel, ConnectProTheme theme)
 		{
 			m_Panel = panel;
+			UpdatePanelOnlineJoin();
 
 			IViewFactory viewFactory = new ConnectProViewFactory(panel, theme);
 			m_NavigationController = new ConnectProNavigationController(viewFactory, theme);
 
 			BuildVisibilityTree();
 			SubscribePresenters();
+		}
+
+		/// <summary>
+		/// Updates the "offline" visual state of the panel
+		/// </summary>
+		private void UpdatePanelOnlineJoin()
+		{
+			m_Panel.SendInputDigital(CommonJoins.DIGITAL_OFFLINE_JOIN, m_Room == null);
 		}
 
 		/// <summary>
@@ -134,6 +143,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			Subscribe(m_RoutingGraph);
 			Subscribe(m_Room);
 
+			UpdatePanelOnlineJoin();
 			UpdateMeetingPresenters();
 		}
 
