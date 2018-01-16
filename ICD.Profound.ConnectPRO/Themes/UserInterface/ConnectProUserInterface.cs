@@ -160,6 +160,110 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		#endregion
 
+		#region Private Methods
+
+		/// <summary>
+		/// Called to update the selection state of the given source.
+		/// </summary>
+		/// <param name="source"></param>
+		private void HandleSelectedSource(ISource source)
+		{
+			if (m_Room == null)
+				return;
+
+			bool dualDisplays = m_Room.Routing.IsDualDisplayRoom;
+
+			// In a dual display room we allow the user to select which display to route to
+			if (dualDisplays)
+			{
+				// Edge case - route the codec to both displays and open the context menu
+				CiscoCodecRoutingControl codecControl =
+					m_Room.Core.GetControl<IRouteSourceControl>(source.Endpoint.Device, source.Endpoint.Control) as
+						CiscoCodecRoutingControl;
+
+				if (codecControl == null)
+				{
+					SetActiveSource(source);
+					return;
+				}
+
+				m_Room.Routing.Route(codecControl);
+				ShowSourceContextualMenu(source);
+			}
+			// In a single display room just route the source immediately
+			else
+			{
+				if (source != null)
+					m_Room.Routing.Route(source);
+
+				SetActiveSource(null);
+			}
+
+			ShowSourceContextualMenu(source);
+		}
+
+		/// <summary>
+		/// Called to update the selection state of the given destination.
+		/// </summary>
+		/// <param name="presenter"></param>
+		/// <param name="destination"></param>
+		private void HandleSelectedDisplay(IReferencedDisplaysPresenter presenter, IDestination destination)
+		{
+			if (m_Room == null)
+				return;
+
+			if (destination == null)
+				return;
+
+			ISource routedSource;
+
+			// If no source is selected for routing then we open the contextual menu for the current routed source
+			if (m_ActiveSource == null)
+				routedSource = presenter == null ? null : presenter.RoutedSource;
+			// If a source is currently selected then we route that source to the selected display
+			else
+			{
+				m_Room.Routing.Route(m_ActiveSource, destination);
+				routedSource = m_ActiveSource;
+			}
+
+			// Clear the selected source for routing
+			SetActiveSource(null);
+
+			ShowSourceContextualMenu(routedSource);
+		}
+
+		private void ShowSourceContextualMenu(ISource source)
+		{
+			if (source == null)
+				return;
+
+			IRouteSourceControl sourceControl =
+				m_Room.Core.GetControl<IRouteSourceControl>(source.Endpoint.Device, source.Endpoint.Control);
+
+			// TODO - VERY temporary
+			CiscoCodecRoutingControl codecControl = sourceControl as CiscoCodecRoutingControl;
+			if (codecControl != null)
+				m_NavigationController.NavigateTo<IVtcBasePresenter>();
+		}
+
+		/// <summary>
+		/// Sets the source that is currently active for routing to the displays.
+		/// </summary>
+		/// <param name="source"></param>
+		private void SetActiveSource(ISource source)
+		{
+			if (source == m_ActiveSource)
+				return;
+
+			m_ActiveSource = source;
+
+			m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>().ActiveSource = m_ActiveSource;
+			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().ActiveSource = m_ActiveSource;
+		}
+
+		#endregion
+
 		#region Room Callbacks
 
 		/// <summary>
@@ -207,13 +311,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_NavigationController.LazyLoadPresenter<IStartMeetingPresenter>().ShowView(!isInMeeting);
 			m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>().ShowView(isInMeeting);
 
-			IDestination[] displayDestinations =
-				m_Room == null ? new IDestination[0] : m_Room.Routing.GetDisplayDestinations().ToArray();
+			bool dualDisplays = m_Room != null && m_Room.Routing.IsDualDisplayRoom;
 
 			// Set the visibility of the source a display subpages
-			bool dualSourceVisible = isInMeeting && displayDestinations.Length > 1;
-			bool singleSourceVisible = isInMeeting && !dualSourceVisible;
-			bool displaysVisible = isInMeeting && dualSourceVisible;
+			bool dualSourceVisible = isInMeeting && dualDisplays;
+			bool singleSourceVisible = isInMeeting && !dualDisplays;
+			bool displaysVisible = isInMeeting && dualDisplays;
 
 			m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>().ShowView(singleSourceVisible);
 			m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>().ShowView(dualSourceVisible);
@@ -335,9 +438,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (m_Room == null)
 				return;
 
-			m_Room.Routing.Route(source);
-
-			SetActiveSource(null);
+			HandleSelectedSource(source);
 		}
 
 		#endregion
@@ -373,22 +474,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (source == m_ActiveSource)
 				source = null;
 
-			SetActiveSource(source);
-		}
-
-		/// <summary>
-		/// Sets the source that is currently active for routing to the displays.
-		/// </summary>
-		/// <param name="source"></param>
-		private void SetActiveSource(ISource source)
-		{
-			if (source == m_ActiveSource)
-				return;
-
-			m_ActiveSource = source;
-
-			m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>().ActiveSource = m_ActiveSource;
-			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().ActiveSource = m_ActiveSource;
+			HandleSelectedSource(source);
 		}
 
 		#endregion
@@ -422,24 +508,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private void DisplaysPresenterOnDestinationPressed(object sender, IReferencedDisplaysPresenter presenter,
 		                                                   IDestination destination)
 		{
-			if (m_Room == null)
-				return;
-
-			if (m_ActiveSource != null)
-			{
-				m_Room.Routing.Route(m_ActiveSource, destination);
-				SetActiveSource(null);
-			}
-
-			// Contextual
-			ISource routedSource = presenter.RoutedSource;
-			IRouteSourceControl sourceControl = m_Room.Core.GetControl<IRouteSourceControl>(routedSource.Endpoint.Device,
-			                                                                                routedSource.Endpoint.Control);
-
-			// TODO - VERY temporary
-			CiscoCodecRoutingControl codecControl = sourceControl as CiscoCodecRoutingControl;
-			if (codecControl != null)
-				m_NavigationController.NavigateTo<IVtcBasePresenter>();
+			HandleSelectedDisplay(sender as IReferencedDisplaysPresenter, destination);
 		}
 
 		#endregion

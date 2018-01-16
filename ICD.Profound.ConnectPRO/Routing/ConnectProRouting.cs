@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Properties;
+using ICD.Common.Utils.Extensions;
+using ICD.Connect.Conferencing.Cisco.Controls;
 using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Displays;
 using ICD.Connect.Partitioning.Rooms;
@@ -27,6 +29,11 @@ namespace ICD.Profound.ConnectPRO.Routing
 		private IRoutingGraph RoutingGraph { get { return m_Room.Core.GetRoutingGraph(); } }
 
 		/// <summary>
+		/// Returns true if the room contains more than 1 display.
+		/// </summary>
+		public bool IsDualDisplayRoom { get { return GetDisplayDestinations().Count() > 1; } }
+
+		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="room"></param>
@@ -35,21 +42,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			m_Room = room;
 		}
 
-		/// <summary>
-		/// Returns the first two ordered display destinations for the room.
-		/// </summary>
-		/// <returns></returns>
-		public IEnumerable<IDestination> GetDisplayDestinations()
-		{
-			bool combine = m_Room.IsCombineRoom();
-
-			return m_Room.Originators
-			             .GetInstancesRecursive<IDestination>()
-			             .Where(d => m_Room.Core.Originators.GetChild(d.Endpoint.Device) is IDisplay)
-			             .OrderBy(d => d.Order)
-			             .ThenBy(d => d.GetNameOrDeviceName(combine))
-			             .Take(2);
-		}
+		#region Sources
 
 		/// <summary>
 		/// Returns all of the sources available in the core.
@@ -85,6 +78,50 @@ namespace ICD.Profound.ConnectPRO.Routing
 			             .OrderBy(r => r.IsCombineRoom())
 			             .FirstOrDefault();
 		}
+
+		#endregion
+
+		#region Destinations
+
+		/// <summary>
+		/// Returns the first two ordered display destinations for the room.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<IDestination> GetDisplayDestinations()
+		{
+			bool combine = m_Room.IsCombineRoom();
+
+			return m_Room.Originators
+			             .GetInstancesRecursive<IDestination>()
+			             .Where(d => m_Room.Core.Originators.GetChild(d.Endpoint.Device) is IDisplay)
+			             .OrderBy(d => d.Order)
+			             .ThenBy(d => d.GetNameOrDeviceName(combine))
+			             .Take(2);
+		}
+
+		/// <summary>
+		/// Gets the displays that the given source is actively routed to.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <returns></returns>
+		public IEnumerable<IDestination> GetActiveDisplayDestinations(ISource source)
+		{
+			IRouteSourceControl sourceControl =
+				m_Room.Core.GetControl<IRouteSourceControl>(source.Endpoint.Device, source.Endpoint.Control);
+
+			IEnumerable<EndpointInfo> destinations =
+				RoutingGraph.GetActiveDestinationEndpoints(sourceControl, source.Endpoint.Address, eConnectionType.Video, false,
+				                                           false);
+
+			IDestination[] displayDestinations = GetDisplayDestinations().ToArray();
+
+			return destinations.Where(d => displayDestinations.Any(disp => disp.Endpoint == d))
+			                   .Select(d => displayDestinations.First(disp => disp.Endpoint == d));
+		}
+
+		#endregion
+
+		#region Routing
 
 		/// <summary>
 		/// Routes the source to the displays.
@@ -125,23 +162,38 @@ namespace ICD.Profound.ConnectPRO.Routing
 		}
 
 		/// <summary>
-		/// Gets the displays that the given source is actively routed to.
+		/// Routes the codec to all available displays.
 		/// </summary>
-		/// <param name="source"></param>
-		/// <returns></returns>
-		public IEnumerable<IDestination> GetActiveDisplayDestinations(ISource source)
+		/// <param name="codecControl"></param>
+		public void Route(CiscoCodecRoutingControl codecControl)
 		{
-			IRouteSourceControl sourceControl =
-				m_Room.Core.GetControl<IRouteSourceControl>(source.Endpoint.Device, source.Endpoint.Control);
+			if (codecControl == null)
+				throw new ArgumentNullException("codecControl");
 
-			IEnumerable<EndpointInfo> destinations =
-				RoutingGraph.GetActiveDestinationEndpoints(sourceControl, source.Endpoint.Address, eConnectionType.Video, false,
-				                                           false);
+			Connection[] outputs = RoutingGraph.Connections
+			                                   .GetOutputConnections(codecControl.Parent.Id, codecControl.Id)
+											   .OrderBy(o => o.Source.Address)
+			                                   .ToArray();
 
-			IDestination[] displayDestinations = GetDisplayDestinations().ToArray();
+			IDestination[] destinations = GetDisplayDestinations().ToArray();
 
-			return destinations.Where(d => displayDestinations.Any(disp => disp.Endpoint == d))
-			                   .Select(d => displayDestinations.First(disp => disp.Endpoint == d));
+			Connection firstOutput = outputs.FirstOrDefault();
+
+			for (int index = 0; index < destinations.Length; index++)
+			{
+				IDestination destination = destinations[index];
+
+				Connection output;
+				if (!outputs.TryElementAt(index, out output))
+					output = firstOutput;
+
+				if (output == null)
+					break;
+
+				RoutingGraph.Route(output.Source, destination.Endpoint, eConnectionType.Video, m_Room.Id);
+			}
 		}
+
+		#endregion
 	}
 }
