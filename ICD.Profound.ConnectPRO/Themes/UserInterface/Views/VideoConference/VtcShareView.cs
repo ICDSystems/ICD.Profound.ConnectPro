@@ -1,5 +1,6 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
@@ -38,5 +39,28 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		{
 			m_ButtonList.SetItemIcon(index, icon);
 		}
+
+		#region Control Callbacks
+
+		protected override void SubscribeControls()
+		{
+			base.SubscribeControls();
+
+			m_ButtonList.OnButtonClicked += ButtonListOnButtonClicked;
+		}
+
+		protected override void UnsubscribeControls()
+		{
+			base.UnsubscribeControls();
+
+			m_ButtonList.OnButtonClicked -= ButtonListOnButtonClicked;
+		}
+
+		private void ButtonListOnButtonClicked(object sender, UShortEventArgs uShortEventArgs)
+		{
+			OnSourceButtonPressed.Raise(this, new UShortEventArgs(uShortEventArgs.Data));
+		}
+
+		#endregion
 	}
 }
