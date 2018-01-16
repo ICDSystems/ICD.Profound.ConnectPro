@@ -6,10 +6,9 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 {
-	public sealed partial class VtcReferencedContactsView : AbstractComponentView, IVtcReferencedContactsView
+	public sealed partial class VtcReferencedHangupView : AbstractComponentView, IVtcReferencedHangupView
 	{
-		public event EventHandler OnButtonPressed;
-		public event EventHandler OnFavoriteButtonPressed;
+		public event EventHandler OnHangupButtonPressed;
 
 		/// <summary>
 		/// Constructor.
@@ -18,13 +17,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		/// <param name="theme"></param>
 		/// <param name="parent"></param>
 		/// <param name="index"></param>
-		public VtcReferencedContactsView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index)
+		public VtcReferencedHangupView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index)
 			: base(panel, theme, parent, index)
 		{
 		}
 
 		/// <summary>
-		/// Sets the name of the contact.
+		/// Sets the name for the contact.
 		/// </summary>
 		/// <param name="name"></param>
 		public void SetContactName(string name)
@@ -33,12 +32,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		}
 
 		/// <summary>
-		/// Sets the favorite state of the contact.
+		/// Sets the number for the contact.
 		/// </summary>
-		/// <param name="favorite"></param>
-		public void SetIsFavorite(bool favorite)
+		/// <param name="number"></param>
+		public void SetContactNumber(string number)
 		{
-			m_FavoriteButton.SetSelected(favorite);
+			m_ContactNumberLabel.SetLabelText(number);
 		}
 
 		#region Control Callbacks
@@ -50,8 +49,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		{
 			base.SubscribeControls();
 
-			m_BackgroundImage.OnPressed += BackgroundImageOnPressed;
-			m_FavoriteButton.OnPressed += FavoriteButtonOnPressed;
+			m_HangupButton.OnPressed += HangupButtonOnPressed;
 		}
 
 		/// <summary>
@@ -61,18 +59,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		{
 			base.UnsubscribeControls();
 
-			m_BackgroundImage.OnPressed -= BackgroundImageOnPressed;
-			m_FavoriteButton.OnPressed -= FavoriteButtonOnPressed;
+			m_HangupButton.OnPressed -= HangupButtonOnPressed;
 		}
 
-		private void BackgroundImageOnPressed(object sender, EventArgs eventArgs)
+		private void HangupButtonOnPressed(object sender, EventArgs eventArgs)
 		{
-			OnButtonPressed.Raise(this);
-		}
-
-		private void FavoriteButtonOnPressed(object sender, EventArgs eventArgs)
-		{
-			OnFavoriteButtonPressed.Raise(this);
+			OnHangupButtonPressed.Raise(this);
 		}
 
 		#endregion

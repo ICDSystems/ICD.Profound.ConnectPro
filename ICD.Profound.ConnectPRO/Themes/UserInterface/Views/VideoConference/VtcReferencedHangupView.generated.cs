@@ -1,15 +1,18 @@
 ﻿using System.Collections.Generic;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
-using ICD.Connect.UI.Controls.Keypads;
+using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Pages;
+using ICD.Connect.UI.Controls.TextControls;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 {
-	public sealed partial class VtcDtmfView
+	public sealed partial class VtcReferencedHangupView
 	{
 		private VtProSubpage m_Subpage;
-		private VtProSimpleKeypad m_Keypad;
+		private VtProButton m_HangupButton;
+		private VtProSimpleLabel m_ContactNameLabel;
+		private VtProSimpleLabel m_ContactNumberLabel;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -19,12 +22,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		/// <param name="index"></param>
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
-			m_Subpage = new VtProSubpage(panel, parent, index)
+			m_Subpage = new VtProSubpage(panel, parent, index);
+
+			m_HangupButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalVisibilityJoin = 123
+				DigitalPressJoin = 1
 			};
 
-			m_Keypad = new VtProSimpleKeypad(502, panel as IPanelDevice, m_Subpage);
+			m_ContactNameLabel = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				IndirectTextJoin = 1
+			};
+
+			m_ContactNumberLabel = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				IndirectTextJoin = 2
+			};
 		}
 
 		/// <summary>
@@ -34,7 +47,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		protected override IEnumerable<IVtProControl> GetChildren()
 		{
 			yield return m_Subpage;
-			yield return m_Keypad;
+			yield return m_HangupButton;
+			yield return m_ContactNameLabel;
+			yield return m_ContactNumberLabel;
 		}
 	}
 }
