@@ -429,7 +429,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			{
 				m_Room.Routing.Route(m_ActiveSource, destination);
 				SetActiveSource(null);
-				return;
 			}
 
 			// Contextual
