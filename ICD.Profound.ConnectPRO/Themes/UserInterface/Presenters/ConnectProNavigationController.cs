@@ -65,6 +65,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IVtcSharePresenter), (nav, views, theme) => new VtcSharePresenter(nav, views, theme)},
 			{typeof(IVtcDtmfPresenter), (nav, views, theme) => new VtcDtmfPresenter(nav, views, theme)},
 			{typeof(IVtcReferencedContactsPresenter), (nav, views, theme) => new VtcReferencedContactsPresenter(nav, views, theme)},
+			{typeof(IVtcReferencedHangupPresenter), (nav, views, theme) => new VtcReferencedHangupPresenter(nav, views, theme)},
+			{typeof(IVtcIncomingCallPresenter), (nav, views, theme) => new VtcIncomingCallPresenter(nav, views, theme)},
+			{typeof(IVtcHangupPresenter), (nav, views, theme) => new VtcHangupPresenter(nav, views, theme)},
 
 			// Panel
 			{typeof(IHardButtonsPresenter), (nav, views, theme) => new HardButtonsPresenter(nav, views, theme)}
