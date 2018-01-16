@@ -419,7 +419,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="sender"></param>
 		/// <param name="presenter"></param>
 		/// <param name="destination"></param>
-		private void DisplaysPresenterOnDestinationPressed(object sender, IReferencedDisplaysPresenter presenter, IDestination destination)
+		private void DisplaysPresenterOnDestinationPressed(object sender, IReferencedDisplaysPresenter presenter,
+		                                                   IDestination destination)
 		{
 			if (m_Room == null)
 				return;
@@ -433,7 +434,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			// Contextual
 			ISource routedSource = presenter.RoutedSource;
-			IRouteSourceControl sourceControl = m_Room.Core.GetControl<IRouteSourceControl>(routedSource.Endpoint.Device, routedSource.Endpoint.Control);
+			IRouteSourceControl sourceControl = m_Room.Core.GetControl<IRouteSourceControl>(routedSource.Endpoint.Device,
+			                                                                                routedSource.Endpoint.Control);
 
 			// TODO - VERY temporary
 			CiscoCodecRoutingControl codecControl = sourceControl as CiscoCodecRoutingControl;

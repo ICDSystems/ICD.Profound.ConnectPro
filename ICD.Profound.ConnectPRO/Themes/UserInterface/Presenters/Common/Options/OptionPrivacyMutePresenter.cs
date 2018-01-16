@@ -6,7 +6,8 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 {
-	public sealed class OptionPrivacyMutePresenter : AbstractOptionPresenter<IOptionPrivacyMuteView>, IOptionPrivacyMutePresenter
+	public sealed class OptionPrivacyMutePresenter : AbstractOptionPresenter<IOptionPrivacyMuteView>,
+	                                                 IOptionPrivacyMutePresenter
 	{
 		/// <summary>
 		/// Constructor.

@@ -5,7 +5,6 @@ using ICD.Common.Properties;
 using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Displays;
 using ICD.Connect.Partitioning.Rooms;
-using ICD.Connect.Routing;
 using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Controls;
 using ICD.Connect.Routing.Endpoints;

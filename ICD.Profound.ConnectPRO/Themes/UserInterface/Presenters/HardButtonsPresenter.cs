@@ -9,8 +9,8 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 {
-    public sealed class HardButtonsPresenter : AbstractPresenter<IHardButtonsView>, IHardButtonsPresenter
-    {
+	public sealed class HardButtonsPresenter : AbstractPresenter<IHardButtonsView>, IHardButtonsPresenter
+	{
 		private const int ADDRESS_POWER = 1;
 		private const int ADDRESS_HOME = 2;
 		private const int ADDRESS_LIGHT = 3;
@@ -189,7 +189,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
 		}
 
-	    /// <summary>
+		/// <summary>
 		/// Unsubscribe from the room events.
 		/// </summary>
 		/// <param name="room"></param>
@@ -203,10 +203,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
 		}
 
-	    private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs boolEventArgs)
-	    {
-		    RefreshIfVisible();
-	    }
+		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs boolEventArgs)
+		{
+			RefreshIfVisible();
+		}
 
 		#endregion
 	}

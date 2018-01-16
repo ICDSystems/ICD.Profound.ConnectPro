@@ -126,7 +126,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 						                        : eDisplayColor.Green
 					                      : eDisplayColor.Yellow;
 
-				string text = m_ActiveSource == null ? destinationName : string.Format("PRESS TO SHOW SELECTION ON {0}", destinationName);
+				string text = m_ActiveSource == null
+					              ? destinationName
+					              : string.Format("PRESS TO SHOW SELECTION ON {0}", destinationName);
 				text = text.ToUpper();
 
 				string line1;

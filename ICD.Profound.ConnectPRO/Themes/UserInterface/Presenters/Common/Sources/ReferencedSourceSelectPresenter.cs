@@ -20,7 +20,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		public event EventHandler OnPressed;
 
 		private readonly SafeCriticalSection m_RefreshSection;
-		
+
 		private ISource m_Source;
 		private bool m_Selected;
 		private bool m_Routed;
@@ -141,8 +141,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 				eSourceColor color = m_Selected
 					                     ? eSourceColor.Yellow
 					                     : m_Routed
-						                     ? eSourceColor.Green
-						                     : eSourceColor.White;
+						                       ? eSourceColor.Green
+						                       : eSourceColor.White;
 
 				view.SetColor(color);
 				view.SetFeedbackText(room == null ? string.Empty : room.GetName(combine));

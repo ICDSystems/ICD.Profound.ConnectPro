@@ -15,7 +15,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// <summary>
 		/// Gets the menu for this button.
 		/// </summary>
-		private IVolumePresenter Menu { get { return m_CachedMenu ?? (m_CachedMenu = Navigation.LazyLoadPresenter<IVolumePresenter>()); } }
+		private IVolumePresenter Menu
+		{
+			get { return m_CachedMenu ?? (m_CachedMenu = Navigation.LazyLoadPresenter<IVolumePresenter>()); }
+		}
 
 		/// <summary>
 		/// Constructor.

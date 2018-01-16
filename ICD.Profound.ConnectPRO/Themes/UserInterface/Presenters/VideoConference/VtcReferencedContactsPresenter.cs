@@ -5,7 +5,8 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference
 {
-	public sealed class VtcReferencedContactsPresenter : AbstractComponentPresenter<IVtcReferencedContactsView>, IVtcReferencedContactsPresenter
+	public sealed class VtcReferencedContactsPresenter : AbstractComponentPresenter<IVtcReferencedContactsView>,
+	                                                     IVtcReferencedContactsPresenter
 	{
 		/// <summary>
 		/// Constructor.

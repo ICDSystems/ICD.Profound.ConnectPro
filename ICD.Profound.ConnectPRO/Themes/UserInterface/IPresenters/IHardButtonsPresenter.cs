@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters
 {
-    public interface IHardButtonsPresenter : IPresenter<IHardButtonsView>
-    {
-    }
+	public interface IHardButtonsPresenter : IPresenter<IHardButtonsView>
+	{
+	}
 }

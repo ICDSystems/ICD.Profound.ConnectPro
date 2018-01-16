@@ -23,7 +23,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				{INDEX_CAMERA, typeof(IVtcCameraPresenter)},
 				{INDEX_SHARE, typeof(IVtcSharePresenter)},
 				{INDEX_DTMF, typeof(IVtcDtmfPresenter)},
-			}; 
+			};
 
 		/// <summary>
 		/// Constructor.
@@ -76,12 +76,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			base.ViewOnVisibilityChanged(sender, args);
 
 			if (args.Data)
-			{
 				Navigation.NavigateTo<IVtcContactsPresenter>();
-			}
 			else
 			{
-				foreach(Type type in s_NavPages.Values)
+				foreach (Type type in s_NavPages.Values)
 					Navigation.LazyLoadPresenter(type).ShowView(false);
 			}
 		}
