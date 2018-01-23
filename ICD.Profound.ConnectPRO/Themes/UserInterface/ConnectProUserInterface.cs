@@ -104,6 +104,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			// These presenters control their own visibility.
 			m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>();
 			m_NavigationController.LazyLoadPresenter<IStartMeetingPresenter>();
+			m_NavigationController.LazyLoadPresenter<IVtcHangupPresenter>();
 		}
 
 		#region Methods

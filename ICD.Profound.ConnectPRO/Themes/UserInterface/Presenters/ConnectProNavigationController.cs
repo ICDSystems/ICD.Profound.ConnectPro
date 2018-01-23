@@ -21,6 +21,8 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Contacts;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Hangup;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 {

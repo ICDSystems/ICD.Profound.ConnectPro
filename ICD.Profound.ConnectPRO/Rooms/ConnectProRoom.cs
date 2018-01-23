@@ -48,6 +48,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public ConnectProRouting Routing { get { return m_Routing; } }
 
+		/// <summary>
+		/// Gets the conference manager.
+		/// </summary>
+		public IConferenceManager ConferenceManager { get { return m_ConferenceManager; } }
+
 		#endregion
 
 		/// <summary>
