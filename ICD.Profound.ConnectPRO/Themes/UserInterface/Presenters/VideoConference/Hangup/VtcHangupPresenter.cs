@@ -151,9 +151,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="args"></param>
 		private void ConferenceManagerOnInCallChanged(object sender, InCallEventArgs args)
 		{
-			// Show the view when we enter a call.
-			if (args.Data >= eInCall.Audio)
-				ShowView(true);
+			RefreshIfVisible();
 		}
 
 		/// <summary>
@@ -173,9 +171,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="args"></param>
 		private void ConferenceManagerOnRecentSourceAdded(object sender, ConferenceSourceEventArgs args)
 		{
-			if (args.Data.GetIsOnline())
-				ShowView(true);
-
 			RefreshIfVisible();
 		}
 
