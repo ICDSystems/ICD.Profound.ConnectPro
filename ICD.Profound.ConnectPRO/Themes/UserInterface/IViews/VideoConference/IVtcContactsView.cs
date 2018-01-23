@@ -43,5 +43,41 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 		/// <param name="count"></param>
 		/// <returns></returns>
 		IEnumerable<IVtcReferencedContactsView> GetChildComponentViews(IViewFactory factory, ushort count);
+
+		/// <summary>
+		/// Sets the selected state of the directory button.
+		/// </summary>
+		/// <param name="selected"></param>
+		void SetDirectoryButtonSelected(bool selected);
+
+		/// <summary>
+		/// Sets the selected state of the favorites button.
+		/// </summary>
+		/// <param name="selected"></param>
+		void SetFavoritesButtonSelected(bool selected);
+
+		/// <summary>
+		/// Sets the selected state of the recent button.
+		/// </summary>
+		/// <param name="selected"></param>
+		void SetRecentButtonSelected(bool selected);
+
+		/// <summary>
+		/// Sets the enabled state of the call button.
+		/// </summary>
+		/// <param name="enabled"></param>
+		void SetCallButtonEnabled(bool enabled);
+
+		/// <summary>
+		/// Sets the enabled state of the hangup button.
+		/// </summary>
+		/// <param name="enabled"></param>
+		void SetHangupButtonEnabled(bool enabled);
+
+		/// <summary>
+		/// Sets the text for the searchbar.
+		/// </summary>
+		/// <param name="text"></param>
+		void SetSearchBarText(string text);
 	}
 }

@@ -6,8 +6,8 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Contacts
 {
-	public sealed class VtcReferencedContactsPresenter : AbstractComponentPresenter<IVtcReferencedContactsView>,
-	                                                     IVtcReferencedContactsPresenter
+	public abstract class AbstractVtcReferencedContactsPresenter : AbstractComponentPresenter<IVtcReferencedContactsView>,
+	                                                               IVtcReferencedContactsPresenter
 	{
 		/// <summary>
 		/// Constructor.
@@ -15,7 +15,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcReferencedContactsPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		protected AbstractVtcReferencedContactsPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 		}
@@ -38,14 +38,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			view.OnFavoriteButtonPressed -= ViewOnFavoriteButtonPressed;
 		}
 
-		private void ViewOnFavoriteButtonPressed(object sender, EventArgs eventArgs)
+		protected virtual void ViewOnFavoriteButtonPressed(object sender, EventArgs eventArgs)
 		{
-			throw new NotImplementedException();
 		}
 
-		private void ViewOnButtonPressed(object sender, EventArgs eventArgs)
+		protected virtual void ViewOnButtonPressed(object sender, EventArgs eventArgs)
 		{
-			throw new NotImplementedException();
 		}
 
 		#endregion
