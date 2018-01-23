@@ -14,6 +14,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Options;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Displays;
@@ -69,6 +70,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IVtcReferencedHangupPresenter), (nav, views, theme) => new VtcReferencedHangupPresenter(nav, views, theme)},
 			{typeof(IVtcIncomingCallPresenter), (nav, views, theme) => new VtcIncomingCallPresenter(nav, views, theme)},
 			{typeof(IVtcHangupPresenter), (nav, views, theme) => new VtcHangupPresenter(nav, views, theme)},
+
+			// Video conference contacts
+			{typeof(IVtcReferencedContactsPresenter), (nav, views, theme) => new VtcReferencedContactsPresenter(nav, views, theme)},
+			{typeof(IVtcReferencedFavoritesPresenter), (nav, views, theme) => new VtcReferencedFavoritesPresenter(nav, views, theme)},
+			{typeof(IVtcReferencedRecentPresenter), (nav, views, theme) => new VtcReferencedRecentPresenter(nav, views, theme)},
+			{typeof(IVtcReferencedFolderPresenter), (nav, views, theme) => new VtcReferencedFolderPresenter(nav, views, theme)},
 
 			// Panel
 			{typeof(IHardButtonsPresenter), (nav, views, theme) => new HardButtonsPresenter(nav, views, theme)}

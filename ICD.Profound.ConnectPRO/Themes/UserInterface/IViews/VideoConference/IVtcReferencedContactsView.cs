@@ -25,5 +25,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 		/// </summary>
 		/// <param name="favorite"></param>
 		void SetIsFavorite(bool favorite);
+
+		/// <summary>
+		/// Sets the visibility of the favorite button.
+		/// </summary>
+		/// <param name="favoriteVisible"></param>
+		void SetFavoriteButtonVisible(bool favoriteVisible);
+
+		/// <summary>
+		/// Sets the selected state of the view.
+		/// </summary>
+		/// <param name="selected"></param>
+		void SetSelected(bool selected);
 	}
 }

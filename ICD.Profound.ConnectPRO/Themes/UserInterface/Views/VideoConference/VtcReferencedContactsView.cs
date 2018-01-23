@@ -41,6 +41,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			m_FavoriteButton.SetSelected(favorite);
 		}
 
+		/// <summary>
+		/// Sets the visibility of the favorite button.
+		/// </summary>
+		/// <param name="favoriteVisible"></param>
+		public void SetFavoriteButtonVisible(bool favoriteVisible)
+		{
+			// todo
+			//m_FavoriteButton.Show(favoriteVisible);
+		}
+
+		/// <summary>
+		/// Sets the selected state of the view.
+		/// </summary>
+		/// <param name="selected"></param>
+		public void SetSelected(bool selected)
+		{
+			m_BackgroundImage.SetSelected(selected);
+		}
+
 		#region Control Callbacks
 
 		/// <summary>

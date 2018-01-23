@@ -38,9 +38,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		public override void Dispose()
 		{
-			m_ChildrenFactory.Dispose();
-
 			base.Dispose();
+
+			m_ChildrenFactory.Dispose();
 		}
 
 		/// <summary>
