@@ -10,6 +10,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 	public sealed partial class VtcHangupView : AbstractView, IVtcHangupView
 	{
 		public event EventHandler OnHangupAllButtonPressed;
+		public event EventHandler OnCloseButtonPressed;
 
 		private readonly List<IVtcReferencedHangupView> m_ChildList;
 
@@ -22,6 +23,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			: base(panel, theme)
 		{
 			m_ChildList = new List<IVtcReferencedHangupView>();
+		}
+
+		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			OnHangupAllButtonPressed = null;
+			OnCloseButtonPressed = null;
+
+			base.Dispose();
 		}
 
 		/// <summary>
@@ -43,6 +55,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			base.SubscribeControls();
 
 			m_HangupAllButton.OnPressed += HangupAllButtonOnPressed;
+			m_CloseButton.OnPressed += CloseButtonOnPressed;
 		}
 
 		/// <summary>
@@ -53,11 +66,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			base.UnsubscribeControls();
 
 			m_HangupAllButton.OnPressed -= HangupAllButtonOnPressed;
+			m_CloseButton.OnPressed -= CloseButtonOnPressed;
 		}
 
 		private void HangupAllButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnHangupAllButtonPressed.Raise(this);
+		}
+
+		private void CloseButtonOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnCloseButtonPressed.Raise(this);
 		}
 	}
 }

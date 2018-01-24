@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Connect.Conferencing.ConferenceManagers;
@@ -151,6 +152,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="args"></param>
 		private void ConferenceManagerOnInCallChanged(object sender, InCallEventArgs args)
 		{
+			if (!GetSources().Any())
+				ShowView(false);
+
 			RefreshIfVisible();
 		}
 
@@ -182,6 +186,45 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private void ConferenceManagerOnActiveConferenceChanged(object sender, ConferenceEventArgs conferenceEventArgs)
 		{
 			RefreshIfVisible();
+		}
+
+		#endregion
+
+		#region View Callbacks
+
+		/// <summary>
+		/// Subscribe to the view events.
+		/// </summary>
+		/// <param name="view"></param>
+		protected override void Subscribe(IVtcHangupView view)
+		{
+			base.Subscribe(view);
+
+			view.OnCloseButtonPressed += ViewOnCloseButtonPressed;
+			view.OnHangupAllButtonPressed += ViewOnHangupAllButtonPressed;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the view events.
+		/// </summary>
+		/// <param name="view"></param>
+		protected override void Unsubscribe(IVtcHangupView view)
+		{
+			base.Unsubscribe(view);
+
+			view.OnCloseButtonPressed -= ViewOnCloseButtonPressed;
+			view.OnHangupAllButtonPressed -= ViewOnHangupAllButtonPressed;
+		}
+
+		private void ViewOnHangupAllButtonPressed(object sender, EventArgs eventArgs)
+		{
+			foreach (IConferenceSource source in GetSources())
+				source.Hangup();
+		}
+
+		private void ViewOnCloseButtonPressed(object sender, EventArgs eventArgs)
+		{
+			ShowView(false);
 		}
 
 		#endregion

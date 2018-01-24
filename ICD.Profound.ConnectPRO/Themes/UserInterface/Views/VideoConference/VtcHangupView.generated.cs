@@ -12,6 +12,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		private VtProSubpage m_Subpage;
 		private VtProSubpageReferenceList m_HangupList;
 		private VtProButton m_HangupAllButton;
+		private VtProButton m_CloseButton;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -37,6 +38,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			{
 				DigitalPressJoin = 512
 			};
+
+			m_CloseButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 518
+			};
 		}
 
 		/// <summary>
@@ -48,6 +54,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			yield return m_Subpage;
 			yield return m_HangupList;
 			yield return m_HangupAllButton;
+			yield return m_CloseButton;
 		}
 	}
 }
