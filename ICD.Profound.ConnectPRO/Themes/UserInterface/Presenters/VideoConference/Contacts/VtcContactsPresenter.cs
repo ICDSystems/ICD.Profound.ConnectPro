@@ -173,7 +173,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 					                                 });
 				
 				case eDirectoryMode.Favorites:
-					return Enumerable.Empty<ModelPresenterTypeInfo>();
+					return
+						m_SubscribedConferenceManager == null || m_SubscribedConferenceManager.Favorites == null
+							? Enumerable.Empty<ModelPresenterTypeInfo>()
+							: m_SubscribedConferenceManager.Favorites
+								.GetFavorites()
+								.Select(f => new ModelPresenterTypeInfo(ModelPresenterTypeInfo.ePresenterType.Favorite, f));
 				
 				case eDirectoryMode.Recents:
 					return
@@ -182,7 +187,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 							: m_SubscribedConferenceManager
 								.GetRecentSources()
 								.Reverse()
-								.Distinct().Select(c => new ModelPresenterTypeInfo(ModelPresenterTypeInfo.ePresenterType.Recent, c));
+								.Distinct()
+								.Select(c => new ModelPresenterTypeInfo(ModelPresenterTypeInfo.ePresenterType.Recent, c));
 
 				default:
 					throw new ArgumentOutOfRangeException("directoryMode");

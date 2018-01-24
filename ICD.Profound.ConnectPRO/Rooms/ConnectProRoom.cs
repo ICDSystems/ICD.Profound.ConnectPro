@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Linq;
+using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Controls;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Favorites.SqLite;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Partitioning.Rooms;
@@ -102,6 +104,10 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			// Dialing plan
 			SetDialingPlan(settings.DialingPlan, factory);
+
+			// Favorites
+			string path = PathUtils.GetProgramConfigPath("favorites");
+			m_ConferenceManager.Favorites = new SqLiteFavorites(path);
 		}
 
 		/// <summary>

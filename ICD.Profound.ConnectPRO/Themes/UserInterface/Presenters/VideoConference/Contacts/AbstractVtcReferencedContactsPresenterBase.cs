@@ -1,7 +1,8 @@
 using System;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
-using ICD.Connect.Conferencing.Cisco.Components.Dialing;
+using ICD.Connect.Conferencing.Favorites;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -28,6 +29,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				m_Selected = value;
 
 				RefreshIfVisible();
+			}
+		}
+
+		[CanBeNull]
+		protected IFavorites Favorites
+		{
+			get
+			{
+				if (Room == null)
+					return null;
+
+				return Room.ConferenceManager == null ? null : Room.ConferenceManager.Favorites;
 			}
 		}
 

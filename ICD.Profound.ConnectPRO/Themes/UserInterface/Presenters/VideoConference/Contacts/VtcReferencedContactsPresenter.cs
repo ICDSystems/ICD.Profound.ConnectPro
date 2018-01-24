@@ -1,5 +1,7 @@
-﻿using ICD.Connect.Conferencing.ConferenceManagers;
+﻿using System;
+using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Contacts;
+using ICD.Connect.Conferencing.Favorites;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -51,8 +53,33 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <returns></returns>
 		protected override bool GetIsFavorite()
 		{
-			// todo
-			return false;
+			if (m_Contact == null)
+				return false;
+
+			IFavorites favorites = Favorites;
+			if (favorites == null)
+				return false;
+
+			return favorites.GetFavorite(m_Contact) != null;
+		}
+
+		protected override void ViewOnFavoriteButtonPressed(object sender, EventArgs eventArgs)
+		{
+			base.ViewOnFavoriteButtonPressed(sender, eventArgs);
+
+			if (m_Contact == null)
+				return;
+
+			IFavorites favorites = Favorites;
+			if (favorites == null)
+				return;
+
+			if (GetIsFavorite())
+				favorites.RemoveFavorite(m_Contact);
+			else
+				favorites.SubmitFavorite(m_Contact);
+
+			RefreshIfVisible();
 		}
 
 		/// <summary>
@@ -61,7 +88,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <returns></returns>
 		protected override bool GetIsFavoriteVisible()
 		{
-			return true;
+			return m_Contact != null;
 		}
 
 		protected override void SetModel(object model)
