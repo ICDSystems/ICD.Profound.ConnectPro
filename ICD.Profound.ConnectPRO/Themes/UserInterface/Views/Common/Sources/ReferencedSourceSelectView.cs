@@ -36,19 +36,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		/// <param name="color"></param>
 		public void SetColor(eSourceColor color)
 		{
-			bool grey = color == eSourceColor.Grey || color == eSourceColor.Yellow || color == eSourceColor.White;
-			bool green = color == eSourceColor.Green;
-
-			m_GreyIconButton.Show(grey);
-			m_GreyLine1Label.Show(grey);
-			m_GreyLine2Label.Show(grey);
-			m_GreyFeedbackLabel.Show(grey);
-
-			m_GreenIconButton.Show(green);
-			m_GreenLine1Label.Show(green);
-			m_GreenLine2Label.Show(green);
-			m_GreenFeedbackLabel.Show(green);
-
 			switch (color)
 			{
 				case eSourceColor.White:
@@ -74,8 +61,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		/// <param name="icon"></param>
 		public void SetIcon(string icon)
 		{
-			//m_GreenIconButton.SetIcon(icon);
-			//m_GreyIconButton.SetIcon(icon);
+			m_Icon.SetIcon(icon);
 		}
 
 		/// <summary>
@@ -84,8 +70,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		/// <param name="text"></param>
 		public void SetLine1Text(string text)
 		{
-			m_GreyLine1Label.SetLabelText(text);
-			m_GreenLine1Label.SetLabelText(text);
+			m_Line1Label.SetLabelText(text);
 		}
 
 		/// <summary>
@@ -94,8 +79,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		/// <param name="text"></param>
 		public void SetLine2Text(string text)
 		{
-			m_GreyLine2Label.SetLabelText(text);
-			m_GreenLine2Label.SetLabelText(text);
+			m_Line2Label.SetLabelText(text);
 		}
 
 		/// <summary>
@@ -104,8 +88,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		/// <param name="text"></param>
 		public void SetFeedbackText(string text)
 		{
-			m_GreyFeedbackLabel.SetLabelText(text);
-			m_GreenFeedbackLabel.SetLabelText(text);
+			m_FeedbackLabel.SetLabelText(text);
 		}
 
 		#endregion

@@ -2,6 +2,7 @@
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
+using ICD.Connect.UI.Controls.Images;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Connect.UI.Controls.TextControls;
 
@@ -11,18 +12,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 	{
 		private VtProSubpage m_Subpage;
 		private VtProAdvancedButton m_BackgroundButton;
-
-		private VtProMultiModeButton m_GreyIconButton;
-		private VtProSimpleLabel m_GreyLine1Label;
-		private VtProSimpleLabel m_GreyLine2Label;
-
-		private VtProMultiModeButton m_YellowIconButton;
-		private VtProSimpleLabel m_YellowLine1Label;
-		private VtProSimpleLabel m_YellowLine2Label;
-
-		private VtProMultiModeButton m_GreenIconButton;
-		private VtProSimpleLabel m_GreenLine1Label;
-		private VtProSimpleLabel m_GreenLine2Label;
+		private VtProDynamicIconObject m_Icon;
+		private VtProSimpleLabel m_Line1Label;
+		private VtProSimpleLabel m_Line2Label;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -40,64 +32,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 				AnalogModeJoin = 1
 			};
 
-			// Grey controls
-			m_GreyIconButton = new VtProMultiModeButton(panel, m_Subpage)
+			m_Icon = new VtProDynamicIconObject(panel, m_Subpage)
 			{
-				DigitalPressJoin = 1,
-				DigitalVisibilityJoin = 2,
-				AnalogModeJoin = 2
-			};
-
-			m_GreyLine1Label = new VtProSimpleLabel(panel, m_Subpage)
-			{
-				IndirectTextJoin = 1,
 				DigitalVisibilityJoin = 2
 			};
 
-			m_GreyLine2Label = new VtProSimpleLabel(panel, m_Subpage)
+			m_Line1Label = new VtProSimpleLabel(panel, m_Subpage)
 			{
-				IndirectTextJoin = 2,
-				DigitalVisibilityJoin = 2
+				IndirectTextJoin = 1
 			};
 
-			// Yellow controls
-			m_YellowIconButton = new VtProMultiModeButton(panel, m_Subpage)
+			m_Line2Label = new VtProSimpleLabel(panel, m_Subpage)
 			{
-				DigitalPressJoin = 1,
-				DigitalVisibilityJoin = 3,
-				AnalogModeJoin = 2
-			};
-
-			m_YellowLine1Label = new VtProSimpleLabel(panel, m_Subpage)
-			{
-				IndirectTextJoin = 1,
-				DigitalVisibilityJoin = 3
-			};
-
-			m_YellowLine2Label = new VtProSimpleLabel(panel, m_Subpage)
-			{
-				IndirectTextJoin = 2,
-				DigitalVisibilityJoin = 3
-			};
-
-			// Green controls
-			m_GreenIconButton = new VtProMultiModeButton(panel, m_Subpage)
-			{
-				DigitalPressJoin = 1,
-				DigitalVisibilityJoin = 4,
-				AnalogModeJoin = 2
-			};
-
-			m_GreenLine1Label = new VtProSimpleLabel(panel, m_Subpage)
-			{
-				IndirectTextJoin = 1,
-				DigitalVisibilityJoin = 4
-			};
-
-			m_GreenLine2Label = new VtProSimpleLabel(panel, m_Subpage)
-			{
-				IndirectTextJoin = 2,
-				DigitalVisibilityJoin = 4
+				IndirectTextJoin = 2
 			};
 		}
 
@@ -109,18 +56,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		{
 			yield return m_Subpage;
 			yield return m_BackgroundButton;
-
-			yield return m_GreyIconButton;
-			yield return m_GreyLine1Label;
-			yield return m_GreyLine2Label;
-
-			yield return m_YellowIconButton;
-			yield return m_YellowLine1Label;
-			yield return m_YellowLine2Label;
-
-			yield return m_GreenIconButton;
-			yield return m_GreenLine1Label;
-			yield return m_GreenLine2Label;
+			yield return m_Icon;
+			yield return m_Line1Label;
+			yield return m_Line2Label;
 		}
 	}
 }

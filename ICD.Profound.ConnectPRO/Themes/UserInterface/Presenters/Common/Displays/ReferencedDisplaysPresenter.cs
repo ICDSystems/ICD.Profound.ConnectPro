@@ -170,6 +170,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				view.SetLine1Text(line1);
 				view.SetLine2Text(line2);
 				view.SetIcon(icon);
+				view.ShowIcon(source != null);
 			}
 			finally
 			{

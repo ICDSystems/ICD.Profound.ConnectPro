@@ -34,7 +34,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 
 			m_ContactList = new VtProSubpageReferenceList(501, panel as IPanelDevice, m_Subpage)
 			{
-				DigitalJoinIncrement = 2,
+				DigitalJoinIncrement = 3,
 				AnalogJoinIncrement = 0,
 				SerialJoinIncrement = 1,
 				MaxSize = 20

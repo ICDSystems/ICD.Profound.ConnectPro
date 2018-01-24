@@ -22,6 +22,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays
 		void SetIcon(string icon);
 
 		/// <summary>
+		/// Sets the visibility of the icon.
+		/// </summary>
+		/// <param name="visible"></param>
+		void ShowIcon(bool visible);
+
+		/// <summary>
 		/// Sets the text for the first label.
 		/// </summary>
 		/// <param name="text"></param>

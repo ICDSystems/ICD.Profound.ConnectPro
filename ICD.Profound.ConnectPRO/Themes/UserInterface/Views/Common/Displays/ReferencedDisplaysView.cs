@@ -45,22 +45,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		/// <param name="color"></param>
 		public void SetColor(eDisplayColor color)
 		{
-			bool grey = color == eDisplayColor.Grey;
-			bool green = color == eDisplayColor.Green;
-			bool yellow = color == eDisplayColor.Yellow;
-
-			m_GreyIconButton.Show(grey);
-			m_GreyLine1Label.Show(grey);
-			m_GreyLine2Label.Show(grey);
-
-			m_GreenIconButton.Show(green);
-			m_GreenLine1Label.Show(green);
-			m_GreenLine2Label.Show(green);
-
-			m_YellowIconButton.Show(yellow);
-			m_YellowLine1Label.Show(yellow);
-			m_YellowLine2Label.Show(yellow);
-
 			switch (color)
 			{
 				case eDisplayColor.Grey:
@@ -83,9 +67,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		/// <param name="icon"></param>
 		public void SetIcon(string icon)
 		{
-			//m_GreenIconButton.SetIcon(icon);
-			//m_YellowIconButton.SetIcon(icon);
-			//m_GreyIconButton.SetIcon(icon);
+			m_Icon.SetIcon(icon);
+		}
+
+		/// <summary>
+		/// Sets the visibility of the icon.
+		/// </summary>
+		/// <param name="visible"></param>
+		public void ShowIcon(bool visible)
+		{
+			m_Icon.Show(visible);
 		}
 
 		/// <summary>
@@ -94,9 +85,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		/// <param name="text"></param>
 		public void SetLine1Text(string text)
 		{
-			m_GreyLine1Label.SetLabelText(text);
-			m_GreenLine1Label.SetLabelText(text);
-			m_YellowLine1Label.SetLabelText(text);
+			m_Line1Label.SetLabelText(text);
 		}
 
 		/// <summary>
@@ -105,9 +94,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		/// <param name="text"></param>
 		public void SetLine2Text(string text)
 		{
-			m_GreyLine2Label.SetLabelText(text);
-			m_GreenLine2Label.SetLabelText(text);
-			m_YellowLine2Label.SetLabelText(text);
+			m_Line2Label.SetLabelText(text);
 		}
 
 		#endregion
