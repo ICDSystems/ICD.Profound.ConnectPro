@@ -4,6 +4,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings;
+using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
@@ -119,6 +120,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 
 				string line1;
 				string line2;
+				string feedback = room == null ? string.Empty : room.GetName(combine);
 
 				if (text.Length <= MAX_LINE_WIDTH)
 				{
@@ -144,8 +146,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 						                       ? eSourceColor.Green
 						                       : eSourceColor.White;
 
+				string hexColor = Colors.SourceColorToTextColor(color);
+
+				line1 = HtmlUtils.FormatColoredText(line1, hexColor);
+				line2 = HtmlUtils.FormatColoredText(line2, hexColor);
+				feedback = HtmlUtils.FormatColoredText(feedback, hexColor);
+
 				view.SetColor(color);
-				view.SetFeedbackText(room == null ? string.Empty : room.GetName(combine));
+				view.SetFeedbackText(feedback);
 				view.SetLine1Text(line1);
 				view.SetLine2Text(line2);
 				view.SetIcon(icon);

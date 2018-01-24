@@ -8,6 +8,7 @@ using ICD.Connect.Routing.Controls;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings;
+using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
@@ -159,6 +160,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 					line1 = "PRESS FOR CONTROLS";
 					line2 = string.Empty;
 				}
+
+				string hexColor = Colors.DisplayColorToTextColor(color);
+
+				line1 = HtmlUtils.FormatColoredText(line1, hexColor);
+				line2 = HtmlUtils.FormatColoredText(line2, hexColor);
 
 				view.SetColor(color);
 				view.SetLine1Text(line1);
