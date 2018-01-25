@@ -56,7 +56,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		/// <param name="selected"></param>
 		public void SetSelected(bool selected)
 		{
-			m_BackgroundImage.SetSelected(selected);
+			m_BackgroundButton.SetSelected(selected);
 		}
 
 		#region Control Callbacks
@@ -68,7 +68,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		{
 			base.SubscribeControls();
 
-			m_BackgroundImage.OnPressed += BackgroundImageOnPressed;
+			m_BackgroundButton.OnPressed += BackgroundButtonOnPressed;
 			m_FavoriteButton.OnPressed += FavoriteButtonOnPressed;
 		}
 
@@ -79,11 +79,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		{
 			base.UnsubscribeControls();
 
-			m_BackgroundImage.OnPressed -= BackgroundImageOnPressed;
+			m_BackgroundButton.OnPressed -= BackgroundButtonOnPressed;
 			m_FavoriteButton.OnPressed -= FavoriteButtonOnPressed;
 		}
 
-		private void BackgroundImageOnPressed(object sender, EventArgs eventArgs)
+		private void BackgroundButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnButtonPressed.Raise(this);
 		}

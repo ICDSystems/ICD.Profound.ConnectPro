@@ -11,7 +11,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 	public sealed partial class VtcReferencedContactsView
 	{
 		private VtProSubpage m_Subpage;
-		private VtProImageObject m_BackgroundImage;
+		private VtProButton m_BackgroundButton;
 		private VtProSimpleLabel m_ContactNameLabel;
 		private VtProButton m_FavoriteButton;
 
@@ -25,7 +25,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index);
 
-			m_BackgroundImage = new VtProImageObject(panel, m_Subpage)
+			m_BackgroundButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 1
 			};
@@ -49,7 +49,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		protected override IEnumerable<IVtProControl> GetChildren()
 		{
 			yield return m_Subpage;
-			yield return m_BackgroundImage;
+			yield return m_BackgroundButton;
 			yield return m_ContactNameLabel;
 			yield return m_FavoriteButton;
 		}
