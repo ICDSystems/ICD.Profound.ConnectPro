@@ -47,8 +47,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		/// <param name="favoriteVisible"></param>
 		public void SetFavoriteButtonVisible(bool favoriteVisible)
 		{
-			// todo
-			//m_FavoriteButton.Show(favoriteVisible);
+			m_FavoriteButton.Show(favoriteVisible);
 		}
 
 		/// <summary>
