@@ -189,6 +189,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 				m_Room.Routing.Route(codecControl);
 				ShowSourceContextualMenu(source);
+				SetActiveSource(null);
 			}
 			// In a single display room just route the source immediately
 			else
