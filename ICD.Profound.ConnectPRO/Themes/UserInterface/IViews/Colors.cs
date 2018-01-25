@@ -66,5 +66,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews
 					throw new ArgumentOutOfRangeException("sourceColor");
 			}
 		}
+
+		public static eSourceColor DisplayColorToSourceColor(eDisplayColor displayColor)
+		{
+			switch (displayColor)
+			{
+				case eDisplayColor.Grey:
+					return eSourceColor.Grey;
+				case eDisplayColor.Yellow:
+					return eSourceColor.Yellow;
+				case eDisplayColor.Green:
+					return eSourceColor.Green;
+
+				default:
+					throw new ArgumentOutOfRangeException("displayColor");
+			}
+		}
 	}
 }

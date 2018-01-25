@@ -137,17 +137,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 					line2 = text.Substring(splitIndex + 1).Trim();
 				}
 
-				ConnectProSource source = m_Source as ConnectProSource;
-				string icon = source == null ? null : source.Icon;
-
 				eSourceColor color = m_Selected
 					                     ? eSourceColor.Yellow
 					                     : m_Routed
 						                       ? eSourceColor.Green
 						                       : eSourceColor.White;
 
-				string hexColor = Colors.SourceColorToTextColor(color);
+				// Icon
+				ConnectProSource source = m_Source as ConnectProSource;
+				string icon = source == null ? null : source.Icon;
+				icon = string.IsNullOrEmpty(icon) ? Icons.SOURCE_BLANK : Icons.GetSourceIcon(icon, color);
 
+				// Text
+				string hexColor = Colors.SourceColorToTextColor(color);
 				line1 = HtmlUtils.FormatColoredText(line1, hexColor);
 				line2 = HtmlUtils.FormatColoredText(line2, hexColor);
 				feedback = HtmlUtils.FormatColoredText(feedback, hexColor);

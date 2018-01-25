@@ -115,8 +115,8 @@
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IStartMeetingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IVolumeView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Icons.cs" />
     <Compile Include="Themes\UserInterface\IViews\IHardButtonsView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\IIcon.cs" />
     <Compile Include="Themes\UserInterface\IViews\Popups\IAppleTvView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Displays\IDisplaysView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IEndMeetingView.cs" />

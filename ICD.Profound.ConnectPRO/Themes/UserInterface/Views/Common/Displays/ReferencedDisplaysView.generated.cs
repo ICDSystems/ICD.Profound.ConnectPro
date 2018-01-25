@@ -34,7 +34,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 
 			m_Icon = new VtProDynamicIconObject(panel, m_Subpage)
 			{
-				DigitalVisibilityJoin = 2
+				DigitalVisibilityJoin = 2,
+				DynamicIconSerialJoin = 3
 			};
 
 			m_Line1Label = new VtProSimpleLabel(panel, m_Subpage)

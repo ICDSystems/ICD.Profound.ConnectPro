@@ -150,19 +150,27 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 					line2 = text.Substring(splitIndex + 1).Trim();
 				}
 
-				ConnectProSource source = m_RoutedSource as ConnectProSource;
-				string icon = source == null ? null : source.Icon;
-
 				// TODO - VERY temporary
 				CiscoCodecRoutingControl codecControl = GetSourceControl() as CiscoCodecRoutingControl;
-				if (codecControl != null)
+				if (codecControl != null && m_ActiveSource == null)
 				{
 					line1 = "PRESS FOR CONTROLS";
 					line2 = string.Empty;
 				}
 
-				string hexColor = Colors.DisplayColorToTextColor(color);
+				// Icon
+				ConnectProSource source = m_RoutedSource as ConnectProSource;
+				string icon = source == null ? null : source.Icon;
+				if (string.IsNullOrEmpty(icon))
+					icon = Icons.GetDisplayIcon(color);
+				else
+				{
+					eSourceColor sourceColor = Colors.DisplayColorToSourceColor(color);
+					icon = Icons.GetSourceIcon(icon, sourceColor);
+				}
 
+				// Text
+				string hexColor = Colors.DisplayColorToTextColor(color);
 				line1 = HtmlUtils.FormatColoredText(line1, hexColor);
 				line2 = HtmlUtils.FormatColoredText(line2, hexColor);
 
