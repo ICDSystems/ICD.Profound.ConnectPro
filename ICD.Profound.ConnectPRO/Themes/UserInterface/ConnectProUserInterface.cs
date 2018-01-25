@@ -509,7 +509,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private void DisplaysPresenterOnDestinationPressed(object sender, IReferencedDisplaysPresenter presenter,
 		                                                   IDestination destination)
 		{
-			HandleSelectedDisplay(sender as IReferencedDisplaysPresenter, destination);
+			HandleSelectedDisplay(presenter, destination);
 		}
 
 		#endregion
