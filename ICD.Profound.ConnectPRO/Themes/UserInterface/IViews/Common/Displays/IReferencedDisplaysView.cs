@@ -10,6 +10,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays
 		event EventHandler OnButtonPressed;
 
 		/// <summary>
+		/// Raised when the user presses the speaker button.
+		/// </summary>
+		event EventHandler OnSpeakerButtonPressed;
+
+		/// <summary>
 		/// Sets the color style of the entire view.
 		/// </summary>
 		/// <param name="color"></param>
@@ -22,12 +27,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays
 		void SetIcon(string icon);
 
 		/// <summary>
-		/// Sets the visibility of the icon.
-		/// </summary>
-		/// <param name="visible"></param>
-		void ShowIcon(bool visible);
-
-		/// <summary>
 		/// Sets the text for the first label.
 		/// </summary>
 		/// <param name="text"></param>
@@ -38,5 +37,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays
 		/// </summary>
 		/// <param name="text"></param>
 		void SetLine2Text(string text);
+
+		/// <summary>
+		/// Sets the visibility of the speaker button.
+		/// </summary>
+		/// <param name="visible"></param>
+		void ShowSpeakerButton(bool visible);
 	}
 }

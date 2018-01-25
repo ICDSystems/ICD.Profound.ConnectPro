@@ -12,6 +12,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 	{
 		private VtProSubpage m_Subpage;
 		private VtProAdvancedButton m_BackgroundButton;
+		private VtProButton m_SpeakerButton;
 		private VtProDynamicIconObject m_Icon;
 		private VtProSimpleLabel m_Line1Label;
 		private VtProSimpleLabel m_Line2Label;
@@ -34,8 +35,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 
 			m_Icon = new VtProDynamicIconObject(panel, m_Subpage)
 			{
-				DigitalVisibilityJoin = 2,
 				DynamicIconSerialJoin = 3
+			};
+
+			m_SpeakerButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalVisibilityJoin = 2,
+				DigitalPressJoin = 3
 			};
 
 			m_Line1Label = new VtProSimpleLabel(panel, m_Subpage)
@@ -57,6 +63,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		{
 			yield return m_Subpage;
 			yield return m_BackgroundButton;
+			yield return m_SpeakerButton;
 			yield return m_Icon;
 			yield return m_Line1Label;
 			yield return m_Line2Label;

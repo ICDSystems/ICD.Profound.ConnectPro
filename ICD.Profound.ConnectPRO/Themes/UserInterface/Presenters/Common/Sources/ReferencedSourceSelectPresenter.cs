@@ -146,7 +146,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 				// Icon
 				ConnectProSource source = m_Source as ConnectProSource;
 				string icon = source == null ? null : source.Icon;
-				icon = string.IsNullOrEmpty(icon) ? Icons.SOURCE_BLANK : Icons.GetSourceIcon(icon, color);
+				icon = Icons.GetSourceIcon(icon, color);
 
 				// Text
 				string hexColor = Colors.SourceColorToTextColor(color);

@@ -4,36 +4,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews
 {
 	public static class Icons
 	{
-		private const string DISPLAY_GREY = "display_blank_gray";
-		private const string DISPLAY_WHITE = "display_blank_white";
-		private const string DISPLAY_YELLOW = "display_blank_yellow";
+		private const string PREFIX_SOURCE = "icon_";
+		private const string PREFIX_DISPLAY = "display_";
 
 		private const string SUFFIX_WHITE = "_white";
 		private const string SUFFIX_TWOTONE = "_twoTone";
+		private const string SUFFIX_GREY = "_gray";
+		private const string SUFFIX_YELLOW = "_yellow";
 
-		/// <summary>
-		/// Blank icon state.
-		/// </summary>
-		public const string SOURCE_BLANK = "icon_blank_sources";
+		private const string SOURCE_BLANK = "blank_sources";
+		private const string DISPLAY_BLANK = "blank";
 
 		/// <summary>
 		/// Gets the display icon for the given display colour state.
 		/// </summary>
+		/// <param name="icon"></param>
 		/// <param name="color"></param>
 		/// <returns></returns>
-		public static string GetDisplayIcon(eDisplayColor color)
+		public static string GetDisplayIcon(string icon, eDisplayColor color)
 		{
-			switch (color)
-			{
-				case eDisplayColor.Grey:
-					return DISPLAY_GREY;
-				case eDisplayColor.Yellow:
-					return DISPLAY_YELLOW;
-				case eDisplayColor.Green:
-					return DISPLAY_WHITE;
-				default:
-					throw new ArgumentOutOfRangeException("color");
-			}
+			icon = string.IsNullOrEmpty(icon) ? DISPLAY_BLANK : icon;
+			string suffix = GetDisplayColorSuffix(color);
+
+			return string.Format("{0}{1}{2}", PREFIX_DISPLAY, icon, suffix);
 		}
 
 		/// <summary>
@@ -44,8 +37,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews
 		/// <returns></returns>
 		public static string GetSourceIcon(string icon, eSourceColor color)
 		{
+			icon = string.IsNullOrEmpty(icon) ? SOURCE_BLANK : icon;
 			string suffix = GetSourceColorSuffix(color);
-			return string.Format("{0}{1}", icon, suffix);
+
+			// Edge case - blank source doesn't have a colour
+			if (icon == SOURCE_BLANK)
+				suffix = string.Empty;
+
+			return string.Format("{0}{1}{2}", PREFIX_SOURCE, icon, suffix);
 		}
 
 		/// <summary>
@@ -62,6 +61,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews
 				case eSourceColor.Yellow:
 					return SUFFIX_TWOTONE;
 				case eSourceColor.Green:
+					return SUFFIX_WHITE;
+				default:
+					throw new ArgumentOutOfRangeException("color");
+			}
+		}
+
+		/// <summary>
+		/// Gets the display icon color suffix for the given display color mode.
+		/// </summary>
+		/// <param name="color"></param>
+		/// <returns></returns>
+		private static string GetDisplayColorSuffix(eDisplayColor color)
+		{
+			switch (color)
+			{
+				case eDisplayColor.Grey:
+					return SUFFIX_GREY;
+				case eDisplayColor.Yellow:
+					return SUFFIX_YELLOW;
+				case eDisplayColor.Green:
 					return SUFFIX_WHITE;
 				default:
 					throw new ArgumentOutOfRangeException("color");

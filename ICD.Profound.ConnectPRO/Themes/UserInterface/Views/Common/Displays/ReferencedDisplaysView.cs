@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
@@ -14,6 +15,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		private const ushort MODE_GREEN = 2;
 
 		public event EventHandler OnButtonPressed;
+		public event EventHandler OnSpeakerButtonPressed;
 
 		/// <summary>
 		/// Constructor.
@@ -71,15 +73,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		}
 
 		/// <summary>
-		/// Sets the visibility of the icon.
-		/// </summary>
-		/// <param name="visible"></param>
-		public void ShowIcon(bool visible)
-		{
-			m_Icon.Show(visible);
-		}
-
-		/// <summary>
 		/// Sets the text for the first label.
 		/// </summary>
 		/// <param name="text"></param>
@@ -97,6 +90,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 			m_Line2Label.SetLabelText(text);
 		}
 
+		/// <summary>
+		/// Sets the visibility of the speaker button.
+		/// </summary>
+		/// <param name="visible"></param>
+		public void ShowSpeakerButton(bool visible)
+		{
+			m_SpeakerButton.Show(visible);
+		}
+
 		#endregion
 
 		#region Control Callbacks
@@ -109,6 +111,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 			base.SubscribeControls();
 
 			m_BackgroundButton.OnPressed += BackgroundButtonOnPressed;
+			m_SpeakerButton.OnPressed += SpeakerButtonOnPressed;
 		}
 
 		/// <summary>
@@ -119,6 +122,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 			base.UnsubscribeControls();
 
 			m_BackgroundButton.OnPressed -= BackgroundButtonOnPressed;
+			m_SpeakerButton.OnPressed -= SpeakerButtonOnPressed;
 		}
 
 		/// <summary>
@@ -129,6 +133,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		private void BackgroundButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnButtonPressed.Raise(this);
+		}
+
+		/// <summary>
+		/// Called when the user presses the speaker button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void SpeakerButtonOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnSpeakerButtonPressed.Raise(this);
 		}
 
 		#endregion

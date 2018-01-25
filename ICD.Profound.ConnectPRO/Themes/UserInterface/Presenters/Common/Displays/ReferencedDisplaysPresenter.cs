@@ -4,6 +4,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Cisco.Controls;
 using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Controls;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
@@ -161,24 +162,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				// Icon
 				ConnectProSource source = m_RoutedSource as ConnectProSource;
 				string icon = source == null ? null : source.Icon;
-				if (string.IsNullOrEmpty(icon))
-					icon = Icons.GetDisplayIcon(color);
-				else
-				{
-					eSourceColor sourceColor = Colors.DisplayColorToSourceColor(color);
-					icon = Icons.GetSourceIcon(icon, sourceColor);
-				}
+				icon = Icons.GetDisplayIcon(icon, color);
 
 				// Text
 				string hexColor = Colors.DisplayColorToTextColor(color);
 				line1 = HtmlUtils.FormatColoredText(line1, hexColor);
 				line2 = HtmlUtils.FormatColoredText(line2, hexColor);
 
+				// Speaker visibility
+				bool showSpeaker = m_RoutedSource != null && m_RoutedSource.ConnectionType.HasFlag(eConnectionType.Audio);
+
 				view.SetColor(color);
 				view.SetLine1Text(line1);
 				view.SetLine2Text(line2);
 				view.SetIcon(icon);
-				view.ShowIcon(source != null);
+				view.ShowSpeakerButton(showSpeaker);
 			}
 			finally
 			{
