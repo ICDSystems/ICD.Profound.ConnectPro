@@ -27,7 +27,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 
 			m_CloseButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 110
+				DigitalPressJoin = 113
 			};
 
 			m_NavButtons = new VtProTabButton(500, panel as IPanelDevice, m_Subpage);
