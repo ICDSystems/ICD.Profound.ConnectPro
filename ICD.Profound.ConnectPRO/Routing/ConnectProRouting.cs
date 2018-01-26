@@ -149,16 +149,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (destination == null)
 				throw new ArgumentNullException("destination");
 
-			RoutingGraph.Route(source.Endpoint, destination.Endpoint, eConnectionType.Audio | eConnectionType.Video, m_Room.Id);
-
-			IOriginator device = m_Room.Core.Originators.GetChild(destination.Endpoint.Device);
-			IDisplay display = device as IDisplay;
-
-			if (display != null)
-			{
-				display.PowerOn();
-				display.SetHdmiInput(destination.Endpoint.Address);
-			}
+			Route(source.Endpoint, destination.Endpoint);
 		}
 
 		/// <summary>
@@ -190,7 +181,21 @@ namespace ICD.Profound.ConnectPRO.Routing
 				if (output == null)
 					break;
 
-				RoutingGraph.Route(output.Source, destination.Endpoint, eConnectionType.Video, m_Room.Id);
+				Route(output.Source, destination.Endpoint);
+			}
+		}
+
+		private void Route(EndpointInfo source, EndpointInfo destination)
+		{
+			RoutingGraph.Route(source, destination, eConnectionType.Audio | eConnectionType.Video, m_Room.Id);
+
+			IOriginator device = m_Room.Core.Originators.GetChild(destination.Device);
+			IDisplay display = device as IDisplay;
+
+			if (display != null)
+			{
+				display.PowerOn();
+				display.SetHdmiInput(destination.Address);
 			}
 		}
 
