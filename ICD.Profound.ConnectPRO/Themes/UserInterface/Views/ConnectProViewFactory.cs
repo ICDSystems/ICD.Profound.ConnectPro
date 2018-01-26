@@ -70,6 +70,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 
 			// Common
 			{typeof(IConfirmEndMeetingView), (panel, theme) => new ConfirmEndMeetingView(panel, theme)},
+			{typeof(IConfirmLeaveCallView), (panel, theme) => new ConfirmLeaveCallView(panel, theme)},
 			{typeof(IEndMeetingView), (panel, theme) => new EndMeetingView(panel, theme)},
 			{typeof(IHeaderView), (panel, theme) => new HeaderView(panel, theme)},
 			{typeof(IStartMeetingView), (panel, theme) => new StartMeetingView(panel, theme)},
