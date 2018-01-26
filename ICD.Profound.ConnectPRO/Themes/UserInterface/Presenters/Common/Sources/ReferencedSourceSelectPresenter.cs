@@ -139,8 +139,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 
 				eSourceColor color = m_Selected
 					                     ? eSourceColor.Yellow
-					                     : m_Routed
-						                       ? eSourceColor.Green
+				//	                     : m_Routed
+				//		                       ? eSourceColor.Green
 						                       : eSourceColor.White;
 
 				// Icon
