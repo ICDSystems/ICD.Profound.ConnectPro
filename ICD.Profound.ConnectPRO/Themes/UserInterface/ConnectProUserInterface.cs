@@ -19,6 +19,8 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Hangup;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VisibilityTree;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters;

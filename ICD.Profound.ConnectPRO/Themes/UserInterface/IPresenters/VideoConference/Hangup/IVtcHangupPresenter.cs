@@ -2,7 +2,7 @@
 using ICD.Connect.Conferencing.ConferenceSources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Hangup
 {
 	public interface IVtcHangupPresenter : IPresenter<IVtcHangupView>
 	{

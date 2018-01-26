@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ICD.Common.Utils.EventArguments;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups;
