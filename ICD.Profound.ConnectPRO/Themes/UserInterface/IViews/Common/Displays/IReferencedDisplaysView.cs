@@ -43,5 +43,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays
 		/// </summary>
 		/// <param name="visible"></param>
 		void ShowSpeakerButton(bool visible);
+
+		/// <summary>
+		/// Sets the text for the source label.
+		/// </summary>
+		/// <param name="text"></param>
+		void SetSourceText(string text);
 	}
 }

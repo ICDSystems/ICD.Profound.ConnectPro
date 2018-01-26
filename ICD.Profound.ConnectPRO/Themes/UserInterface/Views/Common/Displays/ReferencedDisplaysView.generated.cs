@@ -14,6 +14,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		private VtProAdvancedButton m_BackgroundButton;
 		private VtProButton m_SpeakerButton;
 		private VtProDynamicIconObject m_Icon;
+		private VtProSimpleLabel m_SourceLabel;
 		private VtProSimpleLabel m_Line1Label;
 		private VtProSimpleLabel m_Line2Label;
 
@@ -44,6 +45,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 				DigitalPressJoin = 3
 			};
 
+			m_SourceLabel = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				IndirectTextJoin = 4
+			};
+
 			m_Line1Label = new VtProSimpleLabel(panel, m_Subpage)
 			{
 				IndirectTextJoin = 1
@@ -65,6 +71,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 			yield return m_BackgroundButton;
 			yield return m_SpeakerButton;
 			yield return m_Icon;
+			yield return m_SourceLabel;
 			yield return m_Line1Label;
 			yield return m_Line2Label;
 		}

@@ -1,5 +1,4 @@
 ﻿using System;
-using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
@@ -97,6 +96,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		public void ShowSpeakerButton(bool visible)
 		{
 			m_SpeakerButton.Show(visible);
+		}
+
+		/// <summary>
+		/// Sets the text for the source label.
+		/// </summary>
+		/// <param name="text"></param>
+		public void SetSourceText(string text)
+		{
+			m_SourceLabel.SetLabelText(text);
 		}
 
 		#endregion

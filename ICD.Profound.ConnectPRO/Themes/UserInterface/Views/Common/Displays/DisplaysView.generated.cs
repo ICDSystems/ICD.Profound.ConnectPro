@@ -29,7 +29,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 				MaxSize = 2,
 				DigitalJoinIncrement = 3,
 				AnalogJoinIncrement = 1,
-				SerialJoinIncrement = 3
+				SerialJoinIncrement = 4
 			};
 		}
 

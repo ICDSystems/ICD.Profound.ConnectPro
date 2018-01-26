@@ -6,6 +6,7 @@ using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Controls;
+using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings;
@@ -133,6 +134,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 					              : string.Format("PRESS TO SHOW SELECTION ON {0}", destinationName);
 				text = text.ToUpper();
 
+				string sourceName = m_RoutedSource == null ? string.Empty : m_RoutedSource.GetNameOrDeviceName(combine);
+
 				string line1;
 				string line2;
 
@@ -166,6 +169,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 				// Text
 				string hexColor = Colors.DisplayColorToTextColor(color);
+				sourceName = HtmlUtils.FormatColoredText(sourceName, hexColor);
 				line1 = HtmlUtils.FormatColoredText(line1, hexColor);
 				line2 = HtmlUtils.FormatColoredText(line2, hexColor);
 
@@ -173,6 +177,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				bool showSpeaker = m_RoutedSource != null && m_RoutedSource.ConnectionType.HasFlag(eConnectionType.Audio);
 
 				view.SetColor(color);
+				view.SetSourceText(sourceName);
 				view.SetLine1Text(line1);
 				view.SetLine2Text(line2);
 				view.SetIcon(icon);
