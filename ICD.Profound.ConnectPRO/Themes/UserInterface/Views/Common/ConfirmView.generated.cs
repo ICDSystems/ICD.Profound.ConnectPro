@@ -6,7 +6,7 @@ using ICD.Connect.UI.Controls.Pages;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 {
-	public sealed partial class ConfirmView
+	public sealed partial class ConfirmEndMeetingView
 	{
 		private VtProSubpage m_Subpage;
 		private VtProButton m_YesButton;

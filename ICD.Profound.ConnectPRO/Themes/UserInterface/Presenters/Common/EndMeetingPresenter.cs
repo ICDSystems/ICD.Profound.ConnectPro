@@ -51,7 +51,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		private void ViewOnEndMeetingButtonPressed(object sender, EventArgs eventArgs)
 		{
 			if (Room != null)
-				Navigation.NavigateTo<IConfirmPresenter>();
+				Navigation.NavigateTo<IConfirmEndMeetingPresenter>();
 		}
 
 		#endregion

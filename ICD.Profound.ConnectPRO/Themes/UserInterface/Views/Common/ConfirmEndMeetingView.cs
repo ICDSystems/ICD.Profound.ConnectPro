@@ -5,7 +5,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 {
-	public sealed partial class ConfirmView : AbstractView, IConfirmView
+	public sealed partial class ConfirmEndMeetingView : AbstractView, IConfirmEndMeetingView
 	{
 		/// <summary>
 		/// Raised when the user presses the Yes button.
@@ -22,7 +22,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public ConfirmView(ISigInputOutput panel, ConnectProTheme theme)
+		public ConfirmEndMeetingView(ISigInputOutput panel, ConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 {
-	public interface IConfirmView : IView
+	public interface IConfirmEndMeetingView : IView
 	{
 		/// <summary>
 		/// Raised when the user presses the Yes button.

@@ -56,7 +56,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IReferencedSourceSelectPresenter), (nav, views, theme) => new ReferencedSourceSelectPresenter(nav, views, theme)},
 
 			// Common
-			{typeof(IConfirmPresenter), (nav, views, theme) => new ConfirmPresenter(nav, views, theme)},
+			{typeof(IConfirmEndMeetingPresenter), (nav, views, theme) => new ConfirmEndMeetingPresenter(nav, views, theme)},
 			{typeof(IEndMeetingPresenter), (nav, views, theme) => new EndMeetingPresenter(nav, views, theme)},
 			{typeof(IHeaderPresenter), (nav, views, theme) => new HeaderPresenter(nav, views, theme)},
 			{typeof(IStartMeetingPresenter), (nav, views, theme) => new StartMeetingPresenter(nav, views, theme)},
