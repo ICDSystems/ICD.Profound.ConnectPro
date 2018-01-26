@@ -5,12 +5,16 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Conferencing.ConferenceManagers;
+using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Favorites.SqLite;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
+using ICD.Connect.Displays;
+using ICD.Connect.Panels;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.Routing.Controls;
 using ICD.Connect.Settings.Core;
 using ICD.Profound.ConnectPRO.Routing;
 
@@ -41,6 +45,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 				m_IsInMeeting = value;
 
+				if (!m_IsInMeeting)
+					Shutdown();
+
 				OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
 			}
 		}
@@ -64,6 +71,29 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		{
 			m_Routing = new ConnectProRouting(this);
 			m_ConferenceManager = new ConferenceManager();
+		}
+
+		/// <summary>
+		/// Shuts down the room.
+		/// </summary>
+		public void Shutdown()
+		{
+			// Undo all routing
+			foreach (IRouteSwitcherControl switcher in this.GetControlsRecursive<IRouteSwitcherControl>())
+				switcher.Clear();
+
+			// Hangup
+			if (ConferenceManager != null && ConferenceManager.ActiveConference != null)
+				ConferenceManager.ActiveConference.Hangup();
+
+			// Power off displays
+			foreach (IDisplay display in this.Originators.GetInstancesRecursive<IDisplay>())
+				display.PowerOff();
+
+			// Power off the panels
+			Originators.GetInstancesRecursive<IPanelDevice>()
+					   .SelectMany(panel => panel.Controls.GetControls<IPowerDeviceControl>())
+					   .ForEach(c => c.PowerOff());
 		}
 
 		#region Settings
