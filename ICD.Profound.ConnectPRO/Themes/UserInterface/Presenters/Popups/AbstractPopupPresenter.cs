@@ -49,7 +49,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void ViewOnCloseButtonPressed(object sender, EventArgs eventArgs)
+		protected virtual void ViewOnCloseButtonPressed(object sender, EventArgs eventArgs)
 		{
 			ShowView(false);
 		}

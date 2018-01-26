@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Properties;
+using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
+using ICD.Connect.Conferencing.Cisco;
 using ICD.Connect.Conferencing.Cisco.Controls;
 using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Displays;
@@ -197,6 +199,19 @@ namespace ICD.Profound.ConnectPRO.Routing
 				display.PowerOn();
 				display.SetHdmiInput(destination.Address);
 			}
+		}
+
+		/// <summary>
+		/// Fully unroutes the VTC from all displays.
+		/// </summary>
+		public void UnrouteVtc()
+		{
+			CiscoCodec codec = m_Room.Originators.GetInstanceRecursive<CiscoCodec>();
+			if (codec == null)
+				return;
+
+			IRouteSourceControl sourceControl = codec.Controls.GetControl<IRouteSourceControl>();
+			RoutingGraph.Unroute(sourceControl, EnumUtils.GetFlagsAllValue<eConnectionType>(), m_Room.Id);
 		}
 
 		#endregion

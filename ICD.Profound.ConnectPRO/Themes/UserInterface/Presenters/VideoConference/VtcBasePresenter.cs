@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using ICD.Common.Utils.EventArguments;
+using ICD.Connect.Conferencing.ConferenceManagers;
+using ICD.Connect.Conferencing.Conferences;
+using ICD.Connect.Conferencing.EventArguments;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -68,6 +72,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		}
 
 		/// <summary>
+		/// Called when the user presses the close button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		protected override void ViewOnCloseButtonPressed(object sender, EventArgs eventArgs)
+		{
+			// If we are in a call we want to confirm before closing
+			IConferenceManager manager = Room == null ? null : Room.ConferenceManager;
+			bool isInCall = manager != null && manager.IsInCall >= eInCall.Audio;
+			
+			if (isInCall)
+				Navigation.NavigateTo<IConfirmLeaveCallPresenter>();
+			else
+				base.ViewOnCloseButtonPressed(sender, eventArgs);
+		}
+
+		/// <summary>
 		/// Called when the view visibility changes.
 		/// </summary>
 		/// <param name="sender"></param>
@@ -82,6 +103,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			{
 				foreach (Type type in s_NavPages.Values)
 					Navigation.LazyLoadPresenter(type).ShowView(false);
+
+				IConferenceManager manager = Room == null ? null : Room.ConferenceManager;
+				IConference active = manager == null ? null : manager.ActiveConference;
+
+				if (active != null)
+					active.Hangup();
+
+				if (Room != null)
+					Room.Routing.UnrouteVtc();
 			}
 		}
 
