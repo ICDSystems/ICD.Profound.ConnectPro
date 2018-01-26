@@ -21,7 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 	public sealed class ReferencedDisplaysPresenter : AbstractComponentPresenter<IReferencedDisplaysView>,
 	                                                  IReferencedDisplaysPresenter
 	{
-		private const int MAX_LINE_WIDTH = 10;
+		private const int MAX_LINE_WIDTH = 20;
 
 		public event EventHandler OnPressed;
 
