@@ -171,6 +171,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (m_Room == null)
 				return;
 
+			// If the source is already active then clear the active state
+			if (source == m_ActiveSource)
+			{
+				SetActiveSource(null);
+				return;
+			}
+
 			bool dualDisplays = m_Room.Routing.IsDualDisplayRoom;
 
 			// In a dual display room we allow the user to select which display to route to
@@ -178,8 +185,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			{
 				// Edge case - route the codec to both displays and open the context menu
 				CiscoCodecRoutingControl codecControl =
-					m_Room.Core.GetControl<IRouteSourceControl>(source.Endpoint.Device, source.Endpoint.Control) as
-						CiscoCodecRoutingControl;
+					source == null
+						? null
+						: m_Room.Core.GetControl<IRouteSourceControl>(source.Endpoint.Device, source.Endpoint.Control) as
+						  CiscoCodecRoutingControl;
 
 				if (codecControl == null)
 				{
@@ -471,10 +480,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="source"></param>
 		private void SourceSelectDualPresenterOnSourcePressed(object sender, ISource source)
 		{
-			// Toggle if the given source is already active
-			if (source == m_ActiveSource)
-				source = null;
-
 			HandleSelectedSource(source);
 		}
 
