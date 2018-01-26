@@ -381,7 +381,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void ViewOnHangupButtonPressed(object sender, EventArgs eventArgs)
 		{
-			Navigation.NavigateTo<IVtcHangupPresenter>();
+			IVtcHangupPresenter presenter = Navigation.LazyLoadPresenter<IVtcHangupPresenter>();
+			int sourceCount = presenter.GetSources().Count();
+
+			// Don't do anything if there are no sources.
+			if (sourceCount == 0)
+				return;
+
+			// If there is only one source hangup immediately, otherwise provide a menu
+			if (sourceCount == 1)
+				presenter.HangupAll();
+			else
+				presenter.ShowView(true);
 		}
 
 		private void ViewOnTextEntered(object sender, StringEventArgs stringEventArgs)

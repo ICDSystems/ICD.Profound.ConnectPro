@@ -77,21 +77,30 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_ChildrenFactory.SetRoom(room);
 		}
 
-		#region Private Methods
-
 		/// <summary>
 		/// Returns the current active sources.
 		/// </summary>
 		/// <returns></returns>
-		private IEnumerable<IConferenceSource> GetSources()
+		public IEnumerable<IConferenceSource> GetSources()
 		{
 			IConference conference = m_SubscribedConferenceManager == null
-										 ? null
-										 : m_SubscribedConferenceManager.ActiveConference;
+				                         ? null
+				                         : m_SubscribedConferenceManager.ActiveConference;
 			return conference == null
-					   ? Enumerable.Empty<IConferenceSource>()
-					   : conference.GetSources().Where(s => s.GetIsOnline());
+				       ? Enumerable.Empty<IConferenceSource>()
+				       : conference.GetSources().Where(CanHangup);
 		}
+
+		/// <summary>
+		/// Hangs up all of the active sources.
+		/// </summary>
+		public void HangupAll()
+		{
+			foreach (IConferenceSource source in GetSources())
+				source.Hangup();
+		}
+
+		#region Private Methods
 
 		/// <summary>
 		/// Generates the given number of views.
@@ -101,6 +110,31 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private IEnumerable<IVtcReferencedHangupView> ItemFactory(ushort count)
 		{
 			return GetView().GetChildComponentViews(ViewFactory, count);
+		}
+
+		private bool CanHangup(IConferenceSource source)
+		{
+			switch (source.Status)
+			{
+				case eConferenceSourceStatus.Undefined:
+				case eConferenceSourceStatus.Disconnecting:
+				case eConferenceSourceStatus.Disconnected:
+				case eConferenceSourceStatus.Idle:
+					return false;
+
+				case eConferenceSourceStatus.Dialing:
+				case eConferenceSourceStatus.Connecting:
+				case eConferenceSourceStatus.Ringing:
+				case eConferenceSourceStatus.Connected:
+				case eConferenceSourceStatus.OnHold:
+				case eConferenceSourceStatus.EarlyMedia:
+				case eConferenceSourceStatus.Preserved:
+				case eConferenceSourceStatus.RemotePreserved:
+					return true;
+
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
 		}
 
 		#endregion
@@ -218,8 +252,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void ViewOnHangupAllButtonPressed(object sender, EventArgs eventArgs)
 		{
-			foreach (IConferenceSource source in GetSources())
-				source.Hangup();
+			HangupAll();
 		}
 
 		private void ViewOnCloseButtonPressed(object sender, EventArgs eventArgs)
