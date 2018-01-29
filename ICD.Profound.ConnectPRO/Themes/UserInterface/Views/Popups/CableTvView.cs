@@ -1,10 +1,11 @@
 ﻿using System;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 {
-	public sealed partial class CableTvView : AbstractPopupView
+	public sealed partial class CableTvView : AbstractPopupView, ICableTvView
 	{
 		public override event EventHandler OnCloseButtonPressed;
 

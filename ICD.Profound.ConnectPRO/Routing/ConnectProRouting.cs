@@ -244,12 +244,14 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (device == null)
 				throw new ArgumentNullException("device");
 
-			// Codec
-			if (device is CiscoCodec)
-				return device.Controls.GetControl<IDialingDeviceControl>();
+			// Dialer
+			IDialingDeviceControl dialer = device.Controls.GetControls<IDialingDeviceControl>().FirstOrDefault();
+			if (dialer != null)
+				return dialer;
 
 			// TV Tuner
-			return device.Controls.GetControls<ITvTunerControl>().FirstOrDefault();
+			ITvTunerControl tvTuner = device.Controls.GetControls<ITvTunerControl>().FirstOrDefault();
+			return tvTuner;
 		}
 
 		#endregion

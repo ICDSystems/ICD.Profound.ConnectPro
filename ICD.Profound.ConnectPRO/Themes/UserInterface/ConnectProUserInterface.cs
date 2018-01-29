@@ -5,19 +5,25 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Conferencing.Cisco.Controls;
+using ICD.Connect.Conferencing.Controls;
+using ICD.Connect.Devices;
+using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Controls;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.EventArguments;
 using ICD.Connect.Routing.Extensions;
 using ICD.Connect.Routing.RoutingGraphs;
+using ICD.Connect.Sources.TvTuner.Controls;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Hangup;
@@ -250,13 +256,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (source == null)
 				return;
 
-			IRouteSourceControl sourceControl =
-				m_Room.Core.GetControl<IRouteSourceControl>(source.Endpoint.Device, source.Endpoint.Control);
+			IDeviceBase device = m_Room == null ? null : m_Room.Routing.GetDevice(source);
+			if (device == null)
+				return;
+
+			IDeviceControl control = m_Room.Routing.GetDeviceControl(device);
+			if (control == null)
+				return;
 
 			// TODO - VERY temporary
-			CiscoCodecRoutingControl codecControl = sourceControl as CiscoCodecRoutingControl;
-			if (codecControl != null)
+			if (control is CiscoDialingDeviceControl)
 				m_NavigationController.NavigateTo<IVtcBasePresenter>();
+			else if (control is ITvTunerControl)
+				m_NavigationController.NavigateTo<ICableTvPresenter>().Control = control as ITvTunerControl;
 		}
 
 		/// <summary>
