@@ -61,7 +61,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		{
 			base.Refresh(view);
 
-			view.SetSelected(Menu.IsViewVisible);
+			view.SetMode((ushort)(Menu.IsViewVisible ? 1 : 0));
+		}
+
+		/// <summary>
+		/// Override to get the selected state for the button.
+		/// </summary>
+		/// <returns></returns>
+		protected override ushort GetMode()
+		{
+			throw new NotImplementedException();
 		}
 
 		#region Navigation Callbacks

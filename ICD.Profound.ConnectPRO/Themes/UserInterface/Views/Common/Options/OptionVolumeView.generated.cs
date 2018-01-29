@@ -24,7 +24,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options
 				DigitalVisibilityJoin = 40
 			};
 
-			m_Button = new VtProMultiModeButton(panel, m_Subpage);
+			m_Button = new VtProMultiModeButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 45,
+				AnalogModeJoin = 45
+			};
 		}
 
 		/// <summary>

@@ -12,7 +12,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options
 		/// <summary>
 		/// Sets the selected state of the option.
 		/// </summary>
-		/// <param name="selected"></param>
-		void SetSelected(bool selected);
+		/// <param name="mode"></param>
+		void SetMode(ushort mode);
 	}
 }

@@ -5,7 +5,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options
 {
-	public sealed partial class OptionPrivacyMuteView : AbstractOptionView, IOptionContactsView
+	public sealed partial class OptionPrivacyMuteView : AbstractOptionView, IOptionPrivacyMuteView
 	{
 		public override event EventHandler OnButtonPressed;
 
@@ -32,10 +32,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options
 		/// <summary>
 		/// Sets the selected state of the option.
 		/// </summary>
-		/// <param name="selected"></param>
-		public override void SetSelected(bool selected)
+		/// <param name="mode"></param>
+		public override void SetMode(ushort mode)
 		{
-			m_Button.SetSelected(selected);
+			m_Button.SetMode(mode);
 		}
 
 		#region Control Callbacks

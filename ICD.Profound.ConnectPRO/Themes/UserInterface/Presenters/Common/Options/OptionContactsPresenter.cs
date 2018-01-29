@@ -20,6 +20,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		}
 
 		/// <summary>
+		/// Override to get the selected state for the button.
+		/// </summary>
+		/// <returns></returns>
+		protected override ushort GetMode()
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
 		/// Called when the user presses the option button.
 		/// </summary>
 		/// <param name="sender"></param>

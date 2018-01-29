@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Common.Utils;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Options;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -9,6 +10,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 	public abstract class AbstractOptionPresenter<TView> : AbstractPresenter<TView>, IOptionPresenter<TView>
 		where TView : class, IOptionView
 	{
+		private readonly SafeCriticalSection m_RefreshSection;
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -18,7 +21,35 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		protected AbstractOptionPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
+			m_RefreshSection = new SafeCriticalSection();
 		}
+
+		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
+		protected override void Refresh(TView view)
+		{
+			base.Refresh(view);
+
+			m_RefreshSection.Enter();
+
+			try
+			{
+				ushort mode = GetMode();
+				view.SetMode(mode);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+		}
+
+		/// <summary>
+		/// Override to get the mode for the button.
+		/// </summary>
+		/// <returns></returns>
+		protected abstract ushort GetMode();
 
 		#region View Callbacks
 
