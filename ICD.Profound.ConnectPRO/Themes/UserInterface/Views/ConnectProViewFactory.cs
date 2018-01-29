@@ -54,6 +54,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 		{
 			// Popups
 			{typeof(IAppleTvView), (panel, theme) => new AppleTvView(panel, theme)},
+			{typeof(ICableTvView), (panel, theme) => new CableTvView(panel, theme)},
 
 			// Displays
 			{typeof(IDisplaysView), (panel, theme) => new DisplaysView(panel, theme)},

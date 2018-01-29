@@ -297,6 +297,10 @@
       <Project>{5B84EB3C-1C3A-4C4D-98C2-69F67CF51D5A}</Project>
       <Name>ICD.Connect.Settings_SimplSharp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Sources\ICD.Connect.Sources.TvTuner\ICD.Connect.Sources.TvTuner_SimplSharp.csproj">
+      <Project>{EE162C95-A9DB-459D-95B6-9E63D9816DC5}</Project>
+      <Name>ICD.Connect.Sources.TvTuner_SimplSharp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ICD.Connect.Themes\ICD.Connect.Themes\ICD.Connect.Themes_SimplSharp.csproj">
       <Project>{7D599445-C1F9-4BBD-ACC4-DC80E3311376}</Project>
       <Name>ICD.Connect.Themes_SimplSharp</Name>

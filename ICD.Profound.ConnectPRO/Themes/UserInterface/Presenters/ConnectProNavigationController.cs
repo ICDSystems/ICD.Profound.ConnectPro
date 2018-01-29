@@ -39,6 +39,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		{
 			// Popups
 			{typeof(IAppleTvPresenter), (nav, views, theme) => new AppleTvPresenter(nav, views, theme)},
+			{typeof(ICableTvPresenter), (nav, views, theme) => new CableTvPresenter(nav, views, theme)},
 
 			// Displays
 			{typeof(IDisplaysPresenter), (nav, views, theme) => new DisplaysPresenter(nav, views, theme)},
