@@ -87,7 +87,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 				ConferenceManager.ActiveConference.Hangup();
 
 			// Power off displays
-			foreach (IDisplay display in this.Originators.GetInstancesRecursive<IDisplay>())
+			foreach (IDisplay display in Originators.GetInstancesRecursive<IDisplay>())
 				display.PowerOff();
 
 			// Power off the panels
