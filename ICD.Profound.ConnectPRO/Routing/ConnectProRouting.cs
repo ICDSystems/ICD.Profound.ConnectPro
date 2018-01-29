@@ -6,6 +6,9 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Cisco;
 using ICD.Connect.Conferencing.Cisco.Controls;
+using ICD.Connect.Conferencing.Controls;
+using ICD.Connect.Devices;
+using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Displays;
 using ICD.Connect.Partitioning.Rooms;
@@ -17,6 +20,7 @@ using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.Extensions;
 using ICD.Connect.Routing.RoutingGraphs;
 using ICD.Connect.Settings;
+using ICD.Connect.Sources.TvTuner.Controls;
 using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Routing
@@ -212,6 +216,40 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			IRouteSourceControl sourceControl = codec.Controls.GetControl<IRouteSourceControl>();
 			RoutingGraph.Unroute(sourceControl, EnumUtils.GetFlagsAllValue<eConnectionType>(), m_Room.Id);
+		}
+
+		#endregion
+
+		#region Controls
+
+		/// <summary>
+		/// Gets the device for the given source.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <returns></returns>
+		public IDeviceBase GetDevice(ISource source)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			return m_Room.Core.Originators.GetChild<IDeviceBase>(source.Endpoint.Device);
+		}
+
+		/// <summary>
+		/// Returns the control that can be manipulated by the user, e.g. dialing control, tv tuner, etc.
+		/// </summary>
+		/// <returns></returns>
+		public IDeviceControl GetDeviceControl(IDeviceBase device)
+		{
+			if (device == null)
+				throw new ArgumentNullException("device");
+
+			// Codec
+			if (device is CiscoCodec)
+				return device.Controls.GetControl<IDialingDeviceControl>();
+
+			// TV Tuner
+			return device.Controls.GetControls<ITvTunerControl>().FirstOrDefault();
 		}
 
 		#endregion

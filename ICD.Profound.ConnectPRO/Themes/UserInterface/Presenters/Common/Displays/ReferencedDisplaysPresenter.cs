@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
-using ICD.Connect.Conferencing.Cisco;
-using ICD.Connect.Conferencing.Controls;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Partitioning.Rooms;
@@ -12,7 +9,6 @@ using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings;
-using ICD.Connect.Sources.TvTuner.Controls;
 using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -196,7 +192,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		{
 			return Room == null || m_RoutedSource == null
 				       ? null
-				       : Room.Core.Originators.GetChild<IDeviceBase>(m_RoutedSource.Endpoint.Device);
+				       : Room.Routing.GetDevice(m_RoutedSource);
 		}
 
 		/// <summary>
@@ -209,12 +205,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			if (device == null)
 				return null;
 
-			// Codec
-			if (device is CiscoCodec)
-				return device.Controls.GetControl<IDialingDeviceControl>();
-
-			// TV Tuner
-			return device.Controls.GetControls<ITvTunerControl>().FirstOrDefault();
+			return Room == null ? null : Room.Routing.GetDeviceControl(device);
 		}
 
 		#region View Callbacks
