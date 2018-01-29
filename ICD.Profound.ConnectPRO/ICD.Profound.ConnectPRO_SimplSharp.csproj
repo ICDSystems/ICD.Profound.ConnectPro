@@ -76,6 +76,8 @@
     <Compile Include="Themes\IUserInterface.cs" />
     <Compile Include="Themes\ConnectProTheme.cs" />
     <Compile Include="Themes\ConnectProThemeSettings.cs" />
+    <Compile Include="Themes\MicrophoneInterface\ConnectProMicrophoneInterface.cs" />
+    <Compile Include="Themes\MicrophoneInterface\ConnectProMicrophoneInterfaceFactory.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmLeaveCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IReferencedDisplaysPresenter.cs" />
@@ -265,6 +267,10 @@
     <ProjectReference Include="..\..\ICD.Connect.API\ICD.Connect.API\ICD.Connect.API_SimplSharp.csproj">
       <Project>{727F5820-5A61-440D-8899-E454FE8238D7}</Project>
       <Name>ICD.Connect.API_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Audio\ICD.Connect.Audio.Shure\ICD.Connect.Audio.Shure_SimplSharp.csproj">
+      <Project>{AFEEC857-710B-4F94-B982-7BD8648904DD}</Project>
+      <Name>ICD.Connect.Audio.Shure_SimplSharp</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing.Cisco\ICD.Connect.Conferencing.Cisco_SimplSharp.csproj">
       <Project>{B2DF3389-5C95-4CAF-BA30-3A4D0AAC9CE3}</Project>
