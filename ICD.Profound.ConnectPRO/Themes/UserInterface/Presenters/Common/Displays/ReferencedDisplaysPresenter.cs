@@ -1,15 +1,18 @@
 ﻿using System;
+using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
-using ICD.Connect.Conferencing.Cisco.Controls;
-using ICD.Connect.Devices.Extensions;
+using ICD.Connect.Conferencing.Cisco;
+using ICD.Connect.Conferencing.Controls;
+using ICD.Connect.Devices;
+using ICD.Connect.Devices.Controls;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Connections;
-using ICD.Connect.Routing.Controls;
 using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings;
+using ICD.Connect.Sources.TvTuner.Controls;
 using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -155,8 +158,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				}
 
 				// TODO - VERY temporary
-				CiscoCodecRoutingControl codecControl = GetSourceControl() as CiscoCodecRoutingControl;
-				if (codecControl != null && m_ActiveSource == null)
+				IDeviceControl control = GetDeviceControl();
+				if (control != null)
 				{
 					line1 = "PRESS FOR CONTROLS";
 					line2 = string.Empty;
@@ -189,11 +192,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			}
 		}
 
-		private IRouteSourceControl GetSourceControl()
+		private IDeviceBase GetDevice()
 		{
 			return Room == null || m_RoutedSource == null
 				       ? null
-				       : Room.Core.GetControl<IRouteSourceControl>(m_RoutedSource.Endpoint.Device, m_RoutedSource.Endpoint.Control);
+				       : Room.Core.Originators.GetChild<IDeviceBase>(m_RoutedSource.Endpoint.Device);
+		}
+
+		/// <summary>
+		/// Returns the control that can be manipulated by the user, e.g. dialing control, tv tuner, etc.
+		/// </summary>
+		/// <returns></returns>
+		private IDeviceControl GetDeviceControl()
+		{
+			IDeviceBase device = GetDevice();
+			if (device == null)
+				return null;
+
+			// Codec
+			if (device is CiscoCodec)
+				return device.Controls.GetControl<IDialingDeviceControl>();
+
+			// TV Tuner
+			return device.Controls.GetControls<ITvTunerControl>().FirstOrDefault();
 		}
 
 		#region View Callbacks
