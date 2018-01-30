@@ -104,7 +104,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		/// <param name="active"></param>
 		public void SetSpeakerButtonActive(bool active)
 		{
-			m_SpeakerButton.SetSelected(active);
+			m_SpeakerButton.SetSelected(!active);
 		}
 
 		/// <summary>
