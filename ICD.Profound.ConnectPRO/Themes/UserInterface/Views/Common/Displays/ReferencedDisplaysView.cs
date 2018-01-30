@@ -99,6 +99,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		}
 
 		/// <summary>
+		/// Sets the activity state of the speaker button.
+		/// </summary>
+		/// <param name="active"></param>
+		public void SetSpeakerButtonActive(bool active)
+		{
+			m_SpeakerButton.SetSelected(active);
+		}
+
+		/// <summary>
 		/// Sets the text for the source label.
 		/// </summary>
 		/// <param name="text"></param>

@@ -174,6 +174,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 				// Speaker visibility
 				bool showSpeaker = m_RoutedSource != null && m_RoutedSource.ConnectionType.HasFlag(eConnectionType.Audio);
+				bool speakerActive = false;
 
 				view.SetColor(color);
 				view.SetSourceText(sourceName);
@@ -181,6 +182,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				view.SetLine2Text(line2);
 				view.SetIcon(icon);
 				view.ShowSpeakerButton(showSpeaker);
+				view.SetSpeakerButtonActive(speakerActive);
 			}
 			finally
 			{
