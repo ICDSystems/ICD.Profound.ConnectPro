@@ -3,6 +3,7 @@ using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Favorites;
+using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -79,6 +80,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			try
 			{
 				string name = GetName();
+				name = HtmlUtils.FormatColoredText(name, Selected ? Colors.COLOR_WHITE : Colors.COLOR_DARK_GREY);
+
 				bool favorite = GetIsFavorite();
 				bool favoriteVisible = GetIsFavoriteVisible();
 
