@@ -212,7 +212,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			else
 			{
 				if (source != null)
+				{
 					m_Room.Routing.Route(source);
+					m_Room.Routing.RouteAudio(source);
+				}
 
 				SetActiveSource(null);
 			}
@@ -242,6 +245,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			else
 			{
 				m_Room.Routing.Route(m_ActiveSource, destination);
+				m_Room.Routing.RouteAudioIfUnrouted(m_ActiveSource);
 				routedSource = m_ActiveSource;
 			}
 

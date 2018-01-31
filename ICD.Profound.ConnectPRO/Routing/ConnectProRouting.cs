@@ -167,7 +167,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		#region Routing
 
 		/// <summary>
-		/// Routes the source to the displays.
+		/// Routes the source to the displays and room audio.
 		/// </summary>
 		/// <param name="source"></param>
 		public void Route(ISource source)
@@ -177,6 +177,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			foreach (IDestination destination in GetDisplayDestinations())
 				Route(source, destination);
+
+			if (source.ConnectionType.HasFlag(eConnectionType.Audio))
+				RouteAudio(source);
 		}
 
 		/// <summary>
@@ -192,7 +195,11 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (destination == null)
 				throw new ArgumentNullException("destination");
 
-			Route(source.Endpoint, destination.Endpoint, eConnectionType.Audio | eConnectionType.Video);
+			eConnectionType intersection = EnumUtils.GetFlagsIntersection(source.ConnectionType, destination.ConnectionType);
+			if (intersection == eConnectionType.None)
+				return;
+
+			Route(source.Endpoint, destination.Endpoint, intersection);
 		}
 
 		/// <summary>
@@ -226,6 +233,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 				Route(output.Source, destination.Endpoint, eConnectionType.Video);
 			}
+
+			foreach (IDestination audioDestination in GetAudioDestinations())
+				Route(codecControl.GetOutputEndpointInfo(firstOutput.Source.Address), audioDestination.Endpoint, eConnectionType.Audio);
 		}
 
 		public void RouteAudio(ISource source)
@@ -235,6 +245,19 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			foreach (IDestination destination in GetAudioDestinations())
 				RouteAudio(source, destination);
+		}
+
+		/// <summary>
+		/// Route the source audio only if there is currently no audio routed.
+		/// </summary>
+		/// <param name="source"></param>
+		public void RouteAudioIfUnrouted(ISource source)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			if (!GetActiveAudioSources().Any())
+				RouteAudio(source);
 		}
 
 		public void RouteAudio(ISource source, IDestination destination)
