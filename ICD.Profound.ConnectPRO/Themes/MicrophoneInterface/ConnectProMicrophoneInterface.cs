@@ -147,17 +147,15 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 			eLedBrightness brightness = eLedBrightness.Disabled;
 			eLedColor color = eLedColor.White;
 
-			IConferenceManager conferenceManager = Room == null ? null : Room.ConferenceManager;
-
-			if (conferenceManager != null && conferenceManager.IsInCall >= eInCall.Audio)
+			if (m_SubscribedConferenceManager != null && m_SubscribedConferenceManager.IsInCall >= eInCall.Audio)
 			{
 				brightness = eLedBrightness.Default;
 
-				color = conferenceManager.ActiveConference.Status == eConferenceStatus.OnHold
+				color = m_SubscribedConferenceManager.ActiveConference.Status == eConferenceStatus.OnHold
 					        ? eLedColor.Yellow
-					        : conferenceManager.PrivacyMuted
-						        ? eLedColor.Red
-						        : eLedColor.Green;
+					        : m_SubscribedConferenceManager.PrivacyMuted
+						          ? eLedColor.Red
+						          : eLedColor.Green;
 			}
 
 			m_Microphone.SetLedBrightness(brightness);
