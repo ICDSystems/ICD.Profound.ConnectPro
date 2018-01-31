@@ -20,5 +20,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displa
 		/// Gets/sets the source that is currently routed to the display.
 		/// </summary>
 		ISource RoutedSource { get; set; }
+
+		/// <summary>
+		/// Gets/sets whether the routed source is currently audible in the room.
+		/// </summary>
+		bool ActiveAudio { get; set; }
 	}
 }

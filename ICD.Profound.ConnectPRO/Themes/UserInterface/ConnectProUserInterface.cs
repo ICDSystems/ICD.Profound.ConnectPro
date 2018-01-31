@@ -395,9 +395,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 					routing[destination] = source;
 			}
 
+			IEnumerable<ISource> activeAudio = m_Room.Routing.GetActiveAudioSources();
+
 			m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>().SetRoutedSources(routing);
 			m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>().SetRoutedSources(routing);
 			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().SetRoutedSources(routing);
+			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().SetActiveAudioSources(activeAudio);
 		}
 
 		/// <summary>

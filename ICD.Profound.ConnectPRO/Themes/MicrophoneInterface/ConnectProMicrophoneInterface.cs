@@ -8,7 +8,7 @@ using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 {
-	public class ConnectProMicrophoneInterface : IUserInterface
+	public sealed class ConnectProMicrophoneInterface : IUserInterface
 	{
 		private bool m_IsDisposed;
 
@@ -18,7 +18,7 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		private IConferenceManager m_SubscribedConferenceManager;
 
 		[CanBeNull]
-		protected IConnectProRoom Room { get; private set; }
+		private IConnectProRoom Room { get; set; }
 
 		public IShureMxaDevice Microphone { get { return m_Microphone; } }
 
@@ -36,7 +36,7 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		/// <summary>
 		/// Release resources.
 		/// </summary>
-		public virtual void Dispose()
+		public void Dispose()
 		{
 			m_IsDisposed = true;
 

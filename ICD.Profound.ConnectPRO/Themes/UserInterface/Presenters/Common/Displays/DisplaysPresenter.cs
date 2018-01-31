@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
@@ -20,6 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		private readonly SafeCriticalSection m_RefreshSection;
 		private ISource m_ActiveSource;
 		private readonly Dictionary<IDestination, ISource> m_Routing;
+		private readonly IcdHashSet<ISource> m_ActiveAudio;
 
 		/// <summary>
 		/// Gets/sets the source that is currently active for routing.
@@ -50,6 +52,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			m_RefreshSection = new SafeCriticalSection();
 			m_ChildrenFactory = new ReferencedDisplaysPresenterFactory(nav, ItemFactory);
 			m_Routing = new Dictionary<IDestination, ISource>();
+			m_ActiveAudio = new IcdHashSet<ISource>();
 		}
 
 		/// <summary>
@@ -86,6 +89,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 					presenter.ActiveSource = m_ActiveSource;
 					presenter.RoutedSource = m_Routing.GetDefault(presenter.Destination, null);
+					presenter.ActiveAudio = presenter.RoutedSource != null && m_ActiveAudio.Contains(presenter.RoutedSource);
 
 					presenter.ShowView(true);
 				}
@@ -104,6 +108,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			{
 				m_Routing.Clear();
 				m_Routing.Update(routing);
+
+				RefreshIfVisible();
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+		}
+
+		public void SetActiveAudioSources(IEnumerable<ISource> activeAudio)
+		{
+			m_RefreshSection.Enter();
+
+			try
+			{
+				m_ActiveAudio.Clear();
+				m_ActiveAudio.AddRange(activeAudio);
 
 				RefreshIfVisible();
 			}

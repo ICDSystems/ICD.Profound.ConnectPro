@@ -21,5 +21,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displa
 		ISource ActiveSource { get; set; }
 
 		void SetRoutedSources(Dictionary<IDestination, ISource> routing);
+		void SetActiveAudioSources(IEnumerable<ISource> activeAudio);
 	}
 }

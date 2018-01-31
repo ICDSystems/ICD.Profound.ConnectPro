@@ -30,6 +30,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		private IDestination m_Destination;
 		private ISource m_ActiveSource;
 		private ISource m_RoutedSource;
+		private bool m_ActiveAudio;
 
 		#region Properties
 
@@ -79,6 +80,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 					return;
 
 				m_RoutedSource = value;
+
+				RefreshIfVisible();
+			}
+		}
+
+		/// <summary>
+		/// Gets/sets whether the routed source is currently audible in the room.
+		/// </summary>
+		public bool ActiveAudio
+		{
+			get { return m_ActiveAudio; }
+			set
+			{
+				if (value == m_ActiveAudio)
+					return;
+
+				m_ActiveAudio = value;
 
 				RefreshIfVisible();
 			}
@@ -153,7 +171,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 					line2 = text.Substring(splitIndex + 1).Trim();
 				}
 
-				// TODO - VERY temporary
 				IDeviceControl control = GetDeviceControl();
 				if (control != null)
 				{
@@ -173,8 +190,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				line2 = HtmlUtils.FormatColoredText(line2, hexColor);
 
 				// Speaker visibility
-				bool showSpeaker = m_RoutedSource != null && m_RoutedSource.ConnectionType.HasFlag(eConnectionType.Audio);
-				bool speakerActive = false;
+				bool showSpeaker = color == eDisplayColor.Green && m_RoutedSource != null &&
+				                   m_RoutedSource.ConnectionType.HasFlag(eConnectionType.Audio);
 
 				view.SetColor(color);
 				view.SetSourceText(sourceName);
@@ -182,7 +199,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				view.SetLine2Text(line2);
 				view.SetIcon(icon);
 				view.ShowSpeakerButton(showSpeaker);
-				view.SetSpeakerButtonActive(speakerActive);
+				view.SetSpeakerButtonActive(ActiveAudio);
 			}
 			finally
 			{
@@ -221,6 +238,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			base.Subscribe(view);
 
 			view.OnButtonPressed += ViewOnButtonPressed;
+			view.OnSpeakerButtonPressed += ViewOnSpeakerButtonPressed;
 		}
 
 		/// <summary>
@@ -232,6 +250,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			base.Unsubscribe(view);
 
 			view.OnButtonPressed -= ViewOnButtonPressed;
+			view.OnSpeakerButtonPressed -= ViewOnSpeakerButtonPressed;
 		}
 
 		/// <summary>
@@ -242,6 +261,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		private void ViewOnButtonPressed(object sender, EventArgs eventArgs)
 		{
 			OnPressed.Raise(this);
+		}
+
+		/// <summary>
+		/// Called when the user presses the speaker button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ViewOnSpeakerButtonPressed(object sender, EventArgs eventArgs)
+		{
+			if (Room == null)
+				return;
+
+			if (m_RoutedSource == null || !m_RoutedSource.ConnectionType.HasFlag(eConnectionType.Audio))
+				return;
+
+			Room.Routing.RouteAudio(m_RoutedSource);
 		}
 
 		#endregion
