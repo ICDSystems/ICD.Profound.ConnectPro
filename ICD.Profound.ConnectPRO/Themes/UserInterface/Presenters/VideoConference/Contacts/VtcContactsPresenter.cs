@@ -7,6 +7,7 @@ using ICD.Connect.Conferencing.Cisco;
 using ICD.Connect.Conferencing.Cisco.Components.Directory;
 using ICD.Connect.Conferencing.Cisco.Components.Directory.Tree;
 using ICD.Connect.Conferencing.ConferenceManagers;
+using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -127,8 +128,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				}
 
 				bool callEnabled = m_Selected != null;
-				bool hangupEnabled = m_SubscribedConferenceManager != null &&
-				                     m_SubscribedConferenceManager.IsInCall >= eInCall.Audio;
+
+				IConference active = m_SubscribedConferenceManager == null ? null : m_SubscribedConferenceManager.ActiveConference;
+				bool hangupEnabled = active != null;
 
 				string searchText = string.Empty;
 
@@ -294,6 +296,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				return;
 
 			m_SubscribedConferenceManager.OnInCallChanged += ConferenceManagerOnInCallChanged;
+			m_SubscribedConferenceManager.OnActiveSourceStatusChanged += ConferenceManagerOnActiveSourceStatusChanged;
 		}
 
 		/// <summary>
@@ -308,6 +311,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				return;
 
 			m_SubscribedConferenceManager.OnInCallChanged -= ConferenceManagerOnInCallChanged;
+			m_SubscribedConferenceManager.OnActiveSourceStatusChanged -= ConferenceManagerOnActiveSourceStatusChanged;
 		}
 
 		/// <summary>
@@ -316,6 +320,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
 		private void ConferenceManagerOnInCallChanged(object sender, InCallEventArgs args)
+		{
+			RefreshIfVisible();
+		}
+
+		private void ConferenceManagerOnActiveSourceStatusChanged(object sender, ConferenceSourceStatusEventArgs args)
 		{
 			RefreshIfVisible();
 		}
