@@ -26,7 +26,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 	public abstract class AbstractListItemFactory<TModel, TPresenter, TView> : IEnumerable<TPresenter>, IDisposable
 		where TPresenter : class, IPresenter
 	{
-		private readonly Dictionary<int, TPresenter> m_PresenterCache;
+		private readonly List<TPresenter> m_PresenterCache; 
 		private readonly SafeCriticalSection m_CacheSection;
 		private readonly SafeCriticalSection m_BuildViewsSection;
 
@@ -40,7 +40,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="viewFactory"></param>
 		protected AbstractListItemFactory(INavigationController navigationController, ListItemFactory<TView> viewFactory)
 		{
-			m_PresenterCache = new Dictionary<int, TPresenter>();
+			m_PresenterCache = new List<TPresenter>();
 			m_CacheSection = new SafeCriticalSection();
 			m_BuildViewsSection = new SafeCriticalSection();
 
@@ -55,7 +55,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// </summary>
 		public virtual void Dispose()
 		{
-			foreach (TPresenter presenter in m_PresenterCache.Values)
+			foreach (TPresenter presenter in m_PresenterCache)
 				presenter.Dispose();
 			m_PresenterCache.Clear();
 		}
@@ -65,7 +65,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// </summary>
 		/// <param name="models"></param>
 		[PublicAPI]
-		public TPresenter[] BuildChildren(IEnumerable<TModel> models)
+		public IEnumerable<TPresenter> BuildChildren(IEnumerable<TModel> models)
 		{
 			List<TPresenter> output = new List<TPresenter>();
 
@@ -106,7 +106,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 				m_BuildViewsSection.Leave();
 			}
 
-			return output.ToArray();
+			return output;
 		}
 
 		/// <summary>
@@ -115,7 +115,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="room"></param>
 		public void SetRoom(IConnectProRoom room)
 		{
-			foreach (TPresenter presenter in GetPresenters())
+			foreach (TPresenter presenter in GetAllPresenters())
 				presenter.SetRoom(room);
 		}
 
@@ -156,9 +156,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 
 			try
 			{
-				m_PresenterCache.Where(kvp => kvp.Key >= startIndex)
-				                .Select(kvp => kvp.Value)
-				                .ForEach(p => p.ClearView());
+				foreach (TPresenter presenter in m_PresenterCache.Skip(startIndex))
+					presenter.ClearView();
 			}
 			finally
 			{
@@ -170,9 +169,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// Gets the instantiated presenters.
 		/// </summary>
 		/// <returns></returns>
-		private IEnumerable<TPresenter> GetPresenters()
+		private IEnumerable<TPresenter> GetAllPresenters()
 		{
-			return m_CacheSection.Execute(() => m_PresenterCache.OrderValuesByKey().ToList());
+			return m_CacheSection.Execute(() => new List<TPresenter>(m_PresenterCache));
 		}
 
 		/// <summary>
@@ -187,8 +186,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 
 			try
 			{
+				m_PresenterCache.PadRight(cacheIndex + 1);
+				TPresenter existing = m_PresenterCache[cacheIndex];
+
 				// Dispose the existing presenter if it does not match the requested type.
-				TPresenter existing = m_PresenterCache.GetDefault(cacheIndex, null);
 				if (existing != null && !existing.GetType().IsAssignableTo(presenterType))
 				{
 					existing.ClearView();
@@ -213,7 +214,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 
 		public IEnumerator<TPresenter> GetEnumerator()
 		{
-			return GetPresenters().GetEnumerator();
+			return GetAllPresenters().GetEnumerator();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
