@@ -98,8 +98,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			bool combine = m_Room.IsCombineRoom();
 
 			return m_Room.Originators
-			             .GetInstancesRecursive<IDestination>()
-			             .Where(d => m_Room.Core.Originators.GetChild(d.Endpoint.Device) is IDisplay)
+			             .GetInstancesRecursive<IDestination>(d => m_Room.Core.Originators.GetChild(d.Endpoint.Device) is IDisplay)
 			             .OrderBy(d => d.Order)
 			             .ThenBy(d => d.GetNameOrDeviceName(combine))
 			             .Take(2);
@@ -114,8 +113,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			bool combine = m_Room.IsCombineRoom();
 
 			return m_Room.Originators
-			             .GetInstancesRecursive<IDestination>()
-						 .Where(d => d.ConnectionType == eConnectionType.Audio)
+			             .GetInstancesRecursive<IDestination>(d => d.ConnectionType == eConnectionType.Audio)
 			             .OrderBy(d => d.Order)
 			             .ThenBy(d => d.GetNameOrDeviceName(combine))
 			             .Take(2);
