@@ -134,7 +134,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			}
 		}
 
-		#region Perivate Methods
+		#region Private Methods
 
 		/// <summary>
 		/// Unsubscribes from all of the child presenters.

@@ -195,7 +195,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				CiscoCodecRoutingControl codecControl =
 					source == null
 						? null
-						: m_Room.Core.GetControl<IRouteSourceControl>(source.Endpoint.Device, source.Endpoint.Control) as
+						: m_Room.Core.GetControl<IRouteSourceControl>(source.Endpoint.Device,
+						                                              source.Endpoint.Control) as
 						  CiscoCodecRoutingControl;
 
 				if (codecControl == null)
@@ -205,6 +206,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				}
 
 				m_Room.Routing.Route(codecControl);
+
 				ShowSourceContextualMenu(source);
 				SetActiveSource(null);
 			}
@@ -365,7 +367,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				return;
 
 			routingGraph.OnRouteChanged += RoutingGraphOnRouteChanged;
-			routingGraph.OnSourceDetectionStateChanged += RoutingGraphOnSourceDetectionStateChanged;
 		}
 
 		/// <summary>
@@ -378,7 +379,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				return;
 
 			routingGraph.OnRouteChanged -= RoutingGraphOnRouteChanged;
-			routingGraph.OnSourceDetectionStateChanged -= RoutingGraphOnSourceDetectionStateChanged;
 		}
 
 		/// <summary>
@@ -391,30 +391,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (m_Room == null)
 				return;
 
+			// Build a map of video destination => source
 			Dictionary<IDestination, ISource> routing = new Dictionary<IDestination, ISource>();
+			foreach (IDestination destination in m_Room.Routing.GetDisplayDestinations())
+				routing[destination] = m_Room.Routing.GetActiveVideoSource(destination);
 
-			foreach (ISource source in m_Room.Routing.GetCoreSources())
-			{
-				foreach (IDestination destination in m_Room.Routing.GetActiveDisplayDestinations(source))
-					routing[destination] = source;
-			}
-
+			// Get a list of sources going to audio destinations
 			IEnumerable<ISource> activeAudio = m_Room.Routing.GetActiveAudioSources();
 
-			m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>().SetRoutedSources(routing);
-			m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>().SetRoutedSources(routing);
 			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().SetRoutedSources(routing);
 			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().SetActiveAudioSources(activeAudio);
-		}
-
-		/// <summary>
-		/// Called when a source is detected or loses detection.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		private void RoutingGraphOnSourceDetectionStateChanged(object sender, EndpointStateEventArgs args)
-		{
-			// TODO - Update source presenter states
 		}
 
 		#endregion

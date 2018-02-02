@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
-using ICD.Common.Utils.Extensions;
-using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
@@ -22,7 +20,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 
 		private readonly ReferencedSourceSelectPresenterFactory m_ChildrenFactory;
 		private readonly SafeCriticalSection m_RefreshSection;
-		private readonly Dictionary<IDestination, ISource> m_Routing;
 
 		private ISource[] m_Sources;
 		private ISource m_ActiveSource;
@@ -64,7 +61,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		{
 			m_RefreshSection = new SafeCriticalSection();
 			m_ChildrenFactory = new ReferencedSourceSelectPresenterFactory(nav, ItemFactory);
-			m_Routing = new Dictionary<IDestination, ISource>();
 
 			m_Sources = new ISource[0];
 		}
@@ -106,27 +102,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 					Subscribe(presenter);
 
 					presenter.Selected = presenter.Source == m_ActiveSource;
-					presenter.Routed = m_Routing.ContainsValue(presenter.Source);
-
 					presenter.ShowView(true);
 				}
-			}
-			finally
-			{
-				m_RefreshSection.Leave();
-			}
-		}
-
-		public void SetRoutedSources(Dictionary<IDestination, ISource> routing)
-		{
-			m_RefreshSection.Enter();
-
-			try
-			{
-				m_Routing.Clear();
-				m_Routing.Update(routing);
-
-				RefreshIfVisible();
 			}
 			finally
 			{

@@ -137,11 +137,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 					line2 = text.Substring(splitIndex + 1).Trim();
 				}
 
-				eSourceColor color = m_Selected
-					                     ? eSourceColor.Yellow
-				//	                     : m_Routed
-				//		                       ? eSourceColor.Green
-						                       : eSourceColor.White;
+				eSourceColor color = m_Selected ? eSourceColor.Yellow : eSourceColor.White;
 
 				// Icon
 				ConnectProSource source = m_Source as ConnectProSource;
