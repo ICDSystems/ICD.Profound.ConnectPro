@@ -27,7 +27,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 		public static ConnectProThemeSettings FromXml(string xml)
 		{
 			ConnectProThemeSettings output = new ConnectProThemeSettings();
-			ParseXml(output, xml);
+			output.ParseXml(xml);
 			return output;
 		}
 	}

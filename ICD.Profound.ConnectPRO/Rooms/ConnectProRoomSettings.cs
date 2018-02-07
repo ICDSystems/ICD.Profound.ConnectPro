@@ -54,7 +54,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 				DialingPlan = dialingPlanInfo
 			};
 
-			ParseXml(output, xml);
+			output.ParseXml(xml);
 			return output;
 		}
 	}

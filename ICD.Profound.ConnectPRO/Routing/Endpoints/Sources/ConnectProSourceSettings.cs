@@ -55,7 +55,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 				Icon = XmlUtils.TryReadChildElementContentAsString(xml, ICON_ELEMENT)
 			};
 
-			ParseXml(output, xml);
+			output.ParseXml(xml);
 			return output;
 		}
 	}
