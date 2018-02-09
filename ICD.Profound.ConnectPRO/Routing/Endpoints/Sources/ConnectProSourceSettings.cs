@@ -1,11 +1,11 @@
 ﻿using System;
-using ICD.Common.Properties;
 using ICD.Common.Utils.Xml;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings.Attributes;
 
 namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 {
+	[KrangSettings(FACTORY_NAME)]
 	public sealed class ConnectProSourceSettings : AbstractSourceSettings
 	{
 		private const string FACTORY_NAME = "ConnectProSource";
@@ -43,20 +43,14 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 		}
 
 		/// <summary>
-		/// Loads the settings from XML.
+		/// Updates the settings from xml.
 		/// </summary>
 		/// <param name="xml"></param>
-		/// <returns></returns>
-		[PublicAPI, XmlFactoryMethod(FACTORY_NAME)]
-		public static ConnectProSourceSettings FromXml(string xml)
+		public override void ParseXml(string xml)
 		{
-			ConnectProSourceSettings output = new ConnectProSourceSettings
-			{
-				Icon = XmlUtils.TryReadChildElementContentAsString(xml, ICON_ELEMENT)
-			};
+			base.ParseXml(xml);
 
-			output.ParseXml(xml);
-			return output;
+			Icon = XmlUtils.TryReadChildElementContentAsString(xml, ICON_ELEMENT);
 		}
 	}
 }

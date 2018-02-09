@@ -5,6 +5,7 @@ using ICD.Connect.Settings.Attributes;
 
 namespace ICD.Profound.ConnectPRO.Rooms
 {
+	[KrangSettings(FACTORY_NAME)]
 	public sealed class ConnectProRoomSettings : AbstractRoomSettings
 	{
 		private const string FACTORY_NAME = "ConnectProRoom";
@@ -35,27 +36,19 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		}
 
 		/// <summary>
-		/// Instantiates room settings from an xml element.
+		/// Updates the settings from xml.
 		/// </summary>
 		/// <param name="xml"></param>
-		/// <returns></returns>
-		[XmlFactoryMethod(FACTORY_NAME)]
-		public static ConnectProRoomSettings FromXml(string xml)
+		public override void ParseXml(string xml)
 		{
+			base.ParseXml(xml);
+
 			string dialingPlan;
 			XmlUtils.TryGetChildElementAsString(xml, DIALINGPLAN_ELEMENT, out dialingPlan);
 
-			DialingPlanInfo dialingPlanInfo = string.IsNullOrEmpty(dialingPlan)
-												  ? new DialingPlanInfo()
-												  : DialingPlanInfo.FromXml(dialingPlan);
-
-			ConnectProRoomSettings output = new ConnectProRoomSettings
-			{
-				DialingPlan = dialingPlanInfo
-			};
-
-			output.ParseXml(xml);
-			return output;
+			DialingPlan = string.IsNullOrEmpty(dialingPlan)
+				              ? new DialingPlanInfo()
+				              : DialingPlanInfo.FromXml(dialingPlan);
 		}
 	}
 }

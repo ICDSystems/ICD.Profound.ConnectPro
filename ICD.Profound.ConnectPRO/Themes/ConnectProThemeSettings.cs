@@ -4,6 +4,7 @@ using ICD.Connect.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes
 {
+	[KrangSettings(FACTORY_NAME)]
 	public sealed class ConnectProThemeSettings : AbstractThemeSettings
 	{
 		private const string FACTORY_NAME = "ConnectProTheme";
@@ -17,18 +18,5 @@ namespace ICD.Profound.ConnectPRO.Themes
 		/// Gets the type of the originator for this settings instance.
 		/// </summary>
 		public override Type OriginatorType { get { return typeof(ConnectProTheme); } }
-
-		/// <summary>
-		/// Instantiates room settings from an xml element.
-		/// </summary>
-		/// <param name="xml"></param>
-		/// <returns></returns>
-		[XmlFactoryMethod(FACTORY_NAME)]
-		public static ConnectProThemeSettings FromXml(string xml)
-		{
-			ConnectProThemeSettings output = new ConnectProThemeSettings();
-			output.ParseXml(xml);
-			return output;
-		}
 	}
 }
