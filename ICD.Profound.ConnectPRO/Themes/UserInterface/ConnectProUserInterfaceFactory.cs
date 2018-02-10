@@ -1,4 +1,7 @@
-﻿using ICD.Connect.Panels;
+﻿using System.Collections.Generic;
+using System.Linq;
+using ICD.Connect.Panels;
+using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Partitioning.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface
@@ -34,6 +37,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		protected override bool RoomContainsOriginator(IRoom room, ConnectProUserInterface ui)
 		{
 			return room.Originators.ContainsRecursive(ui.Panel.Id);
+		}
+
+		protected override IEnumerable<IPanelDevice> GetOriginatorsForUserInterface()
+		{
+			// Don't create UIs for the OSD
+			return base.GetOriginatorsForUserInterface().Where(o => !(o is OsdPanelDevice));
 		}
 	}
 }

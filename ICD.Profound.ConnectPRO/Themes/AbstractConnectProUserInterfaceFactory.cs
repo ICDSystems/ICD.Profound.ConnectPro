@@ -66,10 +66,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 				Clear();
 
 				IEnumerable<TUserInterface> uis =
-					m_Theme.Core
-					       .Originators
-					       .OfType<TOriginator>()
-					       .Select(originator => CreateUserInterface(originator));
+					GetOriginatorsForUserInterface().Select(originator => CreateUserInterface(originator));
 
 				m_UserInterfaces.AddRange(uis);
 
@@ -108,6 +105,15 @@ namespace ICD.Profound.ConnectPRO.Themes
 		#endregion
 
 		#region Protected Methods
+
+		/// <summary>
+		/// Override to control which originators are selected for UI instantiation.
+		/// </summary>
+		/// <returns></returns>
+		protected virtual IEnumerable<TOriginator> GetOriginatorsForUserInterface()
+		{
+			return m_Theme.Core.Originators.OfType<TOriginator>();
+		}
 
 		/// <summary>
 		/// Instantiates the user interface for the given originator.
