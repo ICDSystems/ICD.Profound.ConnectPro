@@ -1,10 +1,10 @@
-﻿using ICD.Connect.Panels;
+﻿using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Partitioning.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 {
 	public sealed class ConnectProOsdInterfaceFactory :
-		AbstractConnectProUserInterfaceFactory<ConnectProOsdInterface, IPanelDevice>
+		AbstractConnectProUserInterfaceFactory<ConnectProOsdInterface, OsdPanelDevice>
 	{
 		/// <summary>
 		/// Constructor.
@@ -20,7 +20,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 		/// </summary>
 		/// <param name="originator"></param>
 		/// <returns></returns>
-		protected override ConnectProOsdInterface CreateUserInterface(IPanelDevice originator)
+		protected override ConnectProOsdInterface CreateUserInterface(OsdPanelDevice originator)
 		{
 			return new ConnectProOsdInterface(originator, Theme);
 		}

@@ -6,6 +6,7 @@ using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings.Core;
 using ICD.Connect.Themes;
 using ICD.Profound.ConnectPRO.Themes.MicrophoneInterface;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface;
 using ICD.Profound.ConnectPRO.Themes.UserInterface;
 
 namespace ICD.Profound.ConnectPRO.Themes
@@ -25,7 +26,8 @@ namespace ICD.Profound.ConnectPRO.Themes
 			m_UiFactories = new IcdHashSet<IConnectProUserInterfaceFactory>
 			{
 				new ConnectProUserInterfaceFactory(this),
-				new ConnectProMicrophoneInterfaceFactory(this)
+				new ConnectProMicrophoneInterfaceFactory(this),
+				new ConnectProOsdInterfaceFactory(this)
 			};
 
 			m_UiFactoriesSection = new SafeCriticalSection();
