@@ -32,6 +32,8 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 
 		private readonly Dictionary<Type, FactoryMethod> m_ViewFactories = new Dictionary<Type, FactoryMethod>
 		{
+			{typeof(IOsdSourcesView), (panel, theme) => new OsdSourcesView(panel, theme)},
+			{typeof(IOsdWelcomeView), (panel, theme) => new OsdWelcomeView(panel, theme)}
 		};
 
 		private readonly IPanelDevice m_Panel;
