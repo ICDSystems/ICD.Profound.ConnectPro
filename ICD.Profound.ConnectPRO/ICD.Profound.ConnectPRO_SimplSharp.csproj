@@ -78,6 +78,29 @@
     <Compile Include="Themes\ConnectProThemeSettings.cs" />
     <Compile Include="Themes\MicrophoneInterface\ConnectProMicrophoneInterface.cs" />
     <Compile Include="Themes\MicrophoneInterface\ConnectProMicrophoneInterfaceFactory.cs" />
+    <Compile Include="Themes\OsdInterface\ConnectProOsdInterface.cs" />
+    <Compile Include="Themes\OsdInterface\ConnectProOsdInterfaceFactory.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\IOsdNavigationController.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\IOsdPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\IOsdSourcesPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\IOsdWelcomePresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\IOsdSourcesView.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\IOsdView.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\IOsdViewFactory.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\IOsdWelcomeView.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\AbstractOsdComponentPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\AbstractOsdListItemFactory.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\AbstractOsdPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\ConnectProOsdNavigationController.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\OsdSourcesPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\OsdWelcomePresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Views\AbstractOsdComponentView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\AbstractOsdView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\ConnectProOsdViewFactory.cs" />
+    <Compile Include="Themes\OsdInterface\Views\OsdSourcesView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\OsdSourcesView.generated.cs" />
+    <Compile Include="Themes\OsdInterface\Views\OsdWelcomeView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\OsdWelcomeView.generated.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmLeaveCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IReferencedDisplaysPresenter.cs" />
@@ -287,6 +310,10 @@
     <ProjectReference Include="..\..\ICD.Connect.Displays\ICD.Connect.Displays\ICD.Connect.Displays_SimplSharp.csproj">
       <Project>{FCC7D685-B801-43A5-AEB3-774442027A0D}</Project>
       <Name>ICD.Connect.Displays_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Panels\ICD.Connect.Panels.Server\ICD.Connect.Panels.Server_SimplSharp.csproj">
+      <Project>{B14DB63B-1D7B-4112-8845-8187A2C7DF90}</Project>
+      <Name>ICD.Connect.Panels.Server_SimplSharp</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ICD.Connect.Panels\ICD.Connect.Panels\ICD.Connect.Panels_SimplSharp.csproj">
       <Project>{A441FE98-6A8E-4EF3-98F0-D17041D2E118}</Project>
