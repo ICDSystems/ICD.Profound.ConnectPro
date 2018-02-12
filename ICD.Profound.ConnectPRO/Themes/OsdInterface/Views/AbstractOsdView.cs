@@ -8,7 +8,6 @@ using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 {
@@ -165,7 +164,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 		/// <returns></returns>
 		protected static IEnumerable<T> GetChildViews<T>(IOsdViewFactory factory, VtProSubpageReferenceList subpageReferenceList,
 		                                                 List<T> viewList, ushort count)
-			where T : class, IView
+			where T : class, IOsdView
 		{
 			if (factory as ConnectProOsdViewFactory == null)
 				throw new ArgumentException("View factory must support SRLs", "factory");

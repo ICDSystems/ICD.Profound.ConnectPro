@@ -2,7 +2,6 @@
 using ICD.Common.Utils.EventArguments;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters
 {
@@ -42,7 +41,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters
 		void ClearView();
 	}
 
-	public interface IOsdPresenter<T> : IPresenter
+	public interface IOsdPresenter<T> : IOsdPresenter
 		where T : IOsdView
 	{
 		/// <summary>

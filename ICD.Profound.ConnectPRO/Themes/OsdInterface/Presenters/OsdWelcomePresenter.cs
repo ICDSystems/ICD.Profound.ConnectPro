@@ -1,5 +1,4 @@
-﻿using ICD.Connect.Partitioning.Rooms;
-using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
+﻿using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters

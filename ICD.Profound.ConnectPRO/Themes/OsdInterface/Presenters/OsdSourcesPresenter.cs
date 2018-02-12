@@ -9,8 +9,8 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 {
-    public sealed class OsdSourcesPresenter : AbstractOsdPresenter<IOsdSourcesView>, IOsdSourcesPresenter
-    {
+	public sealed class OsdSourcesPresenter : AbstractOsdPresenter<IOsdSourcesView>, IOsdSourcesPresenter
+	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>

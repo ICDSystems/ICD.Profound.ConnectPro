@@ -6,7 +6,6 @@ using ICD.Connect.Panels.SmartObjects;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Lists;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 {
@@ -88,7 +87,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 		/// <param name="index"></param>
 		/// <returns></returns>
 		private T GetNewView<T>(ISigInputOutput panel, IVtProParent parent, ushort index)
-			where T : class, IView
+			where T : class, IOsdView
 		{
 			if (!m_ComponentViewFactories.ContainsKey(typeof(T)))
 			{
@@ -114,7 +113,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 		/// <param name="count"></param>
 		/// <returns></returns>
 		public IEnumerable<T> GetNewSrlViews<T>(VtProSubpageReferenceList list, List<T> childViews, ushort count)
-			where T : class, IView
+			where T : class, IOsdView
 		{
 			count = Math.Min(count, list.MaxSize);
 			list.SetNumberOfItems(count);
