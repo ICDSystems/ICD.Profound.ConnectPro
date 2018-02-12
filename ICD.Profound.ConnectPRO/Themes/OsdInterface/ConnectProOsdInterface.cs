@@ -1,4 +1,5 @@
 ﻿using ICD.Common.Utils;
+using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Panels;
@@ -48,6 +49,45 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 			m_Panel.SendInputDigital(CommonJoins.DIGITAL_OFFLINE_JOIN, m_Room == null);
 		}
 
+		#region Room Callbacks
+
+		/// <summary>
+		/// Subscribe to the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		private void Subscribe(IConnectProRoom room)
+		{
+			if (room == null)
+				return;
+
+			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		private void Unsubscribe(IConnectProRoom room)
+		{
+			if (room == null)
+				return;
+
+			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
+		}
+
+		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs eventArgs)
+		{
+			UpdateVisibility();
+		}
+
+		private void UpdateVisibility()
+		{
+			m_NavigationController.LazyLoadPresenter<IOsdWelcomePresenter>().ShowView(m_Room != null && !m_Room.IsInMeeting);
+			m_NavigationController.LazyLoadPresenter<IOsdSourcesPresenter>().ShowView(m_Room != null && m_Room.IsInMeeting);
+		}
+
+		#endregion
+
 		#region Methods
 
 		/// <summary>
@@ -72,11 +112,14 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 			ServiceProvider.GetService<ILoggerService>()
 			               .AddEntry(eSeverity.Informational, "{0} setting room to {1}", this, room);
 
+			Unsubscribe(m_Room);
 			m_Room = room;
+			Subscribe(m_Room);
 
 			m_NavigationController.SetRoom(room);
 
 			UpdatePanelOnlineJoin();
+			UpdateVisibility();
 		}
 
 		/// <summary>
