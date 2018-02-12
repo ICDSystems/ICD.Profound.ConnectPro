@@ -10,11 +10,17 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 		/// </summary>
 		public string Icon { get; set; }
 
+		/// <summary>
+		/// Gets/sets the text describing this source.
+		/// </summary>
+		public string Description { get; set; }
+
 		protected override void ClearSettingsFinal()
 		{
 			base.ClearSettingsFinal();
 
 			Icon = null;
+			Description = null;
 		}
 
 		protected override void CopySettingsFinal(ConnectProSourceSettings settings)
@@ -22,6 +28,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 			base.CopySettingsFinal(settings);
 
 			settings.Icon = Icon;
+			settings.Description = Description;
 		}
 
 		protected override void ApplySettingsFinal(ConnectProSourceSettings settings, IDeviceFactory factory)
@@ -29,6 +36,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 			base.ApplySettingsFinal(settings, factory);
 
 			Icon = settings.Icon;
+			Description = settings.Description;
 		}
 	}
 }
