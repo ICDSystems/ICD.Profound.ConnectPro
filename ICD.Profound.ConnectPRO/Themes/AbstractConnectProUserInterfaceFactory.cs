@@ -112,7 +112,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 		/// <returns></returns>
 		protected virtual IEnumerable<TOriginator> GetOriginatorsForUserInterface()
 		{
-			return m_Theme.Core.Originators.OfType<TOriginator>();
+			return m_Theme.Core.Originators.GetChildren<TOriginator>();
 		}
 
 		/// <summary>
