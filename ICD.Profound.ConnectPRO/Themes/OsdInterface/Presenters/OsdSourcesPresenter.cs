@@ -35,11 +35,13 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 				ConnectProSource proSource = source as ConnectProSource;
 
 				string name = source == null ? string.Empty : source.Name;
+				string description = proSource == null ? string.Empty : proSource.Description;
 				string icon = proSource == null ? string.Empty : proSource.Icon;
 
 				icon = Icons.GetSourceIcon(icon, eSourceColor.Grey);
 
 				view.SetLabel(index, name);
+				view.SetDescription(index, description);
 				view.SetIcon(index, icon);
 
 				index++;

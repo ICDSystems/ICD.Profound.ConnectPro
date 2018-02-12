@@ -22,7 +22,12 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 
 		public void SetLabel(ushort index, string label)
 		{
-			m_Labels[index].SetLabelText(label);
+			m_NameLabels[index].SetLabelText(label);
+		}
+
+		public void SetDescription(ushort index, string description)
+		{
+			m_DescriptionLabels[index].SetLabelText(description);
 		}
 	}
 }

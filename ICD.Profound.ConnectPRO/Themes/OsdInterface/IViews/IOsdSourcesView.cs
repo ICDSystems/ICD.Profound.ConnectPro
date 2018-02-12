@@ -21,5 +21,12 @@
 		/// <param name="index"></param>
 		/// <param name="label"></param>
 		void SetLabel(ushort index, string label);
+
+		/// <summary>
+		/// Sets the description text for the source at the given index.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="description"></param>
+		void SetDescription(ushort index, string description);
 	}
 }

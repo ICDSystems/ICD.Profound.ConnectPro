@@ -21,6 +21,15 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 		private VtProSimpleLabel m_SourceLabel7;
 		private VtProSimpleLabel m_SourceLabel8;
 
+		private VtProSimpleLabel m_SourceDescription1;
+		private VtProSimpleLabel m_SourceDescription2;
+		private VtProSimpleLabel m_SourceDescription3;
+		private VtProSimpleLabel m_SourceDescription4;
+		private VtProSimpleLabel m_SourceDescription5;
+		private VtProSimpleLabel m_SourceDescription6;
+		private VtProSimpleLabel m_SourceDescription7;
+		private VtProSimpleLabel m_SourceDescription8;
+
 		private VtProDynamicIconObject m_SourceIcon1;
 		private VtProDynamicIconObject m_SourceIcon2;
 		private VtProDynamicIconObject m_SourceIcon3;
@@ -30,7 +39,8 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 		private VtProDynamicIconObject m_SourceIcon7;
 		private VtProDynamicIconObject m_SourceIcon8;
 
-		private Dictionary<ushort, VtProSimpleLabel> m_Labels;
+		private Dictionary<ushort, VtProSimpleLabel> m_NameLabels;
+		private Dictionary<ushort, VtProSimpleLabel> m_DescriptionLabels;
 		private Dictionary<ushort, VtProDynamicIconObject> m_Icons;
 
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
@@ -127,7 +137,48 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 				DynamicIconSerialJoin = 217
 			};
 
-			m_Labels = new Dictionary<ushort, VtProSimpleLabel>
+			// Source Descriptions
+			m_SourceDescription1 = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				IndirectTextJoin = 218
+			};
+
+			m_SourceDescription2 = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				IndirectTextJoin = 219
+			};
+
+			m_SourceDescription3 = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				IndirectTextJoin = 220
+			};
+
+			m_SourceDescription4 = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				IndirectTextJoin = 221
+			};
+
+			m_SourceDescription5 = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				IndirectTextJoin = 222
+			};
+
+			m_SourceDescription6 = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				IndirectTextJoin = 223
+			};
+
+			m_SourceDescription7 = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				IndirectTextJoin = 224
+			};
+
+			m_SourceDescription8 = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				IndirectTextJoin = 225
+			};
+
+			m_NameLabels = new Dictionary<ushort, VtProSimpleLabel>
 			{
 				{ 0, m_SourceLabel1 },
 				{ 1, m_SourceLabel2 },
@@ -137,6 +188,18 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 				{ 5, m_SourceLabel6 },
 				{ 6, m_SourceLabel7 },
 				{ 7, m_SourceLabel8 },
+			};
+
+			m_DescriptionLabels = new Dictionary<ushort, VtProSimpleLabel>
+			{
+				{ 0, m_SourceDescription1 },
+				{ 1, m_SourceDescription2 },
+				{ 2, m_SourceDescription3 },
+				{ 3, m_SourceDescription4 },
+				{ 4, m_SourceDescription5 },
+				{ 5, m_SourceDescription6 },
+				{ 6, m_SourceDescription7 },
+				{ 7, m_SourceDescription8 },
 			};
 
 			m_Icons = new Dictionary<ushort, VtProDynamicIconObject>
@@ -165,6 +228,15 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 			yield return m_SourceLabel6;
 			yield return m_SourceLabel7;
 			yield return m_SourceLabel8;
+
+			yield return m_SourceDescription1;
+			yield return m_SourceDescription2;
+			yield return m_SourceDescription3;
+			yield return m_SourceDescription4;
+			yield return m_SourceDescription5;
+			yield return m_SourceDescription6;
+			yield return m_SourceDescription7;
+			yield return m_SourceDescription8;
 
 			yield return m_SourceIcon1;
 			yield return m_SourceIcon2;
