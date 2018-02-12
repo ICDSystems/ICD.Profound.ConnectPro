@@ -21,6 +21,8 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 
 		private readonly Dictionary<Type, PresenterFactory> m_PresenterFactories = new Dictionary<Type, PresenterFactory>
 		{
+			{typeof(IOsdSourcesPresenter), (nav, views, theme) => new OsdSourcesPresenter(nav, views, theme)},
+			{typeof(IOsdWelcomePresenter), (nav, views, theme) => new OsdWelcomePresenter(nav, views, theme)},
 		};
 
 		private readonly Dictionary<Type, IOsdPresenter> m_Cache;
