@@ -94,37 +94,37 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 
 			m_SourceIcon2 = new VtProDynamicIconObject(panel, m_Subpage)
 			{
-				IndirectTextJoin = 211
+				DynamicIconSerialJoin = 211
 			};
 
 			m_SourceIcon3 = new VtProDynamicIconObject(panel, m_Subpage)
 			{
-				IndirectTextJoin = 212
+				DynamicIconSerialJoin = 212
 			};
 
 			m_SourceIcon4 = new VtProDynamicIconObject(panel, m_Subpage)
 			{
-				IndirectTextJoin = 213
+				DynamicIconSerialJoin = 213
 			};
 
 			m_SourceIcon5 = new VtProDynamicIconObject(panel, m_Subpage)
 			{
-				IndirectTextJoin = 214
+				DynamicIconSerialJoin = 214
 			};
 
 			m_SourceIcon6 = new VtProDynamicIconObject(panel, m_Subpage)
 			{
-				IndirectTextJoin = 215
+				DynamicIconSerialJoin = 215
 			};
 
 			m_SourceIcon7 = new VtProDynamicIconObject(panel, m_Subpage)
 			{
-				IndirectTextJoin = 216
+				DynamicIconSerialJoin = 216
 			};
 
 			m_SourceIcon8 = new VtProDynamicIconObject(panel, m_Subpage)
 			{
-				IndirectTextJoin = 217
+				DynamicIconSerialJoin = 217
 			};
 
 			m_Labels = new Dictionary<ushort, VtProSimpleLabel>
