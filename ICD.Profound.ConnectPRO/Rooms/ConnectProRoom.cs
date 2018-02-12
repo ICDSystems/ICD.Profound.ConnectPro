@@ -79,8 +79,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		public void Shutdown()
 		{
 			// Undo all routing
-			foreach (IRouteSwitcherControl switcher in this.GetControlsRecursive<IRouteSwitcherControl>())
-				switcher.Clear();
+			Routing.UnrouteAll();
 
 			// Hangup
 			if (ConferenceManager != null && ConferenceManager.ActiveConference != null)
