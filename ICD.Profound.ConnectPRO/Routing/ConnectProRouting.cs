@@ -28,7 +28,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 	{
 		private readonly IConnectProRoom m_Room;
 		private readonly List<IDestination> m_Displays;
-		private readonly List<IDestination> m_AudioDestinations; 
+		private readonly List<IDestination> m_AudioDestinations;
+		private readonly SafeCriticalSection m_CacheSection;
 
 		/// <summary>
 		/// Gets the routing graph from the core.
@@ -49,6 +50,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			m_Room = room;
 			m_Displays = new List<IDestination>();
 			m_AudioDestinations = new List<IDestination>();
+			m_CacheSection = new SafeCriticalSection();
 		}
 
 		#region Sources
@@ -98,23 +100,32 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <returns></returns>
 		public IEnumerable<IDestination> GetDisplayDestinations()
 		{
-			if (m_Displays.Count == 0)
+			m_CacheSection.Enter();
+
+			try
 			{
-				bool combine = m_Room.IsCombineRoom();
+				if (m_Displays.Count == 0)
+				{
+					bool combine = m_Room.IsCombineRoom();
 
-				IEnumerable<IDestination> displays =
-					m_Room.Originators
-					      .GetInstancesRecursive<IDestination>(d =>
-					                                           m_Room.Core.Originators.GetChild(d.Endpoint.Device)
-					                                           is IDisplay)
-					      .OrderBy(d => d.Order)
-					      .ThenBy(d => d.GetNameOrDeviceName(combine))
-					      .Take(2);
+					IEnumerable<IDestination> displays =
+						m_Room.Originators
+						      .GetInstancesRecursive<IDestination>(d =>
+						                                           m_Room.Core.Originators.GetChild(d.Endpoint.Device)
+						                                           is IDisplay)
+						      .OrderBy(d => d.Order)
+						      .ThenBy(d => d.GetNameOrDeviceName(combine))
+						      .Take(2);
 
-				m_Displays.AddRange(displays);
+					m_Displays.AddRange(displays);
+				}
+
+				return m_Displays.ToArray(m_Displays.Count);
 			}
-
-			return m_Displays;
+			finally
+			{
+				m_CacheSection.Leave();
+			}
 		}
 
 		/// <summary>
@@ -123,21 +134,30 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <returns></returns>
 		public IEnumerable<IDestination> GetAudioDestinations()
 		{
-			if (m_AudioDestinations.Count == 0)
+			m_CacheSection.Enter();
+
+			try
 			{
-				bool combine = m_Room.IsCombineRoom();
+				if (m_AudioDestinations.Count == 0)
+				{
+					bool combine = m_Room.IsCombineRoom();
 
-				IEnumerable<IDestination> audioDestinations =
-					m_Room.Originators
-					      .GetInstancesRecursive<IDestination>(d => d.ConnectionType == eConnectionType.Audio)
-					      .OrderBy(d => d.Order)
-					      .ThenBy(d => d.GetNameOrDeviceName(combine))
-					      .Take(2);
+					IEnumerable<IDestination> audioDestinations =
+						m_Room.Originators
+							  .GetInstancesRecursive<IDestination>(d => d.ConnectionType == eConnectionType.Audio)
+							  .OrderBy(d => d.Order)
+							  .ThenBy(d => d.GetNameOrDeviceName(combine))
+							  .Take(2);
 
-				m_AudioDestinations.AddRange(audioDestinations);
+					m_AudioDestinations.AddRange(audioDestinations);
+				}
+
+				return m_AudioDestinations.ToArray(m_AudioDestinations.Count);
 			}
-
-			return m_AudioDestinations;
+			finally
+			{
+				m_CacheSection.Leave();
+			}
 		}
 
 		public IEnumerable<ISource> GetActiveAudioSources()
