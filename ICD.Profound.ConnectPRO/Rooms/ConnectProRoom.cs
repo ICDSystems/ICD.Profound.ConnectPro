@@ -13,7 +13,10 @@ using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Displays;
 using ICD.Connect.Panels;
+using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.Routing.Endpoints.Destinations;
+using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings.Core;
 using ICD.Profound.ConnectPRO.Routing;
 
@@ -78,15 +81,28 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		public void Shutdown()
 		{
 			// Undo all routing
-			Routing.UnrouteAll();
+			Routing.UnrouteAllExceptOsd();
+
+			// Route the OSD
+			Routing.RouteOsd();
 
 			// Hangup
 			if (ConferenceManager != null && ConferenceManager.ActiveConference != null)
 				ConferenceManager.ActiveConference.Hangup();
 
-			// Power off displays
-			foreach (IDisplay display in Originators.GetInstancesRecursive<IDisplay>())
-				display.PowerOff();
+			// Power off displays (except OSD)
+			foreach (IDestination destination in Routing.GetDisplayDestinations())
+			{
+				ISource source = Routing.GetActiveVideoSource(destination);
+				OsdPanelDevice osd = source == null ? null : Core.Originators.GetChild(source.Endpoint.Device) as OsdPanelDevice;
+
+				if (osd != null)
+					continue;
+
+				IDisplay display = Core.Originators.GetChild(destination.Endpoint.Device) as IDisplay;
+				if (display != null)
+					display.PowerOff();
+			}
 
 			// Power off the panels
 			Originators.GetInstancesRecursive<IPanelDevice>()

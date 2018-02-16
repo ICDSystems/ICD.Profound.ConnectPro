@@ -11,6 +11,7 @@ using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Displays;
+using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Controls;
@@ -301,6 +302,24 @@ namespace ICD.Profound.ConnectPRO.Routing
 			Route(source.Endpoint, destination.Endpoint, eConnectionType.Audio);
 		}
 
+		/// <summary>
+		/// Routes the OSD to the displays.
+		/// </summary>
+		public void RouteOsd()
+		{
+			OsdPanelDevice osd = m_Room.Core.Originators.GetChildren<OsdPanelDevice>().FirstOrDefault();
+			if (osd == null)
+				return;
+
+			IRouteSourceControl sourceControl = osd.Controls.GetControl<IRouteSourceControl>();
+			EndpointInfo sourceEndpoint = sourceControl.GetOutputEndpointInfo(1);
+
+			foreach (IDestination destination in GetDisplayDestinations())
+			{
+				RoutingGraph.Route(sourceEndpoint, destination.Endpoint, eConnectionType.Video, m_Room.Id);
+			}
+		}
+
 		private void Route(EndpointInfo source, EndpointInfo destination, eConnectionType connectionType)
 		{
 			RoutingGraph.Route(source, destination, connectionType, m_Room.Id);
@@ -327,14 +346,24 @@ namespace ICD.Profound.ConnectPRO.Routing
 		}
 
 		/// <summary>
-		/// Unroute all sources from all destinations.
+		/// Unroute all sources except OSD from all destinations.
 		/// </summary>
-		public void UnrouteAll()
+		public void UnrouteAllExceptOsd()
 		{
 			UnrouteVtc();
 
 			foreach (IDestination display in GetDisplayDestinations())
+			{
+				ISource source = GetActiveVideoSource(display);
+				if (source == null)
+					continue;
+
+				OsdPanelDevice osd = m_Room.Core.Originators.GetChild(source.Endpoint.Device) as OsdPanelDevice;
+				if (osd != null)
+					continue;
+
 				RoutingGraph.UnrouteDestination(display.Endpoint, EnumUtils.GetFlagsAllValue<eConnectionType>(), m_Room.Id);
+			}
 
 			foreach (IDestination audio in GetAudioDestinations())
 				RoutingGraph.UnrouteDestination(audio.Endpoint, EnumUtils.GetFlagsAllValue<eConnectionType>(), m_Room.Id);
