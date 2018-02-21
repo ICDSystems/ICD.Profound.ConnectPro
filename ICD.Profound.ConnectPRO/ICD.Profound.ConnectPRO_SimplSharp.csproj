@@ -280,6 +280,7 @@
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcReferencedHangupView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcShareView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcShareView.generated.cs" />
+    <Compile Include="VolumePoint.cs" />
     <None Include="Properties\ControlSystem.cfg" />
   </ItemGroup>
   <ItemGroup>

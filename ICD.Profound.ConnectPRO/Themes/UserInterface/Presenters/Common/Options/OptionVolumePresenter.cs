@@ -1,5 +1,7 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
+using ICD.Connect.Devices.Controls;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Options;
@@ -90,5 +92,44 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		}
 
 		#endregion
+
+		/// <summary>
+		/// Subscribe to the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Subscribe(IConnectProRoom room)
+		{
+			base.Subscribe(room);
+
+			if (room == null)
+				return;
+
+			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Unsubscribe(IConnectProRoom room)
+		{
+			base.Unsubscribe(room);
+
+			if (room == null)
+				return;
+
+			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
+		}
+
+		/// <summary>
+		/// Called when the room enters/leaves meeting state.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs eventArgs)
+		{
+			IVolumeDeviceControl volumeControl = Room == null ? null : Room.GetVolumeControl();
+			ShowView(eventArgs.Data && volumeControl != null);
+		}
 	}
 }

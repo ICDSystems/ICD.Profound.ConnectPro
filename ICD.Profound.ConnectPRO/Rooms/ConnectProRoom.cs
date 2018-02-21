@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
@@ -11,6 +12,7 @@ using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Favorites.SqLite;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
+using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Displays;
 using ICD.Connect.Panels;
 using ICD.Connect.Panels.Server.Osd;
@@ -31,6 +33,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 		private bool m_IsInMeeting;
 		private DialingPlanInfo m_DialingPlan;
+		private VolumePoint m_VolumePoint;
 
 		#region Properties
 
@@ -110,6 +113,18 @@ namespace ICD.Profound.ConnectPRO.Rooms
 					   .ForEach(c => c.PowerOff());
 		}
 
+		/// <summary>
+		/// Gets the volume control matching the configured volume point.
+		/// </summary>
+		/// <returns></returns>
+		[CanBeNull]
+		public IVolumeDeviceControl GetVolumeControl()
+		{
+			return m_VolumePoint == null
+				       ? null
+				       : Core.GetControl<IVolumeDeviceControl>(m_VolumePoint.DeviceId, m_VolumePoint.ControlId);
+		}
+
 		#region Settings
 
 		/// <summary>
@@ -121,6 +136,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			base.CopySettingsFinal(settings);
 
 			settings.DialingPlan = m_DialingPlan;
+			settings.VolumePoint = m_VolumePoint;
 		}
 
 		/// <summary>
@@ -131,6 +147,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			base.ClearSettingsFinal();
 
 			m_DialingPlan = default(DialingPlanInfo);
+
+			m_VolumePoint = null;
 
 			m_ConferenceManager.ClearDialingProviders();
 			m_ConferenceManager.Favorites = null;
@@ -149,13 +167,25 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			// Dialing plan
 			SetDialingPlan(settings.DialingPlan, factory);
 
+			// Volume Point
+			SetVolumePoint(settings.VolumePoint);
+
 			// Favorites
 			string path = PathUtils.GetProgramConfigPath("favorites");
 			m_ConferenceManager.Favorites = new SqLiteFavorites(path);
 		}
 
 		/// <summary>
-		/// Sets the dialing plan from the given xml document path.
+		/// Sets the volume point from the settings.
+		/// </summary>
+		/// <param name="volumePoint"></param>
+		private void SetVolumePoint(VolumePoint volumePoint)
+		{
+			m_VolumePoint = volumePoint;
+		}
+
+		/// <summary>
+		/// Sets the dialing plan from the settings.
 		/// </summary>
 		/// <param name="planInfo"></param>
 		/// <param name="factory"></param>
