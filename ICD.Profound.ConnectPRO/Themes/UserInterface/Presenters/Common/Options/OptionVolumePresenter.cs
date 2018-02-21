@@ -10,15 +10,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 {
 	public sealed class OptionVolumePresenter : AbstractOptionPresenter<IOptionVolumeView>, IOptionVolumePresenter
 	{
-		private IVolumePresenter m_CachedMenu;
-
-		/// <summary>
-		/// Gets the menu for this button.
-		/// </summary>
-		private IVolumePresenter Menu
-		{
-			get { return m_CachedMenu ?? (m_CachedMenu = Navigation.LazyLoadPresenter<IVolumePresenter>()); }
-		}
+		private readonly IVolumePresenter m_Menu;
 
 		/// <summary>
 		/// Constructor.
@@ -29,17 +21,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		public OptionVolumePresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
-			Subscribe(Menu);
-		}
-
-		/// <summary>
-		/// Called when the user presses the option button.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="eventArgs"></param>
-		protected override void ViewOnButtonPressed(object sender, EventArgs eventArgs)
-		{
-			Menu.ShowView(!Menu.IsViewVisible);
+			m_Menu = Navigation.LazyLoadPresenter<IVolumePresenter>();
+			Subscribe(m_Menu);
 		}
 
 		/// <summary>
@@ -47,21 +30,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// </summary>
 		public override void Dispose()
 		{
-			if (m_CachedMenu != null)
-				Unsubscribe(m_CachedMenu);
-
 			base.Dispose();
-		}
 
-		/// <summary>
-		/// Updates the view.
-		/// </summary>
-		/// <param name="view"></param>
-		protected override void Refresh(IOptionVolumeView view)
-		{
-			base.Refresh(view);
-
-			view.SetMode((ushort)(Menu.IsViewVisible ? 1 : 0));
+			Unsubscribe(m_Menu);
 		}
 
 		/// <summary>
@@ -70,8 +41,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// <returns></returns>
 		protected override ushort GetMode()
 		{
-			throw new NotImplementedException();
+			bool menuOpen = m_Menu.IsViewVisible;
+			return (ushort)(menuOpen ? 1 : 0);
 		}
+
+		#region View Callbacks
+
+		/// <summary>
+		/// Called when the user presses the option button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		protected override void ViewOnButtonPressed(object sender, EventArgs eventArgs)
+		{
+			m_Menu.ShowView(!m_Menu.IsViewVisible);
+		}
+
+		#endregion
 
 		#region Navigation Callbacks
 

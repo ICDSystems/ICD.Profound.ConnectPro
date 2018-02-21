@@ -97,6 +97,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOptionPrivacyMutePresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOptionContactsPresenter>());
+			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOptionVolumePresenter>());
 			meetingVisibility.AddNode(videoConferencingVisibility);
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcBasePresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ICableTvPresenter>());
@@ -113,6 +114,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_NavigationController.LazyLoadPresenter<IVtcHangupPresenter>();
 			m_NavigationController.LazyLoadPresenter<IOptionPrivacyMutePresenter>();
 			m_NavigationController.LazyLoadPresenter<IOptionContactsPresenter>();
+			m_NavigationController.LazyLoadPresenter<IOptionVolumePresenter>();
 		}
 
 		#region Methods
