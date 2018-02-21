@@ -2,7 +2,6 @@
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Devices.Controls;
-using ICD.Connect.Devices.Timers;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -12,14 +11,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
 	public sealed class VolumePresenter : AbstractPresenter<IVolumeView>, IVolumePresenter
 	{
-		private const ushort INITIAL_INCREMENT = 1;
-		private const ushort REPEAT_INCREMENT = 1;
-		private const ushort BEFORE_REPEAT_MILLISECONDS = 500;
-		private const ushort BETWEEN_REPEAT_MILLISECONDS = 100;
-
 		private const ushort HIDE_TIME = (ushort)(3.5f * 1000);
 
-		private readonly VolumeRepeater m_Repeater;
 		private readonly SafeTimer m_VisibilityTimer;
 		private IVolumeDeviceControl m_VolumeControl;
 
@@ -38,9 +31,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				m_VolumeControl = value;
 				Subscribe(m_VolumeControl);
 
-				m_Repeater.Release();
-				m_Repeater.SetControl(m_VolumeControl);
-
 				RefreshIfVisible();
 			}
 		}
@@ -54,9 +44,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		public VolumePresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
-			m_Repeater = new VolumeRepeater(INITIAL_INCREMENT, REPEAT_INCREMENT, BEFORE_REPEAT_MILLISECONDS,
-			                                BETWEEN_REPEAT_MILLISECONDS);
-
 			m_VisibilityTimer = SafeTimer.Stopped(() => ShowView(false));
 		}
 
@@ -80,8 +67,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			base.Refresh(view);
 
-			bool muted = VolumeControl != null && VolumeControl.IsMuted;
-			float volume = VolumeControl == null ? 0 : VolumeControl.GetRawVolumeAsSafetyPercentage();
+			IVolumeMuteFeedbackDeviceControl volumeControlMute = VolumeControl as IVolumeMuteFeedbackDeviceControl;
+			bool muted = volumeControlMute != null && volumeControlMute.VolumeIsMuted;
+			IVolumeLevelDeviceControl volumeControlLevel = VolumeControl as IVolumeLevelDeviceControl;
+			float volume = volumeControlLevel == null ? 0 : volumeControlLevel.VolumePosition;
 
 			view.SetMuted(muted);
 			view.SetVolumePercentage(volume);
@@ -97,7 +86,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			ShowView(true);
 			StopVisibilityTimer();
-			m_Repeater.VolumeUpHold();
+
+			IVolumeMuteDeviceControl volumeControlMute = VolumeControl as IVolumeMuteDeviceControl;
+			if (volumeControlMute != null)
+				volumeControlMute.SetVolumeMute(false);
+
+			IVolumeLevelBasicDeviceControl volumeControlLevel = VolumeControl as IVolumeLevelBasicDeviceControl;
+			if (volumeControlLevel != null)
+				volumeControlLevel.VolumeLevelRampUp();
 		}
 
 		/// <summary>
@@ -110,7 +106,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			ShowView(true);
 			StopVisibilityTimer();
-			m_Repeater.VolumeDownHold();
+
+			IVolumeLevelBasicDeviceControl volumeControlLevel = VolumeControl as IVolumeLevelBasicDeviceControl;
+			if (volumeControlLevel != null)
+				volumeControlLevel.VolumeLevelRampDown();
 		}
 
 		/// <summary>
@@ -122,7 +121,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				return;
 
 			ResetVisibilityTimer();
-			m_Repeater.Release();
+
+			IVolumeLevelBasicDeviceControl volumeControlLevel = VolumeControl as IVolumeLevelBasicDeviceControl;
+			if (volumeControlLevel != null)
+				volumeControlLevel.VolumeLevelRampStop();
 		}
 
 		/// <summary>
@@ -135,7 +137,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			ShowView(true);
 			ResetVisibilityTimer();
-			VolumeControl.MuteToggle();
+
+			IVolumeMuteBasicDeviceControl volumeControlMute = VolumeControl as IVolumeMuteBasicDeviceControl;
+			if (volumeControlMute != null)
+				volumeControlMute.VolumeMuteToggle();
 		}
 
 		/// <summary>
@@ -251,8 +256,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (control == null)
 				return;
 
-			control.OnMuteStateChanged += DeviceOnMuteStateChanged;
-			control.OnRawVolumeChanged += DeviceOnVolumeChanged;
+			IVolumeMuteFeedbackDeviceControl controlMute = control as IVolumeMuteFeedbackDeviceControl;
+			if (controlMute != null)
+				controlMute.OnMuteStateChanged += DeviceOnMuteStateChanged;
+
+			IVolumeLevelDeviceControl controlLevel = control as IVolumeLevelDeviceControl;
+			if (controlLevel != null)
+				controlLevel.OnVolumeChanged += DeviceOnVolumeChanged;
+
 		}
 
 		/// <summary>
@@ -264,8 +275,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (control == null)
 				return;
 
-			control.OnMuteStateChanged -= DeviceOnMuteStateChanged;
-			control.OnRawVolumeChanged -= DeviceOnVolumeChanged;
+			IVolumeMuteFeedbackDeviceControl controlMute = control as IVolumeMuteFeedbackDeviceControl;
+			if (controlMute != null)
+				controlMute.OnMuteStateChanged -= DeviceOnMuteStateChanged;
+
+			IVolumeLevelDeviceControl controlLevel = control as IVolumeLevelDeviceControl;
+			if (controlLevel != null)
+			{
+				controlLevel.VolumeLevelRampStop();
+				controlLevel.OnVolumeChanged -= DeviceOnVolumeChanged;
+			}
 		}
 
 		/// <summary>
@@ -273,7 +292,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		private void DeviceOnVolumeChanged(object sender, FloatEventArgs args)
+		private void DeviceOnVolumeChanged(object sender, VolumeDeviceVolumeChangedEventArgs args)
 		{
 			RefreshIfVisible();
 		}
