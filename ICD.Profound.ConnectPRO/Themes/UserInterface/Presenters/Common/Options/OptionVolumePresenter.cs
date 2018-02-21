@@ -47,6 +47,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 			return (ushort)(menuOpen ? 1 : 0);
 		}
 
+		/// <summary>
+		/// Gets the volume control for the current room.
+		/// </summary>
+		/// <returns></returns>
+		private IVolumeDeviceControl GetVolumeControl()
+		{
+			return Room == null ? null : Room.GetVolumeControl();
+		}
+
 		#region View Callbacks
 
 		/// <summary>
@@ -56,6 +65,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// <param name="eventArgs"></param>
 		protected override void ViewOnButtonPressed(object sender, EventArgs eventArgs)
 		{
+			m_Menu.VolumeControl = GetVolumeControl();
 			m_Menu.ShowView(!m_Menu.IsViewVisible);
 		}
 
@@ -93,6 +103,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 
 		#endregion
 
+		#region Room Callbacks
+
 		/// <summary>
 		/// Subscribe to the room events.
 		/// </summary>
@@ -128,8 +140,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// <param name="eventArgs"></param>
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs eventArgs)
 		{
-			IVolumeDeviceControl volumeControl = Room == null ? null : Room.GetVolumeControl();
+			IVolumeDeviceControl volumeControl = GetVolumeControl();
 			ShowView(eventArgs.Data && volumeControl != null);
 		}
+
+		#endregion
 	}
 }

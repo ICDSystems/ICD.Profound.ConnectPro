@@ -2,9 +2,11 @@
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Connect.Devices.Controls;
 using ICD.Connect.Panels.Controls;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
@@ -18,6 +20,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		private const int ADDRESS_VOL_DOWN = 5;
 
 		private readonly SafeCriticalSection m_RefreshSection;
+
+		private IVolumePresenter m_CachedVolumePresenter;
+
+		/// <summary>
+		/// Gets the popup volume presenter.
+		/// </summary>
+		private IVolumePresenter VolumePresenter
+		{
+			get
+			{
+				return m_CachedVolumePresenter ?? (m_CachedVolumePresenter = Navigation.LazyLoadPresenter<IVolumePresenter>());
+			}
+		}
 
 		/// <summary>
 		/// Constructor.
@@ -47,13 +62,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 				if (control == null)
 					return;
 
+				IVolumeDeviceControl volumeControl = GetVolumeControl();
+
 				bool isInMeeting = Room != null && Room.IsInMeeting;
+				bool hasVolumeControl = volumeControl != null;
 
 				control.SetBacklightEnabled(ADDRESS_POWER, isInMeeting);
 				control.SetBacklightEnabled(ADDRESS_HOME, isInMeeting);
 				control.SetBacklightEnabled(ADDRESS_LIGHT, false);
-				control.SetBacklightEnabled(ADDRESS_VOL_UP, false);
-				control.SetBacklightEnabled(ADDRESS_VOL_DOWN, false);
+				control.SetBacklightEnabled(ADDRESS_VOL_UP, hasVolumeControl);
+				control.SetBacklightEnabled(ADDRESS_VOL_DOWN, hasVolumeControl);
 			}
 			finally
 			{
@@ -71,6 +89,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		private IHardButtonBacklightControl GetHardButtonBacklightControl()
 		{
 			return ViewFactory.Panel.Controls.GetControl<IHardButtonBacklightControl>();
+		}
+
+		/// <summary>
+		/// Gets the volume control for the current room.
+		/// </summary>
+		/// <returns></returns>
+		private IVolumeDeviceControl GetVolumeControl()
+		{
+			return Room == null ? null : Room.GetVolumeControl();
 		}
 
 		#endregion
@@ -151,6 +178,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="eventArgs"></param>
 		private void ViewOnVolumeUpButtonPressed(object sender, EventArgs eventArgs)
 		{
+			VolumePresenter.VolumeControl = GetVolumeControl();
+			if (VolumePresenter.VolumeControl != null)
+				VolumePresenter.VolumeUp();
 		}
 
 		/// <summary>
@@ -160,6 +190,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="eventArgs"></param>
 		private void ViewOnVolumeDownButtonPressed(object sender, EventArgs eventArgs)
 		{
+			VolumePresenter.VolumeControl = GetVolumeControl();
+			if (VolumePresenter.VolumeControl != null)
+				VolumePresenter.VolumeDown();
 		}
 
 		/// <summary>
@@ -169,6 +202,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="eventArgs"></param>
 		private void ViewOnVolumeButtonReleased(object sender, EventArgs eventArgs)
 		{
+			VolumePresenter.Release();
 		}
 
 		#endregion
