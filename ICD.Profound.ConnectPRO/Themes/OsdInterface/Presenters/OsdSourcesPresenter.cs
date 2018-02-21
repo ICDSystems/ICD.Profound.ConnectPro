@@ -50,7 +50,16 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 
 		private IEnumerable<ISource> GetSources()
 		{
-			return Room == null ? Enumerable.Empty<ISource>() : Room.Routing.GetCoreSources();
+			if (Room == null)
+				return Enumerable.Empty<ISource>();
+
+			return Room.Routing
+			           .GetCoreSources()
+			           .Distinct(s =>
+			                     {
+				                     ConnectProSource source = s as ConnectProSource;
+				                     return source == null ? null : source.Icon;
+			                     });
 		}
 	}
 }
