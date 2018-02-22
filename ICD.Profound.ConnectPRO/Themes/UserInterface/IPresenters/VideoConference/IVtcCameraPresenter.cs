@@ -8,6 +8,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConferen
 		/// <summary>
 		/// Gets/sets the current camera control.
 		/// </summary>
-		ICameraDeviceControl Camera { get; set; }
+		ICameraDeviceControl CameraControl { get; set; }
 	}
 }
