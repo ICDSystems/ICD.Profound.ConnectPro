@@ -4,6 +4,7 @@ using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Cameras;
+using ICD.Connect.Cameras.Controls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -15,21 +16,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private ICameraDevice m_Camera;
+		private ICameraDeviceControl m_CameraControl;
 		private CameraPreset[] m_CameraPresets;
 
 		/// <summary>
-		/// Gets/sets the current camera device.
+		/// Gets/sets the current camera control.
 		/// </summary>
-		public ICameraDevice Camera
+		public ICameraDeviceControl CameraControl
 		{
-			get { return m_Camera; }
+			get { return m_CameraControl; }
 			set
 			{
-				if (value == m_Camera)
+				if (value == m_CameraControl)
 					return;
 
-				m_Camera = value;
+				m_CameraControl = value;
 
 				RefreshIfVisible();
 			}
@@ -60,12 +61,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			try
 			{
-				ICameraWithPresets cameraWithPresets = m_Camera as ICameraWithPresets;
+				IPresetControl presetControl = m_CameraControl as IPresetControl;
 
 				IEnumerable<CameraPreset> presets =
-					cameraWithPresets == null
+					presetControl == null
 						? Enumerable.Empty<CameraPreset>()
-						: cameraWithPresets.GetPresets();
+						: presetControl.GetPresets();
 
 				m_CameraPresets = presets.ToArray();
 
@@ -86,14 +87,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void Zoom(eCameraZoomAction action)
 		{
-			ICameraWithZoom zoom = m_Camera as ICameraWithZoom;
+			IZoomControl zoom = m_CameraControl as IZoomControl;
 			if (zoom != null)
 				zoom.Zoom(action);
 		}
 
 		private void PanTilt(eCameraPanTiltAction action)
 		{
-			ICameraWithPanTilt panTilt = m_Camera as ICameraWithPanTilt;
+			IPanTiltControl panTilt = m_CameraControl as IPanTiltControl;
 			if (panTilt != null)
 				panTilt.PanTilt(action);
 		}
@@ -174,8 +175,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void ViewOnPresetButtonPressed(object sender, UShortEventArgs eventArgs)
 		{
-			ICameraWithPresets camera = m_Camera as ICameraWithPresets;
-			if (camera == null)
+			IPresetControl cameraControl = m_CameraControl as IPresetControl;
+			if (cameraControl == null)
 				return;
 
 			ushort index = eventArgs.Data;
@@ -183,7 +184,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				return;
 
 			CameraPreset preset = m_CameraPresets[index];
-			camera.ActivatePreset(preset.PresetId);
+			cameraControl.ActivatePreset(preset.PresetId);
 		}
 
 		#endregion
