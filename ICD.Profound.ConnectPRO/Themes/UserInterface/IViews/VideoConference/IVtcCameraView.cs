@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Common.Utils.EventArguments;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 {
@@ -41,6 +42,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 		/// </summary>
 		event EventHandler OnCameraButtonReleased;
 
+		/// <summary>
+		/// Raised when a preset button is pressed.
+		/// </summary>
+		event EventHandler<UShortEventArgs> OnPresetButtonPressed;
+
 		#endregion
+
+		/// <summary>
+		/// Sets the label for the preset button at the given index.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="label"></param>
+		void SetPresetButtonLabel(ushort index, string label);
 	}
 }

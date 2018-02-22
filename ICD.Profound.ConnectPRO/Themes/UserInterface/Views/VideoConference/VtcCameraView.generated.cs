@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
+using ICD.Connect.UI.Controls.Buttons;
+using ICD.Connect.UI.Controls.Keypads;
 using ICD.Connect.UI.Controls.Pages;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
@@ -8,6 +11,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 	public sealed partial class VtcCameraView
 	{
 		private VtProSubpage m_Subpage;
+		private VtProDPad m_DPad;
+		private VtProButton m_ZoomInButton;
+		private VtProButton m_ZoomOutButton;
+		private VtProButton m_PresetButton1;
+		private VtProButton m_PresetButton2;
+		private VtProButton m_PresetButton3;
+		private VtProButton m_PresetButton4;
+		private VtProButton m_PresetButton5;
+
+		private Dictionary<ushort, VtProButton> m_PresetButtons;
+		private Dictionary<VtProButton, ushort> m_PresetButtonsInverse; 
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -21,6 +35,59 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			{
 				DigitalVisibilityJoin = 121
 			};
+
+			m_DPad = new VtProDPad(503, panel as IPanelDevice, m_Subpage);
+
+			m_ZoomInButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 501
+			};
+
+			m_ZoomOutButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 502
+			};
+
+			m_PresetButton1 = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 504,
+				IndirectTextJoin = 509
+			};
+
+			m_PresetButton2 = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 505,
+				IndirectTextJoin = 510
+			};
+
+			m_PresetButton3 = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 506,
+				IndirectTextJoin = 511
+			};
+
+			m_PresetButton4 = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 507,
+				IndirectTextJoin = 512
+			};
+
+			m_PresetButton5 = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 508,
+				IndirectTextJoin = 513
+			};
+
+			m_PresetButtons = new Dictionary<ushort, VtProButton>
+			{
+				{0, m_PresetButton1},
+				{1, m_PresetButton2},
+				{2, m_PresetButton3},
+				{3, m_PresetButton4},
+				{4, m_PresetButton5}
+			};
+
+			m_PresetButtonsInverse = m_PresetButtons.ToInverse();
 		}
 
 		/// <summary>
@@ -30,6 +97,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		protected override IEnumerable<IVtProControl> GetChildren()
 		{
 			yield return m_Subpage;
+			yield return m_DPad;
+			yield return m_ZoomInButton;
+			yield return m_ZoomOutButton;
+			yield return m_PresetButton1;
+			yield return m_PresetButton2;
+			yield return m_PresetButton3;
+			yield return m_PresetButton4;
+			yield return m_PresetButton5;
 		}
 	}
 }
