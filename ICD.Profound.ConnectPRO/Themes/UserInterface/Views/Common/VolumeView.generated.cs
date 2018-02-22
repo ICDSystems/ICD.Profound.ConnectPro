@@ -31,23 +31,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 
 			m_Guage = new VtProGuage(panel, m_Subpage)
 			{
-				// TODO AnalogFeedbackJoin = 0,
-				// TODO DigitalEnableJoin = 0
+				AnalogFeedbackJoin = 500,
+				DigitalEnableJoin = 525
 			};
 
 			m_VolumeUpButton = new VtProButton(panel, m_Subpage)
 			{
-				// TODO DigitalPressJoin = 0
+				DigitalPressJoin = 522
 			};
 
 			m_VolumeDownButton = new VtProButton(panel, m_Subpage)
 			{
-				// TODO DigitalPressJoin = 0
+				DigitalPressJoin = 523
 			};
 
 			m_MuteButton = new VtProButton(panel, m_Subpage)
 			{
-				// TODO DigitalPressJoin = 0
+				DigitalPressJoin = 524
 			};
 		}
 
