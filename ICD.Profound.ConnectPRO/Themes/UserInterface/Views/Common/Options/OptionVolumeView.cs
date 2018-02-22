@@ -5,7 +5,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options
 {
-	public sealed partial class OptionVolumeView : AbstractOptionView, IOptionContactsView
+	public sealed partial class OptionVolumeView : AbstractOptionView, IOptionVolumeView
 	{
 		public override event EventHandler OnButtonPressed;
 
