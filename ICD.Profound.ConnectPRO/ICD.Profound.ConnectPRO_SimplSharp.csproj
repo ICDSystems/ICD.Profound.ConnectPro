@@ -138,6 +138,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcReferencedContactsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcSharePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\VisibilityNode.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Cameras\ICamerasView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Colors.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmLeaveCallView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmEndMeetingView.cs" />
@@ -218,6 +219,8 @@
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcSharePresenter.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractComponentView.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Cameras\CamerasView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Cameras\CamerasView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmEndMeetingView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmEndMeetingView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmLeaveCallView.cs" />
