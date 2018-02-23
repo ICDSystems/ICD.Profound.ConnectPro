@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Devices.Controls;
@@ -14,6 +15,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		private const ushort HIDE_TIME = (ushort)(3.5f * 1000);
 
 		private readonly SafeTimer m_VisibilityTimer;
+		private readonly SafeCriticalSection m_RefreshSection;
+
 		private IVolumeDeviceControl m_VolumeControl;
 
 		/// <summary>
@@ -44,6 +47,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		public VolumePresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
+			m_RefreshSection = new SafeCriticalSection();
 			m_VisibilityTimer = SafeTimer.Stopped(() => ShowView(false));
 		}
 
@@ -67,13 +71,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			base.Refresh(view);
 
-			IVolumeMuteFeedbackDeviceControl volumeControlMute = VolumeControl as IVolumeMuteFeedbackDeviceControl;
-			bool muted = volumeControlMute != null && volumeControlMute.VolumeIsMuted;
-			IVolumeLevelDeviceControl volumeControlLevel = VolumeControl as IVolumeLevelDeviceControl;
-			float volume = volumeControlLevel == null ? 0 : volumeControlLevel.VolumePosition;
+			m_RefreshSection.Enter();
 
-			view.SetMuted(muted);
-			view.SetVolumePercentage(volume);
+			try
+			{
+				IVolumeMuteFeedbackDeviceControl volumeControlMute = VolumeControl as IVolumeMuteFeedbackDeviceControl;
+				bool muted = volumeControlMute != null && volumeControlMute.VolumeIsMuted;
+				IVolumeLevelDeviceControl volumeControlLevel = VolumeControl as IVolumeLevelDeviceControl;
+				float volume = volumeControlLevel == null ? 0 : volumeControlLevel.VolumePosition;
+
+				view.SetMuted(muted);
+				view.SetVolumePercentage(volume);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
 		}
 
 		/// <summary>
