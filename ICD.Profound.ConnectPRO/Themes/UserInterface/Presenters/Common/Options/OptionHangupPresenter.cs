@@ -11,7 +11,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 {
-	public sealed class OptionContactsPresenter : AbstractOptionPresenter<IOptionContactsView>, IOptionContactsPresenter
+	public sealed class OptionHangupPresenter : AbstractOptionPresenter<IOptionHangupView>, IOptionHangupPresenter
 	{
 		private IConferenceManager m_SubscribedConferenceManager;
 		private readonly IVtcHangupPresenter m_Menu;
@@ -22,7 +22,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public OptionContactsPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public OptionHangupPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_Menu = Navigation.LazyLoadPresenter<IVtcHangupPresenter>();

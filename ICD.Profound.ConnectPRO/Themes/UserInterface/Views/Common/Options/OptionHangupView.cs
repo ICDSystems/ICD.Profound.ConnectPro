@@ -5,7 +5,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options
 {
-	public sealed partial class OptionContactsView : AbstractOptionView, IOptionContactsView
+	public sealed partial class OptionHangupView : AbstractOptionView, IOptionHangupView
 	{
 		public override event EventHandler OnButtonPressed;
 
@@ -14,7 +14,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public OptionContactsView(ISigInputOutput panel, ConnectProTheme theme)
+		public OptionHangupView(ISigInputOutput panel, ConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

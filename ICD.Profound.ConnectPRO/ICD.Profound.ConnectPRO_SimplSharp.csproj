@@ -109,7 +109,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\IHeaderPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IStartMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IVolumePresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionContactsPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionHangupPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionPrivacyMutePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionVolumePresenter.cs" />
@@ -152,7 +152,7 @@
     <Compile Include="Themes\UserInterface\IViews\Common\Sources\ISourceSelectDualView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Sources\ISourceSelectSingleView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Sources\ISourceSelectView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\Common\Options\IOptionContactsView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\Options\IOptionHangupView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Options\IOptionPrivacyMuteView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Options\IOptionView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Options\IOptionVolumeView.cs" />
@@ -184,7 +184,7 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\EndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\HeaderPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\AbstractOptionPresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionContactsPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionHangupPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionPrivacyMutePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionVolumePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\AbstractSourceSelectPresenter.cs" />
@@ -235,8 +235,8 @@
     <Compile Include="Themes\UserInterface\Views\Common\Options\OptionVolumeView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Options\OptionPrivacyMuteView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Options\OptionPrivacyMuteView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\Common\Options\OptionContactsView.cs" />
-    <Compile Include="Themes\UserInterface\Views\Common\Options\OptionContactsView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Options\OptionHangupView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Options\OptionHangupView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\AbstractSourceSelectView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\ReferencedSourceSelectView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\ReferencedSourceSelectView.generated.cs" />

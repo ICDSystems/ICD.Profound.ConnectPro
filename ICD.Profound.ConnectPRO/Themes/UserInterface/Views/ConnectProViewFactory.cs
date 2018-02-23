@@ -60,7 +60,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(IDisplaysView), (panel, theme) => new DisplaysView(panel, theme)},
 
 			// Options
-			{typeof(IOptionContactsView), (panel, theme) => new OptionContactsView(panel, theme)},
+			{typeof(IOptionHangupView), (panel, theme) => new OptionHangupView(panel, theme)},
 			{typeof(IOptionPrivacyMuteView), (panel, theme) => new OptionPrivacyMuteView(panel, theme)},
 			{typeof(IOptionVolumeView), (panel, theme) => new OptionVolumeView(panel, theme)},
 

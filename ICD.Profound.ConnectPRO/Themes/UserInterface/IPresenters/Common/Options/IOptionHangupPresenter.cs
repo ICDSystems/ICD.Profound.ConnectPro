@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Options
 {
-	public interface IOptionContactsPresenter : IOptionPresenter<IOptionContactsView>
+	public interface IOptionHangupPresenter : IOptionPresenter<IOptionHangupView>
 	{
 	}
 }

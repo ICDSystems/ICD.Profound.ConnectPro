@@ -46,7 +46,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IReferencedDisplaysPresenter), (nav, views, theme) => new ReferencedDisplaysPresenter(nav, views, theme)},
 
 			// Options
-			{typeof(IOptionContactsPresenter), (nav, views, theme) => new OptionContactsPresenter(nav, views, theme)},
+			{typeof(IOptionHangupPresenter), (nav, views, theme) => new OptionHangupPresenter(nav, views, theme)},
 			{typeof(IOptionPrivacyMutePresenter), (nav, views, theme) => new OptionPrivacyMutePresenter(nav, views, theme)},
 			{typeof(IOptionVolumePresenter), (nav, views, theme) => new OptionVolumePresenter(nav, views, theme)},
 

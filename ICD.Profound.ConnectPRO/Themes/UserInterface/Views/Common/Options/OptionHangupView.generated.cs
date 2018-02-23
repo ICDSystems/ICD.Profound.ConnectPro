@@ -6,7 +6,7 @@ using ICD.Connect.UI.Controls.Pages;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options
 {
-	public sealed partial class OptionContactsView
+	public sealed partial class OptionHangupView
 	{
 		private VtProSubpage m_Subpage;
 		private VtProMultiModeButton m_Button;
