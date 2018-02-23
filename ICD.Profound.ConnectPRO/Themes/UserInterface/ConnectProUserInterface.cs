@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Services;
@@ -12,8 +13,6 @@ using ICD.Connect.Panels;
 using ICD.Connect.Routing.Controls;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
-using ICD.Connect.Routing.Extensions;
-using ICD.Connect.Routing.RoutingGraphs;
 using ICD.Connect.Sources.TvTuner.Controls;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -45,7 +44,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		private DefaultVisibilityNode m_RootVisibility;
 		private ISource m_ActiveSource;
-		private IRoutingGraph m_RoutingGraph;
 
 		#region Properties
 
@@ -140,18 +138,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (room == m_Room)
 				return;
 
-			Unsubscribe(m_RoutingGraph);
 			Unsubscribe(m_Room);
 
 			ServiceProvider.GetService<ILoggerService>()
 			               .AddEntry(eSeverity.Informational, "{0} setting room to {1}", this, room);
 
 			m_Room = room;
-			m_RoutingGraph = m_Room == null ? null : m_Room.Core.GetRoutingGraph();
 
 			m_NavigationController.SetRoom(room);
 
-			Subscribe(m_RoutingGraph);
 			Subscribe(m_Room);
 
 			UpdatePanelOnlineJoin();
@@ -309,6 +304,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				return;
 
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
+			room.Routing.OnDisplaySourceChanged += RoutingOnDisplaySourceChanged;
+			room.Routing.OnAudioSourceChanged += RoutingOnAudioSourceChanged;
 		}
 
 		/// <summary>
@@ -321,6 +318,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				return;
 
 			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
+			room.Routing.OnDisplaySourceChanged -= RoutingOnDisplaySourceChanged;
+			room.Routing.OnAudioSourceChanged -= RoutingOnAudioSourceChanged;
 		}
 
 		/// <summary>
@@ -356,54 +355,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().ShowView(displaysVisible);
 		}
 
-		#endregion
-
-		#region RoutingGraph Callbacks
-
 		/// <summary>
-		/// Subscribe to the routing graph events.
-		/// </summary>
-		/// <param name="routingGraph"></param>
-		private void Subscribe(IRoutingGraph routingGraph)
-		{
-			if (routingGraph == null)
-				return;
-
-			routingGraph.OnRouteChanged += RoutingGraphOnRouteChanged;
-		}
-
-		/// <summary>
-		/// Unsubscribe from the routing graph events.
-		/// </summary>
-		/// <param name="routingGraph"></param>
-		private void Unsubscribe(IRoutingGraph routingGraph)
-		{
-			if (routingGraph == null)
-				return;
-
-			routingGraph.OnRouteChanged -= RoutingGraphOnRouteChanged;
-		}
-
-		/// <summary>
-		/// Called when a switcher changes routing.
+		/// Update the UI with the active audio sources.
 		/// </summary>
 		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		private void RoutingGraphOnRouteChanged(object sender, EventArgs args)
+		/// <param name="eventArgs"></param>
+		private void RoutingOnAudioSourceChanged(object sender, EventArgs eventArgs)
 		{
-			if (m_Room == null)
-				return;
-
-			// Build a map of video destination => source
-			Dictionary<IDestination, ISource> routing = new Dictionary<IDestination, ISource>();
-			foreach (IDestination destination in m_Room.Routing.GetDisplayDestinations())
-				routing[destination] = m_Room.Routing.GetActiveVideoSource(destination);
-
 			// Get a list of sources going to audio destinations
-			IEnumerable<ISource> activeAudio = m_Room.Routing.GetActiveAudioSources();
-
-			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().SetRoutedSources(routing);
+			IEnumerable<ISource> activeAudio = m_Room.Routing.GetCachedActiveAudioSources();
 			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().SetActiveAudioSources(activeAudio);
+		}
+
+		/// <summary>
+		/// Update the UI with the active video sources.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void RoutingOnDisplaySourceChanged(object sender, EventArgs eventArgs)
+		{
+			Dictionary<IDestination, ISource> routing = m_Room.Routing
+			                                                  .GetCachedActiveVideoSources()
+			                                                  .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().SetRoutedSources(routing);
 		}
 
 		#endregion

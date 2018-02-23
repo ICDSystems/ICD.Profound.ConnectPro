@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Cisco;
 using ICD.Connect.Conferencing.Cisco.Controls;
@@ -18,6 +19,7 @@ using ICD.Connect.Routing.Controls;
 using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Connect.Routing.EventArguments;
 using ICD.Connect.Routing.Extensions;
 using ICD.Connect.Routing.RoutingGraphs;
 using ICD.Connect.Sources.TvTuner.Controls;
@@ -25,17 +27,31 @@ using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Routing
 {
-	public sealed class ConnectProRouting
+	public sealed class ConnectProRouting : IDisposable
 	{
+		/// <summary>
+		/// Raised when a source becomes routed/unrouted to a display.
+		/// </summary>
+		public event EventHandler OnDisplaySourceChanged;
+
+		/// <summary>
+		/// Raised when a source becomes routed/unrouted to room audio.
+		/// </summary>
+		public event EventHandler OnAudioSourceChanged;
+
 		private readonly IConnectProRoom m_Room;
 		private readonly List<IDestination> m_Displays;
 		private readonly List<IDestination> m_AudioDestinations;
+		private readonly Dictionary<IDestination, ISource> m_VideoRoutingCache;
+		private readonly IcdHashSet<ISource> m_AudioRoutingCache;
 		private readonly SafeCriticalSection m_CacheSection;
+
+		private IRoutingGraph m_SubscribedRoutingGraph;
 
 		/// <summary>
 		/// Gets the routing graph from the core.
 		/// </summary>
-		private IRoutingGraph RoutingGraph { get { return m_Room.Core.GetRoutingGraph(); } }
+		private IRoutingGraph RoutingGraph { get { return m_SubscribedRoutingGraph; } }
 
 		/// <summary>
 		/// Returns true if the room contains more than 1 display.
@@ -51,7 +67,22 @@ namespace ICD.Profound.ConnectPRO.Routing
 			m_Room = room;
 			m_Displays = new List<IDestination>();
 			m_AudioDestinations = new List<IDestination>();
+			m_VideoRoutingCache = new Dictionary<IDestination, ISource>();
+			m_AudioRoutingCache = new IcdHashSet<ISource>();
 			m_CacheSection = new SafeCriticalSection();
+
+			Subscribe(room.Core.GetRoutingGraph());
+		}
+
+		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public void Dispose()
+		{
+			OnDisplaySourceChanged = null;
+			OnAudioSourceChanged = null;
+
+			Unsubscribe(m_SubscribedRoutingGraph);
 		}
 
 		#region Sources
@@ -89,6 +120,16 @@ namespace ICD.Profound.ConnectPRO.Routing
 			             .Where(r => r.Originators.ContainsRecursive(source.Id))
 			             .OrderBy(r => r.IsCombineRoom())
 			             .FirstOrDefault();
+		}
+
+		public IEnumerable<KeyValuePair<IDestination, ISource>> GetCachedActiveVideoSources()
+		{
+			return m_CacheSection.Execute(() => m_VideoRoutingCache.ToArray(m_VideoRoutingCache.Count));
+		}
+
+		public IEnumerable<ISource> GetCachedActiveAudioSources()
+		{
+			return m_CacheSection.Execute(() => m_AudioRoutingCache.ToArray(m_AudioRoutingCache.Count));
 		}
 
 		#endregion
@@ -403,6 +444,86 @@ namespace ICD.Profound.ConnectPRO.Routing
 			// TV Tuner
 			ITvTunerControl tvTuner = device.Controls.GetControls<ITvTunerControl>().FirstOrDefault();
 			return tvTuner;
+		}
+
+		#endregion
+
+		#region RoutingGraph Callbacks
+
+		/// <summary>
+		/// Subscribe to the routing graph events.
+		/// </summary>
+		/// <param name="routingGraph"></param>
+		private void Subscribe(IRoutingGraph routingGraph)
+		{
+			if (routingGraph == null)
+				return;
+
+			m_SubscribedRoutingGraph = routingGraph;
+
+			routingGraph.OnRouteChanged += RoutingGraphOnRouteChanged;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the routing graph events.
+		/// </summary>
+		/// <param name="routingGraph"></param>
+		private void Unsubscribe(IRoutingGraph routingGraph)
+		{
+			if (routingGraph == null)
+				return;
+
+			m_SubscribedRoutingGraph = null;
+
+			routingGraph.OnRouteChanged -= RoutingGraphOnRouteChanged;
+		}
+
+		/// <summary>
+		/// Called when a switcher changes routing.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void RoutingGraphOnRouteChanged(object sender, SwitcherRouteChangeEventArgs args)
+		{
+			bool videoChange = false;
+			bool audioChange = false;
+
+			m_CacheSection.Enter();
+
+			try
+			{
+				// Build a map of video destination => source
+				if (args.Type.HasFlag(eConnectionType.Video))
+				{
+					Dictionary<IDestination, ISource> routing =
+						m_Room.Routing
+						      .GetDisplayDestinations()
+						      .ToDictionary(destination => destination,
+						                    destination => m_Room.Routing.GetActiveVideoSource(destination));
+
+					videoChange = m_VideoRoutingCache.Update(routing);
+				}
+
+				// Get a list of sources going to audio destinations
+				if (args.Type.HasFlag(eConnectionType.Audio))
+				{
+					IcdHashSet<ISource> activeAudio = m_Room.Routing.GetActiveAudioSources().ToIcdHashSet();
+					audioChange = !activeAudio.ScrambledEquals(m_AudioRoutingCache);
+
+					m_AudioRoutingCache.Clear();
+					m_AudioRoutingCache.AddRange(activeAudio);
+				}
+			}
+			finally
+			{
+				m_CacheSection.Leave();
+			}
+
+			if (videoChange)
+				OnDisplaySourceChanged.Raise(this);
+
+			if (audioChange)
+				OnAudioSourceChanged.Raise(this);
 		}
 
 		#endregion
