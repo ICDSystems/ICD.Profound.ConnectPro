@@ -163,7 +163,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 						return Enumerable.Empty<ModelPresenterTypeInfo>();
 
 					return m_DirectoryBrowser.GetCurrentFolder()
-					                         .GetChildren()
+					                         // TODO - Panel doesn't support tree navigation (yet)
+					                         //.GetChildren()
+					                         .GetContacts()
 					                         .Select(c =>
 					                                 {
 						                                 ModelPresenterTypeInfo.ePresenterType type = (c is IFolder)
