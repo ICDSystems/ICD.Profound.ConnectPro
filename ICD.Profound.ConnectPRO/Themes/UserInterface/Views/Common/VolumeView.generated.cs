@@ -11,6 +11,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 	public sealed partial class VolumeView
 	{
 		private VtProSubpage m_Subpage;
+		private VtProButton m_CloseButton;
 		private VtProGuage m_Guage;
 		private VtProButton m_VolumeUpButton;
 		private VtProButton m_VolumeDownButton;
@@ -27,6 +28,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
 				DigitalVisibilityJoin = 11
+			};
+
+			m_CloseButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 45
 			};
 
 			m_Guage = new VtProGuage(panel, m_Subpage)
@@ -58,6 +64,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		protected override IEnumerable<IVtProControl> GetChildren()
 		{
 			yield return m_Subpage;
+			yield return m_CloseButton;
 			yield return m_Guage;
 			yield return m_VolumeUpButton;
 			yield return m_VolumeDownButton;

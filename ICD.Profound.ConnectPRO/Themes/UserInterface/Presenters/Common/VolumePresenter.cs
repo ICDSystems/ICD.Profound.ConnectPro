@@ -171,6 +171,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			base.Subscribe(view);
 
+			view.OnCloseButtonPressed += ViewOnCloseButtonPressed;
 			view.OnMuteButtonPressed += ViewOnMuteButtonPressed;
 			view.OnVolumeButtonReleased += ViewOnVolumeButtonReleased;
 			view.OnVolumeUpButtonPressed += ViewOnVolumeUpButtonPressed;
@@ -185,6 +186,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			base.Unsubscribe(view);
 
+			view.OnCloseButtonPressed -= ViewOnCloseButtonPressed;
 			view.OnMuteButtonPressed -= ViewOnMuteButtonPressed;
 			view.OnVolumeButtonReleased -= ViewOnVolumeButtonReleased;
 			view.OnVolumeUpButtonPressed -= ViewOnVolumeUpButtonPressed;
@@ -229,6 +231,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		private void ViewOnMuteButtonPressed(object sender, EventArgs eventArgs)
 		{
 			ToggleMute();
+		}
+
+		/// <summary>
+		/// Called when the user presses the close button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ViewOnCloseButtonPressed(object sender, EventArgs eventArgs)
+		{
+			ShowView(false);
 		}
 
 		/// <summary>

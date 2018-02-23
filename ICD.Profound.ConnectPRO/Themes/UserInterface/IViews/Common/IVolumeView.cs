@@ -25,6 +25,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 		event EventHandler OnMuteButtonPressed;
 
 		/// <summary>
+		/// Raised when the user presses the close button.
+		/// </summary>
+		event EventHandler OnCloseButtonPressed;
+
+		/// <summary>
 		/// Sets the value on the volume bar in the range 0.0f - 1.0f
 		/// </summary>
 		/// <param name="volume"></param>

@@ -11,6 +11,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		public event EventHandler OnVolumeDownButtonPressed;
 		public event EventHandler OnVolumeButtonReleased;
 		public event EventHandler OnMuteButtonPressed;
+		public event EventHandler OnCloseButtonPressed;
 
 		/// <summary>
 		/// Constructor.
@@ -33,6 +34,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			OnVolumeDownButtonPressed = null;
 			OnVolumeButtonReleased = null;
 			OnMuteButtonPressed = null;
+			OnCloseButtonPressed = null;
 
 			base.Dispose();
 		}
@@ -72,6 +74,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			m_VolumeDownButton.OnPressed += VolumeDownButtonOnPressed;
 			m_VolumeDownButton.OnReleased += VolumeDownButtonOnReleased;
 			m_MuteButton.OnPressed += MuteButtonOnPressed;
+			m_CloseButton.OnPressed += CloseButtonOnPressed;
 		}
 
 		/// <summary>
@@ -86,6 +89,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			m_VolumeDownButton.OnPressed -= VolumeDownButtonOnPressed;
 			m_VolumeDownButton.OnReleased -= VolumeDownButtonOnReleased;
 			m_MuteButton.OnPressed -= MuteButtonOnPressed;
+			m_CloseButton.OnPressed -= CloseButtonOnPressed;
+		}
+
+		/// <summary>
+		/// Called when the user presses the close button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void CloseButtonOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnCloseButtonPressed.Raise(this);
 		}
 
 		/// <summary>
