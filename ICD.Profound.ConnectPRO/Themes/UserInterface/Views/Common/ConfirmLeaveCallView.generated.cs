@@ -22,17 +22,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 30
+				DigitalVisibilityJoin = 521
 			};
 
 			m_YesButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 31
+				DigitalPressJoin = 519
 			};
 
 			m_CancelButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 32
+				DigitalPressJoin = 520
 			};
 		}
 
