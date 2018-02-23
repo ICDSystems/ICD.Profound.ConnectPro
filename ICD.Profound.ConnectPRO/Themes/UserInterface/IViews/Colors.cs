@@ -4,17 +4,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews
 {
 	public enum eDisplayColor
 	{
-		Grey,
-		Yellow,
-		Green
+		White, // Routed with no controls
+		Grey, // Nothing routed/selected
+		Yellow, // Currently routing
+		Green // Routed with controls
 	}
 
 	public enum eSourceColor
 	{
 		White,
 		Grey,
-		Yellow,
-		Green
+		Yellow
 	}
 
 	public static class Colors
@@ -32,12 +32,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews
 		{
 			switch (displayColor)
 			{
+				case eDisplayColor.White:
+				case eDisplayColor.Green:
+					return COLOR_DARK_GREY;
 				case eDisplayColor.Grey:
 					return COLOR_LIGHT_GREY;
 				case eDisplayColor.Yellow:
 					return COLOR_DARK_GREY;
-				case eDisplayColor.Green:
-					return COLOR_WHITE;
 
 				default:
 					throw new ArgumentOutOfRangeException("displayColor");
@@ -59,8 +60,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews
 					return COLOR_LIGHT_GREY;
 				case eSourceColor.Yellow:
 					return COLOR_DARK_GREY;
-				case eSourceColor.Green:
-					return COLOR_WHITE;
 
 				default:
 					throw new ArgumentOutOfRangeException("sourceColor");

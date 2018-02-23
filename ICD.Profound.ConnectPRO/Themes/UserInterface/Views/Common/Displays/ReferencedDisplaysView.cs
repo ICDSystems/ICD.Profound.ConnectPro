@@ -9,9 +9,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 {
 	public sealed partial class ReferencedDisplaysView : AbstractComponentView, IReferencedDisplaysView
 	{
-		private const ushort MODE_GREY = 0;
-		private const ushort MODE_YELLOW = 1;
-		private const ushort MODE_GREEN = 2;
+		private const ushort MODE_WHITE = 0;
+		private const ushort MODE_GREY = 1;
+		private const ushort MODE_YELLOW = 2;
+		private const ushort MODE_GREEN = 3;
 
 		public event EventHandler OnButtonPressed;
 		public event EventHandler OnSpeakerButtonPressed;
@@ -48,6 +49,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		{
 			switch (color)
 			{
+				case eDisplayColor.White:
+					m_BackgroundButton.SetMode(MODE_WHITE);
+					break;
 				case eDisplayColor.Grey:
 					m_BackgroundButton.SetMode(MODE_GREY);
 					break;

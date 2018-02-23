@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Conferencing.Cisco.Controls;
@@ -151,6 +153,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			UpdatePanelOnlineJoin();
 			UpdateMeetingPresenters();
+			UpdateAudioRouting();
+			UpdateVideoRouting();
 		}
 
 		/// <summary>
@@ -226,9 +230,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <summary>
 		/// Called to update the selection state of the given destination.
 		/// </summary>
-		/// <param name="presenter"></param>
+		/// <param name="routedSource"></param>
 		/// <param name="destination"></param>
-		private void HandleSelectedDisplay(IReferencedDisplaysPresenter presenter, IDestination destination)
+		private void HandleSelectedDisplay(ISource routedSource, IDestination destination)
 		{
 			if (m_Room == null)
 				return;
@@ -236,11 +240,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (destination == null)
 				return;
 
-			ISource routedSource;
-
 			// If no source is selected for routing then we open the contextual menu for the current routed source
 			if (m_ActiveSource == null)
-				routedSource = presenter == null ? null : presenter.RoutedSource;
+			{
+			}
 			// If a source is currently selected then we route that source to the selected display
 			else
 			{
@@ -288,6 +291,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>().ActiveSource = m_ActiveSource;
 			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().ActiveSource = m_ActiveSource;
+			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().ActiveSource = m_ActiveSource;
 		}
 
 		#endregion
@@ -353,6 +357,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>().ShowView(singleSourceVisible);
 			m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>().ShowView(dualSourceVisible);
 			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().ShowView(displaysVisible);
+			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().ShowView(displaysVisible);
 		}
 
 		/// <summary>
@@ -362,9 +367,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="eventArgs"></param>
 		private void RoutingOnAudioSourceChanged(object sender, EventArgs eventArgs)
 		{
-			// Get a list of sources going to audio destinations
-			IEnumerable<ISource> activeAudio = m_Room.Routing.GetCachedActiveAudioSources();
-			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().SetActiveAudioSources(activeAudio);
+			UpdateAudioRouting();
 		}
 
 		/// <summary>
@@ -374,10 +377,39 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="eventArgs"></param>
 		private void RoutingOnDisplaySourceChanged(object sender, EventArgs eventArgs)
 		{
-			Dictionary<IDestination, ISource> routing = m_Room.Routing
-			                                                  .GetCachedActiveVideoSources()
-			                                                  .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+			UpdateVideoRouting();
+		}
+
+		/// <summary>
+		/// Updates the audio routing state in the UI.
+		/// </summary>
+		private void UpdateAudioRouting()
+		{
+			IcdHashSet<ISource> activeAudio =
+				(m_Room == null
+					 ? Enumerable.Empty<ISource>()
+					 : m_Room.Routing
+					         .GetCachedActiveAudioSources())
+					.ToIcdHashSet();
+
+			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().SetActiveAudioSources(activeAudio);
+			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().SetActiveAudioSources(activeAudio);
+		}
+
+		/// <summary>
+		/// Updates the video routing state in the UI.
+		/// </summary>
+		private void UpdateVideoRouting()
+		{
+			Dictionary<IDestination, ISource> routing =
+				(m_Room == null
+					 ? Enumerable.Empty<KeyValuePair<IDestination, ISource>>()
+					 : m_Room.Routing
+					         .GetCachedActiveVideoSources())
+					.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
 			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().SetRoutedSources(routing);
+			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().SetRoutedSources(routing);
 		}
 
 		#endregion
@@ -390,6 +422,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			Subscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>());
 			Subscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>());
 			Subscribe(m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>());
+			Subscribe(m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>());
 		}
 
 		/// <summary>
@@ -400,6 +433,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>());
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>());
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>());
+			Unsubscribe(m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>());
 		}
 
 		#region SourceSelectSingle Callbacks
@@ -498,7 +532,42 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private void DisplaysPresenterOnDestinationPressed(object sender, IReferencedDisplaysPresenter presenter,
 		                                                   IDestination destination)
 		{
-			HandleSelectedDisplay(presenter, destination);
+			HandleSelectedDisplay(presenter.ActiveSource, destination);
+		}
+
+		#endregion
+
+		#region Menu Displays Callbacks
+
+		/// <summary>
+		/// Subscribe to the presenter events.
+		/// </summary>
+		/// <param name="presenter"></param>
+		private void Subscribe(IMenuDisplaysPresenter presenter)
+		{
+			presenter.OnDestinationPressed += MenuDisplaysPresenterOnDestinationPressed;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the presenter events.
+		/// </summary>
+		/// <param name="presenter"></param>
+		private void Unsubscribe(IMenuDisplaysPresenter presenter)
+		{
+			presenter.OnDestinationPressed -= MenuDisplaysPresenterOnDestinationPressed;
+		}
+
+		/// <summary>
+		/// Called when the user presses a destination in the presenter.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="destination"></param>
+		private void MenuDisplaysPresenterOnDestinationPressed(object sender, IDestination destination)
+		{
+			IMenuDisplaysPresenter presenter = sender as IMenuDisplaysPresenter;
+			ISource activeSource = presenter == null ? null : presenter.ActiveSource;
+
+			HandleSelectedDisplay(activeSource, destination);
 		}
 
 		#endregion

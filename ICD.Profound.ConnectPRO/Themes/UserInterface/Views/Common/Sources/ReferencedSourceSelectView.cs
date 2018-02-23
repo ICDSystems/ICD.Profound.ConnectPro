@@ -12,7 +12,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		private const ushort MODE_GREY = 0;
 		private const ushort MODE_WHITE = 1;
 		private const ushort MODE_YELLOW = 2;
-		private const ushort MODE_GREEN = 3;
 
 		public event EventHandler OnButtonPressed;
 
@@ -47,9 +46,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 				case eSourceColor.Yellow:
 					m_BackgroundButton.SetMode(MODE_YELLOW);
 					break;
-				case eSourceColor.Green:
-					m_BackgroundButton.SetMode(MODE_GREEN);
-					break;
+
 				default:
 					throw new ArgumentOutOfRangeException("color");
 			}

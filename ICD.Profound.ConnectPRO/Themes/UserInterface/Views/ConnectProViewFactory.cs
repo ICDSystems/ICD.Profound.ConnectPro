@@ -58,6 +58,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 
 			// Displays
 			{typeof(IDisplaysView), (panel, theme) => new DisplaysView(panel, theme)},
+			{typeof(IMenuDisplaysView), (panel, theme) => new MenuDisplaysView(panel, theme)},
 
 			// Options
 			{typeof(IOptionHangupView), (panel, theme) => new OptionHangupView(panel, theme)},

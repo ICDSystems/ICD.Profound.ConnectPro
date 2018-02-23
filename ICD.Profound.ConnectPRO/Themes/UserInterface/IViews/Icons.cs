@@ -5,10 +5,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews
 	public static class Icons
 	{
 		private const string PREFIX_SOURCE = "icon_";
-		private const string PREFIX_DISPLAY = "display_";
+		private const string PREFIX_DISPLAY = "icon_display_";
 
-		private const string SUFFIX_WHITE = "_white";
-		private const string SUFFIX_TWOTONE = "_twoTone";
+		private const string SUFFIX_WHITE = "_stndBlue";//"_white";
+		private const string SUFFIX_TWOTONE = "_gray";//"_twoTone";
 		private const string SUFFIX_GREY = "_gray";
 		private const string SUFFIX_YELLOW = "_yellow";
 
@@ -60,8 +60,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews
 				case eSourceColor.Grey:
 				case eSourceColor.Yellow:
 					return SUFFIX_TWOTONE;
-				case eSourceColor.Green:
-					return SUFFIX_WHITE;
+
 				default:
 					throw new ArgumentOutOfRangeException("color");
 			}
@@ -80,8 +79,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews
 					return SUFFIX_GREY;
 				case eDisplayColor.Yellow:
 					return SUFFIX_YELLOW;
+
+				case eDisplayColor.White:
 				case eDisplayColor.Green:
 					return SUFFIX_WHITE;
+				
 				default:
 					throw new ArgumentOutOfRangeException("color");
 			}

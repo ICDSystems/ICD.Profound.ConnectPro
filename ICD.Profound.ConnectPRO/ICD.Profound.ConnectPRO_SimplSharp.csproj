@@ -101,6 +101,7 @@
     <Compile Include="Themes\OsdInterface\Views\OsdSourcesView.generated.cs" />
     <Compile Include="Themes\OsdInterface\Views\OsdWelcomeView.cs" />
     <Compile Include="Themes\OsdInterface\Views\OsdWelcomeView.generated.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IMenuDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmLeaveCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IReferencedDisplaysPresenter.cs" />
@@ -139,6 +140,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\VisibilityNode.cs" />
     <Compile Include="Themes\UserInterface\IViews\Cameras\ICamerasView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Colors.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\Displays\IMenuDisplaysView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmLeaveCallView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmEndMeetingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IStartMeetingView.cs" />
@@ -179,6 +181,7 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmEndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmLeaveCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\DisplaysPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Displays\MenuDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\ReferencedDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\ReferencedDisplaysPresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\EndMeetingPresenter.cs" />
@@ -224,6 +227,8 @@
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmLeaveCallView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\DisplaysView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\DisplaysView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Displays\MenuDisplaysView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Displays\MenuDisplaysView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\ReferencedDisplaysView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\ReferencedDisplaysView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\EndMeetingView.cs" />
