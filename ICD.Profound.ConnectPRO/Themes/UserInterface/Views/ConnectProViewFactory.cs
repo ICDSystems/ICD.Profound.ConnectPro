@@ -61,7 +61,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 
 			// Options
 			{typeof(IOptionContactsView), (panel, theme) => new OptionContactsView(panel, theme)},
-			{typeof(IOptionMasterMicView), (panel, theme) => new OptionMasterMicView(panel, theme)},
 			{typeof(IOptionPrivacyMuteView), (panel, theme) => new OptionPrivacyMuteView(panel, theme)},
 			{typeof(IOptionVolumeView), (panel, theme) => new OptionVolumeView(panel, theme)},
 
