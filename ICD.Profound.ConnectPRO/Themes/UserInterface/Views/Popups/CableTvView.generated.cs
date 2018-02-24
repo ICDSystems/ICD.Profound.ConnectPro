@@ -53,88 +53,85 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 				DigitalPressJoin = 110
 			};
 
-			// TODO
-			m_MenuButtons = new VtProTabButton(0, panel as IPanelDevice, m_Subpage);
+			m_MenuButtons = new VtProTabButton(10, panel as IPanelDevice, m_Subpage);
 			
-			// TODO
-			m_MenuDirections = new VtProDPad(0, panel as IPanelDevice, m_Subpage);
+			m_MenuDirections = new VtProDPad(12, panel as IPanelDevice, m_Subpage);
 
-			// TODO
-			m_NumberKeypad = new VtProSimpleKeypad(0, panel as IPanelDevice, m_Subpage);
+			m_NumberKeypad = new VtProSimpleKeypad(11, panel as IPanelDevice, m_Subpage);
 
 			m_ChannelUpButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 0 // TODO
+				DigitalPressJoin = 550
 			};
 
 			m_ChannelDownButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 0 // TODO
+				DigitalPressJoin = 551
 			};
 
 			m_PageUpButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 0 // TODO
+				DigitalPressJoin = 552
 			};
 
 			m_PageDownButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 0 // TODO
+				DigitalPressJoin = 553
 			};
 
 			m_RedButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 0 // TODO
+				DigitalPressJoin = 561
 			};
 
 			m_YellowButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 0 // TODO
+				DigitalPressJoin = 562
 			};
 
 			m_GreenButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 0 // TODO
+				DigitalPressJoin = 563
 			};
 
 			m_BlueButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 0 // TODO
+				DigitalPressJoin = 564
 			};
 
 			m_RepeatButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 0 // TODO
+				DigitalPressJoin = 554
 			};
 
 			m_RewindButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 0 // TODO
+				DigitalPressJoin = 555
 			};
 
 			m_StopButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 0 // TODO
+				DigitalPressJoin = 556
 			};
 
 			m_PlayButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 0 // TODO
+				DigitalPressJoin = 557
 			};
 
 			m_PauseButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 0 // TODO
+				DigitalPressJoin = 558
 			};
 
 			m_FastForwardButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 0 // TODO
+				DigitalPressJoin = 559
 			};
 
 			m_RecordButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 0 // TODO
+				DigitalPressJoin = 560
 			};
 		}
 
