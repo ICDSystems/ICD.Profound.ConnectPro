@@ -10,6 +10,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 {
 	public sealed class CableTvPresenter : AbstractPopupPresenter<ICableTvView>, ICableTvPresenter
 	{
+		private const ushort INDEX_TOP_MENU = 0;
+		private const ushort INDEX_POPUP_MENU = 1;
+		private const ushort INDEX_RETURN = 2;
+		private const ushort INDEX_INFO = 3;
+		private const ushort INDEX_EJECT = 4;
+		private const ushort INDEX_POWER = 5;
+
 		/// <summary>
 		/// Gets/sets the tv tuner control that this preseter controls.
 		/// </summary>
@@ -36,6 +43,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 		{
 			base.Subscribe(view);
 
+			view.OnMenuButtonPressed += ViewOnOnMenuButtonPressed;
 			view.OnNumberButtonPressed += ViewOnNumberButtonPressed;
 			view.OnClearButtonPressed += ViewOnClearButtonPressed;
 			view.OnEnterButtonPressed += ViewOnEnterButtonPressed;
@@ -50,13 +58,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 			view.OnChannelDownButtonPressed += ViewOnChannelDownButtonPressed;
 			view.OnPageUpButtonPressed += ViewOnPageUpButtonPressed;
 			view.OnPageDownButtonPressed += ViewOnPageDownButtonPressed;
-
-			view.OnTopMenuButtonPressed += ViewOnTopMenuButtonPressed;
-			view.OnPopupMenuButtonPressed += ViewOnPopupMenuButtonPressed;
-			view.OnReturnButtonPressed += ViewOnReturnButtonPressed;
-			view.OnInfoButtonPressed += ViewOnInfoButtonPressed;
-			view.OnEjectButtonPressed += ViewOnEjectButtonPressed;
-			view.OnPowerButtonPressed += ViewOnPowerButtonPressed;
 
 			view.OnRepeatButtonPressed += ViewOnRepeatButtonPressed;
 			view.OnRewindButtonPressed += ViewOnRewindButtonPressed;
@@ -80,6 +81,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 		{
 			base.Unsubscribe(view);
 
+			view.OnMenuButtonPressed -= ViewOnOnMenuButtonPressed;
 			view.OnNumberButtonPressed -= ViewOnNumberButtonPressed;
 			view.OnClearButtonPressed -= ViewOnClearButtonPressed;
 			view.OnEnterButtonPressed -= ViewOnEnterButtonPressed;
@@ -95,13 +97,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 			view.OnPageUpButtonPressed -= ViewOnPageUpButtonPressed;
 			view.OnPageDownButtonPressed -= ViewOnPageDownButtonPressed;
 
-			view.OnTopMenuButtonPressed -= ViewOnTopMenuButtonPressed;
-			view.OnPopupMenuButtonPressed -= ViewOnPopupMenuButtonPressed;
-			view.OnReturnButtonPressed -= ViewOnReturnButtonPressed;
-			view.OnInfoButtonPressed -= ViewOnInfoButtonPressed;
-			view.OnEjectButtonPressed -= ViewOnEjectButtonPressed;
-			view.OnPowerButtonPressed -= ViewOnPowerButtonPressed;
-
 			view.OnRepeatButtonPressed -= ViewOnRepeatButtonPressed;
 			view.OnRewindButtonPressed -= ViewOnRewindButtonPressed;
 			view.OnFastForwardButtonPressed -= ViewOnFastForwardButtonPressed;
@@ -116,10 +111,43 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 			view.OnYellowButtonPressed -= ViewOnYellowButtonPressed;
 		}
 
-		private void ViewOnNumberButtonPressed(object sender, CharEventArgs charEventArgs)
+		private void ViewOnOnMenuButtonPressed(object sender, UShortEventArgs eventArgs)
+		{
+			if (Control == null)
+				return;
+
+			switch (eventArgs.Data)
+			{
+				case INDEX_TOP_MENU:
+					Control.TopMenu();
+					break;
+				
+				case INDEX_POPUP_MENU:
+					Control.PopupMenu();
+					break;
+				
+				case INDEX_RETURN:
+					Control.Return();
+					break;
+				
+				case INDEX_INFO:
+					Control.Info();
+					break;
+				
+				case INDEX_EJECT:
+					Control.Eject();
+					break;
+				
+				case INDEX_POWER:
+					Control.Power();
+					break;
+			}
+		}
+
+		private void ViewOnNumberButtonPressed(object sender, CharEventArgs eventArgs)
 		{
 			if (Control != null)
-				Control.SendNumber(charEventArgs.Data);
+				Control.SendNumber(eventArgs.Data);
 		}
 
 		private void ViewOnClearButtonPressed(object sender, EventArgs eventArgs)
@@ -186,42 +214,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 		{
 			if (Control != null)
 				Control.PageDown();
-		}
-
-		private void ViewOnTopMenuButtonPressed(object sender, EventArgs eventArgs)
-		{
-			if (Control != null)
-				Control.TopMenu();
-		}
-
-		private void ViewOnPopupMenuButtonPressed(object sender, EventArgs eventArgs)
-		{
-			if (Control != null)
-				Control.PopupMenu();
-		}
-
-		private void ViewOnReturnButtonPressed(object sender, EventArgs eventArgs)
-		{
-			if (Control != null)
-				Control.Return();
-		}
-
-		private void ViewOnInfoButtonPressed(object sender, EventArgs eventArgs)
-		{
-			if (Control != null)
-				Control.Info();
-		}
-
-		private void ViewOnEjectButtonPressed(object sender, EventArgs eventArgs)
-		{
-			if (Control != null)
-				Control.Eject();
-		}
-
-		private void ViewOnPowerButtonPressed(object sender, EventArgs eventArgs)
-		{
-			if (Control != null)
-				Control.Power();
 		}
 
 		private void ViewOnRepeatButtonPressed(object sender, EventArgs eventArgs)
