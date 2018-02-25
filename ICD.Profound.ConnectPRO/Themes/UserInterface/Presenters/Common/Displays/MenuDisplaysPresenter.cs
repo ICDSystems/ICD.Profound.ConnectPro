@@ -73,10 +73,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 						? string.Empty
 						: Display1Destination.GetName(combine) ?? string.Empty;
 
+				IDeviceControl display1Control = GetDeviceControl(m_Display1RoutedSource);
+
 				eDisplayColor display1Color = m_ActiveSource == null
 					                              ? m_Display1RoutedSource == null
 						                                ? eDisplayColor.Grey
-						                                : eDisplayColor.White
+						                                : display1Control == null
+							                                  ? eDisplayColor.White
+							                                  : eDisplayColor.Green
 					                              : eDisplayColor.Yellow;
 
 				string display1Test = m_ActiveSource == null
@@ -106,7 +110,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 					display1Line2 = display1Test.Substring(splitIndex + 1).Trim();
 				}
 
-				IDeviceControl display1Control = GetDeviceControl(m_Display1RoutedSource);
 				if (display1Control != null)
 				{
 					display1Line1 = "PRESS FOR CONTROLS";
@@ -145,10 +148,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 						? string.Empty
 						: Display2Destination.GetName(combine) ?? string.Empty;
 
+				IDeviceControl display2Control = GetDeviceControl(m_Display2RoutedSource);
+
 				eDisplayColor display2Color = m_ActiveSource == null
 					                              ? m_Display2RoutedSource == null
 						                                ? eDisplayColor.Grey
-														: eDisplayColor.White
+						                                : display2Control == null
+							                                  ? eDisplayColor.White
+							                                  : eDisplayColor.Green
 					                              : eDisplayColor.Yellow;
 
 				string display2Test = m_ActiveSource == null
@@ -178,7 +185,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 					display2Line2 = display2Test.Substring(splitIndex + 1).Trim();
 				}
 
-				IDeviceControl display2Control = GetDeviceControl(m_Display2RoutedSource);
 				if (display2Control != null)
 				{
 					display2Line1 = "PRESS FOR CONTROLS";
