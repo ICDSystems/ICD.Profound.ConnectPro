@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using ICD.Common.Utils.EventArguments;
+using ICD.Connect.Conferencing.Cisco;
+using ICD.Connect.Conferencing.Cisco.Components.System;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
+using ICD.Connect.Conferencing.Controls;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
@@ -30,6 +34,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				{INDEX_DTMF, typeof(IVtcDtmfPresenter)},
 			};
 
+		private SystemComponent m_SubscribedCodecSystem;
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -40,6 +46,83 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			: base(nav, views, theme)
 		{
 		}
+
+		private SystemComponent GetSystemComponent(IConnectProRoom room)
+		{
+			if (room == null)
+				return null;
+
+			IDialingDeviceControl dialer = room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			if (dialer == null)
+				return null;
+
+			CiscoCodec codec = dialer.Parent as CiscoCodec;
+			return codec == null ? null : codec.Components.GetComponent<SystemComponent>();
+		}
+
+		/// <summary>
+		/// Ensures the codec is awake while the view is visible.
+		/// </summary>
+		private void UpdateCodecAwakeState()
+		{
+			if (m_SubscribedCodecSystem == null)
+				return;
+
+			bool visible = IsViewVisible;
+			if (visible == m_SubscribedCodecSystem.Awake)
+				return;
+
+			if (visible)
+				m_SubscribedCodecSystem.Wake();
+			else
+				m_SubscribedCodecSystem.Standby();
+		}
+
+		#region Room Callbacks
+
+		/// <summary>
+		/// Subscribe to the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Subscribe(IConnectProRoom room)
+		{
+			base.Subscribe(room);
+
+			if (room == null)
+				return;
+
+			m_SubscribedCodecSystem = GetSystemComponent(room);
+			if (m_SubscribedCodecSystem == null)
+				return;
+
+			m_SubscribedCodecSystem.OnAwakeStateChanged += SubscribedCodecSystemOnAwakeStateChanged;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Unsubscribe(IConnectProRoom room)
+		{
+			base.Unsubscribe(room);
+
+			if (m_SubscribedCodecSystem == null)
+				return;
+
+			m_SubscribedCodecSystem.OnAwakeStateChanged -= SubscribedCodecSystemOnAwakeStateChanged;
+		}
+
+		/// <summary>
+		/// Called when the codec awake state changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void SubscribedCodecSystemOnAwakeStateChanged(object sender, BoolEventArgs eventArgs)
+		{
+			UpdateCodecAwakeState();
+		}
+
+		#endregion
 
 		#region View Callbacks
 
@@ -97,8 +180,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.ViewOnVisibilityChanged(sender, args);
 
+			// View became visible
 			if (args.Data)
+			{
 				Navigation.NavigateTo<IVtcContactsPresenter>();
+			}
+			// View became hidden
 			else
 			{
 				foreach (Type type in s_NavPages.Values)
@@ -113,6 +200,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				if (Room != null)
 					Room.Routing.UnrouteVtc();
 			}
+
+			UpdateCodecAwakeState();
 		}
 
 		#endregion
