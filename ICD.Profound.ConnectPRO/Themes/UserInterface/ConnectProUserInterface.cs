@@ -562,12 +562,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="destination"></param>
-		private void MenuDisplaysPresenterOnDestinationPressed(object sender, IDestination destination)
+		private void MenuDisplaysPresenterOnDestinationPressed(object sender, ISource routedSource, IDestination destination)
 		{
-			IMenuDisplaysPresenter presenter = sender as IMenuDisplaysPresenter;
-			ISource activeSource = presenter == null ? null : presenter.ActiveSource;
-
-			HandleSelectedDisplay(activeSource, destination);
+			HandleSelectedDisplay(routedSource, destination);
 		}
 
 		#endregion

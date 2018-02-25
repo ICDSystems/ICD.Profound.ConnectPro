@@ -7,7 +7,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays
 {
 	public delegate void MenuDestinationPressedCallback(
-		object sender, IDestination destination);
+		object sender, ISource routedSource, IDestination destination);
 
 	public interface IMenuDisplaysPresenter : IPresenter<IMenuDisplaysView>
 	{

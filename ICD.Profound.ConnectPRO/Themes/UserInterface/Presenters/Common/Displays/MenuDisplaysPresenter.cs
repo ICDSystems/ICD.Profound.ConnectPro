@@ -406,7 +406,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		{
 			MenuDestinationPressedCallback handler = OnDestinationPressed;
 			if (handler != null)
-				handler(this, Display1Destination);
+				handler(this, Display1RoutedSource, Display1Destination);
 		}
 
 		/// <summary>
@@ -434,7 +434,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		{
 			MenuDestinationPressedCallback handler = OnDestinationPressed;
 			if (handler != null)
-				handler(this, Display2Destination);
+				handler(this, Display2RoutedSource, Display2Destination);
 		}
 
 		/// <summary>
