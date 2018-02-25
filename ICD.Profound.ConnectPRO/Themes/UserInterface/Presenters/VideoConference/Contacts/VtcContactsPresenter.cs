@@ -223,6 +223,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			};
 
 			Subscribe(m_DirectoryBrowser);
+
+			// Show the existing directory contents
+			Refresh();
 		}
 
 		#region Directory Browser Callbacks
@@ -254,7 +257,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		}
 
 		/// <summary>
-		/// Called when the curent folder contents change.
+		/// Called when the current folder contents change.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
