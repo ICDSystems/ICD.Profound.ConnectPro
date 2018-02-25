@@ -128,8 +128,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				display1Line2 = HtmlUtils.FormatColoredText(display1Line2, display1HexColor);
 
 				// Speaker visibility
-				bool display1ShowSpeaker = display1Color == eDisplayColor.Green && m_Display1RoutedSource != null &&
-				                           m_Display1RoutedSource.ConnectionType.HasFlag(eConnectionType.Audio);
+				bool display1ShowSpeaker =
+					m_ActiveSource == null &&
+					m_Display1RoutedSource != null &&
+					m_Display1RoutedSource.ConnectionType.HasFlag(eConnectionType.Audio);
 
 				view.SetDisplay1Color(display1Color);
 				view.SetDisplay1SourceText(display1SourceName);
@@ -203,8 +205,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				display2Line2 = HtmlUtils.FormatColoredText(display2Line2, display2HexColor);
 
 				// Speaker visibility
-				bool display2ShowSpeaker = display2Color == eDisplayColor.Green && m_Display2RoutedSource != null &&
-				                           m_Display2RoutedSource.ConnectionType.HasFlag(eConnectionType.Audio);
+				bool display2ShowSpeaker =
+					m_ActiveSource == null &&
+					m_Display2RoutedSource != null &&
+				    m_Display2RoutedSource.ConnectionType.HasFlag(eConnectionType.Audio);
 
 				view.SetDisplay2Color(display2Color);
 				view.SetDisplay2SourceText(display2SourceName);
