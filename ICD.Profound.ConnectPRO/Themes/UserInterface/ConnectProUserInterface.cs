@@ -307,7 +307,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				return;
 
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
-			room.Routing.OnDisplaySourceChanged += RoutingOnDisplaySourceChanged;
+			room.Routing.OnDisplayTrackingChanged += RoutingOnDisplayTrackingChanged;
 			room.Routing.OnAudioSourceChanged += RoutingOnAudioSourceChanged;
 		}
 
@@ -321,7 +321,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				return;
 
 			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
-			room.Routing.OnDisplaySourceChanged -= RoutingOnDisplaySourceChanged;
+			room.Routing.OnDisplayTrackingChanged -= RoutingOnDisplayTrackingChanged;
 			room.Routing.OnAudioSourceChanged -= RoutingOnAudioSourceChanged;
 		}
 
@@ -374,7 +374,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void RoutingOnDisplaySourceChanged(object sender, EventArgs eventArgs)
+		private void RoutingOnDisplayTrackingChanged(object sender, EventArgs eventArgs)
 		{
 			UpdateRouting();
 		}
@@ -395,7 +395,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				(m_Room == null
 					 ? Enumerable.Empty<KeyValuePair<IDestination, ISource>>()
 					 : m_Room.Routing
-							 .GetCachedActiveVideoSources())
+							 .GetTrackedVideoSources())
 					.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
 			IcdHashSet<ISource> routedSources =

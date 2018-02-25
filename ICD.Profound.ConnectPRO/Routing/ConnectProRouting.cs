@@ -35,6 +35,11 @@ namespace ICD.Profound.ConnectPRO.Routing
 		public event EventHandler OnDisplaySourceChanged;
 
 		/// <summary>
+		/// Raised when a source tracking to a display changes.
+		/// </summary>
+		public event EventHandler OnDisplayTrackingChanged;
+
+		/// <summary>
 		/// Raised when a source becomes routed/unrouted to room audio.
 		/// </summary>
 		public event EventHandler OnAudioSourceChanged;
@@ -43,6 +48,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		private readonly List<IDestination> m_Displays;
 		private readonly List<IDestination> m_AudioDestinations;
 		private readonly Dictionary<IDestination, ISource> m_VideoRoutingCache;
+		private readonly Dictionary<IDestination, ISource> m_VideoTracking;
 		private readonly IcdHashSet<ISource> m_AudioRoutingCache;
 		private readonly SafeCriticalSection m_CacheSection;
 
@@ -68,6 +74,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			m_Displays = new List<IDestination>();
 			m_AudioDestinations = new List<IDestination>();
 			m_VideoRoutingCache = new Dictionary<IDestination, ISource>();
+			m_VideoTracking = new Dictionary<IDestination, ISource>();
 			m_AudioRoutingCache = new IcdHashSet<ISource>();
 			m_CacheSection = new SafeCriticalSection();
 
@@ -81,6 +88,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		public void Dispose()
 		{
 			OnDisplaySourceChanged = null;
+			OnDisplayTrackingChanged = null;
 			OnAudioSourceChanged = null;
 
 			Unsubscribe(m_Room);
@@ -89,6 +97,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 		private void UpdateRoutingCache(eConnectionType type)
 		{
+			bool videoTrackingChange = false;
 			bool videoChange = false;
 			bool audioChange = false;
 
@@ -96,15 +105,24 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			try
 			{
-				// Build a map of video destination => source
 				if (type.HasFlag(eConnectionType.Video))
 				{
+					// Build a map of video destination => source
 					Dictionary<IDestination, ISource> routing =
 						GetDisplayDestinations()
 							.ToDictionary(destination => destination,
 							              destination => GetActiveVideoSource(destination));
 
 					videoChange = m_VideoRoutingCache.Update(routing);
+				}
+
+				if (videoChange)
+				{
+					// Update the tracking cache
+					IEnumerable<KeyValuePair<IDestination, ISource>> pairs =
+						m_VideoRoutingCache.Where(kvp => kvp.Value != null && !(m_Room.Core.Originators.GetChild(kvp.Value.Endpoint.Device) is OsdPanelDevice));
+
+					videoTrackingChange = m_VideoTracking.Update(pairs);
 				}
 
 				// Get a list of sources going to audio destinations
@@ -128,6 +146,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 			{
 				m_CacheSection.Leave();
 			}
+
+			if (videoTrackingChange)
+				OnDisplayTrackingChanged.Raise(this);
 
 			if (videoChange)
 				OnDisplaySourceChanged.Raise(this);
@@ -171,6 +192,11 @@ namespace ICD.Profound.ConnectPRO.Routing
 			             .Where(r => r.Originators.ContainsRecursive(source.Id))
 			             .OrderBy(r => r.IsCombineRoom())
 			             .FirstOrDefault();
+		}
+
+		public IEnumerable<KeyValuePair<IDestination, ISource>> GetTrackedVideoSources()
+		{
+			return m_CacheSection.Execute(() => m_VideoTracking.ToArray(m_VideoTracking.Count));
 		}
 
 		public IEnumerable<KeyValuePair<IDestination, ISource>> GetCachedActiveVideoSources()
@@ -638,7 +664,16 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			IcdConsole.PrintLine(eConsoleColor.Magenta, "{0} video detection state changed to {1}", source, args.State);
 
-			if (!args.State)
+			// When a previously selected source is detected again we restore the old route
+			if (args.State)
+			{
+				IEnumerable<IDestination> trackedDisplays =
+					m_CacheSection.Execute(() => m_VideoTracking.Where(kvp => kvp.Value == source).Select(kvp => kvp.Key).ToArray());
+				foreach (IDestination destination in trackedDisplays)
+					Route(source.Endpoint, destination.Endpoint, eConnectionType.Video);
+			}
+			// When a source is lost we unroute it
+			else
 				UnrouteVideo(source);
 		}
 
