@@ -109,6 +109,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 			base.SubscribeControls();
 
 			m_BackgroundButton.OnPressed += BackgroundButtonOnPressed;
+			m_RoutedButton.OnPressed += RoutedButtonOnPressed;
 		}
 
 		/// <summary>
@@ -119,6 +120,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 			base.UnsubscribeControls();
 
 			m_BackgroundButton.OnPressed -= BackgroundButtonOnPressed;
+			m_RoutedButton.OnPressed -= RoutedButtonOnPressed;
+		}
+
+		/// <summary>
+		/// Called when the user presses the button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void RoutedButtonOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnButtonPressed.Raise(this);
 		}
 
 		/// <summary>
