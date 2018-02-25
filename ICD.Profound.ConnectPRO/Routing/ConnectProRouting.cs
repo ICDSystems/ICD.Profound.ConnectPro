@@ -71,6 +71,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			m_AudioRoutingCache = new IcdHashSet<ISource>();
 			m_CacheSection = new SafeCriticalSection();
 
+			Subscribe(room);
 			Subscribe(room.Core.GetRoutingGraph());
 		}
 
@@ -82,6 +83,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			OnDisplaySourceChanged = null;
 			OnAudioSourceChanged = null;
 
+			Unsubscribe(m_Room);
 			Unsubscribe(m_SubscribedRoutingGraph);
 		}
 
@@ -463,6 +465,31 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 		#endregion
 
+		#region Room Callbacks
+
+		private void Subscribe(IConnectProRoom room)
+		{
+			if (room == null)
+				return;
+
+			room.OnSettingsApplied += RoomOnSettingsApplied;
+		}
+
+		private void Unsubscribe(IConnectProRoom room)
+		{
+			if (room == null)
+				return;
+
+			room.OnSettingsApplied -= RoomOnSettingsApplied;
+		}
+
+		private void RoomOnSettingsApplied(object sender, EventArgs eventArgs)
+		{
+			UpdateRoutingCache(EnumUtils.GetFlagsAllValue<eConnectionType>());
+		}
+
+		#endregion
+
 		#region RoutingGraph Callbacks
 
 		/// <summary>
@@ -500,6 +527,11 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <param name="args"></param>
 		private void RoutingGraphOnRouteChanged(object sender, SwitcherRouteChangeEventArgs args)
 		{
+			UpdateRoutingCache(args.Type);
+		}
+
+		private void UpdateRoutingCache(eConnectionType type)
+		{
 			bool videoChange = false;
 			bool audioChange = false;
 
@@ -508,21 +540,20 @@ namespace ICD.Profound.ConnectPRO.Routing
 			try
 			{
 				// Build a map of video destination => source
-				if (args.Type.HasFlag(eConnectionType.Video))
+				if (type.HasFlag(eConnectionType.Video))
 				{
 					Dictionary<IDestination, ISource> routing =
-						m_Room.Routing
-						      .GetDisplayDestinations()
-						      .ToDictionary(destination => destination,
-						                    destination => m_Room.Routing.GetActiveVideoSource(destination));
+						GetDisplayDestinations()
+							.ToDictionary(destination => destination,
+							              destination => GetActiveVideoSource(destination));
 
 					videoChange = m_VideoRoutingCache.Update(routing);
 				}
 
 				// Get a list of sources going to audio destinations
-				if (args.Type.HasFlag(eConnectionType.Audio))
+				if (type.HasFlag(eConnectionType.Audio))
 				{
-					IcdHashSet<ISource> activeAudio = m_Room.Routing.GetActiveAudioSources().ToIcdHashSet();
+					IcdHashSet<ISource> activeAudio = GetActiveAudioSources().ToIcdHashSet();
 					audioChange = !activeAudio.ScrambledEquals(m_AudioRoutingCache);
 
 					m_AudioRoutingCache.Clear();
@@ -532,7 +563,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				// Make sure there are no audio routes without video routes
 				IEnumerable<ISource> unrouteAudioSources =
 					m_AudioRoutingCache.Where(s => !m_VideoRoutingCache.ContainsValue(s))
-					                   .ToArray();
+									   .ToArray();
 				foreach (ISource source in unrouteAudioSources)
 					UnrouteAudio(source);
 			}
