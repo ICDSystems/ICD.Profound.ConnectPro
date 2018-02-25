@@ -38,5 +38,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources
 		/// </summary>
 		/// <param name="text"></param>
 		void SetFeedbackText(string text);
+
+		/// <summary>
+		/// Sets the routed state for the source.
+		/// </summary>
+		/// <param name="routed"></param>
+		void SetRoutedState(bool routed);
 	}
 }

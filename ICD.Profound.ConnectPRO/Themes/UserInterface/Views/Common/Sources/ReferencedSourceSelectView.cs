@@ -88,6 +88,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 			m_FeedbackLabel.SetLabelText(text);
 		}
 
+		/// <summary>
+		/// Sets the routed state for the source.
+		/// </summary>
+		/// <param name="routed"></param>
+		public void SetRoutedState(bool routed)
+		{
+			// TODO
+			//m_RoutedButton.SetSelected(routed);
+		}
+
 		#endregion
 
 		#region Control Callbacks

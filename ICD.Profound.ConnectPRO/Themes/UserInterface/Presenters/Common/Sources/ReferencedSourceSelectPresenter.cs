@@ -155,6 +155,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 				view.SetLine1Text(line1);
 				view.SetLine2Text(line2);
 				view.SetIcon(icon);
+				view.SetRoutedState(Routed);
 			}
 			finally
 			{
