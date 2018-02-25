@@ -374,6 +374,19 @@ namespace ICD.Profound.ConnectPRO.Routing
 		}
 
 		/// <summary>
+		/// Unroutes the given audio source from all audio destinations.
+		/// </summary>
+		/// <param name="source"></param>
+		public void UnrouteAudio(ISource source)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			foreach (IDestination destination in GetAudioDestinations())
+				RoutingGraph.Unroute(source.Endpoint, destination.Endpoint, eConnectionType.Audio, m_Room.Id);
+		}
+
+		/// <summary>
 		/// Fully unroutes the VTC from all displays.
 		/// </summary>
 		public void UnrouteVtc()
@@ -515,6 +528,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 					m_AudioRoutingCache.Clear();
 					m_AudioRoutingCache.AddRange(activeAudio);
 				}
+
+				// Make sure there are no audio routes without video routes
+				IEnumerable<ISource> unrouteAudioSources =
+					m_AudioRoutingCache.Where(s => !m_VideoRoutingCache.ContainsValue(s))
+					                   .ToArray();
+				foreach (ISource source in unrouteAudioSources)
+					UnrouteAudio(source);
 			}
 			finally
 			{
