@@ -50,7 +50,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 
 			m_CloseButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 110
+				DigitalPressJoin = 113
 			};
 
 			m_MenuButtons = new VtProTabButton(10, panel as IPanelDevice, m_Subpage);
