@@ -100,7 +100,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			}
 		}
 
-		public void SetRoutedSources(Dictionary<IDestination, ISource> routing)
+		public void SetRouting(Dictionary<IDestination, ISource> routing, IcdHashSet<ISource> activeAudio)
 		{
 			m_RefreshSection.Enter();
 
@@ -108,22 +108,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			{
 				m_Routing.Clear();
 				m_Routing.Update(routing);
-
-				RefreshIfVisible();
-			}
-			finally
-			{
-				m_RefreshSection.Leave();
-			}
-		}
-
-		public void SetActiveAudioSources(IEnumerable<ISource> activeAudio)
-		{
-			m_RefreshSection.Enter();
-
-			try
-			{
-				m_ActiveAudio.Clear();
 				m_ActiveAudio.AddRange(activeAudio);
 
 				RefreshIfVisible();

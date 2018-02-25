@@ -335,16 +335,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		#endregion
 
-		public void SetActiveAudioSources(IcdHashSet<ISource> activeAudio)
-		{
-			Display1ActiveAudio = Display1RoutedSource != null && activeAudio.Contains(Display1RoutedSource);
-			Display2ActiveAudio = Display2RoutedSource != null && activeAudio.Contains(Display2RoutedSource);
-		}
-
-		public void SetRoutedSources(Dictionary<IDestination, ISource> routing)
+		public void SetRouting(Dictionary<IDestination, ISource> routing, IcdHashSet<ISource> activeAudio)
 		{
 			Display1RoutedSource = Display1Destination == null ? null : routing.GetDefault(Display1Destination);
-			Display2RoutedSource = Display1Destination == null ? null : routing.GetDefault(Display2Destination);
+			Display2RoutedSource = Display2Destination == null ? null : routing.GetDefault(Display2Destination);
+
+			Display1ActiveAudio = Display1RoutedSource != null && activeAudio.Contains(Display1RoutedSource);
+			Display2ActiveAudio = Display2RoutedSource != null && activeAudio.Contains(Display2RoutedSource);
 		}
 
 		private IDeviceBase GetDevice(ISource source)

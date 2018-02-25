@@ -153,8 +153,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			UpdatePanelOnlineJoin();
 			UpdateMeetingPresenters();
-			UpdateAudioRouting();
-			UpdateVideoRouting();
+			UpdateRouting();
 		}
 
 		/// <summary>
@@ -367,7 +366,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="eventArgs"></param>
 		private void RoutingOnAudioSourceChanged(object sender, EventArgs eventArgs)
 		{
-			UpdateAudioRouting();
+			UpdateRouting();
 		}
 
 		/// <summary>
@@ -377,13 +376,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="eventArgs"></param>
 		private void RoutingOnDisplaySourceChanged(object sender, EventArgs eventArgs)
 		{
-			UpdateVideoRouting();
+			UpdateRouting();
 		}
 
 		/// <summary>
-		/// Updates the audio routing state in the UI.
+		/// Updates the routing state in the UI.
 		/// </summary>
-		private void UpdateAudioRouting()
+		private void UpdateRouting()
 		{
 			IcdHashSet<ISource> activeAudio =
 				(m_Room == null
@@ -392,24 +391,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 					         .GetCachedActiveAudioSources())
 					.ToIcdHashSet();
 
-			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().SetActiveAudioSources(activeAudio);
-			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().SetActiveAudioSources(activeAudio);
-		}
-
-		/// <summary>
-		/// Updates the video routing state in the UI.
-		/// </summary>
-		private void UpdateVideoRouting()
-		{
 			Dictionary<IDestination, ISource> routing =
 				(m_Room == null
 					 ? Enumerable.Empty<KeyValuePair<IDestination, ISource>>()
 					 : m_Room.Routing
-					         .GetCachedActiveVideoSources())
+							 .GetCachedActiveVideoSources())
 					.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().SetRoutedSources(routing);
-			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().SetRoutedSources(routing);
+			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().SetRouting(routing, activeAudio);
+			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().SetRouting(routing, activeAudio);
 		}
 
 		#endregion
@@ -561,6 +551,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// Called when the user presses a destination in the presenter.
 		/// </summary>
 		/// <param name="sender"></param>
+		/// <param name="routedSource"></param>
 		/// <param name="destination"></param>
 		private void MenuDisplaysPresenterOnDestinationPressed(object sender, ISource routedSource, IDestination destination)
 		{
