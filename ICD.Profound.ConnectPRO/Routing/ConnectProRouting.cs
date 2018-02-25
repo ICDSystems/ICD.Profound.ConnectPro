@@ -429,13 +429,15 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (osd == null)
 				return;
 
+			m_CacheSection.Execute(() => m_VideoTracking.Clear());
+
 			IRouteSourceControl sourceControl = osd.Controls.GetControl<IRouteSourceControl>();
 			EndpointInfo sourceEndpoint = sourceControl.GetOutputEndpointInfo(1);
 
 			foreach (IDestination destination in GetDisplayDestinations())
-			{
 				RoutingGraph.Route(sourceEndpoint, destination.Endpoint, eConnectionType.Video, m_Room.Id);
-			}
+		
+			OnDisplayTrackingChanged.Raise(this);
 		}
 
 		private void Route(EndpointInfo source, EndpointInfo destination, eConnectionType connectionType)
