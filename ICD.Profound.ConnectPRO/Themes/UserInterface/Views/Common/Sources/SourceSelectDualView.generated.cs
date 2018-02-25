@@ -30,7 +30,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 			m_SourceList = new VtProSubpageReferenceList(1, panel as IPanelDevice, m_Subpage)
 			{
 				MaxSize = 20,
-				DigitalJoinIncrement = 1,
+				DigitalJoinIncrement = 2,
 				AnalogJoinIncrement = 1,
 				SerialJoinIncrement = 4
 			};

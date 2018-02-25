@@ -56,7 +56,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 
 			m_RoutedButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 0 // TODO
+				DigitalPressJoin = 2
 			};
 		}
 

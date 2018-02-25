@@ -398,6 +398,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 							 .GetCachedActiveVideoSources())
 					.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
+			IcdHashSet<ISource> routedSources =
+				routing.Values
+				       .Except((ISource)null)
+				       .ToIcdHashSet();
+
+			m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>().SetRoutedSources(routedSources);
+			m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>().SetRoutedSources(routedSources);
 			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().SetRouting(routing, activeAudio);
 			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().SetRouting(routing, activeAudio);
 		}

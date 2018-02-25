@@ -94,8 +94,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		/// <param name="routed"></param>
 		public void SetRoutedState(bool routed)
 		{
-			// TODO
-			//m_RoutedButton.SetSelected(routed);
+			m_RoutedButton.SetSelected(routed);
 		}
 
 		#endregion

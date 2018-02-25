@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Collections;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
@@ -19,6 +20,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		public event SourcePressedCallback OnSourcePressed;
 
 		private readonly ReferencedSourceSelectPresenterFactory m_ChildrenFactory;
+		private readonly IcdHashSet<ISource> m_RoutedSources;
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private ISource[] m_Sources;
@@ -63,6 +65,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			m_ChildrenFactory = new ReferencedSourceSelectPresenterFactory(nav, ItemFactory);
 
 			m_Sources = new ISource[0];
+			m_RoutedSources = new IcdHashSet<ISource>();
 		}
 
 		/// <summary>
@@ -103,12 +106,34 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 
 					presenter.Selected = presenter.Source == m_ActiveSource;
 					presenter.ShowView(true);
+					presenter.Routed = presenter.Source != null && m_RoutedSources.Contains(presenter.Source);
 				}
 			}
 			finally
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		/// <summary>
+		/// Sets the sources that are currently routed to displays.
+		/// </summary>
+		/// <param name="routedSources"></param>
+		public void SetRoutedSources(IEnumerable<ISource> routedSources)
+		{
+			m_RefreshSection.Enter();
+
+			try
+			{
+				m_RoutedSources.Clear();
+				m_RoutedSources.AddRange(routedSources);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+
+			RefreshIfVisible();
 		}
 
 		#region Private Methods
