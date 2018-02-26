@@ -19,7 +19,6 @@ using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Destinations;
-using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings.Core;
 using ICD.Profound.ConnectPRO.Routing;
 
