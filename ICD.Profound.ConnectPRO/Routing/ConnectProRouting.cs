@@ -494,6 +494,26 @@ namespace ICD.Profound.ConnectPRO.Routing
 		}
 
 		/// <summary>
+		/// Unroute all sources from all destinations.
+		/// </summary>
+		public void UnrouteAll()
+		{
+			UnrouteVtc();
+
+			foreach (IDestination display in GetDisplayDestinations())
+			{
+				ISource source = GetActiveVideoSource(display);
+				if (source == null)
+					continue;
+
+				RoutingGraph.UnrouteDestination(display.Endpoint, EnumUtils.GetFlagsAllValue<eConnectionType>(), m_Room.Id);
+			}
+
+			foreach (IDestination audio in GetAudioDestinations())
+				RoutingGraph.UnrouteDestination(audio.Endpoint, EnumUtils.GetFlagsAllValue<eConnectionType>(), m_Room.Id);
+		}
+
+		/// <summary>
 		/// Unroute all sources except OSD from all destinations.
 		/// </summary>
 		public void UnrouteAllExceptOsd()

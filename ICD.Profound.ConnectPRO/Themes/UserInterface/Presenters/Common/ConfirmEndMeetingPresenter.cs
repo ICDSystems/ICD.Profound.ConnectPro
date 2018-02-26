@@ -107,7 +107,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		private void ViewOnYesButtonPressed(object sender, EventArgs eventArgs)
 		{
 			if (Room != null)
-				Room.IsInMeeting = false;
+				Room.EndMeeting(false);
 		}
 
 		#endregion

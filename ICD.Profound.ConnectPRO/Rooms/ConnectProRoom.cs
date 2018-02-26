@@ -40,22 +40,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <summary>
 		/// Gets/sets the current meeting status.
 		/// </summary>
-		public bool IsInMeeting
-		{
-			get { return m_IsInMeeting; }
-			set
-			{
-				if (value == m_IsInMeeting)
-					return;
-
-				m_IsInMeeting = value;
-
-				if (!m_IsInMeeting)
-					Shutdown();
-
-				OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
-			}
-		}
+		public bool IsInMeeting { get { return m_IsInMeeting; } }
 
 		/// <summary>
 		/// Gets the routing features for this room.
@@ -78,40 +63,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			m_ConferenceManager = new ConferenceManager();
 		}
 
-		/// <summary>
-		/// Shuts down the room.
-		/// </summary>
-		public void Shutdown()
-		{
-			// Undo all routing
-			Routing.UnrouteAllExceptOsd();
-
-			// Route the OSD
-			Routing.RouteOsd();
-
-			// Hangup
-			if (ConferenceManager != null && ConferenceManager.ActiveConference != null)
-				ConferenceManager.ActiveConference.Hangup();
-
-			// Power off displays (except OSD)
-			foreach (IDestination destination in Routing.GetDisplayDestinations())
-			{
-				ISource source = Routing.GetActiveVideoSource(destination);
-				OsdPanelDevice osd = source == null ? null : Core.Originators.GetChild(source.Endpoint.Device) as OsdPanelDevice;
-
-				if (osd != null)
-					continue;
-
-				IDisplay display = Core.Originators.GetChild(destination.Endpoint.Device) as IDisplay;
-				if (display != null)
-					display.PowerOff();
-			}
-
-			// Power off the panels
-			Originators.GetInstancesRecursive<IPanelDevice>()
-					   .SelectMany(panel => panel.Controls.GetControls<IPowerDeviceControl>())
-					   .ForEach(c => c.PowerOff());
-		}
+		#region Methods
 
 		/// <summary>
 		/// Gets the volume control matching the configured volume point.
@@ -123,6 +75,80 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			return m_VolumePoint == null
 				       ? null
 				       : Core.GetControl<IVolumeDeviceControl>(m_VolumePoint.DeviceId, m_VolumePoint.ControlId);
+		}
+
+		/// <summary>
+		/// Enters the meeting state.
+		/// </summary>
+		public void StartMeeting()
+		{
+			if (m_IsInMeeting)
+				return;
+
+			m_IsInMeeting = true;
+
+			OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
+		}
+
+		/// <summary>
+		/// Ends the meeting state. If shutdown is true fully powers down the room.
+		/// </summary>
+		/// <param name="shutdown"></param>
+		public void EndMeeting(bool shutdown)
+		{
+			bool change = m_IsInMeeting;
+			m_IsInMeeting = false;
+
+			Shutdown(shutdown);
+
+			if (change)
+				OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Shuts down the room.
+		/// </summary>
+		private void Shutdown(bool powerOff)
+		{
+			// Undo all routing
+			if (powerOff)
+			{
+				Routing.UnrouteAll();
+			}
+			else
+			{
+				Routing.UnrouteAllExceptOsd();
+				Routing.RouteOsd();
+			}
+			
+			// Hangup
+			if (ConferenceManager != null && ConferenceManager.ActiveConference != null)
+				ConferenceManager.ActiveConference.Hangup();
+
+			// Power off displays
+			foreach (IDestination destination in Routing.GetDisplayDestinations())
+			{
+				ISource source = Routing.GetActiveVideoSource(destination);
+				OsdPanelDevice osd = source == null ? null : Core.Originators.GetChild(source.Endpoint.Device) as OsdPanelDevice;
+
+				// Don't power off displays showing the osd
+				if (!powerOff && osd != null)
+					continue;
+
+				IDisplay display = Core.Originators.GetChild(destination.Endpoint.Device) as IDisplay;
+				if (display != null)
+					display.PowerOff();
+			}
+
+			// Power off the panels
+			if (powerOff)
+			{
+				Originators.GetInstancesRecursive<IPanelDevice>()
+				           .SelectMany(panel => panel.Controls.GetControls<IPowerDeviceControl>())
+				           .ForEach(c => c.PowerOff());
+			}
 		}
 
 		#region Settings

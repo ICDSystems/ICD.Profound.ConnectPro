@@ -8,6 +8,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 	public sealed partial class StartMeetingView : AbstractView, IStartMeetingView
 	{
 		public event EventHandler OnStartMeetingButtonPressed;
+		public event EventHandler OnShutdownButtonPressed;
 
 		/// <summary>
 		/// Constructor.
@@ -29,6 +30,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			base.SubscribeControls();
 
 			m_StartMeetingButton.OnPressed += StartMeetingButtonOnPressed;
+			m_ShutdownButton.OnPressed += ShutdownButtonOnPressed;
 		}
 
 		/// <summary>
@@ -39,6 +41,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			base.UnsubscribeControls();
 
 			m_StartMeetingButton.OnPressed -= StartMeetingButtonOnPressed;
+			m_ShutdownButton.OnPressed -= ShutdownButtonOnPressed;
+		}
+
+		private void ShutdownButtonOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnShutdownButtonPressed.Raise(this);
 		}
 
 		private void StartMeetingButtonOnPressed(object sender, EventArgs eventArgs)

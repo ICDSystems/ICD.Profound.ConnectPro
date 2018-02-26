@@ -30,6 +30,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			base.Subscribe(view);
 
 			view.OnStartMeetingButtonPressed += ViewOnStartMeetingButtonPressed;
+			view.OnShutdownButtonPressed += ViewOnShutdownButtonPressed;
 		}
 
 		/// <summary>
@@ -41,6 +42,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			base.Unsubscribe(view);
 
 			view.OnStartMeetingButtonPressed -= ViewOnStartMeetingButtonPressed;
+			view.OnShutdownButtonPressed -= ViewOnShutdownButtonPressed;
+		}
+
+		private void ViewOnShutdownButtonPressed(object sender, EventArgs eventArgs)
+		{
+			if (Room != null)
+				Room.EndMeeting(true);
 		}
 
 		/// <summary>
@@ -51,7 +59,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		private void ViewOnStartMeetingButtonPressed(object sender, EventArgs eventArgs)
 		{
 			if (Room != null)
-				Room.IsInMeeting = true;
+				Room.StartMeeting();
 		}
 
 		#endregion

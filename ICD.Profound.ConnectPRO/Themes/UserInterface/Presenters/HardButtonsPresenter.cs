@@ -146,7 +146,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			if (Room == null)
 				return;
 
-			Room.IsInMeeting = false;
+			Room.EndMeeting(false);
 		}
 
 		/// <summary>
@@ -159,7 +159,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			if (Room == null)
 				return;
 
-			Room.IsInMeeting = false;
+			Room.EndMeeting(false);
 		}
 
 		/// <summary>

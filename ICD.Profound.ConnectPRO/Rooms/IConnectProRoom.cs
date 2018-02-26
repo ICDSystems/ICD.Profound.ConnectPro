@@ -12,7 +12,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 	{
 		event EventHandler<BoolEventArgs> OnIsInMeetingChanged;
 
-		bool IsInMeeting { get; set; }
+		bool IsInMeeting { get; }
 
 		/// <summary>
 		/// Gets the routing features for this room.
@@ -30,5 +30,16 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <returns></returns>
 		[CanBeNull]
 		IVolumeDeviceControl GetVolumeControl();
+
+		/// <summary>
+		/// Enters the meeting state.
+		/// </summary>
+		void StartMeeting();
+
+		/// <summary>
+		/// Ends the meeting state. If shutdown is true fully powers down the room.
+		/// </summary>
+		/// <param name="shutdown"></param>
+		void EndMeeting(bool shutdown);
 	}
 }
