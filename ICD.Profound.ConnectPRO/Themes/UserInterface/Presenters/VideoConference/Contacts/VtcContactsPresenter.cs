@@ -350,6 +350,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			view.OnFavoritesButtonPressed += ViewOnFavoritesButtonPressed;
 			view.OnHangupButtonPressed += ViewOnHangupButtonPressed;
 			view.OnRecentButtonPressed += ViewOnRecentButtonPressed;
+			view.OnBackButtonPressed += ViewOnBackButtonPressed;
+			view.OnHomeButtonPressed += ViewOnHomeButtonPressed;
+			view.OnSearchButtonPressed += ViewOnSearchButtonPressed;
+			view.OnManualDialButtonPressed += ViewOnManualDialButtonPressed;
 		}
 
 		/// <summary>
@@ -366,6 +370,28 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			view.OnFavoritesButtonPressed -= ViewOnFavoritesButtonPressed;
 			view.OnHangupButtonPressed -= ViewOnHangupButtonPressed;
 			view.OnRecentButtonPressed -= ViewOnRecentButtonPressed;
+			view.OnBackButtonPressed -= ViewOnBackButtonPressed;
+			view.OnHomeButtonPressed -= ViewOnHomeButtonPressed;
+			view.OnSearchButtonPressed -= ViewOnSearchButtonPressed;
+			view.OnManualDialButtonPressed -= ViewOnManualDialButtonPressed;
+		}
+
+		private void ViewOnManualDialButtonPressed(object sender, EventArgs eventArgs)
+		{
+		}
+
+		private void ViewOnSearchButtonPressed(object sender, EventArgs eventArgs)
+		{
+		}
+
+		private void ViewOnHomeButtonPressed(object sender, EventArgs eventArgs)
+		{
+			m_DirectoryBrowser.GoToRoot();
+		}
+
+		private void ViewOnBackButtonPressed(object sender, EventArgs eventArgs)
+		{
+			m_DirectoryBrowser.GoUp();
 		}
 
 		private void ViewOnRecentButtonPressed(object sender, EventArgs eventArgs)
