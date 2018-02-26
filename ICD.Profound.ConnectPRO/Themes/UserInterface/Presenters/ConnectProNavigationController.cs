@@ -15,7 +15,6 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Hangup;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Displays;
@@ -24,7 +23,6 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Contacts;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Hangup;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 {
@@ -47,7 +45,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IMenuDisplaysPresenter), (nav, views, theme) => new MenuDisplaysPresenter(nav, views, theme)},
 
 			// Options
-			{typeof(IOptionHangupPresenter), (nav, views, theme) => new OptionHangupPresenter(nav, views, theme)},
 			{typeof(IOptionPrivacyMutePresenter), (nav, views, theme) => new OptionPrivacyMutePresenter(nav, views, theme)},
 			{typeof(IOptionVolumePresenter), (nav, views, theme) => new OptionVolumePresenter(nav, views, theme)},
 
@@ -70,10 +67,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IVtcCameraPresenter), (nav, views, theme) => new VtcCameraPresenter(nav, views, theme)},
 			{typeof(IVtcSharePresenter), (nav, views, theme) => new VtcSharePresenter(nav, views, theme)},
 			{typeof(IVtcDtmfPresenter), (nav, views, theme) => new VtcDtmfPresenter(nav, views, theme)},
-			{typeof(IVtcReferencedHangupPresenter), (nav, views, theme) => new VtcReferencedHangupPresenter(nav, views, theme)},
 			{typeof(IVtcIncomingCallPresenter), (nav, views, theme) => new VtcIncomingCallPresenter(nav, views, theme)},
-			{typeof(IVtcHangupPresenter), (nav, views, theme) => new VtcHangupPresenter(nav, views, theme)},
-
+			
 			// Video Conference Contacts
 			{typeof(IVtcReferencedContactsPresenter), (nav, views, theme) => new VtcReferencedContactsPresenter(nav, views, theme)},
 			{typeof(IVtcReferencedFavoritesPresenter), (nav, views, theme) => new VtcReferencedFavoritesPresenter(nav, views, theme)},

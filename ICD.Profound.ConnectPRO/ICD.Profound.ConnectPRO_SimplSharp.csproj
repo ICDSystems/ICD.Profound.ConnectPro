@@ -110,7 +110,6 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\IHeaderPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IStartMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IVolumePresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionHangupPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionPrivacyMutePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionVolumePresenter.cs" />
@@ -128,12 +127,10 @@
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcReferencedFolderPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcReferencedFavoritesPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcReferencedRecentPresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Hangup\IVtcReferencedHangupPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcCameraPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcContactsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcDtmfPresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Hangup\IVtcHangupPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcIncomingCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcReferencedContactsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcSharePresenter.cs" />
@@ -154,7 +151,6 @@
     <Compile Include="Themes\UserInterface\IViews\Common\Sources\ISourceSelectDualView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Sources\ISourceSelectSingleView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Sources\ISourceSelectView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\Common\Options\IOptionHangupView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Options\IOptionPrivacyMuteView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Options\IOptionView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Options\IOptionVolumeView.cs" />
@@ -166,7 +162,6 @@
     <Compile Include="Themes\UserInterface\IViews\IViewFactory.cs" />
     <Compile Include="Themes\UserInterface\ConnectProUserInterface.cs" />
     <Compile Include="Themes\UserInterface\ConnectProUserInterfaceFactory.cs" />
-    <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcHangupView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcBaseView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcCameraView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcContactsView.cs" />
@@ -187,7 +182,6 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\EndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\HeaderPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\AbstractOptionPresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionHangupPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionPrivacyMutePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionVolumePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\AbstractSourceSelectPresenter.cs" />
@@ -209,9 +203,6 @@
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\VtcReferencedFavoritesPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\VtcReferencedFolderPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\VtcReferencedRecentPresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\VideoConference\Hangup\VtcHangupPresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\VideoConference\Hangup\VtcReferencedHangupPresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\VideoConference\Hangup\VtcReferencedHangupPresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcCameraPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcDtmfPresenter.cs" />
@@ -240,8 +231,6 @@
     <Compile Include="Themes\UserInterface\Views\Common\Options\OptionVolumeView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Options\OptionPrivacyMuteView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Options\OptionPrivacyMuteView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\Common\Options\OptionHangupView.cs" />
-    <Compile Include="Themes\UserInterface\Views\Common\Options\OptionHangupView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\AbstractSourceSelectView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\ReferencedSourceSelectView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\ReferencedSourceSelectView.generated.cs" />
@@ -273,8 +262,6 @@
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcContactsView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcDtmfView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcDtmfView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcHangupView.cs" />
-    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcHangupView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcIncomingCallView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcIncomingCallView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcReferencedContactsView.cs" />

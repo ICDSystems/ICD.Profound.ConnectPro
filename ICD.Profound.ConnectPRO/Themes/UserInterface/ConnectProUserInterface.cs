@@ -26,7 +26,6 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Hangup;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VisibilityTree;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters;
@@ -100,7 +99,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			IVisibilityNode meetingVisibility = new VisibilityNode();
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOptionPrivacyMutePresenter>());
-			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOptionHangupPresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOptionVolumePresenter>());
 			meetingVisibility.AddNode(videoConferencingVisibility);
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcBasePresenter>());
@@ -115,9 +113,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			// These presenters control their own visibility.
 			m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>();
 			m_NavigationController.LazyLoadPresenter<IStartMeetingPresenter>();
-			m_NavigationController.LazyLoadPresenter<IVtcHangupPresenter>();
 			m_NavigationController.LazyLoadPresenter<IOptionPrivacyMutePresenter>();
-			m_NavigationController.LazyLoadPresenter<IOptionHangupPresenter>();
 			m_NavigationController.LazyLoadPresenter<IOptionVolumePresenter>();
 		}
 

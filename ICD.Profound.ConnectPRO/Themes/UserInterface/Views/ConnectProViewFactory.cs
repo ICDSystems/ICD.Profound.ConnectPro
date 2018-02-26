@@ -61,7 +61,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(IMenuDisplaysView), (panel, theme) => new MenuDisplaysView(panel, theme)},
 
 			// Options
-			{typeof(IOptionHangupView), (panel, theme) => new OptionHangupView(panel, theme)},
 			{typeof(IOptionPrivacyMuteView), (panel, theme) => new OptionPrivacyMuteView(panel, theme)},
 			{typeof(IOptionVolumeView), (panel, theme) => new OptionVolumeView(panel, theme)},
 
@@ -83,7 +82,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(IVtcCameraView), (panel, theme) => new VtcCameraView(panel, theme)},
 			{typeof(IVtcShareView), (panel, theme) => new VtcShareView(panel, theme)},
 			{typeof(IVtcDtmfView), (panel, theme) => new VtcDtmfView(panel, theme)},
-			{typeof(IVtcHangupView), (panel, theme) => new VtcHangupView(panel, theme)},
 			{typeof(IVtcIncomingCallView), (panel, theme) => new VtcIncomingCallView(panel, theme)},
 
 			// Panel
