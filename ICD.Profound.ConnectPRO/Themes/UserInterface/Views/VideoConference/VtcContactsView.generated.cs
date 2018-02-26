@@ -18,6 +18,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		private VtProTextEntry m_SearchBar;
 		private VtProButton m_CallButton;
 		private VtProButton m_HangupButton;
+		private VtProButton m_BackButton;
+		private VtProButton m_HomeButton;
+		private VtProButton m_SearchButton;
+		private VtProButton m_ManualDialButton;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -72,6 +76,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 				DigitalPressJoin = 510,
 				DigitalEnableJoin = 511
 			};
+
+			m_BackButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 0 // TODO
+			};
+
+			m_HomeButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 0 // TODO
+			};
+
+			m_SearchButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 0 // TODO
+			};
+
+			m_ManualDialButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 0 // TODO
+			};
 		}
 
 		/// <summary>
@@ -88,7 +112,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			yield return m_SearchBar;
 			yield return m_CallButton;
 			yield return m_HangupButton;
-	}
+			yield return m_BackButton;
+			yield return m_HomeButton;
+			yield return m_SearchButton;
+			yield return m_ManualDialButton;
+		}
 	}
 }
 

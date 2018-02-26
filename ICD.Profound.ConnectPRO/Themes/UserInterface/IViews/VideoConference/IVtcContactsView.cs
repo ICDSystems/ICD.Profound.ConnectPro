@@ -37,6 +37,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 		event EventHandler OnHangupButtonPressed;
 
 		/// <summary>
+		/// Raised when the user presses the back button.
+		/// </summary>
+		event EventHandler OnBackButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the home button.
+		/// </summary>
+		event EventHandler OnHomeButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the search button.
+		/// </summary>
+		event EventHandler OnSearchButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the manual dial button.
+		/// </summary>
+		event EventHandler OnManualDialButtonPressed;
+
+		/// <summary>
 		/// Returns child views for list items.
 		/// </summary>
 		/// <param name="factory"></param>

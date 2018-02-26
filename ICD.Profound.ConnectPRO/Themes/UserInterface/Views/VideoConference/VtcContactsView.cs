@@ -16,6 +16,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		public event EventHandler OnRecentButtonPressed;
 		public event EventHandler OnCallButtonPressed;
 		public event EventHandler OnHangupButtonPressed;
+		public event EventHandler OnBackButtonPressed;
+		public event EventHandler OnHomeButtonPressed;
+		public event EventHandler OnSearchButtonPressed;
+		public event EventHandler OnManualDialButtonPressed;
 
 		private readonly List<IVtcReferencedContactsView> m_ChildList;
 
@@ -40,6 +44,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			OnRecentButtonPressed = null;
 			OnCallButtonPressed = null;
 			OnHangupButtonPressed = null;
+			OnBackButtonPressed = null;
+			OnHomeButtonPressed = null;
+			OnSearchButtonPressed = null;
+			OnManualDialButtonPressed = null;
 
 			base.Dispose();
 		}
@@ -101,6 +109,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			m_RecentsButton.OnPressed += RecentsButtonOnPressed;
 			m_CallButton.OnPressed += CallButtonOnPressed;
 			m_HangupButton.OnPressed += HangupButtonOnPressed;
+			m_BackButton.OnPressed += BackButtonOnPressed;
+			m_HomeButton.OnPressed += HomeButtonOnPressed;
+			m_SearchButton.OnPressed += SearchButtonOnPressed;
+			m_ManualDialButton.OnPressed += ManualDialButtonOnPressed;
 		}
 
 		protected override void UnsubscribeControls()
@@ -113,6 +125,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			m_RecentsButton.OnPressed -= RecentsButtonOnPressed;
 			m_CallButton.OnPressed -= CallButtonOnPressed;
 			m_HangupButton.OnPressed -= HangupButtonOnPressed;
+			m_BackButton.OnPressed -= BackButtonOnPressed;
+			m_HomeButton.OnPressed -= HomeButtonOnPressed;
+			m_SearchButton.OnPressed -= SearchButtonOnPressed;
+			m_ManualDialButton.OnPressed -= ManualDialButtonOnPressed;
 		}
 
 		private void HangupButtonOnPressed(object sender, EventArgs eventArgs)
@@ -143,6 +159,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		private void FavoritesButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnFavoritesButtonPressed.Raise(this);
+		}
+
+		private void ManualDialButtonOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnManualDialButtonPressed.Raise(this);
+		}
+
+		private void SearchButtonOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnSearchButtonPressed.Raise(this);
+		}
+
+		private void HomeButtonOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnHomeButtonPressed.Raise(this);
+		}
+
+		private void BackButtonOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnBackButtonPressed.Raise(this);
 		}
 
 		#endregion
