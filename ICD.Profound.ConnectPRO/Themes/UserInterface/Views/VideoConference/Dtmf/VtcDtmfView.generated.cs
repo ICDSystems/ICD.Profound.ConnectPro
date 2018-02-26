@@ -2,6 +2,7 @@
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Keypads;
+using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.Pages;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
@@ -10,6 +11,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 	{
 		private VtProSubpage m_Subpage;
 		private VtProSimpleKeypad m_Keypad;
+		private VtProSubpageReferenceList m_ConferenceSourceList;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -25,6 +27,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			};
 
 			m_Keypad = new VtProSimpleKeypad(502, panel as IPanelDevice, m_Subpage);
+
+			m_ConferenceSourceList = new VtProSubpageReferenceList(501, panel as IPanelDevice, m_Subpage)
+			{
+				DigitalJoinIncrement = 1,
+				AnalogJoinIncrement = 0,
+				SerialJoinIncrement = 1,
+				MaxSize = 20
+			};
 		}
 
 		/// <summary>
@@ -35,6 +45,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		{
 			yield return m_Subpage;
 			yield return m_Keypad;
+			yield return m_ConferenceSourceList;
 		}
 	}
 }

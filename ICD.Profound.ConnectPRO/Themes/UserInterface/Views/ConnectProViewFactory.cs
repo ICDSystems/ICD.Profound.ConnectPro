@@ -18,6 +18,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Dtmf;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 {
@@ -47,6 +48,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 
 			// Video Conference
 			{typeof(IVtcReferencedContactsView), (nav, views, theme, index) => new VtcReferencedContactsView(nav, views, theme, index)},
+			{typeof(IVtcReferencedDtmfView), (nav, views, theme, index) => new VtcReferencedDtmfView(nav, views, theme, index)},
 		};
 
 		private readonly Dictionary<Type, FactoryMethod> m_ViewFactories = new Dictionary<Type, FactoryMethod>
