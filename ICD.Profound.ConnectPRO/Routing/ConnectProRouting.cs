@@ -6,6 +6,9 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Cisco;
+using ICD.Connect.Conferencing.Cisco.Components.Presentation;
+using ICD.Connect.Conferencing.Cisco.Components.Video;
+using ICD.Connect.Conferencing.Cisco.Components.Video.Connectors;
 using ICD.Connect.Conferencing.Cisco.Controls;
 using ICD.Connect.Conferencing.Controls;
 using ICD.Connect.Conferencing.EventArguments;
@@ -480,10 +483,21 @@ namespace ICD.Profound.ConnectPRO.Routing
 				throw new ArgumentNullException("source");
 
 			CiscoCodec codec = GetCodec();
-			CiscoCodecRoutingControl control = codec == null ? null : codec.Controls.GetControl<CiscoCodecRoutingControl>();
+			if (codec == null)
+				throw new InvalidOperationException("No codec available.");
+
+			// Route the video
+			CiscoCodecRoutingControl control = codec.Controls.GetControl<CiscoCodecRoutingControl>();
 			int input = RoutingGraph.Connections.GetInputs(control, eConnectionType.Video).First();
 
 			Route(source.Endpoint, control.GetInputEndpointInfo(input), eConnectionType.Video);
+
+			// Start the presentation
+			VideoComponent video = codec.Components.GetComponent<VideoComponent>();
+			VideoInputConnector connector = video.GetVideoInputConnector(input);
+
+			PresentationComponent presentation = codec.Components.GetComponent<PresentationComponent>();
+			presentation.StartPresentation(connector.SourceId, PresentationItem.eSendingMode.LocalRemote);
 		}
 
 		/// <summary>
