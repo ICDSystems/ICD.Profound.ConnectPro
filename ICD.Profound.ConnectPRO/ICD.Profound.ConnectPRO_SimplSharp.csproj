@@ -168,7 +168,6 @@
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcDtmfView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcIncomingCallView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcReferencedContactsView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcReferencedHangupView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcShareView.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractComponentPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractListItemFactory.cs" />
@@ -266,8 +265,6 @@
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcIncomingCallView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcReferencedContactsView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcReferencedContactsView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcReferencedHangupView.cs" />
-    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcReferencedHangupView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcShareView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcShareView.generated.cs" />
     <Compile Include="VolumePoint.cs" />

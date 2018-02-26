@@ -47,7 +47,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 
 			// Video Conference
 			{typeof(IVtcReferencedContactsView), (nav, views, theme, index) => new VtcReferencedContactsView(nav, views, theme, index)},
-			{typeof(IVtcReferencedHangupView), (nav, views, theme, index) => new VtcReferencedHangupView(nav, views, theme, index)},
 		};
 
 		private readonly Dictionary<Type, FactoryMethod> m_ViewFactories = new Dictionary<Type, FactoryMethod>
