@@ -5,7 +5,6 @@ using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 {
@@ -38,7 +37,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 				string description = proSource == null ? string.Empty : proSource.Description;
 				string icon = proSource == null ? string.Empty : proSource.Icon;
 
-				icon = Icons.GetSourceIcon(icon, eSourceColor.Grey);
+				icon = string.Format("icon_{0}_white", icon);
 
 				view.SetLabel(index, name);
 				view.SetDescription(index, description);
