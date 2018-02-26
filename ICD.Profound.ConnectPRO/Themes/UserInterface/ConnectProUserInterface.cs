@@ -7,6 +7,7 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
+using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.Cisco.Controls;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
@@ -38,12 +39,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 	/// </summary>
 	public sealed class ConnectProUserInterface : IUserInterface
 	{
-		private readonly IPanelDevice m_Panel;
+		private const long SOURCE_SELECTION_TIMEOUT = 8 * 1000;
 
+		private readonly IPanelDevice m_Panel;
 		private readonly INavigationController m_NavigationController;
+		private readonly SafeTimer m_SourceSelectionTimeout;
 
 		private IConnectProRoom m_Room;
-
 		private DefaultVisibilityNode m_RootVisibility;
 		private ISource m_ActiveSource;
 
@@ -62,6 +64,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		{
 			m_Panel = panel;
 			UpdatePanelOnlineJoin();
+
+			m_SourceSelectionTimeout = SafeTimer.Stopped(() => SetActiveSource(null));
 
 			IViewFactory viewFactory = new ConnectProViewFactory(panel, theme);
 			m_NavigationController = new ConnectProNavigationController(viewFactory, theme);
@@ -128,6 +132,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			SetRoom(null);
 
+			m_SourceSelectionTimeout.Dispose();
 			m_NavigationController.Dispose();
 		}
 
@@ -291,6 +296,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>().ActiveSource = m_ActiveSource;
 			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().ActiveSource = m_ActiveSource;
 			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().ActiveSource = m_ActiveSource;
+
+			m_SourceSelectionTimeout.Reset(SOURCE_SELECTION_TIMEOUT);
 		}
 
 		#endregion
