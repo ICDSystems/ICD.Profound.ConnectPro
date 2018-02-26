@@ -360,12 +360,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Unsubscribe(view);
 
-			view.OnTextEntered += ViewOnTextEntered;
-			view.OnCallButtonPressed += ViewOnCallButtonPressed;
-			view.OnDirectoryButtonPressed += ViewOnDirectoryButtonPressed;
-			view.OnFavoritesButtonPressed += ViewOnFavoritesButtonPressed;
-			view.OnHangupButtonPressed += ViewOnHangupButtonPressed;
-			view.OnRecentButtonPressed += ViewOnRecentButtonPressed;
+			view.OnTextEntered -= ViewOnTextEntered;
+			view.OnCallButtonPressed -= ViewOnCallButtonPressed;
+			view.OnDirectoryButtonPressed -= ViewOnDirectoryButtonPressed;
+			view.OnFavoritesButtonPressed -= ViewOnFavoritesButtonPressed;
+			view.OnHangupButtonPressed -= ViewOnHangupButtonPressed;
+			view.OnRecentButtonPressed -= ViewOnRecentButtonPressed;
 		}
 
 		private void ViewOnRecentButtonPressed(object sender, EventArgs eventArgs)
