@@ -23,10 +23,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Act
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 51
+				DigitalVisibilityJoin = 122
 			};
 
-			m_HangupList = new VtProSubpageReferenceList(504, panel as IPanelDevice, m_Subpage)
+			m_HangupList = new VtProSubpageReferenceList(622, panel as IPanelDevice, m_Subpage)
 			{
 				DigitalJoinIncrement = 3,
 				SerialJoinIncrement = 1,
@@ -35,7 +35,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Act
 
 			m_HangupAllButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 512
+				DigitalPressJoin = 606
 			};
 		}
 

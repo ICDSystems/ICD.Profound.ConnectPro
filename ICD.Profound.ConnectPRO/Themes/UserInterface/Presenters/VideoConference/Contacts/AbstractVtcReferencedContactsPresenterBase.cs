@@ -147,7 +147,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 		}
 
-		protected virtual void ViewOnButtonPressed(object sender, EventArgs eventArgs)
+		private void ViewOnButtonPressed(object sender, EventArgs eventArgs)
 		{
 			OnPressed.Raise(this);
 		}
