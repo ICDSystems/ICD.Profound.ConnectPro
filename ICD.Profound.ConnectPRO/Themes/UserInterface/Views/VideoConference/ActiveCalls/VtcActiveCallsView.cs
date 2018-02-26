@@ -55,7 +55,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Act
 			base.SubscribeControls();
 
 			m_HangupAllButton.OnPressed += HangupAllButtonOnPressed;
-			m_CloseButton.OnPressed += CloseButtonOnPressed;
 		}
 
 		/// <summary>
@@ -66,17 +65,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Act
 			base.UnsubscribeControls();
 
 			m_HangupAllButton.OnPressed -= HangupAllButtonOnPressed;
-			m_CloseButton.OnPressed -= CloseButtonOnPressed;
 		}
 
 		private void HangupAllButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnHangupAllButtonPressed.Raise(this);
-		}
-
-		private void CloseButtonOnPressed(object sender, EventArgs eventArgs)
-		{
-			OnCloseButtonPressed.Raise(this);
 		}
 	}
 }

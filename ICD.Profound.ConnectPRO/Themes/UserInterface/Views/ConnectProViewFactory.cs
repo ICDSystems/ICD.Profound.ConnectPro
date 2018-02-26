@@ -21,6 +21,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.ActiveCalls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Dtmf;
 
@@ -89,6 +90,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(IVtcShareView), (panel, theme) => new VtcShareView(panel, theme)},
 			{typeof(IVtcDtmfView), (panel, theme) => new VtcDtmfView(panel, theme)},
 			{typeof(IVtcIncomingCallView), (panel, theme) => new VtcIncomingCallView(panel, theme)},
+			{typeof(IVtcActiveCallsView), (panel, theme) => new VtcActiveCallsView(panel, theme)},
 
 			// Panel
 			{typeof(IHardButtonsView), (panel, theme) => new HardButtonsView(panel, theme)}
