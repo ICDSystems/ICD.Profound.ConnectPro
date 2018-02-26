@@ -291,20 +291,30 @@ namespace ICD.Profound.ConnectPRO.Routing
 			return GetActiveSource(destination, eConnectionType.Video);
 		}
 
+		public EndpointInfo? GetActiveVideoEndpoint(IDestination destination)
+		{
+			return GetActiveEndpoint(destination, eConnectionType.Video);
+		}
+
 		[CanBeNull]
 		public ISource GetActiveSource(IDestination destination, eConnectionType flag)
 		{
-			IRouteDestinationControl destinationControl =
-				m_Room.Core.GetControl<IRouteDestinationControl>(destination.Endpoint.Device, destination.Endpoint.Control);
-
-			EndpointInfo? info =
-				RoutingGraph.GetActiveSourceEndpoint(destinationControl, destination.Endpoint.Address, flag,
-													 false, false);
+			EndpointInfo? info = GetActiveEndpoint(destination, flag);
 			if (info == null)
 				return null;
 
 			ISource source;
 			return RoutingGraph.Sources.TryGetChild(info.Value, flag, out source) ? source : null;
+		}
+
+		public EndpointInfo? GetActiveEndpoint(IDestination destination, eConnectionType flag)
+		{
+			IRouteDestinationControl destinationControl =
+				m_Room.Core.GetControl<IRouteDestinationControl>(destination.Endpoint.Device, destination.Endpoint.Control);
+
+			return
+				RoutingGraph.GetActiveSourceEndpoint(destinationControl, destination.Endpoint.Address, flag,
+				                                     false, false);
 		}
 
 		#endregion
@@ -522,11 +532,11 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			foreach (IDestination display in GetDisplayDestinations())
 			{
-				ISource source = GetActiveVideoSource(display);
-				if (source == null)
+				EndpointInfo? endpoint = GetActiveVideoEndpoint(display);
+				if (endpoint == null)
 					continue;
 
-				OsdPanelDevice osd = m_Room.Core.Originators.GetChild(source.Endpoint.Device) as OsdPanelDevice;
+				OsdPanelDevice osd = m_Room.Core.Originators.GetChild(endpoint.Value.Device) as OsdPanelDevice;
 				if (osd != null)
 					continue;
 
