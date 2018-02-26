@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
+using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.Pages;
 
@@ -10,6 +11,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 	{
 		private VtProSubpage m_Subpage;
 		private VtProDynamicButtonList m_ButtonList;
+		private VtProButton m_ShareButton;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -28,6 +30,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			{
 				MaxSize = 8
 			};
+
+			m_ShareButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 503,
+				DigitalEnableJoin = 509
+			};
 		}
 
 		/// <summary>
@@ -38,6 +46,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		{
 			yield return m_Subpage;
 			yield return m_ButtonList;
+			yield return m_ShareButton;
 		}
 	}
 }

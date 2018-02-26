@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
+using ICD.Connect.Conferencing.Cisco;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Sources;
@@ -16,10 +18,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 {
 	public sealed class VtcSharePresenter : AbstractPresenter<IVtcShareView>, IVtcSharePresenter
 	{
-		private const int SOURCE_COUNT = 8;
+		private readonly SafeCriticalSection m_RefreshSection;
 
 		private ISource[] m_Sources;
-		private readonly SafeCriticalSection m_RefreshSection;
+		private ISource m_Selected;
 
 		/// <summary>
 		/// Constructor.
@@ -42,28 +44,48 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			try
 			{
-				m_Sources =
-					Room == null
-						? new ISource[0]
-						: Room.Routing.GetCoreSources().ToArray();
+				m_Sources = GetSources().ToArray();
 
-				for (ushort index = 0; index < SOURCE_COUNT; index++)
+				for (ushort index = 0; index < m_Sources.Length; index++)
 				{
-					ISource source;
-					m_Sources.TryElementAt(index, out source);
-
+					ISource source = m_Sources[index];
 					ConnectProSource connectProSource = source as ConnectProSource;
+
 					IRoom room = Room == null || source == null ? null : Room.Routing.GetRoomForSource(source);
 					bool combine = room != null && room.CombineState;
 
+					view.SetButtonSelected(index, source == m_Selected);
 					view.SetButtonIcon(index, connectProSource == null ? null : connectProSource.Icon);
 					view.SetButtonLabel(index, source == null ? null : source.GetNameOrDeviceName(combine));
 				}
+
+				view.SetButtonCount((ushort)m_Sources.Length);
+				view.SetShareButtonEnabled(m_Selected != null);
 			}
 			finally
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		private IEnumerable<ISource> GetSources()
+		{
+			return
+				Room == null
+					? Enumerable.Empty<ISource>()
+					: Room.Routing
+					      .GetCoreSources()
+					      .Where(s => !(Room.Core.Originators.GetChild(s.Endpoint.Device) is CiscoCodec));
+		}
+
+		public void SetSelected(ISource source)
+		{
+			if (source == m_Selected)
+				return;
+
+			m_Selected = source;
+
+			RefreshIfVisible();
 		}
 
 		#region View Callbacks
@@ -73,6 +95,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			base.Subscribe(view);
 
 			view.OnSourceButtonPressed += ViewOnSourceButtonPressed;
+			view.OnShareButtonPressed += ViewOnShareButtonPressed;
 		}
 
 		protected override void Unsubscribe(IVtcShareView view)
@@ -80,11 +103,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			base.Unsubscribe(view);
 
 			view.OnSourceButtonPressed -= ViewOnSourceButtonPressed;
+			view.OnShareButtonPressed -= ViewOnShareButtonPressed;
 		}
 
-		private void ViewOnSourceButtonPressed(object sender, UShortEventArgs uShortEventArgs)
+		private void ViewOnShareButtonPressed(object sender, EventArgs eventArgs)
 		{
-			throw new NotImplementedException();
+			if (Room == null || m_Selected == null)
+				return;
+
+			Room.Routing.RouteVtcPresentation(m_Selected);
+		}
+
+		private void ViewOnSourceButtonPressed(object sender, UShortEventArgs eventArgs)
+		{
+			ISource source;
+			m_Sources.TryElementAt(eventArgs.Data, out source);
+
+			SetSelected(source);
 		}
 
 		#endregion

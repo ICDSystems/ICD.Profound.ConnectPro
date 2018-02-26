@@ -8,6 +8,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Cisco;
 using ICD.Connect.Conferencing.Cisco.Controls;
 using ICD.Connect.Conferencing.Controls;
+using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Extensions;
@@ -155,6 +156,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			if (audioChange)
 				OnAudioSourceChanged.Raise(this);
+		}
+
+		[CanBeNull]
+		private CiscoCodec GetCodec()
+		{
+			IDialingDeviceControl dialer = m_Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			return dialer == null ? null : dialer.Parent as CiscoCodec;
 		}
 
 		#region Sources
@@ -460,6 +468,22 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			display.PowerOn();
 			display.SetHdmiInput(destination.Address);
+		}
+
+		/// <summary>
+		/// Routes the given source to the VTC and starts the presentation.
+		/// </summary>
+		/// <param name="source"></param>
+		public void RouteVtcPresentation(ISource source)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			CiscoCodec codec = GetCodec();
+			CiscoCodecRoutingControl control = codec == null ? null : codec.Controls.GetControl<CiscoCodecRoutingControl>();
+			int input = RoutingGraph.Connections.GetInputs(control, eConnectionType.Video).First();
+
+			Route(source.Endpoint, control.GetInputEndpointInfo(input), eConnectionType.Video);
 		}
 
 		/// <summary>
