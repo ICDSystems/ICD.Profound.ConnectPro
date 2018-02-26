@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using ICD.Common.Utils.EventArguments;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contacts
 {
 	public interface IVtcContactsView : IView
 	{
-		/// <summary>
-		/// Raised when the user enters text in the text field.
-		/// </summary>
-		event EventHandler<StringEventArgs> OnTextEntered;
-
 		/// <summary>
 		/// Raised when the user presses the directory button.
 		/// </summary>
@@ -93,11 +87,5 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Co
 		/// </summary>
 		/// <param name="enabled"></param>
 		void SetHangupButtonEnabled(bool enabled);
-
-		/// <summary>
-		/// Sets the text for the searchbar.
-		/// </summary>
-		/// <param name="text"></param>
-		void SetSearchBarText(string text);
 	}
 }

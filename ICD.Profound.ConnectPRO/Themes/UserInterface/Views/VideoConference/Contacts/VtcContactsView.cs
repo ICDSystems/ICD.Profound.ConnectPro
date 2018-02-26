@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -10,7 +9,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 {
 	public sealed partial class VtcContactsView : AbstractView, IVtcContactsView
 	{
-		public event EventHandler<StringEventArgs> OnTextEntered;
 		public event EventHandler OnDirectoryButtonPressed;
 		public event EventHandler OnFavoritesButtonPressed;
 		public event EventHandler OnRecentButtonPressed;
@@ -38,7 +36,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 		/// </summary>
 		public override void Dispose()
 		{
-			OnTextEntered = null;
 			OnDirectoryButtonPressed = null;
 			OnFavoritesButtonPressed = null;
 			OnRecentButtonPressed = null;
@@ -90,11 +87,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 			m_HangupButton.Enable(enabled);
 		}
 
-		public void SetSearchBarText(string text)
-		{
-			m_SearchBar.SetLabelText(text);
-		}
-
 		#endregion
 
 		#region Control Callbacks
@@ -103,7 +95,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 		{
 			base.SubscribeControls();
 
-			m_SearchBar.OnTextModified += SearchBarOnTextModified;
 			m_DirectoryButton.OnPressed += DirectoryButtonOnPressed;
 			m_FavoritesButton.OnPressed += FavoritesButtonOnPressed;
 			m_RecentsButton.OnPressed += RecentsButtonOnPressed;
@@ -119,7 +110,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 		{
 			base.UnsubscribeControls();
 
-			m_SearchBar.OnTextModified -= SearchBarOnTextModified;
 			m_DirectoryButton.OnPressed -= DirectoryButtonOnPressed;
 			m_FavoritesButton.OnPressed -= FavoritesButtonOnPressed;
 			m_RecentsButton.OnPressed -= RecentsButtonOnPressed;
@@ -139,11 +129,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 		private void CallButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnCallButtonPressed.Raise(this);
-		}
-
-		private void SearchBarOnTextModified(object sender, StringEventArgs stringEventArgs)
-		{
-			OnTextEntered.Raise(this, new StringEventArgs(stringEventArgs.Data));
 		}
 
 		private void DirectoryButtonOnPressed(object sender, EventArgs eventArgs)

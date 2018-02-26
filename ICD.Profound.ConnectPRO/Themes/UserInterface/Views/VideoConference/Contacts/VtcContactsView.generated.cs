@@ -15,7 +15,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 		private VtProButton m_DirectoryButton;
 		private VtProButton m_FavoritesButton;
 		private VtProButton m_RecentsButton;
-		private VtProTextEntry m_SearchBar;
 		private VtProButton m_CallButton;
 		private VtProButton m_HangupButton;
 		private VtProButton m_BackButton;
@@ -36,7 +35,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 				DigitalVisibilityJoin = 120
 			};
 
-			m_ContactList = new VtProSubpageReferenceList(501, panel as IPanelDevice, m_Subpage)
+			m_ContactList = new VtProSubpageReferenceList(601, panel as IPanelDevice, m_Subpage)
 			{
 				DigitalJoinIncrement = 3,
 				AnalogJoinIncrement = 0,
@@ -46,55 +45,49 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 
 			m_DirectoryButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 514
+				DigitalPressJoin = 120
 			};
 
 			m_FavoritesButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 515
+				DigitalPressJoin = 125
 			};
 
 			m_RecentsButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 516
-			};
-
-			m_SearchBar = new VtProTextEntry(panel, m_Subpage)
-			{
-				IndirectTextJoin = 500,
-				SerialOutputJoin = 501
+				DigitalPressJoin = 124
 			};
 
 			m_CallButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 503,
-				DigitalEnableJoin = 509
+				DigitalPressJoin = 603,
+				DigitalEnableJoin = 603
 			};
 
 			m_HangupButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 510,
-				DigitalEnableJoin = 511
+				DigitalPressJoin = 605,
+				DigitalEnableJoin = 605
 			};
 
 			m_BackButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 0 // TODO
+				DigitalPressJoin = 611
 			};
 
 			m_HomeButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 0 // TODO
+				DigitalPressJoin = 612
 			};
 
 			m_SearchButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 0 // TODO
+				DigitalPressJoin = 613
 			};
 
 			m_ManualDialButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 0 // TODO
+				DigitalPressJoin = 604
 			};
 		}
 
@@ -109,7 +102,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 			yield return m_DirectoryButton;
 			yield return m_FavoritesButton;
 			yield return m_RecentsButton;
-			yield return m_SearchBar;
 			yield return m_CallButton;
 			yield return m_HangupButton;
 			yield return m_BackButton;

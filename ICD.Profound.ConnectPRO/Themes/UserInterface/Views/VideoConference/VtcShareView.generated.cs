@@ -23,18 +23,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 122
+				DigitalVisibilityJoin = 121
 			};
 
-			m_ButtonList = new VtProDynamicButtonList(505, panel as IPanelDevice, m_Subpage)
+			m_ButtonList = new VtProDynamicButtonList(621, panel as IPanelDevice, m_Subpage)
 			{
 				MaxSize = 8
 			};
 
 			m_ShareButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 503,
-				DigitalEnableJoin = 509
+				DigitalPressJoin = 641,
+				DigitalEnableJoin = 641
 			};
 		}
 

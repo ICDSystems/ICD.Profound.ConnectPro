@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
-using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Cisco;
 using ICD.Connect.Conferencing.Cisco.Components.Directory;
 using ICD.Connect.Conferencing.Cisco.Components.Directory.Tree;
@@ -131,16 +130,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				IConference active = m_SubscribedConferenceManager == null ? null : m_SubscribedConferenceManager.ActiveConference;
 				bool hangupEnabled = active != null;
 
-				string searchText = string.Empty;
-
 				view.SetDirectoryButtonSelected(m_DirectoryMode == eDirectoryMode.Contacts);
 				view.SetFavoritesButtonSelected(m_DirectoryMode == eDirectoryMode.Favorites);
 				view.SetRecentButtonSelected(m_DirectoryMode == eDirectoryMode.Recents);
 
 				view.SetCallButtonEnabled(callEnabled);
 				view.SetHangupButtonEnabled(hangupEnabled);
-
-				view.SetSearchBarText(searchText);
 			}
 			finally
 			{
@@ -343,7 +338,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Subscribe(view);
 
-			view.OnTextEntered += ViewOnTextEntered;
 			view.OnCallButtonPressed += ViewOnCallButtonPressed;
 			view.OnDirectoryButtonPressed += ViewOnDirectoryButtonPressed;
 			view.OnFavoritesButtonPressed += ViewOnFavoritesButtonPressed;
@@ -363,7 +357,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Unsubscribe(view);
 
-			view.OnTextEntered -= ViewOnTextEntered;
 			view.OnCallButtonPressed -= ViewOnCallButtonPressed;
 			view.OnDirectoryButtonPressed -= ViewOnDirectoryButtonPressed;
 			view.OnFavoritesButtonPressed -= ViewOnFavoritesButtonPressed;
@@ -421,10 +414,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			IConference active = m_SubscribedConferenceManager == null ? null : m_SubscribedConferenceManager.ActiveConference;
 			if (active != null)
 				active.Hangup();
-		}
-
-		private void ViewOnTextEntered(object sender, StringEventArgs stringEventArgs)
-		{
 		}
 
 		#endregion

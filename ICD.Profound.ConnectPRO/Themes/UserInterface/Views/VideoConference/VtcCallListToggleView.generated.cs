@@ -21,12 +21,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 0 // TODO
+				DigitalVisibilityJoin = 128
 			};
 
 			m_Button = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 0 // TODO
+				DigitalPressJoin = 122
 			};
 		}
 
