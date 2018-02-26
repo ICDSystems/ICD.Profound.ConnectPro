@@ -12,6 +12,7 @@ using ICD.Connect.Conferencing.EventArguments;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Hangup;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contacts;
 
@@ -418,12 +419,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void ViewOnHangupButtonPressed(object sender, EventArgs eventArgs)
 		{
-			IConference active = m_SubscribedConferenceManager == null
-				? null
-				: m_SubscribedConferenceManager.ActiveConference;
+			IVtcHangupPresenter presenter = Navigation.LazyLoadPresenter<IVtcHangupPresenter>();
+			int sourceCount = presenter.GetSources().Count();
 
-			if (active != null)
-				active.Hangup();
+			// Don't do anything if there are no sources.
+			if (sourceCount == 0)
+				return;
+
+			// If there is only one source hangup immediately, otherwise provide a menu
+			if (sourceCount == 1)
+				presenter.HangupAll();
+			else
+				presenter.ShowView(true);
 		}
 
 		private void ViewOnTextEntered(object sender, StringEventArgs stringEventArgs)
