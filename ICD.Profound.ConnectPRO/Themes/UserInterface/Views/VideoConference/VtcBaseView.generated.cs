@@ -10,7 +10,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 	{
 		private VtProSubpage m_Subpage;
 		private VtProButton m_CloseButton;
-		private VtProTabButton m_NavButtons;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -29,8 +28,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			{
 				DigitalPressJoin = 113
 			};
-
-			m_NavButtons = new VtProTabButton(500, panel as IPanelDevice, m_Subpage);
 		}
 
 		/// <summary>
@@ -41,7 +38,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		{
 			yield return m_Subpage;
 			yield return m_CloseButton;
-			yield return m_NavButtons;
 		}
 	}
 }

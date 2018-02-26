@@ -1,5 +1,4 @@
 ﻿using System;
-using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
@@ -10,7 +9,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 	public sealed partial class VtcBaseView : AbstractPopupView, IVtcBaseView
 	{
 		public override event EventHandler OnCloseButtonPressed;
-		public event EventHandler<UShortEventArgs> OnNavButtonPressed;
 
 		/// <summary>
 		/// Constructor.
@@ -28,7 +26,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		public override void Dispose()
 		{
 			OnCloseButtonPressed = null;
-			OnNavButtonPressed = null;
 
 			base.Dispose();
 		}
@@ -43,7 +40,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			base.SubscribeControls();
 
 			m_CloseButton.OnPressed += CloseButtonOnPressed;
-			m_NavButtons.OnButtonPressed += NavButtonsOnButtonPressed;
 		}
 
 		/// <summary>
@@ -54,12 +50,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			base.UnsubscribeControls();
 
 			m_CloseButton.OnPressed -= CloseButtonOnPressed;
-			m_NavButtons.OnButtonPressed -= NavButtonsOnButtonPressed;
-		}
-
-		private void NavButtonsOnButtonPressed(object sender, UShortEventArgs eventArgs)
-		{
-			OnNavButtonPressed.Raise(this, new UShortEventArgs(eventArgs.Data));
 		}
 
 		private void CloseButtonOnPressed(object sender, EventArgs eventArgs)

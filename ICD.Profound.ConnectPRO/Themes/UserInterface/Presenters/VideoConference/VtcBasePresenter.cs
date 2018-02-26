@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Cisco;
 using ICD.Connect.Conferencing.Cisco.Components.System;
@@ -20,20 +19,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 {
 	public sealed class VtcBasePresenter : AbstractPopupPresenter<IVtcBaseView>, IVtcBasePresenter
 	{
-		private const ushort INDEX_CONTACTS = 0;
-		private const ushort INDEX_CAMERA = 1;
-		private const ushort INDEX_SHARE = 2;
-		private const ushort INDEX_DTMF = 3;
-
-		private static readonly Dictionary<ushort, Type> s_NavPages =
-			new Dictionary<ushort, Type>
-			{
-				{INDEX_CONTACTS, typeof(IVtcContactsPresenter)},
-				{INDEX_CAMERA, typeof(IVtcCameraPresenter)},
-				{INDEX_SHARE, typeof(IVtcSharePresenter)},
-				{INDEX_DTMF, typeof(IVtcDtmfPresenter)},
-			};
-
 		private SystemComponent m_SubscribedCodecSystem;
 
 		/// <summary>
@@ -127,34 +112,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		#region View Callbacks
 
 		/// <summary>
-		/// Subscribe to the view events.
-		/// </summary>
-		/// <param name="view"></param>
-		protected override void Subscribe(IVtcBaseView view)
-		{
-			base.Subscribe(view);
-
-			view.OnNavButtonPressed += ViewOnNavButtonPressed;
-		}
-
-		/// <summary>
-		/// Unsubscribe from the view events.
-		/// </summary>
-		/// <param name="view"></param>
-		protected override void Unsubscribe(IVtcBaseView view)
-		{
-			base.Unsubscribe(view);
-
-			view.OnNavButtonPressed -= ViewOnNavButtonPressed;
-		}
-
-		private void ViewOnNavButtonPressed(object sender, UShortEventArgs eventArgs)
-		{
-			Type type = s_NavPages[eventArgs.Data];
-			Navigation.LazyLoadPresenter(type).ShowView(true);
-		}
-
-		/// <summary>
 		/// Called when the user presses the close button.
 		/// </summary>
 		/// <param name="sender"></param>
@@ -188,9 +145,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			// View became hidden
 			else
 			{
-				foreach (Type type in s_NavPages.Values)
-					Navigation.LazyLoadPresenter(type).ShowView(false);
-
 				IConferenceManager manager = Room == null ? null : Room.ConferenceManager;
 				IConference active = manager == null ? null : manager.ActiveConference;
 
