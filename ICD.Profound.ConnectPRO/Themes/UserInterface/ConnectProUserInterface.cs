@@ -25,6 +25,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Options;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.ActiveCalls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Dtmf;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VisibilityTree;
@@ -96,6 +97,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcCameraPresenter>());
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcSharePresenter>());
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcDtmfPresenter>());
+			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcCallListTogglePresenter>());
+			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcActiveCallsPresenter>());
 
 			IVisibilityNode meetingVisibility = new VisibilityNode();
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>());
@@ -116,6 +119,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_NavigationController.LazyLoadPresenter<IStartMeetingPresenter>();
 			m_NavigationController.LazyLoadPresenter<IOptionPrivacyMutePresenter>();
 			m_NavigationController.LazyLoadPresenter<IOptionVolumePresenter>();
+			m_NavigationController.LazyLoadPresenter<IVtcCallListTogglePresenter>();
 		}
 
 		#region Methods

@@ -75,6 +75,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IVtcIncomingCallPresenter), (nav, views, theme) => new VtcIncomingCallPresenter(nav, views, theme)},
 			{typeof(IVtcActiveCallsPresenter), (nav, views, theme) => new VtcActiveCallsPresenter(nav, views, theme)},
 			{typeof(IVtcReferencedActiveCallsPresenter), (nav, views, theme) => new VtcReferencedActiveCallsPresenter(nav, views, theme)},
+			{typeof(IVtcCallListTogglePresenter), (nav, views, theme) => new VtcCallListTogglePresenter(nav, views, theme)},
 
 			// Video Conference Contacts
 			{typeof(IVtcReferencedContactsPresenter), (nav, views, theme) => new VtcReferencedContactsPresenter(nav, views, theme)},
