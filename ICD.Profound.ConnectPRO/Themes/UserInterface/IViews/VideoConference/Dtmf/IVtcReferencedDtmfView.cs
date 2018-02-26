@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Dtmf
 {
 	public interface IVtcReferencedDtmfView : IView
 	{

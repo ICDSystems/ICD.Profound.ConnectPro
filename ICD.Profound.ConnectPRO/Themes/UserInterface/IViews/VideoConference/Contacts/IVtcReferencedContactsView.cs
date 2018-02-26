@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contacts
 {
 	public interface IVtcReferencedContactsView : IView
 	{

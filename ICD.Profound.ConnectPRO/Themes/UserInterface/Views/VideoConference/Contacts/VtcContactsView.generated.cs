@@ -6,7 +6,7 @@ using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Connect.UI.Controls.TextControls;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Contacts
 {
 	public sealed partial class VtcContactsView
 	{

@@ -5,7 +5,7 @@ using ICD.Connect.UI.Controls.Keypads;
 using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.Pages;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Dtmf
 {
 	public sealed partial class VtcDtmfView
 	{

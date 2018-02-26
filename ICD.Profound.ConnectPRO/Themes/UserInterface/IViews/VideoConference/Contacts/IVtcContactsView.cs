@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using ICD.Common.Utils.EventArguments;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contacts
 {
 	public interface IVtcContactsView : IView
 	{
