@@ -12,7 +12,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
 	public sealed class VolumePresenter : AbstractPresenter<IVolumeView>, IVolumePresenter
 	{
-		private const ushort HIDE_TIME = (ushort)(3.5f * 1000);
+		private const ushort HIDE_TIME = 20 * 1000;
 
 		private readonly SafeTimer m_VisibilityTimer;
 		private readonly SafeCriticalSection m_RefreshSection;
