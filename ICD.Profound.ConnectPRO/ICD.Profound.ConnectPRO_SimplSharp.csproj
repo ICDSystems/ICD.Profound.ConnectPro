@@ -138,6 +138,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Dtmf\IVtcDtmfPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcIncomingCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcReferencedContactsPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcKeyboardPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcSharePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\VisibilityNode.cs" />
     <Compile Include="Themes\UserInterface\IViews\Cameras\ICamerasView.cs" />
@@ -178,6 +179,7 @@
     <Compile Include="Themes\UserInterface\IViews\VideoConference\Contacts\IVtcReferencedContactsView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\Dtmf\IVtcReferencedDtmfView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\ActiveCalls\IVtcReferencedActiveCallsView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcKeyboardView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcShareView.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractComponentPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractListItemFactory.cs" />
