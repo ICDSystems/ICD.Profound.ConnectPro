@@ -10,15 +10,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Ac
 		event EventHandler OnHangupButtonPressed;
 
 		/// <summary>
-		/// Sets the name for the contact.
+		/// Sets the label text for the contact.
 		/// </summary>
-		/// <param name="name"></param>
-		void SetContactName(string name);
-
-		/// <summary>
-		/// Sets the number for the contact.
-		/// </summary>
-		/// <param name="number"></param>
-		void SetContactNumber(string number);
+		/// <param name="label"></param>
+		void SetLabel(string label);
 	}
 }

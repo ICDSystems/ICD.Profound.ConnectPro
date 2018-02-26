@@ -59,8 +59,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			try
 			{
-				view.SetContactName(m_Source == null ? null : m_Source.Name);
-				view.SetContactNumber(m_Source == null ? null : m_Source.Number);
+				string name =
+					m_Source == null
+						? string.Empty
+						: string.Format("{0} - {1} - {2}", m_Source.GetDuration(), m_Source.Name, m_Source.Number);
+
+				view.SetLabel(name);
 			}
 			finally
 			{

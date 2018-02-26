@@ -2,7 +2,6 @@
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.ActiveCalls;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
@@ -24,21 +23,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		}
 
 		/// <summary>
-		/// Sets the name for the contact.
+		/// Sets the label text for the contact.
 		/// </summary>
-		/// <param name="name"></param>
-		public void SetContactName(string name)
+		/// <param name="label"></param>
+		public void SetLabel(string label)
 		{
-			m_ContactNameLabel.SetLabelText(name);
-		}
-
-		/// <summary>
-		/// Sets the number for the contact.
-		/// </summary>
-		/// <param name="number"></param>
-		public void SetContactNumber(string number)
-		{
-			m_ContactNumberLabel.SetLabelText(number);
+			m_Label.SetLabelText(label);
 		}
 
 		#region Control Callbacks

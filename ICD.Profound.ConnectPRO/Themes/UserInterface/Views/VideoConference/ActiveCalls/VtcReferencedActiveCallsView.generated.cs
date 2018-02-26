@@ -11,8 +11,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 	{
 		private VtProSubpage m_Subpage;
 		private VtProButton m_HangupButton;
-		private VtProSimpleLabel m_ContactNameLabel;
-		private VtProSimpleLabel m_ContactNumberLabel;
+		private VtProSimpleLabel m_Label;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -29,14 +28,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 				DigitalPressJoin = 1
 			};
 
-			m_ContactNameLabel = new VtProSimpleLabel(panel, m_Subpage)
+			m_Label = new VtProSimpleLabel(panel, m_Subpage)
 			{
 				IndirectTextJoin = 1
-			};
-
-			m_ContactNumberLabel = new VtProSimpleLabel(panel, m_Subpage)
-			{
-				IndirectTextJoin = 2
 			};
 		}
 
@@ -48,8 +42,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		{
 			yield return m_Subpage;
 			yield return m_HangupButton;
-			yield return m_ContactNameLabel;
-			yield return m_ContactNumberLabel;
+			yield return m_Label;
 		}
 	}
 }
