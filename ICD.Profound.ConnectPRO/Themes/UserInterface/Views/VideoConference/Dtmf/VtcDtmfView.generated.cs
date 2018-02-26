@@ -26,7 +26,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Dtm
 				DigitalVisibilityJoin = 123
 			};
 
-			m_Keypad = new VtProSimpleKeypad(502, panel as IPanelDevice, m_Subpage);
+			m_Keypad = new VtProSimpleKeypad(11, panel as IPanelDevice, m_Subpage)
+			{
+				MiscButtonOneChar = '*',
+				MiscButtonTwoChar = '#'
+			};
 
 			m_ConferenceSourceList = new VtProSubpageReferenceList(501, panel as IPanelDevice, m_Subpage)
 			{

@@ -15,6 +15,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Dtmf;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Displays;
@@ -23,6 +24,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Contacts;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Dtmf;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 {
@@ -67,6 +69,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IVtcCameraPresenter), (nav, views, theme) => new VtcCameraPresenter(nav, views, theme)},
 			{typeof(IVtcSharePresenter), (nav, views, theme) => new VtcSharePresenter(nav, views, theme)},
 			{typeof(IVtcDtmfPresenter), (nav, views, theme) => new VtcDtmfPresenter(nav, views, theme)},
+			{typeof(IVtcReferencedDtmfPresenter), (nav, views, theme) => new VtcReferencedDtmfPresenter(nav, views, theme)},
 			{typeof(IVtcIncomingCallPresenter), (nav, views, theme) => new VtcIncomingCallPresenter(nav, views, theme)},
 			
 			// Video Conference Contacts

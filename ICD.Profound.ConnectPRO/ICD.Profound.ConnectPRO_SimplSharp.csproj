@@ -127,10 +127,11 @@
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcReferencedFolderPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcReferencedFavoritesPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcReferencedRecentPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Dtmf\IVtcReferencedDtmfPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcCameraPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcContactsPresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcDtmfPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Dtmf\IVtcDtmfPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcIncomingCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcReferencedContactsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcSharePresenter.cs" />
@@ -203,9 +204,11 @@
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\VtcReferencedFavoritesPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\VtcReferencedFolderPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\VtcReferencedRecentPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\VideoConference\Dtmf\VtcReferencedDtmfPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\VideoConference\Dtmf\VtcReferencedDtmfPresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcCameraPresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcDtmfPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\VideoConference\Dtmf\VtcDtmfPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcIncomingCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcSharePresenter.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractComponentView.cs" />
