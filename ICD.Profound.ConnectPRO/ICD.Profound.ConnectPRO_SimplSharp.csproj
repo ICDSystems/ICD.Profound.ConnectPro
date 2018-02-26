@@ -128,6 +128,8 @@
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcReferencedFavoritesPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcReferencedRecentPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Dtmf\IVtcReferencedDtmfPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\ActiveCalls\IVtcActiveCallsPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\ActiveCalls\IVtcReferencedActiveCallsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcCameraPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcContactsPresenter.cs" />
@@ -167,9 +169,11 @@
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcCameraView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\Contacts\IVtcContactsView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\Dtmf\IVtcDtmfView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\VideoConference\ActiveCalls\IVtcActiveCallsView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcIncomingCallView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\Contacts\IVtcReferencedContactsView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\Dtmf\IVtcReferencedDtmfView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\VideoConference\ActiveCalls\IVtcReferencedActiveCallsView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcShareView.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractComponentPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractListItemFactory.cs" />
@@ -206,6 +210,9 @@
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\VtcReferencedRecentPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Dtmf\VtcReferencedDtmfPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Dtmf\VtcReferencedDtmfPresenterFactory.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\VideoConference\ActiveCalls\VtcActiveCallsPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\VideoConference\ActiveCalls\VtcReferencedActiveCallsPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\VideoConference\ActiveCalls\VtcReferencedActiveCallsPresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcCameraPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Dtmf\VtcDtmfPresenter.cs" />
@@ -267,10 +274,14 @@
     <Compile Include="Themes\UserInterface\Views\VideoConference\Contacts\VtcContactsView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\Dtmf\VtcDtmfView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\Dtmf\VtcDtmfView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\ActiveCalls\VtcActiveCallsView.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\ActiveCalls\VtcActiveCallsView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcIncomingCallView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcIncomingCallView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\Contacts\VtcReferencedContactsView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\Contacts\VtcReferencedContactsView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\ActiveCalls\VtcReferencedActiveCallsView.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\ActiveCalls\VtcReferencedActiveCallsView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcShareView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcShareView.generated.cs" />
     <Compile Include="VolumePoint.cs" />

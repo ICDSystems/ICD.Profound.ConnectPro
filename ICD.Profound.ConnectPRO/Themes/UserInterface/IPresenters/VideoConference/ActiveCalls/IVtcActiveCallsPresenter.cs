@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using ICD.Connect.Conferencing.ConferenceSources;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.ActiveCalls;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Hangup
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.ActiveCalls
 {
-	public interface IVtcHangupPresenter : IPresenter<IVtcHangupView>
+	public interface IVtcActiveCallsPresenter : IPresenter<IVtcActiveCallsView>
 	{
 		/// <summary>
 		/// Returns the current active sources.

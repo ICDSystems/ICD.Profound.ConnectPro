@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.ActiveCalls
 {
-	public interface IVtcReferencedHangupView : IView
+	public interface IVtcReferencedActiveCallsView : IView
 	{
 		/// <summary>
 		/// Raised when the user presses the hangup button.

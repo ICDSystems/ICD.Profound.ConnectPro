@@ -8,15 +8,15 @@ using ICD.Connect.Conferencing.ConferenceSources;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Hangup;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.ActiveCalls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.ActiveCalls;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Hangup
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.ActiveCalls
 {
-	public sealed class VtcHangupPresenter : AbstractPresenter<IVtcHangupView>, IVtcHangupPresenter
+	public sealed class VtcActiveCallsPresenter : AbstractPresenter<IVtcActiveCallsView>, IVtcActiveCallsPresenter
 	{
-		private readonly VtcReferencedHangupPresenterFactory m_ChildrenFactory;
+		private readonly VtcReferencedActiveCallsPresenterFactory m_ChildrenFactory;
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private IConferenceManager m_SubscribedConferenceManager;
@@ -27,10 +27,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcHangupPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public VtcActiveCallsPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
-			m_ChildrenFactory = new VtcReferencedHangupPresenterFactory(nav, ItemFactory);
+			m_ChildrenFactory = new VtcReferencedActiveCallsPresenterFactory(nav, ItemFactory);
 			m_RefreshSection = new SafeCriticalSection();
 		}
 
@@ -48,7 +48,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Updates the view.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Refresh(IVtcHangupView view)
+		protected override void Refresh(IVtcActiveCallsView view)
 		{
 			base.Refresh(view);
 
@@ -57,7 +57,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			try
 			{
 				IConferenceSource[] sources = GetSources().ToArray();
-				foreach (IVtcReferencedHangupPresenter presenter in m_ChildrenFactory.BuildChildren(sources))
+				foreach (IVtcReferencedActiveCallsPresenter presenter in m_ChildrenFactory.BuildChildren(sources))
 					presenter.ShowView(true);
 			}
 			finally
@@ -107,7 +107,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		/// <param name="count"></param>
 		/// <returns></returns>
-		private IEnumerable<IVtcReferencedHangupView> ItemFactory(ushort count)
+		private IEnumerable<IVtcReferencedActiveCallsView> ItemFactory(ushort count)
 		{
 			return GetView().GetChildComponentViews(ViewFactory, count);
 		}
@@ -230,7 +230,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Subscribe to the view events.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Subscribe(IVtcHangupView view)
+		protected override void Subscribe(IVtcActiveCallsView view)
 		{
 			base.Subscribe(view);
 
@@ -242,7 +242,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Unsubscribe from the view events.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Unsubscribe(IVtcHangupView view)
+		protected override void Unsubscribe(IVtcActiveCallsView view)
 		{
 			base.Unsubscribe(view);
 

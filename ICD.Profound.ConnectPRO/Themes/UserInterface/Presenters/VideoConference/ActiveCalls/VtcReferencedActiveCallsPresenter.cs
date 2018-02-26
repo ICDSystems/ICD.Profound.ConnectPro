@@ -3,14 +3,14 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.ConferenceSources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Hangup;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.ActiveCalls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.ActiveCalls;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Hangup
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.ActiveCalls
 {
-	public sealed class VtcReferencedHangupPresenter : AbstractComponentPresenter<IVtcReferencedHangupView>,
-	                                                   IVtcReferencedHangupPresenter
+	public sealed class VtcReferencedActiveCallsPresenter : AbstractComponentPresenter<IVtcReferencedActiveCallsView>,
+	                                                   IVtcReferencedActiveCallsPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 		private IConferenceSource m_Source;
@@ -41,7 +41,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcReferencedHangupPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public VtcReferencedActiveCallsPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
@@ -51,7 +51,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Updates the view.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Refresh(IVtcReferencedHangupView view)
+		protected override void Refresh(IVtcReferencedActiveCallsView view)
 		{
 			base.Refresh(view);
 
@@ -110,14 +110,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		#region View Callbacks
 
-		protected override void Subscribe(IVtcReferencedHangupView view)
+		protected override void Subscribe(IVtcReferencedActiveCallsView view)
 		{
 			base.Subscribe(view);
 
 			view.OnHangupButtonPressed += ViewOnHangupButtonPressed;
 		}
 
-		protected override void Unsubscribe(IVtcReferencedHangupView view)
+		protected override void Unsubscribe(IVtcReferencedActiveCallsView view)
 		{
 			base.Unsubscribe(view);
 

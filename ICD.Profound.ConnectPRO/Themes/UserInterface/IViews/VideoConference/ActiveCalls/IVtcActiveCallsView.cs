@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.ActiveCalls
 {
-	public interface IVtcHangupView : IView
+	public interface IVtcActiveCallsView : IView
 	{
 		/// <summary>
 		/// Raised when the user presses the hangup all button.
@@ -21,6 +21,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 		/// <param name="factory"></param>
 		/// <param name="count"></param>
 		/// <returns></returns>
-		IEnumerable<IVtcReferencedHangupView> GetChildComponentViews(IViewFactory factory, ushort count);
+		IEnumerable<IVtcReferencedActiveCallsView> GetChildComponentViews(IViewFactory factory, ushort count);
 	}
 }

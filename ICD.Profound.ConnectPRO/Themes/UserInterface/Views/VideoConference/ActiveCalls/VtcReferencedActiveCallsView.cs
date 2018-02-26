@@ -3,10 +3,11 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.ActiveCalls;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 {
-	public sealed partial class VtcReferencedHangupView : AbstractComponentView, IVtcReferencedHangupView
+	public sealed partial class VtcReferencedActiveCallsView : AbstractComponentView, IVtcReferencedActiveCallsView
 	{
 		public event EventHandler OnHangupButtonPressed;
 
@@ -17,7 +18,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		/// <param name="theme"></param>
 		/// <param name="parent"></param>
 		/// <param name="index"></param>
-		public VtcReferencedHangupView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index)
+		public VtcReferencedActiveCallsView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index)
 			: base(panel, theme, parent, index)
 		{
 		}

@@ -5,9 +5,9 @@ using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.Pages;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.ActiveCalls
 {
-	public sealed partial class VtcHangupView
+	public sealed partial class VtcActiveCallsView
 	{
 		private VtProSubpage m_Subpage;
 		private VtProSubpageReferenceList m_HangupList;

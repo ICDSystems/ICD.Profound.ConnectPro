@@ -7,7 +7,7 @@ using ICD.Connect.UI.Controls.TextControls;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 {
-	public sealed partial class VtcReferencedHangupView
+	public sealed partial class VtcReferencedActiveCallsView
 	{
 		private VtProSubpage m_Subpage;
 		private VtProButton m_HangupButton;
