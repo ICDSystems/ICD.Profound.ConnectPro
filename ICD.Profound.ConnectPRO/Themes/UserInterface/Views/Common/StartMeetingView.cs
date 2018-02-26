@@ -20,6 +20,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		{
 		}
 
+		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			OnStartMeetingButtonPressed = null;
+			OnShutdownButtonPressed = null;
+
+			base.Dispose();
+		}
+
 		#region Control Callbacks
 
 		/// <summary>
