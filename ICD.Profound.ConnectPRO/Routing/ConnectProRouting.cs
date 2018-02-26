@@ -684,8 +684,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (source == null)
 				return;
 
-			IcdConsole.PrintLine(eConsoleColor.Magenta, "{0} video detection state changed to {1}", source, args.State);
-
 			// When a previously selected source is detected again we restore the old route
 			if (args.State)
 			{
