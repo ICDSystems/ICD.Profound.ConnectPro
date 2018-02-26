@@ -4,8 +4,6 @@ using ICD.Connect.Conferencing.EventArguments;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.ActiveCalls;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
@@ -96,19 +94,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="eventArgs"></param>
 		private void ViewOnButtonPressed(object sender, EventArgs eventArgs)
 		{
-			IVtcContactsPresenter contacts = Navigation.LazyLoadPresenter<IVtcContactsPresenter>();
-			IVtcActiveCallsPresenter activeCalls = Navigation.LazyLoadPresenter<IVtcActiveCallsPresenter>();
-
-			if (contacts.IsViewVisible)
-			{
-				contacts.ShowView(false);
-				activeCalls.ShowView(true);
-			}
-			else
-			{
-				activeCalls.ShowView(false);
-				contacts.ShowView(true);
-			}
+			IVtcButtonListPresenter presenter = Navigation.LazyLoadPresenter<IVtcButtonListPresenter>();
+			presenter.ShowView(!presenter.IsViewVisible);
 		}
 
 		#endregion
