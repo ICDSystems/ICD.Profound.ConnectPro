@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
@@ -95,10 +96,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			{
 				UnsubscribeChildren();
 
-				m_Sources =
-					Room == null
-						? new ISource[0]
-						: Room.Routing.GetCoreSources().ToArray();
+				m_Sources = GetSources().ToArray();
 
 				foreach (IReferencedSourceSelectPresenter presenter in m_ChildrenFactory.BuildChildren(m_Sources))
 				{
@@ -113,6 +111,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		private IEnumerable<ISource> GetSources()
+		{
+			return Room == null
+				       ? Enumerable.Empty<ISource>()
+				       : Room.Routing
+				             .GetCoreSources()
+				             .Distinct(s => s.Endpoint.Device);
 		}
 
 		/// <summary>
