@@ -228,7 +228,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		[PublicAPI]
 		public void RefreshAsync()
 		{
-			m_AsyncRefreshHandle = ThreadingUtils.SafeInvoke(Refresh);
+			Refresh();
+			//m_AsyncRefreshHandle = ThreadingUtils.SafeInvoke(Refresh);
 		}
 
 		/// <summary>
