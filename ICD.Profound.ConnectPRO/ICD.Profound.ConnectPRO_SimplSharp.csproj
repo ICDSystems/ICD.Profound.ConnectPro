@@ -106,6 +106,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IReferencedDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmEndMeetingPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmSplashPowerPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IEndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IHeaderPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IStartMeetingPresenter.cs" />
@@ -146,6 +147,7 @@
     <Compile Include="Themes\UserInterface\IViews\Common\Displays\IMenuDisplaysView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmLeaveCallView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmEndMeetingView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\IConfirmSplashPowerView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IStartMeetingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IVolumeView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Icons.cs" />
@@ -186,6 +188,7 @@
     <Compile Include="Themes\UserInterface\Presenters\AbstractPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmEndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmLeaveCallPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmSplashPowerPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\DisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\MenuDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\ReferencedDisplaysPresenter.cs" />
@@ -234,6 +237,8 @@
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmEndMeetingView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmLeaveCallView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmLeaveCallView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\ConfirmSplashPowerView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\ConfirmSplashPowerView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\DisplaysView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\DisplaysView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\MenuDisplaysView.cs" />

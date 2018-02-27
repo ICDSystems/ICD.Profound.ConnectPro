@@ -6,11 +6,11 @@ using ICD.Connect.UI.Controls.Pages;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 {
-	public sealed partial class StartMeetingView
+	public sealed partial class ConfirmSplashPowerView
 	{
 		private VtProSubpage m_Subpage;
-		private VtProButton m_StartMeetingButton;
-		private VtProButton m_ShutdownButton;
+		private VtProButton m_YesButton;
+		private VtProButton m_CancelButton;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -22,17 +22,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 90
+				DigitalVisibilityJoin = 33
 			};
 
-			m_StartMeetingButton = new VtProButton(panel, m_Subpage)
+			m_YesButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 91
+				DigitalPressJoin = 34
 			};
 
-			m_ShutdownButton = new VtProButton(panel, m_Subpage)
+			m_CancelButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 114
+				DigitalPressJoin = 35
 			};
 		}
 
@@ -43,8 +43,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		protected override IEnumerable<IVtProControl> GetChildren()
 		{
 			yield return m_Subpage;
-			yield return m_StartMeetingButton;
-			yield return m_ShutdownButton;
+			yield return m_YesButton;
+			yield return m_CancelButton;
 		}
 	}
 }

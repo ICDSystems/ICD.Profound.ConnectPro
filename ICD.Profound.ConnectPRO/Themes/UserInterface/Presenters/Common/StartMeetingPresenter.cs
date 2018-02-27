@@ -47,8 +47,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 		private void ViewOnShutdownButtonPressed(object sender, EventArgs eventArgs)
 		{
-			if (Room != null)
-				Room.EndMeeting(true);
+			Navigation.NavigateTo<IConfirmSplashPowerPresenter>();
 		}
 
 		/// <summary>
