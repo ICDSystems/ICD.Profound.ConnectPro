@@ -86,6 +86,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 				return;
 
 			m_IsInMeeting = true;
+			Routing.RouteOsd();
 
 			OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
 		}
