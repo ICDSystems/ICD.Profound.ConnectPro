@@ -41,11 +41,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <returns></returns>
 		protected override string GetName()
 		{
-			return Recent == null
-				       ? null
-				       : string.IsNullOrEmpty(Recent.Name)
-					         ? Recent.Number
-					         : Recent.Name;
+			if (Recent == null)
+				return string.Empty;
+
+			string name =
+				string.IsNullOrEmpty(Recent.Name)
+					? Recent.Number
+					: Recent.Name;
+
+			return string.Format("{0} - {1}", Recent.End, name);
 		}
 
 		/// <summary>
