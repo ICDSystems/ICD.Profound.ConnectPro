@@ -1,4 +1,5 @@
 ﻿using ICD.Common.Properties;
+using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Audio.Shure;
 using ICD.Connect.Conferencing.ConferenceManagers;
@@ -14,6 +15,7 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 
 		private readonly ConnectProTheme m_Theme;
 		private readonly IShureMxaDevice m_Microphone;
+		private readonly SafeCriticalSection m_RefreshSection;
 
 		private IConferenceManager m_SubscribedConferenceManager;
 
@@ -31,6 +33,7 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		{
 			m_Microphone = microphone;
 			m_Theme = theme;
+			m_RefreshSection = new SafeCriticalSection();
 		}
 
 		/// <summary>
@@ -147,19 +150,28 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 			eLedBrightness brightness = eLedBrightness.Disabled;
 			eLedColor color = eLedColor.White;
 
-			if (m_SubscribedConferenceManager != null && m_SubscribedConferenceManager.IsInCall >= eInCall.Audio)
+			m_RefreshSection.Enter();
+
+			try
 			{
-				brightness = eLedBrightness.Default;
+				if (m_SubscribedConferenceManager != null && m_SubscribedConferenceManager.IsInCall >= eInCall.Audio)
+				{
+					brightness = eLedBrightness.Default;
 
-				color = m_SubscribedConferenceManager.ActiveConference.Status == eConferenceStatus.OnHold
-					        ? eLedColor.Yellow
-					        : m_SubscribedConferenceManager.PrivacyMuted
-						          ? eLedColor.Red
-						          : eLedColor.Green;
+					color = m_SubscribedConferenceManager.ActiveConference.Status == eConferenceStatus.OnHold
+								? eLedColor.Yellow
+								: m_SubscribedConferenceManager.PrivacyMuted
+									  ? eLedColor.Red
+									  : eLedColor.Green;
+				}
+
+				m_Microphone.SetLedBrightness(brightness);
+				m_Microphone.SetLedColor(color);
 			}
-
-			m_Microphone.SetLedBrightness(brightness);
-			m_Microphone.SetLedColor(color);
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
 		}
 
 		#endregion
