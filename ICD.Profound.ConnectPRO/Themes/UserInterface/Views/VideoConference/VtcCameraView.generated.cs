@@ -33,49 +33,49 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 121
+				DigitalVisibilityJoin = 124
 			};
 
-			m_DPad = new VtProDPad(503, panel as IPanelDevice, m_Subpage);
+			m_DPad = new VtProDPad(620, panel as IPanelDevice, m_Subpage);
 
 			m_ZoomInButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 501
+				DigitalPressJoin = 621
 			};
 
 			m_ZoomOutButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 502
+				DigitalPressJoin = 622
 			};
 
 			m_PresetButton1 = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 504,
-				IndirectTextJoin = 509
+				DigitalPressJoin = 631,
+				IndirectTextJoin = 631
 			};
 
 			m_PresetButton2 = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 505,
-				IndirectTextJoin = 510
+				DigitalPressJoin = 632,
+				IndirectTextJoin = 632
 			};
 
 			m_PresetButton3 = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 506,
-				IndirectTextJoin = 511
+				DigitalPressJoin = 633,
+				IndirectTextJoin = 633
 			};
 
 			m_PresetButton4 = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 507,
-				IndirectTextJoin = 512
+				DigitalPressJoin = 634,
+				IndirectTextJoin = 634
 			};
 
 			m_PresetButton5 = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 508,
-				IndirectTextJoin = 513
+				DigitalPressJoin = 635,
+				IndirectTextJoin = 635
 			};
 
 			m_PresetButtons = new Dictionary<ushort, VtProButton>
