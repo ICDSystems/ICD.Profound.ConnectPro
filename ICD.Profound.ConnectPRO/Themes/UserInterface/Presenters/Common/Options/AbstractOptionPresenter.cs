@@ -36,8 +36,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 
 			try
 			{
-				ushort mode = GetMode();
-				view.SetMode(mode);
+				bool active = GetActive();
+				view.SetActive(active);
 			}
 			finally
 			{
@@ -49,7 +49,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// Override to get the mode for the button.
 		/// </summary>
 		/// <returns></returns>
-		protected abstract ushort GetMode();
+		protected abstract bool GetActive();
 
 		#region View Callbacks
 

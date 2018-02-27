@@ -32,10 +32,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options
 		/// <summary>
 		/// Sets the selected state of the option.
 		/// </summary>
-		/// <param name="mode"></param>
-		public override void SetMode(ushort mode)
+		/// <param name="active"></param>
+		public override void SetActive(bool active)
 		{
-			m_Button.SetMode(mode);
+			m_Button.SetSelected(active);
 		}
 
 		#region Control Callbacks

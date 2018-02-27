@@ -30,10 +30,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// Override to get the selected state for the button.
 		/// </summary>
 		/// <returns></returns>
-		protected override ushort GetMode()
+		protected override bool GetActive()
 		{
-			bool muted = Room != null && Room.ConferenceManager.PrivacyMuted;
-			return (ushort)(muted ? 1 : 0);
+			return Room != null && Room.ConferenceManager.PrivacyMuted;
 		}
 
 		/// <summary>

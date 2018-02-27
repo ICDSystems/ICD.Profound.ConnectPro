@@ -9,7 +9,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options
 	public sealed partial class OptionPrivacyMuteView
 	{
 		private VtProSubpage m_Subpage;
-		private VtProMultiModeButton m_Button;
+		private VtProButton m_Button;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -24,10 +24,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options
 				DigitalVisibilityJoin = 42
 			};
 
-			m_Button = new VtProMultiModeButton(panel, m_Subpage)
+			m_Button = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 47,
-				AnalogModeJoin = 47
+				DigitalPressJoin = 47
 			};
 		}
 

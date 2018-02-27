@@ -41,10 +41,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// Override to get the selected state for the button.
 		/// </summary>
 		/// <returns></returns>
-		protected override ushort GetMode()
+		protected override bool GetActive()
 		{
-			bool menuOpen = m_Menu.IsViewVisible;
-			return (ushort)(menuOpen ? 1 : 0);
+			return m_Menu.IsViewVisible;
 		}
 
 		/// <summary>
