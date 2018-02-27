@@ -456,7 +456,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			EndpointInfo sourceEndpoint = sourceControl.GetOutputEndpointInfo(1);
 
 			foreach (IDestination destination in GetDisplayDestinations())
-				RoutingGraph.Route(sourceEndpoint, destination.Endpoint, eConnectionType.Video, m_Room.Id);
+				Route(sourceEndpoint, destination.Endpoint, eConnectionType.Video);
 		
 			OnDisplayTrackingChanged.Raise(this);
 		}
