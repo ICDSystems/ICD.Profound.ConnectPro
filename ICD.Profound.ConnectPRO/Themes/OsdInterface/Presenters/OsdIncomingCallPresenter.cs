@@ -31,7 +31,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 		{
 			base.Refresh(view);
 
-			view.SetIcon("source_videoConference_white");
+			view.SetIcon("icon_videoConference_white");
 			view.SetSourceName("Video Conference");
 
 			IConference conference = m_SubscribedConferenceManager == null
