@@ -1,4 +1,5 @@
-﻿using ICD.Connect.Conferencing.ConferenceManagers;
+﻿using System.Linq;
+using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Favorites;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
@@ -61,6 +62,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		protected override bool GetIsFavoriteVisible()
 		{
 			return true;
+		}
+
+		public override bool HasContactNumber(string number)
+		{
+			return m_Favorite != null && m_Favorite.GetContactMethods().Any(m => m.Number == number);
 		}
 
 		protected override void SetModel(object model)

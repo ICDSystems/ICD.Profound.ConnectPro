@@ -71,6 +71,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			return true;
 		}
 
+		public override bool HasContactNumber(string number)
+		{
+			return m_Recent != null && m_Recent.Number == number;
+		}
+
 		protected override void SetModel(object model)
 		{
 			Recent = model as IConferenceSource;

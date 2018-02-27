@@ -121,6 +121,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			Dial();
 		}
 
+		public abstract bool HasContactNumber(string number);
+
 		protected abstract void SetModel(object model);
 
 		protected abstract void Dial();

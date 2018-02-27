@@ -7,6 +7,7 @@ using ICD.Connect.Conferencing.Cisco.Components.Directory;
 using ICD.Connect.Conferencing.Cisco.Components.Directory.Tree;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
+using ICD.Connect.Conferencing.ConferenceSources;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -408,7 +409,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (m_Selected == null)
 				return;
 
-			m_Selected.Dial();
+			IConference conference = m_SubscribedConferenceManager == null
+				                         ? null
+				                         : m_SubscribedConferenceManager.ActiveConference;
+			IConferenceSource source = conference == null
+				                           ? null
+				                           : conference.GetSources().FirstOrDefault(s => m_Selected.HasContactNumber(s.Number));
+
+			if (source == null)
+				m_Selected.Dial();
 		}
 
 		private void ViewOnHangupButtonPressed(object sender, EventArgs eventArgs)
