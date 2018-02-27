@@ -1,6 +1,7 @@
 ﻿using System;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.ConferenceSources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.ActiveCalls;
@@ -14,6 +15,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 		private IConferenceSource m_Source;
+		private SafeTimer m_RefreshTimer;
 
 		/// <summary>
 		/// Sets the conference source for this presenter.
@@ -45,6 +47,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
+			m_RefreshTimer = new SafeTimer(RefreshIfVisible, 1 * 1000);
+		}
+
+		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			m_RefreshTimer.Dispose();
+
+			base.Dispose();
 		}
 
 		/// <summary>
@@ -62,7 +75,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				string name =
 					m_Source == null
 						? string.Empty
-						: string.Format("{0} - {1} - {2}", m_Source.GetDuration(), m_Source.Name, m_Source.Number);
+						: string.Format("{0:hh\\:mm\\:ss} - {1} - {2}", m_Source.GetDuration().ToString(), m_Source.Name, m_Source.Number);
 
 				view.SetLabel(name);
 				view.SetHangupButtonVisible(true);
