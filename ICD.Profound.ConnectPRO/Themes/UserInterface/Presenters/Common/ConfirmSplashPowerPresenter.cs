@@ -64,6 +64,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			if (Room != null)
 				Room.EndMeeting(true);
+			ShowView(false);
 		}
 
 		#endregion
