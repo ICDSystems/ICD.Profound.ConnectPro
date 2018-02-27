@@ -294,7 +294,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_ActiveSource = source;
 
 			m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>().ActiveSource = m_ActiveSource;
-			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().ActiveSource = m_ActiveSource;
+			//m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().ActiveSource = m_ActiveSource;
 			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().ActiveSource = m_ActiveSource;
 
 			m_SourceSelectionTimeout.Reset(SOURCE_SELECTION_TIMEOUT);
@@ -360,9 +360,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			bool singleSourceVisible = isInMeeting && !dualDisplays;
 			bool displaysVisible = isInMeeting && dualDisplays;
 
-			m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>().ShowView(singleSourceVisible);
+			//m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>().ShowView(singleSourceVisible);
 			m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>().ShowView(dualSourceVisible);
-			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().ShowView(displaysVisible);
+			//m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().ShowView(displaysVisible);
 			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().ShowView(displaysVisible);
 		}
 
@@ -410,9 +410,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				       .Except((ISource)null)
 				       .ToIcdHashSet();
 
-			m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>().SetRoutedSources(routedSources);
+			//m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>().SetRoutedSources(routedSources);
 			m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>().SetRoutedSources(routedSources);
-			m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().SetRouting(routing, activeAudio);
+			//m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().SetRouting(routing, activeAudio);
 			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().SetRouting(routing, activeAudio);
 		}
 
@@ -423,9 +423,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// </summary>
 		private void SubscribePresenters()
 		{
-			Subscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>());
+			//Subscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>());
 			Subscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>());
-			Subscribe(m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>());
+			//Subscribe(m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>());
 			Subscribe(m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>());
 		}
 
@@ -434,9 +434,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// </summary>
 		private void UnsubscribePresenters()
 		{
-			Unsubscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>());
+			//Unsubscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>());
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>());
-			Unsubscribe(m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>());
+			//Unsubscribe(m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>());
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>());
 		}
 
