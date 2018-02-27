@@ -2,6 +2,9 @@
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Cameras;
 using ICD.Connect.Cameras.Controls;
+using ICD.Connect.Conferencing.ConferenceManagers;
+using ICD.Connect.Conferencing.EventArguments;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Options;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
@@ -13,6 +16,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 	public sealed class OptionCameraPresenter : AbstractOptionPresenter<IOptionCameraView>, IOptionCameraPresenter
 	{
 		private readonly IVtcCameraPresenter m_Menu;
+		private IConferenceManager m_SubscribedConferenceManager;
 
 		/// <summary>
 		/// Constructor.
@@ -98,6 +102,50 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		private void MenuOnViewVisibilityChanged(object sender, BoolEventArgs boolEventArgs)
 		{
 			RefreshIfVisible();
+		}
+
+		#endregion
+
+		#region Room Callbacks
+
+		/// <summary>
+		/// Subscribe to the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Subscribe(IConnectProRoom room)
+		{
+			base.Subscribe(room);
+
+			if (room == null)
+				return;
+
+			m_SubscribedConferenceManager = room.ConferenceManager;
+			m_SubscribedConferenceManager.OnInCallChanged += SubscribedConferenceManagerOnInCallChanged;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Unsubscribe(IConnectProRoom room)
+		{
+			base.Unsubscribe(room);
+
+			if (m_SubscribedConferenceManager == null)
+				return;
+
+			m_SubscribedConferenceManager.OnPrivacyMuteStatusChange -= ConferenceManagerOnPrivacyMuteStatusChange;
+			m_SubscribedConferenceManager.OnInCallChanged -= SubscribedConferenceManagerOnInCallChanged;
+		}
+
+		private void ConferenceManagerOnPrivacyMuteStatusChange(object sender, BoolEventArgs boolEventArgs)
+		{
+			RefreshIfVisible();
+		}
+
+		private void SubscribedConferenceManagerOnInCallChanged(object sender, InCallEventArgs callEventArgs)
+		{
+			ShowView(callEventArgs.Data >= eInCall.Audio);
 		}
 
 		#endregion
