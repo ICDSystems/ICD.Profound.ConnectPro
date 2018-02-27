@@ -4,7 +4,6 @@ using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
-using ICD.Connect.Conferencing.Cisco;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Sources;
@@ -80,7 +79,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 					? Enumerable.Empty<ISource>()
 					: Room.Routing
 					      .GetCoreSources()
-					      .Where(s => !(Room.Core.Originators.GetChild(s.Endpoint.Device) is CiscoCodec));
+					      .Where(s =>
+					             {
+						             ConnectProSource source = s as ConnectProSource;
+						             return source != null && source.Share;
+					             });
 		}
 
 		public void SetSelected(ISource source)

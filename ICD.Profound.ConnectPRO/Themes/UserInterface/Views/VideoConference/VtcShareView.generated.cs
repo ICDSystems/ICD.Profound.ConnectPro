@@ -34,7 +34,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			m_ShareButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 641,
-				DigitalEnableJoin = 641
+				DigitalEnableJoin = 642
 			};
 		}
 

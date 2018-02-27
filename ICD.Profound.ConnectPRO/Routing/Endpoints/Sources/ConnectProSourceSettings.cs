@@ -11,6 +11,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 		private const string FACTORY_NAME = "ConnectProSource";
 
 		private const string ICON_ELEMENT = "Icon";
+		private const string SHARE_ELEMENT = "Share";
 		private const string DESCRIPTION_ELEMENT = "Description";
 
 		#region Properties
@@ -31,6 +32,11 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 		public string Icon { get; set; }
 
 		/// <summary>
+		/// Gets/sets if the source can be shared.
+		/// </summary>
+		public bool Share { get; set; }
+
+		/// <summary>
 		/// Gets/sets the description text.
 		/// </summary>
 		public string Description { get; set; }
@@ -46,6 +52,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 			base.WriteElements(writer);
 
 			writer.WriteElementString(ICON_ELEMENT, Icon);
+			writer.WriteElementString(SHARE_ELEMENT, IcdXmlConvert.ToString(Share));
 			writer.WriteElementString(DESCRIPTION_ELEMENT, Description);
 		}
 
@@ -58,6 +65,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 			base.ParseXml(xml);
 
 			Icon = XmlUtils.TryReadChildElementContentAsString(xml, ICON_ELEMENT);
+			Share = XmlUtils.TryReadChildElementContentAsBoolean(xml, SHARE_ELEMENT) ?? false;
 			Description = XmlUtils.TryReadChildElementContentAsString(xml, DESCRIPTION_ELEMENT);
 		}
 	}

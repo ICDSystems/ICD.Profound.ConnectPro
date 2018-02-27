@@ -15,12 +15,18 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 		/// </summary>
 		public string Description { get; set; }
 
+		/// <summary>
+		/// Gets/sets if this source can be shared.
+		/// </summary>
+		public bool Share { get; set; }
+
 		protected override void ClearSettingsFinal()
 		{
 			base.ClearSettingsFinal();
 
 			Icon = null;
 			Description = null;
+			Share = false;
 		}
 
 		protected override void CopySettingsFinal(ConnectProSourceSettings settings)
@@ -29,6 +35,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 
 			settings.Icon = Icon;
 			settings.Description = Description;
+			settings.Share = Share;
 		}
 
 		protected override void ApplySettingsFinal(ConnectProSourceSettings settings, IDeviceFactory factory)
@@ -37,6 +44,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 
 			Icon = settings.Icon;
 			Description = settings.Description;
+			Share = settings.Share;
 		}
 	}
 }
