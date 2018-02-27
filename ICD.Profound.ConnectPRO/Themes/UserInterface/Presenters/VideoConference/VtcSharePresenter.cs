@@ -54,8 +54,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 					IRoom room = Room == null || source == null ? null : Room.Routing.GetRoomForSource(source);
 					bool combine = room != null && room.CombineState;
 
+					string icon =
+						connectProSource == null
+						? null
+						: Icons.GetSourceIcon(connectProSource.Icon, eSourceColor.White);
+
 					view.SetButtonSelected(index, source == m_Selected);
-					view.SetButtonIcon(index, connectProSource == null ? null : connectProSource.Icon);
+					view.SetButtonIcon(index, icon);
 					view.SetButtonLabel(index, source == null ? null : source.GetNameOrDeviceName(combine));
 				}
 
