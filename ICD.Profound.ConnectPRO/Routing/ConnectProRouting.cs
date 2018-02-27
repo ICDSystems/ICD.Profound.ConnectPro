@@ -52,11 +52,12 @@ namespace ICD.Profound.ConnectPRO.Routing
 		private readonly List<IDestination> m_Displays;
 		private readonly List<IDestination> m_AudioDestinations;
 		private readonly Dictionary<IDestination, ISource> m_VideoRoutingCache;
-		private readonly Dictionary<IDestination, ISource> m_VideoTracking;
+		//private readonly Dictionary<IDestination, ISource> m_VideoTracking;
 		private readonly IcdHashSet<ISource> m_AudioRoutingCache;
 		private readonly SafeCriticalSection m_CacheSection;
 
 		private IRoutingGraph m_SubscribedRoutingGraph;
+		private bool m_Routing;
 
 		/// <summary>
 		/// Gets the routing graph from the core.
@@ -78,7 +79,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			m_Displays = new List<IDestination>();
 			m_AudioDestinations = new List<IDestination>();
 			m_VideoRoutingCache = new Dictionary<IDestination, ISource>();
-			m_VideoTracking = new Dictionary<IDestination, ISource>();
+			//m_VideoTracking = new Dictionary<IDestination, ISource>();
 			m_AudioRoutingCache = new IcdHashSet<ISource>();
 			m_CacheSection = new SafeCriticalSection();
 
@@ -119,7 +120,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 					videoChange = m_VideoRoutingCache.Update(routing);
 				}
-
+				/*
 				if (videoChange)
 				{
 					// Update the tracking cache
@@ -127,7 +128,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 						m_VideoRoutingCache.Where(kvp => kvp.Value != null && !(m_Room.Core.Originators.GetChild(kvp.Value.Endpoint.Device) is OsdPanelDevice));
 
 					videoTrackingChange = m_VideoTracking.Update(pairs);
-				}
+				}*/
 
 				// Get a list of sources going to audio destinations
 				if (type.HasFlag(eConnectionType.Audio))
@@ -151,11 +152,14 @@ namespace ICD.Profound.ConnectPRO.Routing
 				m_CacheSection.Leave();
 			}
 
-			if (videoTrackingChange)
-				OnDisplayTrackingChanged.Raise(this);
+			//if (videoTrackingChange)
+			//	OnDisplayTrackingChanged.Raise(this);
 
 			if (videoChange)
+			{
+				OnDisplayTrackingChanged.Raise(this);
 				OnDisplaySourceChanged.Raise(this);
+			}
 
 			if (audioChange)
 				OnAudioSourceChanged.Raise(this);
@@ -207,7 +211,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 		public IEnumerable<KeyValuePair<IDestination, ISource>> GetTrackedVideoSources()
 		{
-			return m_CacheSection.Execute(() => m_VideoTracking.ToArray(m_VideoTracking.Count));
+			return GetCachedActiveVideoSources();
+			//return m_CacheSection.Execute(() => m_VideoTracking.ToArray(m_VideoTracking.Count));
 		}
 
 		public IEnumerable<KeyValuePair<IDestination, ISource>> GetCachedActiveVideoSources()
@@ -450,7 +455,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (osd == null)
 				return;
 
-			m_CacheSection.Execute(() => m_VideoTracking.Clear());
+			//m_CacheSection.Execute(() => m_VideoTracking.Clear());
 
 			IRouteSourceControl sourceControl = osd.Controls.GetControl<IRouteSourceControl>();
 			EndpointInfo sourceEndpoint = sourceControl.GetOutputEndpointInfo(1);
@@ -463,14 +468,22 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 		private void Route(EndpointInfo source, EndpointInfo destination, eConnectionType connectionType)
 		{
+			bool oldRouting = m_Routing;
+			m_Routing = true;
+
 			RoutingGraph.Route(source, destination, connectionType, m_Room.Id);
+			
+			if (!oldRouting)
+				m_Routing = false;
 
 			IDisplay display = m_Room.Core.Originators.GetChild(destination.Device) as IDisplay;
 			if (display == null)
 				return;
 
 			display.PowerOn();
-			display.SetHdmiInput(destination.Address);
+
+			if (display.HdmiInput != destination.Address)
+				display.SetHdmiInput(destination.Address);
 		}
 
 		/// <summary>
@@ -689,6 +702,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 		{
 			UpdateRoutingCache(args.Type);
 
+			if (m_Routing)
+				return;
+
 			// If nothing is routed to a display we route the OSD
 			OsdPanelDevice osd = m_Room.Core.Originators.GetChildren<OsdPanelDevice>().FirstOrDefault();
 			if (osd == null)
@@ -701,7 +717,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				GetCachedActiveVideoSources().Where(kvp => kvp.Value == null).Select(kvp => kvp.Key);
 
 			foreach (IDestination destination in emptyDestinations)
-				RoutingGraph.Route(sourceEndpoint, destination.Endpoint, eConnectionType.Video, m_Room.Id);
+				Route(sourceEndpoint, destination.Endpoint, eConnectionType.Video);
 		}
 
 		/// <summary>
@@ -714,6 +730,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			// TODO - Need to fix VTC routing
 			return;
 
+			/*
 			if (!args.Type.HasFlag(eConnectionType.Video))
 				return;
 
@@ -746,6 +763,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			// When a source is lost we unroute it
 			else
 				UnrouteVideo(source);
+			 * */
 		}
 
 		#endregion
