@@ -51,6 +51,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			// Options
 			{typeof(IOptionPrivacyMutePresenter), (nav, views, theme) => new OptionPrivacyMutePresenter(nav, views, theme)},
 			{typeof(IOptionVolumePresenter), (nav, views, theme) => new OptionVolumePresenter(nav, views, theme)},
+			{typeof(IOptionCameraPresenter), (nav, views, theme) => new OptionCameraPresenter(nav, views, theme)},
 
 			// Sources
 			{typeof(ISourceSelectDualPresenter), (nav, views, theme) => new SourceSelectDualPresenter(nav, views, theme)},

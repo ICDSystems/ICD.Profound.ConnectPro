@@ -70,6 +70,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			// Options
 			{typeof(IOptionPrivacyMuteView), (panel, theme) => new OptionPrivacyMuteView(panel, theme)},
 			{typeof(IOptionVolumeView), (panel, theme) => new OptionVolumeView(panel, theme)},
+			{typeof(IOptionCameraView), (panel, theme) => new OptionCameraView(panel, theme)},
 
 			// Sources
 			{typeof(ISourceSelectDualView), (panel, theme) => new SourceSelectDualView(panel, theme)},
