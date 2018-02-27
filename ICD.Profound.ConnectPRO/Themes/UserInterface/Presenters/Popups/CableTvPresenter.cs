@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Sources.TvTuner.Controls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -10,10 +11,39 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 {
 	public sealed class CableTvPresenter : AbstractPopupPresenter<ICableTvView>, ICableTvPresenter
 	{
+		private const ushort INDEX_ABC = 0;
+		private const ushort INDEX_CBS = 1;
+		private const ushort INDEX_NBC = 2;
+		private const ushort INDEX_FOX = 3;
+		private const ushort INDEX_CNN = 4;
+		private const ushort INDEX_WEATHER = 5;
+		private const ushort INDEX_ESPN = 6;
+		private const ushort INDEX_NBC_SPORTS = 7;
+
+		private static Dictionary<ushort, string> s_Channels =
+			new Dictionary<ushort, string>
+			{
+				{INDEX_ABC, "806"},
+				{INDEX_CBS, "803"},
+				{INDEX_NBC, "810"},
+				{INDEX_FOX, "805"},
+				{INDEX_CNN, "817"},
+				{INDEX_WEATHER, "815"},
+				{INDEX_ESPN, "850"},
+				{INDEX_NBC_SPORTS, "846"},
+			};
+
 		/// <summary>
 		/// Gets/sets the tv tuner control that this preseter controls.
 		/// </summary>
 		public ITvTunerControl Control { get; set; }
+
+		/// <summary>
+		/// Static constructor.
+		/// </summary>
+		static CableTvPresenter()
+		{
+		}
 
 		/// <summary>
 		/// Constructor.
@@ -35,6 +65,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 		protected override void Subscribe(ICableTvView view)
 		{
 			base.Subscribe(view);
+
+			view.OnChannelButtonPressed += ViewOnChannelButtonPressed;
 
 			view.OnGuideButtonPressed += ViewOnGuideButtonPressed;
 			view.OnExitButtonPressed += ViewOnExitButtonPressed;
@@ -64,6 +96,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 		{
 			base.Unsubscribe(view);
 
+			view.OnChannelButtonPressed -= ViewOnChannelButtonPressed;
+
 			view.OnGuideButtonPressed -= ViewOnGuideButtonPressed;
 			view.OnExitButtonPressed -= ViewOnExitButtonPressed;
 			view.OnPowerButtonPressed -= ViewOnPowerButtonPressed;
@@ -82,6 +116,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 			view.OnChannelDownButtonPressed -= ViewOnChannelDownButtonPressed;
 			view.OnPageUpButtonPressed -= ViewOnPageUpButtonPressed;
 			view.OnPageDownButtonPressed -= ViewOnPageDownButtonPressed;
+		}
+
+		private void ViewOnChannelButtonPressed(object sender, UShortEventArgs uShortEventArgs)
+		{
+			if (Control == null)
+				return;
+
+			string channel = s_Channels[uShortEventArgs.Data];
+			Control.SetChannel(channel);
 		}
 
 		private void ViewOnPowerButtonPressed(object sender, EventArgs eventArgs)

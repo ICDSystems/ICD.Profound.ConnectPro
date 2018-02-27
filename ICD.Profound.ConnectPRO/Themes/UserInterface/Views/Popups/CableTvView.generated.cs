@@ -3,6 +3,7 @@ using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Keypads;
+using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.Pages;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
@@ -24,6 +25,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 		private VtProButton m_ChannelDownButton;
 		private VtProButton m_PageUpButton;
 		private VtProButton m_PageDownButton;
+
+		private VtProDynamicButtonList m_ChannelList;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -81,6 +84,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 			{
 				DigitalPressJoin = 553
 			};
+
+			m_ChannelList = new VtProDynamicButtonList(13, panel as IPanelDevice, m_Subpage);
 		}
 
 		/// <summary>
@@ -100,6 +105,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 			yield return m_ChannelDownButton;
 			yield return m_PageUpButton;
 			yield return m_PageDownButton;
+			yield return m_ChannelList;
 		}
 	}
 }

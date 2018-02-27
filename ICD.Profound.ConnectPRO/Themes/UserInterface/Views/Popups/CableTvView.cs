@@ -11,6 +11,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 	{
 		public override event EventHandler OnCloseButtonPressed;
 
+		public event EventHandler<UShortEventArgs> OnChannelButtonPressed;
 		public event EventHandler OnGuideButtonPressed;
 		public event EventHandler OnExitButtonPressed;
 		public event EventHandler OnPowerButtonPressed;
@@ -45,6 +46,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 		/// </summary>
 		public override void Dispose()
 		{
+			OnChannelButtonPressed = null;
+
 			OnCloseButtonPressed = null;
 
 			OnGuideButtonPressed = null;
@@ -88,6 +91,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 			m_ChannelDownButton.OnPressed += ChannelDownButtonOnPressed;
 			m_PageUpButton.OnPressed += PageUpButtonOnPressed;
 			m_PageDownButton.OnPressed += PageDownButtonOnPressed;
+			m_ChannelList.OnButtonClicked += ChannelListOnButtonClicked;
 		}
 
 		/// <summary>
@@ -107,6 +111,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 			m_ChannelDownButton.OnPressed -= ChannelDownButtonOnPressed;
 			m_PageUpButton.OnPressed -= PageUpButtonOnPressed;
 			m_PageDownButton.OnPressed -= PageDownButtonOnPressed;
+			m_ChannelList.OnButtonClicked -= ChannelListOnButtonClicked;
+		}
+
+		private void ChannelListOnButtonClicked(object sender, UShortEventArgs uShortEventArgs)
+		{
+			OnChannelButtonPressed.Raise(this, new UShortEventArgs(uShortEventArgs.Data));
 		}
 
 		private void PowerButtonOnPressed(object sender, EventArgs eventArgs)
