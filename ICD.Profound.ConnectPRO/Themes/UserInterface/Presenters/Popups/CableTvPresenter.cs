@@ -36,6 +36,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 		{
 			base.Subscribe(view);
 
+			view.OnGuideButtonPressed += ViewOnGuideButtonPressed;
+			view.OnExitButtonPressed += ViewOnExitButtonPressed;
+			view.OnPowerButtonPressed += ViewOnPowerButtonPressed;
+
 			view.OnNumberButtonPressed += ViewOnNumberButtonPressed;
 			view.OnClearButtonPressed += ViewOnClearButtonPressed;
 			view.OnEnterButtonPressed += ViewOnEnterButtonPressed;
@@ -60,6 +64,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 		{
 			base.Unsubscribe(view);
 
+			view.OnGuideButtonPressed -= ViewOnGuideButtonPressed;
+			view.OnExitButtonPressed -= ViewOnExitButtonPressed;
+			view.OnPowerButtonPressed -= ViewOnPowerButtonPressed;
+
 			view.OnNumberButtonPressed -= ViewOnNumberButtonPressed;
 			view.OnClearButtonPressed -= ViewOnClearButtonPressed;
 			view.OnEnterButtonPressed -= ViewOnEnterButtonPressed;
@@ -74,6 +82,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 			view.OnChannelDownButtonPressed -= ViewOnChannelDownButtonPressed;
 			view.OnPageUpButtonPressed -= ViewOnPageUpButtonPressed;
 			view.OnPageDownButtonPressed -= ViewOnPageDownButtonPressed;
+		}
+
+		private void ViewOnPowerButtonPressed(object sender, EventArgs eventArgs)
+		{
+			if (Control != null)
+				Control.Power();
+		}
+
+		private void ViewOnExitButtonPressed(object sender, EventArgs eventArgs)
+		{
+			if (Control != null)
+				Control.Return();
+		}
+
+		private void ViewOnGuideButtonPressed(object sender, EventArgs eventArgs)
+		{
+			if (Control != null)
+				Control.TopMenu();
 		}
 
 		private void ViewOnNumberButtonPressed(object sender, CharEventArgs eventArgs)

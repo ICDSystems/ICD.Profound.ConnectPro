@@ -13,6 +13,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 
 		private VtProButton m_CloseButton;
 
+		private VtProButton m_GuideButton;
+		private VtProButton m_ExitButton;
+		private VtProButton m_PowerButton;
 
 		private VtProDPad m_MenuDirections;
 		private VtProSimpleKeypad m_NumberKeypad;
@@ -38,6 +41,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 			m_CloseButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 113
+			};
+
+			m_GuideButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 0 // TODO
+			};
+
+			m_ExitButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 0 // TODO
+			};
+
+			m_PowerButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 0 // TODO
 			};
 
 			m_MenuDirections = new VtProDPad(12, panel as IPanelDevice, m_Subpage);
@@ -71,6 +89,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 		/// <returns></returns>
 		protected override IEnumerable<IVtProControl> GetChildren()
 		{
+			yield return m_GuideButton;
+			yield return m_ExitButton;
+			yield return m_PowerButton;
 			yield return m_Subpage;
 			yield return m_CloseButton;
 			yield return m_MenuDirections;

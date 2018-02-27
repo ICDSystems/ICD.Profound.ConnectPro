@@ -11,6 +11,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 	{
 		public override event EventHandler OnCloseButtonPressed;
 
+		public event EventHandler OnGuideButtonPressed;
+		public event EventHandler OnExitButtonPressed;
+		public event EventHandler OnPowerButtonPressed;
+
 		public event EventHandler<CharEventArgs> OnNumberButtonPressed;
 		public event EventHandler OnClearButtonPressed;
 		public event EventHandler OnEnterButtonPressed;
@@ -43,6 +47,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 		{
 			OnCloseButtonPressed = null;
 
+			OnGuideButtonPressed = null;
+			OnExitButtonPressed = null;
+			OnPowerButtonPressed = null;
+
 			OnNumberButtonPressed = null;
 			OnClearButtonPressed = null;
 			OnEnterButtonPressed = null;
@@ -71,6 +79,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 			base.SubscribeControls();
 
 			m_CloseButton.OnPressed += CloseButtonOnPressed;
+			m_GuideButton.OnPressed += GuideButtonOnPressed;
+			m_ExitButton.OnPressed += ExitButtonOnPressed;
+			m_PowerButton.OnPressed += PowerButtonOnPressed;
 			m_MenuDirections.OnButtonPressed += MenuDirectionsOnButtonPressed;
 			m_NumberKeypad.OnButtonPressed += NumberKeypadOnButtonPressed;
 			m_ChannelUpButton.OnPressed += ChannelUpButtonOnPressed;
@@ -87,12 +98,30 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 			base.UnsubscribeControls();
 
 			m_CloseButton.OnPressed -= CloseButtonOnPressed;
+			m_GuideButton.OnPressed -= GuideButtonOnPressed;
+			m_ExitButton.OnPressed -= ExitButtonOnPressed;
+			m_PowerButton.OnPressed -= PowerButtonOnPressed;
 			m_MenuDirections.OnButtonPressed -= MenuDirectionsOnButtonPressed;
 			m_NumberKeypad.OnButtonPressed -= NumberKeypadOnButtonPressed;
 			m_ChannelUpButton.OnPressed -= ChannelUpButtonOnPressed;
 			m_ChannelDownButton.OnPressed -= ChannelDownButtonOnPressed;
 			m_PageUpButton.OnPressed -= PageUpButtonOnPressed;
 			m_PageDownButton.OnPressed -= PageDownButtonOnPressed;
+		}
+
+		private void PowerButtonOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnPowerButtonPressed.Raise(this);
+		}
+
+		private void ExitButtonOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnExitButtonPressed.Raise(this);
+		}
+
+		private void GuideButtonOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnGuideButtonPressed.Raise(this);
 		}
 
 		/// <summary>

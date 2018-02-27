@@ -5,6 +5,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups
 {
 	public interface ICableTvView : IPopupView
 	{
+		event EventHandler OnGuideButtonPressed;
+		event EventHandler OnExitButtonPressed;
+		event EventHandler OnPowerButtonPressed;
+
 		event EventHandler<CharEventArgs> OnNumberButtonPressed;
 		event EventHandler OnClearButtonPressed;
 		event EventHandler OnEnterButtonPressed;
