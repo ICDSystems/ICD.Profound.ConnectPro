@@ -96,7 +96,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				IEnumerable<string> labels = s_ButtonLabels.OrderValuesByKey();
 				view.SetButtonLabels(labels);
 
-				foreach (var kvp in m_NavPages)
+				foreach (KeyValuePair<ushort, IPresenter> kvp in m_NavPages)
 				{
 					view.SetButtonVisible(kvp.Key, kvp.Value != Visible);
 					view.SetButtonEnabled(kvp.Key, kvp.Value != Visible);

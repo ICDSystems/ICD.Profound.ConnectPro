@@ -11,7 +11,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 	{
 		public override event EventHandler OnCloseButtonPressed;
 
-		public event EventHandler<UShortEventArgs> OnMenuButtonPressed; 
 		public event EventHandler<CharEventArgs> OnNumberButtonPressed;
 		public event EventHandler OnClearButtonPressed;
 		public event EventHandler OnEnterButtonPressed;
@@ -26,19 +25,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 		public event EventHandler OnChannelDownButtonPressed;
 		public event EventHandler OnPageUpButtonPressed;
 		public event EventHandler OnPageDownButtonPressed;
-
-		public event EventHandler OnRepeatButtonPressed;
-		public event EventHandler OnRewindButtonPressed;
-		public event EventHandler OnFastForwardButtonPressed;
-		public event EventHandler OnStopButtonPressed;
-		public event EventHandler OnPlayButtonPressed;
-		public event EventHandler OnPauseButtonPressed;
-		public event EventHandler OnRecordButtonPressed;
-
-		public event EventHandler OnRedButtonPressed;
-		public event EventHandler OnGreenButtonPressed;
-		public event EventHandler OnBlueButtonPressed;
-		public event EventHandler OnYellowButtonPressed;
 
 		/// <summary>
 		/// Constructor.
@@ -57,7 +43,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 		{
 			OnCloseButtonPressed = null;
 
-			OnMenuButtonPressed = null;
 			OnNumberButtonPressed = null;
 			OnClearButtonPressed = null;
 			OnEnterButtonPressed = null;
@@ -73,19 +58,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 			OnPageUpButtonPressed = null;
 			OnPageDownButtonPressed = null;
 
-			OnRepeatButtonPressed = null;
-			OnRewindButtonPressed = null;
-			OnFastForwardButtonPressed = null;
-			OnStopButtonPressed = null;
-			OnPlayButtonPressed = null;
-			OnPauseButtonPressed = null;
-			OnRecordButtonPressed = null;
-
-			OnRedButtonPressed = null;
-			OnGreenButtonPressed = null;
-			OnBlueButtonPressed = null;
-			OnYellowButtonPressed = null;
-
 			base.Dispose();
 		}
 
@@ -99,28 +71,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 			base.SubscribeControls();
 
 			m_CloseButton.OnPressed += CloseButtonOnPressed;
-
-			m_MenuButtons.OnButtonPressed += MenuButtonsOnButtonPressed;
 			m_MenuDirections.OnButtonPressed += MenuDirectionsOnButtonPressed;
 			m_NumberKeypad.OnButtonPressed += NumberKeypadOnButtonPressed;
-
 			m_ChannelUpButton.OnPressed += ChannelUpButtonOnPressed;
 			m_ChannelDownButton.OnPressed += ChannelDownButtonOnPressed;
 			m_PageUpButton.OnPressed += PageUpButtonOnPressed;
 			m_PageDownButton.OnPressed += PageDownButtonOnPressed;
-
-			m_RedButton.OnPressed += RedButtonOnPressed;
-			m_YellowButton.OnPressed += YellowButtonOnPressed;
-			m_GreenButton.OnPressed += GreenButtonOnPressed;
-			m_BlueButton.OnPressed += BlueButtonOnPressed;
-
-			m_RepeatButton.OnPressed += RepeatButtonOnPressed;
-			m_RewindButton.OnPressed += RewindButtonOnPressed;
-			m_StopButton.OnPressed += StopButtonOnPressed;
-			m_PlayButton.OnPressed += PlayButtonOnPressed;
-			m_PauseButton.OnPressed += PauseButtonOnPressed;
-			m_FastForwardButton.OnPressed += FastForwardButtonOnPressed;
-			m_RecordButton.OnPressed += RecordButtonOnPressed;
 		}
 
 		/// <summary>
@@ -131,28 +87,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 			base.UnsubscribeControls();
 
 			m_CloseButton.OnPressed -= CloseButtonOnPressed;
-
-			m_MenuButtons.OnButtonPressed -= MenuButtonsOnButtonPressed;
 			m_MenuDirections.OnButtonPressed -= MenuDirectionsOnButtonPressed;
 			m_NumberKeypad.OnButtonPressed -= NumberKeypadOnButtonPressed;
-
 			m_ChannelUpButton.OnPressed -= ChannelUpButtonOnPressed;
 			m_ChannelDownButton.OnPressed -= ChannelDownButtonOnPressed;
 			m_PageUpButton.OnPressed -= PageUpButtonOnPressed;
 			m_PageDownButton.OnPressed -= PageDownButtonOnPressed;
-
-			m_RedButton.OnPressed -= RedButtonOnPressed;
-			m_YellowButton.OnPressed -= YellowButtonOnPressed;
-			m_GreenButton.OnPressed -= GreenButtonOnPressed;
-			m_BlueButton.OnPressed -= BlueButtonOnPressed;
-
-			m_RepeatButton.OnPressed -= RepeatButtonOnPressed;
-			m_RewindButton.OnPressed -= RewindButtonOnPressed;
-			m_StopButton.OnPressed -= StopButtonOnPressed;
-			m_PlayButton.OnPressed -= PlayButtonOnPressed;
-			m_PauseButton.OnPressed -= PauseButtonOnPressed;
-			m_FastForwardButton.OnPressed -= FastForwardButtonOnPressed;
-			m_RecordButton.OnPressed -= RecordButtonOnPressed;
 		}
 
 		/// <summary>
@@ -163,11 +103,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 		private void CloseButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnCloseButtonPressed.Raise(this);
-		}
-
-		private void MenuButtonsOnButtonPressed(object sender, UShortEventArgs eventArgs)
-		{
-			OnMenuButtonPressed.Raise(this, new UShortEventArgs(eventArgs.Data));
 		}
 
 		private void MenuDirectionsOnButtonPressed(object sender, DPadEventArgs eventArgs)
@@ -248,61 +183,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 		private void PageDownButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnPageDownButtonPressed.Raise(this);
-		}
-
-		private void RedButtonOnPressed(object sender, EventArgs eventArgs)
-		{
-			OnRedButtonPressed.Raise(this);
-		}
-
-		private void YellowButtonOnPressed(object sender, EventArgs eventArgs)
-		{
-			OnYellowButtonPressed.Raise(this);
-		}
-
-		private void GreenButtonOnPressed(object sender, EventArgs eventArgs)
-		{
-			OnGreenButtonPressed.Raise(this);
-		}
-
-		private void BlueButtonOnPressed(object sender, EventArgs eventArgs)
-		{
-			OnBlueButtonPressed.Raise(this);
-		}
-
-		private void RepeatButtonOnPressed(object sender, EventArgs eventArgs)
-		{
-			OnRepeatButtonPressed.Raise(this);
-		}
-
-		private void RewindButtonOnPressed(object sender, EventArgs eventArgs)
-		{
-			OnRewindButtonPressed.Raise(this);
-		}
-
-		private void StopButtonOnPressed(object sender, EventArgs eventArgs)
-		{
-			OnStopButtonPressed.Raise(this);
-		}
-
-		private void PlayButtonOnPressed(object sender, EventArgs eventArgs)
-		{
-			OnPlayButtonPressed.Raise(this);
-		}
-
-		private void PauseButtonOnPressed(object sender, EventArgs eventArgs)
-		{
-			OnPauseButtonPressed.Raise(this);
-		}
-
-		private void FastForwardButtonOnPressed(object sender, EventArgs eventArgs)
-		{
-			OnFastForwardButtonPressed.Raise(this);
-		}
-
-		private void RecordButtonOnPressed(object sender, EventArgs eventArgs)
-		{
-			OnRecordButtonPressed.Raise(this);
 		}
 
 		#endregion

@@ -10,13 +10,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 {
 	public sealed class CableTvPresenter : AbstractPopupPresenter<ICableTvView>, ICableTvPresenter
 	{
-		private const ushort INDEX_TOP_MENU = 0;
-		private const ushort INDEX_POPUP_MENU = 1;
-		private const ushort INDEX_RETURN = 2;
-		private const ushort INDEX_INFO = 3;
-		private const ushort INDEX_EJECT = 4;
-		private const ushort INDEX_POWER = 5;
-
 		/// <summary>
 		/// Gets/sets the tv tuner control that this preseter controls.
 		/// </summary>
@@ -43,7 +36,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 		{
 			base.Subscribe(view);
 
-			view.OnMenuButtonPressed += ViewOnOnMenuButtonPressed;
 			view.OnNumberButtonPressed += ViewOnNumberButtonPressed;
 			view.OnClearButtonPressed += ViewOnClearButtonPressed;
 			view.OnEnterButtonPressed += ViewOnEnterButtonPressed;
@@ -58,19 +50,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 			view.OnChannelDownButtonPressed += ViewOnChannelDownButtonPressed;
 			view.OnPageUpButtonPressed += ViewOnPageUpButtonPressed;
 			view.OnPageDownButtonPressed += ViewOnPageDownButtonPressed;
-
-			view.OnRepeatButtonPressed += ViewOnRepeatButtonPressed;
-			view.OnRewindButtonPressed += ViewOnRewindButtonPressed;
-			view.OnFastForwardButtonPressed += ViewOnFastForwardButtonPressed;
-			view.OnStopButtonPressed += ViewOnStopButtonPressed;
-			view.OnPlayButtonPressed += ViewOnPlayButtonPressed;
-			view.OnPauseButtonPressed += ViewOnPauseButtonPressed;
-			view.OnRecordButtonPressed += ViewOnRecordButtonPressed;
-
-			view.OnRedButtonPressed += ViewOnRedButtonPressed;
-			view.OnGreenButtonPressed += ViewOnGreenButtonPressed;
-			view.OnBlueButtonPressed += ViewOnBlueButtonPressed;
-			view.OnYellowButtonPressed += ViewOnYellowButtonPressed;
 		}
 
 		/// <summary>
@@ -81,7 +60,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 		{
 			base.Unsubscribe(view);
 
-			view.OnMenuButtonPressed -= ViewOnOnMenuButtonPressed;
 			view.OnNumberButtonPressed -= ViewOnNumberButtonPressed;
 			view.OnClearButtonPressed -= ViewOnClearButtonPressed;
 			view.OnEnterButtonPressed -= ViewOnEnterButtonPressed;
@@ -96,52 +74,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 			view.OnChannelDownButtonPressed -= ViewOnChannelDownButtonPressed;
 			view.OnPageUpButtonPressed -= ViewOnPageUpButtonPressed;
 			view.OnPageDownButtonPressed -= ViewOnPageDownButtonPressed;
-
-			view.OnRepeatButtonPressed -= ViewOnRepeatButtonPressed;
-			view.OnRewindButtonPressed -= ViewOnRewindButtonPressed;
-			view.OnFastForwardButtonPressed -= ViewOnFastForwardButtonPressed;
-			view.OnStopButtonPressed -= ViewOnStopButtonPressed;
-			view.OnPlayButtonPressed -= ViewOnPlayButtonPressed;
-			view.OnPauseButtonPressed -= ViewOnPauseButtonPressed;
-			view.OnRecordButtonPressed -= ViewOnRecordButtonPressed;
-
-			view.OnRedButtonPressed -= ViewOnRedButtonPressed;
-			view.OnGreenButtonPressed -= ViewOnGreenButtonPressed;
-			view.OnBlueButtonPressed -= ViewOnBlueButtonPressed;
-			view.OnYellowButtonPressed -= ViewOnYellowButtonPressed;
-		}
-
-		private void ViewOnOnMenuButtonPressed(object sender, UShortEventArgs eventArgs)
-		{
-			if (Control == null)
-				return;
-
-			switch (eventArgs.Data)
-			{
-				case INDEX_TOP_MENU:
-					Control.TopMenu();
-					break;
-				
-				case INDEX_POPUP_MENU:
-					Control.PopupMenu();
-					break;
-				
-				case INDEX_RETURN:
-					Control.Return();
-					break;
-				
-				case INDEX_INFO:
-					Control.Info();
-					break;
-				
-				case INDEX_EJECT:
-					Control.Eject();
-					break;
-				
-				case INDEX_POWER:
-					Control.Power();
-					break;
-			}
 		}
 
 		private void ViewOnNumberButtonPressed(object sender, CharEventArgs eventArgs)
@@ -214,72 +146,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 		{
 			if (Control != null)
 				Control.PageDown();
-		}
-
-		private void ViewOnRepeatButtonPressed(object sender, EventArgs eventArgs)
-		{
-			if (Control != null)
-				Control.Repeat();
-		}
-
-		private void ViewOnRewindButtonPressed(object sender, EventArgs eventArgs)
-		{
-			if (Control != null)
-				Control.Rewind();
-		}
-
-		private void ViewOnFastForwardButtonPressed(object sender, EventArgs eventArgs)
-		{
-			if (Control != null)
-				Control.FastForward();
-		}
-
-		private void ViewOnStopButtonPressed(object sender, EventArgs eventArgs)
-		{
-			if (Control != null)
-				Control.Stop();
-		}
-
-		private void ViewOnPlayButtonPressed(object sender, EventArgs eventArgs)
-		{
-			if (Control != null)
-				Control.Play();
-		}
-
-		private void ViewOnPauseButtonPressed(object sender, EventArgs eventArgs)
-		{
-			if (Control != null)
-				Control.Pause();
-		}
-
-		private void ViewOnRecordButtonPressed(object sender, EventArgs eventArgs)
-		{
-			if (Control != null)
-				Control.Record();
-		}
-
-		private void ViewOnRedButtonPressed(object sender, EventArgs eventArgs)
-		{
-			if (Control != null)
-				Control.Red();
-		}
-
-		private void ViewOnGreenButtonPressed(object sender, EventArgs eventArgs)
-		{
-			if (Control != null)
-				Control.Green();
-		}
-
-		private void ViewOnBlueButtonPressed(object sender, EventArgs eventArgs)
-		{
-			if (Control != null)
-				Control.Blue();
-		}
-
-		private void ViewOnYellowButtonPressed(object sender, EventArgs eventArgs)
-		{
-			if (Control != null)
-				Control.Yellow();
 		}
 
 		#endregion
