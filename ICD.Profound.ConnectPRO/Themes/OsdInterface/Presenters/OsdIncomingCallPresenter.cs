@@ -62,10 +62,16 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 				return;
 
 			m_SubscribedConferenceManager = room.ConferenceManager;
+			m_SubscribedConferenceManager.OnRecentSourceAdded += SubscribedConferenceManagerOnRecentSourceAdded;
 			m_SubscribedConferenceManager.OnActiveSourceStatusChanged += SubscribedConferenceManagerOnActiveSourceStatusChanged;
 		}
 
-		private void SubscribedConferenceManagerOnActiveSourceStatusChanged(object sender, ConferenceSourceStatusEventArgs conferenceSourceStatusEventArgs)
+		private void SubscribedConferenceManagerOnRecentSourceAdded(object sender, ConferenceSourceEventArgs conferenceSourceEventArgs)
+		{
+			UpdateVisibility();
+		}
+
+		private void UpdateVisibility()
 		{
 			IConference conference = m_SubscribedConferenceManager == null
 							 ? null
@@ -83,6 +89,11 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 			RefreshIfVisible();
 		}
 
+		private void SubscribedConferenceManagerOnActiveSourceStatusChanged(object sender, ConferenceSourceStatusEventArgs conferenceSourceStatusEventArgs)
+		{
+			UpdateVisibility();
+		}
+
 		/// <summary>
 		/// Unsubscribe from the room events.
 		/// </summary>
@@ -94,6 +105,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 			if (m_SubscribedConferenceManager == null)
 				return;
 
+			m_SubscribedConferenceManager.OnRecentSourceAdded += SubscribedConferenceManagerOnRecentSourceAdded;
 			m_SubscribedConferenceManager.OnActiveSourceStatusChanged -= SubscribedConferenceManagerOnActiveSourceStatusChanged;
 		}
 	}
