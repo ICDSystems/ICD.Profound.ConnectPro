@@ -299,6 +299,8 @@
     <Compile Include="Themes\UserInterface\Views\VideoConference\Contacts\VtcReferencedContactsView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\ActiveCalls\VtcReferencedActiveCallsView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\ActiveCalls\VtcReferencedActiveCallsView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcKeyboardView.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcKeyboardView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcShareView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcShareView.generated.cs" />
     <Compile Include="VolumePoint.cs" />

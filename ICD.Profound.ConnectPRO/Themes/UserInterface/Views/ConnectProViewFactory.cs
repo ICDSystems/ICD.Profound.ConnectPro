@@ -94,6 +94,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(IVtcActiveCallsView), (panel, theme) => new VtcActiveCallsView(panel, theme)},
 			{typeof(IVtcCallListToggleView), (panel, theme) => new VtcCallListToggleView(panel, theme)},
 			{typeof(IVtcButtonListView), (panel, theme) => new VtcButtonListView(panel, theme)},
+			{typeof(IVtcKeyboardView), (panel, theme) => new VtcKeyboardView(panel, theme)},
 
 			// Panel
 			{typeof(IHardButtonsView), (panel, theme) => new HardButtonsView(panel, theme)}
