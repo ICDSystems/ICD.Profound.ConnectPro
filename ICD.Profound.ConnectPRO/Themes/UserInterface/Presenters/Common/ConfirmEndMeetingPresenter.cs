@@ -114,7 +114,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 		private void ViewOnShutdownButtonPressed(object sender, EventArgs eventArgs)
 		{
-			Navigation.NavigateTo<IConfirmSplashPowerPresenter>();
+			Navigation.NavigateTo<IDisabledAlertPresenter>();
+			//Navigation.NavigateTo<IConfirmSplashPowerPresenter>();
 		}
 
 		#endregion
