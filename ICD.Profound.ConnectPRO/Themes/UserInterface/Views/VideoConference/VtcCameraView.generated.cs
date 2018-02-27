@@ -33,7 +33,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 124
+				DigitalVisibilityJoin = 130
 			};
 
 			m_DPad = new VtProDPad(620, panel as IPanelDevice, m_Subpage);
