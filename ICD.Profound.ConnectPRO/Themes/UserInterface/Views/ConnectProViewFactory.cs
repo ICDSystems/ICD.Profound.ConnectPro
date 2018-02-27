@@ -84,6 +84,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(IHeaderView), (panel, theme) => new HeaderView(panel, theme)},
 			{typeof(IStartMeetingView), (panel, theme) => new StartMeetingView(panel, theme)},
 			{typeof(IVolumeView), (panel, theme) => new VolumeView(panel, theme)},
+			{typeof(IDisabledAlertView), (panel, theme) => new DisabledAlertView(panel, theme)},
 
 			// Video Conference
 			{typeof(IVtcBaseView), (panel, theme) => new VtcBaseView(panel, theme)},

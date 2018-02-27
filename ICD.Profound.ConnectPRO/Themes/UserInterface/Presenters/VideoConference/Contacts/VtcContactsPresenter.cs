@@ -370,10 +370,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void ViewOnManualDialButtonPressed(object sender, EventArgs eventArgs)
 		{
+			Navigation.NavigateTo<IDisabledAlertPresenter>();
 		}
 
 		private void ViewOnSearchButtonPressed(object sender, EventArgs eventArgs)
 		{
+			Navigation.NavigateTo<IDisabledAlertPresenter>();
 		}
 
 		private void ViewOnHomeButtonPressed(object sender, EventArgs eventArgs)
