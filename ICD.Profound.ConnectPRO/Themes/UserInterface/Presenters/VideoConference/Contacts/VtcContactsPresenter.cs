@@ -131,9 +131,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				IConference active = m_SubscribedConferenceManager == null ? null : m_SubscribedConferenceManager.ActiveConference;
 				bool hangupEnabled = active != null;
 
-				//view.SetDirectoryButtonSelected(m_DirectoryMode == eDirectoryMode.Contacts);
-				//view.SetFavoritesButtonSelected(m_DirectoryMode == eDirectoryMode.Favorites);
-				//view.SetRecentButtonSelected(m_DirectoryMode == eDirectoryMode.Recents);
+				view.SetDirectoryButtonSelected(m_DirectoryMode == eDirectoryMode.Contacts);
+				view.SetFavoritesButtonSelected(m_DirectoryMode == eDirectoryMode.Favorites);
+				view.SetRecentButtonSelected(m_DirectoryMode == eDirectoryMode.Recents);
 
 				view.SetCallButtonEnabled(callEnabled);
 				view.SetHangupButtonEnabled(hangupEnabled);
