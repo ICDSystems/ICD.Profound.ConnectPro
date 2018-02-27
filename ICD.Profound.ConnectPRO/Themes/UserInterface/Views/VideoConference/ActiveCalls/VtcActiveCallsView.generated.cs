@@ -26,7 +26,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Act
 				DigitalVisibilityJoin = 122
 			};
 
-			m_HangupList = new VtProSubpageReferenceList(622, panel as IPanelDevice, m_Subpage)
+			m_HangupList = new VtProSubpageReferenceList(624, panel as IPanelDevice, m_Subpage)
 			{
 				DigitalJoinIncrement = 3,
 				SerialJoinIncrement = 1,

@@ -1,7 +1,5 @@
 ﻿using System;
-using ICD.Connect.Conferencing.ConferenceManagers;
-using ICD.Connect.Conferencing.EventArguments;
-using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Common.Utils.Extensions;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -11,7 +9,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 {
 	public sealed class VtcCallListTogglePresenter : AbstractPresenter<IVtcCallListToggleView>, IVtcCallListTogglePresenter
 	{
-		private IConferenceManager m_SubscribedConferenceManager;
+		public event EventHandler OnButtonPressed;
 
 		/// <summary>
 		/// Constructor.
@@ -24,44 +22,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 		}
 
-		#region Room Callbacks
-
-		/// <summary>
-		/// Subscribe to the room events.
-		/// </summary>
-		/// <param name="room"></param>
-		protected override void Subscribe(IConnectProRoom room)
+		public override void Dispose()
 		{
-			base.Subscribe(room);
+			OnButtonPressed = null;
 
-			if (room == null)
-				return;
-
-			m_SubscribedConferenceManager = room.ConferenceManager;
-
-			m_SubscribedConferenceManager.OnInCallChanged += SubscribedConferenceManagerOnInCallChanged;
+			base.Dispose();
 		}
-
-		/// <summary>
-		/// Unsubscribe from the room events.
-		/// </summary>
-		/// <param name="room"></param>
-		protected override void Unsubscribe(IConnectProRoom room)
-		{
-			base.Unsubscribe(room);
-
-			if (m_SubscribedConferenceManager == null)
-				return;
-
-			m_SubscribedConferenceManager.OnInCallChanged -= SubscribedConferenceManagerOnInCallChanged;
-		}
-
-		private void SubscribedConferenceManagerOnInCallChanged(object sender, InCallEventArgs inCallEventArgs)
-		{
-			ShowView(inCallEventArgs.Data >= eInCall.Audio);
-		}
-
-		#endregion
 
 		#region View Callbacks
 
@@ -94,8 +60,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="eventArgs"></param>
 		private void ViewOnButtonPressed(object sender, EventArgs eventArgs)
 		{
-			IVtcButtonListPresenter presenter = Navigation.LazyLoadPresenter<IVtcButtonListPresenter>();
-			presenter.ShowView(!presenter.IsViewVisible);
+			OnButtonPressed.Raise(this);
 		}
 
 		#endregion

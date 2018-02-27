@@ -14,5 +14,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Ac
 		/// </summary>
 		/// <param name="label"></param>
 		void SetLabel(string label);
+
+		/// <summary>
+		/// Sets the visibility of the hangup button.
+		/// </summary>
+		/// <param name="visible"></param>
+		void SetHangupButtonVisible(bool visible);
 	}
 }

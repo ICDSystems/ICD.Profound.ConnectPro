@@ -51,6 +51,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			m_ButtonList.SetItemVisible(index, visible);
 		}
 
+		public void SetButtonEnabled(ushort index, bool enabled)
+		{
+			m_ButtonList.SetItemEnabled(index, enabled);
+		}
+
 		#region Control Callbacks
 
 		/// <summary>

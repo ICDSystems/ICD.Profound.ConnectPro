@@ -5,7 +5,7 @@ using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Connect.UI.Controls.TextControls;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.ActiveCalls
 {
 	public sealed partial class VtcReferencedActiveCallsView
 	{
@@ -25,7 +25,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 
 			m_HangupButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 1
+				DigitalPressJoin = 2,
+				DigitalVisibilityJoin = 3
 			};
 
 			m_Label = new VtProSimpleLabel(panel, m_Subpage)

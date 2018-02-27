@@ -186,9 +186,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="args"></param>
 		private void ConferenceManagerOnInCallChanged(object sender, InCallEventArgs args)
 		{
-			if (!GetSources().Any())
-				ShowView(false);
-
 			RefreshIfVisible();
 		}
 

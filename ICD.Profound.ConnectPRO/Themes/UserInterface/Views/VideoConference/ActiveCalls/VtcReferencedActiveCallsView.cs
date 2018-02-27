@@ -4,7 +4,7 @@ using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.ActiveCalls;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.ActiveCalls
 {
 	public sealed partial class VtcReferencedActiveCallsView : AbstractComponentView, IVtcReferencedActiveCallsView
 	{
@@ -29,6 +29,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		public void SetLabel(string label)
 		{
 			m_Label.SetLabelText(label);
+		}
+
+		/// <summary>
+		/// Sets the visibility of the hangup button.
+		/// </summary>
+		/// <param name="visible"></param>
+		public void SetHangupButtonVisible(bool visible)
+		{
+			m_HangupButton.Show(visible);
 		}
 
 		#region Control Callbacks

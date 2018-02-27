@@ -65,6 +65,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 						: string.Format("{0} - {1} - {2}", m_Source.GetDuration(), m_Source.Name, m_Source.Number);
 
 				view.SetLabel(name);
+				view.SetHangupButtonVisible(true);
 			}
 			finally
 			{

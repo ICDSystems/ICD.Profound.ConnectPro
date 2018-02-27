@@ -23,5 +23,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 		/// <param name="index"></param>
 		/// <param name="visible"></param>
 		void SetButtonVisible(ushort index, bool visible);
+
+		/// <summary>
+		/// Sets the enabled state of the button at the given index.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="enabled"></param>
+		void SetButtonEnabled(ushort index, bool enabled);
 	}
 }

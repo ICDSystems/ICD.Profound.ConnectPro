@@ -21,6 +21,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 	{
 		private SystemComponent m_SubscribedCodecSystem;
 
+		private IConferenceManager m_SubscribedConferenceManager;
+
+		private readonly IVtcCallListTogglePresenter m_CallListTogglePresenter;
+		private readonly IVtcContactsPresenter m_ContactsPresenter;
+		private readonly IVtcButtonListPresenter m_ButtonListPresenter;
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -30,6 +36,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		public VtcBasePresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
+			m_CallListTogglePresenter = nav.LazyLoadPresenter<IVtcCallListTogglePresenter>();
+			m_CallListTogglePresenter.OnButtonPressed += CallListTogglePresenterOnButtonPressed;
+
+			m_ContactsPresenter = nav.LazyLoadPresenter<IVtcContactsPresenter>();
+			m_ButtonListPresenter = nav.LazyLoadPresenter<IVtcButtonListPresenter>();
 		}
 
 		private SystemComponent GetSystemComponent(IConnectProRoom room)
@@ -76,6 +87,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (room == null)
 				return;
 
+			m_SubscribedConferenceManager = room.ConferenceManager;
+			m_SubscribedConferenceManager.OnInCallChanged += SubscribedConferenceManagerOnInCallChanged;
+
 			m_SubscribedCodecSystem = GetSystemComponent(room);
 			if (m_SubscribedCodecSystem == null)
 				return;
@@ -91,10 +105,32 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Unsubscribe(room);
 
+			if (m_SubscribedConferenceManager != null)
+				m_SubscribedConferenceManager.OnInCallChanged -= SubscribedConferenceManagerOnInCallChanged;
+
 			if (m_SubscribedCodecSystem == null)
 				return;
 
 			m_SubscribedCodecSystem.OnAwakeStateChanged -= SubscribedCodecSystemOnAwakeStateChanged;
+		}
+
+		private void SubscribedConferenceManagerOnInCallChanged(object sender, InCallEventArgs inCallEventArgs)
+		{
+			bool isInCall = inCallEventArgs.Data >= eInCall.Audio;
+
+			m_CallListTogglePresenter.ShowView(isInCall);
+
+			if (isInCall)
+			{
+				m_ContactsPresenter.ShowView(false);
+				m_ButtonListPresenter.ShowView(true);
+			}
+			else
+			{
+				m_ButtonListPresenter.ShowView(false);
+				if (IsViewVisible)
+					m_ContactsPresenter.ShowView(true);
+			}
 		}
 
 		/// <summary>
@@ -140,11 +176,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			// View became visible
 			if (args.Data)
 			{
-				Navigation.NavigateTo<IVtcContactsPresenter>();
+				m_ButtonListPresenter.ShowView(false);
+				m_ContactsPresenter.ShowView(true);
 			}
 			// View became hidden
 			else
 			{
+				m_ButtonListPresenter.ShowView(false);
+				m_ContactsPresenter.ShowView(false);
+				m_CallListTogglePresenter.ShowView(false);
+
 				IConferenceManager manager = Room == null ? null : Room.ConferenceManager;
 				IConference active = manager == null ? null : manager.ActiveConference;
 
@@ -156,6 +197,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			}
 
 			UpdateCodecAwakeState();
+		}
+
+		#endregion
+
+		#region Subpage Callbacks
+
+		private void CallListTogglePresenterOnButtonPressed(object sender, EventArgs eventArgs)
+		{
+			if (m_ContactsPresenter.IsViewVisible)
+			{
+				m_ContactsPresenter.ShowView(false);
+				m_ButtonListPresenter.ShowView(true);
+			}
+			else
+			{
+				m_ButtonListPresenter.ShowView(false);
+				m_ContactsPresenter.ShowView(true);
+			}
 		}
 
 		#endregion
