@@ -98,8 +98,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 				foreach (KeyValuePair<ushort, IPresenter> kvp in m_NavPages)
 				{
-					view.SetButtonVisible(kvp.Key, kvp.Value != Visible);
-					view.SetButtonEnabled(kvp.Key, kvp.Value != Visible);
+					view.SetButtonVisible(kvp.Key, true);
+					view.SetButtonEnabled(kvp.Key, true);
 				}
 			}
 			finally
