@@ -711,6 +711,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <param name="args"></param>
 		private void RoutingGraphOnSourceDetectionStateChanged(object sender, EndpointStateEventArgs args)
 		{
+			// TODO - Need to fix VTC routing
+			return;
+
 			if (!args.Type.HasFlag(eConnectionType.Video))
 				return;
 
