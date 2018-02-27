@@ -39,6 +39,8 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 
 			IOsdViewFactory viewFactory = new ConnectProOsdViewFactory(panel, theme);
 			m_NavigationController = new ConnectProOsdNavigationController(viewFactory, theme);
+
+			m_NavigationController.LazyLoadPresenter<IOsdIncomingCallPresenter>();
 		}
 
 		/// <summary>
