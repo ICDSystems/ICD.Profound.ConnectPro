@@ -20,7 +20,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 		private const ushort INDEX_ESPN = 6;
 		private const ushort INDEX_NBC_SPORTS = 7;
 
-		private static Dictionary<ushort, string> s_Channels =
+		private static readonly Dictionary<ushort, string> s_Channels =
 			new Dictionary<ushort, string>
 			{
 				{INDEX_ABC, "806"},
