@@ -608,7 +608,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (codec == null)
 				return;
 
-			ISource codecSource = m_Room.Originators.GetInstancesRecursive<ISource>(s => s.Endpoint.Device == codec.Id).SingleOrDefault();
+			ISource codecSource = m_Room.Originators.GetInstancesRecursive<ISource>(s => s.Endpoint.Device == codec.Id).FirstOrDefault();
 			if (codecSource == null)
 				return;
 
