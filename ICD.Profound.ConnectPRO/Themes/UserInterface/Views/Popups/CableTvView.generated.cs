@@ -48,17 +48,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 
 			m_GuideButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 365
+				DigitalPressJoin = 565
 			};
 
 			m_ExitButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 366
+				DigitalPressJoin = 566
 			};
 
 			m_PowerButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 367
+				DigitalPressJoin = 567
 			};
 
 			m_MenuDirections = new VtProDPad(12, panel as IPanelDevice, m_Subpage);
