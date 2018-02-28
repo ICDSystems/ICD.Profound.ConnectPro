@@ -23,7 +23,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{
 				DigitalVisibilityJoin = 128
 			};
-			m_dismissButton = new VtProButton(panel, parent)
+			m_dismissButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 100
 			};
