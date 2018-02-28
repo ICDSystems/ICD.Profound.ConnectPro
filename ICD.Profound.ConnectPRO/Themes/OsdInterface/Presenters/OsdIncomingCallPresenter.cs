@@ -95,8 +95,11 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 				? null
 				: m_SubscribedConferenceManager.ActiveConference;
 			IConferenceSource source = conference == null
-				? null
-				: conference.GetSources().FirstOrDefault(s => s.Direction == eConferenceSourceDirection.Incoming && !s.GetIsAnswered());
+				                           ? null
+				                           : conference.GetSources()
+				                                       .FirstOrDefault(s => s.Direction == eConferenceSourceDirection.Incoming &&
+				                                                            !s.GetIsAnswered() &&
+				                                                            !s.GetIsOnline());
 			return source;
 		}
 
