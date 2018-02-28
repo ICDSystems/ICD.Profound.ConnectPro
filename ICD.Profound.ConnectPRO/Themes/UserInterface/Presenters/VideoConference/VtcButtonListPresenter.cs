@@ -23,7 +23,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			{
 				{INDEX_ACTIVE_CALLS, "Active Calls"},
 				{INDEX_SHARE, "Share"},
-				{INDEX_DTMF, "DTMF"}
+				{INDEX_DTMF, "Touchtones"}
 			};
 
 		private static readonly Dictionary<ushort, Type> s_NavTypes =
