@@ -142,7 +142,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 		private void ViewOnGuideButtonPressed(object sender, EventArgs eventArgs)
 		{
 			if (Control != null)
-				Control.TopMenu();
+				Control.PopupMenu();
 		}
 
 		private void ViewOnNumberButtonPressed(object sender, CharEventArgs eventArgs)
