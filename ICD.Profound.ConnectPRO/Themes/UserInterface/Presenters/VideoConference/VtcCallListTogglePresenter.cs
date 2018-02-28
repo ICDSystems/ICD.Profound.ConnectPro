@@ -11,6 +11,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 	{
 		public event EventHandler OnButtonPressed;
 
+		private bool m_Mode;
+
+		public void SetContactsMode(bool mode)
+		{
+			if (mode == m_Mode)
+				return;
+
+			m_Mode = mode;
+
+			RefreshIfVisible();
+		}
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -27,6 +39,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			OnButtonPressed = null;
 
 			base.Dispose();
+		}
+
+		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
+		protected override void Refresh(IVtcCallListToggleView view)
+		{
+			base.Refresh(view);
+
+			view.SetContactsMode(m_Mode);
 		}
 
 		#region View Callbacks

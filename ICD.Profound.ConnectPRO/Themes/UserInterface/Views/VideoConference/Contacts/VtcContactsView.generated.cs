@@ -50,7 +50,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 
 			m_FavoritesButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 125
+				DigitalPressJoin = 132
 			};
 
 			m_RecentsButton = new VtProButton(panel, m_Subpage)
