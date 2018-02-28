@@ -27,12 +27,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 
 			m_AnswerButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 513
+				DigitalPressJoin = 601
 			};
 
 			m_IgnoreButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 517
+				DigitalPressJoin = 602
 			};
 		}
 
