@@ -250,6 +250,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			// If no source is selected for routing then we open the contextual menu for the current routed source
 			if (m_ActiveSource == null)
 			{
+				ShowSourceContextualMenu(routedSource, false);
 			}
 			// If a source is currently selected then we route that source to the selected display
 			else
@@ -257,12 +258,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				m_Room.Routing.Route(m_ActiveSource, destination);
 				m_Room.Routing.RouteAudioIfUnrouted(m_ActiveSource);
 				routedSource = m_ActiveSource;
+
+				ShowSourceContextualMenu(routedSource, true);
 			}
 
 			// Clear the selected source for routing
 			SetActiveSource(null);
-
-			ShowSourceContextualMenu(routedSource, true);
 		}
 
 		private void ShowSourceContextualMenu(ISource source, bool vtcOnly)
