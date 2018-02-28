@@ -20,6 +20,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			m_HideTimer = SafeTimer.Stopped(() => ShowView(false));
 		}
 
+		protected override void Subscribe(IDisabledAlertView view)
+		{
+			base.Subscribe(view);
+			view.OnDismissButtonPressed += View_OnDismissButtonPressed;
+		}
+
+		private void View_OnDismissButtonPressed(object sender, System.EventArgs e)
+		{
+			m_HideTimer.Stop();
+			ShowView(false);
+		}
+
 		/// <summary>
 		/// Release resources.
 		/// </summary>

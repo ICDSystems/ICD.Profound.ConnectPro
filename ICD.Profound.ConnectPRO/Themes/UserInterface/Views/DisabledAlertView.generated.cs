@@ -2,12 +2,14 @@
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Pages;
+using ICD.Connect.UI.Controls.Buttons;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 {
 	public sealed partial class DisabledAlertView
 	{
 		private VtProSubpage m_Subpage;
+		private VtProButton m_dismissButton;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -21,6 +23,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{
 				DigitalVisibilityJoin = 128
 			};
+			m_dismissButton = new VtProButton(panel, parent)
+			{
+				DigitalPressJoin = 100
+			};
 		}
 
 		/// <summary>
@@ -30,6 +36,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 		protected override IEnumerable<IVtProControl> GetChildren()
 		{
 			yield return m_Subpage;
+			yield return m_dismissButton;
 		}
 	}
 }
