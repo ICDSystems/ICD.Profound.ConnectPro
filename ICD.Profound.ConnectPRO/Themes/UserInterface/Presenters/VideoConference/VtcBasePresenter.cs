@@ -26,6 +26,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private readonly IVtcCallListTogglePresenter m_CallListTogglePresenter;
 		private readonly IVtcContactsPresenter m_ContactsPresenter;
 		private readonly IVtcButtonListPresenter m_ButtonListPresenter;
+		private readonly IVtcCameraPresenter m_CameraPresenter;
 
 		/// <summary>
 		/// Constructor.
@@ -41,6 +42,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			m_ContactsPresenter = nav.LazyLoadPresenter<IVtcContactsPresenter>();
 			m_ButtonListPresenter = nav.LazyLoadPresenter<IVtcButtonListPresenter>();
+			m_CameraPresenter = nav.LazyLoadPresenter<IVtcCameraPresenter>();
 		}
 
 		private SystemComponent GetSystemComponent(IConnectProRoom room)
@@ -205,6 +207,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void CallListTogglePresenterOnButtonPressed(object sender, EventArgs eventArgs)
 		{
+			if (m_CameraPresenter.IsViewVisible)
+				m_CameraPresenter.ShowView(false);
+
 			if (m_ContactsPresenter.IsViewVisible)
 			{
 				m_ContactsPresenter.ShowView(false);

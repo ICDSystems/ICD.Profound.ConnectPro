@@ -72,6 +72,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 			m_Menu.ShowView(!m_Menu.IsViewVisible);
 		}
 
+		/// <summary>
+		/// Called when the view visibility changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			base.ViewOnVisibilityChanged(sender, args);
+
+			if (!args.Data)
+				m_Menu.ShowView(false);
+		}
+
 		#endregion
 
 		#region Navigation Callbacks
