@@ -32,7 +32,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 
 			m_ShutdownButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 114
+				DigitalPressJoin = 115
 			};
 		}
 
