@@ -9,6 +9,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 	{
 		public event EventHandler OnButtonPressed;
 
+		public void SetContactsMode(bool mode)
+		{
+			m_Button.SetSelected(mode);
+		}
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>

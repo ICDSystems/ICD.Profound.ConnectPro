@@ -41,6 +41,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			base.Dispose();
 		}
 
+		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
+		protected override void Refresh(IVtcCallListToggleView view)
+		{
+			base.Refresh(view);
+
+			view.SetContactsMode(m_Mode);
+		}
+
 		#region View Callbacks
 
 		/// <summary>

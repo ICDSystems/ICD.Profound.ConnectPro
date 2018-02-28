@@ -8,5 +8,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 		/// Raised when the user presses the button.
 		/// </summary>
 		event EventHandler OnButtonPressed;
+
+		void SetContactsMode(bool mode);
 	}
 }
