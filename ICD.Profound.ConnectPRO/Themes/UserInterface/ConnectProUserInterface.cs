@@ -32,6 +32,8 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VisibilityTree;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views;
+using ICD.Connect.Conferencing.Cisco;
+using ICD.Connect.Conferencing.EventArguments;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 {
@@ -122,6 +124,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_NavigationController.LazyLoadPresenter<IOptionCameraPresenter>();
 			m_NavigationController.LazyLoadPresenter<IVtcCallListTogglePresenter>();
 			m_NavigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>();
+			
 		}
 
 		#region Methods
@@ -437,6 +440,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			Subscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>());
 			//Subscribe(m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>());
 			Subscribe(m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>());
+
+			Subscribe(m_NavigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>());
 		}
 
 		/// <summary>
@@ -448,6 +453,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>());
 			//Unsubscribe(m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>());
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>());
+
+			Unsubscribe(m_NavigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>());
 		}
 
 		#region SourceSelectSingle Callbacks
@@ -580,6 +587,32 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private void MenuDisplaysPresenterOnDestinationPressed(object sender, ISource routedSource, IDestination destination)
 		{
 			HandleSelectedDisplay(routedSource, destination);
+		}
+
+		private void Subscribe(IVtcIncomingCallPresenter presenter)
+		{
+			presenter.OnCallAnswered += VtcIncomingCallPresenterOnCallAnswered;
+		}
+
+		private void Unsubscribe(IVtcIncomingCallPresenter presenter)
+		{
+			presenter.OnCallAnswered -= VtcIncomingCallPresenterOnCallAnswered;
+		}
+
+		private void VtcIncomingCallPresenterOnCallAnswered(object sender, EventArgs e)
+		{
+			if (m_Room == null)
+				return;
+
+			CiscoCodec codec = m_Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video).Parent as CiscoCodec;
+			if (codec == null)
+				return;
+
+			ISource codecSource = m_Room.Originators.GetInstancesRecursive<ISource>(s => s.Endpoint.Device == codec.Id).SingleOrDefault();
+			if (codecSource == null)
+				return;
+
+			HandleSelectedSource(codecSource);
 		}
 
 		#endregion
