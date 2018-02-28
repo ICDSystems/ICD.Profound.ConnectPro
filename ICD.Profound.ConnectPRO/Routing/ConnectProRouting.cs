@@ -5,6 +5,7 @@ using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.Extensions;
+using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.Cisco;
 using ICD.Connect.Conferencing.Cisco.Components.Presentation;
 using ICD.Connect.Conferencing.Cisco.Components.Video;
@@ -468,22 +469,26 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 		private void Route(EndpointInfo source, EndpointInfo destination, eConnectionType connectionType)
 		{
-			bool oldRouting = m_Routing;
-			m_Routing = true;
+			IcdStopwatch.Profile(() =>
+			                     {
 
-			RoutingGraph.Route(source, destination, connectionType, m_Room.Id);
-			
-			if (!oldRouting)
-				m_Routing = false;
+				                     bool oldRouting = m_Routing;
+				                     m_Routing = true;
 
-			IDisplay display = m_Room.Core.Originators.GetChild(destination.Device) as IDisplay;
-			if (display == null)
-				return;
+				                     RoutingGraph.Route(source, destination, connectionType, m_Room.Id);
 
-			display.PowerOn();
+				                     if (!oldRouting)
+					                     m_Routing = false;
 
-			if (display.HdmiInput != destination.Address)
-				display.SetHdmiInput(destination.Address);
+				                     IDisplay display = m_Room.Core.Originators.GetChild(destination.Device) as IDisplay;
+				                     if (display == null)
+					                     return;
+
+				                     display.PowerOn();
+
+				                     if (display.HdmiInput != destination.Address)
+					                     display.SetHdmiInput(destination.Address);
+			                     }, string.Format("Route - {0} {1} {2}", source, destination, connectionType));
 		}
 
 		/// <summary>
