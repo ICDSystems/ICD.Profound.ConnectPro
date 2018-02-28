@@ -34,16 +34,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 			view.SetIcon("icon_videoConference_white");
 			view.SetSourceName("Video Conference");
 
-			IConference conference = m_SubscribedConferenceManager == null
-				                         ? null
-				                         : m_SubscribedConferenceManager.ActiveConference;
-			IConferenceSource source = conference == null
-				                           ? null
-				                           : conference.GetSources()
-				                                       .FirstOrDefault(
-				                                                       s =>
-				                                                       s.Direction == eConferenceSourceDirection.Incoming &&
-				                                                       !s.GetIsAnswered());
+			IConferenceSource source = GetSource();
 
 			string info = source == null ? string.Empty : string.Format("{0} - {1}", source.Name, source.Number);
 
@@ -91,20 +82,22 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 
 		private void UpdateVisibility()
 		{
-			IConference conference = m_SubscribedConferenceManager == null
-							 ? null
-							 : m_SubscribedConferenceManager.ActiveConference;
-			IConferenceSource source = conference == null
-										   ? null
-										   : conference.GetSources()
-													   .FirstOrDefault(
-																	   s =>
-																	   s.Direction == eConferenceSourceDirection.Incoming &&
-																	   !s.GetIsAnswered());
+			IConferenceSource source = GetSource();
 
 			ShowView(source != null);
 
 			RefreshIfVisible();
+		}
+
+		private IConferenceSource GetSource()
+		{
+			IConference conference = m_SubscribedConferenceManager == null
+				? null
+				: m_SubscribedConferenceManager.ActiveConference;
+			IConferenceSource source = conference == null
+				? null
+				: conference.GetSources().FirstOrDefault(s => s.Direction == eConferenceSourceDirection.Incoming && !s.GetIsAnswered());
+			return source;
 		}
 
 		private void SubscribedConferenceManagerOnActiveSourceStatusChanged(object sender, ConferenceSourceStatusEventArgs conferenceSourceStatusEventArgs)

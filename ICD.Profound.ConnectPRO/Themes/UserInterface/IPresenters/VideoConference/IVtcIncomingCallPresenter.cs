@@ -4,5 +4,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConferen
 {
 	public interface IVtcIncomingCallPresenter : IPresenter<IVtcIncomingCallView>
 	{
+		void SetCallerInfo(string number);
 	}
 }

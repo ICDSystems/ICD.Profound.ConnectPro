@@ -13,5 +13,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 		/// Raised when the user presses the ignore button.
 		/// </summary>
 		event EventHandler OnIgoreButtonPressed;
+
+		void SetCallerInfo(string number);
 	}
 }

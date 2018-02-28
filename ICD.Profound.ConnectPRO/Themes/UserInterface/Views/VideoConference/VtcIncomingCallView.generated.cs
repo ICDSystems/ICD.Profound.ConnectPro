@@ -3,6 +3,7 @@ using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Pages;
+using ICD.Connect.UI.Controls.TextControls;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 {
@@ -11,6 +12,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		private VtProSubpage m_Subpage;
 		private VtProButton m_AnswerButton;
 		private VtProButton m_IgnoreButton;
+		private VtProSimpleLabel m_CallerInfoLabel;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -34,6 +36,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			{
 				DigitalPressJoin = 602
 			};
+
+			m_CallerInfoLabel = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				IndirectTextJoin = 600
+			};
 		}
 
 		/// <summary>
@@ -45,6 +52,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			yield return m_Subpage;
 			yield return m_AnswerButton;
 			yield return m_IgnoreButton;
+			yield return m_CallerInfoLabel;
 		}
 	}
 }
