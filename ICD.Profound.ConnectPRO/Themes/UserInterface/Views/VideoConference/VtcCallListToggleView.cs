@@ -11,7 +11,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 
 		public void SetContactsMode(bool mode)
 		{
-			m_Button.SetSelected(mode);
+			m_Button.SetSelected(!mode);
 		}
 
 		/// <summary>
