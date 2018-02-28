@@ -80,6 +80,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			m_ShareButton.Enable(enabled);
 		}
 
+		/// <summary>
+		/// Sets the selected state of the share button.
+		/// </summary>
+		/// <param name="selected"></param>
+		public void SetShareButtonSelected(bool selected)
+		{
+			m_ShareButton.SetSelected(selected);
+		}
+
 		#region Control Callbacks
 
 		protected override void SubscribeControls()
