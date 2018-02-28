@@ -121,6 +121,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_NavigationController.LazyLoadPresenter<IOptionVolumePresenter>();
 			m_NavigationController.LazyLoadPresenter<IOptionCameraPresenter>();
 			m_NavigationController.LazyLoadPresenter<IVtcCallListTogglePresenter>();
+			m_NavigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>();
 		}
 
 		#region Methods
@@ -215,7 +216,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 				m_Room.Routing.Route(codecControl);
 
-				ShowSourceContextualMenu(source);
+				ShowSourceContextualMenu(source, true);
 				SetActiveSource(null);
 			}
 			// In a single display room just route the source immediately
@@ -230,7 +231,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				SetActiveSource(null);
 			}
 
-			ShowSourceContextualMenu(source);
+			ShowSourceContextualMenu(source, false);
 		}
 
 		/// <summary>
@@ -261,10 +262,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			// Clear the selected source for routing
 			SetActiveSource(null);
 
-			ShowSourceContextualMenu(routedSource);
+			ShowSourceContextualMenu(routedSource, true);
 		}
 
-		private void ShowSourceContextualMenu(ISource source)
+		private void ShowSourceContextualMenu(ISource source, bool vtcOnly)
 		{
 			if (source == null)
 				return;
@@ -277,10 +278,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (control == null)
 				return;
 
-			// TODO - VERY temporary
 			if (control is CiscoDialingDeviceControl)
+			{
 				m_NavigationController.NavigateTo<IVtcBasePresenter>();
-			else if (control is ITvTunerControl)
+				return;
+			}
+
+			if (vtcOnly)
+				return;
+
+			if (control is ITvTunerControl)
 				m_NavigationController.NavigateTo<ICableTvPresenter>().Control = control as ITvTunerControl;
 		}
 
