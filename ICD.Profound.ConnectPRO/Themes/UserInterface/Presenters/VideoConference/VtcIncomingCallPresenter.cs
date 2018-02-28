@@ -8,11 +8,18 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
+using ICD.Connect.Conferencing.Cisco.Controls;
+using ICD.Connect.Conferencing.Cisco;
+using System;
+using ICD.Common.Utils.Extensions;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference
 {
 	public sealed class VtcIncomingCallPresenter : AbstractPresenter<IVtcIncomingCallView>, IVtcIncomingCallPresenter
 	{
+
+		public event EventHandler OnCallAnswered;
+		
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -94,6 +101,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			if (source != null)
 				source.Answer();
+
+			OnCallAnswered.Raise(this);
+			
 
 			ShowView(false);
 		}
