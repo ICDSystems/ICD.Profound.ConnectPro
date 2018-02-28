@@ -60,6 +60,32 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_SubscribedConferenceManager.OnActiveSourceStatusChanged -= SubscribedConferenceManagerOnActiveSourceStatusChanged;
 		}
 
+		protected override void Subscribe(IVtcIncomingCallView view)
+		{
+			base.Subscribe(view);
+
+			view.OnAnswerButtonPressed += View_OnAnswerButtonPressed;
+			view.OnIgoreButtonPressed += View_OnIgoreButtonPressed;
+		}
+
+		private void View_OnIgoreButtonPressed(object sender, System.EventArgs e)
+		{
+			IConferenceSource source = GetSource();
+
+			if (source != null)
+				source.Hangup();
+		}
+
+		private void View_OnAnswerButtonPressed(object sender, System.EventArgs e)
+		{
+			IConferenceSource source = GetSource();
+
+			if (source != null)
+				source.Answer();
+
+			ShowView(false);
+		}
+
 		private void SubscribedConferenceManagerOnRecentSourceAdded(object sender, ConferenceSourceEventArgs conferenceSourceEventArgs)
 		{
 			UpdateVisibility();
@@ -67,20 +93,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void UpdateVisibility()
 		{
-			IConference conference = m_SubscribedConferenceManager == null
-							 ? null
-							 : m_SubscribedConferenceManager.ActiveConference;
-			IConferenceSource source = conference == null
-										   ? null
-										   : conference.GetSources()
-													   .FirstOrDefault(
-																	   s =>
-																	   s.Direction == eConferenceSourceDirection.Incoming &&
-																	   !s.GetIsAnswered());
+			IConferenceSource source = GetSource();
 
 			ShowView(source != null);
 
 			RefreshIfVisible();
+		}
+
+		private IConferenceSource GetSource()
+		{
+			IConference conference = m_SubscribedConferenceManager == null
+				? null
+				: m_SubscribedConferenceManager.ActiveConference;
+			IConferenceSource source = conference == null
+				? null
+				: conference.GetSources().FirstOrDefault(s => s.Direction == eConferenceSourceDirection.Incoming && !s.GetIsAnswered());
+			return source;
 		}
 
 		private void SubscribedConferenceManagerOnActiveSourceStatusChanged(object sender, ConferenceSourceStatusEventArgs conferenceSourceStatusEventArgs)
