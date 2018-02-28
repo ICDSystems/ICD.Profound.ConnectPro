@@ -67,11 +67,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			return false;
 		}
 
-		public override bool HasContactNumber(string number)
-		{
-			return false;
-		}
-
 		protected override void SetModel(object model)
 		{
 			Folder = model as Folder;

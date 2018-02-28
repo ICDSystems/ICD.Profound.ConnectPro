@@ -15,7 +15,5 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConferen
 		void SetModel(object model);
 
 		void Dial();
-
-		bool HasContactNumber(string number);
 	}
 }
