@@ -7,6 +7,7 @@ using ICD.Connect.Cameras;
 using ICD.Connect.Cameras.Controls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
@@ -185,6 +186,28 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			CameraPreset preset = m_CameraPresets[index];
 			cameraControl.ActivatePreset(preset.PresetId);
+		}
+
+		/// <summary>
+		/// Called when the view visibility changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			base.ViewOnVisibilityChanged(sender, args);
+
+			if (args.Data)
+			{
+				// Hide the conferencing subpages
+				Navigation.LazyLoadPresenter<IVtcContactsPresenter>().ShowView(false);
+				Navigation.LazyLoadPresenter<IVtcButtonListPresenter>().ShowView(false);
+			}
+			else
+			{
+				// Show the conferencing subpages
+				Navigation.LazyLoadPresenter<IVtcButtonListPresenter>().ShowView(true);
+			}
 		}
 
 		#endregion
