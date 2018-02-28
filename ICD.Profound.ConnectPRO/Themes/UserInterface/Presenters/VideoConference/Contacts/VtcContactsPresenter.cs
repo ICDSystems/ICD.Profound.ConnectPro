@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
+using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Cisco;
 using ICD.Connect.Conferencing.Cisco.Components.Directory;
 using ICD.Connect.Conferencing.Cisco.Components.Directory.Tree;
@@ -45,8 +46,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 					return;
 
 				m_DirectoryMode = value;
+				Selected = null;
 
-				RefreshIfVisible();
+				Refresh();
 			}
 		}
 
@@ -60,7 +62,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 				m_Selected = value;
 
-				RefreshIfVisible();
+				Refresh();
 			}
 		}
 
@@ -408,7 +410,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (m_Selected == null)
 				return;
 
-			m_Selected.Dial();
+			IVtcReferencedContactsPresenterBase presenter = m_Selected;
+			Selected = null;
+
+			presenter.Dial();
 		}
 
 		private void ViewOnHangupButtonPressed(object sender, EventArgs eventArgs)
@@ -416,6 +421,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			IConference active = m_SubscribedConferenceManager == null ? null : m_SubscribedConferenceManager.ActiveConference;
 			if (active != null)
 				active.Hangup();
+		}
+
+		/// <summary>
+		/// Called when the view visibility changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			base.ViewOnVisibilityChanged(sender, args);
+
+			// Clear the selection
+			Selected = null;
 		}
 
 		#endregion
