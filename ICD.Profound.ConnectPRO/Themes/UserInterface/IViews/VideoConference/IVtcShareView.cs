@@ -47,5 +47,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 		/// </summary>
 		/// <param name="enabled"></param>
 		void SetShareButtonEnabled(bool enabled);
+
+		/// <summary>
+		/// Sets the selected state of the share button.
+		/// </summary>
+		/// <param name="selected"></param>
+		void SetShareButtonSelected(bool selected);
 	}
 }
