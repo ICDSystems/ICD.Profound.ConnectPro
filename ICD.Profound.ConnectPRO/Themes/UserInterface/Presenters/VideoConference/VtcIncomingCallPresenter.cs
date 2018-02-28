@@ -45,6 +45,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_SubscribedConferenceManager.OnActiveSourceStatusChanged += SubscribedConferenceManagerOnActiveSourceStatusChanged;
 		}
 
+		protected override void Refresh(IVtcIncomingCallView view)
+		{
+			base.Refresh(view);
+
+			IConferenceSource source = GetSource();
+			string info = source == null ? string.Empty : string.Format("{0} - {1}", source.Name, source.Number);
+
+			view.SetCallerInfo(info);
+		}
+
 		/// <summary>
 		/// Unsubscribe from the room events.
 		/// </summary>
@@ -74,6 +84,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			if (source != null)
 				source.Hangup();
+
+			ShowView(false);
 		}
 
 		private void View_OnAnswerButtonPressed(object sender, System.EventArgs e)

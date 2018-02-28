@@ -20,6 +20,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		{
 		}
 
+		public void SetCallerInfo(string number)
+		{
+			m_CallerInfoLabel.SetLabelText(number);
+		}
+
 		/// <summary>
 		/// Subscribes to the view controls.
 		/// </summary>
