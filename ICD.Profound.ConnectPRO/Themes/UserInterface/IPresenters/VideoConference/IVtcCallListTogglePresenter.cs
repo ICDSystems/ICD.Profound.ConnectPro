@@ -6,5 +6,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConferen
 	public interface IVtcCallListTogglePresenter : IPresenter<IVtcCallListToggleView>
 	{
 		event EventHandler OnButtonPressed;
+
+		void SetContactsMode(bool mode);
 	}
 }

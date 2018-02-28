@@ -11,6 +11,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 	{
 		public event EventHandler OnButtonPressed;
 
+		private bool m_Mode;
+
+		public void SetContactsMode(bool mode)
+		{
+			if (mode == m_Mode)
+				return;
+
+			m_Mode = mode;
+
+			RefreshIfVisible();
+		}
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>

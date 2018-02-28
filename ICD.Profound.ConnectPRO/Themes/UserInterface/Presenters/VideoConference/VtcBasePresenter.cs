@@ -41,8 +41,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_CallListTogglePresenter.OnButtonPressed += CallListTogglePresenterOnButtonPressed;
 
 			m_ContactsPresenter = nav.LazyLoadPresenter<IVtcContactsPresenter>();
+			m_ContactsPresenter.OnViewVisibilityChanged += ContactsPresenterOnViewVisibilityChanged;
+
 			m_ButtonListPresenter = nav.LazyLoadPresenter<IVtcButtonListPresenter>();
 			m_CameraPresenter = nav.LazyLoadPresenter<IVtcCameraPresenter>();
+		}
+
+		private void ContactsPresenterOnViewVisibilityChanged(object sender, BoolEventArgs boolEventArgs)
+		{
+			m_CallListTogglePresenter.SetContactsMode(!boolEventArgs.Data);
 		}
 
 		private SystemComponent GetSystemComponent(IConnectProRoom room)
