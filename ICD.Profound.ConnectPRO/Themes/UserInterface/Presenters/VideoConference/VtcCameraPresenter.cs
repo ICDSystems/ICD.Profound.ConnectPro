@@ -88,14 +88,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void Zoom(eCameraZoomAction action)
 		{
-			IZoomControl zoom = m_CameraControl as IZoomControl;
+			IZoomControl zoom = m_CameraControl.Parent.Controls.GetControl<IZoomControl>();
 			if (zoom != null)
 				zoom.Zoom(action);
 		}
 
 		private void PanTilt(eCameraPanTiltAction action)
 		{
-			IPanTiltControl panTilt = m_CameraControl as IPanTiltControl;
+			IPanTiltControl panTilt = m_CameraControl.Parent.Controls.GetControl<IPanTiltControl>();
 			if (panTilt != null)
 				panTilt.PanTilt(action);
 		}
