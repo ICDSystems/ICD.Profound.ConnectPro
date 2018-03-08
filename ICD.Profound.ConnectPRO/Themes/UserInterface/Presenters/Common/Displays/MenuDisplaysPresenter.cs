@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.Extensions;
@@ -250,7 +249,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		/// </summary>
 		public IDestination Display1Destination
 		{
-			get { return m_Display1Destination = m_Display1Destination ?? (Room == null ? null : Room.Routing.GetDisplayDestinations().ElementAt(0)); }
+			get
+			{
+				if (m_Display1Destination == null && Room != null)
+					Room.Routing.GetDisplayDestinations().TryElementAt(0, out m_Display1Destination);
+				return m_Display1Destination;
+			}
 		}
 
 		/// <summary>
@@ -296,7 +300,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		/// </summary>
 		public IDestination Display2Destination
 		{
-			get { return m_Display2Destination = m_Display2Destination ?? (Room == null ? null : Room.Routing.GetDisplayDestinations().ElementAt(1)); }
+			get
+			{
+				if (m_Display2Destination == null && Room != null)
+					Room.Routing.GetDisplayDestinations().TryElementAt(1, out m_Display2Destination);
+				return m_Display2Destination;
+			}
 		}
 
 		/// <summary>
