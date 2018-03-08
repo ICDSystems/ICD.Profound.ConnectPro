@@ -108,7 +108,6 @@
     <Compile Include="Themes\OsdInterface\Views\OsdWelcomeView.generated.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IMenuDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmLeaveCallPresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IReferencedDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmEndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmSplashPowerPresenter.cs" />
@@ -121,9 +120,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionPrivacyMutePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionVolumePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Sources\IReferencedSourceSelectPresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\Common\Sources\ISourceSelectDualPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Sources\ISourceSelectPresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\Common\Sources\ISourceSelectSinglePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IDisabledAlertPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IHardButtonsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\INavigationController.cs" />
@@ -162,11 +159,8 @@
     <Compile Include="Themes\UserInterface\IViews\IDisabledAlertView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IHardButtonsView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Popups\IAppleTvView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\Common\Displays\IDisplaysView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IEndMeetingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IHeaderView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\Common\Sources\ISourceSelectDualView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\Common\Sources\ISourceSelectSingleView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Sources\ISourceSelectView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Options\IOptionPrivacyMuteView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Options\IOptionView.cs" />
@@ -198,7 +192,6 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmEndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmLeaveCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmSplashPowerPresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\Common\Displays\DisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\MenuDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\ReferencedDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\ReferencedDisplaysPresenterFactory.cs" />
@@ -211,8 +204,6 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\AbstractSourceSelectPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\ReferencedSourceSelectPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\ReferencedSourceSelectPresenterFactory.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\Common\Sources\SourceSelectDualPresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\Common\Sources\SourceSelectSinglePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\StartMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\VolumePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\ConnectProNavigationController.cs" />
@@ -251,8 +242,6 @@
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmLeaveCallView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmSplashPowerView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmSplashPowerView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\Common\Displays\DisplaysView.cs" />
-    <Compile Include="Themes\UserInterface\Views\Common\Displays\DisplaysView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\MenuDisplaysView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\MenuDisplaysView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\ReferencedDisplaysView.cs" />
@@ -268,13 +257,10 @@
     <Compile Include="Themes\UserInterface\Views\Common\Options\OptionVolumeView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Options\OptionPrivacyMuteView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Options\OptionPrivacyMuteView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\Common\Sources\AbstractSourceSelectView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\ReferencedSourceSelectView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\ReferencedSourceSelectView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\Common\Sources\SourceSelectDualView.cs" />
-    <Compile Include="Themes\UserInterface\Views\Common\Sources\SourceSelectDualView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\Common\Sources\SourceSelectSingleView.cs" />
-    <Compile Include="Themes\UserInterface\Views\Common\Sources\SourceSelectSingleView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Sources\SourceSelectView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Sources\SourceSelectView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\StartMeetingView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\StartMeetingView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\VolumeView.cs" />

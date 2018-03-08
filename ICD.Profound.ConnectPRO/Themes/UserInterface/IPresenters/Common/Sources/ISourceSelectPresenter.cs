@@ -6,8 +6,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Source
 {
 	public delegate void SourcePressedCallback(object sender, ISource source);
 
-	public interface ISourceSelectPresenter<TView> : IPresenter<TView>
-		where TView : ISourceSelectView
+	public interface ISourceSelectPresenter : IPresenter<ISourceSelectView>
 	{
 		/// <summary>
 		/// Raised when the user presses a source.

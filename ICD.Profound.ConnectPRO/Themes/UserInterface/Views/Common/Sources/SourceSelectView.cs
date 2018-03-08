@@ -5,7 +5,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 {
-	public sealed partial class SourceSelectDualView : AbstractSourceSelectView, ISourceSelectDualView
+	public sealed partial class SourceSelectView : AbstractView, ISourceSelectView
 	{
 		private readonly List<IReferencedSourceSelectView> m_ChildList;
 
@@ -14,7 +14,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public SourceSelectDualView(ISigInputOutput panel, ConnectProTheme theme)
+		public SourceSelectView(ISigInputOutput panel, ConnectProTheme theme)
 			: base(panel, theme)
 		{
 			m_ChildList = new List<IReferencedSourceSelectView>();
@@ -26,7 +26,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		/// <param name="factory"></param>
 		/// <param name="count"></param>
 		/// <returns></returns>
-		public override IEnumerable<IReferencedSourceSelectView> GetChildComponentViews(IViewFactory factory, ushort count)
+		public IEnumerable<IReferencedSourceSelectView> GetChildComponentViews(IViewFactory factory, ushort count)
 		{
 			return GetChildViews(factory, m_SourceList, m_ChildList, count);
 		}

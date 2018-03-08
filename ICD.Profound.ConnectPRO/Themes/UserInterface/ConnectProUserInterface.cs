@@ -162,9 +162,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			Subscribe(m_Room);
 
-			UpdatePanelOnlineJoin();
 			UpdateMeetingPresenters();
 			UpdateRouting();
+
+			UpdatePanelOnlineJoin();
 		}
 
 		/// <summary>
@@ -306,8 +307,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			m_ActiveSource = source;
 
-			m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>().ActiveSource = m_ActiveSource;
-			//m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().ActiveSource = m_ActiveSource;
+			m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().ActiveSource = m_ActiveSource;
 			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().ActiveSource = m_ActiveSource;
 
 			m_SourceSelectionTimeout.Reset(SOURCE_SELECTION_TIMEOUT);
@@ -369,13 +369,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			bool dualDisplays = m_Room != null && m_Room.Routing.IsDualDisplayRoom;
 
 			// Set the visibility of the source a display subpages
-			bool dualSourceVisible = isInMeeting && dualDisplays;
-			bool singleSourceVisible = isInMeeting && !dualDisplays;
 			bool displaysVisible = isInMeeting && dualDisplays;
 
-			//m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>().ShowView(singleSourceVisible);
-			m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>().ShowView(dualSourceVisible);
-			//m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().ShowView(displaysVisible);
+			m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().ShowView(true);
 			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().ShowView(displaysVisible);
 		}
 
@@ -423,9 +419,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				       .Except((ISource)null)
 				       .ToIcdHashSet();
 
-			//m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>().SetRoutedSources(routedSources);
-			m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>().SetRoutedSources(routedSources);
-			//m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>().SetRouting(routing, activeAudio);
+			m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().SetRoutedSources(routedSources);
 			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().SetRouting(routing, activeAudio);
 		}
 
@@ -436,9 +430,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// </summary>
 		private void SubscribePresenters()
 		{
-			//Subscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>());
-			Subscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>());
-			//Subscribe(m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>());
+			Subscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>());
 			Subscribe(m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>());
 
 			Subscribe(m_NavigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>());
@@ -449,9 +441,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// </summary>
 		private void UnsubscribePresenters()
 		{
-			//Unsubscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectSinglePresenter>());
-			Unsubscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectDualPresenter>());
-			//Unsubscribe(m_NavigationController.LazyLoadPresenter<IDisplaysPresenter>());
+			Unsubscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>());
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>());
 
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>());
@@ -463,7 +453,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// Subscribe to the presenter events.
 		/// </summary>
 		/// <param name="presenter"></param>
-		private void Subscribe(ISourceSelectSinglePresenter presenter)
+		private void Subscribe(ISourceSelectPresenter presenter)
 		{
 			presenter.OnSourcePressed += SourceSelectSinglePresenterOnSourcePressed;
 		}
@@ -472,7 +462,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// Unsubscribe from the presenter events.
 		/// </summary>
 		/// <param name="presenter"></param>
-		private void Unsubscribe(ISourceSelectSinglePresenter presenter)
+		private void Unsubscribe(ISourceSelectPresenter presenter)
 		{
 			presenter.OnSourcePressed -= SourceSelectSinglePresenterOnSourcePressed;
 		}
@@ -484,76 +474,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="source"></param>
 		private void SourceSelectSinglePresenterOnSourcePressed(object sender, ISource source)
 		{
-			if (m_Room == null)
-				return;
-
 			HandleSelectedSource(source);
-		}
-
-		#endregion
-
-		#region SourceSelectDual Callbacks
-
-		/// <summary>
-		/// Subscribe to the presenter events.
-		/// </summary>
-		/// <param name="presenter"></param>
-		private void Subscribe(ISourceSelectDualPresenter presenter)
-		{
-			presenter.OnSourcePressed += SourceSelectDualPresenterOnSourcePressed;
-		}
-
-		/// <summary>
-		/// Unsubscribe from the presenter events.
-		/// </summary>
-		/// <param name="presenter"></param>
-		private void Unsubscribe(ISourceSelectDualPresenter presenter)
-		{
-			presenter.OnSourcePressed -= SourceSelectDualPresenterOnSourcePressed;
-		}
-
-		/// <summary>
-		/// Called when the user presses a source in the presenter.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="source"></param>
-		private void SourceSelectDualPresenterOnSourcePressed(object sender, ISource source)
-		{
-			HandleSelectedSource(source);
-		}
-
-		#endregion
-
-		#region Displays Callbacks
-
-		/// <summary>
-		/// Subscribe to the presenter events.
-		/// </summary>
-		/// <param name="presenter"></param>
-		private void Subscribe(IDisplaysPresenter presenter)
-		{
-			presenter.OnDestinationPressed += DisplaysPresenterOnDestinationPressed;
-		}
-
-		/// <summary>
-		/// Unsubscribe from the presenter events.
-		/// </summary>
-		/// <param name="presenter"></param>
-		private void Unsubscribe(IDisplaysPresenter presenter)
-		{
-			presenter.OnDestinationPressed -= DisplaysPresenterOnDestinationPressed;
-		}
-
-		/// <summary>
-		/// Called when the user presses a destination in the presenter.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="presenter"></param>
-		/// <param name="destination"></param>
-		private void DisplaysPresenterOnDestinationPressed(object sender, IReferencedDisplaysPresenter presenter,
-		                                                   IDestination destination)
-		{
-			HandleSelectedDisplay(presenter.ActiveSource, destination);
 		}
 
 		#endregion

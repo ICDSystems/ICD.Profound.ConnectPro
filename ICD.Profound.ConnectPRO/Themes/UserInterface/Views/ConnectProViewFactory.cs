@@ -64,7 +64,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(ICableTvView), (panel, theme) => new CableTvView(panel, theme)},
 
 			// Displays
-			{typeof(IDisplaysView), (panel, theme) => new DisplaysView(panel, theme)},
 			{typeof(IMenuDisplaysView), (panel, theme) => new MenuDisplaysView(panel, theme)},
 
 			// Options
@@ -73,8 +72,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(IOptionCameraView), (panel, theme) => new OptionCameraView(panel, theme)},
 
 			// Sources
-			{typeof(ISourceSelectDualView), (panel, theme) => new SourceSelectDualView(panel, theme)},
-			{typeof(ISourceSelectSingleView), (panel, theme) => new SourceSelectSingleView(panel, theme)},
+			{typeof(ISourceSelectView), (panel, theme) => new SourceSelectView(panel, theme)},
 
 			// Common
 			{typeof(IConfirmEndMeetingView), (panel, theme) => new ConfirmEndMeetingView(panel, theme)},

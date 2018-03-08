@@ -44,7 +44,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(ICableTvPresenter), (nav, views, theme) => new CableTvPresenter(nav, views, theme)},
 
 			// Displays
-			{typeof(IDisplaysPresenter), (nav, views, theme) => new DisplaysPresenter(nav, views, theme)},
 			{typeof(IReferencedDisplaysPresenter), (nav, views, theme) => new ReferencedDisplaysPresenter(nav, views, theme)},
 			{typeof(IMenuDisplaysPresenter), (nav, views, theme) => new MenuDisplaysPresenter(nav, views, theme)},
 
@@ -54,8 +53,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IOptionCameraPresenter), (nav, views, theme) => new OptionCameraPresenter(nav, views, theme)},
 
 			// Sources
-			{typeof(ISourceSelectDualPresenter), (nav, views, theme) => new SourceSelectDualPresenter(nav, views, theme)},
-			{typeof(ISourceSelectSinglePresenter), (nav, views, theme) => new SourceSelectSinglePresenter(nav, views, theme)},
+			{typeof(ISourceSelectPresenter), (nav, views, theme) => new SourceSelectPresenter(nav, views, theme)},
 			{typeof(IReferencedSourceSelectPresenter), (nav, views, theme) => new ReferencedSourceSelectPresenter(nav, views, theme)},
 
 			// Common

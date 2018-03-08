@@ -12,8 +12,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 {
-	public abstract class AbstractSourceSelectPresenter<TView> : AbstractPresenter<TView>, ISourceSelectPresenter<TView>
-		where TView : class, ISourceSelectView
+	public sealed class SourceSelectPresenter : AbstractPresenter<ISourceSelectView>, ISourceSelectPresenter
 	{
 		/// <summary>
 		/// Raised when the user presses a source.
@@ -32,7 +31,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// <summary>
 		/// Gets the number of sources currently listed.
 		/// </summary>
-		protected int SourceCount { get { return m_RefreshSection.Execute(() => m_Sources.Length); } }
+		public int SourceCount { get { return m_RefreshSection.Execute(() => m_Sources.Length); } }
 
 		/// <summary>
 		/// Gets/sets the source that is currently selected for routing.
@@ -59,7 +58,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		protected AbstractSourceSelectPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public SourceSelectPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
@@ -86,7 +85,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// Updates the view.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Refresh(TView view)
+		protected override void Refresh(ISourceSelectView view)
 		{
 			base.Refresh(view);
 
@@ -106,6 +105,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 					presenter.ShowView(true);
 					presenter.Routed = presenter.Source != null && m_RoutedSources.Contains(presenter.Source);
 				}
+
+				view.ShowArrows(SourceCount > 4);
 			}
 			finally
 			{

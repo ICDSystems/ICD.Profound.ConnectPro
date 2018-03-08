@@ -7,7 +7,7 @@ using ICD.Connect.UI.Controls.Pages;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 {
-	public sealed partial class SourceSelectDualView
+	public sealed partial class SourceSelectView
 	{
 		private VtProSubpage m_Subpage;
 		private VtProSubpageReferenceList m_SourceList;
@@ -22,14 +22,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		/// <param name="index"></param>
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
-			m_Subpage = new VtProSubpage(panel, parent)
-			{
-				DigitalVisibilityJoin = 110
-			};
+			m_Subpage = new VtProSubpage(panel, parent);
 
-			m_SourceList = new VtProSubpageReferenceList(1, panel as IPanelDevice, m_Subpage)
+			m_SourceList = new VtProSubpageReferenceList(3, panel as IPanelDevice, m_Subpage)
 			{
-				MaxSize = 20,
+				MaxSize = 8,
 				DigitalJoinIncrement = 2,
 				AnalogJoinIncrement = 1,
 				SerialJoinIncrement = 4
