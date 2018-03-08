@@ -201,7 +201,7 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionCameraPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionPrivacyMutePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionVolumePresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\Common\Sources\AbstractSourceSelectPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Sources\SourceSelectPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\ReferencedSourceSelectPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\ReferencedSourceSelectPresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\StartMeetingPresenter.cs" />
