@@ -341,6 +341,10 @@
       <Project>{FCC7D685-B801-43A5-AEB3-774442027A0D}</Project>
       <Name>ICD.Connect.Displays_SimplSharp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Misc\ICD.Connect.TvPresets\ICD.Connect.TvPresets_SimplSharp.csproj">
+      <Project>{5752751F-FDEB-40A0-9249-6580A62A6D88}</Project>
+      <Name>ICD.Connect.TvPresets_SimplSharp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ICD.Connect.Panels\ICD.Connect.Panels.Server\ICD.Connect.Panels.Server_SimplSharp.csproj">
       <Project>{B14DB63B-1D7B-4112-8845-8187A2C7DF90}</Project>
       <Name>ICD.Connect.Panels.Server_SimplSharp</Name>
