@@ -19,6 +19,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 		public event EventHandler<BoolEventArgs> OnVisibilityChanged;
 		public event EventHandler<BoolEventArgs> OnEnabledChanged;
 
+		private readonly ISigInputOutput m_Panel;
 		private readonly ConnectProTheme m_Theme;
 
 		private IVtProControl m_CachedPage;
@@ -44,6 +45,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			}
 		}
 
+		public ISigInputOutput Panel { get { return m_Panel; } }
+
 		public ConnectProTheme Theme { get { return m_Theme; } }
 
 		#region Constructors
@@ -67,6 +70,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 		/// <param name="index"></param>
 		protected AbstractView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index)
 		{
+			m_Panel = panel;
 			m_Theme = theme;
 
 			InstantiateControls(panel, parent, index);

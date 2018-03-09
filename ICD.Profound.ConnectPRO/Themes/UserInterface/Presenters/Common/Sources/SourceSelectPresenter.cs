@@ -29,11 +29,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		#region Properties
 
 		/// <summary>
-		/// Gets the number of sources currently listed.
-		/// </summary>
-		public int SourceCount { get { return m_RefreshSection.Execute(() => m_Sources.Length); } }
-
-		/// <summary>
 		/// Gets/sets the source that is currently selected for routing.
 		/// </summary>
 		public ISource ActiveSource
@@ -96,6 +91,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 				UnsubscribeChildren();
 
 				m_Sources = GetSources().ToArray();
+				ushort displayCount =
+					Room == null
+						? (ushort)0
+						: (ushort)Room.Routing.GetDisplayDestinations().Count();
 
 				foreach (IReferencedSourceSelectPresenter presenter in m_ChildrenFactory.BuildChildren(m_Sources))
 				{
@@ -106,7 +105,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 					presenter.Routed = presenter.Source != null && m_RoutedSources.Contains(presenter.Source);
 				}
 
-				view.ShowArrows(SourceCount > 4);
+				view.SetSourceCount((ushort)m_Sources.Length);
+				view.SetDisplayCount(displayCount);
 			}
 			finally
 			{
