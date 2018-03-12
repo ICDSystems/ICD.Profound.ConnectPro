@@ -11,6 +11,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.CableTv;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.ActiveCalls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contacts;
@@ -20,6 +21,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups.CableTv;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.ActiveCalls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Contacts;
@@ -45,6 +47,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 		private readonly Dictionary<Type, ComponentFactoryMethod> m_ComponentViewFactories = new Dictionary
 			<Type, ComponentFactoryMethod>
 		{
+			// Popups
+			{typeof(IReferencedCableTvView), (nav, views, theme, index) => new ReferencedCableTvView(nav, views, theme, index)},
+
 			// Sources
 			{typeof(IReferencedSourceSelectView), (nav, views, theme, index) => new ReferencedSourceSelectView(nav, views, theme, index)},
 

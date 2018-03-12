@@ -1,20 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Sources.TvTuner.Controls;
 using ICD.Connect.TvPresets;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.CableTv;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.CableTv;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.CableTv
 {
 	public sealed class CableTvPresenter : AbstractPopupPresenter<ICableTvView>, ICableTvPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
-		private readonly Dictionary<int, Station> m_Stations;
+		private readonly ReferencedCableTvPresenterFactory m_ChildrenFactory;
+
+		private Station[] m_Stations;
 
 		/// <summary>
 		/// Gets/sets the tv tuner control that this preseter controls.
@@ -31,7 +34,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
-			m_Stations = new Dictionary<int, Station>();
+			m_ChildrenFactory = new ReferencedCableTvPresenterFactory(nav, ItemFactory);
+
+			m_Stations = new Station[0];
+		}
+
+		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			UnsubscribeChildren();
+			m_ChildrenFactory.Dispose();
+
+			base.Dispose();
 		}
 
 		/// <summary>
@@ -46,24 +62,39 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 
 			try
 			{
-				// Set station list and dictionary
-				m_Stations.Clear();
-				ushort i = 0;
+				m_Stations = Theme.TvPresets.ToArray();
 
-				IcdConsole.PrintLine(eConsoleColor.Magenta, "Station count: {0}", Theme.TvPresets.Count);
-
-				foreach (Station station in Theme.TvPresets)
+				foreach (IReferencedCableTvPresenter presenter in m_ChildrenFactory.BuildChildren(m_Stations))
 				{
-					m_Stations[i] = station;
-					view.SetStationButtonIcon(i, station.Url);
-					i++;
+					Subscribe(presenter);
+					presenter.ShowView(true);
 				}
-				view.SetStationListSize(i);
+
+				view.ShowSwipeIcons(m_Stations.Length > 6);
 			}
 			finally
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		/// <summary>
+		/// Unsubscribes from all of the child presenters.
+		/// </summary>
+		private void UnsubscribeChildren()
+		{
+			foreach (IReferencedCableTvPresenter presenter in m_ChildrenFactory)
+				Unsubscribe(presenter);
+		}
+
+		/// <summary>
+		/// Generates the given number of views.
+		/// </summary>
+		/// <param name="count"></param>
+		/// <returns></returns>
+		private IEnumerable<IReferencedCableTvView> ItemFactory(ushort count)
+		{
+			return GetView().GetChildComponentViews(ViewFactory, count);
 		}
 
 		#region View Callbacks
@@ -75,8 +106,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 		protected override void Subscribe(ICableTvView view)
 		{
 			base.Subscribe(view);
-
-			view.OnChannelButtonPressed += ViewOnChannelButtonPressed;
 
 			view.OnGuideButtonPressed += ViewOnGuideButtonPressed;
 			view.OnExitButtonPressed += ViewOnExitButtonPressed;
@@ -106,8 +135,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 		{
 			base.Unsubscribe(view);
 
-			view.OnChannelButtonPressed -= ViewOnChannelButtonPressed;
-
 			view.OnGuideButtonPressed -= ViewOnGuideButtonPressed;
 			view.OnExitButtonPressed -= ViewOnExitButtonPressed;
 			view.OnPowerButtonPressed -= ViewOnPowerButtonPressed;
@@ -126,15 +153,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 			view.OnChannelDownButtonPressed -= ViewOnChannelDownButtonPressed;
 			view.OnPageUpButtonPressed -= ViewOnPageUpButtonPressed;
 			view.OnPageDownButtonPressed -= ViewOnPageDownButtonPressed;
-		}
-
-		private void ViewOnChannelButtonPressed(object sender, UShortEventArgs uShortEventArgs)
-		{
-			if (Control == null)
-				return;
-
-			string channel = m_Stations[uShortEventArgs.Data].Channel;
-			Control.SetChannel(channel);
 		}
 
 		private void ViewOnPowerButtonPressed(object sender, EventArgs eventArgs)
@@ -225,6 +243,49 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 		{
 			if (Control != null)
 				Control.PageDown();
+		}
+
+		#endregion
+
+		#region Child Callbacks
+
+		/// <summary>
+		/// Subscribe to the child events.
+		/// </summary>
+		/// <param name="child"></param>
+		private void Subscribe(IReferencedCableTvPresenter child)
+		{
+			if (child == null)
+				return;
+
+			child.OnPressed += ChildOnPressed;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the child events.
+		/// </summary>
+		/// <param name="child"></param>
+		private void Unsubscribe(IReferencedCableTvPresenter child)
+		{
+			if (child == null)
+				return;
+
+			child.OnPressed -= ChildOnPressed;
+		}
+
+		/// <summary>
+		/// Called when the user presses the child source.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ChildOnPressed(object sender, EventArgs eventArgs)
+		{
+			IReferencedCableTvPresenter child = sender as IReferencedCableTvPresenter;
+			if (child == null)
+				return;
+
+			if (Control != null)
+				Control.SetChannel(child.Station.Channel);
 		}
 
 		#endregion

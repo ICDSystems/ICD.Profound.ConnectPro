@@ -125,8 +125,9 @@
     <Compile Include="Themes\UserInterface\IPresenters\IHardButtonsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\INavigationController.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Popups\CableTv\IReferencedCableTvPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Popups\IAppleTvPresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\Popups\ICableTvPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Popups\CableTv\ICableTvPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Popups\IPopupPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcReferencedContactsPresenterBase.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcReferencedFolderPresenter.cs" />
@@ -158,6 +159,7 @@
     <Compile Include="Themes\UserInterface\IViews\Icons.cs" />
     <Compile Include="Themes\UserInterface\IViews\IDisabledAlertView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IHardButtonsView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Popups\CableTv\IReferencedCableTvView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Popups\IAppleTvView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IEndMeetingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IHeaderView.cs" />
@@ -167,7 +169,7 @@
     <Compile Include="Themes\UserInterface\IViews\Common\Options\IOptionVolumeView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Displays\IReferencedDisplaysView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Sources\IReferencedSourceSelectView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\Popups\ICableTvView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Popups\CableTv\ICableTvView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Popups\IPopupView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IViewFactory.cs" />
@@ -211,7 +213,9 @@
     <Compile Include="Themes\UserInterface\Presenters\HardButtonsPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\AbstractPopupPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\AppleTvPresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\Popups\CableTvPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Popups\CableTv\CableTvPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Popups\CableTv\ReferencedCableTvPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Popups\CableTv\ReferencedCableTvPresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\AbstractVtcReferencedContactsPresenterBase.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\VtcContactsPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\VtcReferencedContactsPresenter.cs" />
@@ -277,8 +281,10 @@
     <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\DefaultVisibilityNode.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\IVisibilityNode.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\SingleVisibilityNode.cs" />
-    <Compile Include="Themes\UserInterface\Views\Popups\CableTvView.cs" />
-    <Compile Include="Themes\UserInterface\Views\Popups\CableTvView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Popups\CableTv\CableTvView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Popups\CableTv\CableTvView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Popups\CableTv\ReferencedCableTvView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Popups\CableTv\ReferencedCableTvView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\Dtmf\VtcReferencedDtmfView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\Dtmf\VtcReferencedDtmfView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcBaseView.cs" />

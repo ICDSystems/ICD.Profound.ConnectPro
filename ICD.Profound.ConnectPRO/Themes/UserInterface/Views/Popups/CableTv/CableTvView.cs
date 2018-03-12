@@ -1,18 +1,18 @@
 ﻿using System;
-using ICD.Common.Utils;
+using System.Collections.Generic;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.EventArguments;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.CableTv;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups.CableTv
 {
 	public sealed partial class CableTvView : AbstractPopupView, ICableTvView
 	{
 		public override event EventHandler OnCloseButtonPressed;
 
-		public event EventHandler<UShortEventArgs> OnChannelButtonPressed;
 		public event EventHandler OnGuideButtonPressed;
 		public event EventHandler OnExitButtonPressed;
 		public event EventHandler OnPowerButtonPressed;
@@ -32,6 +32,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 		public event EventHandler OnPageUpButtonPressed;
 		public event EventHandler OnPageDownButtonPressed;
 
+		private readonly List<IReferencedCableTvView> m_ChildList;
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -40,6 +42,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 		public CableTvView(ISigInputOutput panel, ConnectProTheme theme)
 			: base(panel, theme)
 		{
+			m_ChildList = new List<IReferencedCableTvView>();
 		}
 
 		/// <summary>
@@ -47,8 +50,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 		/// </summary>
 		public override void Dispose()
 		{
-			OnChannelButtonPressed = null;
-
 			OnCloseButtonPressed = null;
 
 			OnGuideButtonPressed = null;
@@ -73,16 +74,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 			base.Dispose();
 		}
 
-		public void SetStationButtonIcon(ushort index, string icon)
+		/// <summary>
+		/// Returns child views for list items.
+		/// </summary>
+		/// <param name="factory"></param>
+		/// <param name="count"></param>
+		/// <returns></returns>
+		public IEnumerable<IReferencedCableTvView> GetChildComponentViews(IViewFactory factory, ushort count)
 		{
-			IcdConsole.PrintLine(eConsoleColor.Magenta, icon);
-
-			m_ChannelList.SetItemIcon(index, icon);
+			return GetChildViews(factory, m_ChannelList, m_ChildList, count);
 		}
 
-		public void SetStationListSize(ushort count)
+		public void ShowSwipeIcons(bool show)
 		{
-			m_ChannelList.SetNumberOfItems(count);
+			m_SwipeLeftButton.Show(show);
+			m_SwipeRightButton.Show(show);
 		}
 
 		#region Control Callbacks
@@ -104,7 +110,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 			m_ChannelDownButton.OnPressed += ChannelDownButtonOnPressed;
 			m_PageUpButton.OnPressed += PageUpButtonOnPressed;
 			m_PageDownButton.OnPressed += PageDownButtonOnPressed;
-			m_ChannelList.OnButtonClicked += ChannelListOnButtonClicked;
 		}
 
 		/// <summary>
@@ -124,12 +129,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 			m_ChannelDownButton.OnPressed -= ChannelDownButtonOnPressed;
 			m_PageUpButton.OnPressed -= PageUpButtonOnPressed;
 			m_PageDownButton.OnPressed -= PageDownButtonOnPressed;
-			m_ChannelList.OnButtonClicked -= ChannelListOnButtonClicked;
-		}
-
-		private void ChannelListOnButtonClicked(object sender, UShortEventArgs uShortEventArgs)
-		{
-			OnChannelButtonPressed.Raise(this, new UShortEventArgs(uShortEventArgs.Data));
 		}
 
 		private void PowerButtonOnPressed(object sender, EventArgs eventArgs)

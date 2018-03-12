@@ -1,7 +1,7 @@
 ﻿using ICD.Connect.Sources.TvTuner.Controls;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.CableTv;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.CableTv
 {
 	public interface ICableTvPresenter : IPopupPresenter<ICableTvView>
 	{

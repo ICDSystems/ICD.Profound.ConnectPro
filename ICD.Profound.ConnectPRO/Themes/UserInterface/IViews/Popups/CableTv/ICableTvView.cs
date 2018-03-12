@@ -1,12 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using ICD.Common.Utils.EventArguments;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.CableTv
 {
 	public interface ICableTvView : IPopupView
 	{
-		event EventHandler<UShortEventArgs> OnChannelButtonPressed; 
-
 		event EventHandler OnGuideButtonPressed;
 		event EventHandler OnExitButtonPressed;
 		event EventHandler OnPowerButtonPressed;
@@ -26,8 +25,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups
 		event EventHandler OnPageUpButtonPressed;
 		event EventHandler OnPageDownButtonPressed;
 
-		void SetStationButtonIcon(ushort index, string icon);
+		/// <summary>
+		/// Returns child views for list items.
+		/// </summary>
+		/// <param name="factory"></param>
+		/// <param name="count"></param>
+		/// <returns></returns>
+		IEnumerable<IReferencedCableTvView> GetChildComponentViews(IViewFactory factory, ushort count);
 
-		void SetStationListSize(ushort count);
+		void ShowSwipeIcons(bool show);
 	}
 }

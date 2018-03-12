@@ -6,7 +6,7 @@ using ICD.Connect.UI.Controls.Keypads;
 using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.Pages;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups.CableTv
 {
 	public sealed partial class CableTvView
 	{
@@ -26,7 +26,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 		private VtProButton m_PageUpButton;
 		private VtProButton m_PageDownButton;
 
-		private VtProDynamicButtonList m_ChannelList;
+		private VtProButton m_SwipeLeftButton;
+		private VtProButton m_SwipeRightButton;
+
+		private VtProSubpageReferenceList m_ChannelList;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -85,8 +88,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 				DigitalPressJoin = 553
 			};
 
-			m_ChannelList = new VtProDynamicButtonList(13, panel as IPanelDevice, m_Subpage)
+			m_SwipeLeftButton = new VtProButton(panel, m_Subpage)
 			{
+				DigitalVisibilityJoin = 95
+			};
+
+			m_SwipeRightButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalVisibilityJoin = 95
+			};
+
+			m_ChannelList = new VtProSubpageReferenceList(14, panel as IPanelDevice, m_Subpage)
+			{
+				DigitalJoinIncrement = 1,
+				SerialJoinIncrement = 1,
 				MaxSize = 8
 			};
 		}
@@ -108,6 +123,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 			yield return m_ChannelDownButton;
 			yield return m_PageUpButton;
 			yield return m_PageDownButton;
+			yield return m_SwipeLeftButton;
+			yield return m_SwipeRightButton;
 			yield return m_ChannelList;
 		}
 	}
