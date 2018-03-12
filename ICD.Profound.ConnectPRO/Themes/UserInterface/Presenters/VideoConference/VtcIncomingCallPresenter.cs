@@ -8,8 +8,6 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
-using ICD.Connect.Conferencing.Cisco.Controls;
-using ICD.Connect.Conferencing.Cisco;
 using System;
 using ICD.Common.Utils.Extensions;
 
