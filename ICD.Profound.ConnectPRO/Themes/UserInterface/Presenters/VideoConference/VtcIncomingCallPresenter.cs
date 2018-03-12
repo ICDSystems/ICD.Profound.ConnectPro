@@ -83,7 +83,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			view.OnIgoreButtonPressed += View_OnIgoreButtonPressed;
 		}
 
-		private void View_OnIgoreButtonPressed(object sender, System.EventArgs e)
+		private void View_OnIgoreButtonPressed(object sender, EventArgs e)
 		{
 			IConferenceSource source = GetSource();
 
@@ -93,7 +93,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			ShowView(false);
 		}
 
-		private void View_OnAnswerButtonPressed(object sender, System.EventArgs e)
+		private void View_OnAnswerButtonPressed(object sender, EventArgs e)
 		{
 			IConferenceSource source = GetSource();
 
