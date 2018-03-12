@@ -85,7 +85,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 				DigitalPressJoin = 553
 			};
 
-			m_ChannelList = new VtProDynamicButtonList(13, panel as IPanelDevice, m_Subpage);
+			m_ChannelList = new VtProDynamicButtonList(13, panel as IPanelDevice, m_Subpage)
+			{
+				MaxSize = 8
+			};
 		}
 
 		/// <summary>

@@ -25,5 +25,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups
 		event EventHandler OnChannelDownButtonPressed;
 		event EventHandler OnPageUpButtonPressed;
 		event EventHandler OnPageDownButtonPressed;
+
+		void SetStationButtonIcon(ushort index, string icon);
+
+		void SetStationListSize(ushort count);
 	}
 }

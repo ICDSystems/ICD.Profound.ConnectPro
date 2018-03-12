@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
@@ -70,6 +71,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 			OnPageDownButtonPressed = null;
 
 			base.Dispose();
+		}
+
+		public void SetStationButtonIcon(ushort index, string icon)
+		{
+			IcdConsole.PrintLine(eConsoleColor.Magenta, icon);
+
+			m_ChannelList.SetItemIcon(index, icon);
+		}
+
+		public void SetStationListSize(ushort count)
+		{
+			m_ChannelList.SetNumberOfItems(count);
 		}
 
 		#region Control Callbacks

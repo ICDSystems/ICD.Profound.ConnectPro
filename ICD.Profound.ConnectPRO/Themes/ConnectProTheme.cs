@@ -23,6 +23,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 
 		// Used with settings.
 		private string m_TvPresetsPath;
+		private readonly XmlTvPresets m_TvPresets;
 
 		#region Properties
 
@@ -31,7 +32,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 		/// <summary>
 		/// Gets the tv presets.
 		/// </summary>
-		public ITvPresets TvPresets { get; private set; }
+		public ITvPresets TvPresets { get { return m_TvPresets; } }
 
 		#endregion
 
@@ -40,6 +41,8 @@ namespace ICD.Profound.ConnectPRO.Themes
 		/// </summary>
 		public ConnectProTheme()
 		{
+			m_TvPresets = new XmlTvPresets();
+
 			m_UiFactories = new IcdHashSet<IConnectProUserInterfaceFactory>
 			{
 				new ConnectProUserInterfaceFactory(this),
@@ -60,9 +63,6 @@ namespace ICD.Profound.ConnectPRO.Themes
 		{
 			m_TvPresetsPath = path;
 
-			XmlTvPresets presets = new XmlTvPresets();
-			TvPresets = presets;
-
 			string tvPresetsPath = string.IsNullOrEmpty(path)
 									   ? null
 									   : PathUtils.GetDefaultConfigPath("TvPresets", m_TvPresetsPath);
@@ -73,7 +73,8 @@ namespace ICD.Profound.ConnectPRO.Themes
 			try
 			{
 				string tvPresetsXml = IcdFile.ReadToEnd(tvPresetsPath, Encoding.ASCII);
-				presets.Parse(tvPresetsXml);
+				m_TvPresets.Clear();
+				m_TvPresets.Parse(tvPresetsXml);
 			}
 			catch (Exception e)
 			{

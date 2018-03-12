@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Sources.TvTuner.Controls;
+using ICD.Connect.TvPresets;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -11,39 +13,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 {
 	public sealed class CableTvPresenter : AbstractPopupPresenter<ICableTvView>, ICableTvPresenter
 	{
-		private const ushort INDEX_ABC = 0;
-		private const ushort INDEX_CBS = 1;
-		private const ushort INDEX_NBC = 2;
-		private const ushort INDEX_FOX = 3;
-		private const ushort INDEX_CNN = 4;
-		private const ushort INDEX_WEATHER = 5;
-		private const ushort INDEX_ESPN = 6;
-		private const ushort INDEX_NBC_SPORTS = 7;
-
-		private static readonly Dictionary<ushort, string> s_Channels =
-			new Dictionary<ushort, string>
-			{
-				{INDEX_ABC, "806"},
-				{INDEX_CBS, "803"},
-				{INDEX_NBC, "810"},
-				{INDEX_FOX, "805"},
-				{INDEX_CNN, "817"},
-				{INDEX_WEATHER, "815"},
-				{INDEX_ESPN, "850"},
-				{INDEX_NBC_SPORTS, "846"},
-			};
+		private readonly SafeCriticalSection m_RefreshSection;
+		private readonly Dictionary<int, Station> m_Stations;
 
 		/// <summary>
 		/// Gets/sets the tv tuner control that this preseter controls.
 		/// </summary>
 		public ITvTunerControl Control { get; set; }
-
-		/// <summary>
-		/// Static constructor.
-		/// </summary>
-		static CableTvPresenter()
-		{
-		}
 
 		/// <summary>
 		/// Constructor.
@@ -54,6 +30,40 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 		public CableTvPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
+			m_RefreshSection = new SafeCriticalSection();
+			m_Stations = new Dictionary<int, Station>();
+		}
+
+		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
+		protected override void Refresh(ICableTvView view)
+		{
+			base.Refresh(view);
+
+			m_RefreshSection.Enter();
+
+			try
+			{
+				// Set station list and dictionary
+				m_Stations.Clear();
+				ushort i = 0;
+
+				IcdConsole.PrintLine(eConsoleColor.Magenta, "Station count: {0}", Theme.TvPresets.Count);
+
+				foreach (Station station in Theme.TvPresets)
+				{
+					m_Stations[i] = station;
+					view.SetStationButtonIcon(i, station.Url);
+					i++;
+				}
+				view.SetStationListSize(i);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
 		}
 
 		#region View Callbacks
@@ -123,7 +133,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 			if (Control == null)
 				return;
 
-			string channel = s_Channels[uShortEventArgs.Data];
+			string channel = m_Stations[uShortEventArgs.Data].Channel;
 			Control.SetChannel(channel);
 		}
 
