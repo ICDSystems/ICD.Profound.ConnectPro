@@ -20,6 +20,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		public event EventHandler OnCapsButtonPressed;
 		public event EventHandler OnShiftButtonPressed;
 		public event EventHandler OnSubmitButtonPressed;
+		public event EventHandler OnExitButtonPressed;
 
 		private Dictionary<VtProButton, KeyboardKey> m_KeyMap;
 
@@ -47,6 +48,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			OnCapsButtonPressed = null;
 			OnShiftButtonPressed = null;
 			OnSubmitButtonPressed = null;
+			OnExitButtonPressed = null;
 
 			base.Dispose();
 		}
@@ -100,6 +102,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 
 			m_KeyMap = new Dictionary<VtProButton, KeyboardKey>();
 
+			m_KeyMap[m_Key0Button] = new KeyboardKey('0', '0');
+			m_KeyMap[m_Key1Button] = new KeyboardKey('1', '1');
+			m_KeyMap[m_Key2Button] = new KeyboardKey('2', '2');
+			m_KeyMap[m_Key3Button] = new KeyboardKey('3', '3');
+			m_KeyMap[m_Key4Button] = new KeyboardKey('4', '4');
+			m_KeyMap[m_Key5Button] = new KeyboardKey('5', '5');
+			m_KeyMap[m_Key6Button] = new KeyboardKey('6', '6');
+			m_KeyMap[m_Key7Button] = new KeyboardKey('7', '7');
+			m_KeyMap[m_Key8Button] = new KeyboardKey('8', '8');
+			m_KeyMap[m_Key9Button] = new KeyboardKey('9', '9');
+
 			m_KeyMap[m_KeyQButton] = new KeyboardKey('q');
 			m_KeyMap[m_KeyWButton] = new KeyboardKey('w');
 			m_KeyMap[m_KeyEButton] = new KeyboardKey('e');
@@ -141,6 +154,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			m_CapsButton.OnPressed += CapsButtonOnPressed;
 			m_ShiftButton.OnPressed += ShiftButtonOnPressed;
 			m_SubmitButton.OnPressed += SubmitButtonOnPressed;
+			m_ExitButton.OnPressed += ExitButtonOnPressed;
 		}
 
 		/// <summary>
@@ -159,6 +173,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			m_CapsButton.OnPressed -= CapsButtonOnPressed;
 			m_ShiftButton.OnPressed -= ShiftButtonOnPressed;
 			m_SubmitButton.OnPressed -= SubmitButtonOnPressed;
+			m_ExitButton.OnPressed -= ExitButtonOnPressed;
 		}
 
 		/// <summary>
@@ -229,6 +244,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		private void SubmitButtonOnPressed(object sender, EventArgs args)
 		{
 			OnSubmitButtonPressed.Raise(this);
+		}
+
+		/// <summary>
+		/// Called when the user presses the exit button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ExitButtonOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnExitButtonPressed.Raise(this);
 		}
 
 		#endregion

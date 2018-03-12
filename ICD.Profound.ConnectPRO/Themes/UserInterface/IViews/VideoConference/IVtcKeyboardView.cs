@@ -42,6 +42,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 		event EventHandler OnSubmitButtonPressed;
 
 		/// <summary>
+		/// Raised when the user presses the exit button.
+		/// </summary>
+		event EventHandler OnExitButtonPressed;
+
+		/// <summary>
 		/// Sets the selected state of the caps button.
 		/// </summary>
 		void SelectCapsButton(bool select);

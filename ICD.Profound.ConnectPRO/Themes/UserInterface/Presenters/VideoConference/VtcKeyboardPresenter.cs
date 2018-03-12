@@ -115,6 +115,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			view.OnSpaceButtonPressed += ViewOnSpaceButtonPressed;
 			view.OnTextEntered += ViewOnTextEntered;
 			view.OnKeyPressed += ViewOnKeyPressed;
+			view.OnExitButtonPressed += ViewOnExitButtonPressed;
 		}
 
 		/// <summary>
@@ -132,6 +133,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			view.OnSpaceButtonPressed -= ViewOnSpaceButtonPressed;
 			view.OnTextEntered -= ViewOnTextEntered;
 			view.OnKeyPressed -= ViewOnKeyPressed;
+			view.OnExitButtonPressed -= ViewOnExitButtonPressed;
 		}
 
 		/// <summary>
@@ -191,6 +193,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			IConferenceManager manager = Room == null ? null : Room.ConferenceManager;
 			if (manager != null)
 				manager.Dial(number);
+		}
+
+		private void ViewOnExitButtonPressed(object sender, EventArgs eventArgs)
+		{
+			ShowView(false);
 		}
 
 		/// <summary>

@@ -11,6 +11,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 	{
 		private VtProSubpage m_Subpage;
 
+		private VtProButton m_Key0Button;
+		private VtProButton m_Key1Button;
+		private VtProButton m_Key2Button;
+		private VtProButton m_Key3Button;
+		private VtProButton m_Key4Button;
+		private VtProButton m_Key5Button;
+		private VtProButton m_Key6Button;
+		private VtProButton m_Key7Button;
+		private VtProButton m_Key8Button;
+		private VtProButton m_Key9Button;
+
 		private VtProButton m_KeyQButton;
 		private VtProButton m_KeyWButton;
 		private VtProButton m_KeyEButton;
@@ -50,6 +61,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		private VtProButton m_CapsButton;
 		private VtProButton m_SpaceButton;
 		private VtProButton m_SubmitButton;
+		private VtProButton m_ExitButton;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -61,7 +73,57 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 2791
+				DigitalVisibilityJoin = 126
+			};
+
+			m_Key0Button = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 2700
+			};
+
+			m_Key1Button = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 2701
+			};
+
+			m_Key2Button = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 2702
+			};
+
+			m_Key3Button = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 2703
+			};
+
+			m_Key4Button = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 2704
+			};
+
+			m_Key5Button = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 2705
+			};
+
+			m_Key6Button = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 2706
+			};
+
+			m_Key7Button = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 2707
+			};
+
+			m_Key8Button = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 2708
+			};
+
+			m_Key9Button = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 2709
 			};
 
 			m_KeyQButton = new VtProButton(panel, m_Subpage)
@@ -238,8 +300,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 
 			m_BackspaceButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 2752,
-				DigitalEnableJoin = 2752
+				DigitalPressJoin = 2752
 			};
 
 			m_ShiftButton = new VtProButton(panel, m_Subpage)
@@ -259,10 +320,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 
 			m_SubmitButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 2754,
-				DigitalEnableJoin = 2754
+				DigitalPressJoin = 2754
 			};
-			m_SubmitButton.SerialLabelJoins.Add(1031);
+
+			m_ExitButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 2755
+			};
 		}
 
 		/// <summary>
@@ -272,6 +336,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		protected override IEnumerable<IVtProControl> GetChildren()
 		{
 			yield return m_Subpage;
+
+			yield return m_Key0Button;
+			yield return m_Key1Button;
+			yield return m_Key2Button;
+			yield return m_Key3Button;
+			yield return m_Key4Button;
+			yield return m_Key5Button;
+			yield return m_Key6Button;
+			yield return m_Key7Button;
+			yield return m_Key8Button;
+			yield return m_Key9Button;
 
 			yield return m_KeyQButton;
 			yield return m_KeyWButton;
@@ -311,6 +386,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			yield return m_CapsButton;
 			yield return m_SpaceButton;
 			yield return m_SubmitButton;
+			yield return m_ExitButton;
 		}
 	}
 }
