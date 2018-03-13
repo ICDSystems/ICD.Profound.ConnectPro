@@ -417,7 +417,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			IcdHashSet<ISource> routedSources =
 				routing.Values
 				       .SelectMany(v => v)
-				       .Except((ISource)null)
 				       .ToIcdHashSet();
 
 			m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().SetRoutedSources(routedSources);
