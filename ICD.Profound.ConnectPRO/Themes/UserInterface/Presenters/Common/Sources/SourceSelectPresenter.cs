@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
-using ICD.Common.Utils.Extensions;
 using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -120,7 +120,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 				       ? Enumerable.Empty<ISource>()
 				       : Room.Routing
 				             .GetCoreSources()
-				             .Distinct(s => s.Endpoint.Device);
+				             .Where(s =>
+				                    {
+					                    ConnectProSource source = s as ConnectProSource;
+					                    return source == null || !source.Hide;
+				                    });
 		}
 
 		/// <summary>

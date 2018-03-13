@@ -12,6 +12,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 
 		private const string ICON_ELEMENT = "Icon";
 		private const string SHARE_ELEMENT = "Share";
+		private const string HIDE_ELEMENT = "Hide";
 		private const string DESCRIPTION_ELEMENT = "Description";
 
 		#region Properties
@@ -37,6 +38,11 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 		public bool Share { get; set; }
 
 		/// <summary>
+		/// Gets/sets if the source should be hidden from the source list.
+		/// </summary>
+		public bool Hide { get; set; }
+
+		/// <summary>
 		/// Gets/sets the description text.
 		/// </summary>
 		public string Description { get; set; }
@@ -53,6 +59,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 
 			writer.WriteElementString(ICON_ELEMENT, Icon);
 			writer.WriteElementString(SHARE_ELEMENT, IcdXmlConvert.ToString(Share));
+			writer.WriteElementString(HIDE_ELEMENT, IcdXmlConvert.ToString(Hide));
 			writer.WriteElementString(DESCRIPTION_ELEMENT, Description);
 		}
 
@@ -66,6 +73,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 
 			Icon = XmlUtils.TryReadChildElementContentAsString(xml, ICON_ELEMENT);
 			Share = XmlUtils.TryReadChildElementContentAsBoolean(xml, SHARE_ELEMENT) ?? false;
+			Hide = XmlUtils.TryReadChildElementContentAsBoolean(xml, HIDE_ELEMENT) ?? false;
 			Description = XmlUtils.TryReadChildElementContentAsString(xml, DESCRIPTION_ELEMENT);
 		}
 	}

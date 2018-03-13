@@ -20,6 +20,11 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 		/// </summary>
 		public bool Share { get; set; }
 
+		/// <summary>
+		/// Gets/sets if the source should be hidden from the source list.
+		/// </summary>
+		public bool Hide { get; set; }
+
 		protected override void ClearSettingsFinal()
 		{
 			base.ClearSettingsFinal();
@@ -27,6 +32,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 			Icon = null;
 			Description = null;
 			Share = false;
+			Hide = false;
 		}
 
 		protected override void CopySettingsFinal(ConnectProSourceSettings settings)
@@ -36,6 +42,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 			settings.Icon = Icon;
 			settings.Description = Description;
 			settings.Share = Share;
+			settings.Hide = Hide;
 		}
 
 		protected override void ApplySettingsFinal(ConnectProSourceSettings settings, IDeviceFactory factory)
@@ -45,6 +52,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 			Icon = settings.Icon;
 			Description = settings.Description;
 			Share = settings.Share;
+			Hide = Hide;
 		}
 	}
 }

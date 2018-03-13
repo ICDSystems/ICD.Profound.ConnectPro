@@ -54,7 +54,11 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 
 			return Room.Routing
 			           .GetCoreSources()
-			           .Distinct(s => s.Endpoint.Device)
+			           .Where(s =>
+			                  {
+				                  ConnectProSource source = s as ConnectProSource;
+				                  return source == null || !source.Hide;
+			                  })
 			           .Distinct(s =>
 			                     {
 				                     ConnectProSource source = s as ConnectProSource;
