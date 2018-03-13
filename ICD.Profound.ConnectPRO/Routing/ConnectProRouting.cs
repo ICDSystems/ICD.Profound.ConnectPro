@@ -185,7 +185,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 					if (!m_VideoRoutingCache.ContainsKey(kvp.Key))
 						m_VideoRoutingCache.Add(kvp.Key, new IcdHashSet<ISource>());
 
-					output |= m_VideoRoutingCache[kvp.Key].ScrambledEquals(kvp.Value);
+					output |= !m_VideoRoutingCache[kvp.Key].ScrambledEquals(kvp.Value);
 
 					m_VideoRoutingCache[kvp.Key].Clear();
 					m_VideoRoutingCache[kvp.Key].AddRange(kvp.Value);
