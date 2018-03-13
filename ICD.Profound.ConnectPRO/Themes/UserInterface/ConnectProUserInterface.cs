@@ -407,15 +407,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 					         .GetCachedActiveAudioSources())
 					.ToIcdHashSet();
 
-			Dictionary<IDestination, ISource> routing =
+			Dictionary<IDestination, IcdHashSet<ISource>> routing =
 				(m_Room == null
-					 ? Enumerable.Empty<KeyValuePair<IDestination, ISource>>()
+					 ? Enumerable.Empty<KeyValuePair<IDestination, IcdHashSet<ISource>>>()
 					 : m_Room.Routing
-							 .GetTrackedVideoSources())
+					         .GetTrackedVideoSources())
 					.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
 			IcdHashSet<ISource> routedSources =
 				routing.Values
+				       .SelectMany(v => v)
 				       .Except((ISource)null)
 				       .ToIcdHashSet();
 

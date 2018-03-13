@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.Extensions;
@@ -344,13 +345,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		#endregion
 
-		public void SetRouting(Dictionary<IDestination, ISource> routing, IcdHashSet<ISource> activeAudio)
+		public void SetRouting(Dictionary<IDestination, IcdHashSet<ISource>> routing, IcdHashSet<ISource> activeAudio)
 		{
-			Display1RoutedSource = Display1Destination == null ? null : routing.GetDefault(Display1Destination);
-			Display2RoutedSource = Display2Destination == null ? null : routing.GetDefault(Display2Destination);
+			Display1RoutedSource = GetRoutedSource(Display1Destination, routing);
+			Display2RoutedSource = GetRoutedSource(Display2Destination, routing);
 
 			Display1ActiveAudio = Display1RoutedSource != null && activeAudio.Contains(Display1RoutedSource);
 			Display2ActiveAudio = Display2RoutedSource != null && activeAudio.Contains(Display2RoutedSource);
+		}
+
+		private ISource GetRoutedSource(IDestination destination, Dictionary<IDestination, IcdHashSet<ISource>> routing)
+		{
+			if (destination == null)
+				return null;
+
+			if (!routing.ContainsKey(destination))
+				return null;
+
+			return routing[destination].OrderBy(s => s.Order)
+			                           .ThenBy(s => s.Id)
+			                           .FirstOrDefault();
 		}
 
 		private IDeviceBase GetDevice(ISource source)

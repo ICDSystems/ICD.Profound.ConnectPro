@@ -52,7 +52,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		private readonly IConnectProRoom m_Room;
 		private readonly List<IDestination> m_Displays;
 		private readonly List<IDestination> m_AudioDestinations;
-		private readonly Dictionary<IDestination, ISource> m_VideoRoutingCache;
+		private readonly Dictionary<IDestination, IcdHashSet<ISource>> m_VideoRoutingCache;
 		//private readonly Dictionary<IDestination, ISource> m_VideoTracking;
 		private readonly IcdHashSet<ISource> m_AudioRoutingCache;
 		private readonly SafeCriticalSection m_CacheSection;
@@ -79,7 +79,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			m_Room = room;
 			m_Displays = new List<IDestination>();
 			m_AudioDestinations = new List<IDestination>();
-			m_VideoRoutingCache = new Dictionary<IDestination, ISource>();
+			m_VideoRoutingCache = new Dictionary<IDestination, IcdHashSet<ISource>>();
 			//m_VideoTracking = new Dictionary<IDestination, ISource>();
 			m_AudioRoutingCache = new IcdHashSet<ISource>();
 			m_CacheSection = new SafeCriticalSection();
@@ -114,18 +114,18 @@ namespace ICD.Profound.ConnectPRO.Routing
 				if (type.HasFlag(eConnectionType.Video))
 				{
 					// Build a map of video destination => source
-					Dictionary<IDestination, ISource> routing =
+					Dictionary<IDestination, IcdHashSet<ISource>> routing =
 						GetDisplayDestinations()
 							.ToDictionary(destination => destination,
-							              destination => GetActiveVideoSource(destination));
+							              destination => GetActiveVideoSources(destination).ToIcdHashSet());
 
-					videoChange = m_VideoRoutingCache.Update(routing);
+					videoChange = UpdateVideoRoutingCache(routing);
 				}
 				/*
 				if (videoChange)
 				{
 					// Update the tracking cache
-					IEnumerable<KeyValuePair<IDestination, ISource>> pairs =
+					IEnumerable<KeyValuePair<IDestination, IcdHashSet<ISource>>> pairs =
 						m_VideoRoutingCache.Where(kvp => kvp.Value != null && !(m_Room.Core.Originators.GetChild(kvp.Value.Endpoint.Device) is OsdPanelDevice));
 
 					videoTrackingChange = m_VideoTracking.Update(pairs);
@@ -143,7 +143,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 				// Make sure there are no audio routes without video routes
 				IEnumerable<ISource> unrouteAudioSources =
-					m_AudioRoutingCache.Where(s => !m_VideoRoutingCache.ContainsValue(s))
+					m_AudioRoutingCache.Where(s => !m_VideoRoutingCache.Any(kvp => kvp.Value.Contains(s)))
 					                   .ToArray();
 				foreach (ISource source in unrouteAudioSources)
 					UnrouteAudio(source);
@@ -164,6 +164,39 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			if (audioChange)
 				OnAudioSourceChanged.Raise(this);
+		}
+
+		/// <summary>
+		/// Updates the current video routing cache to match the given dictionary.
+		/// Returns true if there are any changes.
+		/// </summary>
+		/// <param name="routing"></param>
+		/// <returns></returns>
+		private bool UpdateVideoRoutingCache(Dictionary<IDestination, IcdHashSet<ISource>> routing)
+		{
+			bool output = false;
+
+			m_CacheSection.Enter();
+
+			try
+			{
+				foreach (KeyValuePair<IDestination, IcdHashSet<ISource>> kvp in routing)
+				{
+					if (!m_VideoRoutingCache.ContainsKey(kvp.Key))
+						m_VideoRoutingCache.Add(kvp.Key, new IcdHashSet<ISource>());
+
+					output |= m_VideoRoutingCache[kvp.Key].ScrambledEquals(kvp.Value);
+
+					m_VideoRoutingCache[kvp.Key].Clear();
+					m_VideoRoutingCache[kvp.Key].AddRange(kvp.Value);
+				}
+			}
+			finally
+			{
+				m_CacheSection.Leave();
+			}
+
+			return output;
 		}
 
 		[CanBeNull]
@@ -210,13 +243,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 			             .FirstOrDefault();
 		}
 
-		public IEnumerable<KeyValuePair<IDestination, ISource>> GetTrackedVideoSources()
+		public IEnumerable<KeyValuePair<IDestination, IcdHashSet<ISource>>> GetTrackedVideoSources()
 		{
 			return GetCachedActiveVideoSources();
 			//return m_CacheSection.Execute(() => m_VideoTracking.ToArray(m_VideoTracking.Count));
 		}
 
-		public IEnumerable<KeyValuePair<IDestination, ISource>> GetCachedActiveVideoSources()
+		public IEnumerable<KeyValuePair<IDestination, IcdHashSet<ISource>>> GetCachedActiveVideoSources()
 		{
 			return m_CacheSection.Execute(() => m_VideoRoutingCache.ToArray(m_VideoRoutingCache.Count));
 		}
@@ -298,14 +331,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 		public IEnumerable<ISource> GetActiveAudioSources()
 		{
-			return GetAudioDestinations().Select(destination => GetActiveSource(destination, eConnectionType.Audio))
+			return GetAudioDestinations().SelectMany(destination => GetActiveSources(destination, eConnectionType.Audio))
 			                             .Where(source => source != null);
 		}
 
-		[CanBeNull]
-		public ISource GetActiveVideoSource(IDestination destination)
+		public IEnumerable<ISource> GetActiveVideoSources(IDestination destination)
 		{
-			return GetActiveSource(destination, eConnectionType.Video);
+			return GetActiveSources(destination, eConnectionType.Video);
 		}
 
 		public EndpointInfo? GetActiveVideoEndpoint(IDestination destination)
@@ -313,15 +345,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 			return GetActiveEndpoint(destination, eConnectionType.Video);
 		}
 
-		[CanBeNull]
-		public ISource GetActiveSource(IDestination destination, eConnectionType flag)
+		public IEnumerable<ISource> GetActiveSources(IDestination destination, eConnectionType flag)
 		{
 			EndpointInfo? info = GetActiveEndpoint(destination, flag);
 			if (info == null)
 				return null;
 
-			ISource source;
-			return RoutingGraph.Sources.TryGetChild(info.Value, flag, out source) ? source : null;
+			return RoutingGraph.Sources.GetChildren(info.Value, flag);
 		}
 
 		public EndpointInfo? GetActiveEndpoint(IDestination destination, eConnectionType flag)
@@ -568,8 +598,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			foreach (IDestination display in GetDisplayDestinations())
 			{
-				ISource source = GetActiveVideoSource(display);
-				if (source == null)
+				if (!GetActiveVideoSources(display).Any())
 					continue;
 
 				RoutingGraph.UnrouteDestination(display.Endpoint, EnumUtils.GetFlagsAllValue<eConnectionType>(), m_Room.Id);
