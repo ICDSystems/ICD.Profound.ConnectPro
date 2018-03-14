@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Provider name="Profound">
+	<BaseUrl>http://10.40.4.15/WebConferencing/</BaseUrl>
+	 <Apps>
+      <App>
+         <Icon>icon_videxio.png</Icon>
+         <Name>Videxio VMR</Name>
+         <Steps>
+            <Step>
+               <Image>Videxio_1.png</Image>
+               <Text />
+            </Step>
+            <Step>
+               <Image>Videxio_2.png</Image>
+               <Text />
+            </Step>
+            <Step>
+               <Image>Videxio_3.png</Image>
+               <Text />
+            </Step>
+            <Step>
+               <Image>Videxio_4.png</Image>
+               <Text />
+            </Step>
+         </Steps>
+      </App>
+      <App>
+         <Icon>icon_skype.png</Icon>
+         <Name>Skype for Business</Name>
+         <Steps>
+            <Step>
+               <Image>Skype_1.png</Image>
+               <Text />
+            </Step>
+            <Step>
+               <Image>Skype_2.png</Image>
+               <Text />
+            </Step>
+            <Step>
+               <Image>Skype_3.png</Image>
+               <Text />
+            </Step>
+            <Step>
+               <Image>Skype_4.png</Image>
+               <Text />
+            </Step>
+            <Step>
+               <Image>Skype_5.png</Image>
+               <Text />
+            </Step>
+         </Steps>
+      </App>
+      <App>
+         <Icon>icon_cisco.png</Icon>
+         <Name>Cisco WebEx</Name>
+         <Steps>
+            <Step>
+               <Image>Cisco_1.png</Image>
+               <Text />
+            </Step>
+            <Step>
+               <Image>Cisco_2.png</Image>
+               <Text />
+            </Step>
+            <Step>
+               <Image>Cisco_3.png</Image>
+               <Text />
+            </Step>
+            <Step>
+               <Image>Cisco_4.png</Image>
+               <Text />
+            </Step>
+         </Steps>
+      </App>
+      <App>
+         <Icon>icon_webRTC.png</Icon>
+         <Name>Web RTV (Browser-Based)</Name>
+         <Steps>
+            <Step>
+               <Image>WebRTC_1.png</Image>
+               <Text />
+            </Step>
+            <Step>
+               <Image>WebRTC_2.png</Image>
+               <Text />
+            </Step>
+            <Step>
+               <Image>WebRTC_3.png</Image>
+               <Text />
+            </Step>
+            <Step>
+               <Image>WebRTC_4.png</Image>
+               <Text />
+            </Step>
+         </Steps>
+      </App>
+   </Apps>
+</Provider>

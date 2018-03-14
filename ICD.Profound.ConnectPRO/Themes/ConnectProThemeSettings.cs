@@ -12,6 +12,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 		private const string FACTORY_NAME = "ConnectProTheme";
 
 		private const string TVPRESETS_ELEMENT = "TvPresets";
+		private const string WEB_CONFERENCING_INSTRUCTIONS_ELEMENT = "WebConferencingInstructions";
 
 		/// <summary>
 		/// Gets the originator factory name.
@@ -26,6 +27,9 @@ namespace ICD.Profound.ConnectPRO.Themes
 		[PathSettingsProperty("TvPresets", ".xml")]
 		public string TvPresets { get; set; }
 
+		[PathSettingsProperty("WebConferencing", ".xml")]
+		public string WebConferencingInstructions { get; set; }
+
 		/// <summary>
 		/// Writes property elements to xml.
 		/// </summary>
@@ -35,6 +39,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 			base.WriteElements(writer);
 
 			writer.WriteElementString(TVPRESETS_ELEMENT, TvPresets);
+			writer.WriteElementString(WEB_CONFERENCING_INSTRUCTIONS_ELEMENT, WebConferencingInstructions);
 		}
 
 		/// <summary>
@@ -46,6 +51,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 			base.ParseXml(xml);
 
 			TvPresets = XmlUtils.TryReadChildElementContentAsString(xml, TVPRESETS_ELEMENT);
+			WebConferencingInstructions = XmlUtils.TryReadChildElementContentAsString(xml, WEB_CONFERENCING_INSTRUCTIONS_ELEMENT);
 		}
 	}
 }

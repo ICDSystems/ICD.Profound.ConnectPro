@@ -13,6 +13,7 @@ using ICD.Connect.TvPresets;
 using ICD.Profound.ConnectPRO.Themes.MicrophoneInterface;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface;
 using ICD.Profound.ConnectPRO.Themes.UserInterface;
+using ICD.Profound.ConnectPRO.WebConferencing;
 
 namespace ICD.Profound.ConnectPRO.Themes
 {
@@ -21,9 +22,12 @@ namespace ICD.Profound.ConnectPRO.Themes
 		private readonly IcdHashSet<IConnectProUserInterfaceFactory> m_UiFactories;
 		private readonly SafeCriticalSection m_UiFactoriesSection;
 
+		private readonly XmlTvPresets m_TvPresets;
+		private readonly WebConferencingInstructions m_WebConferencingInstructions;
+
 		// Used with settings.
 		private string m_TvPresetsPath;
-		private readonly XmlTvPresets m_TvPresets;
+		private string m_WebConferencingInstructionsPath;
 
 		#region Properties
 
@@ -34,6 +38,11 @@ namespace ICD.Profound.ConnectPRO.Themes
 		/// </summary>
 		public ITvPresets TvPresets { get { return m_TvPresets; } }
 
+		/// <summary>
+		/// Gets the web conferencing instructions.
+		/// </summary>
+		public WebConferencingInstructions WebConferencingInstructions { get { return m_WebConferencingInstructions; } }
+
 		#endregion
 
 		/// <summary>
@@ -42,6 +51,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 		public ConnectProTheme()
 		{
 			m_TvPresets = new XmlTvPresets();
+			m_WebConferencingInstructions = new WebConferencingInstructions();
 
 			m_UiFactories = new IcdHashSet<IConnectProUserInterfaceFactory>
 			{
@@ -63,9 +73,10 @@ namespace ICD.Profound.ConnectPRO.Themes
 		{
 			m_TvPresetsPath = path;
 
-			string tvPresetsPath = string.IsNullOrEmpty(path)
-									   ? null
-									   : PathUtils.GetDefaultConfigPath("TvPresets", m_TvPresetsPath);
+			string tvPresetsPath =
+				string.IsNullOrEmpty(path)
+					? null
+					: PathUtils.GetDefaultConfigPath("TvPresets", m_TvPresetsPath);
 
 			if (string.IsNullOrEmpty(tvPresetsPath))
 				return;
@@ -79,6 +90,34 @@ namespace ICD.Profound.ConnectPRO.Themes
 			catch (Exception e)
 			{
 				Logger.AddEntry(eSeverity.Error, "Failed to load TV Presets {0} - {1}", m_TvPresetsPath, e.Message);
+			}
+		}
+
+		/// <summary>
+		/// Sets the web conferencing instructions from the given xml document path.
+		/// </summary>
+		/// <param name="path"></param>
+		public void SetWebConferencingInstructionsFromPath(string path)
+		{
+			m_WebConferencingInstructionsPath = path;
+
+			string webConferencingInstructionsPath =
+				string.IsNullOrEmpty(path)
+					? null
+					: PathUtils.GetDefaultConfigPath("WebConferencing", m_WebConferencingInstructionsPath);
+
+			if (string.IsNullOrEmpty(webConferencingInstructionsPath))
+				return;
+
+			try
+			{
+				string webConferencingInstructionsXml = IcdFile.ReadToEnd(webConferencingInstructionsPath, Encoding.ASCII);
+				m_WebConferencingInstructions.Clear();
+				m_WebConferencingInstructions.Parse(webConferencingInstructionsXml);
+			}
+			catch (Exception e)
+			{
+				Logger.AddEntry(eSeverity.Error, "Failed to load Web Conferencing Instructions {0} - {1}", m_WebConferencingInstructionsPath, e.Message);
 			}
 		}
 
@@ -128,6 +167,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 			base.ClearSettingsFinal();
 
 			m_TvPresetsPath = null;
+			m_WebConferencingInstructionsPath = null;
 		}
 
 		/// <summary>
@@ -139,6 +179,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 			base.CopySettingsFinal(settings);
 
 			settings.TvPresets = m_TvPresetsPath;
+			settings.WebConferencingInstructions = m_WebConferencingInstructionsPath;
 		}
 
 		/// <summary>
@@ -151,8 +192,8 @@ namespace ICD.Profound.ConnectPRO.Themes
 			// Ensure the rooms are loaded
 			factory.LoadOriginators<IRoom>();
 
-			// Tv Presets
 			SetTvPresetsFromPath(settings.TvPresets);
+			SetWebConferencingInstructionsFromPath(settings.WebConferencingInstructions);
 
 			base.ApplySettingsFinal(settings, factory);
 		}
