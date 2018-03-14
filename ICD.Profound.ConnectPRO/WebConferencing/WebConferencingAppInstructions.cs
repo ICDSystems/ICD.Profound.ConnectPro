@@ -21,6 +21,9 @@ namespace ICD.Profound.ConnectPRO.WebConferencing
 
 		public bool IsReadOnly { get { return false; } }
 
+		public string Name { get; set; }
+		public string Icon { get; set; }
+
 		/// <summary>
 		/// Gets the step at the given index.
 		/// </summary>
@@ -67,6 +70,9 @@ namespace ICD.Profound.ConnectPRO.WebConferencing
 		public void Parse(string baseUrl, string xml)
 		{
 			Clear();
+
+			Name = XmlUtils.TryReadChildElementContentAsString(xml, "Name");
+			Icon = (baseUrl ?? string.Empty) + XmlUtils.TryReadChildElementContentAsString(xml, "Icon");
 
 			IEnumerable<WebConferencingStepInstructions> apps = ParseSteps(baseUrl, xml);
 			m_StepsSection.Execute(() => m_Steps.AddRange(apps));

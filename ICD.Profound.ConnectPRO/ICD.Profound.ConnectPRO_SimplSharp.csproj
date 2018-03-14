@@ -129,6 +129,9 @@
     <Compile Include="Themes\UserInterface\IPresenters\Popups\IAppleTvPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Popups\CableTv\ICableTvPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Popups\IPopupPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Popups\WebConferencing\IReferencedWebConferencingAlertPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Popups\WebConferencing\IWebConferencingAlertPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Popups\WebConferencing\IWebConferencingStepPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcReferencedContactsPresenterBase.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcReferencedFolderPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcReferencedFavoritesPresenter.cs" />
@@ -219,6 +222,10 @@
     <Compile Include="Themes\UserInterface\Presenters\Popups\CableTv\CableTvPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\CableTv\ReferencedCableTvPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\CableTv\ReferencedCableTvPresenterFactory.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Popups\WebConferencing\ReferencedWebConferencingAlertPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Popups\WebConferencing\ReferencedWebConferencingAlertPresenterFactory.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Popups\WebConferencing\WebConferencingAlertPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Popups\WebConferencing\WebConferencingStepPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\AbstractVtcReferencedContactsPresenterBase.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\VtcContactsPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\VtcReferencedContactsPresenter.cs" />
@@ -289,7 +296,11 @@
     <Compile Include="Themes\UserInterface\Views\Popups\CableTv\ReferencedCableTvView.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\CableTv\ReferencedCableTvView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\WebConferencing\ReferencedWebConferencingAlertView.cs" />
-    <Compile Include="Themes\UserInterface\Views\Popups\WebConferencing\ReferencedWebConferencingView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Popups\WebConferencing\ReferencedWebConferencingAlertView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Popups\WebConferencing\WebConferencingAlertView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Popups\WebConferencing\WebConferencingAlertView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Popups\WebConferencing\WebConferencingStepView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Popups\WebConferencing\WebConferencingStepView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\Dtmf\VtcReferencedDtmfView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\Dtmf\VtcReferencedDtmfView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcBaseView.cs" />
