@@ -14,6 +14,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Options;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.CableTv;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.WebConferencing;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.ActiveCalls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
@@ -25,6 +26,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.CableTv;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.WebConferencing;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.ActiveCalls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Contacts;
@@ -45,6 +47,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IAppleTvPresenter), (nav, views, theme) => new AppleTvPresenter(nav, views, theme)},
 			{typeof(ICableTvPresenter), (nav, views, theme) => new CableTvPresenter(nav, views, theme)},
 			{typeof(IReferencedCableTvPresenter), (nav, views, theme) => new ReferencedCableTvPresenter(nav, views, theme)},
+			{typeof(IWebConferencingAlertPresenter), (nav, views, theme) => new WebConferencingAlertPresenter(nav, views, theme)},
+			{typeof(IReferencedWebConferencingAlertPresenter), (nav, views, theme) => new ReferencedWebConferencingAlertPresenter(nav, views, theme)},
+			{typeof(IWebConferencingStepPresenter), (nav, views, theme) => new WebConferencingStepPresenter(nav, views, theme)},
 
 			// Displays
 			{typeof(IReferencedDisplaysPresenter), (nav, views, theme) => new ReferencedDisplaysPresenter(nav, views, theme)},

@@ -12,6 +12,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.CableTv;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.WebConferencing;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.ActiveCalls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contacts;
@@ -22,6 +23,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups.CableTv;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups.WebConferencing;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.ActiveCalls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Contacts;
@@ -49,6 +51,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 		{
 			// Popups
 			{typeof(IReferencedCableTvView), (nav, views, theme, index) => new ReferencedCableTvView(nav, views, theme, index)},
+			{typeof(IReferencedWebConferencingAlertView), (nav, views, theme, index) => new ReferencedWebConferencingAlertView(nav, views, theme, index)},
 
 			// Sources
 			{typeof(IReferencedSourceSelectView), (nav, views, theme, index) => new ReferencedSourceSelectView(nav, views, theme, index)},
@@ -67,6 +70,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			// Popups
 			{typeof(IAppleTvView), (panel, theme) => new AppleTvView(panel, theme)},
 			{typeof(ICableTvView), (panel, theme) => new CableTvView(panel, theme)},
+			{typeof(IWebConferencingAlertView), (panel, theme) => new WebConferencingAlertView(panel, theme)},
+			{typeof(IWebConferencingStepView), (panel, theme) => new WebConferencingStepView(panel, theme)},
 
 			// Displays
 			{typeof(IMenuDisplaysView), (panel, theme) => new MenuDisplaysView(panel, theme)},
