@@ -62,6 +62,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.CableTv
 
 			try
 			{
+				UnsubscribeChildren();
+
 				m_Stations = Theme.TvPresets.ToArray();
 
 				foreach (IReferencedCableTvPresenter presenter in m_ChildrenFactory.BuildChildren(m_Stations))
