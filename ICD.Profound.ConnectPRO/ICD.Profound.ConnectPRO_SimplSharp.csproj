@@ -175,6 +175,9 @@
     <Compile Include="Themes\UserInterface\IViews\IViewFactory.cs" />
     <Compile Include="Themes\UserInterface\ConnectProUserInterface.cs" />
     <Compile Include="Themes\UserInterface\ConnectProUserInterfaceFactory.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Popups\WebConferencing\IReferencedWebConferencingAlertView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Popups\WebConferencing\IWebConferencingAlertView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Popups\WebConferencing\IWebConferencingStepView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcBaseView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcButtonListView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcCallListToggleView.cs" />
@@ -285,6 +288,8 @@
     <Compile Include="Themes\UserInterface\Views\Popups\CableTv\CableTvView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\CableTv\ReferencedCableTvView.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\CableTv\ReferencedCableTvView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Popups\WebConferencing\ReferencedWebConferencingAlertView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Popups\WebConferencing\ReferencedWebConferencingView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\Dtmf\VtcReferencedDtmfView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\Dtmf\VtcReferencedDtmfView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcBaseView.cs" />
