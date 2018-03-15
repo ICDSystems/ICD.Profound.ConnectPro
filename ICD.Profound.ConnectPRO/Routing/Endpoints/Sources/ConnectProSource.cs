@@ -67,7 +67,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 			Icon = settings.Icon;
 			Description = settings.Description;
 			Share = settings.Share;
-			Hide = Hide;
+			Hide = settings.Hide;
 			ControlOverride = settings.ControlOverride;
 		}
 	}
