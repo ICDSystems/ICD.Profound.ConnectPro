@@ -108,7 +108,6 @@
     <Compile Include="Themes\OsdInterface\Views\OsdWelcomeView.generated.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IMenuDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmLeaveCallPresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IReferencedDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmEndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmSplashPowerPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IEndMeetingPresenter.cs" />
@@ -170,7 +169,6 @@
     <Compile Include="Themes\UserInterface\IViews\Common\Options\IOptionPrivacyMuteView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Options\IOptionView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Options\IOptionVolumeView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\Common\Displays\IReferencedDisplaysView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Sources\IReferencedSourceSelectView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Popups\CableTv\ICableTvView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Popups\IPopupView.cs" />
@@ -201,8 +199,6 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmLeaveCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmSplashPowerPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\MenuDisplaysPresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\Common\Displays\ReferencedDisplaysPresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\Common\Displays\ReferencedDisplaysPresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\EndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\HeaderPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\AbstractOptionPresenter.cs" />
@@ -258,8 +254,6 @@
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmSplashPowerView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\MenuDisplaysView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\MenuDisplaysView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\Common\Displays\ReferencedDisplaysView.cs" />
-    <Compile Include="Themes\UserInterface\Views\Common\Displays\ReferencedDisplaysView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\EndMeetingView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\EndMeetingView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\HeaderView.cs" />

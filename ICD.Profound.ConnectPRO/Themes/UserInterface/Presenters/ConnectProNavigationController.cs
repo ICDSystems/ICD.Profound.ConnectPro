@@ -52,7 +52,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IWebConferencingStepPresenter), (nav, views, theme) => new WebConferencingStepPresenter(nav, views, theme)},
 
 			// Displays
-			{typeof(IReferencedDisplaysPresenter), (nav, views, theme) => new ReferencedDisplaysPresenter(nav, views, theme)},
 			{typeof(IMenuDisplaysPresenter), (nav, views, theme) => new MenuDisplaysPresenter(nav, views, theme)},
 
 			// Options
