@@ -694,7 +694,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 					return device.Controls.GetControls<ITvTunerControl>().FirstOrDefault();
 
 				case eControlOverride.Vtc:
-					return device.Controls.GetControls<ITvTunerControl>().FirstOrDefault();
+					return device.Controls.GetControls<IDialingDeviceControl>().FirstOrDefault();
 					
 				case eControlOverride.WebConference:
 					return null;
