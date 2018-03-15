@@ -18,6 +18,7 @@ using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Sources.TvTuner.Controls;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
@@ -275,16 +276,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		private void ShowSourceContextualMenu(ISource source, bool vtcOnly)
 		{
+			if (m_Room == null)
+				return;
+
 			if (source == null)
 				return;
 
-			IDeviceBase device = m_Room == null ? null : m_Room.Routing.GetDevice(source);
-			if (device == null)
-				return;
-
-			IDeviceControl control = m_Room.Routing.GetDeviceControl(device);
-			if (control == null)
-				return;
+			eControlOverride controlOverride = m_Room.Routing.GetControlOverride(source);
+			IDeviceControl control = m_Room.Routing.GetDeviceControl(source, controlOverride);
 
 			if (control is CiscoDialingDeviceControl)
 			{
@@ -296,7 +295,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				return;
 
 			if (control is ITvTunerControl)
+			{
 				m_NavigationController.NavigateTo<ICableTvPresenter>().Control = control as ITvTunerControl;
+				return;
+			}
+
+			switch (controlOverride)
+			{
+				case eControlOverride.WebConference:
+					m_NavigationController.NavigateTo<IWebConferencingAlertPresenter>();
+					break;
+			}
 		}
 
 		/// <summary>
@@ -450,7 +459,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>());
 		}
 
-		#region SourceSelectSingle Callbacks
+		#region Source Select Callbacks
 
 		/// <summary>
 		/// Subscribe to the presenter events.
@@ -458,7 +467,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="presenter"></param>
 		private void Subscribe(ISourceSelectPresenter presenter)
 		{
-			presenter.OnSourcePressed += SourceSelectSinglePresenterOnSourcePressed;
+			presenter.OnSourcePressed += SourceSelectPresenterOnSourcePressed;
 		}
 
 		/// <summary>
@@ -467,7 +476,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="presenter"></param>
 		private void Unsubscribe(ISourceSelectPresenter presenter)
 		{
-			presenter.OnSourcePressed -= SourceSelectSinglePresenterOnSourcePressed;
+			presenter.OnSourcePressed -= SourceSelectPresenterOnSourcePressed;
 		}
 
 		/// <summary>
@@ -475,7 +484,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="source"></param>
-		private void SourceSelectSinglePresenterOnSourcePressed(object sender, ISource source)
+		private void SourceSelectPresenterOnSourcePressed(object sender, ISource source)
 		{
 			HandleSelectedSource(source);
 		}

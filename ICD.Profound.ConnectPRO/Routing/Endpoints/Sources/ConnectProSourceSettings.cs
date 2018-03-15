@@ -14,7 +14,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 		private const string SHARE_ELEMENT = "Share";
 		private const string HIDE_ELEMENT = "Hide";
 		private const string DESCRIPTION_ELEMENT = "Description";
-		private const string CONTROL_TYPE_ELEMENT = "ControlType";
+		private const string CONTROL_OVERRIDE_ELEMENT = "ControlOverride";
 
 		#region Properties
 
@@ -51,7 +51,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 		/// <summary>
 		/// Gets/sets the type of control to show when selecting the source in the UI.
 		/// </summary>
-		public eControlType ControlType { get; set; }
+		public eControlOverride ControlOverride { get; set; }
 
 		#endregion
 
@@ -67,7 +67,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 			writer.WriteElementString(SHARE_ELEMENT, IcdXmlConvert.ToString(Share));
 			writer.WriteElementString(HIDE_ELEMENT, IcdXmlConvert.ToString(Hide));
 			writer.WriteElementString(DESCRIPTION_ELEMENT, Description);
-			writer.WriteElementString(CONTROL_TYPE_ELEMENT, IcdXmlConvert.ToString(ControlType));
+			writer.WriteElementString(CONTROL_OVERRIDE_ELEMENT, IcdXmlConvert.ToString(ControlOverride));
 		}
 
 		/// <summary>
@@ -82,8 +82,8 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 			Share = XmlUtils.TryReadChildElementContentAsBoolean(xml, SHARE_ELEMENT) ?? false;
 			Hide = XmlUtils.TryReadChildElementContentAsBoolean(xml, HIDE_ELEMENT) ?? false;
 			Description = XmlUtils.TryReadChildElementContentAsString(xml, DESCRIPTION_ELEMENT);
-			ControlType = XmlUtils.TryReadChildElementContentAsEnum<eControlType>(xml, CONTROL_TYPE_ELEMENT, true) ??
-			              eControlType.Default;
+			ControlOverride = XmlUtils.TryReadChildElementContentAsEnum<eControlOverride>(xml, CONTROL_OVERRIDE_ELEMENT, true) ??
+			              eControlOverride.Default;
 		}
 	}
 }

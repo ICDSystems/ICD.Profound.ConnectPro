@@ -29,6 +29,7 @@ using ICD.Connect.Routing.Extensions;
 using ICD.Connect.Routing.RoutingGraphs;
 using ICD.Connect.Sources.TvTuner.Controls;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 
 namespace ICD.Profound.ConnectPRO.Routing
 {
@@ -649,23 +650,69 @@ namespace ICD.Profound.ConnectPRO.Routing
 			return m_Room.Core.Originators.GetChild<IDeviceBase>(source.Endpoint.Device);
 		}
 
-		/// <summary>
-		/// Returns the control that can be manipulated by the user, e.g. dialing control, tv tuner, etc.
-		/// </summary>
-		/// <returns></returns>
-		public IDeviceControl GetDeviceControl(IDeviceBase device)
+		public bool CanControl(ISource source)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			eControlOverride controlOverride = GetControlOverride(source);
+
+			// If the control type is NOT default we return true.
+			// This means we can show UI items for sources that don't necessarily have an IDeviceControl.
+			return controlOverride != eControlOverride.Default || GetDeviceControl(source, eControlOverride.Default) != null;
+		}
+
+		public IDeviceControl GetDeviceControl(ISource source, eControlOverride controlOverride)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			IDeviceBase device = GetDevice(source);
+			return device == null ? null : GetDeviceControl(device, controlOverride);
+		}
+
+		public IDeviceControl GetDeviceControl(IDeviceBase device, eControlOverride controlOverride)
 		{
 			if (device == null)
 				throw new ArgumentNullException("device");
 
-			// Dialer
-			IDialingDeviceControl dialer = device.Controls.GetControls<IDialingDeviceControl>().FirstOrDefault();
-			if (dialer != null)
-				return dialer;
+			switch (controlOverride)
+			{
+				case eControlOverride.Default:
 
-			// TV Tuner
-			ITvTunerControl tvTuner = device.Controls.GetControls<ITvTunerControl>().FirstOrDefault();
-			return tvTuner;
+					IDeviceControl dialer = GetDeviceControl(device, eControlOverride.Vtc);
+					if (dialer != null)
+						return dialer;
+
+					IDeviceControl tuner = GetDeviceControl(device, eControlOverride.CableTv);
+					if (tuner != null)
+						return tuner;
+
+					break;
+
+				case eControlOverride.CableTv:
+					return device.Controls.GetControls<ITvTunerControl>().FirstOrDefault();
+
+				case eControlOverride.Vtc:
+					return device.Controls.GetControls<ITvTunerControl>().FirstOrDefault();
+					
+				case eControlOverride.WebConference:
+					return null;
+				
+				default:
+					throw new ArgumentOutOfRangeException("controlOverride");
+			}
+
+			return null;
+		}
+
+		public eControlOverride GetControlOverride(ISource source)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			ConnectProSource connectProSource = source as ConnectProSource;
+			return connectProSource == null ? eControlOverride.Default : connectProSource.ControlOverride;
 		}
 
 		#endregion
