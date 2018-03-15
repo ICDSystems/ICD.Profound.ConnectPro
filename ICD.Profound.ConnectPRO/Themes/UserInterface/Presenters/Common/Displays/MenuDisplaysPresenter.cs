@@ -198,8 +198,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 					                              ? m_Display1RoutedSource == null
 						                                ? eDisplayColor.Grey
 						                                : display1HasControl
-							                                  ? eDisplayColor.White
-							                                  : eDisplayColor.Green
+							                                  ? eDisplayColor.Green
+							                                  : eDisplayColor.White
 					                              : eDisplayColor.Yellow;
 
 				string display1Test = m_ActiveSource == null
@@ -275,8 +275,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 					                              ? m_Display2RoutedSource == null
 						                                ? eDisplayColor.Grey
 						                                : display2HasControl
-							                                  ? eDisplayColor.White
-							                                  : eDisplayColor.Green
+							                                  ? eDisplayColor.Green
+							                                  : eDisplayColor.White
 					                              : eDisplayColor.Yellow;
 
 				string display2Test = m_ActiveSource == null
