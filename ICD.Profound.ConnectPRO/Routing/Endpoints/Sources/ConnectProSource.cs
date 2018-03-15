@@ -3,6 +3,14 @@ using ICD.Connect.Settings.Core;
 
 namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 {
+	public enum eControlType
+	{
+		Default,
+		CableTv,
+		Vtc,
+		WebConference
+	}
+
 	public sealed class ConnectProSource : AbstractSource<ConnectProSourceSettings>
 	{
 		/// <summary>
@@ -25,6 +33,11 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 		/// </summary>
 		public bool Hide { get; set; }
 
+		/// <summary>
+		/// Gets/sets the type of control to show when selecting the source in the UI.
+		/// </summary>
+		public eControlType ControlType { get; set; }
+
 		protected override void ClearSettingsFinal()
 		{
 			base.ClearSettingsFinal();
@@ -33,6 +46,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 			Description = null;
 			Share = false;
 			Hide = false;
+			ControlType = eControlType.Default;
 		}
 
 		protected override void CopySettingsFinal(ConnectProSourceSettings settings)
@@ -43,6 +57,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 			settings.Description = Description;
 			settings.Share = Share;
 			settings.Hide = Hide;
+			settings.ControlType = ControlType;
 		}
 
 		protected override void ApplySettingsFinal(ConnectProSourceSettings settings, IDeviceFactory factory)
@@ -53,6 +68,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 			Description = settings.Description;
 			Share = settings.Share;
 			Hide = Hide;
+			ControlType = settings.ControlType;
 		}
 	}
 }
