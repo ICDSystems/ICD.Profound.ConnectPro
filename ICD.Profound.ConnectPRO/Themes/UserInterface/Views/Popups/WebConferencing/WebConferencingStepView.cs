@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.WebConferencing;
 
@@ -56,5 +57,48 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups.WebConferenc
 		{
 			m_StepLabel.SetLabelText(number.ToString());
 		}
+
+		#region Control Callbacks
+
+		/// <summary>
+		/// Subscribes to the view controls.
+		/// </summary>
+		protected override void SubscribeControls()
+		{
+			base.SubscribeControls();
+
+			m_CloseButton.OnPressed += CloseButtonOnPressed;
+			m_BackButton.OnPressed += BackButtonOnPressed;
+			m_ForwardButton.OnPressed += ForwardButtonOnPressed;
+		}
+
+		/// <summary>
+		/// Unsubscribes from the view controls.
+		/// </summary>
+		protected override void UnsubscribeControls()
+		{
+			base.UnsubscribeControls();
+
+			m_CloseButton.OnPressed -= CloseButtonOnPressed;
+			m_BackButton.OnPressed -= BackButtonOnPressed;
+			m_ForwardButton.OnPressed -= ForwardButtonOnPressed;
+		}
+
+		private void ForwardButtonOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnForwardButtonPressed.Raise(this);
+		}
+
+		private void BackButtonOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnBackButtonPressed.Raise(this);
+		}
+
+		private void CloseButtonOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnCloseButtonPressed.Raise(this);
+		}
+
+		#endregion
 	}
 }

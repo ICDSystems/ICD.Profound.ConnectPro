@@ -16,6 +16,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups.WebConferenc
 		private VtProImageObject m_InstructionImage;
 		private VtProButton m_BackButton;
 		private VtProButton m_ForwardButton;
+		private VtProButton m_CloseButton;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -56,6 +57,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups.WebConferenc
 				DigitalPressJoin = 543,
 				DigitalVisibilityJoin = 541
 			};
+
+			m_CloseButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 113
+			};
 		}
 
 		/// <summary>
@@ -70,6 +76,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups.WebConferenc
 			yield return m_InstructionImage;
 			yield return m_BackButton;
 			yield return m_ForwardButton;
+			yield return m_CloseButton;
 		}
 	}
 }

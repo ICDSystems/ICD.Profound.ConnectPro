@@ -64,6 +64,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.WebConf
 					Subscribe(presenter);
 					presenter.ShowView(true);
 				}
+
+				view.SetAppCount((ushort)m_Apps.Length);
 			}
 			finally
 			{

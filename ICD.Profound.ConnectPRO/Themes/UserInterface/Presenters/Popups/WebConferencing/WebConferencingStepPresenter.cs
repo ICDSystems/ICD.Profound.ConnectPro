@@ -2,6 +2,7 @@
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.WebConferencing;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -75,10 +76,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.WebConf
 
 			try
 			{
-				WebConferencingStepInstructions step =
-					App == null && StepNumber >= 1
-						? null
-						: App.ElementAt(StepNumber - 1);
+				WebConferencingStepInstructions step = null;
+				if (App != null)
+					App.TryElementAt(StepNumber - 1, out step);
 
 				string url = step == null ? null : step.Image;
 				ushort number = (ushort)StepNumber;

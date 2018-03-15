@@ -11,7 +11,7 @@ namespace ICD.Profound.ConnectPRO.WebConferencing
 		{
 			return new WebConferencingStepInstructions
 			{
-				Image = XmlUtils.TryReadChildElementContentAsString(xml, "Image"),
+				Image = (baseUrl ?? string.Empty) + XmlUtils.TryReadChildElementContentAsString(xml, "Image"),
 				Text = XmlUtils.TryReadChildElementContentAsString(xml, "Text")
 			};
 		}

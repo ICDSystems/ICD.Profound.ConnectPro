@@ -45,6 +45,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups.WebConferenc
 			return GetChildViews(factory, m_AppList, m_ChildList, count);
 		}
 
+		public void SetAppCount(ushort count)
+		{
+			m_AppList.SetNumberOfItems(count);
+		}
+
 		/// <summary>
 		/// Subscribes to the view controls.
 		/// </summary>

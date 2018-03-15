@@ -14,5 +14,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.WebConferen
 		/// <param name="count"></param>
 		/// <returns></returns>
 		IEnumerable<IReferencedWebConferencingAlertView> GetChildComponentViews(IViewFactory factory, ushort count);
+
+		void SetAppCount(ushort count);
 	}
 }

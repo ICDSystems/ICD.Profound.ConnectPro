@@ -12,7 +12,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 		private const string FACTORY_NAME = "ConnectProTheme";
 
 		private const string TVPRESETS_ELEMENT = "TvPresets";
-		private const string WEB_CONFERENCING_INSTRUCTIONS_ELEMENT = "WebConferencingInstructions";
+		private const string WEB_CONFERENCING_INSTRUCTIONS_ELEMENT = "WebConferencing";
 
 		/// <summary>
 		/// Gets the originator factory name.
