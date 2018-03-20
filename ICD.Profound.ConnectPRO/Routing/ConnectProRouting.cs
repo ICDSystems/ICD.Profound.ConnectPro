@@ -16,7 +16,7 @@ using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Extensions;
-using ICD.Connect.Displays;
+using ICD.Connect.Displays.Devices;
 using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Connections;

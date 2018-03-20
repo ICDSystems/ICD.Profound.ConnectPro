@@ -13,7 +13,7 @@ using ICD.Connect.Conferencing.Favorites.SqLite;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Extensions;
-using ICD.Connect.Displays;
+using ICD.Connect.Displays.Devices;
 using ICD.Connect.Panels;
 using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Partitioning.Rooms;
