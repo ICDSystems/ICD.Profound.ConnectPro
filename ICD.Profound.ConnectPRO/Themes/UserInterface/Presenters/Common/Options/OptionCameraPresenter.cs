@@ -1,7 +1,7 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Cameras;
 using ICD.Connect.Cameras.Controls;
+using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Profound.ConnectPRO.Rooms;
