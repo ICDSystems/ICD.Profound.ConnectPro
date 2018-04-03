@@ -4,6 +4,7 @@
     <OutputType>Library</OutputType>
     <TargetFramework>netstandard2.0</TargetFramework>
 	<RootNamespace>ICD.Profound.ConnectPRO</RootNamespace>
+	<AssemblyName>ICD.Profound.ConnectPRO</AssemblyName>
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 	<Deterministic>true</Deterministic>
   </PropertyGroup>
