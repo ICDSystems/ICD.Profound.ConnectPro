@@ -17,7 +17,6 @@ using ICD.Connect.Displays.Devices;
 using ICD.Connect.Panels;
 using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Partitioning.Rooms;
-using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Settings.Core;
 using ICD.Profound.ConnectPRO.Routing;
@@ -133,8 +132,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			{
 				if (!powerOff)
 				{
-					EndpointInfo? endpoint = Routing.GetActiveVideoEndpoint(destination);
-					OsdPanelDevice osd = endpoint == null ? null : Core.Originators.GetChild(endpoint.Value.Device) as OsdPanelDevice;
+					OsdPanelDevice osd = Routing.GetActiveVideoEndpoints(destination)
+												.Select(e => Core.Originators.GetChild(e.Device) as OsdPanelDevice)
+												.FirstOrDefault(o => o != null);
 
 					// Don't power off displays showing the osd
 					if (osd != null)
