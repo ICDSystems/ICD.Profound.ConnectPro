@@ -281,7 +281,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 					IEnumerable<IDestination> displays =
 						m_Room.Originators
 						      .GetInstancesRecursive<IDestination>(d =>
-						                                           m_Room.Core.Originators.GetChild(d.Endpoint.Device)
+						                                           m_Room.Core.Originators.GetChild(d.Device)
 						                                           is IDisplay)
 						      .OrderBy(d => d.Order)
 						      .ThenBy(d => d.GetNameOrDeviceName(combine))
@@ -358,7 +358,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		public EndpointInfo? GetActiveEndpoint(IDestination destination, eConnectionType flag)
 		{
 			IRouteDestinationControl destinationControl =
-				m_Room.Core.GetControl<IRouteDestinationControl>(destination.Endpoint.Device, destination.Endpoint.Control);
+				m_Room.Core.GetControl<IRouteDestinationControl>(destination.Device, destination.Control);
 
 			return
 				RoutingGraph.GetActiveSourceEndpoint(destinationControl, destination.Endpoint.Address, flag,
@@ -647,7 +647,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (source == null)
 				throw new ArgumentNullException("source");
 
-			return m_Room.Core.Originators.GetChild<IDeviceBase>(source.Endpoint.Device);
+			return m_Room.Core.Originators.GetChild<IDeviceBase>(source.Device);
 		}
 
 		public bool CanControl(ISource source)

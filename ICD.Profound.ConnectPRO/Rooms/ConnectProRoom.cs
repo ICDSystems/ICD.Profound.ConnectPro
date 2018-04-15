@@ -141,7 +141,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 						continue;
 				}
 
-				IDisplay display = Core.Originators.GetChild(destination.Endpoint.Device) as IDisplay;
+				IDisplay display = Core.Originators.GetChild(destination.Device) as IDisplay;
 				if (display != null)
 					display.PowerOff();
 			}
