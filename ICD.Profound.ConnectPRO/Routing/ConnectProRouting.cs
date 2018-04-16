@@ -479,7 +479,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				return;
 			}
 
-			Route(path, flag);
+			Route(path);
 		}
 
 		private void Route(EndpointInfo sourceEndpoint, IDestination destination, eConnectionType flag)
@@ -494,7 +494,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				return;
 			}
 
-			Route(path, flag);
+			Route(path);
 		}
 
 		private void Route(ISource source, EndpointInfo destinationEndpoint, eConnectionType flag)
@@ -509,7 +509,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				return;
 			}
 
-			Route(path, flag);
+			Route(path);
 		}
 
 		public void RouteAudio(ISource source)
@@ -565,30 +565,31 @@ namespace ICD.Profound.ConnectPRO.Routing
 			OnDisplayTrackingChanged.Raise(this);
 		}
 
-		private void Route(ConnectionPath path, eConnectionType flag)
+		private void Route(ConnectionPath path)
 		{
 			if (path == null)
 				throw new ArgumentNullException("path");
 
-			IcdStopwatch.Profile(() =>
-			                     {
-				                     bool oldRouting = m_Routing;
-				                     m_Routing = true;
 
-				                     RoutingGraph.RoutePath(path, flag, m_Room.Id);
 
-				                     if (!oldRouting)
-					                     m_Routing = false;
+			bool oldRouting = m_Routing;
+			m_Routing = true;
 
-				                     IDisplay display = m_Room.Core.Originators.GetChild(path.DestinationEndpoint.Device) as IDisplay;
-				                     if (display == null)
-					                     return;
+			IcdStopwatch.Profile(() => RoutingGraph.RoutePath(path, m_Room.Id),
+			                     string.Format("Route - {0} {1}", path, path.ConnectionType));
 
-				                     display.PowerOn();
+			if (!oldRouting)
+				m_Routing = false;
 
-				                     if (display.HdmiInput != path.DestinationEndpoint.Address)
-					                     display.SetHdmiInput(path.DestinationEndpoint.Address);
-			                     }, string.Format("Route - {0} {1}", path, flag));
+			IDisplay display = m_Room.Core.Originators.GetChild(path.DestinationEndpoint.Device) as IDisplay;
+			if (display == null)
+				return;
+
+			display.PowerOn();
+
+			if (display.HdmiInput != path.DestinationEndpoint.Address)
+				display.SetHdmiInput(path.DestinationEndpoint.Address);
+
 		}
 
 		/// <summary>
