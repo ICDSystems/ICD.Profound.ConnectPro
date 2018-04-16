@@ -473,6 +473,12 @@ namespace ICD.Profound.ConnectPRO.Routing
 				throw new ArgumentNullException("destination");
 
 			ConnectionPath path = RoutingGraph.FindPath(source, destination, flag, m_Room.Id);
+			if (path == null)
+			{
+				m_Room.Logger.AddEntry(eSeverity.Error, "Failed to find {0} path from {1} to {2}", flag, source, destination);
+				return;
+			}
+
 			Route(path, flag);
 		}
 
@@ -482,6 +488,12 @@ namespace ICD.Profound.ConnectPRO.Routing
 				throw new ArgumentNullException("destination");
 
 			ConnectionPath path = RoutingGraph.FindPath(sourceEndpoint, destination, flag, m_Room.Id);
+			if (path == null)
+			{
+				m_Room.Logger.AddEntry(eSeverity.Error, "Failed to find {0} path from {1} to {2}", flag, sourceEndpoint, destination);
+				return;
+			}
+
 			Route(path, flag);
 		}
 
@@ -491,6 +503,12 @@ namespace ICD.Profound.ConnectPRO.Routing
 				throw new ArgumentNullException("source");
 
 			ConnectionPath path = RoutingGraph.FindPath(source, destinationEndpoint, flag, m_Room.Id);
+			if (path == null)
+			{
+				m_Room.Logger.AddEntry(eSeverity.Error, "Failed to find {0} path from {1} to {2}", flag, source, destinationEndpoint);
+				return;
+			}
+
 			Route(path, flag);
 		}
 
@@ -549,6 +567,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 		private void Route(ConnectionPath path, eConnectionType flag)
 		{
+			if (path == null)
+				throw new ArgumentNullException("path");
+
 			IcdStopwatch.Profile(() =>
 			                     {
 				                     bool oldRouting = m_Routing;
