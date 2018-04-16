@@ -5,6 +5,7 @@ using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.Extensions;
+using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.Cisco;
 using ICD.Connect.Conferencing.Cisco.Components.Presentation;
@@ -412,10 +413,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 				throw new ArgumentNullException("destination");
 
 			eConnectionType intersection = EnumUtils.GetFlagsIntersection(source.ConnectionType, destination.ConnectionType);
-			if (intersection == eConnectionType.None)
-				return;
 
-			Route(source, destination, intersection);
+			foreach (eConnectionType flag in EnumUtils.GetFlagsExceptNone(intersection))
+				Route(source, destination, flag);
 		}
 
 		/// <summary>
