@@ -283,6 +283,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 						      .GetInstancesRecursive<IDestination>(d =>
 						                                           m_Room.Core.Originators.GetChild(d.Endpoint.Device)
 						                                           is IDisplay)
+						      .Where(d => d.ConnectionType.HasFlag(eConnectionType.Video))
 						      .OrderBy(d => d.Order)
 						      .ThenBy(d => d.GetNameOrDeviceName(combine))
 						      .Take(2);
