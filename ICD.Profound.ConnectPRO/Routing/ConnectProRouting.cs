@@ -317,7 +317,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 							  .GetInstancesRecursive<IDestination>(d => d.ConnectionType == eConnectionType.Audio)
 							  .OrderBy(d => d.Order)
 							  .ThenBy(d => d.GetNameOrDeviceName(combine))
-							  .Take(2);
 
 					m_AudioDestinations.AddRange(audioDestinations);
 				}
