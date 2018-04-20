@@ -315,9 +315,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 					IEnumerable<IDestination> audioDestinations =
 						m_Room.Originators
-							  .GetInstancesRecursive<IDestination>(d => d.ConnectionType == eConnectionType.Audio)
-							  .OrderBy(d => d.Order)
-							  .ThenBy(d => d.GetNameOrDeviceName(combine))
+						      .GetInstancesRecursive<IDestination>(d => d.ConnectionType == eConnectionType.Audio)
+						      .OrderBy(d => d.Order)
+						      .ThenBy(d => d.GetNameOrDeviceName(combine));
 
 					m_AudioDestinations.AddRange(audioDestinations);
 				}
