@@ -211,8 +211,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				CiscoCodecRoutingControl codecControl =
 					source == null
 						? null
-						: m_Room.Core.GetControl<IRouteSourceControl>(source.Endpoint.Device,
-						                                              source.Endpoint.Control) as
+						: m_Room.Core.GetControl<IRouteSourceControl>(source.Device, source.Control) as
 						  CiscoCodecRoutingControl;
 
 				if (codecControl == null)
@@ -540,7 +539,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (codec == null)
 				return;
 
-			ISource codecSource = m_Room.Originators.GetInstancesRecursive<ISource>(s => s.Endpoint.Device == codec.Id).FirstOrDefault();
+			ISource codecSource = m_Room.Originators.GetInstancesRecursive<ISource>(s => s.Device == codec.Id).FirstOrDefault();
 			if (codecSource == null)
 				return;
 

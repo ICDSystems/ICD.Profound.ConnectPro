@@ -5,6 +5,7 @@ using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.Extensions;
+using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.Cisco;
 using ICD.Connect.Conferencing.Cisco.Components.Presentation;
@@ -15,7 +16,6 @@ using ICD.Connect.Conferencing.Controls;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
-using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Displays.Devices;
 using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Partitioning.Rooms;
@@ -281,7 +281,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 					IEnumerable<IDestination> displays =
 						m_Room.Originators
 						      .GetInstancesRecursive<IDestination>(d =>
-						                                           m_Room.Core.Originators.GetChild(d.Endpoint.Device)
+						                                           m_Room.Core.Originators.GetChild(d.Device)
 						                                           is IDisplay)
 						      .Where(d => d.ConnectionType.HasFlag(eConnectionType.Video))
 						      .OrderBy(d => d.Order)
@@ -303,7 +303,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// Returns the ordered audio only destinations for the room.
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<IDestination> GetAudioDestinations()
+		private IEnumerable<IDestination> GetAudioDestinations()
 		{
 			m_CacheSection.Enter();
 
@@ -330,39 +330,53 @@ namespace ICD.Profound.ConnectPRO.Routing
 			}
 		}
 
-		public IEnumerable<ISource> GetActiveAudioSources()
+		private IEnumerable<ISource> GetActiveAudioSources()
 		{
-			return GetAudioDestinations().SelectMany(destination => GetActiveSources(destination, eConnectionType.Audio))
-			                             .Where(source => source != null);
+			return GetAudioDestinations().SelectMany(destination => GetActiveSources(destination, eConnectionType.Audio));
 		}
 
-		public IEnumerable<ISource> GetActiveVideoSources(IDestination destination)
+		/// <summary>
+		/// Gets all of the source endpoints actively routed to the given destination for video.
+		/// </summary>
+		/// <param name="destination"></param>
+		/// <returns></returns>
+		public IEnumerable<EndpointInfo> GetActiveVideoEndpoints(IDestination destination)
 		{
+			if (destination == null)
+				throw new ArgumentNullException("destination");
+
+			return GetActiveEndpoints(destination, eConnectionType.Video);
+		}
+
+		/// <summary>
+		/// Gets all of the source endpoints actively routed to the given destination.
+		/// </summary>
+		/// <param name="destination"></param>
+		/// <param name="flag"></param>
+		/// <returns></returns>
+		private IEnumerable<EndpointInfo> GetActiveEndpoints(IDestination destination, eConnectionType flag)
+		{
+			if (destination == null)
+				throw new ArgumentNullException("destination");
+
+			return RoutingGraph.GetActiveSourceEndpoints(destination, flag, false, false);
+		}
+
+		private IEnumerable<ISource> GetActiveVideoSources(IDestination destination)
+		{
+			if (destination == null)
+				throw new ArgumentNullException("destination");
+
 			return GetActiveSources(destination, eConnectionType.Video);
 		}
 
-		public EndpointInfo? GetActiveVideoEndpoint(IDestination destination)
+		private IEnumerable<ISource> GetActiveSources(IDestination destination, eConnectionType flag)
 		{
-			return GetActiveEndpoint(destination, eConnectionType.Video);
-		}
+			if (destination == null)
+				throw new ArgumentNullException("destination");
 
-		public IEnumerable<ISource> GetActiveSources(IDestination destination, eConnectionType flag)
-		{
-			EndpointInfo? info = GetActiveEndpoint(destination, flag);
-			if (info == null)
-				return null;
-
-			return RoutingGraph.Sources.GetChildren(info.Value, flag);
-		}
-
-		public EndpointInfo? GetActiveEndpoint(IDestination destination, eConnectionType flag)
-		{
-			IRouteDestinationControl destinationControl =
-				m_Room.Core.GetControl<IRouteDestinationControl>(destination.Endpoint.Device, destination.Endpoint.Control);
-
-			return
-				RoutingGraph.GetActiveSourceEndpoint(destinationControl, destination.Endpoint.Address, flag,
-				                                     false, false);
+			return GetActiveEndpoints(destination, flag).SelectMany(e => RoutingGraph.Sources.GetChildren(e, flag))
+														.Distinct();
 		}
 
 		#endregion
@@ -399,10 +413,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 				throw new ArgumentNullException("destination");
 
 			eConnectionType intersection = EnumUtils.GetFlagsIntersection(source.ConnectionType, destination.ConnectionType);
-			if (intersection == eConnectionType.None)
-				return;
 
-			Route(source.Endpoint, destination.Endpoint, intersection);
+			foreach (eConnectionType flag in EnumUtils.GetFlagsExceptNone(intersection))
+				Route(source, destination, flag);
 		}
 
 		/// <summary>
@@ -415,10 +428,10 @@ namespace ICD.Profound.ConnectPRO.Routing
 				throw new ArgumentNullException("codecControl");
 
 			Connection[] outputs = RoutingGraph.Connections
-			                                   .GetOutputConnections(codecControl.Parent.Id,
-			                                                         codecControl.Id)
-			                                   .OrderBy(o => o.Source.Address)
-			                                   .ToArray();
+											   .GetOutputConnections(codecControl.Parent.Id,
+																	 codecControl.Id)
+											   .OrderBy(o => o.Source.Address)
+											   .ToArray();
 
 			IDestination[] destinations = GetDisplayDestinations().ToArray();
 
@@ -435,14 +448,68 @@ namespace ICD.Profound.ConnectPRO.Routing
 				if (output == null)
 					break;
 
-				Route(output.Source, destination.Endpoint, eConnectionType.Video);
+				Route(output.Source, destination, eConnectionType.Video);
 			}
 
 			foreach (IDestination audioDestination in GetAudioDestinations())
 			{
 				Route(codecControl.GetOutputEndpointInfo(firstOutput.Source.Address),
-				      audioDestination.Endpoint, eConnectionType.Audio);
+					  audioDestination, eConnectionType.Audio);
 			}
+		}
+
+		/// <summary>
+		/// Routes the source to the destination.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
+		/// <param name="flag"></param>
+		private void Route(ISource source, IDestination destination, eConnectionType flag)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			if (destination == null)
+				throw new ArgumentNullException("destination");
+
+			ConnectionPath path = RoutingGraph.FindPath(source, destination, flag, m_Room.Id);
+			if (path == null)
+			{
+				m_Room.Logger.AddEntry(eSeverity.Error, "Failed to find {0} path from {1} to {2}", flag, source, destination);
+				return;
+			}
+
+			Route(path);
+		}
+
+		private void Route(EndpointInfo sourceEndpoint, IDestination destination, eConnectionType flag)
+		{
+			if (destination == null)
+				throw new ArgumentNullException("destination");
+
+			ConnectionPath path = RoutingGraph.FindPath(sourceEndpoint, destination, flag, m_Room.Id);
+			if (path == null)
+			{
+				m_Room.Logger.AddEntry(eSeverity.Error, "Failed to find {0} path from {1} to {2}", flag, sourceEndpoint, destination);
+				return;
+			}
+
+			Route(path);
+		}
+
+		private void Route(ISource source, EndpointInfo destinationEndpoint, eConnectionType flag)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			ConnectionPath path = RoutingGraph.FindPath(source, destinationEndpoint, flag, m_Room.Id);
+			if (path == null)
+			{
+				m_Room.Logger.AddEntry(eSeverity.Error, "Failed to find {0} path from {1} to {2}", flag, source, destinationEndpoint);
+				return;
+			}
+
+			Route(path);
 		}
 
 		public void RouteAudio(ISource source)
@@ -475,7 +542,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (destination == null)
 				throw new ArgumentNullException("destination");
 
-			Route(source.Endpoint, destination.Endpoint, eConnectionType.Audio);
+			Route(source, destination, eConnectionType.Audio);
 		}
 
 		/// <summary>
@@ -493,33 +560,36 @@ namespace ICD.Profound.ConnectPRO.Routing
 			EndpointInfo sourceEndpoint = sourceControl.GetOutputEndpointInfo(1);
 
 			foreach (IDestination destination in GetDisplayDestinations())
-				Route(sourceEndpoint, destination.Endpoint, eConnectionType.Video);
+				Route(sourceEndpoint, destination, eConnectionType.Video);
 		
 			OnDisplayTrackingChanged.Raise(this);
 		}
 
-		private void Route(EndpointInfo source, EndpointInfo destination, eConnectionType connectionType)
+		private void Route(ConnectionPath path)
 		{
-			IcdStopwatch.Profile(() =>
-			                     {
+			if (path == null)
+				throw new ArgumentNullException("path");
 
-				                     bool oldRouting = m_Routing;
-				                     m_Routing = true;
 
-				                     RoutingGraph.Route(source, destination, connectionType, m_Room.Id);
 
-				                     if (!oldRouting)
-					                     m_Routing = false;
+			bool oldRouting = m_Routing;
+			m_Routing = true;
 
-				                     IDisplay display = m_Room.Core.Originators.GetChild(destination.Device) as IDisplay;
-				                     if (display == null)
-					                     return;
+			IcdStopwatch.Profile(() => RoutingGraph.RoutePath(path, m_Room.Id),
+			                     string.Format("Route - {0} {1}", path, path.ConnectionType));
 
-				                     display.PowerOn();
+			if (!oldRouting)
+				m_Routing = false;
 
-				                     if (display.HdmiInput != destination.Address)
-					                     display.SetHdmiInput(destination.Address);
-			                     }, string.Format("Route - {0} {1} {2}", source, destination, connectionType));
+			IDisplay display = m_Room.Core.Originators.GetChild(path.DestinationEndpoint.Device) as IDisplay;
+			if (display == null)
+				return;
+
+			display.PowerOn();
+
+			if (display.HdmiInput != path.DestinationEndpoint.Address)
+				display.SetHdmiInput(path.DestinationEndpoint.Address);
+
 		}
 
 		/// <summary>
@@ -539,7 +609,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			CiscoCodecRoutingControl control = codec.Controls.GetControl<CiscoCodecRoutingControl>();
 			int input = RoutingGraph.Connections.GetInputs(control, eConnectionType.Video).First();
 
-			Route(source.Endpoint, control.GetInputEndpointInfo(input), eConnectionType.Video);
+			Route(source, control.GetInputEndpointInfo(input), eConnectionType.Video);
 
 			// Start the presentation
 			VideoComponent video = codec.Components.GetComponent<VideoComponent>();
@@ -559,7 +629,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				throw new ArgumentNullException("source");
 
 			foreach (IDestination destination in GetAudioDestinations())
-				RoutingGraph.Unroute(source.Endpoint, destination.Endpoint, eConnectionType.Audio, m_Room.Id);
+				RoutingGraph.Unroute(source, destination, eConnectionType.Audio, m_Room.Id);
 		}
 
 		/// <summary>
@@ -572,7 +642,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				throw new ArgumentNullException("source");
 
 			foreach (IDestination destination in GetDisplayDestinations())
-				RoutingGraph.Unroute(source.Endpoint, destination.Endpoint, eConnectionType.Video, m_Room.Id);
+				RoutingGraph.Unroute(source, destination, eConnectionType.Video, m_Room.Id);
 		}
 
 		/// <summary>
@@ -598,15 +668,10 @@ namespace ICD.Profound.ConnectPRO.Routing
 			UnrouteVtc();
 
 			foreach (IDestination display in GetDisplayDestinations())
-			{
-				if (!GetActiveVideoSources(display).Any())
-					continue;
-
-				RoutingGraph.UnrouteDestination(display.Endpoint, EnumUtils.GetFlagsAllValue<eConnectionType>(), m_Room.Id);
-			}
+				RoutingGraph.Unroute(display, EnumUtils.GetFlagsAllValue<eConnectionType>(), m_Room.Id);
 
 			foreach (IDestination audio in GetAudioDestinations())
-				RoutingGraph.UnrouteDestination(audio.Endpoint, EnumUtils.GetFlagsAllValue<eConnectionType>(), m_Room.Id);
+				RoutingGraph.Unroute(audio, EnumUtils.GetFlagsAllValue<eConnectionType>(), m_Room.Id);
 		}
 
 		/// <summary>
@@ -618,19 +683,20 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			foreach (IDestination display in GetDisplayDestinations())
 			{
-				EndpointInfo? endpoint = GetActiveVideoEndpoint(display);
-				if (endpoint == null)
-					continue;
+				IEnumerable<EndpointInfo> endpoints = GetActiveVideoEndpoints(display);
 
-				OsdPanelDevice osd = m_Room.Core.Originators.GetChild(endpoint.Value.Device) as OsdPanelDevice;
-				if (osd != null)
-					continue;
+				foreach (EndpointInfo endpoint in endpoints)
+				{
+					OsdPanelDevice osd = m_Room.Core.Originators.GetChild(endpoint.Device) as OsdPanelDevice;
+					if (osd != null)
+						continue;
 
-				RoutingGraph.UnrouteDestination(display.Endpoint, EnumUtils.GetFlagsAllValue<eConnectionType>(), m_Room.Id);
+					RoutingGraph.Unroute(display, EnumUtils.GetFlagsAllValue<eConnectionType>(), m_Room.Id);
+				}
 			}
 
 			foreach (IDestination audio in GetAudioDestinations())
-				RoutingGraph.UnrouteDestination(audio.Endpoint, EnumUtils.GetFlagsAllValue<eConnectionType>(), m_Room.Id);
+				RoutingGraph.Unroute(audio, EnumUtils.GetFlagsAllValue<eConnectionType>(), m_Room.Id);
 		}
 
 		#endregion
@@ -647,7 +713,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (source == null)
 				throw new ArgumentNullException("source");
 
-			return m_Room.Core.Originators.GetChild<IDeviceBase>(source.Endpoint.Device);
+			return m_Room.Core.Originators.GetChild<IDeviceBase>(source.Device);
 		}
 
 		public bool CanControl(ISource source)
@@ -798,7 +864,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				GetCachedActiveVideoSources().Where(kvp => kvp.Value == null).Select(kvp => kvp.Key);
 
 			foreach (IDestination destination in emptyDestinations)
-				Route(sourceEndpoint, destination.Endpoint, eConnectionType.Video);
+				Route(sourceEndpoint, destination, eConnectionType.Video);
 		}
 
 		/// <summary>
