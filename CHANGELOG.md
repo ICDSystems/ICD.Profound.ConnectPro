@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
  - Hiding favourites icon on recent calls
  - Pressing the favourite icon on a favourited contact removes the contact from favourites
+ - Incoming call subpage now updates to show latest information for caller
 
 ## [2.0.0] - 2018-04-23
 ### Changed

@@ -1,7 +1,10 @@
-﻿using System.Linq;
-using ICD.Common.Properties;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ICD.Common.Utils;
+using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.ConferenceManagers;
-using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.ConferenceSources;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -9,8 +12,6 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
-using System;
-using ICD.Common.Utils.Extensions;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference
 {
@@ -21,7 +22,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		public event EventHandler OnCallAnswered;
 
+		private readonly List<IConferenceSource> m_Sources;
+		private readonly SafeCriticalSection m_SourcesSection;
+		private readonly SafeCriticalSection m_RefreshSection;
+
 		private IConferenceManager m_SubscribedConferenceManager;
+
+		/// <summary>
+		/// Gets the number of incoming sources.
+		/// </summary>
+		private int SourceCount { get { return m_SourcesSection.Execute(() => m_Sources.Count); } }
 
 		/// <summary>
 		/// Constructor.
@@ -32,6 +42,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		public VtcIncomingCallPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
+			m_Sources = new List<IConferenceSource>();
+			m_SourcesSection = new SafeCriticalSection();
+			m_RefreshSection = new SafeCriticalSection();
 		}
 
 		/// <summary>
@@ -52,30 +65,28 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Refresh(view);
 
-			IConferenceSource source = GetSource();
-			string info = source == null ? string.Empty : string.Format("{0} - {1}", source.Name, source.Number);
+			m_RefreshSection.Enter();
 
-			view.SetCallerInfo(info);
+			try
+			{
+				IConferenceSource source = GetFirstSource();
+				string info = source == null ? string.Empty : string.Format("{0} - {1}", source.Name, source.Number);
+
+				view.SetCallerInfo(info);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
 		}
 
 		/// <summary>
-		/// Gets the first available incoming conference source.
+		/// Gets the first unanswered source.
 		/// </summary>
 		/// <returns></returns>
-		[CanBeNull]
-		private IConferenceSource GetSource()
+		private IConferenceSource GetFirstSource()
 		{
-			IConference conference = m_SubscribedConferenceManager == null
-				                         ? null
-				                         : m_SubscribedConferenceManager.ActiveConference;
-
-			IConferenceSource source = conference == null
-				                           ? null
-				                           : conference.GetSources()
-				                                       .FirstOrDefault(s => s.Direction == eConferenceSourceDirection.Incoming &&
-				                                                            !s.GetIsAnswered() &&
-				                                                            !s.GetIsOnline());
-			return source;
+			return m_SourcesSection.Execute(() => m_Sources.FirstOrDefault());
 		}
 
 		#region Room Callbacks
@@ -88,15 +99,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Subscribe(room);
 
-			if (room == null)
-				return;
-
-			m_SubscribedConferenceManager = room.ConferenceManager;
+			m_SubscribedConferenceManager = room == null ? null : room.ConferenceManager;
 			if (m_SubscribedConferenceManager == null)
 				return;
 
-			m_SubscribedConferenceManager.OnRecentSourceAdded += SubscribedConferenceManagerOnRecentSourceAdded;
-			m_SubscribedConferenceManager.OnActiveSourceStatusChanged += SubscribedConferenceManagerOnActiveSourceStatusChanged;
+			m_SubscribedConferenceManager.OnRecentSourceAdded += ConferenceManagerOnRecentSourceAdded;
 		}
 
 		/// <summary>
@@ -110,39 +117,140 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (m_SubscribedConferenceManager == null)
 				return;
 
-			m_SubscribedConferenceManager.OnRecentSourceAdded -= SubscribedConferenceManagerOnRecentSourceAdded;
-			m_SubscribedConferenceManager.OnActiveSourceStatusChanged -= SubscribedConferenceManagerOnActiveSourceStatusChanged;
+			m_SubscribedConferenceManager.OnRecentSourceAdded -= ConferenceManagerOnRecentSourceAdded;
 		}
 
 		/// <summary>
-		/// Called when a conference source is added to the conference manager.
+		/// Adds the source to the collection.
+		/// </summary>
+		/// <param name="source"></param>
+		private void AddSource(IConferenceSource source)
+		{
+			m_SourcesSection.Enter();
+
+			try
+			{
+				if (m_Sources.Contains(source))
+					return;
+
+				m_Sources.Add(source);
+				Subscribe(source);
+			}
+			finally
+			{
+				m_SourcesSection.Leave();
+			}
+
+			ShowView(SourceCount > 0);
+			RefreshIfVisible(false);
+		}
+
+		/// <summary>
+		/// Removes the source from the collection.
+		/// </summary>
+		/// <param name="source"></param>
+		private void RemoveSource(IConferenceSource source)
+		{
+			m_SourcesSection.Enter();
+			try
+			{
+				if (!m_Sources.Contains(source))
+					return;
+
+				m_Sources.Remove(source);
+				Unsubscribe(source);
+			}
+			finally
+			{
+				m_SourcesSection.Leave();
+			}
+
+			RefreshIfVisible();
+			ShowView(SourceCount > 0);
+		}
+
+		/// <summary>
+		/// Called when a new source is detected.
 		/// </summary>
 		/// <param name="sender"></param>
-		/// <param name="eventArgs"></param>
-		private void SubscribedConferenceManagerOnRecentSourceAdded(object sender, ConferenceSourceEventArgs eventArgs)
+		/// <param name="args"></param>
+		private void ConferenceManagerOnRecentSourceAdded(object sender, ConferenceSourceEventArgs args)
 		{
-			UpdateVisibility();
+			IConferenceSource source = args.Data;
+			if (source.GetIsRingingIncomingCall())
+				AddSource(source);
+		}
+
+		#endregion
+
+		#region Source Callbacks
+
+		/// <summary>
+		/// Subscribe to the source events.
+		/// </summary>
+		/// <param name="source"></param>
+		private void Subscribe(IConferenceSource source)
+		{
+			source.OnNameChanged += SourceOnNameChanged;
+			source.OnNumberChanged += SourceOnNumberChanged;
+			source.OnSourceTypeChanged += SourceOnSourceTypeChanged;
+			source.OnStatusChanged += SourceOnStatusChanged;
 		}
 
 		/// <summary>
-		/// Called when an active conference source status changes.
+		/// Unsubscribe from the source events.
+		/// </summary>
+		/// <param name="source"></param>
+		private void Unsubscribe(IConferenceSource source)
+		{
+			source.OnNameChanged -= SourceOnNameChanged;
+			source.OnNumberChanged -= SourceOnNumberChanged;
+			source.OnSourceTypeChanged -= SourceOnSourceTypeChanged;
+			source.OnStatusChanged -= SourceOnStatusChanged;
+		}
+
+		/// <summary>
+		/// Called when the source status changes.
 		/// </summary>
 		/// <param name="sender"></param>
-		/// <param name="eventArgs"></param>
-		private void SubscribedConferenceManagerOnActiveSourceStatusChanged(object sender, ConferenceSourceStatusEventArgs eventArgs)
+		/// <param name="args"></param>
+		private void SourceOnStatusChanged(object sender, ConferenceSourceStatusEventArgs args)
 		{
-			UpdateVisibility();
+			IConferenceSource source = sender as IConferenceSource;
+			if (sender == null)
+				return;
+
+			if (!source.GetIsRingingIncomingCall())
+				RemoveSource(source);
 		}
 
 		/// <summary>
-		/// Updates the visibility of the subpage based if there is an incoming source.
+		/// Called when the source type changes.
 		/// </summary>
-		private void UpdateVisibility()
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void SourceOnSourceTypeChanged(object sender, EventArgs args)
 		{
-			IConferenceSource source = GetSource();
+			RefreshIfVisible();
+		}
 
-			ShowView(source != null);
+		/// <summary>
+		/// Called when the source number changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void SourceOnNumberChanged(object sender, StringEventArgs args)
+		{
+			RefreshIfVisible();
+		}
 
+		/// <summary>
+		/// Called when the source name changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void SourceOnNameChanged(object sender, StringEventArgs args)
+		{
 			RefreshIfVisible();
 		}
 
@@ -181,7 +289,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="e"></param>
 		private void ViewOnIgnoreButtonPressed(object sender, EventArgs e)
 		{
-			IConferenceSource source = GetSource();
+			IConferenceSource source = GetFirstSource();
 
 			if (source != null)
 				source.Hangup();
@@ -196,7 +304,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="e"></param>
 		private void ViewOnAnswerButtonPressed(object sender, EventArgs e)
 		{
-			IConferenceSource source = GetSource();
+			IConferenceSource source = GetFirstSource();
 
 			if (source != null)
 				source.Answer();
