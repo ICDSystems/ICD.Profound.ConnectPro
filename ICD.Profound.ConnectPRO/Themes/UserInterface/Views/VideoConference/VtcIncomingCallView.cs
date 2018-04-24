@@ -8,7 +8,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 	public sealed partial class VtcIncomingCallView : AbstractView, IVtcIncomingCallView
 	{
 		public event EventHandler OnAnswerButtonPressed;
-		public event EventHandler OnIgoreButtonPressed;
+		public event EventHandler OnIgnoreButtonPressed;
 
 		/// <summary>
 		/// Constructor.
@@ -49,7 +49,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 
 		private void IgnoreButtonOnPressed(object sender, EventArgs eventArgs)
 		{
-			OnIgoreButtonPressed.Raise(this);
+			OnIgnoreButtonPressed.Raise(this);
 		}
 
 		private void AnswerButtonOnPressed(object sender, EventArgs eventArgs)

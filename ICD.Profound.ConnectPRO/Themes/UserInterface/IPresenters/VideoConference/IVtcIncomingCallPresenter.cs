@@ -5,6 +5,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConferen
 {
 	public interface IVtcIncomingCallPresenter : IPresenter<IVtcIncomingCallView>
 	{
+		/// <summary>
+		/// Raised when the user answers the incoming call.
+		/// </summary>
 		event EventHandler OnCallAnswered;
 	}
 }
