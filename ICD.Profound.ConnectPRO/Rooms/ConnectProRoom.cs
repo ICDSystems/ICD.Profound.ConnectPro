@@ -96,13 +96,13 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <param name="shutdown"></param>
 		public void EndMeeting(bool shutdown)
 		{
-			bool change = m_IsInMeeting;
-			m_IsInMeeting = false;
+			if (!m_IsInMeeting)
+				return;
 
+			m_IsInMeeting = false;
 			Shutdown(shutdown);
 
-			if (change)
-				OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
+			OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
 		}
 
 		#endregion
