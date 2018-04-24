@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Cameras;
 using ICD.Connect.Cameras.Controls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -73,9 +74,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 				for (ushort index = 0; index < 5; index++)
 				{
-					string name = index < m_CameraPresets.Length
-						              ? m_CameraPresets[index].Name
-						              : string.Empty;
+					string name = "Press and Hold";
+
+					CameraPreset preset;
+					if (m_CameraPresets.TryElementAt(index, out preset))
+					{
+						name = preset.Name ?? string.Empty;
+						name = name.Trim();
+
+						if (string.IsNullOrEmpty(name))
+							name = string.Format("Preset {0}", index + 1);
+					}
 
 					view.SetPresetButtonLabel(index, name);
 				}
