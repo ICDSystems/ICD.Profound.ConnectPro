@@ -58,7 +58,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <returns></returns>
 		protected override bool GetIsFavorite()
 		{
-			// todo
 			return false;
 		}
 
@@ -68,7 +67,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <returns></returns>
 		protected override bool GetIsFavoriteVisible()
 		{
-			return true;
+			return false;
 		}
 
 		protected override void SetModel(object model)
