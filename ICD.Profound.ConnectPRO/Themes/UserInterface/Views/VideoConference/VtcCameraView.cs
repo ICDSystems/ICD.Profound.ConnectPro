@@ -30,6 +30,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		}
 
 		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			OnCameraMoveUpButtonPressed = null;
+			OnCameraMoveLeftButtonPressed = null;
+			OnCameraMoveRightButtonPressed = null;
+			OnCameraMoveDownButtonPressed = null;
+			OnCameraZoomInButtonPressed = null;
+			OnCameraZoomOutButtonPressed = null;
+			OnCameraButtonReleased = null;
+			OnPresetButtonPressed = null;
+
+			base.Dispose();
+		}
+
+		/// <summary>
 		/// Sets the label for the preset button at the given index.
 		/// </summary>
 		/// <param name="index"></param>
