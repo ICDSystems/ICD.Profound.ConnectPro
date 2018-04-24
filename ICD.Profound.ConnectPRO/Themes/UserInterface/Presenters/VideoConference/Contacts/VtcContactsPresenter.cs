@@ -8,6 +8,7 @@ using ICD.Connect.Conferencing.Cisco.Components.Directory;
 using ICD.Connect.Conferencing.Cisco.Components.Directory.Tree;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
+using ICD.Connect.Conferencing.Contacts;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -119,6 +120,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				UnsubscribeChildren();
 
 				IEnumerable<ModelPresenterTypeInfo> contacts = GetContacts();
+
 				foreach (IVtcReferencedContactsPresenterBase presenter in m_ContactsFactory.BuildChildren(contacts))
 				{
 					Subscribe(presenter);
@@ -160,6 +162,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 					return m_DirectoryBrowser.GetCurrentFolder()
 					                         .GetChildren()
+											 .OrderBy(c => c is IContact)
+											 .ThenBy(c => c.Name)
 					                         .Select(c =>
 					                                 {
 						                                 ModelPresenterTypeInfo.ePresenterType type = (c is IFolder)
@@ -176,6 +180,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 							? Enumerable.Empty<ModelPresenterTypeInfo>()
 							: m_SubscribedConferenceManager.Favorites
 								.GetFavorites()
+								.OrderBy(f => f.Name)
 								.Select(f => new ModelPresenterTypeInfo(ModelPresenterTypeInfo.ePresenterType.Favorite, f));
 				
 				case eDirectoryMode.Recents:
