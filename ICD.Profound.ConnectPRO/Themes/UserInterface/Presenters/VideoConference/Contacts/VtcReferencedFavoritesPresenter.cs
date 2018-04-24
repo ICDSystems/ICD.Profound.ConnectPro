@@ -1,4 +1,5 @@
-﻿using ICD.Connect.Conferencing.ConferenceManagers;
+﻿using System;
+using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Favorites;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
@@ -73,6 +74,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			IConferenceManager manager = Room == null ? null : Room.ConferenceManager;
 			if (manager != null && m_Favorite != null)
 				manager.Dial(m_Favorite);
+		}
+
+		protected override void ViewOnFavoriteButtonPressed(object sender, EventArgs eventArgs)
+		{
+			base.ViewOnFavoriteButtonPressed(sender, eventArgs);
+
+			if (m_Favorite == null)
+				return;
+
+			IFavorites favorites = Favorites;
+			if (favorites == null)
+				return;
+
+			favorites.RemoveFavorite(m_Favorite);
+
+			RefreshIfVisible();
 		}
 	}
 }
