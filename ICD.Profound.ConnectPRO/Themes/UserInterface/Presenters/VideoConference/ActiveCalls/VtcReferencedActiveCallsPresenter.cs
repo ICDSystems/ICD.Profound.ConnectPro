@@ -14,8 +14,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 	                                                   IVtcReferencedActiveCallsPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
+		private readonly SafeTimer m_RefreshTimer;
+
 		private IConferenceSource m_Source;
-		private SafeTimer m_RefreshTimer;
 
 		/// <summary>
 		/// Sets the conference source for this presenter.
