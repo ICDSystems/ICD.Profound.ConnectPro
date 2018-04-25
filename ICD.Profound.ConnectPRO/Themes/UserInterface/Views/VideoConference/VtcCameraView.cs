@@ -17,7 +17,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		public event EventHandler OnCameraZoomInButtonPressed;
 		public event EventHandler OnCameraZoomOutButtonPressed;
 		public event EventHandler OnCameraButtonReleased;
-		public event EventHandler<UShortEventArgs> OnPresetButtonPressed;
+		public event EventHandler<UShortEventArgs> OnPresetButtonReleased;
+		public event EventHandler<UShortEventArgs> OnPresetButtonHeld;
 
 		/// <summary>
 		/// Constructor.
@@ -41,7 +42,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			OnCameraZoomInButtonPressed = null;
 			OnCameraZoomOutButtonPressed = null;
 			OnCameraButtonReleased = null;
-			OnPresetButtonPressed = null;
+			OnPresetButtonReleased = null;
+			OnPresetButtonHeld = null;
 
 			base.Dispose();
 		}
@@ -73,7 +75,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			m_ZoomOutButton.OnReleased += ZoomOutButtonOnReleased;
 
 			foreach (VtProButton button in m_PresetButtons.Values)
-				button.OnPressed += PresetButtonOnPressed;
+			{
+				button.OnHeld += PresetButtonOnHeld;
+				button.OnReleased += PresetButtonOnReleased;
+			}
 		}
 
 		/// <summary>
@@ -90,14 +95,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			m_ZoomOutButton.OnPressed -= ZoomOutButtonOnPressed;
 			m_ZoomOutButton.OnReleased -= ZoomOutButtonOnReleased;
 
-			foreach (VtProButton presetButton in m_PresetButtons.Values)
-				presetButton.OnPressed -= PresetButtonOnPressed;
-		}
-
-		private void PresetButtonOnPressed(object sender, EventArgs eventArgs)
-		{
-			ushort index = m_PresetButtonsInverse[sender as VtProButton];
-			OnPresetButtonPressed.Raise(this, new UShortEventArgs(index));
+			foreach (VtProButton button in m_PresetButtons.Values)
+			{
+				button.OnHeld -= PresetButtonOnHeld;
+				button.OnReleased -= PresetButtonOnReleased;
+			}
 		}
 
 		private void ZoomOutButtonOnReleased(object sender, EventArgs eventArgs)
@@ -147,6 +149,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
+		}
+
+		private void PresetButtonOnReleased(object sender, EventArgs eventArgs)
+		{
+			ushort index = m_PresetButtonsInverse[sender as VtProButton];
+			OnPresetButtonReleased.Raise(this, new UShortEventArgs(index));
+		}
+
+		private void PresetButtonOnHeld(object sender, EventArgs eventArgs)
+		{
+			ushort index = m_PresetButtonsInverse[sender as VtProButton];
+			OnPresetButtonHeld.Raise(this, new UShortEventArgs(index));
 		}
 
 		#endregion

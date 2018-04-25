@@ -10,6 +10,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 {
 	public sealed partial class VtcCameraView
 	{
+		private const long PRESET_HOLD_MILLISECONDS = 1000;
+
 		private VtProSubpage m_Subpage;
 		private VtProDPad m_DPad;
 		private VtProButton m_ZoomInButton;
@@ -51,31 +53,36 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			m_PresetButton1 = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 631,
-				IndirectTextJoin = 631
+				IndirectTextJoin = 631,
+				HoldDuration = PRESET_HOLD_MILLISECONDS
 			};
 
 			m_PresetButton2 = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 632,
-				IndirectTextJoin = 632
+				IndirectTextJoin = 632,
+				HoldDuration = PRESET_HOLD_MILLISECONDS
 			};
 
 			m_PresetButton3 = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 633,
-				IndirectTextJoin = 633
+				IndirectTextJoin = 633,
+				HoldDuration = PRESET_HOLD_MILLISECONDS
 			};
 
 			m_PresetButton4 = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 634,
-				IndirectTextJoin = 634
+				IndirectTextJoin = 634,
+				HoldDuration = PRESET_HOLD_MILLISECONDS
 			};
 
 			m_PresetButton5 = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 635,
-				IndirectTextJoin = 635
+				IndirectTextJoin = 635,
+				HoldDuration = PRESET_HOLD_MILLISECONDS
 			};
 
 			m_PresetButtons = new Dictionary<ushort, VtProButton>

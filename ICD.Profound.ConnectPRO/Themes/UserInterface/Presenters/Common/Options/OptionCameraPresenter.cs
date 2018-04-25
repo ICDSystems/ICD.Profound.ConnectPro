@@ -1,6 +1,5 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Cameras.Controls;
 using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.EventArguments;
@@ -50,13 +49,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		}
 
 		/// <summary>
-		/// Gets the camera control for the current room.
+		/// Gets the camera for the current room.
 		/// </summary>
 		/// <returns></returns>
-		private ICameraDeviceControl GetCameraControl()
+		private ICameraDevice GetCamera()
 		{
-			ICameraDevice device = Room == null ? null : Room.Originators.GetInstance<ICameraDevice>();
-			return device == null ? null : device.Controls.GetControl<ICameraDeviceControl>();
+			return Room == null ? null : Room.Originators.GetInstance<ICameraDevice>();
 		}
 
 		#region View Callbacks
@@ -68,7 +66,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// <param name="eventArgs"></param>
 		protected override void ViewOnButtonPressed(object sender, EventArgs eventArgs)
 		{
-			m_Menu.CameraControl = GetCameraControl();
+			m_Menu.Camera = GetCamera();
 			m_Menu.ShowView(!m_Menu.IsViewVisible);
 		}
 

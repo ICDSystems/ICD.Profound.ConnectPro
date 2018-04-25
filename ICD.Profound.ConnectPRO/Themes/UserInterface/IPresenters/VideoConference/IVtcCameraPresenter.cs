@@ -1,4 +1,4 @@
-﻿using ICD.Connect.Cameras.Controls;
+﻿using ICD.Connect.Cameras.Devices;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference
@@ -6,8 +6,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConferen
 	public interface IVtcCameraPresenter : IPresenter<IVtcCameraView>
 	{
 		/// <summary>
-		/// Gets/sets the current camera control.
+		/// Gets/sets the current camera.
 		/// </summary>
-		ICameraDeviceControl CameraControl { get; set; }
+		ICameraDevice Camera { get; set; }
 	}
 }

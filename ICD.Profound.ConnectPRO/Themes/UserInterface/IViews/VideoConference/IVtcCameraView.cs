@@ -45,7 +45,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 		/// <summary>
 		/// Raised when a preset button is pressed.
 		/// </summary>
-		event EventHandler<UShortEventArgs> OnPresetButtonPressed;
+		event EventHandler<UShortEventArgs> OnPresetButtonReleased;
+
+		/// <summary>
+		/// Raised when a preset button is held.
+		/// </summary>
+		event EventHandler<UShortEventArgs> OnPresetButtonHeld;
 
 		#endregion
 
