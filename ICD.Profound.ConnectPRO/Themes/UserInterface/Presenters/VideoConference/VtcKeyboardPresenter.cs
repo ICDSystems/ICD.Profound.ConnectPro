@@ -188,11 +188,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="eventArgs"></param>
 		private void ViewOnSubmitButtonPressed(object sender, EventArgs eventArgs)
 		{
-			string number = m_StringBuilder.Pop();
+			string number = m_StringBuilder.ToString();
 
 			IConferenceManager manager = Room == null ? null : Room.ConferenceManager;
 			if (manager != null)
 				manager.Dial(number);
+
+			ShowView(false);
 		}
 
 		private void ViewOnExitButtonPressed(object sender, EventArgs eventArgs)
@@ -231,6 +233,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			Caps = false;
 			Shift = false;
+
+			m_StringBuilder.Clear();
 		}
 
 		#endregion
