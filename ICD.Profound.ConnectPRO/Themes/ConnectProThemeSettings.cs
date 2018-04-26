@@ -1,28 +1,15 @@
-﻿using System;
-using ICD.Common.Utils.Xml;
+﻿using ICD.Common.Utils.Xml;
 using ICD.Connect.Settings.Attributes;
 using ICD.Connect.Settings.Attributes.SettingsProperties;
 using ICD.Connect.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes
 {
-	[KrangSettings(FACTORY_NAME)]
+	[KrangSettings("ConnectProTheme", typeof(ConnectProTheme))]
 	public sealed class ConnectProThemeSettings : AbstractThemeSettings
 	{
-		private const string FACTORY_NAME = "ConnectProTheme";
-
 		private const string TVPRESETS_ELEMENT = "TvPresets";
 		private const string WEB_CONFERENCING_INSTRUCTIONS_ELEMENT = "WebConferencing";
-
-		/// <summary>
-		/// Gets the originator factory name.
-		/// </summary>
-		public override string FactoryName { get { return FACTORY_NAME; } }
-
-		/// <summary>
-		/// Gets the type of the originator for this settings instance.
-		/// </summary>
-		public override Type OriginatorType { get { return typeof(ConnectProTheme); } }
 
 		[PathSettingsProperty("TvPresets", ".xml")]
 		public string TvPresets { get; set; }

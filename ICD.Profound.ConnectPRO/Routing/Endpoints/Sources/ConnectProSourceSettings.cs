@@ -1,30 +1,17 @@
-﻿using System;
-using ICD.Common.Utils.Xml;
+﻿using ICD.Common.Utils.Xml;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings.Attributes;
 
 namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 {
-	[KrangSettings(FACTORY_NAME)]
+	[KrangSettings("ConnectProSource", typeof(ConnectProSource))]
 	public sealed class ConnectProSourceSettings : AbstractSourceSettings
 	{
-		private const string FACTORY_NAME = "ConnectProSource";
-
 		private const string ICON_ELEMENT = "Icon";
 		private const string SHARE_ELEMENT = "Share";
 		private const string CONTROL_OVERRIDE_ELEMENT = "ControlOverride";
 
 		#region Properties
-
-		/// <summary>
-		/// Gets the originator factory name.
-		/// </summary>
-		public override string FactoryName { get { return FACTORY_NAME; } }
-
-		/// <summary>
-		/// Gets the type of the originator for this settings instance.
-		/// </summary>
-		public override Type OriginatorType { get { return typeof(ConnectProSource); } }
 
 		/// <summary>
 		/// Gets/sets the icon serial.
