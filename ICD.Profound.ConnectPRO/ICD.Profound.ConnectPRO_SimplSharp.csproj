@@ -326,6 +326,8 @@
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcShareView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcShareView.generated.cs" />
     <Compile Include="VolumePoint.cs" />
+    <Compile Include="VolumePoints\ConnectProVolumePoint.cs" />
+    <Compile Include="VolumePoints\ConnectProVolumePointSettings.cs" />
     <Compile Include="WebConferencing\WebConferencingAppInstructions.cs" />
     <Compile Include="WebConferencing\WebConferencingInstructions.cs" />
     <Compile Include="WebConferencing\WebConferencingStepInstructions.cs" />

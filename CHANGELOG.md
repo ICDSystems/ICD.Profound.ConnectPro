@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
  - Added camera preset saving and recalling
  - Manual dialing via keyboard
+ - Adding ConnectProVolumePoint
 
 ### Changed
  - Hiding favourites icon on recent calls
