@@ -386,41 +386,81 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			view.OnManualDialButtonPressed -= ViewOnManualDialButtonPressed;
 		}
 
+		/// <summary>
+		/// Called when the user presses the manual dial button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void ViewOnManualDialButtonPressed(object sender, EventArgs eventArgs)
 		{
 			m_Keyboard.ShowView(true);
 		}
 
+		/// <summary>
+		/// Called when the user presses the search button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void ViewOnSearchButtonPressed(object sender, EventArgs eventArgs)
 		{
 			Navigation.NavigateTo<IDisabledAlertPresenter>();
 		}
 
+		/// <summary>
+		/// Called when the user presses the home button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void ViewOnHomeButtonPressed(object sender, EventArgs eventArgs)
 		{
 			m_DirectoryBrowser.GoToRoot();
 		}
 
+		/// <summary>
+		/// Called when the user presses the back button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void ViewOnBackButtonPressed(object sender, EventArgs eventArgs)
 		{
 			m_DirectoryBrowser.GoUp();
 		}
 
+		/// <summary>
+		/// Called when the user presses the recents button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void ViewOnRecentButtonPressed(object sender, EventArgs eventArgs)
 		{
 			DirectoryMode = eDirectoryMode.Recents;
 		}
 
+		/// <summary>
+		/// Called when the user presses the favourites button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void ViewOnFavoritesButtonPressed(object sender, EventArgs eventArgs)
 		{
 			DirectoryMode = eDirectoryMode.Favorites;
 		}
 
+		/// <summary>
+		/// Called when the user presses the directory button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void ViewOnDirectoryButtonPressed(object sender, EventArgs eventArgs)
 		{
 			DirectoryMode = eDirectoryMode.Contacts;
 		}
 
+		/// <summary>
+		/// Called when the user presses the call button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void ViewOnCallButtonPressed(object sender, EventArgs eventArgs)
 		{
 			if (m_Selected == null)
@@ -432,6 +472,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			presenter.Dial();
 		}
 
+		/// <summary>
+		/// Called when the user presses the hangup button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void ViewOnHangupButtonPressed(object sender, EventArgs eventArgs)
 		{
 			IConference active = m_SubscribedConferenceManager == null ? null : m_SubscribedConferenceManager.ActiveConference;
