@@ -12,6 +12,7 @@ using ICD.Connect.Conferencing.Contacts;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contacts;
@@ -34,6 +35,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private DirectoryBrowser m_DirectoryBrowser;
 		private	IVtcReferencedContactsPresenterBase m_Selected;
 		private IConferenceManager m_SubscribedConferenceManager;
+		private IVtcKeyboardPresenter m_Keyboard;
 
 		/// <summary>
 		/// Gets/sets the directory mode for populating the contacts list.
@@ -78,6 +80,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			m_RefreshSection = new SafeCriticalSection();
 			m_ContactsFactory = new VtcReferencedContactsPresenterFactory(nav, ItemFactory);
+
+			m_Keyboard = nav.LazyLoadPresenter<IVtcKeyboardPresenter>();
+			m_Keyboard.OnExitButtonPressed += KeyboardOnExitButtonPressed;
+		}
+
+		private void KeyboardOnExitButtonPressed(object sender, EventArgs eventArgs)
+		{
+			m_Keyboard.ShowView(false);
+			ShowView(true);
 		}
 
 		/// <summary>
@@ -377,7 +388,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void ViewOnManualDialButtonPressed(object sender, EventArgs eventArgs)
 		{
-			Navigation.NavigateTo<IDisabledAlertPresenter>();
+			m_Keyboard.ShowView(true);
 		}
 
 		private void ViewOnSearchButtonPressed(object sender, EventArgs eventArgs)

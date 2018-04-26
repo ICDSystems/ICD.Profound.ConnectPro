@@ -27,6 +27,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private readonly IVtcContactsPresenter m_ContactsPresenter;
 		private readonly IVtcButtonListPresenter m_ButtonListPresenter;
 		private readonly IVtcCameraPresenter m_CameraPresenter;
+		private readonly IVtcKeyboardPresenter m_KeyboardPresenter;
 
 		/// <summary>
 		/// Constructor.
@@ -43,6 +44,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_ContactsPresenter = nav.LazyLoadPresenter<IVtcContactsPresenter>();
 			m_ContactsPresenter.OnViewVisibilityChanged += ContactsPresenterOnViewVisibilityChanged;
 
+			m_KeyboardPresenter = nav.LazyLoadPresenter<IVtcKeyboardPresenter>();
 			m_ButtonListPresenter = nav.LazyLoadPresenter<IVtcButtonListPresenter>();
 			m_CameraPresenter = nav.LazyLoadPresenter<IVtcCameraPresenter>();
 		}
@@ -182,16 +184,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.ViewOnVisibilityChanged(sender, args);
 
+			m_CameraPresenter.ShowView(false);
+			m_ButtonListPresenter.ShowView(false);
+			m_KeyboardPresenter.ShowView(false);
+
 			// View became visible
 			if (args.Data)
 			{
-				m_ButtonListPresenter.ShowView(false);
 				m_ContactsPresenter.ShowView(true);
 			}
 			// View became hidden
 			else
 			{
-				m_ButtonListPresenter.ShowView(false);
 				m_ContactsPresenter.ShowView(false);
 				m_CallListTogglePresenter.ShowView(false);
 

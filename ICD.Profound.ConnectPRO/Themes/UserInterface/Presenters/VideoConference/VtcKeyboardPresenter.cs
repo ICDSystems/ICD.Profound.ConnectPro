@@ -1,5 +1,6 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.UI.EventArguments;
 using ICD.Connect.UI.Utils;
@@ -12,6 +13,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 {
 	public sealed class VtcKeyboardPresenter : AbstractPresenter<IVtcKeyboardView>, IVtcKeyboardPresenter
 	{
+		public event EventHandler OnExitButtonPressed; 
+
 		private readonly KeypadStringBuilder m_StringBuilder;
 
 		private bool m_Shift;
@@ -69,6 +72,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_StringBuilder.OnStringChanged += StringBuilderOnStringChanged;
 
 			m_RefreshTextField = true;
+		}
+
+		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			OnExitButtonPressed = null;
+
+			base.Dispose();
 		}
 
 		/// <summary>
@@ -199,7 +212,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void ViewOnExitButtonPressed(object sender, EventArgs eventArgs)
 		{
-			ShowView(false);
+			OnExitButtonPressed.Raise(this);
 		}
 
 		/// <summary>
