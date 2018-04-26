@@ -4,5 +4,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConferen
 {
 	public interface IVtcButtonListPresenter : IPresenter<IVtcButtonListView>
 	{
+		void ShowMenu(ushort index);
 	}
 }

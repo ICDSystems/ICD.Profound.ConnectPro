@@ -31,11 +31,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly VtcReferencedContactsPresenterFactory m_ContactsFactory;
 
+		private readonly IVtcKeyboardPresenter m_Keyboard;
+
 		private eDirectoryMode m_DirectoryMode;
 		private DirectoryBrowser m_DirectoryBrowser;
 		private	IVtcReferencedContactsPresenterBase m_Selected;
 		private IConferenceManager m_SubscribedConferenceManager;
-		private IVtcKeyboardPresenter m_Keyboard;
 
 		/// <summary>
 		/// Gets/sets the directory mode for populating the contacts list.
@@ -479,9 +480,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="eventArgs"></param>
 		private void ViewOnHangupButtonPressed(object sender, EventArgs eventArgs)
 		{
-			IConference active = m_SubscribedConferenceManager == null ? null : m_SubscribedConferenceManager.ActiveConference;
-			if (active != null)
-				active.Hangup();
+			if (m_SubscribedConferenceManager == null || m_SubscribedConferenceManager.IsInCall == eInCall.None)
+				return;
+
+			// Go to the list of active calls
+			Navigation.LazyLoadPresenter<IVtcButtonListPresenter>().ShowMenu(VtcButtonListPresenter.INDEX_ACTIVE_CALLS);
 		}
 
 		/// <summary>

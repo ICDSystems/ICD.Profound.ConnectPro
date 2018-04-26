@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Incoming call subpage now updates to show latest information for caller
  - Using VolumePoints from originators collection
  - Using DialingPlan from abstract room settings
+ - Hangup button goes to the active call list
 
 ## [2.0.0] - 2018-04-23
 ### Changed

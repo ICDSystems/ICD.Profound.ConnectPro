@@ -14,7 +14,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 {
 	public sealed class VtcButtonListPresenter : AbstractPresenter<IVtcButtonListView>, IVtcButtonListPresenter
 	{
-		private const ushort INDEX_ACTIVE_CALLS = 0;
+		public const ushort INDEX_ACTIVE_CALLS = 0;
 		private const ushort INDEX_SHARE = 1;
 		private const ushort INDEX_DTMF = 2;
 
@@ -108,6 +108,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			}
 		}
 
+		public void ShowMenu(ushort menu)
+		{
+			m_NavPages[menu].ShowView(true);
+		}
+
 		#region Page Callbacks
 
 		/// <summary>
@@ -169,7 +174,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void ViewOnButtonPressed(object sender, UShortEventArgs eventArgs)
 		{
-			m_NavPages[eventArgs.Data].ShowView(true);
+			ShowMenu(eventArgs.Data);
 		}
 
 		/// <summary>
