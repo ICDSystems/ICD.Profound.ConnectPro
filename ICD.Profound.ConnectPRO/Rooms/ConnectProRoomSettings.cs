@@ -8,11 +8,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 	public sealed class ConnectProRoomSettings : AbstractRoomSettings
 	{
 		private const string DIALINGPLAN_ELEMENT = "DialingPlan";
-		private const string VOLUMEPOINT_ELEMENT = "VolumePoint";
 
 		public DialingPlanInfo DialingPlan { get; set; }
-
-		public VolumePoint VolumePoint { get; set; }
 
 		/// <summary>
 		/// Writes property elements to xml.
@@ -23,9 +20,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			base.WriteElements(writer);
 
 			DialingPlan.WriteToXml(writer, DIALINGPLAN_ELEMENT);
-
-			if (VolumePoint != null)
-				VolumePoint.WriteToXml(writer, VOLUMEPOINT_ELEMENT);
 		}
 
 		/// <summary>
@@ -39,16 +33,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			string dialingPlan;
 			XmlUtils.TryGetChildElementAsString(xml, DIALINGPLAN_ELEMENT, out dialingPlan);
 
-			string volumePoint;
-			XmlUtils.TryGetChildElementAsString(xml, VOLUMEPOINT_ELEMENT, out volumePoint);
-
 			DialingPlan = string.IsNullOrEmpty(dialingPlan)
 				              ? new DialingPlanInfo()
 				              : DialingPlanInfo.FromXml(dialingPlan);
-
-			VolumePoint = string.IsNullOrEmpty(volumePoint)
-				              ? null
-				              : VolumePoint.FromXml(volumePoint);
 		}
 	}
 }
