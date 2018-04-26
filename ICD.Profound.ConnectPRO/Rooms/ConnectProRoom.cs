@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
+using ICD.Common.Utils.IO;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
@@ -210,6 +212,26 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		{
 			m_DialingPlan = planInfo;
 
+			// TODO - Move loading from path into the DialingPlan.
+			string dialingPlanPath = string.IsNullOrEmpty(m_DialingPlan.ConfigPath)
+										 ? null
+										 : PathUtils.GetDefaultConfigPath("DialingPlans", m_DialingPlan.ConfigPath);
+
+			try
+			{
+				if (string.IsNullOrEmpty(dialingPlanPath))
+					Logger.AddEntry(eSeverity.Warning, "{0} has no Dialing Plan configured", this);
+				else
+				{
+					string dialingPlanXml = IcdFile.ReadToEnd(dialingPlanPath, Encoding.ASCII);
+					m_ConferenceManager.DialingPlan.LoadMatchersFromXml(dialingPlanXml);
+				}
+			}
+			catch (Exception e)
+			{
+				Logger.AddEntry(eSeverity.Error, "{0} failed to load Dialing Plan {1} - {2}", this, dialingPlanPath, e.Message);
+			}
+
 			// If there are no audio or video providers, search the available controls
 			if (m_DialingPlan.VideoEndpoint.DeviceId == 0 && m_DialingPlan.AudioEndpoint.DeviceId == 0)
 			{
@@ -223,7 +245,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 												 .Select(d => d.DeviceControlInfo)
 												 .FirstOrDefault(video);
 
-				m_DialingPlan = new DialingPlanInfo(video, audio);
+				m_DialingPlan = new DialingPlanInfo(m_DialingPlan.ConfigPath, video, audio);
 			}
 
 			// Setup the dialing providers
