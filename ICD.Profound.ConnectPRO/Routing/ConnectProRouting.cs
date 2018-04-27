@@ -605,11 +605,11 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (codec == null)
 				throw new InvalidOperationException("No codec available.");
 
-			// Route the video
+			// Route the source video and audio to the codec
 			CiscoCodecRoutingControl control = codec.Controls.GetControl<CiscoCodecRoutingControl>();
 			int input = RoutingGraph.Connections.GetInputs(control, eConnectionType.Video).First();
 
-			Route(source, control.GetInputEndpointInfo(input), eConnectionType.Video);
+			Route(source, control.GetInputEndpointInfo(input), eConnectionType.Video | eConnectionType.Audio);
 
 			// Start the presentation
 			VideoComponent video = codec.Components.GetComponent<VideoComponent>();

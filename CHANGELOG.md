@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Using VolumePoints from originators collection
  - Using DialingPlan from abstract room settings
  - Hangup button goes to the active call list
+ - Sharing source also routes audio to VTC
 
 ## [2.0.0] - 2018-04-23
 ### Changed
