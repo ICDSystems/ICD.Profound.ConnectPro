@@ -581,15 +581,18 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (!oldRouting)
 				m_Routing = false;
 
-			IDisplay display = m_Room.Core.Originators.GetChild(path.DestinationEndpoint.Device) as IDisplay;
-			if (display == null)
-				return;
+			IDeviceBase destinationDevice = m_Room.Core.Originators.GetChild<IDeviceBase>(path.DestinationEndpoint.Device);
 
-			display.PowerOn();
+			// Power on the destination
+			IPowerDeviceControl powerControl = destinationDevice.Controls.GetControl<IPowerDeviceControl>();
+			if (powerControl != null && !powerControl.IsPowered)
+				powerControl.PowerOn();
 
-			if (display.HdmiInput != path.DestinationEndpoint.Address)
-				display.SetHdmiInput(path.DestinationEndpoint.Address);
-
+			// Set the destination to the correct input
+			int input = path.DestinationEndpoint.Address;
+			IRouteInputSelectControl inputSelectControl = destinationDevice.Controls.GetControl<IRouteInputSelectControl>();
+			if (inputSelectControl != null && inputSelectControl.ActiveInput != input)
+				inputSelectControl.SetActiveInput(input);
 		}
 
 		/// <summary>
