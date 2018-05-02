@@ -344,6 +344,10 @@
       <Project>{AFEEC857-710B-4F94-B982-7BD8648904DD}</Project>
       <Name>ICD.Connect.Audio.Shure_SimplSharp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Audio\ICD.Connect.Audio\ICD.Connect.Audio_SimplSharp.csproj">
+      <Project>{8ED25D96-E9A5-4E9A-A890-B4EF3AB62041}</Project>
+      <Name>ICD.Connect.Audio_SimplSharp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ICD.Connect.Cameras\ICD.Connect.Cameras\ICD.Connect.Cameras_SimplSharp.csproj">
       <Project>{B13D593D-8BBF-4E20-ABD8-47C6095E7D3E}</Project>
       <Name>ICD.Connect.Cameras_SimplSharp</Name>

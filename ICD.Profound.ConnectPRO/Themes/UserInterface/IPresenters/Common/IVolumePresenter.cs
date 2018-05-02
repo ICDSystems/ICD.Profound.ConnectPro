@@ -1,4 +1,5 @@
-﻿using ICD.Connect.Devices.Controls;
+﻿using ICD.Connect.Audio.Controls;
+using ICD.Connect.Devices.Controls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common

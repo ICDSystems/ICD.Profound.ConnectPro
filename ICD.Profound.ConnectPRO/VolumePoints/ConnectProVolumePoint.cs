@@ -1,4 +1,4 @@
-﻿using ICD.Connect.Partitioning.VolumePoints;
+﻿using ICD.Connect.Audio.VolumePoints;
 
 namespace ICD.Profound.ConnectPRO.VolumePoints
 {
