@@ -288,7 +288,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			IVolumeLevelDeviceControl controlLevel = control as IVolumeLevelDeviceControl;
 			if (controlLevel != null)
 				controlLevel.OnVolumeChanged += DeviceOnVolumeChanged;
-
 		}
 
 		/// <summary>
