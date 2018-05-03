@@ -3,7 +3,6 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Audio.Controls;
-using ICD.Connect.Devices.Controls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -318,7 +317,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		private void DeviceOnVolumeChanged(object sender, VolumeDeviceVolumeChangedEventArgs args)
+		private void DeviceOnVolumeChanged(object sender, EventArgs args)
 		{
 			RefreshIfVisible();
 		}
