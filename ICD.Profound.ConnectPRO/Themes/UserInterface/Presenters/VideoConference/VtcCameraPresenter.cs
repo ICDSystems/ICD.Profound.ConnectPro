@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Cameras;
@@ -18,8 +19,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private ICameraDevice m_Camera;
 		private readonly Dictionary<int, CameraPreset> m_CameraPresets;
+
+		[CanBeNull]
+		private ICameraDevice m_Camera;
 
 		/// <summary>
 		/// Gets/sets the current camera control.
@@ -99,6 +102,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void Zoom(eCameraZoomAction action)
 		{
+			if (m_Camera == null)
+				return;
+
 			IZoomControl zoom = m_Camera.Controls.GetControl<IZoomControl>();
 			if (zoom != null)
 				zoom.Zoom(action);
@@ -106,6 +112,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void PanTilt(eCameraPanTiltAction action)
 		{
+			if (m_Camera == null)
+				return;
+
 			IPanTiltControl panTilt = m_Camera.Controls.GetControl<IPanTiltControl>();
 			if (panTilt != null)
 				panTilt.PanTilt(action);
@@ -189,6 +198,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void ViewOnPresetButtonReleased(object sender, UShortEventArgs eventArgs)
 		{
+			if (m_Camera == null)
+				return;
+
 			IPresetControl cameraControl = m_Camera.Controls.GetControl<IPresetControl>();
 			if (cameraControl == null)
 				return;
@@ -202,6 +214,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void ViewOnPresetButtonHeld(object sender, UShortEventArgs eventArgs)
 		{
+			if (m_Camera == null)
+				return;
+
 			IPresetControl cameraControl = m_Camera.Controls.GetControl<IPresetControl>();
 			if (cameraControl == null)
 				return;
