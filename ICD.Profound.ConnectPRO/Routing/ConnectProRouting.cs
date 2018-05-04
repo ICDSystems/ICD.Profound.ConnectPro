@@ -612,7 +612,10 @@ namespace ICD.Profound.ConnectPRO.Routing
 			CiscoCodecRoutingControl control = codec.Controls.GetControl<CiscoCodecRoutingControl>();
 			int input = RoutingGraph.Connections.GetInputs(control, eConnectionType.Video).First();
 
-			Route(source, control.GetInputEndpointInfo(input), eConnectionType.Video | eConnectionType.Audio);
+			EndpointInfo endpoint = control.GetInputEndpointInfo(input);
+
+			Route(source, endpoint, eConnectionType.Video);
+			Route(source, endpoint, eConnectionType.Audio);
 
 			// Start the presentation
 			VideoComponent video = codec.Components.GetComponent<VideoComponent>();
