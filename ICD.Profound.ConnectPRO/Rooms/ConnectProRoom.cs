@@ -75,10 +75,19 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		public IVolumeDeviceControl GetVolumeControl()
 		{
 			IVolumePoint volumePoint = Originators.GetInstance<IVolumePoint>();
+			if (volumePoint == null)
+				return null;
 
-			return volumePoint == null
-				       ? null
-					   : Core.GetControl<IVolumeDeviceControl>(volumePoint.DeviceId, volumePoint.ControlId);
+			try
+			{
+				Core.GetControl<IVolumeDeviceControl>(volumePoint.DeviceId, volumePoint.ControlId);
+			}
+			catch (Exception)
+			{
+				Logger.AddEntry(eSeverity.Error, "{0} - Failed to find volume control for {1}", this, volumePoint);
+			}
+
+			return null;
 		}
 
 		/// <summary>
