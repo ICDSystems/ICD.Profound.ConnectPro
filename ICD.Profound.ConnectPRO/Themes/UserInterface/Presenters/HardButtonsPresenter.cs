@@ -3,7 +3,6 @@ using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Audio.Controls;
-using ICD.Connect.Devices.Controls;
 using ICD.Connect.Panels.Controls;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
