@@ -428,10 +428,11 @@ namespace ICD.Profound.ConnectPRO.Routing
 				throw new ArgumentNullException("codecControl");
 
 			Connection[] outputs = RoutingGraph.Connections
-											   .GetOutputConnections(codecControl.Parent.Id,
-																	 codecControl.Id)
-											   .OrderBy(o => o.Source.Address)
-											   .ToArray();
+			                                   .GetOutputConnections(codecControl.Parent.Id,
+			                                                         codecControl.Id)
+			                                   .Where(c => c.ConnectionType.HasFlag(eConnectionType.Video))
+			                                   .OrderBy(o => o.Source.Address)
+			                                   .ToArray();
 
 			IDestination[] destinations = GetDisplayDestinations().ToArray();
 
