@@ -30,5 +30,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 		/// <param name="index"></param>
 		/// <param name="enabled"></param>
 		void SetButtonEnabled(ushort index, bool enabled);
+
+		/// <summary>
+		/// Sets the selected state of the button at the given index.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="selected"></param>
+		void SetButtonSelected(ushort index, bool selected);
 	}
 }
