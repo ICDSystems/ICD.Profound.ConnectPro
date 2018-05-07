@@ -205,7 +205,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (cameraControl == null)
 				return;
 
-			ushort index = eventArgs.Data;
+			ushort index = (ushort)(eventArgs.Data + 1);
 
 			CameraPreset preset;
 			if (m_CameraPresets.TryGetValue(index, out preset))
@@ -221,7 +221,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (cameraControl == null)
 				return;
 
-			ushort index = eventArgs.Data;
+			ushort index = (ushort)(eventArgs.Data + 1);
 			cameraControl.StorePreset(index);
 			RefreshIfVisible();
 		}
