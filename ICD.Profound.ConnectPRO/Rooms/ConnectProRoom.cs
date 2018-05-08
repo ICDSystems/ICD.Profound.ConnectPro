@@ -80,7 +80,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			try
 			{
-				Core.GetControl<IVolumeDeviceControl>(volumePoint.DeviceId, volumePoint.ControlId);
+				return Core.GetControl<IVolumeDeviceControl>(volumePoint.DeviceId, volumePoint.ControlId);
 			}
 			catch (Exception)
 			{
