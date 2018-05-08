@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Changed
  - Setting the selection state of VTC subpage buttons based on current active subpage
+ - Using codec input types to determine presentation routing endpoint
 
 ## [3.1.0] - 2018-05-03
 ### Changed
