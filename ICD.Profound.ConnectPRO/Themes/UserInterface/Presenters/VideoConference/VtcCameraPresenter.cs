@@ -82,7 +82,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 					string name = "Press and Hold";
 
 					CameraPreset preset;
-					if (m_CameraPresets.TryGetValue(index, out preset))
+					if (m_CameraPresets.TryGetValue(index + 1, out preset))
 					{
 						name = preset.Name ?? string.Empty;
 						name = name.Trim();
