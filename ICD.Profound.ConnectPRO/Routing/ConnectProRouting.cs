@@ -428,10 +428,11 @@ namespace ICD.Profound.ConnectPRO.Routing
 				throw new ArgumentNullException("codecControl");
 
 			Connection[] outputs = RoutingGraph.Connections
-											   .GetOutputConnections(codecControl.Parent.Id,
-																	 codecControl.Id)
-											   .OrderBy(o => o.Source.Address)
-											   .ToArray();
+			                                   .GetOutputConnections(codecControl.Parent.Id,
+			                                                         codecControl.Id)
+			                                   .Where(c => c.ConnectionType.HasFlag(eConnectionType.Video))
+			                                   .OrderBy(o => o.Source.Address)
+			                                   .ToArray();
 
 			IDestination[] destinations = GetDisplayDestinations().ToArray();
 
@@ -608,18 +609,44 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (codec == null)
 				throw new InvalidOperationException("No codec available.");
 
-			// Route the source video and audio to the codec
 			CiscoCodecRoutingControl control = codec.Controls.GetControl<CiscoCodecRoutingControl>();
-			int input = RoutingGraph.Connections.GetInputs(control, eConnectionType.Video).First();
 
-			Route(source, control.GetInputEndpointInfo(input), eConnectionType.Video | eConnectionType.Audio);
+			// Get the content inputs
+			int[] inputs = codec.InputTypes.GetInputs(eCodecInputType.Content).ToArray();
+			if (inputs.Length == 0)
+			{
+				m_Room.Logger.AddEntry(eSeverity.Error,
+				                       "Failed to start presentation for {0} - Codec has no inputs configured for content.",
+									   source);
+				return;
+			}
 
-			// Start the presentation
-			VideoComponent video = codec.Components.GetComponent<VideoComponent>();
-			VideoInputConnector connector = video.GetVideoInputConnector(input);
+			// Find the first input available
+			foreach (int input in inputs)
+			{
+				EndpointInfo endpoint = control.GetInputEndpointInfo(input);
 
-			PresentationComponent presentation = codec.Components.GetComponent<PresentationComponent>();
-			presentation.StartPresentation(connector.SourceId, PresentationItem.eSendingMode.LocalRemote);
+				// Is there a path?
+				if (RoutingGraph.FindPath(source, endpoint, eConnectionType.Video, m_Room.Id) == null)
+					continue;
+
+				// Route the source video and audio to the codec
+				Route(source, endpoint, eConnectionType.Video);
+				Route(source, endpoint, eConnectionType.Audio);
+
+				// Start the presentation
+				VideoComponent video = codec.Components.GetComponent<VideoComponent>();
+				VideoInputConnector connector = video.GetVideoInputConnector(input);
+
+				PresentationComponent presentation = codec.Components.GetComponent<PresentationComponent>();
+				presentation.StartPresentation(connector.SourceId, PresentationItem.eSendingMode.LocalRemote);
+
+				return;
+			}
+
+			m_Room.Logger.AddEntry(eSeverity.Error,
+			                       "Failed to start presentation for {0} - Could not find a path to a Codec input configured for content.",
+			                       source);
 		}
 
 		/// <summary>

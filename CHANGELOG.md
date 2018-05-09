@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
  - Default web conferencing path to processor address
 
+## [3.2.0] - 2018-05-09
+### Changed
+ - Setting the selection state of VTC subpage buttons based on current active subpage
+ - Using codec input types to determine presentation routing endpoint
+ - Fixing display issues in the VTC Camera presenter
+ - Routing presentation audio and video seperately
+ - Fixing issues with loading configs with UTF8-BOM encoding
+
 ## [3.1.0] - 2018-05-03
 ### Changed
  - When routing a path ensure we set the destination input and power state regardless of device type

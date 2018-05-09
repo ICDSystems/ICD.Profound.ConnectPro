@@ -66,8 +66,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// <param name="eventArgs"></param>
 		protected override void ViewOnButtonPressed(object sender, EventArgs eventArgs)
 		{
-			m_Menu.Camera = GetCamera();
-			m_Menu.ShowView(!m_Menu.IsViewVisible);
+			ICameraDevice camera = GetCamera();
+
+			m_Menu.Camera = camera;
+			m_Menu.ShowView(!m_Menu.IsViewVisible && camera != null);
 		}
 
 		/// <summary>
@@ -156,7 +158,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 
 		private void SubscribedConferenceManagerOnInCallChanged(object sender, InCallEventArgs callEventArgs)
 		{
-			ShowView(callEventArgs.Data >= eInCall.Audio);
+			ShowView(callEventArgs.Data >= eInCall.Audio && GetCamera() != null);
 		}
 
 		#endregion

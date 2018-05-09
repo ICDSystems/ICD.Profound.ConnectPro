@@ -10,6 +10,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 {
 	public sealed partial class VtcButtonListView : AbstractView, IVtcButtonListView
 	{
+		/// <summary>
+		/// Raised when the user presses a button.
+		/// </summary>
 		public event EventHandler<UShortEventArgs> OnButtonPressed;
 
 		/// <summary>
@@ -51,9 +54,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			m_ButtonList.SetItemVisible(index, visible);
 		}
 
+		/// <summary>
+		/// Sets the enabled state of the button at the given index.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="enabled"></param>
 		public void SetButtonEnabled(ushort index, bool enabled)
 		{
 			m_ButtonList.SetItemEnabled(index, enabled);
+		}
+
+		/// <summary>
+		/// Sets the selected state of the button at the given index.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="selected"></param>
+		public void SetButtonSelected(ushort index, bool selected)
+		{
+			m_ButtonList.SetItemSelected(index, selected);
 		}
 
 		#region Control Callbacks

@@ -100,6 +100,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				{
 					view.SetButtonVisible(kvp.Key, true);
 					view.SetButtonEnabled(kvp.Key, true);
+					view.SetButtonSelected(kvp.Key, kvp.Value.IsViewVisible);
 				}
 			}
 			finally
@@ -144,6 +145,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				Visible = sender as IPresenter;
 			else if (Visible == sender)
 				Visible = null;
+
+			RefreshIfVisible();
 		}
 
 		#endregion

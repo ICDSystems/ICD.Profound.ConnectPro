@@ -83,13 +83,15 @@ namespace ICD.Profound.ConnectPRO.Themes
 
 			try
 			{
-				string tvPresetsXml = IcdFile.ReadToEnd(tvPresetsPath, Encoding.ASCII);
+				string xml = IcdFile.ReadToEnd(tvPresetsPath, new UTF8Encoding(false));
+				xml = EncodingUtils.StripUtf8Bom(xml);
+
 				m_TvPresets.Clear();
-				m_TvPresets.Parse(tvPresetsXml);
+				m_TvPresets.Parse(xml);
 			}
 			catch (Exception e)
 			{
-				Logger.AddEntry(eSeverity.Error, "Failed to load TV Presets {0} - {1}", m_TvPresetsPath, e.Message);
+				Log(eSeverity.Error, "Failed to load TV Presets {0} - {1}", m_TvPresetsPath, e.Message);
 			}
 		}
 
@@ -111,13 +113,15 @@ namespace ICD.Profound.ConnectPRO.Themes
 
 			try
 			{
-				string webConferencingInstructionsXml = IcdFile.ReadToEnd(webConferencingInstructionsPath, Encoding.ASCII);
+				string xml = IcdFile.ReadToEnd(webConferencingInstructionsPath, new UTF8Encoding(false));
+				xml = EncodingUtils.StripUtf8Bom(xml);
+
 				m_WebConferencingInstructions.Clear();
-				m_WebConferencingInstructions.Parse(webConferencingInstructionsXml);
+				m_WebConferencingInstructions.Parse(xml);
 			}
 			catch (Exception e)
 			{
-				Logger.AddEntry(eSeverity.Error, "Failed to load Web Conferencing Instructions {0} - {1}", m_WebConferencingInstructionsPath, e.Message);
+				Log(eSeverity.Error, "Failed to load Web Conferencing Instructions {0} - {1}", m_WebConferencingInstructionsPath, e.Message);
 			}
 		}
 
