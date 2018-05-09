@@ -233,8 +233,10 @@ namespace ICD.Profound.ConnectPRO.Rooms
 					Log(eSeverity.Warning, "No Dialing Plan configured");
 				else
 				{
-					string dialingPlanXml = IcdFile.ReadToEnd(dialingPlanPath, Encoding.ASCII);
-					m_ConferenceManager.DialingPlan.LoadMatchersFromXml(dialingPlanXml);
+					string xml = IcdFile.ReadToEnd(dialingPlanPath, new UTF8Encoding(false));
+					xml = EncodingUtils.StripUtf8Bom(xml);
+
+					m_ConferenceManager.DialingPlan.LoadMatchersFromXml(xml);
 				}
 			}
 			catch (Exception e)

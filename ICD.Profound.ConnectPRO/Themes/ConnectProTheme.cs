@@ -83,9 +83,11 @@ namespace ICD.Profound.ConnectPRO.Themes
 
 			try
 			{
-				string tvPresetsXml = IcdFile.ReadToEnd(tvPresetsPath, Encoding.ASCII);
+				string xml = IcdFile.ReadToEnd(tvPresetsPath, new UTF8Encoding(false));
+				xml = EncodingUtils.StripUtf8Bom(xml);
+
 				m_TvPresets.Clear();
-				m_TvPresets.Parse(tvPresetsXml);
+				m_TvPresets.Parse(xml);
 			}
 			catch (Exception e)
 			{
@@ -111,9 +113,11 @@ namespace ICD.Profound.ConnectPRO.Themes
 
 			try
 			{
-				string webConferencingInstructionsXml = IcdFile.ReadToEnd(webConferencingInstructionsPath, Encoding.ASCII);
+				string xml = IcdFile.ReadToEnd(webConferencingInstructionsPath, new UTF8Encoding(false));
+				xml = EncodingUtils.StripUtf8Bom(xml);
+
 				m_WebConferencingInstructions.Clear();
-				m_WebConferencingInstructions.Parse(webConferencingInstructionsXml);
+				m_WebConferencingInstructions.Parse(xml);
 			}
 			catch (Exception e)
 			{
