@@ -89,7 +89,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 			}
 			catch (Exception e)
 			{
-				Logger.AddEntry(eSeverity.Error, "Failed to load TV Presets {0} - {1}", m_TvPresetsPath, e.Message);
+				Log(eSeverity.Error, "Failed to load TV Presets {0} - {1}", m_TvPresetsPath, e.Message);
 			}
 		}
 
@@ -117,7 +117,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 			}
 			catch (Exception e)
 			{
-				Logger.AddEntry(eSeverity.Error, "Failed to load Web Conferencing Instructions {0} - {1}", m_WebConferencingInstructionsPath, e.Message);
+				Log(eSeverity.Error, "Failed to load Web Conferencing Instructions {0} - {1}", m_WebConferencingInstructionsPath, e.Message);
 			}
 		}
 

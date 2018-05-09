@@ -84,7 +84,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			}
 			catch (Exception)
 			{
-				Logger.AddEntry(eSeverity.Error, "{0} - Failed to find volume control for {1}", this, volumePoint);
+				Log(eSeverity.Error, "Failed to find volume control for {0}", volumePoint);
 			}
 
 			return null;
@@ -230,7 +230,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			try
 			{
 				if (string.IsNullOrEmpty(dialingPlanPath))
-					Logger.AddEntry(eSeverity.Warning, "{0} has no Dialing Plan configured", this);
+					Log(eSeverity.Warning, "No Dialing Plan configured");
 				else
 				{
 					string dialingPlanXml = IcdFile.ReadToEnd(dialingPlanPath, Encoding.ASCII);
@@ -239,7 +239,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			}
 			catch (Exception e)
 			{
-				Logger.AddEntry(eSeverity.Error, "{0} failed to load Dialing Plan {1} - {2}", this, dialingPlanPath, e.Message);
+				Log(eSeverity.Error, "failed to load Dialing Plan {0} - {1}", dialingPlanPath, e.Message);
 			}
 
 			// If there are no audio or video providers, search the available controls
@@ -277,7 +277,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			}
 			catch (Exception e)
 			{
-				Logger.AddEntry(eSeverity.Error, "{0} failed add {1} dialing provider - {2}", this, sourceType, e.Message);
+				Log(eSeverity.Error, "failed add {0} dialing provider - {1}", sourceType, e.Message);
 			}
 		}
 
