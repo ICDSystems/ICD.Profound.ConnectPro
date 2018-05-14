@@ -1,5 +1,6 @@
 ﻿using System;
 using ICD.Common.Properties;
+using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services;
@@ -227,8 +228,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		[PublicAPI]
 		public void RefreshAsync()
 		{
-			Refresh();
-			//m_AsyncRefreshHandle = ThreadingUtils.SafeInvoke(Refresh);
+			m_AsyncRefreshHandle = ThreadingUtils.SafeInvoke(Refresh);
 		}
 
 		/// <summary>
