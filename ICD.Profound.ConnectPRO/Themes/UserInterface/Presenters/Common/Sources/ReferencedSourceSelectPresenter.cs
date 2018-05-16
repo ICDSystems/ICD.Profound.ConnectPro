@@ -3,7 +3,6 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
-using ICD.Connect.Settings;
 using ICD.Connect.Settings.Originators;
 using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
