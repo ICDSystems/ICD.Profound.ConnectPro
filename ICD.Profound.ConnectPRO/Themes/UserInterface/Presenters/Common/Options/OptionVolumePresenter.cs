@@ -1,6 +1,7 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Audio.Controls;
+using ICD.Connect.Devices;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
@@ -43,7 +44,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// <returns></returns>
 		protected override bool GetActive()
 		{
-			return m_Menu.IsViewVisible;
+			IVolumeDeviceControl control = m_Menu.VolumeControl;
+			IDeviceBase device = control == null ? null : control.Parent;
+			IVolumeMuteFeedbackDeviceControl muteControl =
+				device == null
+					? null
+					: device.Controls.GetControl<IVolumeMuteFeedbackDeviceControl>();
+
+			return muteControl != null && muteControl.VolumeIsMuted;
 		}
 
 		/// <summary>
