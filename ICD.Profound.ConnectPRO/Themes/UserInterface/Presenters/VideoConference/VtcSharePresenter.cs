@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
@@ -27,6 +28,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private ISource[] m_Sources;
 		private ISource m_Selected;
 
+		[CanBeNull]
 		private PresentationComponent m_SubscribedPresentationComponent;
 
 		/// <summary>
@@ -42,6 +44,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_Sources = new ISource[0];
 		}
 
+		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Refresh(IVtcShareView view)
 		{
 			base.Refresh(view);
@@ -83,6 +89,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			}
 		}
 
+		/// <summary>
+		/// Gets the sources available for presentation.
+		/// </summary>
+		/// <returns></returns>
 		private IEnumerable<ISource> GetSources()
 		{
 			return
@@ -97,6 +107,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 					             });
 		}
 
+		/// <summary>
+		/// Returns true if we are currently presenting a source.
+		/// </summary>
+		/// <returns></returns>
 		private bool IsInPresentation()
 		{
 			return m_SubscribedPresentationComponent != null && m_SubscribedPresentationComponent.GetPresentations().Any();
@@ -147,6 +161,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				return;
 
 			m_SubscribedPresentationComponent.OnPresentationsChanged -= SubscribedPresentationComponentOnPresentationsChanged;
+
+			m_SubscribedPresentationComponent = null;
 		}
 
 		private void SubscribedPresentationComponentOnPresentationsChanged(object sender, EventArgs eventArgs)
@@ -158,6 +174,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		#region View Callbacks
 
+		/// <summary>
+		/// Subscribe to the view events.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Subscribe(IVtcShareView view)
 		{
 			base.Subscribe(view);
@@ -166,6 +186,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			view.OnShareButtonPressed += ViewOnShareButtonPressed;
 		}
 
+		/// <summary>
+		/// Unsubscribe from the view events.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Unsubscribe(IVtcShareView view)
 		{
 			base.Unsubscribe(view);
@@ -179,7 +203,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (Room == null || m_Selected == null)
 				return;
 
-			if (IsInPresentation())
+			if (IsInPresentation() && m_SubscribedPresentationComponent != null)
 			{
 				foreach (PresentationItem presentation in m_SubscribedPresentationComponent.GetPresentations())
 					m_SubscribedPresentationComponent.StopPresentation(presentation);

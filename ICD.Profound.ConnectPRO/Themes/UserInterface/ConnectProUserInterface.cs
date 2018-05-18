@@ -222,9 +222,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				}
 
 				m_Room.Routing.Route(codecControl);
-
-				ShowSourceContextualMenu(source, true);
-				SetActiveSource(null);
+				m_SourceSelectionTimeout.Reset(SOURCE_SELECTION_TIMEOUT);
 			}
 			// In a single display room just route the source immediately
 			else
@@ -254,32 +252,33 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (destination == null)
 				return;
 
+			// Store in local variable because route feedback will change the field
+			ISource activeSource = m_ActiveSource;
+
 			// If no source is selected for routing then we open the contextual menu for the current routed source
-			if (m_ActiveSource == null)
+			if (activeSource == null)
 			{
 				ShowSourceContextualMenu(routedSource, false);
 			}
 			// If a source is currently selected then we route that source to the selected display
 			else
 			{
-				m_Room.Routing.Route(m_ActiveSource, destination);
-				m_Room.Routing.RouteAudioIfUnrouted(m_ActiveSource);
-				routedSource = m_ActiveSource;
+				m_Room.Routing.Route(activeSource, destination);
+				m_Room.Routing.RouteAudioIfUnrouted(activeSource);
+				routedSource = activeSource;
 
-				ShowSourceContextualMenu(routedSource, true);
+				if (ShowSourceContextualMenu(routedSource, true))
+					SetActiveSource(null);
 			}
-
-			// Clear the selected source for routing
-			SetActiveSource(null);
 		}
 
-		private void ShowSourceContextualMenu(ISource source, bool vtcOnly)
+		private bool ShowSourceContextualMenu(ISource source, bool vtcOnly)
 		{
 			if (m_Room == null)
-				return;
+				return false;
 
 			if (source == null)
-				return;
+				return false;
 
 			eControlOverride controlOverride = m_Room.Routing.GetControlOverride(source);
 			IDeviceControl control = m_Room.Routing.GetDeviceControl(source, controlOverride);
@@ -287,23 +286,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (control is CiscoDialingDeviceControl)
 			{
 				m_NavigationController.NavigateTo<IVtcBasePresenter>();
-				return;
+				return true;
 			}
 
 			if (vtcOnly)
-				return;
+				return false;
 
 			if (control is ITvTunerControl)
 			{
 				m_NavigationController.NavigateTo<ICableTvPresenter>().Control = control as ITvTunerControl;
-				return;
+				return true;
 			}
 
 			switch (controlOverride)
 			{
 				case eControlOverride.WebConference:
 					m_NavigationController.NavigateTo<IWebConferencingAlertPresenter>();
-					break;
+					return true;
+
+				default:
+					return false;
 			}
 		}
 
@@ -432,6 +434,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().SetRoutedSources(routedSources);
 			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().SetRouting(routing, activeAudio);
+
+			// If the active source is routed to all destinations we clear the active source
+			if (m_ActiveSource != null && routing.All(kvp => kvp.Value.Contains(m_ActiveSource)))
+				SetActiveSource(null);
 		}
 
 		#endregion
@@ -520,6 +526,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		{
 			HandleSelectedDisplay(routedSource, destination);
 		}
+
+		#endregion
+
+		#region Incoming Call Presenter Callbacks
 
 		private void Subscribe(IVtcIncomingCallPresenter presenter)
 		{

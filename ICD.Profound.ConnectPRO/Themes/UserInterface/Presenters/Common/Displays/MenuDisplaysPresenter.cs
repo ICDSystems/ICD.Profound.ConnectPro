@@ -194,7 +194,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 				bool display1HasControl = HasDeviceControl(m_Display1RoutedSource);
 
-				eDisplayColor display1Color = m_ActiveSource == null
+				eDisplayColor display1Color = m_ActiveSource == null || m_ActiveSource == m_Display1RoutedSource
 					                              ? m_Display1RoutedSource == null
 						                                ? eDisplayColor.Grey
 						                                : display1HasControl
@@ -202,10 +202,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 							                                  : eDisplayColor.White
 					                              : eDisplayColor.Yellow;
 
-				string display1Test = m_ActiveSource == null
+				string display1Text = m_ActiveSource == null || m_ActiveSource == m_Display1RoutedSource
 					                      ? display1DestinationName
 					                      : string.Format("PRESS TO SHOW SELECTION ON {0}", display1DestinationName);
-				display1Test = display1Test.ToUpper();
+				display1Text = display1Text.ToUpper();
 
 				string display1SourceName = m_Display1RoutedSource == null
 					                            ? string.Empty
@@ -214,19 +214,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				string display1Line1;
 				string display1Line2;
 
-				if (display1Test.Length <= MAX_LINE_WIDTH)
+				if (display1Text.Length <= MAX_LINE_WIDTH)
 				{
-					display1Line1 = display1Test;
+					display1Line1 = display1Text;
 					display1Line2 = string.Empty;
 				}
 				else
 				{
 					// Find the space closest to the middle of the text and split.
-					int middleIndex = display1Test.Length / 2;
-					int splitIndex = display1Test.FindIndices(char.IsWhiteSpace).GetClosest(i => i - middleIndex);
+					int middleIndex = display1Text.Length / 2;
+					int splitIndex = display1Text.FindIndices(char.IsWhiteSpace).GetClosest(i => i - middleIndex);
 
-					display1Line1 = display1Test.Substring(0, splitIndex).Trim();
-					display1Line2 = display1Test.Substring(splitIndex + 1).Trim();
+					display1Line1 = display1Text.Substring(0, splitIndex).Trim();
+					display1Line2 = display1Text.Substring(splitIndex + 1).Trim();
 				}
 
 				if (display1HasControl)
@@ -248,7 +248,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 				// Speaker visibility
 				bool display1ShowSpeaker =
-					m_ActiveSource == null &&
+					(m_ActiveSource == null || m_ActiveSource == m_Display1RoutedSource) &&
 					m_Display1RoutedSource != null &&
 					m_Display1RoutedSource.ConnectionType.HasFlag(eConnectionType.Audio);
 
@@ -271,7 +271,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 				bool display2HasControl = HasDeviceControl(m_Display2RoutedSource);
 
-				eDisplayColor display2Color = m_ActiveSource == null
+				eDisplayColor display2Color = m_ActiveSource == null || m_ActiveSource == m_Display2RoutedSource
 					                              ? m_Display2RoutedSource == null
 						                                ? eDisplayColor.Grey
 						                                : display2HasControl
@@ -279,10 +279,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 							                                  : eDisplayColor.White
 					                              : eDisplayColor.Yellow;
 
-				string display2Test = m_ActiveSource == null
+				string display2Text = m_ActiveSource == null || m_ActiveSource == m_Display2RoutedSource
 					                      ? display2DestinationName
 					                      : string.Format("PRESS TO SHOW SELECTION ON {0}", display2DestinationName);
-				display2Test = display2Test.ToUpper();
+				display2Text = display2Text.ToUpper();
 
 				string display2SourceName = m_Display2RoutedSource == null
 					                            ? string.Empty
@@ -291,19 +291,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				string display2Line1;
 				string display2Line2;
 
-				if (display2Test.Length <= MAX_LINE_WIDTH)
+				if (display2Text.Length <= MAX_LINE_WIDTH)
 				{
-					display2Line1 = display2Test;
+					display2Line1 = display2Text;
 					display2Line2 = string.Empty;
 				}
 				else
 				{
 					// Find the space closest to the middle of the text and split.
-					int middleIndex = display2Test.Length / 2;
-					int splitIndex = display2Test.FindIndices(char.IsWhiteSpace).GetClosest(i => i - middleIndex);
+					int middleIndex = display2Text.Length / 2;
+					int splitIndex = display2Text.FindIndices(char.IsWhiteSpace).GetClosest(i => i - middleIndex);
 
-					display2Line1 = display2Test.Substring(0, splitIndex).Trim();
-					display2Line2 = display2Test.Substring(splitIndex + 1).Trim();
+					display2Line1 = display2Text.Substring(0, splitIndex).Trim();
+					display2Line2 = display2Text.Substring(splitIndex + 1).Trim();
 				}
 
 				if (display2HasControl)
@@ -325,7 +325,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 				// Speaker visibility
 				bool display2ShowSpeaker =
-					m_ActiveSource == null &&
+					(m_ActiveSource == null || m_ActiveSource == m_Display2RoutedSource) &&
 					m_Display2RoutedSource != null &&
 				    m_Display2RoutedSource.ConnectionType.HasFlag(eConnectionType.Audio);
 
