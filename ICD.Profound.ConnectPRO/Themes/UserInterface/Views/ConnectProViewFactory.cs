@@ -6,6 +6,7 @@ using ICD.Connect.Panels.SmartObjects;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Lists;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.AudioConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options;
@@ -17,6 +18,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.ActiveCalls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Dtmf;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options;
@@ -102,6 +104,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(IVtcCallListToggleView), (panel, theme) => new VtcCallListToggleView(panel, theme)},
 			{typeof(IVtcButtonListView), (panel, theme) => new VtcButtonListView(panel, theme)},
 			{typeof(IVtcKeyboardView), (panel, theme) => new VtcKeyboardView(panel, theme)},
+
+			// Audio Conference
+			{typeof(IAtcBaseView), (panel, theme) => new AtcBaseView(panel, theme)},
+			{typeof(IAtcIncomingCallView), (panel, theme) => new AtcIncomingCallView(panel, theme), },
 
 			// Panel
 			{typeof(IHardButtonsView), (panel, theme) => new HardButtonsView(panel, theme)}

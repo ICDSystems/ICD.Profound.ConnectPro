@@ -20,10 +20,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		{
 		}
 
+		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			OnAnswerButtonPressed = null;
+			OnIgnoreButtonPressed = null;
+
+			base.Dispose();
+		}
+
 		public void SetCallerInfo(string number)
 		{
 			m_CallerInfoLabel.SetLabelText(number);
 		}
+
+		#region Control Callbacks
 
 		/// <summary>
 		/// Subscribes to the view controls.
@@ -56,5 +69,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		{
 			OnAnswerButtonPressed.Raise(this);
 		}
+
+		#endregion
 	}
 }

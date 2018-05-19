@@ -8,6 +8,7 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.AudioConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Options;
@@ -20,6 +21,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.A
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Dtmf;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options;
@@ -92,6 +94,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IVtcReferencedFavoritesPresenter), (nav, views, theme) => new VtcReferencedFavoritesPresenter(nav, views, theme)},
 			{typeof(IVtcReferencedRecentPresenter), (nav, views, theme) => new VtcReferencedRecentPresenter(nav, views, theme)},
 			{typeof(IVtcReferencedFolderPresenter), (nav, views, theme) => new VtcReferencedFolderPresenter(nav, views, theme)},
+
+			// Audio Conference
+			{typeof(IAtcBasePresenter), (nav, views, theme) => new AtcBasePresenter(nav, views, theme), },
+			{typeof(IAtcIncomingCallPresenter), (nav, views, theme) => new AtcIncomingCallPresenter(nav, views, theme), },
 
 			// Panel
 			{typeof(IHardButtonsPresenter), (nav, views, theme) => new HardButtonsPresenter(nav, views, theme)}
