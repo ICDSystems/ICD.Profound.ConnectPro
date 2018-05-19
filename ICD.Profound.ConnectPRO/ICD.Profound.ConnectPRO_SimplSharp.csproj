@@ -247,8 +247,6 @@
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcSharePresenter.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractComponentView.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractView.cs" />
-    <Compile Include="Themes\UserInterface\Views\Cameras\CamerasView.cs" />
-    <Compile Include="Themes\UserInterface\Views\Cameras\CamerasView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmEndMeetingView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmEndMeetingView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmLeaveCallView.cs" />
