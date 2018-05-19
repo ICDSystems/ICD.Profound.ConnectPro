@@ -14,6 +14,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 		/// </summary>
 		event EventHandler OnIgnoreButtonPressed;
 
+		/// <summary>
+		/// Sets the incoming caller number.
+		/// </summary>
+		/// <param name="number"></param>
 		void SetCallerInfo(string number);
 	}
 }
