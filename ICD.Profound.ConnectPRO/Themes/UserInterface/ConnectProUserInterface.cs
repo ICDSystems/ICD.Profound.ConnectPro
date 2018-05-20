@@ -34,7 +34,9 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views;
 using ICD.Connect.Conferencing.Cisco;
+using ICD.Connect.Conferencing.Controls;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.AudioConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 {
@@ -103,12 +105,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcActiveCallsPresenter>());
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcKeyboardPresenter>());
 
+			// Audio Conference node
+			IVisibilityNode audioConferencingVisibility = new SingleVisibilityNode();
+			audioConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IAtcBasePresenter>());
+
+			// Meeting node
 			IVisibilityNode meetingVisibility = new VisibilityNode();
+
+			meetingVisibility.AddNode(videoConferencingVisibility);
+			meetingVisibility.AddNode(audioConferencingVisibility);
+
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOptionPrivacyMutePresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOptionVolumePresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOptionCameraPresenter>());
-			meetingVisibility.AddNode(videoConferencingVisibility);
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcBasePresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ICableTvPresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWebConferencingAlertPresenter>());
@@ -128,7 +138,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_NavigationController.LazyLoadPresenter<IOptionCameraPresenter>();
 			m_NavigationController.LazyLoadPresenter<IVtcCallListTogglePresenter>();
 			m_NavigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>();
-			
+			m_NavigationController.LazyLoadPresenter<IAtcIncomingCallPresenter>();
 		}
 
 		#region Methods
@@ -283,9 +293,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			eControlOverride controlOverride = m_Room.Routing.GetControlOverride(source);
 			IDeviceControl control = m_Room.Routing.GetDeviceControl(source, controlOverride);
 
-			if (control is CiscoDialingDeviceControl)
+			if (control is IDialingDeviceControl)
 			{
-				m_NavigationController.NavigateTo<IVtcBasePresenter>();
+				IDialingDeviceControl dialer = control as IDialingDeviceControl;
+
+				if (dialer.Supports.HasFlag(eConferenceSourceType.Video))
+					m_NavigationController.NavigateTo<IVtcBasePresenter>();
+				else
+					m_NavigationController.NavigateTo<IAtcBasePresenter>();
+
 				return true;
 			}
 
