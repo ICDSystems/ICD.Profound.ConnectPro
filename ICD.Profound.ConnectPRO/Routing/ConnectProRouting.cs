@@ -776,7 +776,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 			{
 				case eControlOverride.Default:
 
-					IDeviceControl dialer = GetDeviceControl(device, eControlOverride.Vtc);
+					IDeviceControl dialer = GetDeviceControl(device, eControlOverride.Vtc) ??
+											GetDeviceControl(device, eControlOverride.Atc);
 					if (dialer != null)
 						return dialer;
 
@@ -789,6 +790,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				case eControlOverride.CableTv:
 					return device.Controls.GetControls<ITvTunerControl>().FirstOrDefault();
 
+				case eControlOverride.Atc:
 				case eControlOverride.Vtc:
 					return device.Controls.GetControls<IDialingDeviceControl>().FirstOrDefault();
 					
