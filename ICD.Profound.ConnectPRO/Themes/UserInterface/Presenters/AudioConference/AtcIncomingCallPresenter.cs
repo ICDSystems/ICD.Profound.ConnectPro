@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.ConferenceSources;
+using ICD.Connect.Conferencing.Controls;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -26,7 +28,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		private readonly SafeCriticalSection m_SourcesSection;
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private IConferenceManager m_SubscribedConferenceManager;
+		[CanBeNull]
+		private IDialingDeviceControl m_SubscribedAudioDialer;
 
 		/// <summary>
 		/// Gets the number of incoming sources.
@@ -84,9 +87,31 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		/// Gets the first unanswered source.
 		/// </summary>
 		/// <returns></returns>
+		[CanBeNull]
 		private IConferenceSource GetFirstSource()
 		{
 			return m_SourcesSection.Execute(() => m_Sources.FirstOrDefault());
+		}
+
+		/// <summary>
+		/// Gets the audio dialer to monitor for incoming calls.
+		/// </summary>
+		/// <returns></returns>
+		[CanBeNull]
+		private IDialingDeviceControl GetAudioDialer(IConnectProRoom room)
+		{
+			IConferenceManager manager = room == null ? null : room.ConferenceManager;
+			if (manager == null)
+				return null;
+
+			IDialingDeviceControl video = manager.GetDialingProvider(eConferenceSourceType.Video);
+			IDialingDeviceControl audio = manager.GetDialingProvider(eConferenceSourceType.Audio);
+
+			// Let the incoming video call popup take care of it
+			if (video == audio)
+				return null;
+
+			return audio;
 		}
 
 		#region Room Callbacks
@@ -99,11 +124,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		{
 			base.Subscribe(room);
 
-			m_SubscribedConferenceManager = room == null ? null : room.ConferenceManager;
-			if (m_SubscribedConferenceManager == null)
+			m_SubscribedAudioDialer = GetAudioDialer(room);
+			if (m_SubscribedAudioDialer == null)
 				return;
 
-			m_SubscribedConferenceManager.OnRecentSourceAdded += ConferenceManagerOnRecentSourceAdded;
+			m_SubscribedAudioDialer.OnSourceAdded += AudioDialerOnSourceAdded;
 		}
 
 		/// <summary>
@@ -114,10 +139,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		{
 			base.Unsubscribe(room);
 
-			if (m_SubscribedConferenceManager == null)
+			if (m_SubscribedAudioDialer == null)
 				return;
 
-			m_SubscribedConferenceManager.OnRecentSourceAdded -= ConferenceManagerOnRecentSourceAdded;
+			m_SubscribedAudioDialer.OnSourceAdded -= AudioDialerOnSourceAdded;
+
+			m_SubscribedAudioDialer = null;
 		}
 
 		/// <summary>
@@ -174,7 +201,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		private void ConferenceManagerOnRecentSourceAdded(object sender, ConferenceSourceEventArgs args)
+		private void AudioDialerOnSourceAdded(object sender, ConferenceSourceEventArgs args)
 		{
 			IConferenceSource source = args.Data;
 			if (source.GetIsRingingIncomingCall())
