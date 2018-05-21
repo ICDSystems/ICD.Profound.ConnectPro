@@ -65,6 +65,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			{
 				m_Sources = GetSources().ToArray();
 
+				bool inPresentation = IsInPresentation();
+				ISource select = inPresentation ? m_Routed : m_Selected;
+
 				for (ushort index = 0; index < m_Sources.Length; index++)
 				{
 					ISource source = m_Sources[index];
@@ -78,12 +81,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 						? null
 						: Icons.GetSourceIcon(connectProSource.Icon, eSourceColor.White);
 
-					view.SetButtonSelected(index, source == (m_Routed ?? m_Selected));
+					view.SetButtonSelected(index, source == select);
 					view.SetButtonIcon(index, icon);
 					view.SetButtonLabel(index, source == null ? null : source.GetNameOrDeviceName(combine));
 				}
 
-				bool inPresentation = IsInPresentation();
 				bool enabled = inPresentation || m_Selected != null || m_Routed != null;
 
 				view.SetButtonCount((ushort)m_Sources.Length);
