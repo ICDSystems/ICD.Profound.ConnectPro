@@ -203,6 +203,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			// Update the routed presentation source
 			ISource source = Room.Routing.GetVtcPresentationSource();
+			SetRouted(source);
 		}
 
 		#endregion
@@ -261,7 +262,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (Room == null || source == null)
 				return;
 
-			Room.Routing.RouteVtcPresentation(m_Selected);
+			Room.Routing.RouteVtcPresentation(source);
 		}
 
 		private void StopPresenting()
