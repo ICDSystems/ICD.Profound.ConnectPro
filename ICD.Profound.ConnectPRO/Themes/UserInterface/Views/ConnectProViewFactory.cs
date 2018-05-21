@@ -107,7 +107,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 
 			// Audio Conference
 			{typeof(IAtcBaseView), (panel, theme) => new AtcBaseView(panel, theme)},
-			{typeof(IAtcIncomingCallView), (panel, theme) => new AtcIncomingCallView(panel, theme), },
+			{typeof(IAtcIncomingCallView), (panel, theme) => new AtcIncomingCallView(panel, theme)},
 
 			// Panel
 			{typeof(IHardButtonsView), (panel, theme) => new HardButtonsView(panel, theme)}

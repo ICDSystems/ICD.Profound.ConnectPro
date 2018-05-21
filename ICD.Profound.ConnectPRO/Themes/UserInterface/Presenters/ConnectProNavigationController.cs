@@ -96,8 +96,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IVtcReferencedFolderPresenter), (nav, views, theme) => new VtcReferencedFolderPresenter(nav, views, theme)},
 
 			// Audio Conference
-			{typeof(IAtcBasePresenter), (nav, views, theme) => new AtcBasePresenter(nav, views, theme), },
-			{typeof(IAtcIncomingCallPresenter), (nav, views, theme) => new AtcIncomingCallPresenter(nav, views, theme), },
+			{typeof(IAtcBasePresenter), (nav, views, theme) => new AtcBasePresenter(nav, views, theme)},
+			{typeof(IAtcIncomingCallPresenter), (nav, views, theme) => new AtcIncomingCallPresenter(nav, views, theme)},
 
 			// Panel
 			{typeof(IHardButtonsPresenter), (nav, views, theme) => new HardButtonsPresenter(nav, views, theme)}
