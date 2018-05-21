@@ -649,6 +649,34 @@ namespace ICD.Profound.ConnectPRO.Routing
 			                       source);
 		}
 
+		public ISource GetVtcPresentationSource()
+		{
+			CiscoCodec codec = GetCodec();
+			if (codec == null)
+				throw new InvalidOperationException("No codec available.");
+
+			CiscoCodecRoutingControl control = codec.Controls.GetControl<CiscoCodecRoutingControl>();
+
+			// Get the content inputs
+			int[] inputs = codec.InputTypes.GetInputs(eCodecInputType.Content).ToArray();
+			if (inputs.Length == 0)
+				return null;
+
+			// TODO - check the active presentation input
+			foreach (int input in inputs)
+			{
+				EndpointInfo? endpoint = RoutingGraph.GetActiveSourceEndpoint(control, input, eConnectionType.Video, false, false);
+				if (!endpoint.HasValue)
+					continue;
+
+				ISource output = RoutingGraph.Sources.GetChildren(endpoint.Value, eConnectionType.Video).FirstOrDefault();
+				if (output != null)
+					return output;
+			}
+
+			return null;
+		}
+
 		/// <summary>
 		/// Unroutes the given audio source from all audio destinations.
 		/// </summary>

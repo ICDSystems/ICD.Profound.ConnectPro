@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Default web conferencing path to processor address
  - Volume button goes red when volume is muted
  - Allowing user to route source to 2 destinations without reselecting the source
+ - User can switch presentation source without ending presentation and starting again.
 
 ## [3.2.0] - 2018-05-09
 ### Changed

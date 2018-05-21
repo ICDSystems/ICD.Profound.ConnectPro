@@ -12,6 +12,9 @@ using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Connect.Routing.EventArguments;
+using ICD.Connect.Routing.Extensions;
+using ICD.Connect.Routing.RoutingGraphs;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -27,9 +30,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private ISource[] m_Sources;
 		private ISource m_Selected;
+		private ISource m_Routed;
 
 		[CanBeNull]
 		private PresentationComponent m_SubscribedPresentationComponent;
+
+		[CanBeNull]
+		private IRoutingGraph m_SubscribedRoutingGraph;
 
 		/// <summary>
 		/// Constructor.
@@ -71,13 +78,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 						? null
 						: Icons.GetSourceIcon(connectProSource.Icon, eSourceColor.White);
 
-					view.SetButtonSelected(index, source == m_Selected);
+					view.SetButtonSelected(index, source == (m_Routed ?? m_Selected));
 					view.SetButtonIcon(index, icon);
 					view.SetButtonLabel(index, source == null ? null : source.GetNameOrDeviceName(combine));
 				}
 
 				bool inPresentation = IsInPresentation();
-				bool enabled = inPresentation || m_Selected != null;
+				bool enabled = inPresentation || m_Selected != null || m_Routed != null;
 
 				view.SetButtonCount((ushort)m_Sources.Length);
 				view.SetShareButtonEnabled(enabled);
@@ -116,13 +123,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			return m_SubscribedPresentationComponent != null && m_SubscribedPresentationComponent.GetPresentations().Any();
 		}
 
-		public void SetSelected(ISource source)
+		private void SetSelected(ISource source)
 		{
 			if (source == m_Selected)
 				return;
 
 			m_Selected = source;
 
+			RefreshIfVisible();
+		}
+
+		private void SetRouted(ISource source)
+		{
+			if (source == m_Routed)
+				return;
+
+			m_Routed = source;
+
+			SetSelected(null);
 			RefreshIfVisible();
 		}
 
@@ -138,6 +156,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			if (room == null)
 				return;
+
+			if (room.Core.TryGetRoutingGraph(out m_SubscribedRoutingGraph))
+				m_SubscribedRoutingGraph.OnRouteChanged += RoutingGraphOnRouteChanged;
 
 			IDialingDeviceControl dialer = room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
 			CiscoCodec codec = dialer == null ? null : dialer.Parent as CiscoCodec;
@@ -157,6 +178,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Unsubscribe(room);
 
+			if (m_SubscribedRoutingGraph != null)
+				m_SubscribedRoutingGraph.OnRouteChanged -= RoutingGraphOnRouteChanged;
+
+			m_SubscribedRoutingGraph = null;
+
 			if (m_SubscribedPresentationComponent == null)
 				return;
 
@@ -168,6 +194,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private void SubscribedPresentationComponentOnPresentationsChanged(object sender, EventArgs eventArgs)
 		{
 			RefreshIfVisible();
+		}
+
+		private void RoutingGraphOnRouteChanged(object sender, SwitcherRouteChangeEventArgs eventArgs)
+		{
+			if (Room == null)
+				return;
+
+			// Update the routed presentation source
+			ISource source = Room.Routing.GetVtcPresentationSource();
 		}
 
 		#endregion
@@ -203,23 +238,39 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (Room == null || m_Selected == null)
 				return;
 
-			if (IsInPresentation() && m_SubscribedPresentationComponent != null)
-			{
-				foreach (PresentationItem presentation in m_SubscribedPresentationComponent.GetPresentations())
-					m_SubscribedPresentationComponent.StopPresentation(presentation);
-			}
+			if (IsInPresentation())
+				StopPresenting();
 			else
-			{
-				Room.Routing.RouteVtcPresentation(m_Selected);
-			}
+				StartPresenting(m_Selected);
 		}
 
 		private void ViewOnSourceButtonPressed(object sender, UShortEventArgs eventArgs)
 		{
 			ISource source;
-			m_Sources.TryElementAt(eventArgs.Data, out source);
+			if (!m_Sources.TryElementAt(eventArgs.Data, out source))
+				return;
 
-			SetSelected(source);
+			if (IsInPresentation())
+				StartPresenting(source);
+			else
+				SetSelected(source);
+		}
+
+		private void StartPresenting(ISource source)
+		{
+			if (Room == null || source == null)
+				return;
+
+			Room.Routing.RouteVtcPresentation(m_Selected);
+		}
+
+		private void StopPresenting()
+		{
+			if (m_SubscribedPresentationComponent == null)
+				return;
+
+			foreach (PresentationItem presentation in m_SubscribedPresentationComponent.GetPresentations())
+				m_SubscribedPresentationComponent.StopPresentation(presentation);
 		}
 
 		#endregion
