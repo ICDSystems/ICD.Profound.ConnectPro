@@ -1,4 +1,15 @@
-﻿using ICD.Profound.ConnectPRO.Rooms;
+﻿using System;
+using System.Linq;
+using ICD.Common.Properties;
+using ICD.Common.Utils;
+using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
+using ICD.Connect.Conferencing.ConferenceManagers;
+using ICD.Connect.Conferencing.ConferenceSources;
+using ICD.Connect.Conferencing.Controls;
+using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.UI.Utils;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.AudioConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -8,6 +19,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 {
 	public sealed class AtcBasePresenter : AbstractPresenter<IAtcBaseView>, IAtcBasePresenter
 	{
+		private readonly KeypadStringBuilder m_Builder;
+		private readonly SafeCriticalSection m_RefreshSection;
+
+		private IDialingDeviceControl m_SubscribedAudioDialer;
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -17,6 +33,64 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		public AtcBasePresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
+			m_Builder = new KeypadStringBuilder();
+			m_RefreshSection = new SafeCriticalSection();
+
+			m_Builder.OnStringChanged += BuilderOnStringChanged;
+		}
+
+		/// <summary>
+		/// Called when the dial string updates.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="stringEventArgs"></param>
+		private void BuilderOnStringChanged(object sender, StringEventArgs stringEventArgs)
+		{
+			RefreshIfVisible();
+		}
+
+		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
+		protected override void Refresh(IAtcBaseView view)
+		{
+			base.Refresh(view);
+
+			m_RefreshSection.Enter();
+
+			try
+			{
+				IConferenceSource active =
+					m_SubscribedAudioDialer == null
+						? null
+						: m_SubscribedAudioDialer.GetSources().FirstOrDefault(s => s.GetIsOnline());
+
+				string activeNumber = active == null ? null : active.Number;
+				string dialString = m_Builder.ToString();
+				bool inACall = active != null;
+
+				view.SetActiveNumber(activeNumber);
+				view.SetClearButtonEnabled(dialString.Length > 0);
+				view.SetDialButtonEnabled(dialString.Length > 0);
+				view.SetDialNumber(dialString);
+				view.SetHangupButtonEnabled(inACall);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+		}
+
+		/// <summary>
+		/// Gets the audio dialer to monitor for incoming calls.
+		/// </summary>
+		/// <returns></returns>
+		[CanBeNull]
+		private IDialingDeviceControl GetAudioDialer(IConnectProRoom room)
+		{
+			IConferenceManager manager = room == null ? null : room.ConferenceManager;
+			return manager == null ? null : manager.GetDialingProvider(eConferenceSourceType.Audio);
 		}
 
 		#region Room Callbacks
@@ -28,6 +102,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		protected override void Subscribe(IConnectProRoom room)
 		{
 			base.Subscribe(room);
+
+			m_SubscribedAudioDialer = GetAudioDialer(room);
+			if (m_SubscribedAudioDialer == null)
+				return;
+
+			m_SubscribedAudioDialer.OnSourceAdded += AudioDialerOnSourceAdded;
+			m_SubscribedAudioDialer.OnSourceRemoved += AudioDialerOnSourceRemoved;
+			m_SubscribedAudioDialer.OnSourceChanged += AudioDialerOnSourceChanged;
 		}
 
 		/// <summary>
@@ -37,6 +119,30 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		protected override void Unsubscribe(IConnectProRoom room)
 		{
 			base.Unsubscribe(room);
+
+			if (m_SubscribedAudioDialer == null)
+				return;
+
+			m_SubscribedAudioDialer.OnSourceAdded -= AudioDialerOnSourceAdded;
+			m_SubscribedAudioDialer.OnSourceRemoved -= AudioDialerOnSourceRemoved;
+			m_SubscribedAudioDialer.OnSourceChanged -= AudioDialerOnSourceChanged;
+
+			m_SubscribedAudioDialer = null;
+		}
+
+		private void AudioDialerOnSourceAdded(object sender, ConferenceSourceEventArgs e)
+		{
+			RefreshIfVisible();
+		}
+
+		private void AudioDialerOnSourceRemoved(object sender, ConferenceSourceEventArgs e)
+		{
+			RefreshIfVisible();
+		}
+
+		private void AudioDialerOnSourceChanged(object sender, ConferenceSourceEventArgs e)
+		{
+			RefreshIfVisible();
 		}
 
 		#endregion
@@ -50,6 +156,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		protected override void Subscribe(IAtcBaseView view)
 		{
 			base.Subscribe(view);
+
+			view.OnCloseButtonPressed += ViewOnCloseButtonPressed;
+			view.OnClearButtonPressed += ViewOnClearButtonPressed;
+			view.OnDialButtonPressed += ViewOnDialButtonPressed;
+			view.OnHangupButtonPressed += ViewOnHangupButtonPressed;
+			view.OnKeypadButtonPressed += ViewOnKeypadButtonPressed;
 		}
 
 		/// <summary>
@@ -59,6 +171,47 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		protected override void Unsubscribe(IAtcBaseView view)
 		{
 			base.Unsubscribe(view);
+
+			view.OnCloseButtonPressed -= ViewOnCloseButtonPressed;
+			view.OnClearButtonPressed -= ViewOnClearButtonPressed;
+			view.OnDialButtonPressed -= ViewOnDialButtonPressed;
+			view.OnHangupButtonPressed -= ViewOnHangupButtonPressed;
+			view.OnKeypadButtonPressed -= ViewOnKeypadButtonPressed;
+		}
+
+		private void ViewOnCloseButtonPressed(object sender, EventArgs eventArgs)
+		{
+			ShowView(false);
+		}
+
+		private void ViewOnKeypadButtonPressed(object sender, CharEventArgs eventArgs)
+		{
+			m_Builder.AppendCharacter(eventArgs.Data);
+		}
+
+		private void ViewOnHangupButtonPressed(object sender, EventArgs eventArgs)
+		{
+			if (m_SubscribedAudioDialer == null)
+				return;
+
+			m_SubscribedAudioDialer.GetSources().ForEach(s => s.Hangup());
+		}
+
+		private void ViewOnDialButtonPressed(object sender, EventArgs eventArgs)
+		{
+			if (m_SubscribedAudioDialer == null)
+				return;
+
+			string dialString = m_Builder.ToString();
+			if (string.IsNullOrEmpty(dialString))
+				return;
+
+			m_SubscribedAudioDialer.Dial(dialString);
+		}
+
+		private void ViewOnClearButtonPressed(object sender, EventArgs eventArgs)
+		{
+			m_Builder.Clear();
 		}
 
 		#endregion
