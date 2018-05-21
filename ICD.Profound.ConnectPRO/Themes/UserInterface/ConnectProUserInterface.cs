@@ -9,6 +9,7 @@ using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.Cisco.Controls;
+using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Panels;
@@ -545,7 +546,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		#endregion
 
-		#region Incoming Call Presenter Callbacks
+		#region Incoming Video Call Presenter Callbacks
 
 		private void Subscribe(IVtcIncomingCallPresenter presenter)
 		{
@@ -562,15 +563,49 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (m_Room == null)
 				return;
 
-			CiscoCodec codec = m_Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video).Parent as CiscoCodec;
-			if (codec == null)
+			IDialingDeviceControl videoDialer = m_Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			IDeviceBase device = videoDialer == null ? null : videoDialer.Parent;
+
+			if (device == null)
 				return;
 
-			ISource codecSource = m_Room.Originators.GetInstancesRecursive<ISource>(s => s.Device == codec.Id).FirstOrDefault();
-			if (codecSource == null)
+			ISource source = m_Room.Originators.GetInstancesRecursive<ISource>(s => s.Device == device.Id).FirstOrDefault();
+			if (source == null)
 				return;
 
-			HandleSelectedSource(codecSource);
+			HandleSelectedSource(source);
+		}
+
+		#endregion
+
+		#region Incoming Audio Call Presenter Callbacks
+
+		private void Subscribe(IAtcIncomingCallPresenter presenter)
+		{
+			presenter.OnCallAnswered += AtcIncomingCallPresenterOnCallAnswered;
+		}
+
+		private void Unsubscribe(IAtcIncomingCallPresenter presenter)
+		{
+			presenter.OnCallAnswered -= AtcIncomingCallPresenterOnCallAnswered;
+		}
+
+		private void AtcIncomingCallPresenterOnCallAnswered(object sender, EventArgs e)
+		{
+			if (m_Room == null)
+				return;
+
+			IDialingDeviceControl audioDialer = m_Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Audio);
+			IDeviceBase device = audioDialer == null ? null : audioDialer.Parent;
+
+			if (device == null)
+				return;
+
+			ISource source = m_Room.Originators.GetInstancesRecursive<ISource>(s => s.Device == device.Id).FirstOrDefault();
+			if (source == null)
+				return;
+
+			HandleSelectedSource(source);
 		}
 
 		#endregion
