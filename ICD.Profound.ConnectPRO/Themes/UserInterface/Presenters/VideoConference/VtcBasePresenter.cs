@@ -165,6 +165,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="eventArgs"></param>
 		protected override void ViewOnCloseButtonPressed(object sender, EventArgs eventArgs)
 		{
+			// If the camera subpage is open close that instead
+			IVtcCameraPresenter cameraPresenter = Navigation.LazyLoadPresenter<IVtcCameraPresenter>();
+			if (cameraPresenter.IsViewVisible)
+			{
+				cameraPresenter.ShowView(false);
+				return;
+			}
+
 			// If we are in a call we want to confirm before closing
 			IConferenceManager manager = Room == null ? null : Room.ConferenceManager;
 			bool isInCall = manager != null && manager.IsInCall >= eInCall.Audio;
