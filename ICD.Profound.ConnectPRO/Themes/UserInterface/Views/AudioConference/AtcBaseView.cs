@@ -96,8 +96,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference
 		/// <param name="enabled"></param>
 		public void SetDialButtonEnabled(bool enabled)
 		{
-			IcdConsole.PrintLine(eConsoleColor.Magenta, "SetDialButtonEnabled {0}", enabled);
-
 			m_DialButton.Enable(enabled);
 		}
 
@@ -107,8 +105,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference
 		/// <param name="enabled"></param>
 		public void SetHangupButtonEnabled(bool enabled)
 		{
-			IcdConsole.PrintLine(eConsoleColor.Magenta, "SetHangupButtonEnabled {0}", enabled);
-
 			m_HangupButton.Enable(enabled);
 		}
 
@@ -118,8 +114,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference
 		/// <param name="enabled"></param>
 		public void SetClearButtonEnabled(bool enabled)
 		{
-			IcdConsole.PrintLine(eConsoleColor.Magenta, "SetClearButtonEnabled {0}", enabled);
-
 			m_ClearButton.Enable(enabled);
 		}
 
