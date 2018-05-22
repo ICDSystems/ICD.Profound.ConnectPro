@@ -158,7 +158,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 
 		private void SubscribedConferenceManagerOnInCallChanged(object sender, InCallEventArgs callEventArgs)
 		{
-			ShowView(callEventArgs.Data >= eInCall.Audio && GetCamera() != null);
+			ShowView(callEventArgs.Data == eInCall.Video && GetCamera() != null);
 		}
 
 		#endregion
