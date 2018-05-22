@@ -70,10 +70,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 				string dialString = m_Builder.ToString();
 				bool inACall = active != null;
 
-				view.SetActiveNumber(activeNumber);
+				view.SetActiveNumber(string.IsNullOrEmpty(activeNumber) ? "(XXX)XXX-XXXX" : activeNumber);
+				view.SetDialNumber(string.IsNullOrEmpty(dialString) ? "Dial Number" : dialString);
+
 				view.SetClearButtonEnabled(dialString.Length > 0);
 				view.SetDialButtonEnabled(dialString.Length > 0);
-				view.SetDialNumber(dialString);
 				view.SetHangupButtonEnabled(inACall);
 			}
 			finally
