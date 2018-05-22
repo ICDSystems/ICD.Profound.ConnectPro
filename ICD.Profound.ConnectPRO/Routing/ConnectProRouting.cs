@@ -421,15 +421,15 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <summary>
 		/// Routes the codec to all available displays.
 		/// </summary>
-		/// <param name="codecControl"></param>
-		public void Route(CiscoCodecRoutingControl codecControl)
+		/// <param name="sourceControl"></param>
+		public void RouteVtc(IRouteSourceControl sourceControl)
 		{
-			if (codecControl == null)
-				throw new ArgumentNullException("codecControl");
+			if (sourceControl == null)
+				throw new ArgumentNullException("sourceControl");
 
 			Connection[] outputs = RoutingGraph.Connections
-			                                   .GetOutputConnections(codecControl.Parent.Id,
-			                                                         codecControl.Id)
+			                                   .GetOutputConnections(sourceControl.Parent.Id,
+			                                                         sourceControl.Id)
 			                                   .Where(c => c.ConnectionType.HasFlag(eConnectionType.Video))
 			                                   .OrderBy(o => o.Source.Address)
 			                                   .ToArray();
@@ -454,9 +454,19 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			foreach (IDestination audioDestination in GetAudioDestinations())
 			{
-				Route(codecControl.GetOutputEndpointInfo(firstOutput.Source.Address),
+				Route(sourceControl.GetOutputEndpointInfo(firstOutput.Source.Address),
 					  audioDestination, eConnectionType.Audio);
 			}
+		}
+
+		/// <summary>
+		/// Routes the audio dialer to the audio destination.
+		/// </summary>
+		/// <param name="sourceControl"></param>
+		public void RouteAtc(IRouteSourceControl sourceControl)
+		{
+			if (sourceControl == null)
+				throw new ArgumentNullException("sourceControl");
 		}
 
 		/// <summary>

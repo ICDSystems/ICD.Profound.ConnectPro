@@ -8,7 +8,6 @@ using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
-using ICD.Connect.Conferencing.Cisco.Controls;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Extensions;
@@ -34,7 +33,6 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VisibilityTree;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views;
-using ICD.Connect.Conferencing.Cisco;
 using ICD.Connect.Conferencing.Controls;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.AudioConference;
@@ -219,20 +217,28 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			// In a dual display room we allow the user to select which display to route to
 			if (dualDisplays)
 			{
-				// Edge case - route the codec to both displays and open the context menu
-				CiscoCodecRoutingControl codecControl =
-					source == null
-						? null
-						: m_Room.Core.GetControl<IRouteSourceControl>(source.Device, source.Control) as
-						  CiscoCodecRoutingControl;
+				IDialingDeviceControl videoDialer = m_Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+				IDialingDeviceControl audioDialer = m_Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Audio);
 
-				if (codecControl == null)
+				// Edge case - route the codec to both displays and open the context menu
+				if (source != null && videoDialer != null && source.Device == videoDialer.Parent.Id)
+				{
+					IRouteSourceControl sourceControl = m_Room.Core.GetControl<IRouteSourceControl>(source.Device, source.Control);
+					m_Room.Routing.RouteVtc(sourceControl);
+				}
+				// Edge case - open the audio conferencing context menu
+				else if (source != null && audioDialer != null && source.Device == audioDialer.Parent.Id)
+				{
+					IRouteSourceControl sourceControl = m_Room.Core.GetControl<IRouteSourceControl>(source.Device, source.Control);
+					m_Room.Routing.RouteAtc(sourceControl);	
+				}
+				// Typical case - continue routing
+				else
 				{
 					SetActiveSource(source);
 					return;
 				}
-
-				m_Room.Routing.Route(codecControl);
+				
 				m_SourceSelectionTimeout.Reset(SOURCE_SELECTION_TIMEOUT);
 			}
 			// In a single display room just route the source immediately
@@ -468,6 +474,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			Subscribe(m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>());
 
 			Subscribe(m_NavigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>());
+			Subscribe(m_NavigationController.LazyLoadPresenter<IAtcIncomingCallPresenter>());
 		}
 
 		/// <summary>
@@ -479,6 +486,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>());
 
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>());
+			Unsubscribe(m_NavigationController.LazyLoadPresenter<IAtcIncomingCallPresenter>());
 		}
 
 		#region Source Select Callbacks
