@@ -238,7 +238,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void ViewOnShareButtonPressed(object sender, EventArgs eventArgs)
 		{
-			if (Room == null || m_Selected == null)
+			if (Room == null)
 				return;
 
 			if (IsInPresentation())
