@@ -97,6 +97,8 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 			m_SubscribedConferenceManager.OnRecentConferenceAdded -= ConferenceManagerOnRecentConferenceAdded;
 			m_SubscribedConferenceManager.OnActiveConferenceStatusChanged -= ConferenceManagerOnActiveConferenceStatusChanged;
 			m_SubscribedConferenceManager.OnPrivacyMuteStatusChange -= ConferenceManagerOnPrivacyMuteStatusChange;
+
+			m_SubscribedConferenceManager = null;
 		}
 
 		/// <summary>
