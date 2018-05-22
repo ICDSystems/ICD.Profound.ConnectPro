@@ -159,9 +159,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 
 		private void AudioDialerOnSourceChanged(object sender, ConferenceSourceEventArgs e)
 		{
-			if (GetActiveSource() == null)
-				m_Builder.Clear();
-
 			RefreshIfVisible();
 		}
 
