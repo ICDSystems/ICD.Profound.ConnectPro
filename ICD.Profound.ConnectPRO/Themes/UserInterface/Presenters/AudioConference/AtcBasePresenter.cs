@@ -61,11 +61,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 
 			try
 			{
-				IConferenceSource active =
-					m_SubscribedAudioDialer == null
-						? null
-						: m_SubscribedAudioDialer.GetSources().FirstOrDefault(s => s.GetIsOnline());
-
+				IConferenceSource active = GetActiveSource();
 				eConferenceSourceStatus status = active == null ? eConferenceSourceStatus.Disconnected : active.Status;
 
 				string activeStatus = StringUtils.NiceName(status);
@@ -96,6 +92,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		{
 			IConferenceManager manager = room == null ? null : room.ConferenceManager;
 			return manager == null ? null : manager.GetDialingProvider(eConferenceSourceType.Audio);
+		}
+
+		/// <summary>
+		/// Gets the active conference source.
+		/// </summary>
+		/// <returns></returns>
+		[CanBeNull]
+		private IConferenceSource GetActiveSource()
+		{
+			return
+				m_SubscribedAudioDialer == null
+					? null
+					: m_SubscribedAudioDialer.GetSources().FirstOrDefault(s => s.GetIsOnline());
 		}
 
 		#region Room Callbacks
@@ -142,11 +151,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 
 		private void AudioDialerOnSourceRemoved(object sender, ConferenceSourceEventArgs e)
 		{
+			if (GetActiveSource() == null)
+				m_Builder.Clear();
+
 			RefreshIfVisible();
 		}
 
 		private void AudioDialerOnSourceChanged(object sender, ConferenceSourceEventArgs e)
 		{
+			if (GetActiveSource() == null)
+				m_Builder.Clear();
+
 			RefreshIfVisible();
 		}
 
