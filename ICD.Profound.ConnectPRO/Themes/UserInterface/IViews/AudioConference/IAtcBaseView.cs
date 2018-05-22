@@ -27,16 +27,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.AudioConference
 		event EventHandler<CharEventArgs> OnKeypadButtonPressed;
 
 		/// <summary>
+		/// Sets the active call status text.
+		/// </summary>
+		/// <param name="status"></param>
+		void SetCallStatus(string status);
+
+		/// <summary>
 		/// Sets the text for the number being dialed.
 		/// </summary>
 		/// <param name="number"></param>
 		void SetDialNumber(string number);
 
 		/// <summary>
-		/// Sets the text for the number actively connected to.
+		/// Sets the text for the room number.
 		/// </summary>
 		/// <param name="number"></param>
-		void SetActiveNumber(string number);
+		void SetRoomNumber(string number);
 
 		/// <summary>
 		/// Sets the enabled state of the dial button.

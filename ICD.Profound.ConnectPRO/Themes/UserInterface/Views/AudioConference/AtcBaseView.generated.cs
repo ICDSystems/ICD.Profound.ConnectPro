@@ -12,8 +12,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference
 	{
 		private VtProSubpage m_Subpage;
 		private VtProButton m_CloseButton;
-		private VtProFormattedText m_ActiveNumberLabel;
+		private VtProFormattedText m_RoomNumberLabel;
 		private VtProFormattedText m_DialNumberLabel;
+		private VtProFormattedText m_CallStatusLabel;
 		private VtProButton m_DialButton;
 		private VtProButton m_HangupButton;
 		private VtProButton m_ClearButton;
@@ -37,28 +38,31 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference
 				DigitalPressJoin = 113
 			};
 
-			m_ActiveNumberLabel = new VtProFormattedText(panel, m_Subpage);
-			m_ActiveNumberLabel.SerialLabelJoins.Add(651);
+			m_RoomNumberLabel = new VtProFormattedText(panel, m_Subpage);
+			m_RoomNumberLabel.SerialLabelJoins.Add(651);
 
 			m_DialNumberLabel = new VtProFormattedText(panel, m_Subpage);
 			m_DialNumberLabel.SerialLabelJoins.Add(650);
 
+			m_CallStatusLabel = new VtProFormattedText(panel, m_Subpage);
+			m_CallStatusLabel.SerialLabelJoins.Add(652);
+
 			m_DialButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 650,
-				DigitalEnableJoin = 650
+				DigitalEnableJoin = 651
 			};
 
 			m_HangupButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 651,
-				DigitalEnableJoin = 651
+				DigitalPressJoin = 652,
+				DigitalEnableJoin = 653
 			};
 
 			m_ClearButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 652,
-				DigitalEnableJoin = 652
+				DigitalPressJoin = 654,
+				DigitalEnableJoin = 655
 			};
 
 			m_DialKeypad = new VtProSimpleKeypad(650, panel as IPanelDevice, m_Subpage)
@@ -76,8 +80,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference
 		{
 			yield return m_Subpage;
 			yield return m_CloseButton;
-			yield return m_ActiveNumberLabel;
+			yield return m_RoomNumberLabel;
 			yield return m_DialNumberLabel;
+			yield return m_CallStatusLabel;
 			yield return m_DialButton;
 			yield return m_HangupButton;
 			yield return m_ClearButton;

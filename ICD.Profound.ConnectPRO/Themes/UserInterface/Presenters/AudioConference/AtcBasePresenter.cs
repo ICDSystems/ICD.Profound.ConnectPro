@@ -66,12 +66,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 						? null
 						: m_SubscribedAudioDialer.GetSources().FirstOrDefault(s => s.GetIsOnline());
 
-				string activeNumber = active == null ? null : active.Number;
+				eConferenceSourceStatus status = active == null ? eConferenceSourceStatus.Disconnected : active.Status;
+
+				string activeStatus = StringUtils.NiceName(status);
 				string dialString = m_Builder.ToString();
 				bool inACall = active != null;
 
-				view.SetActiveNumber(string.IsNullOrEmpty(activeNumber) ? "(XXX)XXX-XXXX" : activeNumber);
+				// TODO
+				view.SetRoomNumber("(484)713-9601");
 				view.SetDialNumber(string.IsNullOrEmpty(dialString) ? "Dial Number" : dialString);
+				view.SetCallStatus(activeStatus);
 
 				view.SetClearButtonEnabled(dialString.Length > 0);
 				view.SetDialButtonEnabled(dialString.Length > 0);
@@ -187,6 +191,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 
 		private void ViewOnKeypadButtonPressed(object sender, CharEventArgs eventArgs)
 		{
+			if (m_SubscribedAudioDialer == null)
+				return;
+
+			// DTMF
+			foreach (IConferenceSource source in m_SubscribedAudioDialer.GetSources().Where(s => s.GetIsOnline()))
+				source.SendDtmf(eventArgs.Data);
+
 			m_Builder.AppendCharacter(eventArgs.Data);
 		}
 

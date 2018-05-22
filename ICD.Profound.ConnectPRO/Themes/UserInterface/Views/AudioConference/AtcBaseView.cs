@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
@@ -63,6 +64,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference
 		#region Methods
 
 		/// <summary>
+		/// Sets the active call status text.
+		/// </summary>
+		/// <param name="status"></param>
+		public void SetCallStatus(string status)
+		{
+			m_CallStatusLabel.SetLabelTextAtJoin(m_CallStatusLabel.SerialLabelJoins.First(), status);
+		}
+
+		/// <summary>
 		/// Sets the text for the number being dialed.
 		/// </summary>
 		/// <param name="number"></param>
@@ -72,12 +82,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference
 		}
 
 		/// <summary>
-		/// Sets the text for the number actively connected to.
+		/// Sets the text for the room number.
 		/// </summary>
 		/// <param name="number"></param>
-		public void SetActiveNumber(string number)
+		public void SetRoomNumber(string number)
 		{
-			m_ActiveNumberLabel.SetLabelTextAtJoin(m_ActiveNumberLabel.SerialLabelJoins.First(), number);
+			m_RoomNumberLabel.SetLabelTextAtJoin(m_RoomNumberLabel.SerialLabelJoins.First(), number);
 		}
 
 		/// <summary>
@@ -86,6 +96,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference
 		/// <param name="enabled"></param>
 		public void SetDialButtonEnabled(bool enabled)
 		{
+			IcdConsole.PrintLine(eConsoleColor.Magenta, "SetDialButtonEnabled {0}", enabled);
+
 			m_DialButton.Enable(enabled);
 		}
 
@@ -95,6 +107,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference
 		/// <param name="enabled"></param>
 		public void SetHangupButtonEnabled(bool enabled)
 		{
+			IcdConsole.PrintLine(eConsoleColor.Magenta, "SetHangupButtonEnabled {0}", enabled);
+
 			m_HangupButton.Enable(enabled);
 		}
 
@@ -104,6 +118,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference
 		/// <param name="enabled"></param>
 		public void SetClearButtonEnabled(bool enabled)
 		{
+			IcdConsole.PrintLine(eConsoleColor.Magenta, "SetClearButtonEnabled {0}", enabled);
+
 			m_ClearButton.Enable(enabled);
 		}
 
