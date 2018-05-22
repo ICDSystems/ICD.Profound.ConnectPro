@@ -483,7 +483,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (destination == null)
 				throw new ArgumentNullException("destination");
 
-			ConnectionPath path = RoutingGraph.FindPath(source, destination, flag, m_Room.Id);
+			ConnectionPath path = IcdStopwatch.Profile(() =>
+
+			                                           RoutingGraph.FindPath(source, destination, flag, m_Room.Id), "Pathfinding");
 			if (path == null)
 			{
 				m_Room.Logger.AddEntry(eSeverity.Error, "Failed to find {0} path from {1} to {2}", flag, source, destination);
@@ -581,8 +583,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (path == null)
 				throw new ArgumentNullException("path");
 
-
-
 			bool oldRouting = m_Routing;
 			m_Routing = true;
 
@@ -592,18 +592,23 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (!oldRouting)
 				m_Routing = false;
 
-			IDeviceBase destinationDevice = m_Room.Core.Originators.GetChild<IDeviceBase>(path.DestinationEndpoint.Device);
+			IcdStopwatch.Profile(() =>
+			                     {
+				                     IDeviceBase destinationDevice =
+					                     m_Room.Core.Originators.GetChild<IDeviceBase>(path.DestinationEndpoint.Device);
 
-			// Power on the destination
-			IPowerDeviceControl powerControl = destinationDevice.Controls.GetControl<IPowerDeviceControl>();
-			if (powerControl != null && !powerControl.IsPowered)
-				powerControl.PowerOn();
+				                     // Power on the destination
+				                     IPowerDeviceControl powerControl = destinationDevice.Controls.GetControl<IPowerDeviceControl>();
+				                     if (powerControl != null && !powerControl.IsPowered)
+					                     powerControl.PowerOn();
 
-			// Set the destination to the correct input
-			int input = path.DestinationEndpoint.Address;
-			IRouteInputSelectControl inputSelectControl = destinationDevice.Controls.GetControl<IRouteInputSelectControl>();
-			if (inputSelectControl != null && inputSelectControl.ActiveInput != input)
-				inputSelectControl.SetActiveInput(input);
+				                     // Set the destination to the correct input
+				                     int input = path.DestinationEndpoint.Address;
+				                     IRouteInputSelectControl inputSelectControl =
+					                     destinationDevice.Controls.GetControl<IRouteInputSelectControl>();
+				                     if (inputSelectControl != null && inputSelectControl.ActiveInput != input)
+					                     inputSelectControl.SetActiveInput(input);
+			                     }, "Power destination");
 		}
 
 		/// <summary>
