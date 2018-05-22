@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Linq;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Cisco;
 using ICD.Connect.Conferencing.Cisco.Components.System;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
+using ICD.Connect.Conferencing.ConferenceSources;
 using ICD.Connect.Conferencing.Controls;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -21,7 +23,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 	{
 		private SystemComponent m_SubscribedCodecSystem;
 
-		private IConferenceManager m_SubscribedConferenceManager;
+		private IDialingDeviceControl m_SubscribedVideoDialer;
 
 		private readonly IVtcCallListTogglePresenter m_CallListTogglePresenter;
 		private readonly IVtcContactsPresenter m_ContactsPresenter;
@@ -98,8 +100,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (room == null)
 				return;
 
-			m_SubscribedConferenceManager = room.ConferenceManager;
-			m_SubscribedConferenceManager.OnInCallChanged += SubscribedConferenceManagerOnInCallChanged;
+			m_SubscribedVideoDialer = room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			if (m_SubscribedVideoDialer != null)
+			{
+				m_SubscribedVideoDialer.OnSourceAdded += VideoDialerOnSourceAdded;
+				m_SubscribedVideoDialer.OnSourceChanged += VideoDialerOnSourceChanged;
+				m_SubscribedVideoDialer.OnSourceRemoved += VideoDialerOnSourceRemoved;
+			}
 
 			m_SubscribedCodecSystem = GetSystemComponent(room);
 			if (m_SubscribedCodecSystem == null)
@@ -116,18 +123,40 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Unsubscribe(room);
 
-			if (m_SubscribedConferenceManager != null)
-				m_SubscribedConferenceManager.OnInCallChanged -= SubscribedConferenceManagerOnInCallChanged;
+			if (m_SubscribedVideoDialer != null)
+			{
+				m_SubscribedVideoDialer.OnSourceAdded -= VideoDialerOnSourceAdded;
+				m_SubscribedVideoDialer.OnSourceChanged -= VideoDialerOnSourceChanged;
+				m_SubscribedVideoDialer.OnSourceRemoved -= VideoDialerOnSourceRemoved;
+			}
 
-			if (m_SubscribedCodecSystem == null)
-				return;
+			if (m_SubscribedCodecSystem != null)
+			{
+				m_SubscribedCodecSystem.OnAwakeStateChanged -= SubscribedCodecSystemOnAwakeStateChanged;
+			}
 
-			m_SubscribedCodecSystem.OnAwakeStateChanged -= SubscribedCodecSystemOnAwakeStateChanged;
+			m_SubscribedVideoDialer = null;
+			m_SubscribedCodecSystem = null;
 		}
 
-		private void SubscribedConferenceManagerOnInCallChanged(object sender, InCallEventArgs inCallEventArgs)
+		private void VideoDialerOnSourceChanged(object sender, ConferenceSourceEventArgs eventArgs)
 		{
-			bool isInCall = inCallEventArgs.Data >= eInCall.Audio;
+			UpdateVisibility();
+		}
+
+		private void VideoDialerOnSourceRemoved(object sender, ConferenceSourceEventArgs eventArgs)
+		{
+			UpdateVisibility();
+		}
+
+		private void VideoDialerOnSourceAdded(object sender, ConferenceSourceEventArgs eventArgs)
+		{
+			UpdateVisibility();
+		}
+
+		private void UpdateVisibility()
+		{
+			bool isInCall = m_SubscribedVideoDialer != null && m_SubscribedVideoDialer.GetSources().Any(s => s.GetIsOnline());
 
 			m_CallListTogglePresenter.ShowView(isInCall);
 

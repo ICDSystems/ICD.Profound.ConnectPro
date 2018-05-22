@@ -6,6 +6,7 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.ConferenceSources;
+using ICD.Connect.Conferencing.Controls;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -21,7 +22,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private IConferenceSource m_Selected;
-		private IConferenceManager m_SubscribedConferenceManager;
+		private IDialingDeviceControl m_VideoDialingControl;
 
 		/// <summary>
 		/// Constructor.
@@ -81,12 +82,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <returns></returns>
 		private IEnumerable<IConferenceSource> GetSources()
 		{
-			IConference conference = m_SubscribedConferenceManager == null
-										 ? null
-										 : m_SubscribedConferenceManager.ActiveConference;
-			return conference == null
+			return m_VideoDialingControl == null
 					   ? Enumerable.Empty<IConferenceSource>()
-					   : conference.GetSources().Where(s => s.Status == eConferenceSourceStatus.Connected);
+					   : m_VideoDialingControl.GetSources().Where(s => s.GetIsOnline());
 		}
 
 		private IEnumerable<IVtcReferencedDtmfView> ItemFactory(ushort count)
@@ -118,11 +116,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Subscribe(room);
 
-			m_SubscribedConferenceManager = room == null ? null : room.ConferenceManager;
-			if (m_SubscribedConferenceManager == null)
+			m_VideoDialingControl = room == null ? null : room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			if (m_VideoDialingControl == null)
 				return;
 
-			m_SubscribedConferenceManager.OnRecentSourceAdded += ConferenceManagerOnRecentSourceAdded;
+			m_VideoDialingControl.OnSourceAdded += VideoDialerOnSourceAdded;
+			m_VideoDialingControl.OnSourceRemoved += VideoDialerOnSourceRemoved;
+			m_VideoDialingControl.OnSourceChanged += VideoDialerOnSourceChanged;
 		}
 
 		/// <summary>
@@ -133,18 +133,27 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Unsubscribe(room);
 
-			if (m_SubscribedConferenceManager == null)
-				return;
+			if (m_VideoDialingControl != null)
+			{
+				m_VideoDialingControl.OnSourceAdded -= VideoDialerOnSourceAdded;
+				m_VideoDialingControl.OnSourceRemoved -= VideoDialerOnSourceRemoved;
+				m_VideoDialingControl.OnSourceChanged -= VideoDialerOnSourceChanged;
+			}
 
-			m_SubscribedConferenceManager.OnRecentSourceAdded -= ConferenceManagerOnRecentSourceAdded;
+			m_VideoDialingControl = null;
 		}
 
-		/// <summary>
-		/// Called when a source is added to the conference.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="eventArgs"></param>
-		private void ConferenceManagerOnRecentSourceAdded(object sender, ConferenceSourceEventArgs eventArgs)
+		private void VideoDialerOnSourceRemoved(object sender, ConferenceSourceEventArgs e)
+		{
+			RefreshIfVisible();
+		}
+
+		private void VideoDialerOnSourceChanged(object sender, ConferenceSourceEventArgs e)
+		{
+			RefreshIfVisible();
+		}
+
+		private void VideoDialerOnSourceAdded(object sender, ConferenceSourceEventArgs eventArgs)
 		{
 			RefreshIfVisible();
 

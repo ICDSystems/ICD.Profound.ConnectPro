@@ -1,5 +1,7 @@
 ﻿using System;
-using ICD.Connect.Conferencing.ConferenceManagers;
+using System.Linq;
+using ICD.Connect.Conferencing.Controls;
+using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Favorites;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
@@ -71,9 +73,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		protected override void Dial()
 		{
-			IConferenceManager manager = Room == null ? null : Room.ConferenceManager;
-			if (manager != null && m_Favorite != null)
-				manager.Dial(m_Favorite);
+			IDialingDeviceControl dialer = Room == null ? null : Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			if (dialer != null && m_Favorite != null)
+				dialer.Dial(m_Favorite.GetContactMethods().First().Number);
 		}
 
 		protected override void ViewOnFavoriteButtonPressed(object sender, EventArgs eventArgs)

@@ -1,5 +1,6 @@
-﻿using ICD.Connect.Conferencing.ConferenceManagers;
-using ICD.Connect.Conferencing.ConferenceSources;
+﻿using ICD.Connect.Conferencing.ConferenceSources;
+using ICD.Connect.Conferencing.Controls;
+using ICD.Connect.Conferencing.EventArguments;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -77,9 +78,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		protected override void Dial()
 		{
-			IConferenceManager manager = Room == null ? null : Room.ConferenceManager;
-			if (manager != null && m_Recent != null)
-				manager.Dial(m_Recent);
+			IDialingDeviceControl dialer = Room == null ? null : Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			if (dialer != null && m_Recent != null)
+				dialer.Dial(m_Recent.Number);
 		}
 	}
 }

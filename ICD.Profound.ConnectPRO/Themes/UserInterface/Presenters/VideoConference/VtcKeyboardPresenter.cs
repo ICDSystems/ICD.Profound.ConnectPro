@@ -1,7 +1,8 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
-using ICD.Connect.Conferencing.ConferenceManagers;
+using ICD.Connect.Conferencing.Controls;
+using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.UI.EventArguments;
 using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -203,9 +204,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			string number = m_StringBuilder.ToString();
 
-			IConferenceManager manager = Room == null ? null : Room.ConferenceManager;
-			if (manager != null)
-				manager.Dial(number);
+			IDialingDeviceControl control = Room == null ? null : Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			if (control != null)
+				control.Dial(number);
 
 			ShowView(false);
 		}
