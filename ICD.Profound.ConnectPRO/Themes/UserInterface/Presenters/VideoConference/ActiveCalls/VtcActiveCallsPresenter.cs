@@ -84,7 +84,35 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			return m_SubscribedVideoDialer == null
 				       ? Enumerable.Empty<IConferenceSource>()
-				       : m_SubscribedVideoDialer.GetSources().Where(s => s.GetIsOnline());
+					   : m_SubscribedVideoDialer.GetSources().Where(IsActiveSource);
+		}
+
+		private bool IsActiveSource(IConferenceSource source)
+		{
+			if (source == null)
+				return false;
+
+			switch (source.Status)
+			{
+				case eConferenceSourceStatus.Undefined:
+				case eConferenceSourceStatus.Disconnected:
+				case eConferenceSourceStatus.Idle:
+					return false;
+
+				case eConferenceSourceStatus.Dialing:
+				case eConferenceSourceStatus.Connecting:
+				case eConferenceSourceStatus.Ringing:
+				case eConferenceSourceStatus.Connected:
+				case eConferenceSourceStatus.OnHold:
+				case eConferenceSourceStatus.EarlyMedia:
+				case eConferenceSourceStatus.Preserved:
+				case eConferenceSourceStatus.RemotePreserved:
+				case eConferenceSourceStatus.Disconnecting:
+					return true;
+
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
 		}
 
 		/// <summary>

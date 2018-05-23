@@ -70,7 +70,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 
 				// TODO
 				view.SetRoomNumber("(484)713-9601");
-				view.SetDialNumber(string.IsNullOrEmpty(dialString) ? "Dial Number" : dialString);
+				view.SetDialNumber(string.IsNullOrEmpty(dialString) && active == null ? "Dial Number" : dialString);
 				view.SetCallStatus(activeStatus);
 
 				view.SetClearButtonEnabled(dialString.Length > 0);
@@ -104,7 +104,35 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 			return
 				m_SubscribedAudioDialer == null
 					? null
-					: m_SubscribedAudioDialer.GetSources().FirstOrDefault(s => s.GetIsOnline());
+					: m_SubscribedAudioDialer.GetSources().FirstOrDefault(IsActiveSource);
+		}
+
+		private bool IsActiveSource(IConferenceSource source)
+		{
+			if (source == null)
+				return false;
+
+			switch (source.Status)
+			{
+				case eConferenceSourceStatus.Undefined:
+				case eConferenceSourceStatus.Disconnected:
+				case eConferenceSourceStatus.Idle:
+					return false;
+
+				case eConferenceSourceStatus.Dialing:
+				case eConferenceSourceStatus.Connecting:
+				case eConferenceSourceStatus.Ringing:
+				case eConferenceSourceStatus.Connected:
+				case eConferenceSourceStatus.OnHold:
+				case eConferenceSourceStatus.EarlyMedia:
+				case eConferenceSourceStatus.Preserved:
+				case eConferenceSourceStatus.RemotePreserved:
+				case eConferenceSourceStatus.Disconnecting:
+					return true;
+
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
 		}
 
 		#region Room Callbacks
@@ -151,6 +179,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 
 		private void AudioDialerOnSourceRemoved(object sender, ConferenceSourceEventArgs e)
 		{
+			// When the source goes offline we clear the dial string
 			if (GetActiveSource() == null)
 				m_Builder.Clear();
 
