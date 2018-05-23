@@ -7,6 +7,7 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Cisco;
 using ICD.Connect.Conferencing.Cisco.Components.Presentation;
+using ICD.Connect.Conferencing.ConferenceSources;
 using ICD.Connect.Conferencing.Controls;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Partitioning.Rooms;
@@ -31,6 +32,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private ISource[] m_Sources;
 		private ISource m_Selected;
 		private ISource m_Routed;
+
+		private IDialingDeviceControl m_SubscribedVideoDialer;
 
 		[CanBeNull]
 		private PresentationComponent m_SubscribedPresentationComponent;
@@ -159,6 +162,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (room == null)
 				return;
 
+			m_SubscribedVideoDialer = room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			if (m_SubscribedVideoDialer != null)
+			{
+				m_SubscribedVideoDialer.OnSourceAdded += VideoDialerOnSourceAdded;
+				m_SubscribedVideoDialer.OnSourceChanged += VideoDialerOnSourceChanged;
+				m_SubscribedVideoDialer.OnSourceRemoved += VideoDialerOnSourceRemoved;
+			}
+
 			if (room.Core.TryGetRoutingGraph(out m_SubscribedRoutingGraph))
 				m_SubscribedRoutingGraph.OnRouteChanged += RoutingGraphOnRouteChanged;
 
@@ -179,6 +190,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		protected override void Unsubscribe(IConnectProRoom room)
 		{
 			base.Unsubscribe(room);
+
+			if (m_SubscribedVideoDialer != null)
+			{
+				m_SubscribedVideoDialer.OnSourceAdded -= VideoDialerOnSourceAdded;
+				m_SubscribedVideoDialer.OnSourceChanged -= VideoDialerOnSourceChanged;
+				m_SubscribedVideoDialer.OnSourceRemoved -= VideoDialerOnSourceRemoved;
+			}
+			m_SubscribedVideoDialer = null;
 
 			if (m_SubscribedRoutingGraph != null)
 				m_SubscribedRoutingGraph.OnRouteChanged -= RoutingGraphOnRouteChanged;
@@ -206,6 +225,30 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			// Update the routed presentation source
 			ISource source = Room.Routing.GetVtcPresentationSource();
 			SetRouted(source);
+		}
+
+		private void VideoDialerOnSourceChanged(object sender, ConferenceSourceEventArgs eventArgs)
+		{
+			UpdateVisibility();
+		}
+
+		private void VideoDialerOnSourceRemoved(object sender, ConferenceSourceEventArgs eventArgs)
+		{
+			UpdateVisibility();
+		}
+
+		private void VideoDialerOnSourceAdded(object sender, ConferenceSourceEventArgs eventArgs)
+		{
+			UpdateVisibility();
+		}
+
+		private void UpdateVisibility()
+		{
+			bool isInCall = m_SubscribedVideoDialer != null && m_SubscribedVideoDialer.GetSources().Any(s => s.GetIsOnline());
+
+			// Ensure we leave presentation mode when we leave a call
+			if (m_SubscribedPresentationComponent != null)
+				StopPresenting();
 		}
 
 		#endregion
