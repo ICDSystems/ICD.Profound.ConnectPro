@@ -118,7 +118,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				if (type.HasFlag(eConnectionType.Audio))
 				{
 					IcdHashSet<ISource> activeAudio = GetActiveAudioSources().ToIcdHashSet();
-					audioChange = !activeAudio.ScrambledEquals(m_AudioRoutingCache);
+					audioChange = !activeAudio.SetEquals(m_AudioRoutingCache);
 
 					m_AudioRoutingCache.Clear();
 					m_AudioRoutingCache.AddRange(activeAudio);
@@ -137,9 +137,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			}
 
 			if (videoChange)
-			{
 				OnDisplaySourceChanged.Raise(this);
-			}
 
 			if (audioChange)
 				OnAudioSourceChanged.Raise(this);
@@ -164,7 +162,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 					if (!m_VideoRoutingCache.ContainsKey(kvp.Key))
 						m_VideoRoutingCache.Add(kvp.Key, new IcdHashSet<ISource>());
 
-					output |= !m_VideoRoutingCache[kvp.Key].ScrambledEquals(kvp.Value);
+					output |= !m_VideoRoutingCache[kvp.Key].SetEquals(kvp.Value);
 
 					m_VideoRoutingCache[kvp.Key].Clear();
 					m_VideoRoutingCache[kvp.Key].AddRange(kvp.Value);
