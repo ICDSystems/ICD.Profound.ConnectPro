@@ -9,6 +9,7 @@ using ICD.Connect.Conferencing.Cisco.Components.Directory.Tree;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Contacts;
+using ICD.Connect.Conferencing.Controls;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -223,7 +224,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (room == null)
 				return;
 
-			CiscoCodec codec = room.Originators.GetInstanceRecursive<CiscoCodec>();
+			IDialingDeviceControl videoDialer = room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			CiscoCodec codec = videoDialer == null ? null : videoDialer.Parent as CiscoCodec;
 			if (codec == null)
 				return;
 
