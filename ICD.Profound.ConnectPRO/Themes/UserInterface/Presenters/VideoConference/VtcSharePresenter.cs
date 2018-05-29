@@ -5,10 +5,9 @@ using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
-using ICD.Connect.Conferencing.Cisco;
-using ICD.Connect.Conferencing.Cisco.Components.Presentation;
 using ICD.Connect.Conferencing.ConferenceSources;
 using ICD.Connect.Conferencing.Controls;
+using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints;
@@ -36,7 +35,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private IDialingDeviceControl m_SubscribedVideoDialer;
 
 		[CanBeNull]
-		private PresentationComponent m_SubscribedPresentationComponent;
+		private IPresentationControl m_SubscribedPresentationComponent;
 
 		[CanBeNull]
 		private IRoutingGraph m_SubscribedRoutingGraph;
@@ -125,7 +124,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <returns></returns>
 		private bool IsInPresentation()
 		{
-			return m_SubscribedPresentationComponent != null && m_SubscribedPresentationComponent.GetPresentations().Any();
+			return m_SubscribedPresentationComponent != null && m_SubscribedPresentationComponent.PresentationActive;
 		}
 
 		private void SetSelected(ISource source)
@@ -174,13 +173,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				m_SubscribedRoutingGraph.OnRouteChanged += RoutingGraphOnRouteChanged;
 
 			IDialingDeviceControl dialer = room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
-			CiscoCodec codec = dialer == null ? null : dialer.Parent as CiscoCodec;
-			m_SubscribedPresentationComponent = codec == null ? null : codec.Components.GetComponent<PresentationComponent>();
+			IVideoConferenceDevice codec = dialer == null ? null : dialer.Parent as IVideoConferenceDevice;
+			m_SubscribedPresentationComponent = codec == null ? null : codec.Controls.GetControl<IPresentationControl>();
 
 			if (m_SubscribedPresentationComponent == null)
 				return;
 
-			m_SubscribedPresentationComponent.OnPresentationsChanged += SubscribedPresentationComponentOnPresentationsChanged;
+			m_SubscribedPresentationComponent.OnPresentationActiveChanged += SubscribedPresentationControlOnPresentationActiveChanged;
 		}
 
 		/// <summary>
@@ -207,12 +206,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (m_SubscribedPresentationComponent == null)
 				return;
 
-			m_SubscribedPresentationComponent.OnPresentationsChanged -= SubscribedPresentationComponentOnPresentationsChanged;
+			m_SubscribedPresentationComponent.OnPresentationActiveChanged -= SubscribedPresentationControlOnPresentationActiveChanged;
 
 			m_SubscribedPresentationComponent = null;
 		}
 
-		private void SubscribedPresentationComponentOnPresentationsChanged(object sender, EventArgs eventArgs)
+		private void SubscribedPresentationControlOnPresentationActiveChanged(object sender, EventArgs eventArgs)
 		{
 			RefreshIfVisible();
 		}
@@ -315,8 +314,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (m_SubscribedPresentationComponent == null)
 				return;
 
-			foreach (PresentationItem presentation in m_SubscribedPresentationComponent.GetPresentations())
-				m_SubscribedPresentationComponent.StopPresentation(presentation);
+			m_SubscribedPresentationComponent.StopPresentation();
 		}
 
 		#endregion

@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Conferencing.Cisco;
-using ICD.Connect.Conferencing.Cisco.Components.Directory;
-using ICD.Connect.Conferencing.Cisco.Components.Directory.Tree;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Contacts;
+using ICD.Connect.Conferencing.Directory;
+using ICD.Connect.Conferencing.Directory.Tree;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -34,7 +33,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private readonly IVtcKeyboardPresenter m_Keyboard;
 
 		private eDirectoryMode m_DirectoryMode;
-		private DirectoryBrowser m_DirectoryBrowser;
+		private IDirectoryBrowser<,> m_DirectoryBrowser;
 		private	IVtcReferencedContactsPresenterBase m_Selected;
 		private IConferenceManager m_SubscribedConferenceManager;
 
@@ -245,7 +244,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Subscribe to the browser events.
 		/// </summary>
 		/// <param name="browser"></param>
-		private void Subscribe(DirectoryBrowser browser)
+		private void Subscribe(IDirectoryBrowser browser)
 		{
 			if (browser == null)
 				return;
@@ -258,7 +257,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Unsubscribe from the browser events.
 		/// </summary>
 		/// <param name="browser"></param>
-		private void Unsubscribe(DirectoryBrowser browser)
+		private void Unsubscribe(IDirectoryBrowser browser)
 		{
 			if (browser == null)
 				return;

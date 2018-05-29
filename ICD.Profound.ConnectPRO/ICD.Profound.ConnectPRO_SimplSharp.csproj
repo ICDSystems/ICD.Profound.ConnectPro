@@ -360,10 +360,6 @@
       <Project>{B13D593D-8BBF-4E20-ABD8-47C6095E7D3E}</Project>
       <Name>ICD.Connect.Cameras_SimplSharp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing.Cisco\ICD.Connect.Conferencing.Cisco_SimplSharp.csproj">
-      <Project>{B2DF3389-5C95-4CAF-BA30-3A4D0AAC9CE3}</Project>
-      <Name>ICD.Connect.Conferencing.Cisco_SimplSharp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing\ICD.Connect.Conferencing_SimplSharp.csproj">
       <Project>{1CCA89DA-1F1C-4997-A94F-ABCE878BD6DE}</Project>
       <Name>ICD.Connect.Conferencing_SimplSharp</Name>

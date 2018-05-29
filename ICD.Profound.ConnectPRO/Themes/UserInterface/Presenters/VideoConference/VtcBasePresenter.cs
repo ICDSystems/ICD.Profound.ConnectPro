@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Linq;
 using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Conferencing.Cisco;
-using ICD.Connect.Conferencing.Cisco.Components.System;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.ConferenceSources;
 using ICD.Connect.Conferencing.Controls;
+using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Devices.Controls;
+using ICD.Connect.Devices.EventArguments;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
@@ -21,8 +22,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 {
 	public sealed class VtcBasePresenter : AbstractPopupPresenter<IVtcBaseView>, IVtcBasePresenter
 	{
-		private SystemComponent m_SubscribedCodecSystem;
-
+		private IPowerDeviceControl m_SubscribedPowerControl;
 		private IDialingDeviceControl m_SubscribedVideoDialer;
 
 		private readonly IVtcCallListTogglePresenter m_CallListTogglePresenter;
@@ -56,7 +56,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_CallListTogglePresenter.SetContactsMode(!boolEventArgs.Data);
 		}
 
-		private SystemComponent GetSystemComponent(IConnectProRoom room)
+		private	IPowerDeviceControl GetSystemComponent(IConnectProRoom room)
 		{
 			if (room == null)
 				return null;
@@ -65,8 +65,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (dialer == null)
 				return null;
 
-			CiscoCodec codec = dialer.Parent as CiscoCodec;
-			return codec == null ? null : codec.Components.GetComponent<SystemComponent>();
+			IVideoConferenceDevice codec = dialer.Parent as IVideoConferenceDevice;
+			return codec == null ? null : codec.Controls.GetControl<IPowerDeviceControl>();
 		}
 
 		/// <summary>
@@ -74,17 +74,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		private void UpdateCodecAwakeState()
 		{
-			if (m_SubscribedCodecSystem == null)
+			if (m_SubscribedPowerControl == null)
 				return;
 
 			bool visible = IsViewVisible;
-			if (visible == m_SubscribedCodecSystem.Awake)
+			if (visible == m_SubscribedPowerControl.IsPowered)
 				return;
 
 			if (visible)
-				m_SubscribedCodecSystem.Wake();
+				m_SubscribedPowerControl.PowerOn();
 			else
-				m_SubscribedCodecSystem.Standby();
+				m_SubscribedPowerControl.PowerOff();
 		}
 
 		#region Room Callbacks
@@ -108,11 +108,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				m_SubscribedVideoDialer.OnSourceRemoved += VideoDialerOnSourceRemoved;
 			}
 
-			m_SubscribedCodecSystem = GetSystemComponent(room);
-			if (m_SubscribedCodecSystem == null)
+			m_SubscribedPowerControl = GetSystemComponent(room);
+			if (m_SubscribedPowerControl == null)
 				return;
 
-			m_SubscribedCodecSystem.OnAwakeStateChanged += SubscribedCodecSystemOnAwakeStateChanged;
+			m_SubscribedPowerControl.OnIsPoweredChanged += SubscribedPowerControlOnIsPoweredChanged;
 		}
 
 		/// <summary>
@@ -130,13 +130,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				m_SubscribedVideoDialer.OnSourceRemoved -= VideoDialerOnSourceRemoved;
 			}
 
-			if (m_SubscribedCodecSystem != null)
+			if (m_SubscribedPowerControl != null)
 			{
-				m_SubscribedCodecSystem.OnAwakeStateChanged -= SubscribedCodecSystemOnAwakeStateChanged;
+				m_SubscribedPowerControl.OnIsPoweredChanged -= SubscribedPowerControlOnIsPoweredChanged;
 			}
 
 			m_SubscribedVideoDialer = null;
-			m_SubscribedCodecSystem = null;
+			m_SubscribedPowerControl = null;
 		}
 
 		private void VideoDialerOnSourceChanged(object sender, ConferenceSourceEventArgs eventArgs)
@@ -178,7 +178,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void SubscribedCodecSystemOnAwakeStateChanged(object sender, BoolEventArgs eventArgs)
+		private void SubscribedPowerControlOnIsPoweredChanged(object sender, PowerDeviceControlPowerStateApiEventArgs eventArgs)
 		{
 			UpdateCodecAwakeState();
 		}

@@ -1,4 +1,4 @@
-﻿using ICD.Connect.Conferencing.Cisco.Components.Directory.Tree;
+﻿using ICD.Connect.Conferencing.Directory.Tree;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts
 {
