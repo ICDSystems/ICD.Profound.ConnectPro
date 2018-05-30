@@ -230,10 +230,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				return;
 
 			DirectoryComponent component = codec.Components.GetComponent<DirectoryComponent>();
-			m_DirectoryBrowser = new DirectoryBrowser(component)
-			{
-				PhonebookType = ePhonebookType.Corporate
-			};
+			m_DirectoryBrowser = new DirectoryBrowser(component);
 
 			Subscribe(m_DirectoryBrowser);
 
