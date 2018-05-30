@@ -4,6 +4,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConferen
 {
 	public interface IVtcReferencedFolderPresenter : IVtcReferencedContactsPresenterBase
 	{
-		IFolder Folder { get; set; }
+		IDirectoryFolder Folder { get; set; }
 	}
 }
