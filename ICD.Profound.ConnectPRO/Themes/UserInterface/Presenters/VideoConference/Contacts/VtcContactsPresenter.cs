@@ -183,19 +183,32 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 					if (m_DirectoryBrowser == null)
 						return Enumerable.Empty<ModelPresenterTypeInfo>();
 
-					return m_DirectoryBrowser.GetCurrentFolder()
-					                         .GetChildren()
-											 .OrderBy(c => c is IContact)
-											 .ThenBy(c => c.Name)
-					                         .Select(c =>
-					                                 {
-						                                 ModelPresenterTypeInfo.ePresenterType type = (c is IDirectoryFolder)
-							                                                                              ? ModelPresenterTypeInfo
-								                                                                                .ePresenterType.Folder
-							                                                                              : ModelPresenterTypeInfo
-								                                                                                .ePresenterType.Contact;
-						                                 return new ModelPresenterTypeInfo(type, c);
-					                                 });
+					IDirectoryFolder current = m_DirectoryBrowser.GetCurrentFolder();
+
+					return current
+						.GetFolders()
+						.Cast<object>()
+						.Concat(current.GetContacts())
+						.OrderBy(c => c is IContact)
+						.ThenBy(c =>
+						        {
+							        if (c is IContact)
+								        return (c as IContact).Name;
+									if (c is IDirectoryFolder)
+										return (c as IDirectoryFolder).Name;
+
+									// This should never happen
+									throw new InvalidOperationException();
+						        })
+						.Select(c =>
+						        {
+							        ModelPresenterTypeInfo.ePresenterType type = (c is IDirectoryFolder)
+								                                                     ? ModelPresenterTypeInfo
+									                                                       .ePresenterType.Folder
+								                                                     : ModelPresenterTypeInfo
+									                                                       .ePresenterType.Contact;
+							        return new ModelPresenterTypeInfo(type, c);
+						        });
 				
 				case eDirectoryMode.Favorites:
 					return
@@ -309,6 +322,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			m_SubscribedConferenceManager.OnInCallChanged -= ConferenceManagerOnInCallChanged;
 			m_SubscribedConferenceManager.OnActiveSourceStatusChanged -= ConferenceManagerOnActiveSourceStatusChanged;
+
+			m_SubscribedConferenceManager = null;
 		}
 
 		/// <summary>
