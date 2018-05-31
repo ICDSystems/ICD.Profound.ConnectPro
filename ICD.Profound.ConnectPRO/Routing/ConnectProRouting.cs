@@ -8,6 +8,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.Controls;
+using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Devices;
@@ -590,10 +591,12 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (presentation == null)
 				throw new InvalidOperationException("No presentation control available.");
 
-			IRouteDestinationControl control = codec.Controls.GetControl<IRouteDestinationControl>();
+			IVideoConferenceRouteDestinationControl control = codec.Controls.GetControl<IVideoConferenceRouteDestinationControl>();
+			if (control == null)
+				throw new InvalidOperationException("No routing control available.");
 
 			// Get the content inputs
-			int[] inputs = codec.InputTypes.GetInputs(eCodecInputType.Content).ToArray();
+			int[] inputs = control.GetCodecInputs(eCodecInputType.Content).ToArray();
 			if (inputs.Length == 0)
 			{
 				m_Room.Logger.AddEntry(eSeverity.Error,
@@ -631,10 +634,12 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (codec == null)
 				throw new InvalidOperationException("No codec available.");
 
-			IRouteDestinationControl control = codec.Controls.GetControl<IRouteDestinationControl>();
+			IVideoConferenceRouteDestinationControl control = codec.Controls.GetControl<IVideoConferenceRouteDestinationControl>();
+			if (control == null)
+				throw new InvalidOperationException("Codec has no routing control.");
 
 			// Get the content inputs
-			int[] inputs = codec.InputTypes.GetInputs(eCodecInputType.Content).ToArray();
+			int[] inputs = control.GetCodecInputs(eCodecInputType.Content).ToArray();
 			if (inputs.Length == 0)
 				return null;
 

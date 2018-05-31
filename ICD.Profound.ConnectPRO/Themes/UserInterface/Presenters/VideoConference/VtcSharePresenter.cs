@@ -124,7 +124,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <returns></returns>
 		private bool IsInPresentation()
 		{
-			return m_SubscribedPresentationComponent != null && m_SubscribedPresentationComponent.PresentationActive;
+			return m_SubscribedPresentationComponent != null && m_SubscribedPresentationComponent.PresentationActiveInput != null;
 		}
 
 		private void SetSelected(ISource source)
@@ -243,11 +243,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void UpdateVisibility()
 		{
-			bool isInCall = m_SubscribedVideoDialer != null && m_SubscribedVideoDialer.GetSources().Any(s => s.GetIsOnline());
-
 			// Ensure we leave presentation mode when we leave a call
 			if (m_SubscribedPresentationComponent != null)
 				StopPresenting();
+
+			bool isInCall = m_SubscribedVideoDialer != null && m_SubscribedVideoDialer.GetSources().Any(s => s.GetIsOnline());
+			if (!isInCall)
+				ShowView(false);
 		}
 
 		#endregion
