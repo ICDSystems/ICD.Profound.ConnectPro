@@ -8,6 +8,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.Controls;
+using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Conferencing.EventArguments;
@@ -591,7 +592,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (presentation == null)
 				throw new InvalidOperationException("No presentation control available.");
 
-			IVideoConferenceRouteDestinationControl control = codec.Controls.GetControl<IVideoConferenceRouteDestinationControl>();
+			IVideoConferenceRouteControl control = codec.Controls.GetControl<IVideoConferenceRouteControl>();
 			if (control == null)
 				throw new InvalidOperationException("No routing control available.");
 
@@ -634,7 +635,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (codec == null)
 				throw new InvalidOperationException("No codec available.");
 
-			IVideoConferenceRouteDestinationControl control = codec.Controls.GetControl<IVideoConferenceRouteDestinationControl>();
+			IVideoConferenceRouteControl control = codec.Controls.GetControl<IVideoConferenceRouteControl>();
 			if (control == null)
 				throw new InvalidOperationException("Codec has no routing control.");
 

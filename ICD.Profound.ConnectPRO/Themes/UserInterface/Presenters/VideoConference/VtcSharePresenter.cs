@@ -7,6 +7,7 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.ConferenceSources;
 using ICD.Connect.Conferencing.Controls;
+using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Partitioning.Rooms;
@@ -179,7 +180,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (m_SubscribedPresentationComponent == null)
 				return;
 
-			m_SubscribedPresentationComponent.OnPresentationActiveChanged += SubscribedPresentationControlOnPresentationActiveChanged;
+			m_SubscribedPresentationComponent.OnPresentationActiveInputChanged += SubscribedPresentationControlOnPresentationActiveInputChanged;
 		}
 
 		/// <summary>
@@ -206,12 +207,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (m_SubscribedPresentationComponent == null)
 				return;
 
-			m_SubscribedPresentationComponent.OnPresentationActiveChanged -= SubscribedPresentationControlOnPresentationActiveChanged;
+			m_SubscribedPresentationComponent.OnPresentationActiveInputChanged -= SubscribedPresentationControlOnPresentationActiveInputChanged;
 
 			m_SubscribedPresentationComponent = null;
 		}
 
-		private void SubscribedPresentationControlOnPresentationActiveChanged(object sender, EventArgs eventArgs)
+		private void SubscribedPresentationControlOnPresentationActiveInputChanged(object sender, EventArgs eventArgs)
 		{
 			RefreshIfVisible();
 		}
