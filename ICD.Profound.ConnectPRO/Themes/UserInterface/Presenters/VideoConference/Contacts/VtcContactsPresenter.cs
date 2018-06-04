@@ -106,15 +106,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Dispose();
 
-			if (m_DirectoryBrowser != null)
-			{
-				Unsubscribe(m_DirectoryBrowser);
-				m_DirectoryBrowser.Dispose();
-			}
-
+			Unsubscribe(m_DirectoryBrowser);
 			UnsubscribeChildren();
-			m_ContactsFactory.Dispose();
 
+			m_ContactsFactory.Dispose();
 			m_DirectoryBrowser.Dispose();
 		}
 
