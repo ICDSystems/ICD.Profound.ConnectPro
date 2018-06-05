@@ -7,6 +7,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.ConferenceSources;
 using ICD.Connect.Conferencing.Controls;
+using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Rooms;

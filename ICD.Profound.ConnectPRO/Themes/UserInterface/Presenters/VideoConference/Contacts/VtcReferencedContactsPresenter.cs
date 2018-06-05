@@ -2,6 +2,7 @@
 using System.Linq;
 using ICD.Connect.Conferencing.Contacts;
 using ICD.Connect.Conferencing.Controls;
+using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Favorites;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
