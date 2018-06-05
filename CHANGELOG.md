@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [4.0.1] - 2018-06-04
+### Changed
+ - Routing performance optimizations
+ - No longer setting phonebook type on directory browser
+
 ## [4.0.0] - 2018-05-24
 ### Added
  - ATC implementation
