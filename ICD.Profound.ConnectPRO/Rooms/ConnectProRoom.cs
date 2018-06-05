@@ -11,7 +11,6 @@ using ICD.Connect.Audio.Controls;
 using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
-using ICD.Connect.Conferencing.Controls;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Favorites.SqLite;
