@@ -179,6 +179,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 						return Enumerable.Empty<ModelPresenterTypeInfo>();
 
 					IDirectoryFolder current = m_DirectoryBrowser.GetCurrentFolder();
+					if (current == null)
+						return Enumerable.Empty<ModelPresenterTypeInfo>();
 
 					return current
 						.GetFolders()
