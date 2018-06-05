@@ -6,9 +6,12 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Contacts;
+using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.Controls.Directory;
 using ICD.Connect.Conferencing.Directory;
 using ICD.Connect.Conferencing.Directory.Tree;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Devices;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
@@ -304,6 +307,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			m_SubscribedConferenceManager.OnInCallChanged += ConferenceManagerOnInCallChanged;
 			m_SubscribedConferenceManager.OnActiveSourceStatusChanged += ConferenceManagerOnActiveSourceStatusChanged;
+
+			IDialingDeviceControl dialer = m_SubscribedConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			IDeviceBase parent = dialer == null ? null : dialer.Parent;
+			IDirectoryControl directory = parent == null ? null : parent.Controls.GetControl<IDirectoryControl>();
+			
+			m_DirectoryBrowser.SetControl(directory);
 		}
 
 		/// <summary>
@@ -313,6 +322,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		protected override void Unsubscribe(IConnectProRoom room)
 		{
 			base.Unsubscribe(room);
+
+			m_DirectoryBrowser.SetControl(null);
 
 			if (m_SubscribedConferenceManager == null)
 				return;
