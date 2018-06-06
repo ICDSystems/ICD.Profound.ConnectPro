@@ -633,30 +633,26 @@ namespace ICD.Profound.ConnectPRO.Routing
 		{
 			IVideoConferenceDevice codec = GetCodec();
 			if (codec == null)
-				throw new InvalidOperationException("No codec available.");
+				return null;
 
 			IVideoConferenceRouteControl control = codec.Controls.GetControl<IVideoConferenceRouteControl>();
 			if (control == null)
-				throw new InvalidOperationException("Codec has no routing control.");
-
-			// Get the content inputs
-			int[] inputs = control.GetCodecInputs(eCodecInputType.Content).ToArray();
-			if (inputs.Length == 0)
 				return null;
 
-			// TODO - check the active presentation input
-			foreach (int input in inputs)
-			{
-				EndpointInfo? endpoint = RoutingGraph.GetActiveSourceEndpoint(control, input, eConnectionType.Video, false, false);
-				if (!endpoint.HasValue)
-					continue;
+			IPresentationControl presentation = codec.Controls.GetControl<IPresentationControl>();
+			if (presentation == null)
+				return null;
 
-				ISource output = RoutingGraph.Sources.GetChildren(endpoint.Value, eConnectionType.Video).FirstOrDefault();
-				if (output != null)
-					return output;
-			}
+			int? activeInput = presentation.PresentationActiveInput;
+			if (activeInput == null)
+				return null;
 
-			return null;
+			EndpointInfo? endpoint =
+				RoutingGraph.GetActiveSourceEndpoint(control, (int)activeInput, eConnectionType.Video, false, false);
+
+			return endpoint.HasValue
+				       ? RoutingGraph.Sources.GetChildren(endpoint.Value, eConnectionType.Video).FirstOrDefault()
+				       : null;
 		}
 
 		/// <summary>
