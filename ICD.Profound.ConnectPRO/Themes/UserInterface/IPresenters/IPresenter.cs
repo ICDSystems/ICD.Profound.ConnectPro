@@ -58,8 +58,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters
 		/// <summary>
 		/// Updates the view if it is currently visible.
 		/// </summary>
-		/// <param name="async"></param>
-		void RefreshIfVisible(bool async);
+		/// <param name="refreshAsync"></param>
+		void RefreshIfVisible(bool refreshAsync);
 	}
 
 	public interface IPresenter<T> : IPresenter

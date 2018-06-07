@@ -243,14 +243,14 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 		/// <summary>
 		/// Updates the view if it is currently visible.
 		/// </summary>
-		/// <param name="async"></param>
+		/// <param name="refreshAsync"></param>
 		[PublicAPI]
-		public void RefreshIfVisible(bool async)
+		public void RefreshIfVisible(bool refreshAsync)
 		{
 			if (!IsViewVisible)
 				return;
 
-			if (async)
+			if (refreshAsync)
 				RefreshAsync();
 			else
 				Refresh();
