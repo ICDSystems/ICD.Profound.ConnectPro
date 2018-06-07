@@ -405,6 +405,12 @@ namespace ICD.Profound.ConnectPRO.Routing
 			IDestination[] destinations = GetDisplayDestinations().ToArray();
 
 			Connection firstOutput = outputs.FirstOrDefault();
+			if (firstOutput == null)
+			{
+				m_Room.Logger.AddEntry(eSeverity.Error, "Failed to find {0} output connection for {1}",
+									   eConnectionType.Video, sourceControl);
+				return;
+			}
 
 			for (int index = 0; index < destinations.Length; index++)
 			{
