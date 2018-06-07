@@ -1,5 +1,5 @@
 ﻿using System;
-using ICD.Connect.Conferencing.Cisco.Components.Directory.Tree;
+using ICD.Connect.Conferencing.Directory.Tree;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -8,9 +8,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 {
 	public sealed class VtcReferencedFolderPresenter : AbstractVtcReferencedContactsPresenterBase, IVtcReferencedFolderPresenter
 	{
-		private IFolder m_Folder;
+		private IDirectoryFolder m_Folder;
 
-		public IFolder Folder
+		public IDirectoryFolder Folder
 		{
 			get { return m_Folder; }
 			set
@@ -69,7 +69,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		protected override void SetModel(object model)
 		{
-			Folder = model as Folder;
+			Folder = model as IDirectoryFolder;
 		}
 
 		protected override void Dial()

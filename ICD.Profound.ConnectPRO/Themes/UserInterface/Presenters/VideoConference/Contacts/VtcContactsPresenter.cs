@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Conferencing.Cisco;
-using ICD.Connect.Conferencing.Cisco.Components.Directory;
-using ICD.Connect.Conferencing.Cisco.Components.Directory.Tree;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Contacts;
-using ICD.Connect.Conferencing.Controls;
+using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.Controls.Directory;
+using ICD.Connect.Conferencing.Directory;
+using ICD.Connect.Conferencing.Directory.Tree;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Devices;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
@@ -31,13 +32,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly VtcReferencedContactsPresenterFactory m_ContactsFactory;
+		private readonly DirectoryControlBrowser m_DirectoryBrowser;
 
 		private readonly IVtcKeyboardPresenter m_Keyboard;
 
 		private eDirectoryMode m_DirectoryMode;
-		private DirectoryBrowser m_DirectoryBrowser;
 		private	IVtcReferencedContactsPresenterBase m_Selected;
+
 		private IConferenceManager m_SubscribedConferenceManager;
+
+		#region Properties
 
 		/// <summary>
 		/// Gets/sets the directory mode for populating the contacts list.
@@ -71,6 +75,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			}
 		}
 
+		#endregion
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -85,6 +91,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			m_Keyboard = nav.LazyLoadPresenter<IVtcKeyboardPresenter>();
 			m_Keyboard.OnExitButtonPressed += KeyboardOnExitButtonPressed;
+
+			m_DirectoryBrowser = new DirectoryControlBrowser();
+			Subscribe(m_DirectoryBrowser);
 		}
 
 		private void KeyboardOnExitButtonPressed(object sender, EventArgs eventArgs)
@@ -100,19 +109,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Dispose();
 
-			if (m_DirectoryBrowser != null)
-			{
-				Unsubscribe(m_DirectoryBrowser);
-				m_DirectoryBrowser.Dispose();
-			}
-
+			Unsubscribe(m_DirectoryBrowser);
 			UnsubscribeChildren();
-			m_ContactsFactory.Dispose();
-		}
 
-		private IEnumerable<IVtcReferencedContactsView> ItemFactory(ushort count)
-		{
-			return GetView().GetChildComponentViews(ViewFactory, count);
+			m_ContactsFactory.Dispose();
+			m_DirectoryBrowser.Dispose();
 		}
 
 		/// <summary>
@@ -160,6 +161,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			}
 		}
 
+		#region Private Methods
+
+		private IEnumerable<IVtcReferencedContactsView> ItemFactory(ushort count)
+		{
+			return GetView().GetChildComponentViews(ViewFactory, count);
+		}
+
 		private IEnumerable<ModelPresenterTypeInfo> GetContacts()
 		{
 			return GetContacts(m_DirectoryMode);
@@ -173,19 +181,34 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 					if (m_DirectoryBrowser == null)
 						return Enumerable.Empty<ModelPresenterTypeInfo>();
 
-					return m_DirectoryBrowser.GetCurrentFolder()
-					                         .GetChildren()
-											 .OrderBy(c => c is IContact)
-											 .ThenBy(c => c.Name)
-					                         .Select(c =>
-					                                 {
-						                                 ModelPresenterTypeInfo.ePresenterType type = (c is IFolder)
-							                                                                              ? ModelPresenterTypeInfo
-								                                                                                .ePresenterType.Folder
-							                                                                              : ModelPresenterTypeInfo
-								                                                                                .ePresenterType.Contact;
-						                                 return new ModelPresenterTypeInfo(type, c);
-					                                 });
+					IDirectoryFolder current = m_DirectoryBrowser.GetCurrentFolder();
+					if (current == null)
+						return Enumerable.Empty<ModelPresenterTypeInfo>();
+
+					return current
+						.GetFolders()
+						.Cast<object>()
+						.Concat(current.GetContacts())
+						.OrderBy(c => c is IContact)
+						.ThenBy(c =>
+						        {
+							        if (c is IContact)
+								        return (c as IContact).Name;
+									if (c is IDirectoryFolder)
+										return (c as IDirectoryFolder).Name;
+
+									// This should never happen
+									throw new InvalidOperationException();
+						        })
+						.Select(c =>
+						        {
+							        ModelPresenterTypeInfo.ePresenterType type = (c is IDirectoryFolder)
+								                                                     ? ModelPresenterTypeInfo
+									                                                       .ePresenterType.Folder
+								                                                     : ModelPresenterTypeInfo
+									                                                       .ePresenterType.Contact;
+							        return new ModelPresenterTypeInfo(type, c);
+						        });
 				
 				case eDirectoryMode.Favorites:
 					return
@@ -211,32 +234,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			}
 		}
 
-		public override void SetRoom(IConnectProRoom room)
-		{
-			Unsubscribe(m_DirectoryBrowser);
-
-			if (m_DirectoryBrowser != null)
-				m_DirectoryBrowser.Dispose();
-			m_DirectoryBrowser = null;
-
-			base.SetRoom(room);
-
-			if (room == null)
-				return;
-
-			IDialingDeviceControl videoDialer = room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
-			CiscoCodec codec = videoDialer == null ? null : videoDialer.Parent as CiscoCodec;
-			if (codec == null)
-				return;
-
-			DirectoryComponent component = codec.Components.GetComponent<DirectoryComponent>();
-			m_DirectoryBrowser = new DirectoryBrowser(component);
-
-			Subscribe(m_DirectoryBrowser);
-
-			// Show the existing directory contents
-			Refresh();
-		}
+		#endregion
 
 		#region Directory Browser Callbacks
 
@@ -244,7 +242,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Subscribe to the browser events.
 		/// </summary>
 		/// <param name="browser"></param>
-		private void Subscribe(DirectoryBrowser browser)
+		private void Subscribe(DirectoryControlBrowser browser)
 		{
 			if (browser == null)
 				return;
@@ -257,7 +255,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Unsubscribe from the browser events.
 		/// </summary>
 		/// <param name="browser"></param>
-		private void Unsubscribe(DirectoryBrowser browser)
+		private void Unsubscribe(DirectoryControlBrowser browser)
 		{
 			if (browser == null)
 				return;
@@ -281,12 +279,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="folderEventArgs"></param>
-		private void BrowserOnPathChanged(object sender, FolderEventArgs folderEventArgs)
+		private void BrowserOnPathChanged(object sender, DirectoryFolderEventArgs folderEventArgs)
 		{
 			m_Selected = null;
-
-			if (m_DirectoryBrowser != null)
-				m_DirectoryBrowser.PopulateCurrentFolder();
 
 			RefreshIfVisible();
 		}
@@ -312,6 +307,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			m_SubscribedConferenceManager.OnInCallChanged += ConferenceManagerOnInCallChanged;
 			m_SubscribedConferenceManager.OnActiveSourceStatusChanged += ConferenceManagerOnActiveSourceStatusChanged;
+
+			IDialingDeviceControl dialer = m_SubscribedConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			IDeviceBase parent = dialer == null ? null : dialer.Parent;
+			IDirectoryControl directory = parent == null ? null : parent.Controls.GetControl<IDirectoryControl>();
+			
+			m_DirectoryBrowser.SetControl(directory);
 		}
 
 		/// <summary>
@@ -322,11 +323,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Unsubscribe(room);
 
+			m_DirectoryBrowser.SetControl(null);
+
 			if (m_SubscribedConferenceManager == null)
 				return;
 
 			m_SubscribedConferenceManager.OnInCallChanged -= ConferenceManagerOnInCallChanged;
 			m_SubscribedConferenceManager.OnActiveSourceStatusChanged -= ConferenceManagerOnActiveSourceStatusChanged;
+
+			m_SubscribedConferenceManager = null;
 		}
 
 		/// <summary>

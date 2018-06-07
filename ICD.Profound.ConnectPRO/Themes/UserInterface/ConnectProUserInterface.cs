@@ -8,6 +8,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
+using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Extensions;
@@ -33,7 +34,6 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VisibilityTree;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views;
-using ICD.Connect.Conferencing.Controls;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.AudioConference;
 

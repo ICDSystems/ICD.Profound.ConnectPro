@@ -7,12 +7,10 @@ using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
-using ICD.Connect.Conferencing.Cisco;
-using ICD.Connect.Conferencing.Cisco.Components.Presentation;
-using ICD.Connect.Conferencing.Cisco.Components.Video;
-using ICD.Connect.Conferencing.Cisco.Components.Video.Connectors;
-using ICD.Connect.Conferencing.Cisco.Controls;
-using ICD.Connect.Conferencing.Controls;
+using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.Controls.Presentation;
+using ICD.Connect.Conferencing.Controls.Routing;
+using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
@@ -177,10 +175,10 @@ namespace ICD.Profound.ConnectPRO.Routing
 		}
 
 		[CanBeNull]
-		private CiscoCodec GetCodec()
+		private IVideoConferenceDevice GetCodec()
 		{
 			IDialingDeviceControl dialer = m_Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
-			return dialer == null ? null : dialer.Parent as CiscoCodec;
+			return dialer == null ? null : dialer.Parent as IVideoConferenceDevice;
 		}
 
 		#region Sources
@@ -586,14 +584,20 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (source == null)
 				throw new ArgumentNullException("source");
 
-			CiscoCodec codec = GetCodec();
+			IVideoConferenceDevice codec = GetCodec();
 			if (codec == null)
 				throw new InvalidOperationException("No codec available.");
 
-			CiscoCodecRoutingControl control = codec.Controls.GetControl<CiscoCodecRoutingControl>();
+			IPresentationControl presentation = codec.Controls.GetControl<IPresentationControl>();
+			if (presentation == null)
+				throw new InvalidOperationException("No presentation control available.");
+
+			IVideoConferenceRouteControl control = codec.Controls.GetControl<IVideoConferenceRouteControl>();
+			if (control == null)
+				throw new InvalidOperationException("No routing control available.");
 
 			// Get the content inputs
-			int[] inputs = codec.InputTypes.GetInputs(eCodecInputType.Content).ToArray();
+			int[] inputs = control.GetCodecInputs(eCodecInputType.Content).ToArray();
 			if (inputs.Length == 0)
 			{
 				m_Room.Logger.AddEntry(eSeverity.Error,
@@ -616,12 +620,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				Route(source, endpoint, eConnectionType.Audio);
 
 				// Start the presentation
-				VideoComponent video = codec.Components.GetComponent<VideoComponent>();
-				VideoInputConnector connector = video.GetVideoInputConnector(input);
-
-				PresentationComponent presentation = codec.Components.GetComponent<PresentationComponent>();
-				presentation.StartPresentation(connector.SourceId, PresentationItem.eSendingMode.LocalRemote);
-
+				presentation.StartPresentation(input);
 				return;
 			}
 
@@ -632,30 +631,28 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 		public ISource GetVtcPresentationSource()
 		{
-			CiscoCodec codec = GetCodec();
+			IVideoConferenceDevice codec = GetCodec();
 			if (codec == null)
-				throw new InvalidOperationException("No codec available.");
-
-			CiscoCodecRoutingControl control = codec.Controls.GetControl<CiscoCodecRoutingControl>();
-
-			// Get the content inputs
-			int[] inputs = codec.InputTypes.GetInputs(eCodecInputType.Content).ToArray();
-			if (inputs.Length == 0)
 				return null;
 
-			// TODO - check the active presentation input
-			foreach (int input in inputs)
-			{
-				EndpointInfo? endpoint = RoutingGraph.GetActiveSourceEndpoint(control, input, eConnectionType.Video, false, false);
-				if (!endpoint.HasValue)
-					continue;
+			IVideoConferenceRouteControl control = codec.Controls.GetControl<IVideoConferenceRouteControl>();
+			if (control == null)
+				return null;
 
-				ISource output = RoutingGraph.Sources.GetChildren(endpoint.Value, eConnectionType.Video).FirstOrDefault();
-				if (output != null)
-					return output;
-			}
+			IPresentationControl presentation = codec.Controls.GetControl<IPresentationControl>();
+			if (presentation == null)
+				return null;
 
-			return null;
+			int? activeInput = presentation.PresentationActiveInput;
+			if (activeInput == null)
+				return null;
+
+			EndpointInfo? endpoint =
+				RoutingGraph.GetActiveSourceEndpoint(control, (int)activeInput, eConnectionType.Video, false, false);
+
+			return endpoint.HasValue
+				       ? RoutingGraph.Sources.GetChildren(endpoint.Value, eConnectionType.Video).FirstOrDefault()
+				       : null;
 		}
 
 		/// <summary>
@@ -689,7 +686,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		public void UnrouteVtc()
 		{
-			CiscoCodec codec = m_Room.Originators.GetInstanceRecursive<CiscoCodec>();
+			IVideoConferenceDevice codec = m_Room.Originators.GetInstanceRecursive<IVideoConferenceDevice>();
 			if (codec == null)
 				return;
 
