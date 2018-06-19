@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [4.1.0] - 2018-06-19
+### Changed
+ - Removed dependency on Cisco
+
 ## [4.0.1] - 2018-06-04
 ### Changed
  - Routing performance optimizations
