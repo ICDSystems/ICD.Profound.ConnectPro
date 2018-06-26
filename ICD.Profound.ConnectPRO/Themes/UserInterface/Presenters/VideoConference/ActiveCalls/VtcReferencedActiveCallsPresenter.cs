@@ -76,7 +76,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				string name =
 					m_Source == null
 						? string.Empty
-						: string.Format("{0:hh\\:mm\\:ss} - {1} - {2}", m_Source.GetDuration().ToString(), m_Source.Name, m_Source.Number);
+						: string.Format("{0:hh\\:mm\\:ss} - {1} - {2}", m_Source.GetDuration(), m_Source.Name, m_Source.Number);
 
 				view.SetLabel(name);
 				view.SetHangupButtonVisible(true);
