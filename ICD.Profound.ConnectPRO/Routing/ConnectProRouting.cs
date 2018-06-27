@@ -283,7 +283,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 					IEnumerable<IDestination> audioDestinations =
 						m_Room.Originators
-						      .GetInstancesRecursive<IDestination>(d => d.ConnectionType == eConnectionType.Audio)
+						      .GetInstancesRecursive<IDestination>(d => d.ConnectionType.HasFlag(eConnectionType.Audio))
 						      .OrderBy(d => d.Order)
 						      .ThenBy(d => d.GetNameOrDeviceName(combine));
 
