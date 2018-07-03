@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Partitioning.Rooms;
@@ -118,18 +119,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 
 				string text = sourceName.ToUpper();
 
-				string line1;
-				string line2;
+				string line1 = text;
+				string line2 = string.Empty;
 				string feedback = room == null ? string.Empty : room.GetName(combine);
 
-				if (text.Length <= MAX_LINE_WIDTH)
+				// Find the space closest to the middle of the text and split.
+				if (text.Length > MAX_LINE_WIDTH && text.Any(char.IsWhiteSpace))
 				{
-					line1 = text;
-					line2 = string.Empty;
-				}
-				else
-				{
-					// Find the space closest to the middle of the text and split.
 					int middleIndex = text.Length / 2;
 					int splitIndex = text.FindIndices(char.IsWhiteSpace).GetClosest(i => i - middleIndex);
 
