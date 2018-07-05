@@ -17,12 +17,12 @@ using ICD.Connect.Devices.Controls;
 using ICD.Connect.Displays.Devices;
 using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.Routing;
 using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Controls;
 using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
-using ICD.Connect.Routing.EventArguments;
 using ICD.Connect.Routing.Extensions;
 using ICD.Connect.Routing.RoutingGraphs;
 using ICD.Connect.Sources.TvTuner.Controls;
@@ -327,7 +327,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (destination == null)
 				throw new ArgumentNullException("destination");
 
-			return RoutingGraph.GetActiveSourceEndpoints(destination, flag, false, false);
+			return RoutingGraph.RoutingCache.GetSourceEndpointsForDestination(destination, flag, false, false);
 		}
 
 		private IEnumerable<ISource> GetActiveVideoSources(IDestination destination)
@@ -458,7 +458,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 				throw new ArgumentNullException("destination");
 
 			ConnectionPath path = IcdStopwatch.Profile(() =>
-
 			                                           RoutingGraph.FindPath(source, destination, flag, m_Room.Id), "Pathfinding");
 			if (path == null)
 			{
@@ -653,12 +652,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (activeInput == null)
 				return null;
 
-			EndpointInfo? endpoint =
-				RoutingGraph.GetActiveSourceEndpoint(control, (int)activeInput, eConnectionType.Video, false, false);
-
-			return endpoint.HasValue
-				       ? RoutingGraph.Sources.GetChildren(endpoint.Value, eConnectionType.Video).FirstOrDefault()
-				       : null;
+			return RoutingGraph.RoutingCache
+			                   .GetSourcesForDestination(control.GetInputEndpointInfo((int)activeInput), eConnectionType.Video)
+			                   .FirstOrDefault();
 		}
 
 		/// <summary>
@@ -867,7 +863,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			m_SubscribedRoutingGraph = routingGraph;
 
-			routingGraph.OnRouteChanged += RoutingGraphOnRouteChanged;
+			routingGraph.RoutingCache.OnSourceDestinationRouteChanged += RoutingCacheOnRouteToDestinationChanged;
 		}
 
 		/// <summary>
@@ -881,17 +877,17 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			m_SubscribedRoutingGraph = null;
 
-			routingGraph.OnRouteChanged -= RoutingGraphOnRouteChanged;
+			routingGraph.RoutingCache.OnSourceDestinationRouteChanged -= RoutingCacheOnRouteToDestinationChanged;
 		}
 
 		/// <summary>
 		/// Called when a switcher changes routing.
 		/// </summary>
 		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		private void RoutingGraphOnRouteChanged(object sender, SwitcherRouteChangeEventArgs args)
+		/// <param name="eventArgs"></param>
+		private void RoutingCacheOnRouteToDestinationChanged(object sender, SourceDestinationRouteChangedEventArgs eventArgs)
 		{
-			UpdateRoutingCache(args.Type);
+			UpdateRoutingCache(eventArgs.Type);
 
 			if (m_Routing)
 				return;
