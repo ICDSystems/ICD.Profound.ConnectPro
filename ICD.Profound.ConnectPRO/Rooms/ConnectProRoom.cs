@@ -147,7 +147,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 				if (!powerOff)
 				{
 					OsdPanelDevice osd = Routing.GetActiveVideoEndpoints(destination)
-												.Select(e => Core.Originators.GetChild(e.Device) as OsdPanelDevice)
+												.Select(e => e.Device)
+												.Distinct()
+												.Select(id => Core.Originators.GetChild(id) as OsdPanelDevice)
 												.FirstOrDefault(o => o != null);
 
 					// Don't power off displays showing the osd

@@ -725,11 +725,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			foreach (IDestination display in GetDisplayDestinations())
 			{
-				IEnumerable<EndpointInfo> endpoints = GetActiveVideoEndpoints(display);
+				IEnumerable<int> endpointIds =
+					GetActiveVideoEndpoints(display).Select(e => e.Device)
+					                                .Distinct();
 
-				foreach (EndpointInfo endpoint in endpoints)
+				foreach (int endpointId in endpointIds)
 				{
-					OsdPanelDevice osd = m_Room.Core.Originators.GetChild(endpoint.Device) as OsdPanelDevice;
+					OsdPanelDevice osd = m_Room.Core.Originators.GetChild(endpointId) as OsdPanelDevice;
 					if (osd != null)
 						continue;
 
