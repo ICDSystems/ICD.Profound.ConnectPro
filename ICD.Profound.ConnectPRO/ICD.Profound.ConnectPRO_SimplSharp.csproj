@@ -71,6 +71,7 @@
     <Compile Include="Rooms\ConnectProRoom.cs" />
     <Compile Include="Rooms\ConnectProRoomSettings.cs" />
     <Compile Include="Rooms\IConnectProRoom.cs" />
+    <Compile Include="Rooms\WakeSchedule.cs" />
     <Compile Include="Routing\ConnectProRouting.cs" />
     <Compile Include="Routing\Endpoints\Sources\ConnectProSource.cs" />
     <Compile Include="Routing\Endpoints\Sources\ConnectProSourceSettings.cs" />

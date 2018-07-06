@@ -34,6 +34,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		private readonly IConferenceManager m_ConferenceManager;
 		private readonly ConnectProRouting m_Routing;
 
+		private readonly WakeSchedule m_WakeSchedule;
+
 		private bool m_IsInMeeting;
 		private DialingPlanInfo m_DialingPlan;
 
@@ -63,6 +65,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		{
 			m_Routing = new ConnectProRouting(this);
 			m_ConferenceManager = new ConferenceManager();
+			m_WakeSchedule = new WakeSchedule();
 		}
 
 		#region Methods
@@ -182,6 +185,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			base.CopySettingsFinal(settings);
 
 			settings.DialingPlan = m_DialingPlan;
+
+			settings.WakeSchedule.Copy(m_WakeSchedule);
 		}
 
 		/// <summary>
@@ -196,6 +201,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			m_ConferenceManager.ClearDialingProviders();
 			m_ConferenceManager.Favorites = null;
 			m_ConferenceManager.DialingPlan.ClearMatchers();
+
+			m_WakeSchedule.Clear();
 		}
 
 		/// <summary>
@@ -213,6 +220,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			// Favorites
 			string path = PathUtils.GetProgramConfigPath("favorites");
 			m_ConferenceManager.Favorites = new SqLiteFavorites(path);
+
+			// Wake Schedule
+			m_WakeSchedule.Copy(settings.WakeSchedule);
 		}
 
 		/// <summary>
