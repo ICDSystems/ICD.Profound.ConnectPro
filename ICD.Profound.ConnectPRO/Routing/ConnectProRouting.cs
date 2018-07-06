@@ -327,7 +327,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (destination == null)
 				throw new ArgumentNullException("destination");
 
-			return RoutingGraph.RoutingCache.GetSourceEndpointsForDestination(destination, flag, false, false);
+			return RoutingGraph.RoutingCache.GetSourceEndpointsForDestination(destination, flag, false, true);
 		}
 
 		private IEnumerable<ISource> GetActiveVideoSources(IDestination destination)
@@ -880,6 +880,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			m_SubscribedRoutingGraph = routingGraph;
 
 			routingGraph.RoutingCache.OnSourceDestinationRouteChanged += RoutingCacheOnRouteToDestinationChanged;
+			routingGraph.RoutingCache.OnDestinationEndpointActiveChanged += RoutingCacheOnDestinationEndpointActiveChanged;
 		}
 
 		/// <summary>
@@ -894,6 +895,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			m_SubscribedRoutingGraph = null;
 
 			routingGraph.RoutingCache.OnSourceDestinationRouteChanged -= RoutingCacheOnRouteToDestinationChanged;
+			routingGraph.RoutingCache.OnDestinationEndpointActiveChanged -= RoutingCacheOnDestinationEndpointActiveChanged;
 		}
 
 		/// <summary>
@@ -903,7 +905,22 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <param name="eventArgs"></param>
 		private void RoutingCacheOnRouteToDestinationChanged(object sender, SourceDestinationRouteChangedEventArgs eventArgs)
 		{
-			UpdateRoutingCache(eventArgs.Type);
+			HandleRoutingChange(eventArgs.Type);
+		}
+
+		/// <summary>
+		/// Called when a destinations active inputs change.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void RoutingCacheOnDestinationEndpointActiveChanged(object sender, EndpointStateChangedEventArgs eventArgs)
+		{
+			HandleRoutingChange(eventArgs.Type);
+		}
+
+		private void HandleRoutingChange(eConnectionType type)
+		{
+			UpdateRoutingCache(type);
 
 			if (m_Routing)
 				return;
