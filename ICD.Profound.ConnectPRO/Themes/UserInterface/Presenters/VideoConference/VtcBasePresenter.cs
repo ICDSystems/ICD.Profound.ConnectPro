@@ -72,7 +72,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <summary>
 		/// Ensures the codec is awake while the view is visible.
 		/// </summary>
-		private void UpdateCodecAwakeState()
+		private void UpdateCodecAwakeState(bool forcePowerOff)
 		{
 			if (m_SubscribedPowerControl == null)
 				return;
@@ -83,7 +83,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			if (visible)
 				m_SubscribedPowerControl.PowerOn();
-			else
+			else if (forcePowerOff)
 				m_SubscribedPowerControl.PowerOff();
 		}
 
@@ -180,7 +180,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="eventArgs"></param>
 		private void SubscribedPowerControlOnIsPoweredChanged(object sender, PowerDeviceControlPowerStateApiEventArgs eventArgs)
 		{
-			UpdateCodecAwakeState();
+			UpdateCodecAwakeState(false);
 		}
 
 		#endregion
@@ -246,7 +246,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 					Room.Routing.UnrouteVtc();
 			}
 
-			UpdateCodecAwakeState();
+			UpdateCodecAwakeState(true);
 		}
 
 		#endregion
