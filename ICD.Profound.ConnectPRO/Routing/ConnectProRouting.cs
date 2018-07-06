@@ -426,11 +426,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				Route(output.Source, destination, eConnectionType.Video);
 			}
 
-			foreach (IDestination audioDestination in GetAudioDestinations())
-			{
-				Route(sourceControl.GetOutputEndpointInfo(firstOutput.Source.Address),
-					  audioDestination, eConnectionType.Audio);
-			}
+			RouteAtc(sourceControl);
 		}
 
 		/// <summary>
@@ -441,6 +437,29 @@ namespace ICD.Profound.ConnectPRO.Routing
 		{
 			if (sourceControl == null)
 				throw new ArgumentNullException("sourceControl");
+
+			if (sourceControl == null)
+				throw new ArgumentNullException("sourceControl");
+
+			Connection firstOutput = RoutingGraph.Connections
+			                                     .GetOutputConnections(sourceControl.Parent.Id,
+			                                                           sourceControl.Id)
+			                                     .Where(c => c.ConnectionType.HasFlag(eConnectionType.Audio))
+			                                     .OrderBy(o => o.Source.Address)
+			                                     .FirstOrDefault();
+
+			if (firstOutput == null)
+			{
+				m_Room.Logger.AddEntry(eSeverity.Error, "Failed to find {0} output connection for {1}",
+									   eConnectionType.Audio, sourceControl);
+				return;
+			}
+
+			foreach (IDestination audioDestination in GetAudioDestinations())
+			{
+				Route(sourceControl.GetOutputEndpointInfo(firstOutput.Source.Address),
+					  audioDestination, eConnectionType.Audio);
+			}
 		}
 
 		/// <summary>
