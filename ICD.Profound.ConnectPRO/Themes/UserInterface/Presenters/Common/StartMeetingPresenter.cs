@@ -19,6 +19,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 		}
 
+		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
+		protected override void Refresh(IStartMeetingView view)
+		{
+			base.Refresh(view);
+			
+			// TODO - This will be handled by scheduling features
+			view.SetStartMeetingButtonEnabled(true);
+		}
+
 		#region View Callbacks
 
 		/// <summary>
