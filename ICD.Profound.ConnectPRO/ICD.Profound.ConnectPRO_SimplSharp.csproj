@@ -124,6 +124,8 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionPrivacyMutePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionVolumePresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\ISettingsBasePresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\ISettingsSystemPowerPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Sources\IReferencedSourceSelectPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Sources\ISourceSelectPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IDisabledAlertPresenter.cs" />
@@ -167,6 +169,8 @@
     <Compile Include="Themes\UserInterface\IViews\Common\IStartMeetingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IVolumeView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Options\IOptionCameraView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\Settings\ISettingsBaseView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\Settings\ISettingsSystemPowerView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Icons.cs" />
     <Compile Include="Themes\UserInterface\IViews\IDisabledAlertView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IHardButtonsView.cs" />
@@ -217,6 +221,8 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionPrivacyMutePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionVolumePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\PasscodePresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Settings\SettingsBasePresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Settings\SettingsSystemPowerPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\SourceSelectPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\ReferencedSourceSelectPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\ReferencedSourceSelectPresenterFactory.cs" />
@@ -281,6 +287,10 @@
     <Compile Include="Themes\UserInterface\Views\Common\Options\OptionPrivacyMuteView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\PasscodeView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\PasscodeView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsBaseView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsBaseView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsSystemPowerView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsSystemPowerView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\ReferencedSourceSelectView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\ReferencedSourceSelectView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\SourceSelectView.cs" />
