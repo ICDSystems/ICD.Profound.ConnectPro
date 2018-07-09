@@ -10,6 +10,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.AudioConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.CableTv;
@@ -22,6 +23,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups.CableTv;
@@ -93,6 +95,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(IVolumeView), (panel, theme) => new VolumeView(panel, theme)},
 			{typeof(IDisabledAlertView), (panel, theme) => new DisabledAlertView(panel, theme)},
 			{typeof(IPasscodeView), (panel, theme) => new PasscodeView(panel, theme)},
+
+			// Settings
+			{typeof(ISettingsBaseView), (panel, theme) => new SettingsBaseView(panel, theme)},
 
 			// Video Conference
 			{typeof(IVtcBaseView), (panel, theme) => new VtcBaseView(panel, theme)},
