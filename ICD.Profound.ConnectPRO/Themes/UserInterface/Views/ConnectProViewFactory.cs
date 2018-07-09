@@ -92,6 +92,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(IStartMeetingView), (panel, theme) => new StartMeetingView(panel, theme)},
 			{typeof(IVolumeView), (panel, theme) => new VolumeView(panel, theme)},
 			{typeof(IDisabledAlertView), (panel, theme) => new DisabledAlertView(panel, theme)},
+			{typeof(IPasscodeView), (panel, theme) => new PasscodeView(panel, theme)},
 
 			// Video Conference
 			{typeof(IVtcBaseView), (panel, theme) => new VtcBaseView(panel, theme)},

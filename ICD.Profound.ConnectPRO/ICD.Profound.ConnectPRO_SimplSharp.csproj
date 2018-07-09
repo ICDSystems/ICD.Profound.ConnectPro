@@ -117,6 +117,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmSplashPowerPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IEndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IHeaderPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\IPasscodePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IStartMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IVolumePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionCameraPresenter.cs" />
@@ -162,6 +163,7 @@
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmLeaveCallView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmEndMeetingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmSplashPowerView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\IPasscodeView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IStartMeetingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IVolumeView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Options\IOptionCameraView.cs" />
@@ -276,6 +278,8 @@
     <Compile Include="Themes\UserInterface\Views\Common\Options\OptionVolumeView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Options\OptionPrivacyMuteView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Options\OptionPrivacyMuteView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\PasscodeView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\PasscodeView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\ReferencedSourceSelectView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\ReferencedSourceSelectView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\SourceSelectView.cs" />
