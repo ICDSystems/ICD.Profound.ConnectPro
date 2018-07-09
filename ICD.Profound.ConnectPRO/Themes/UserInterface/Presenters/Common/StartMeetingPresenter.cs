@@ -57,10 +57,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			view.OnSettingsButtonPressed -= ViewOnSettingsButtonPressed;
 		}
 
+		/// <summary>
+		/// Called when the user presses the settings button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void ViewOnSettingsButtonPressed(object sender, EventArgs eventArgs)
 		{
-			//Navigation.NavigateTo<IDisabledAlertPresenter>();
-			Navigation.NavigateTo<IConfirmSplashPowerPresenter>();
+			Navigation.LazyLoadPresenter<IPasscodePresenter>().ShowView(PasscodeSuccessCallback);
 		}
 
 		/// <summary>
@@ -72,6 +76,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			if (Room != null)
 				Room.StartMeeting();
+		}
+
+		/// <summary>
+		/// Called when the user successfully enters the passcode.
+		/// </summary>
+		/// <param name="sender"></param>
+		private void PasscodeSuccessCallback(IPasscodePresenter sender)
+		{
+			Navigation.LazyLoadPresenter<IPasscodePresenter>().ShowView(false);
+
+			throw new NotImplementedException();
 		}
 
 		#endregion

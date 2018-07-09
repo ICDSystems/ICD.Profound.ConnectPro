@@ -6,8 +6,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common
 	public interface IPasscodePresenter : IPresenter<IPasscodeView>
 	{
 		/// <summary>
-		/// Raised when the user submits the correct password.
+		/// Shows the view and sets the success callback.
 		/// </summary>
-		event EventHandler OnSuccess;
+		/// <param name="successCallback"></param>
+		void ShowView(Action<IPasscodePresenter> successCallback);
 	}
 }

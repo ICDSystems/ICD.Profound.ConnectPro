@@ -1,7 +1,6 @@
 ﻿using System;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
-using ICD.Common.Utils.Extensions;
 using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
@@ -12,12 +11,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
 	public sealed class PasscodePresenter : AbstractPresenter<IPasscodeView>, IPasscodePresenter
 	{
-		/// <summary>
-		/// Raised when the user submits the correct password.
-		/// </summary>
-		public event EventHandler OnSuccess;
-
 		private readonly KeypadStringBuilder m_StringBuilder;
+
+		private Action<IPasscodePresenter> m_SuccessCallback; 
+		private bool m_ShowError;
 
 		/// <summary>
 		/// Constructor.
@@ -40,7 +37,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			base.Refresh(view);
 
-			string label = StringUtils.PasswordFormat(m_StringBuilder.ToString());
+			string label = m_ShowError
+				? "Invalid Passcode"
+				: StringUtils.PasswordFormat(m_StringBuilder.ToString());
+
+			if (string.IsNullOrEmpty(label))
+				label = "Enter Passcode";
 
 			view.SetPasscodeLabel(label);
 		}
@@ -102,6 +104,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="eventArgs"></param>
 		private void ViewOnClearButtonPressed(object sender, EventArgs eventArgs)
 		{
+			m_ShowError = false;
 			m_StringBuilder.Clear();
 		}
 
@@ -117,7 +120,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			// TODO - Pull passcode from room settings
 			if (passcode == "1988")
 			{
-				OnSuccess.Raise(this);
+				HandleSuccess();
 				return;
 			}
 
@@ -139,7 +142,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			string expected = (month + day + year).ToString();
 			if (passcode == expected)
-				OnSuccess.Raise(this);
+			{
+				HandleSuccess();
+				return;
+			}
+
+			m_ShowError = true;
+			m_StringBuilder.Clear();
+
+			RefreshIfVisible();
+		}
+
+		/// <summary>
+		/// Calls the success callback if it has been set.
+		/// </summary>
+		private void HandleSuccess()
+		{
+			if (m_SuccessCallback != null)
+				m_SuccessCallback(this);
 		}
 
 		/// <summary>
@@ -149,9 +169,36 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="eventArgs"></param>
 		private void ViewOnKeypadButtonPressed(object sender, CharEventArgs eventArgs)
 		{
+			m_ShowError = false;
 			m_StringBuilder.AppendCharacter(eventArgs.Data);
 		}
 
+		/// <summary>
+		/// Called when the view visibility changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			base.ViewOnVisibilityChanged(sender, args);
+
+			m_ShowError = false;
+			m_StringBuilder.Clear();
+
+			if (!args.Data)
+				m_SuccessCallback = null;
+		}
+
 		#endregion
+
+		/// <summary>
+		/// Shows the view and sets the success callback.
+		/// </summary>
+		/// <param name="successCallback"></param>
+		public void ShowView(Action<IPasscodePresenter> successCallback)
+		{
+			m_SuccessCallback = successCallback;
+			ShowView(true);
+		}
 	}
 }
