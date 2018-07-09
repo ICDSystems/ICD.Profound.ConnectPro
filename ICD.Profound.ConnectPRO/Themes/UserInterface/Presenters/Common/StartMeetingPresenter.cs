@@ -42,7 +42,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			base.Subscribe(view);
 
 			view.OnStartMeetingButtonPressed += ViewOnStartMeetingButtonPressed;
-			view.OnShutdownButtonPressed += ViewOnShutdownButtonPressed;
+			view.OnSettingsButtonPressed += ViewOnSettingsButtonPressed;
 		}
 
 		/// <summary>
@@ -54,10 +54,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			base.Unsubscribe(view);
 
 			view.OnStartMeetingButtonPressed -= ViewOnStartMeetingButtonPressed;
-			view.OnShutdownButtonPressed -= ViewOnShutdownButtonPressed;
+			view.OnSettingsButtonPressed -= ViewOnSettingsButtonPressed;
 		}
 
-		private void ViewOnShutdownButtonPressed(object sender, EventArgs eventArgs)
+		private void ViewOnSettingsButtonPressed(object sender, EventArgs eventArgs)
 		{
 			//Navigation.NavigateTo<IDisabledAlertPresenter>();
 			Navigation.NavigateTo<IConfirmSplashPowerPresenter>();

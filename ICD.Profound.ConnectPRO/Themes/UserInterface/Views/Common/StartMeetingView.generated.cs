@@ -10,7 +10,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 	{
 		private VtProSubpage m_Subpage;
 		private VtProButton m_StartMeetingButton;
-		private VtProButton m_ShutdownButton;
+		private VtProButton m_SettingsButton;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -30,7 +30,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 				DigitalPressJoin = 91
 			};
 
-			m_ShutdownButton = new VtProButton(panel, m_Subpage)
+			m_SettingsButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 115
 			};
@@ -44,7 +44,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		{
 			yield return m_Subpage;
 			yield return m_StartMeetingButton;
-			yield return m_ShutdownButton;
+			yield return m_SettingsButton;
 		}
 	}
 }
