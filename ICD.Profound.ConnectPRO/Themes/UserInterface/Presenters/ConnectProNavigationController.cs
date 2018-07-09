@@ -80,6 +80,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 
 			// Settings
 			{typeof(ISettingsBasePresenter), (nav, views, theme) => new SettingsBasePresenter(nav, views, theme)},
+			{typeof(ISettingsSystemPowerPresenter), (nav, views, theme) => new SettingsSystemPowerPresenter(nav, views, theme)},
 
 			// Video Conference
 			{typeof(IVtcBasePresenter), (nav, views, theme) => new VtcBasePresenter(nav, views, theme)},
