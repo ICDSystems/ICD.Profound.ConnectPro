@@ -1,4 +1,5 @@
-﻿using ICD.Common.Utils.EventArguments;
+﻿using System;
+using ICD.Common.Utils.EventArguments;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings;
@@ -46,6 +47,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			base.Subscribe(view);
 
 			view.OnListItemPressed += ViewOnListItemPressed;
+			view.OnSaveButtonPressed += ViewOnSaveButtonPressed;
 		}
 
 		/// <summary>
@@ -57,6 +59,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			base.Unsubscribe(view);
 
 			view.OnListItemPressed -= ViewOnListItemPressed;
+			view.OnSaveButtonPressed -= ViewOnSaveButtonPressed;
+		}
+
+		private void ViewOnSaveButtonPressed(object sender, EventArgs eventArgs)
+		{
+			throw new NotImplementedException();
 		}
 
 		/// <summary>

@@ -12,6 +12,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings
 		event EventHandler<UShortEventArgs> OnListItemPressed;
 
 		/// <summary>
+		/// Raised when the user presses the save button.
+		/// </summary>
+		event EventHandler OnSaveButtonPressed;
+
+		/// <summary>
 		/// Sets the list item at the given index as active.
 		/// </summary>
 		/// <param name="index"></param>
