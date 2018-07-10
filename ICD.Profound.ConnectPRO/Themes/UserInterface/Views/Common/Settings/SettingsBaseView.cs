@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
@@ -48,13 +47,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 		}
 
 		/// <summary>
-		/// Sets the list item at the given index as active.
+		/// Sets the selected state for the button at the given index.
 		/// </summary>
 		/// <param name="index"></param>
-		public void SetActiveListItem(ushort index)
+		/// <param name="selected"></param>
+		public void SetItemSelected(ushort index, bool selected)
 		{
-			foreach (int item in Enumerable.Range(0, m_ItemList.MaxSize))
-				m_ItemList.SetItemSelected((ushort)item, item == index);
+			m_ItemList.SetItemSelected(index, selected);
 		}
 
 		#region Control Callbacks

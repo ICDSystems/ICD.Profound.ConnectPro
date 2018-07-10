@@ -191,7 +191,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			if (args.Data)
 			{
-				m_NavPages[INDEX_ACTIVE_CALLS].ShowView(true);
+				ShowMenu(INDEX_ACTIVE_CALLS);
 			}
 			else
 			{

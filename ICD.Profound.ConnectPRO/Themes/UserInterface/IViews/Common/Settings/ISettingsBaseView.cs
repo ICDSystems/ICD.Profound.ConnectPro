@@ -17,9 +17,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings
 		event EventHandler OnSaveButtonPressed;
 
 		/// <summary>
-		/// Sets the list item at the given index as active.
+		/// Sets the selected state for the button at the given index.
 		/// </summary>
 		/// <param name="index"></param>
-		void SetActiveListItem(ushort index);
+		/// <param name="selected"></param>
+		void SetItemSelected(ushort index, bool selected);
 	}
 }

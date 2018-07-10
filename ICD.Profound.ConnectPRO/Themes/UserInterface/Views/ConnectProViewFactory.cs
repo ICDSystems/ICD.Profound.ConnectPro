@@ -99,6 +99,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			// Settings
 			{typeof(ISettingsBaseView), (panel, theme) => new SettingsBaseView(panel, theme)},
 			{typeof(ISettingsSystemPowerView), (panel, theme) => new SettingsSystemPowerView(panel, theme)},
+			{typeof(ISettingsPasscodeView), (panel, theme) => new SettingsPasscodeView(panel, theme)},
 
 			// Video Conference
 			{typeof(IVtcBaseView), (panel, theme) => new VtcBaseView(panel, theme)},

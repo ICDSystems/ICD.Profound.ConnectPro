@@ -1,6 +1,7 @@
 ﻿using System;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
@@ -86,7 +87,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			Navigation.LazyLoadPresenter<IPasscodePresenter>().ShowView(false);
 
-			throw new NotImplementedException();
+			Navigation.NavigateTo<ISettingsBasePresenter>();
 		}
 
 		#endregion
