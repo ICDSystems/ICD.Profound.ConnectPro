@@ -179,7 +179,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			string current = m_StringBuilder.ToString();
 
 			if (string.IsNullOrEmpty(m_Previous) || current != m_Previous)
+			{
 				State = ePasscodeState.Fail;
+				return;
+			}
 
 			// TODO - Actually store the new passcode somewhere
 
