@@ -23,6 +23,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Options;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.CableTv;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.WebConferencing;
@@ -125,6 +126,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWebConferencingStepPresenter>());
 
 			m_RootVisibility.AddNode(meetingVisibility);
+
+			// Settings node
+			IVisibilityNode settingsVisibility = new SingleVisibilityNode();
+			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsPasscodePresenter>());
+			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsSystemPowerPresenter>());
+
+			m_RootVisibility.AddNode(settingsVisibility);
 
 			// These presenters are initially visible.
 			m_NavigationController.NavigateTo<IHeaderPresenter>();
