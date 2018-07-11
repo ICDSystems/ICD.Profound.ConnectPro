@@ -152,6 +152,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				view.SetFavoritesButtonSelected(m_DirectoryMode == eDirectoryMode.Favorites);
 				view.SetRecentButtonSelected(m_DirectoryMode == eDirectoryMode.Recents);
 
+				view.SetNavigationButtonsVisible(m_DirectoryMode == eDirectoryMode.Contacts);
+
 				view.SetCallButtonEnabled(callEnabled);
 				view.SetHangupButtonEnabled(hangupEnabled);
 			}

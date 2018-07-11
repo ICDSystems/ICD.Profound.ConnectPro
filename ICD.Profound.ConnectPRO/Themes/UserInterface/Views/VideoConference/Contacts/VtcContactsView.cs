@@ -9,14 +9,49 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 {
 	public sealed partial class VtcContactsView : AbstractView, IVtcContactsView
 	{
+		/// <summary>
+		/// Raised when the user presses the directory button.
+		/// </summary>
 		public event EventHandler OnDirectoryButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the favourites button.
+		/// </summary>
 		public event EventHandler OnFavoritesButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the recent button.
+		/// </summary>
 		public event EventHandler OnRecentButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the call button.
+		/// </summary>
 		public event EventHandler OnCallButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the hangup button.
+		/// </summary>
 		public event EventHandler OnHangupButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the back button.
+		/// </summary>
 		public event EventHandler OnBackButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the home button.
+		/// </summary>
 		public event EventHandler OnHomeButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the search button.
+		/// </summary>
 		public event EventHandler OnSearchButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the manual dial button.
+		/// </summary>
 		public event EventHandler OnManualDialButtonPressed;
 
 		private readonly List<IVtcReferencedContactsView> m_ChildList;
@@ -85,6 +120,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 		public void SetHangupButtonEnabled(bool enabled)
 		{
 			m_HangupButton.Enable(enabled);
+		}
+
+		/// <summary>
+		/// Sets the visibility of the navigation buttons.
+		/// </summary>
+		/// <param name="visible"></param>
+		public void SetNavigationButtonsVisible(bool visible)
+		{
+			m_BackButton.Show(visible);
+			m_HomeButton.Show(visible);
+
+			// TODO
+			m_SearchButton.Show(false);
 		}
 
 		#endregion

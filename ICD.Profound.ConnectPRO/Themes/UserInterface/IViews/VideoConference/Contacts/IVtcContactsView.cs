@@ -87,5 +87,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Co
 		/// </summary>
 		/// <param name="enabled"></param>
 		void SetHangupButtonEnabled(bool enabled);
+
+		/// <summary>
+		/// Sets the visibility of the navigation buttons.
+		/// </summary>
+		/// <param name="visible"></param>
+		void SetNavigationButtonsVisible(bool visible);
 	}
 }
