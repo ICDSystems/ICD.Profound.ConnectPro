@@ -202,6 +202,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				return;
 			}
 
+			// If the keyboad subpage is open close that instead
+			IVtcKeyboardPresenter keyboardPresenter = Navigation.LazyLoadPresenter<IVtcKeyboardPresenter>();
+			if (keyboardPresenter.IsViewVisible)
+			{
+				keyboardPresenter.ShowView(false);
+				return;
+			}
+
 			// If we are in a call we want to confirm before closing
 			IConferenceManager manager = Room == null ? null : Room.ConferenceManager;
 			bool isInCall = manager != null && manager.IsInCall >= eInCall.Audio;
