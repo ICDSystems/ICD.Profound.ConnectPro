@@ -112,6 +112,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(IVtcCallListToggleView), (panel, theme) => new VtcCallListToggleView(panel, theme)},
 			{typeof(IVtcButtonListView), (panel, theme) => new VtcButtonListView(panel, theme)},
 			{typeof(IVtcKeyboardView), (panel, theme) => new VtcKeyboardView(panel, theme)},
+			{typeof(IVtcKeypadView), (panel, theme) => new VtcKeypadView(panel, theme), },
 
 			// Audio Conference
 			{typeof(IAtcBaseView), (panel, theme) => new AtcBaseView(panel, theme)},
