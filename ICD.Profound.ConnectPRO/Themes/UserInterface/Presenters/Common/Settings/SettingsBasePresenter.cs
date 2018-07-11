@@ -10,7 +10,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings
 {
-	public sealed class SettingsBasePresenter : AbstractPopupPresenter<ISettingsBaseView>
+	public sealed class SettingsBasePresenter : AbstractPopupPresenter<ISettingsBaseView>, ISettingsBasePresenter
 	{
 		private const ushort SYSTEM_POWER = 0;
 		private const ushort PASSCODE_SETTINGS = 1;
@@ -56,6 +56,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				m_NavPages.Add(kvp.Key, nav.LazyLoadPresenter(kvp.Value));
 
 			SubscribePages();
+		}
+
+		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			base.Dispose();
+
+			UnsubscribePages();
 		}
 
 		/// <summary>
