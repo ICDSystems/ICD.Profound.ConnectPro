@@ -35,6 +35,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private readonly DirectoryControlBrowser m_DirectoryBrowser;
 
 		private readonly IVtcKeyboardPresenter m_Keyboard;
+		private readonly IVtcKeypadPresenter m_Keypad;
 
 		private eDirectoryMode m_DirectoryMode;
 		private	IVtcReferencedContactsPresenterBase m_Selected;
@@ -90,16 +91,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_ContactsFactory = new VtcReferencedContactsPresenterFactory(nav, ItemFactory);
 
 			m_Keyboard = nav.LazyLoadPresenter<IVtcKeyboardPresenter>();
-			m_Keyboard.OnExitButtonPressed += KeyboardOnExitButtonPressed;
+			m_Keyboard.OnKeypadButtonPressed += KeyboardOnKeypadButtonPressed;
+
+			m_Keypad = nav.LazyLoadPresenter<IVtcKeypadPresenter>();
+			m_Keypad.OnKeyboardButtonPressed += KeypadOnKeyboardButtonPressed;
 
 			m_DirectoryBrowser = new DirectoryControlBrowser();
 			Subscribe(m_DirectoryBrowser);
 		}
 
-		private void KeyboardOnExitButtonPressed(object sender, EventArgs eventArgs)
+		private void KeyboardOnKeypadButtonPressed(object sender, EventArgs eventArgs)
 		{
 			m_Keyboard.ShowView(false);
-			ShowView(true);
+			m_Keypad.ShowView(true);
+		}
+
+		private void KeypadOnKeyboardButtonPressed(object sender, EventArgs e)
+		{
+			m_Keypad.ShowView(false);
+			m_Keyboard.ShowView(true);
 		}
 
 		/// <summary>

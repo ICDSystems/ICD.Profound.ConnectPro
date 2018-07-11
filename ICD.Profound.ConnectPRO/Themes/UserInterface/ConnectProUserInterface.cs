@@ -104,6 +104,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcDtmfPresenter>());
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcActiveCallsPresenter>());
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcKeyboardPresenter>());
+			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcKeypadPresenter>());
 
 			// Audio Conference node
 			IVisibilityNode audioConferencingVisibility = new SingleVisibilityNode();

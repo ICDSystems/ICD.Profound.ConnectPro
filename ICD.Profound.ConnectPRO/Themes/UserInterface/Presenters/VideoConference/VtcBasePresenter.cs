@@ -30,6 +30,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private readonly IVtcButtonListPresenter m_ButtonListPresenter;
 		private readonly IVtcCameraPresenter m_CameraPresenter;
 		private readonly IVtcKeyboardPresenter m_KeyboardPresenter;
+		private readonly IVtcKeypadPresenter m_KeypadPresenter;
 
 		/// <summary>
 		/// Constructor.
@@ -47,6 +48,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_ContactsPresenter.OnViewVisibilityChanged += ContactsPresenterOnViewVisibilityChanged;
 
 			m_KeyboardPresenter = nav.LazyLoadPresenter<IVtcKeyboardPresenter>();
+			m_KeypadPresenter = nav.LazyLoadPresenter<IVtcKeypadPresenter>();
+
 			m_ButtonListPresenter = nav.LazyLoadPresenter<IVtcButtonListPresenter>();
 			m_CameraPresenter = nav.LazyLoadPresenter<IVtcCameraPresenter>();
 		}
@@ -202,11 +205,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				return;
 			}
 
-			// If the keyboad subpage is open close that instead
+			// If the keyboard subpage is open close that instead
 			IVtcKeyboardPresenter keyboardPresenter = Navigation.LazyLoadPresenter<IVtcKeyboardPresenter>();
 			if (keyboardPresenter.IsViewVisible)
 			{
 				keyboardPresenter.ShowView(false);
+				return;
+			}
+
+			// If the keypad subpage is open close that instead
+			IVtcKeypadPresenter keypadPresenter = Navigation.LazyLoadPresenter<IVtcKeypadPresenter>();
+			if (keypadPresenter.IsViewVisible)
+			{
+				keypadPresenter.ShowView(false);
 				return;
 			}
 
@@ -232,6 +243,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_CameraPresenter.ShowView(false);
 			m_ButtonListPresenter.ShowView(false);
 			m_KeyboardPresenter.ShowView(false);
+			m_KeypadPresenter.ShowView(false);
 
 			// View became visible
 			if (args.Data)

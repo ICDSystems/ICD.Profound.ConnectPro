@@ -19,8 +19,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		public event EventHandler OnSpaceButtonPressed;
 		public event EventHandler OnCapsButtonPressed;
 		public event EventHandler OnShiftButtonPressed;
-		public event EventHandler OnSubmitButtonPressed;
-		public event EventHandler OnExitButtonPressed;
+		public event EventHandler OnDialButtonPressed;
+		public event EventHandler OnKeypadButtonPressed;
 
 		private Dictionary<VtProButton, KeyboardKey> m_KeyMap;
 
@@ -47,8 +47,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			OnSpaceButtonPressed = null;
 			OnCapsButtonPressed = null;
 			OnShiftButtonPressed = null;
-			OnSubmitButtonPressed = null;
-			OnExitButtonPressed = null;
+			OnDialButtonPressed = null;
+			OnKeypadButtonPressed = null;
 
 			base.Dispose();
 		}
@@ -153,8 +153,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			m_SpaceButton.OnPressed += SpaceButtonOnPressed;
 			m_CapsButton.OnPressed += CapsButtonOnPressed;
 			m_ShiftButton.OnPressed += ShiftButtonOnPressed;
-			m_SubmitButton.OnPressed += SubmitButtonOnPressed;
-			m_ExitButton.OnPressed += ExitButtonOnPressed;
+			m_DialButton.OnPressed += DialButtonOnPressed;
+			m_KeypadButton.OnPressed += KeypadButtonOnPressed;
 		}
 
 		/// <summary>
@@ -172,8 +172,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			m_SpaceButton.OnPressed -= SpaceButtonOnPressed;
 			m_CapsButton.OnPressed -= CapsButtonOnPressed;
 			m_ShiftButton.OnPressed -= ShiftButtonOnPressed;
-			m_SubmitButton.OnPressed -= SubmitButtonOnPressed;
-			m_ExitButton.OnPressed -= ExitButtonOnPressed;
+			m_DialButton.OnPressed -= DialButtonOnPressed;
+			m_KeypadButton.OnPressed -= KeypadButtonOnPressed;
 		}
 
 		/// <summary>
@@ -241,9 +241,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		private void SubmitButtonOnPressed(object sender, EventArgs args)
+		private void DialButtonOnPressed(object sender, EventArgs args)
 		{
-			OnSubmitButtonPressed.Raise(this);
+			OnDialButtonPressed.Raise(this);
 		}
 
 		/// <summary>
@@ -251,9 +251,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void ExitButtonOnPressed(object sender, EventArgs eventArgs)
+		private void KeypadButtonOnPressed(object sender, EventArgs eventArgs)
 		{
-			OnExitButtonPressed.Raise(this);
+			OnKeypadButtonPressed.Raise(this);
 		}
 
 		#endregion
