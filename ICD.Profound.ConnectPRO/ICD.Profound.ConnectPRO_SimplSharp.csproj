@@ -156,6 +156,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcIncomingCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcReferencedContactsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcKeyboardPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcKeypadPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcSharePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\VisibilityNode.cs" />
     <Compile Include="Themes\UserInterface\IViews\AudioConference\IAtcBaseView.cs" />
@@ -206,6 +207,7 @@
     <Compile Include="Themes\UserInterface\IViews\VideoConference\Dtmf\IVtcReferencedDtmfView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\ActiveCalls\IVtcReferencedActiveCallsView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcKeyboardView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcKeypadView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcShareView.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractComponentPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractListItemFactory.cs" />
@@ -262,6 +264,7 @@
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Dtmf\VtcDtmfPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcIncomingCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcKeyboardPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcKeypadPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcSharePresenter.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractComponentView.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractView.cs" />
@@ -350,6 +353,8 @@
     <Compile Include="Themes\UserInterface\Views\VideoConference\ActiveCalls\VtcReferencedActiveCallsView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcKeyboardView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcKeyboardView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcKeypadView.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcKeypadView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcShareView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcShareView.generated.cs" />
     <Compile Include="VolumePoints\ConnectProVolumePoint.cs" />
