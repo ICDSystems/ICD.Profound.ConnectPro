@@ -10,8 +10,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 		event EventHandler OnStartMeetingButtonPressed;
 
 		/// <summary>
-		/// Raised when the user presses the shutdown button.
+		/// Raised when the user presses the settings button.
 		/// </summary>
-		event EventHandler OnShutdownButtonPressed;
+		event EventHandler OnSettingsButtonPressed;
+
+		/// <summary>
+		/// Sets the enabled state of the start meeting button.
+		/// </summary>
+		/// <param name="enabled"></param>
+		void SetStartMeetingButtonEnabled(bool enabled);
 	}
 }

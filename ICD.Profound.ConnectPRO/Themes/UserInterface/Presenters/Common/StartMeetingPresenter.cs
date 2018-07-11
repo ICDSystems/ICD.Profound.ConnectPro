@@ -1,6 +1,7 @@
 ﻿using System;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
@@ -19,6 +20,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 		}
 
+		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
+		protected override void Refresh(IStartMeetingView view)
+		{
+			base.Refresh(view);
+			
+			// TODO - This will be handled by scheduling features
+			view.SetStartMeetingButtonEnabled(true);
+		}
+
 		#region View Callbacks
 
 		/// <summary>
@@ -30,7 +43,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			base.Subscribe(view);
 
 			view.OnStartMeetingButtonPressed += ViewOnStartMeetingButtonPressed;
-			view.OnShutdownButtonPressed += ViewOnShutdownButtonPressed;
+			view.OnSettingsButtonPressed += ViewOnSettingsButtonPressed;
 		}
 
 		/// <summary>
@@ -42,13 +55,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			base.Unsubscribe(view);
 
 			view.OnStartMeetingButtonPressed -= ViewOnStartMeetingButtonPressed;
-			view.OnShutdownButtonPressed -= ViewOnShutdownButtonPressed;
+			view.OnSettingsButtonPressed -= ViewOnSettingsButtonPressed;
 		}
 
-		private void ViewOnShutdownButtonPressed(object sender, EventArgs eventArgs)
+		/// <summary>
+		/// Called when the user presses the settings button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ViewOnSettingsButtonPressed(object sender, EventArgs eventArgs)
 		{
-			//Navigation.NavigateTo<IDisabledAlertPresenter>();
-			Navigation.NavigateTo<IConfirmSplashPowerPresenter>();
+			Navigation.LazyLoadPresenter<IPasscodePresenter>().ShowView(PasscodeSuccessCallback);
 		}
 
 		/// <summary>
@@ -60,6 +77,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			if (Room != null)
 				Room.StartMeeting();
+		}
+
+		/// <summary>
+		/// Called when the user successfully enters the passcode.
+		/// </summary>
+		/// <param name="sender"></param>
+		private void PasscodeSuccessCallback(IPasscodePresenter sender)
+		{
+			Navigation.LazyLoadPresenter<IPasscodePresenter>().ShowView(false);
+
+			Navigation.NavigateTo<ISettingsBasePresenter>();
 		}
 
 		#endregion

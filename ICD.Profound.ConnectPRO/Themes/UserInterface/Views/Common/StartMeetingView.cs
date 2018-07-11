@@ -7,8 +7,35 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 {
 	public sealed partial class StartMeetingView : AbstractView, IStartMeetingView
 	{
+		/// <summary>
+		/// Raised when the user presses the start meeting button.
+		/// </summary>
 		public event EventHandler OnStartMeetingButtonPressed;
-		public event EventHandler OnShutdownButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the settings button.
+		/// </summary>
+		public event EventHandler OnSettingsButtonPressed;
+
+		/// <summary>
+		/// Sets the enabled state of the start meeting button.
+		/// </summary>
+		/// <param name="enabled"></param>
+		public void SetStartMeetingButtonEnabled(bool enabled)
+		{
+			m_StartMeetingButton.SetSelected(enabled);
+		}
+
+		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			OnStartMeetingButtonPressed = null;
+			OnSettingsButtonPressed = null;
+
+			base.Dispose();
+		}
 
 		/// <summary>
 		/// Constructor.
@@ -18,17 +45,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		public StartMeetingView(ISigInputOutput panel, ConnectProTheme theme)
 			: base(panel, theme)
 		{
-		}
-
-		/// <summary>
-		/// Release resources.
-		/// </summary>
-		public override void Dispose()
-		{
-			OnStartMeetingButtonPressed = null;
-			OnShutdownButtonPressed = null;
-
-			base.Dispose();
 		}
 
 		#region Control Callbacks
@@ -41,7 +57,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			base.SubscribeControls();
 
 			m_StartMeetingButton.OnPressed += StartMeetingButtonOnPressed;
-			m_ShutdownButton.OnPressed += ShutdownButtonOnPressed;
+			m_SettingsButton.OnPressed += SettingsButtonOnPressed;
 		}
 
 		/// <summary>
@@ -52,14 +68,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			base.UnsubscribeControls();
 
 			m_StartMeetingButton.OnPressed -= StartMeetingButtonOnPressed;
-			m_ShutdownButton.OnPressed -= ShutdownButtonOnPressed;
+			m_SettingsButton.OnPressed -= SettingsButtonOnPressed;
 		}
 
-		private void ShutdownButtonOnPressed(object sender, EventArgs eventArgs)
+		/// <summary>
+		/// Called when the user presses the shutdown button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void SettingsButtonOnPressed(object sender, EventArgs eventArgs)
 		{
-			OnShutdownButtonPressed.Raise(this);
+			OnSettingsButtonPressed.Raise(this);
 		}
 
+		/// <summary>
+		/// Called when the user presses the start meeting button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void StartMeetingButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnStartMeetingButtonPressed.Raise(this);

@@ -12,53 +12,13 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference
 {
-	public sealed class VtcKeyboardPresenter : AbstractPresenter<IVtcKeyboardView>, IVtcKeyboardPresenter
+	public class VtcKeypadPresenter : AbstractPresenter<IVtcKeypadView>, IVtcKeypadPresenter
 	{
-		public event EventHandler OnKeypadButtonPressed; 
+		public event EventHandler OnKeyboardButtonPressed; 
 
 		private readonly KeypadStringBuilder m_StringBuilder;
 
-		private bool m_Shift;
-		private bool m_Caps;
 		private bool m_RefreshTextField;
-
-		#region Properties
-
-		/// <summary>
-		/// Gets/sets the caps state.
-		/// </summary>
-		public bool Caps
-		{
-			get { return m_Caps; }
-			set
-			{
-				if (value == m_Caps)
-					return;
-
-				m_Caps = value;
-
-				RefreshIfVisible();
-			}
-		}
-
-		/// <summary>
-		/// Gets/sets the shift state.
-		/// </summary>
-		public bool Shift
-		{
-			get { return m_Shift; }
-			set
-			{
-				if (value == m_Shift)
-					return;
-
-				m_Shift = value;
-
-				RefreshIfVisible();
-			}
-		}
-
-		#endregion
 
 		/// <summary>
 		/// Constructor.
@@ -66,7 +26,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcKeyboardPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public VtcKeypadPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_StringBuilder = new KeypadStringBuilder();
@@ -80,7 +40,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		public override void Dispose()
 		{
-			OnKeypadButtonPressed = null;
+			OnKeyboardButtonPressed = null;
 
 			base.Dispose();
 		}
@@ -89,16 +49,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Updates the view.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Refresh(IVtcKeyboardView view)
+		protected override void Refresh(IVtcKeypadView view)
 		{
 			base.Refresh(view);
 
 			if (m_RefreshTextField)
 				view.SetText(m_StringBuilder.ToString());
-
-			view.SelectCapsButton(Caps);
-			view.SelectShiftButton(Shift);
-			view.SetShift(Shift, Caps);
 		}
 
 		/// <summary>
@@ -118,36 +74,28 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Subscribe to the view events.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Subscribe(IVtcKeyboardView view)
+		protected override void Subscribe(IVtcKeypadView view)
 		{
 			base.Subscribe(view);
 
 			view.OnBackspaceButtonPressed += ViewOnBackspaceButtonPressed;
-			view.OnCapsButtonPressed += ViewOnCapsButtonPressed;
-			view.OnDialButtonPressed += ViewOnDialButtonPressed;
-			view.OnShiftButtonPressed += ViewOnShiftButtonPressed;
-			view.OnSpaceButtonPressed += ViewOnSpaceButtonPressed;
 			view.OnTextEntered += ViewOnTextEntered;
 			view.OnKeyPressed += ViewOnKeyPressed;
-			view.OnKeypadButtonPressed += ViewOnKeypadButtonPressed;
+			view.OnDialButtonPressed += ViewOnDialButtonPressed;
+			view.OnKeyboardButtonPressed += ViewOnKeyboardButtonPressed;
 		}
 
 		/// <summary>
 		/// Unsubscribe from the view events.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Unsubscribe(IVtcKeyboardView view)
+		protected override void Unsubscribe(IVtcKeypadView view)
 		{
 			base.Unsubscribe(view);
 
 			view.OnBackspaceButtonPressed -= ViewOnBackspaceButtonPressed;
-			view.OnCapsButtonPressed -= ViewOnCapsButtonPressed;
-			view.OnDialButtonPressed -= ViewOnDialButtonPressed;
-			view.OnShiftButtonPressed -= ViewOnShiftButtonPressed;
-			view.OnSpaceButtonPressed -= ViewOnSpaceButtonPressed;
 			view.OnTextEntered -= ViewOnTextEntered;
 			view.OnKeyPressed -= ViewOnKeyPressed;
-			view.OnKeypadButtonPressed -= ViewOnKeypadButtonPressed;
 		}
 
 		/// <summary>
@@ -169,30 +117,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="eventArgs"></param>
 		private void ViewOnKeyPressed(object sender, KeyboardKeyEventArgs eventArgs)
 		{
-			char character = eventArgs.Data.GetChar(Shift, Caps);
+			char character = eventArgs.Data.GetChar(false, false);
 
-			Shift = false;
 			m_StringBuilder.AppendCharacter(character);
-		}
-
-		/// <summary>
-		/// Called when the user presses the space bar.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="eventArgs"></param>
-		private void ViewOnSpaceButtonPressed(object sender, EventArgs eventArgs)
-		{
-			m_StringBuilder.AppendCharacter(' ');
-		}
-
-		/// <summary>
-		/// Called when the user presses the shift button.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="eventArgs"></param>
-		private void ViewOnShiftButtonPressed(object sender, EventArgs eventArgs)
-		{
-			Shift = !Shift;
 		}
 
 		/// <summary>
@@ -211,19 +138,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			ShowView(false);
 		}
 
-		private void ViewOnKeypadButtonPressed(object sender, EventArgs eventArgs)
+		private void ViewOnKeyboardButtonPressed(object sender, EventArgs eventArgs)
 		{
-			OnKeypadButtonPressed.Raise(this);
-		}
-
-		/// <summary>
-		/// Called when the user presses the caps button.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="eventArgs"></param>
-		private void ViewOnCapsButtonPressed(object sender, EventArgs eventArgs)
-		{
-			Caps = !Caps;
+			OnKeyboardButtonPressed.Raise(this);
 		}
 
 		/// <summary>
@@ -244,9 +161,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
 		{
 			base.ViewOnVisibilityChanged(sender, args);
-
-			Caps = false;
-			Shift = false;
 
 			m_StringBuilder.Clear();
 		}

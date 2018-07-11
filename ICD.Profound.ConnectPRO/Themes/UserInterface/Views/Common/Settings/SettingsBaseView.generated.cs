@@ -2,15 +2,17 @@
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
+using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.Pages;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 {
-	public sealed partial class StartMeetingView
+	public sealed partial class SettingsBaseView
 	{
 		private VtProSubpage m_Subpage;
-		private VtProButton m_StartMeetingButton;
-		private VtProButton m_SettingsButton;
+		private VtProDynamicButtonList m_ItemList;
+		private VtProButton m_SaveButton;
+		private VtProButton m_CloseButton;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -22,17 +24,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 90
+				DigitalVisibilityJoin = 141
 			};
 
-			m_StartMeetingButton = new VtProButton(panel, m_Subpage)
+			m_ItemList = new VtProDynamicButtonList(652, panel as IPanelDevice, m_Subpage)
 			{
-				DigitalPressJoin = 91
+				MaxSize = 2
 			};
 
-			m_SettingsButton = new VtProButton(panel, m_Subpage)
+			m_SaveButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 115
+				DigitalPressJoin = 820
+			};
+
+			m_CloseButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 160
 			};
 		}
 
@@ -43,8 +50,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		protected override IEnumerable<IVtProControl> GetChildren()
 		{
 			yield return m_Subpage;
-			yield return m_StartMeetingButton;
-			yield return m_SettingsButton;
+			yield return m_ItemList;
+			yield return m_SaveButton;
+			yield return m_CloseButton;
 		}
 	}
 }

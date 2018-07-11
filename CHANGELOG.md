@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Changed
  - Fixed source label formatting bug
+ - Always set Start Meeting button high so new panel changes are not disruptive
+ - Navigate to active calls when a call starts dialing
 
 ## [4.1.1] - 2018-07-02
 ### Changed

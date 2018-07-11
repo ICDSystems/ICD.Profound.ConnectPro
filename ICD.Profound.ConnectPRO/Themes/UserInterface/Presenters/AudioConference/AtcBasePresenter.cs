@@ -104,35 +104,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 			return
 				m_SubscribedAudioDialer == null
 					? null
-					: m_SubscribedAudioDialer.GetSources().FirstOrDefault(IsActiveSource);
-		}
-
-		private bool IsActiveSource(IConferenceSource source)
-		{
-			if (source == null)
-				return false;
-
-			switch (source.Status)
-			{
-				case eConferenceSourceStatus.Undefined:
-				case eConferenceSourceStatus.Disconnected:
-				case eConferenceSourceStatus.Idle:
-					return false;
-
-				case eConferenceSourceStatus.Dialing:
-				case eConferenceSourceStatus.Connecting:
-				case eConferenceSourceStatus.Ringing:
-				case eConferenceSourceStatus.Connected:
-				case eConferenceSourceStatus.OnHold:
-				case eConferenceSourceStatus.EarlyMedia:
-				case eConferenceSourceStatus.Preserved:
-				case eConferenceSourceStatus.RemotePreserved:
-				case eConferenceSourceStatus.Disconnecting:
-					return true;
-
-				default:
-					throw new ArgumentOutOfRangeException();
-			}
+					: m_SubscribedAudioDialer.GetSources().FirstOrDefault(s => s.GetIsActive());
 		}
 
 		#region Room Callbacks
