@@ -39,12 +39,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 		/// <summary>
 		/// Raised when the user presses the submit button.
 		/// </summary>
-		event EventHandler OnSubmitButtonPressed;
+		event EventHandler OnDialButtonPressed;
 
 		/// <summary>
 		/// Raised when the user presses the exit button.
 		/// </summary>
-		event EventHandler OnExitButtonPressed;
+		event EventHandler OnKeypadButtonPressed;
 
 		/// <summary>
 		/// Sets the selected state of the caps button.

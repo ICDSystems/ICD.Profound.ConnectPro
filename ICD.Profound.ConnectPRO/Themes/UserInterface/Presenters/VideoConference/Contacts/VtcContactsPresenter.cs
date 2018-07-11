@@ -90,13 +90,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_ContactsFactory = new VtcReferencedContactsPresenterFactory(nav, ItemFactory);
 
 			m_Keyboard = nav.LazyLoadPresenter<IVtcKeyboardPresenter>();
-			m_Keyboard.OnExitButtonPressed += KeyboardOnExitButtonPressed;
+			m_Keyboard.OnKeypadButtonPressed += KeyboardOnKeypadButtonPressed;
 
 			m_DirectoryBrowser = new DirectoryControlBrowser();
 			Subscribe(m_DirectoryBrowser);
 		}
 
-		private void KeyboardOnExitButtonPressed(object sender, EventArgs eventArgs)
+		private void KeyboardOnKeypadButtonPressed(object sender, EventArgs eventArgs)
 		{
 			m_Keyboard.ShowView(false);
 			ShowView(true);

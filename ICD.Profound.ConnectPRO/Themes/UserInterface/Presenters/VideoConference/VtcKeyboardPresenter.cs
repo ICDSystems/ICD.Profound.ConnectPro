@@ -14,7 +14,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 {
 	public sealed class VtcKeyboardPresenter : AbstractPresenter<IVtcKeyboardView>, IVtcKeyboardPresenter
 	{
-		public event EventHandler OnExitButtonPressed; 
+		public event EventHandler OnKeypadButtonPressed; 
 
 		private readonly KeypadStringBuilder m_StringBuilder;
 
@@ -80,7 +80,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		public override void Dispose()
 		{
-			OnExitButtonPressed = null;
+			OnKeypadButtonPressed = null;
 
 			base.Dispose();
 		}
@@ -124,12 +124,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			view.OnBackspaceButtonPressed += ViewOnBackspaceButtonPressed;
 			view.OnCapsButtonPressed += ViewOnCapsButtonPressed;
-			view.OnSubmitButtonPressed += ViewOnSubmitButtonPressed;
+			view.OnDialButtonPressed += ViewOnDialButtonPressed;
 			view.OnShiftButtonPressed += ViewOnShiftButtonPressed;
 			view.OnSpaceButtonPressed += ViewOnSpaceButtonPressed;
 			view.OnTextEntered += ViewOnTextEntered;
 			view.OnKeyPressed += ViewOnKeyPressed;
-			view.OnExitButtonPressed += ViewOnExitButtonPressed;
+			view.OnKeypadButtonPressed += ViewOnKeypadButtonPressed;
 		}
 
 		/// <summary>
@@ -142,12 +142,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			view.OnBackspaceButtonPressed -= ViewOnBackspaceButtonPressed;
 			view.OnCapsButtonPressed -= ViewOnCapsButtonPressed;
-			view.OnSubmitButtonPressed -= ViewOnSubmitButtonPressed;
+			view.OnDialButtonPressed -= ViewOnDialButtonPressed;
 			view.OnShiftButtonPressed -= ViewOnShiftButtonPressed;
 			view.OnSpaceButtonPressed -= ViewOnSpaceButtonPressed;
 			view.OnTextEntered -= ViewOnTextEntered;
 			view.OnKeyPressed -= ViewOnKeyPressed;
-			view.OnExitButtonPressed -= ViewOnExitButtonPressed;
+			view.OnKeypadButtonPressed -= ViewOnKeypadButtonPressed;
 		}
 
 		/// <summary>
@@ -200,7 +200,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void ViewOnSubmitButtonPressed(object sender, EventArgs eventArgs)
+		private void ViewOnDialButtonPressed(object sender, EventArgs eventArgs)
 		{
 			string number = m_StringBuilder.ToString();
 
@@ -211,9 +211,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			ShowView(false);
 		}
 
-		private void ViewOnExitButtonPressed(object sender, EventArgs eventArgs)
+		private void ViewOnKeypadButtonPressed(object sender, EventArgs eventArgs)
 		{
-			OnExitButtonPressed.Raise(this);
+			OnKeypadButtonPressed.Raise(this);
 		}
 
 		/// <summary>
