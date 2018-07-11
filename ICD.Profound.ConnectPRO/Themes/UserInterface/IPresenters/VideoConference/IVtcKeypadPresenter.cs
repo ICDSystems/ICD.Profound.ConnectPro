@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Crestron.SimplSharp;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference
 {
-	public interface IVtcKeypadPresenter : IPresenter
+	public interface IVtcKeypadPresenter : IPresenter<IVtcKeypadView>
 	{
 		event EventHandler OnKeyboardButtonPressed;
 	}
