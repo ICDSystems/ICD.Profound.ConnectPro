@@ -60,8 +60,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		private VtProButton m_ShiftButton;
 		private VtProButton m_CapsButton;
 		private VtProButton m_SpaceButton;
-		private VtProButton m_SubmitButton;
-		private VtProButton m_ExitButton;
+		private VtProButton m_DialButton;
+		private VtProButton m_KeypadButton;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -318,12 +318,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 				DigitalPressJoin = 2747
 			};
 
-			m_SubmitButton = new VtProButton(panel, m_Subpage)
+			m_DialButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2754
 			};
 
-			m_ExitButton = new VtProButton(panel, m_Subpage)
+			m_KeypadButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2755
 			};
@@ -385,8 +385,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			yield return m_ShiftButton;
 			yield return m_CapsButton;
 			yield return m_SpaceButton;
-			yield return m_SubmitButton;
-			yield return m_ExitButton;
+			yield return m_DialButton;
+			yield return m_KeypadButton;
 		}
 	}
 }

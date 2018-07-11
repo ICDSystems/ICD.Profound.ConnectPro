@@ -2,39 +2,26 @@
 using System.Collections.Generic;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
-using ICD.Common.Utils.Extensions;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.ActiveCalls;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Dtmf;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings
 {
-	public sealed class VtcButtonListPresenter : AbstractPresenter<IVtcButtonListView>, IVtcButtonListPresenter
+	public sealed class SettingsBasePresenter : AbstractPopupPresenter<ISettingsBaseView>, ISettingsBasePresenter
 	{
-		public const ushort INDEX_ACTIVE_CALLS = 0;
-		private const ushort INDEX_SHARE = 1;
-		private const ushort INDEX_DTMF = 2;
+		private const ushort SYSTEM_POWER = 0;
+		private const ushort PASSCODE_SETTINGS = 1;
 
-		private static readonly Dictionary<ushort, string> s_ButtonLabels =
-			new Dictionary<ushort, string>
+		private static readonly Dictionary<ushort, Type> s_NavTypes = new Dictionary<ushort, Type>
 			{
-				{INDEX_ACTIVE_CALLS, "Active Calls"},
-				{INDEX_SHARE, "Share"},
-				{INDEX_DTMF, "Touchtones"}
+				{SYSTEM_POWER, typeof(ISettingsSystemPowerPresenter)},
+				{PASSCODE_SETTINGS, typeof(ISettingsPasscodePresenter)}
 			};
 
-		private static readonly Dictionary<ushort, Type> s_NavTypes =
-			new Dictionary<ushort, Type>
-			{
-				{INDEX_ACTIVE_CALLS, typeof(IVtcActiveCallsPresenter)},
-				{INDEX_SHARE, typeof(IVtcSharePresenter)},
-				{INDEX_DTMF, typeof(IVtcDtmfPresenter)}
-			};
-
-		private readonly Dictionary<ushort, IPresenter> m_NavPages; 
+		private readonly Dictionary<ushort, IPresenter> m_NavPages;
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private IPresenter m_Visible;
@@ -59,7 +46,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcButtonListPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public SettingsBasePresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
@@ -85,7 +72,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Updates the view.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Refresh(IVtcButtonListView view)
+		protected override void Refresh(ISettingsBaseView view)
 		{
 			base.Refresh(view);
 
@@ -93,15 +80,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			try
 			{
-				IEnumerable<string> labels = s_ButtonLabels.OrderValuesByKey();
-				view.SetButtonLabels(labels);
-
 				foreach (KeyValuePair<ushort, IPresenter> kvp in m_NavPages)
-				{
-					view.SetButtonVisible(kvp.Key, true);
-					view.SetButtonEnabled(kvp.Key, true);
-					view.SetButtonSelected(kvp.Key, kvp.Value.IsViewVisible);
-				}
+					view.SetItemSelected(kvp.Key, kvp.Value.IsViewVisible);
 			}
 			finally
 			{
@@ -109,9 +89,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			}
 		}
 
-		public void ShowMenu(ushort menu)
+		private void ShowMenu(ushort index)
 		{
-			m_NavPages[menu].ShowView(true);
+			m_NavPages[index].ShowView(true);
 		}
 
 		#region Page Callbacks
@@ -157,25 +137,42 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Subscribe to the view events.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Subscribe(IVtcButtonListView view)
+		protected override void Subscribe(ISettingsBaseView view)
 		{
 			base.Subscribe(view);
 
-			view.OnButtonPressed += ViewOnButtonPressed;
+			view.OnListItemPressed += ViewOnListItemPressed;
+			view.OnSaveButtonPressed += ViewOnSaveButtonPressed;
 		}
 
 		/// <summary>
 		/// Unsubscribe from the view events.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Unsubscribe(IVtcButtonListView view)
+		protected override void Unsubscribe(ISettingsBaseView view)
 		{
 			base.Unsubscribe(view);
 
-			view.OnButtonPressed -= ViewOnButtonPressed;
+			view.OnListItemPressed -= ViewOnListItemPressed;
+			view.OnSaveButtonPressed -= ViewOnSaveButtonPressed;
 		}
 
-		private void ViewOnButtonPressed(object sender, UShortEventArgs eventArgs)
+		/// <summary>
+		/// Called when the user presses the save button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ViewOnSaveButtonPressed(object sender, EventArgs eventArgs)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Called when the user presses a list item button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ViewOnListItemPressed(object sender, UShortEventArgs eventArgs)
 		{
 			ShowMenu(eventArgs.Data);
 		}
@@ -191,7 +188,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			if (args.Data)
 			{
-				ShowMenu(INDEX_ACTIVE_CALLS);
+				ShowMenu(SYSTEM_POWER);
 			}
 			else
 			{

@@ -19,7 +19,6 @@ using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Displays.Devices;
 using ICD.Connect.Panels;
-using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Settings.Core;
@@ -117,28 +116,52 @@ namespace ICD.Profound.ConnectPRO.Rooms
 				return;
 
 			m_IsInMeeting = false;
-			Shutdown(shutdown);
+
+			// Undo all routing
+			Routing.UnrouteAll();
+			Routing.RouteOsd();
+
+			// Hangup
+			if (ConferenceManager != null && ConferenceManager.ActiveConference != null)
+				ConferenceManager.ActiveConference.Hangup();
+
+			if (shutdown)
+				Sleep();
 
 			OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
 		}
 
-		#endregion
+		/// <summary>
+		/// Wakes up the room.
+		/// </summary>
+		public void Wake()
+		{
+			// Undo all routing
+			Routing.UnrouteAll();
+			Routing.RouteOsd();
+
+			// Power displays
+			foreach (IDestination destination in Routing.GetDisplayDestinations())
+			{
+				IDisplay display = Core.Originators.GetChild(destination.Device) as IDisplay;
+				if (display != null)
+					display.PowerOn();
+			}
+
+			// Power the panels
+			Originators.GetInstancesRecursive<IPanelDevice>()
+					   .SelectMany(panel => panel.Controls.GetControls<IPowerDeviceControl>())
+					   .ForEach(c => c.PowerOn());
+		}
 
 		/// <summary>
 		/// Shuts down the room.
 		/// </summary>
-		private void Shutdown(bool powerOff)
+		public void Sleep()
 		{
 			// Undo all routing
-			if (powerOff)
-			{
-				Routing.UnrouteAll();
-			}
-			else
-			{
-				Routing.UnrouteAllExceptOsd();
-				Routing.RouteOsd();
-			}
+			Routing.UnrouteAll();
+			Routing.RouteOsd();
 			
 			// Hangup
 			if (ConferenceManager != null && ConferenceManager.ActiveConference != null)
@@ -147,32 +170,18 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			// Power off displays
 			foreach (IDestination destination in Routing.GetDisplayDestinations())
 			{
-				if (!powerOff)
-				{
-					OsdPanelDevice osd = Routing.GetActiveVideoEndpoints(destination)
-												.Select(e => e.Device)
-												.Distinct()
-												.Select(id => Core.Originators.GetChild(id) as OsdPanelDevice)
-												.FirstOrDefault(o => o != null);
-
-					// Don't power off displays showing the osd
-					if (osd != null)
-						continue;
-				}
-
 				IDisplay display = Core.Originators.GetChild(destination.Device) as IDisplay;
 				if (display != null)
 					display.PowerOff();
 			}
 
 			// Power off the panels
-			if (powerOff)
-			{
-				Originators.GetInstancesRecursive<IPanelDevice>()
-				           .SelectMany(panel => panel.Controls.GetControls<IPowerDeviceControl>())
-				           .ForEach(c => c.PowerOff());
-			}
+			Originators.GetInstancesRecursive<IPanelDevice>()
+			           .SelectMany(panel => panel.Controls.GetControls<IPowerDeviceControl>())
+			           .ForEach(c => c.PowerOff());
 		}
+
+		#endregion
 
 		#region Settings
 

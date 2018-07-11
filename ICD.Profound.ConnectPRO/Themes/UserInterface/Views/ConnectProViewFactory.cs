@@ -10,6 +10,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.AudioConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.CableTv;
@@ -22,6 +23,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups.CableTv;
@@ -92,6 +94,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(IStartMeetingView), (panel, theme) => new StartMeetingView(panel, theme)},
 			{typeof(IVolumeView), (panel, theme) => new VolumeView(panel, theme)},
 			{typeof(IDisabledAlertView), (panel, theme) => new DisabledAlertView(panel, theme)},
+			{typeof(IPasscodeView), (panel, theme) => new PasscodeView(panel, theme)},
+
+			// Settings
+			{typeof(ISettingsBaseView), (panel, theme) => new SettingsBaseView(panel, theme)},
+			{typeof(ISettingsSystemPowerView), (panel, theme) => new SettingsSystemPowerView(panel, theme)},
+			{typeof(ISettingsPasscodeView), (panel, theme) => new SettingsPasscodeView(panel, theme)},
 
 			// Video Conference
 			{typeof(IVtcBaseView), (panel, theme) => new VtcBaseView(panel, theme)},
@@ -104,6 +112,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(IVtcCallListToggleView), (panel, theme) => new VtcCallListToggleView(panel, theme)},
 			{typeof(IVtcButtonListView), (panel, theme) => new VtcButtonListView(panel, theme)},
 			{typeof(IVtcKeyboardView), (panel, theme) => new VtcKeyboardView(panel, theme)},
+			{typeof(IVtcKeypadView), (panel, theme) => new VtcKeypadView(panel, theme), },
 
 			// Audio Conference
 			{typeof(IAtcBaseView), (panel, theme) => new AtcBaseView(panel, theme)},

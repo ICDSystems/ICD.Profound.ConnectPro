@@ -41,5 +41,15 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		/// <param name="shutdown"></param>
 		void EndMeeting(bool shutdown);
+
+		/// <summary>
+		/// Wakes up the room.
+		/// </summary>
+		void Wake();
+
+		/// <summary>
+		/// Shuts down the room.
+		/// </summary>
+		void Sleep();
 	}
 }

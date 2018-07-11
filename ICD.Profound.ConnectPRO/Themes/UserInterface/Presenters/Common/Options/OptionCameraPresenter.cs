@@ -146,14 +146,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 
 			if (m_SubscribedConferenceManager == null)
 				return;
-
-			m_SubscribedConferenceManager.OnPrivacyMuteStatusChange -= ConferenceManagerOnPrivacyMuteStatusChange;
+			
 			m_SubscribedConferenceManager.OnInCallChanged -= SubscribedConferenceManagerOnInCallChanged;
-		}
-
-		private void ConferenceManagerOnPrivacyMuteStatusChange(object sender, BoolEventArgs boolEventArgs)
-		{
-			RefreshIfVisible();
 		}
 
 		private void SubscribedConferenceManagerOnInCallChanged(object sender, InCallEventArgs callEventArgs)
