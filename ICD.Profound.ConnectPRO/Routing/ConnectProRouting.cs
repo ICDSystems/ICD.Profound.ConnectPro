@@ -669,7 +669,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				return null;
 
 			return RoutingGraph.RoutingCache
-			                   .GetSourcesForDestination(control.GetInputEndpointInfo((int)activeInput), eConnectionType.Video)
+			                   .GetSourcesForDestinationEndpoint(control.GetInputEndpointInfo((int)activeInput), eConnectionType.Video)
 			                   .FirstOrDefault();
 		}
 
