@@ -334,11 +334,13 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 		private void ScheduleOnSleepActionRequested(object sender, EventArgs eventArgs)
 		{
+			Log(eSeverity.Informational, "Scheduled wakeup occurring at {0}", IcdEnvironment.GetLocalTime().ToShortTimeString());
 			Sleep();
 		}
 
 		private void ScheduleOnWakeActionRequested(object sender, EventArgs eventArgs)
 		{
+			Log(eSeverity.Informational, "Scheduled sleep occurring at {0}", IcdEnvironment.GetLocalTime().ToShortTimeString());
 			Wake();
 		}
 

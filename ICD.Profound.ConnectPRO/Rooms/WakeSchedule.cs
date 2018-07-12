@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services.Scheduler;
 using ICD.Common.Utils.Xml;
@@ -34,7 +32,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			set
 			{ 
 				_weekdayWakeTime = value;
-				UpdateRunTime();
+				UpdateNextRunTime();
 			}
 		}
 
@@ -47,7 +45,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			set
 			{
 				_weekdaySleepTime = value;
-				UpdateRunTime();
+				UpdateNextRunTime();
 			}
 		}
 
@@ -60,7 +58,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			set
 			{
 				_weekendWakeTime = value;
-				UpdateRunTime();
+				UpdateNextRunTime();
 			}
 		}
 
@@ -73,7 +71,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			set
 			{
 				_weekendSleepTime = value;
-				UpdateRunTime();
+				UpdateNextRunTime();
 			}
 		}
 
@@ -101,7 +99,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 				Sleep();
 		}
 
-		public override DateTime? UpdateRunTime()
+		public override DateTime? GetNextRunTime()
 		{
 			var now = DateTime.Now;
 			var currentDay = DateTime.Today;
