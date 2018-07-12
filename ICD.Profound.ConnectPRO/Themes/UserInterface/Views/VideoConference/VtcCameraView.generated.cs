@@ -5,6 +5,7 @@ using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Keypads;
 using ICD.Connect.UI.Controls.Pages;
+using ICD.Connect.UI.Controls.TextControls;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 {
@@ -21,6 +22,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		private VtProButton m_PresetButton3;
 		private VtProButton m_PresetButton4;
 		private VtProButton m_PresetButton5;
+		private VtProSimpleLabel m_PresetStoredLabel;
 
 		private Dictionary<ushort, VtProButton> m_PresetButtons;
 		private Dictionary<VtProButton, ushort> m_PresetButtonsInverse; 
@@ -85,6 +87,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 				HoldDuration = PRESET_HOLD_MILLISECONDS
 			};
 
+			m_PresetStoredLabel = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				DigitalVisibilityJoin = 636
+			};
+
 			m_PresetButtons = new Dictionary<ushort, VtProButton>
 			{
 				{0, m_PresetButton1},
@@ -112,6 +119,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			yield return m_PresetButton3;
 			yield return m_PresetButton4;
 			yield return m_PresetButton5;
+			yield return m_PresetStoredLabel;
 		}
 	}
 }
