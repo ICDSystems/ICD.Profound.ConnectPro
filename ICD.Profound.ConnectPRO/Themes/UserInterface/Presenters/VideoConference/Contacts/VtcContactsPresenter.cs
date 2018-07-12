@@ -92,12 +92,28 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			m_Keyboard = nav.LazyLoadPresenter<IVtcKeyboardPresenter>();
 			m_Keyboard.OnKeypadButtonPressed += KeyboardOnKeypadButtonPressed;
+			m_Keyboard.OnDialButtonPressed += KeyboardOnDialButtonPressed;
 
 			m_Keypad = nav.LazyLoadPresenter<IVtcKeypadPresenter>();
 			m_Keypad.OnKeyboardButtonPressed += KeypadOnKeyboardButtonPressed;
+			m_Keypad.OnDialButtonPressed += KeypadOnDialButtonPressed;
 
 			m_DirectoryBrowser = new DirectoryControlBrowser();
 			Subscribe(m_DirectoryBrowser);
+		}
+
+		private void KeypadOnDialButtonPressed(object sender, EventArgs eventArgs)
+		{
+			m_Keypad.ShowView(true);
+
+			ShowView(true);
+		}
+
+		private void KeyboardOnDialButtonPressed(object sender, EventArgs eventArgs)
+		{
+			m_Keypad.ShowView(false);
+
+			ShowView(true);
 		}
 
 		private void KeyboardOnKeypadButtonPressed(object sender, EventArgs eventArgs)
