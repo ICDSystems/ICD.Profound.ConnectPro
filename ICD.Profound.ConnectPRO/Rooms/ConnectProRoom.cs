@@ -6,7 +6,9 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.IO;
+using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
+using ICD.Common.Utils.Services.Scheduler;
 using ICD.Connect.Audio.Controls;
 using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Conferencing.ConferenceManagers;
@@ -65,6 +67,16 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			m_Routing = new ConnectProRouting(this);
 			m_ConferenceManager = new ConferenceManager();
 			m_WakeSchedule = new WakeSchedule();
+			Subscribe(m_WakeSchedule);
+			ServiceProvider.TryGetService<IActionSchedulerService>().Add(m_WakeSchedule);
+		}
+
+		protected override void DisposeFinal(bool disposing)
+		{
+			base.DisposeFinal(disposing);
+
+			Unsubscribe(m_WakeSchedule);
+			ServiceProvider.TryGetService<IActionSchedulerService>().Remove(m_WakeSchedule);
 		}
 
 		#region Methods
@@ -302,6 +314,32 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			{
 				Log(eSeverity.Error, "failed add {0} dialing provider - {1}", sourceType, e.Message);
 			}
+		}
+
+		#endregion
+
+		#region WakeSchedule Callbacks
+
+		private void Subscribe(WakeSchedule schedule)
+		{
+			schedule.WakeActionRequested += ScheduleOnWakeActionRequested;
+			schedule.SleepActionRequested += ScheduleOnSleepActionRequested;
+		}
+
+		private void Unsubscribe(WakeSchedule schedule)
+		{
+			schedule.WakeActionRequested -= ScheduleOnWakeActionRequested;
+			schedule.SleepActionRequested -= ScheduleOnSleepActionRequested;
+		}
+
+		private void ScheduleOnSleepActionRequested(object sender, EventArgs eventArgs)
+		{
+			Sleep();
+		}
+
+		private void ScheduleOnWakeActionRequested(object sender, EventArgs eventArgs)
+		{
+			Wake();
 		}
 
 		#endregion

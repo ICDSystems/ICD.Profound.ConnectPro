@@ -1,41 +1,131 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ICD.Common.Utils.Extensions;
+using ICD.Common.Utils.Services.Scheduler;
 using ICD.Common.Utils.Xml;
 
 namespace ICD.Profound.ConnectPRO.Rooms
 {
-	public sealed class WakeSchedule
+	public sealed class WakeSchedule : AbstractScheduledAction
 	{
+		public event EventHandler WakeActionRequested;
+		public event EventHandler SleepActionRequested;
+
 		private const string WEEKDAY_ELEMENT = "Weekday";
 		private const string WEEKEND_ELEMENT = "Weekend";
 
 		private const string WAKE_ELEMENT = "Wake";
 		private const string SLEEP_ELEMENT = "Sleep";
 
+		private TimeSpan? _weekdayWakeTime;
+		private TimeSpan? _weekdaySleepTime;
+		private TimeSpan? _weekendWakeTime;
+		private TimeSpan? _weekendSleepTime;
+		
 		#region Properties
 
 		/// <summary>
-		/// Gets/sets the Weekday Wake Time in UTC.
+		/// Gets/sets the Weekday Wake Time.
 		/// </summary>
-		public TimeSpan? WeekdayWakeTime { get; set; }
+		public TimeSpan? WeekdayWakeTime
+		{
+			get { return _weekdayWakeTime; }
+			set
+			{ 
+				_weekdayWakeTime = value;
+				UpdateRunTime();
+			}
+		}
 
 		/// <summary>
-		/// Gets/sets the Weekday Sleep Time in UTC.
+		/// Gets/sets the Weekday Sleep Time.
 		/// </summary>
-		public TimeSpan? WeekdaySleepTime { get; set; }
+		public TimeSpan? WeekdaySleepTime
+		{
+			get { return _weekdaySleepTime; }
+			set
+			{
+				_weekdaySleepTime = value;
+				UpdateRunTime();
+			}
+		}
 
 		/// <summary>
-		/// Gets/sets the Weekend Wake Time in UTC.
+		/// Gets/sets the Weekend Wake Time.
 		/// </summary>
-		public TimeSpan? WeekendWakeTime { get; set; }
+		public TimeSpan? WeekendWakeTime
+		{
+			get { return _weekendWakeTime; }
+			set
+			{
+				_weekendWakeTime = value;
+				UpdateRunTime();
+			}
+		}
 
 		/// <summary>
-		/// Gets/sets the Weekend Sleep Time in UTC.
+		/// Gets/sets the Weekend Sleep Time.
 		/// </summary>
-		public TimeSpan? WeekendSleepTime { get; set; }
+		public TimeSpan? WeekendSleepTime
+		{
+			get { return _weekendSleepTime; }
+			set
+			{
+				_weekendSleepTime = value;
+				UpdateRunTime();
+			}
+		}
 
 		#endregion
 
 		#region Methods
+
+		public override void RunFinal()
+		{
+			var now = DateTime.Now;
+			var wakeTime = GetWakeTimeForDay(DateTime.Today);
+			var sleepTime = GetSleepTimeForDay(DateTime.Today);
+
+			if (sleepTime != null && wakeTime != null)
+			{
+				var time = now.PreviousLatestTime(sleepTime.Value, wakeTime.Value);
+				if (time != null && time == sleepTime.Value)
+					Sleep();
+				else if (time != null && time == wakeTime.Value)
+					Wake();
+			}
+			else if (wakeTime != null && now > wakeTime)
+				Wake();
+			else if (sleepTime != null && now > sleepTime)
+				Sleep();
+		}
+
+		public override DateTime? UpdateRunTime()
+		{
+			var now = DateTime.Now;
+			var currentDay = DateTime.Today;
+			while (currentDay < now.AddDays(7)) // if no action found for a week, means all 4 times are null
+			{
+				var sleepTime = GetSleepTimeForDay(currentDay);
+				var wakeTime = GetWakeTimeForDay(currentDay);
+
+				if (sleepTime != null && wakeTime != null)
+				{
+					var time = now.NextEarliestTime(sleepTime.Value, wakeTime.Value);
+					if (time != null)
+						return time;
+				}
+				else if (wakeTime != null && now < wakeTime)
+					return wakeTime.Value;
+				else if (sleepTime != null && now < sleepTime)
+					return sleepTime.Value;
+
+				currentDay = currentDay.AddDays(1); // no actions scheduled for today, check next day
+			}
+
+			return null;
+		}
 
 		/// <summary>
 		/// Clears the stored times.
@@ -152,6 +242,38 @@ namespace ICD.Profound.ConnectPRO.Rooms
 				return null;
 
 			return TimeSpan.Parse(content);
+		}
+
+		private DateTime? GetSleepTimeForDay(DateTime day)
+		{
+			day = day.Date; // remove any time info
+			if (day.DayOfWeek.IsWeekday() && WeekdaySleepTime != null)
+				return day.Add(WeekdaySleepTime.Value);
+			else if (day.DayOfWeek.IsWeekend() && WeekendSleepTime != null)
+				return day.Add(WeekendSleepTime.Value);
+
+			return null; // should not sleep today
+		}
+
+		private DateTime? GetWakeTimeForDay(DateTime day)
+		{
+			day = day.Date; // remove any time info
+			if (day.DayOfWeek.IsWeekday() && WeekdayWakeTime != null)
+				return day.Add(WeekdayWakeTime.Value);
+			else if (day.DayOfWeek.IsWeekend() && WeekendWakeTime != null)
+				return day.Add(WeekendWakeTime.Value);
+
+			return null; // should not wake today
+		}
+
+		private void Wake()
+		{
+			WakeActionRequested.Raise(this);
+		}
+
+		private void Sleep()
+		{
+			SleepActionRequested.Raise(this);
 		}
 
 		#endregion
