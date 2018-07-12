@@ -13,10 +13,5 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 		/// Raised when the user presses the Cancel button.
 		/// </summary>
 		event EventHandler OnCancelButtonPressed;
-
-		/// <summary>
-		/// Raised when the user presses the Shutdown button.
-		/// </summary>
-		event EventHandler OnShutdownButtonPressed;
 	}
 }

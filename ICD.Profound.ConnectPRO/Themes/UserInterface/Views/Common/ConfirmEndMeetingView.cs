@@ -18,11 +18,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		public event EventHandler OnCancelButtonPressed;
 
 		/// <summary>
-		/// Raised when the user presses the Shutdown button.
-		/// </summary>
-		public event EventHandler OnShutdownButtonPressed;
-
-		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="panel"></param>
@@ -39,7 +34,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		{
 			OnYesButtonPressed = null;
 			OnCancelButtonPressed = null;
-			OnShutdownButtonPressed = null;
 
 			base.Dispose();
 		}
@@ -55,7 +49,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 
 			m_YesButton.OnPressed += YesButtonOnPressed;
 			m_CancelButton.OnPressed += CancelButtonOnPressed;
-			m_ShutdownButton.OnPressed += ShutdownButtonOnPressed;
 		}
 
 		/// <summary>
@@ -67,7 +60,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 
 			m_YesButton.OnPressed -= YesButtonOnPressed;
 			m_CancelButton.OnPressed -= CancelButtonOnPressed;
-			m_ShutdownButton.OnPressed -= ShutdownButtonOnPressed;
 		}
 
 		private void CancelButtonOnPressed(object sender, EventArgs eventArgs)
@@ -78,11 +70,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		private void YesButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnYesButtonPressed.Raise(this);
-		}
-
-		private void ShutdownButtonOnPressed(object sender, EventArgs eventArgs)
-		{
-			OnShutdownButtonPressed.Raise(this);
 		}
 
 		#endregion

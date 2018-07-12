@@ -75,7 +75,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			view.OnYesButtonPressed += ViewOnYesButtonPressed;
 			view.OnCancelButtonPressed += ViewOnCancelButtonPressed;
-			view.OnShutdownButtonPressed += ViewOnShutdownButtonPressed;
 		}
 
 		/// <summary>
@@ -88,7 +87,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			view.OnYesButtonPressed -= ViewOnYesButtonPressed;
 			view.OnCancelButtonPressed -= ViewOnCancelButtonPressed;
-			view.OnShutdownButtonPressed -= ViewOnShutdownButtonPressed;
 		}
 
 		/// <summary>
@@ -110,12 +108,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			if (Room != null)
 				Room.EndMeeting(false);
-		}
-
-		private void ViewOnShutdownButtonPressed(object sender, EventArgs eventArgs)
-		{
-			Navigation.NavigateTo<IDisabledAlertPresenter>();
-			//Navigation.NavigateTo<IConfirmSplashPowerPresenter>();
 		}
 
 		#endregion
