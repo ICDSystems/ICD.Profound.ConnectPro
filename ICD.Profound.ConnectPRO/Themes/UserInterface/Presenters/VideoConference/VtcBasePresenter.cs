@@ -210,6 +210,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (keyboardPresenter.IsViewVisible)
 			{
 				keyboardPresenter.ShowView(false);
+				m_ContactsPresenter.ShowView(true);
 				return;
 			}
 
@@ -218,6 +219,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (keypadPresenter.IsViewVisible)
 			{
 				keypadPresenter.ShowView(false);
+				m_ContactsPresenter.ShowView(true);
 				return;
 			}
 

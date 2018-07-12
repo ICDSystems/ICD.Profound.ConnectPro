@@ -6,5 +6,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConferen
 	public interface IVtcKeypadPresenter : IPresenter<IVtcKeypadView>
 	{
 		event EventHandler OnKeyboardButtonPressed;
+
+		event EventHandler OnDialButtonPressed;
 	}
 }

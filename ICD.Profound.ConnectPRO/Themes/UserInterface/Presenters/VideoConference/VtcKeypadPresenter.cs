@@ -14,7 +14,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 {
 	public class VtcKeypadPresenter : AbstractPresenter<IVtcKeypadView>, IVtcKeypadPresenter
 	{
-		public event EventHandler OnKeyboardButtonPressed; 
+		public event EventHandler OnKeyboardButtonPressed;
+		public event EventHandler OnDialButtonPressed;
 
 		private readonly KeypadStringBuilder m_StringBuilder;
 
@@ -41,6 +42,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		public override void Dispose()
 		{
 			OnKeyboardButtonPressed = null;
+			OnDialButtonPressed = null;
 
 			base.Dispose();
 		}
@@ -96,6 +98,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			view.OnBackspaceButtonPressed -= ViewOnBackspaceButtonPressed;
 			view.OnTextEntered -= ViewOnTextEntered;
 			view.OnKeyPressed -= ViewOnKeyPressed;
+			view.OnDialButtonPressed -= ViewOnDialButtonPressed;
+			view.OnKeyboardButtonPressed -= ViewOnKeyboardButtonPressed;
 		}
 
 		/// <summary>
@@ -135,7 +139,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (control != null)
 				control.Dial(number);
 
-			ShowView(false);
+			OnDialButtonPressed.Raise(this);
 		}
 
 		private void ViewOnKeyboardButtonPressed(object sender, EventArgs eventArgs)
