@@ -98,6 +98,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 				return;
 
 			m_IsInMeeting = true;
+
 			Routing.RouteOsd();
 
 			OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
@@ -114,13 +115,12 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			m_IsInMeeting = false;
 
-			// Undo all routing
-			Routing.UnrouteAll();
-			Routing.RouteOsd();
-
 			// Hangup
 			if (ConferenceManager != null && ConferenceManager.ActiveConference != null)
 				ConferenceManager.ActiveConference.Hangup();
+
+			// Reset all routing
+			Routing.RouteOsd();
 
 			if (shutdown)
 				Sleep();
@@ -133,17 +133,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public void Wake()
 		{
-			// Undo all routing
-			Routing.UnrouteAll();
+			// Reset all routing
 			Routing.RouteOsd();
-
-			// Power displays
-			foreach (IDestination destination in Routing.GetDisplayDestinations())
-			{
-				IDisplay display = Core.Originators.GetChild(destination.Device) as IDisplay;
-				if (display != null)
-					display.PowerOn();
-			}
 
 			// Power the panels
 			Originators.GetInstancesRecursive<IPanelDevice>()
@@ -156,13 +147,12 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public void Sleep()
 		{
-			// Undo all routing
-			Routing.UnrouteAll();
-			Routing.RouteOsd();
-			
 			// Hangup
 			if (ConferenceManager != null && ConferenceManager.ActiveConference != null)
 				ConferenceManager.ActiveConference.Hangup();
+
+			// Reset all routing
+			Routing.RouteOsd();
 
 			// Power off displays
 			foreach (IDestination destination in Routing.GetDisplayDestinations())
