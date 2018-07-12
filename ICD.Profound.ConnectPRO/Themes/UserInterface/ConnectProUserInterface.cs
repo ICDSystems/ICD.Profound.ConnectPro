@@ -51,6 +51,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private readonly INavigationController m_NavigationController;
 		private readonly SafeTimer m_SourceSelectionTimeout;
 
+		private readonly IcdHashSet<ISource> m_ProcessingSources; 
+
 		private IConnectProRoom m_Room;
 		private DefaultVisibilityNode m_RootVisibility;
 		private ISource m_ActiveSource;
@@ -75,6 +77,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			IViewFactory viewFactory = new ConnectProViewFactory(panel, theme);
 			m_NavigationController = new ConnectProNavigationController(viewFactory, theme);
+
+			m_ProcessingSources = new IcdHashSet<ISource>();
 
 			BuildVisibilityTree();
 			SubscribePresenters();
@@ -255,6 +259,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			{
 				if (source != null)
 				{
+					AddProcessingSource(source);
+
 					m_Room.Routing.Route(source);
 					m_Room.Routing.RouteAudio(source);
 				}
@@ -289,6 +295,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			// If a source is currently selected then we route that source to the selected display
 			else
 			{
+				AddProcessingSource(activeSource);
+
 				m_Room.Routing.Route(activeSource, destination);
 				m_Room.Routing.RouteAudioIfUnrouted(activeSource);
 				routedSource = activeSource;
@@ -296,6 +304,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				if (ShowSourceContextualMenu(routedSource, true))
 					SetActiveSource(null);
 			}
+		}
+
+		private void AddProcessingSource(ISource source)
+		{
+			if (m_ProcessingSources.Contains(source))
+				return;
+
+			m_ProcessingSources.Add(source);
+
+			UpdateRouting();
 		}
 
 		private bool ShowSourceContextualMenu(ISource source, bool vtcOnly)
@@ -459,10 +477,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 					         .GetCachedActiveVideoSources())
 					.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-			IcdHashSet<ISource> routedSources =
+			Dictionary<ISource, eRoutedState> routedSources =
 				routing.Values
 				       .SelectMany(v => v)
-				       .ToIcdHashSet();
+				       .Distinct()
+				       .ToDictionary(s => s, s => eRoutedState.Active);
+
+			// Remove routed items from the processing sources collection
+			foreach (ISource source in routing.Values.SelectMany(v => v))
+				m_ProcessingSources.Remove(source);
+
+			foreach (ISource source in m_ProcessingSources)
+				routedSources.Add(source, eRoutedState.Processing);
 
 			m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().SetRoutedSources(routedSources);
 			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().SetRouting(routing, activeAudio);
