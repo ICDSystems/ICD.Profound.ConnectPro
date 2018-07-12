@@ -771,7 +771,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 			{
 				IEnumerable<int> endpointIds =
 					GetActiveVideoEndpoints(display).Select(e => e.Device)
-					                                .Distinct();
+					                                .Distinct()
+													.ToArray();
 
 				foreach (int endpointId in endpointIds)
 				{
