@@ -361,7 +361,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				throw new ArgumentNullException("source");
 
 			foreach (IDestination destination in GetDisplayDestinations())
-				Route(source, destination);
+				Route(source, destination, eConnectionType.Video);
 
 			if (source.ConnectionType.HasFlag(eConnectionType.Audio))
 				RouteAudio(source);
