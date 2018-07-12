@@ -13,6 +13,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		private const ushort MODE_WHITE = 1;
 		private const ushort MODE_YELLOW = 2;
 
+		private const ushort MODE_ROUTED_WHITE = 0;
+		private const ushort MODE_ROUTED_YELLOW = 1;
+		private const ushort MODE_ROUTED_GREEN = 2;
+
 		public event EventHandler OnButtonPressed;
 
 		/// <summary>
@@ -94,7 +98,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		/// <param name="routed"></param>
 		public void SetRoutedState(bool routed)
 		{
-			m_RoutedButton.SetSelected(routed);
+			m_RoutedButton.SetMode(routed ? MODE_ROUTED_GREEN : MODE_ROUTED_WHITE);
 		}
 
 		#endregion
