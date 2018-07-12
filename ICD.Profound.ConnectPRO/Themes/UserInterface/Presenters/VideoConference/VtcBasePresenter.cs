@@ -265,7 +265,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 					active.Hangup();
 
 				if (Room != null)
-					Room.Routing.UnrouteVtc();
+					Room.Routing.RouteOsd();
 			}
 
 			UpdateCodecAwakeState(true);
