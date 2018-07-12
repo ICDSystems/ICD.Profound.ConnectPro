@@ -62,7 +62,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			m_RefreshSection = new SafeCriticalSection();
 			m_CameraPresets = new Dictionary<int, CameraPreset>();
-			m_PresetStoredTimer = SafeTimer.Stopped(HidePresetStoredLabel);
+			m_PresetStoredTimer = SafeTimer.Stopped(() => ShowPresetStoredLabel(false));
 		}
 
 		/// <summary>
@@ -121,22 +121,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			}
 		}
 
-		private void ShowPresetStoredLabel()
+		private void ShowPresetStoredLabel(bool visible)
 		{
 			IVtcCameraView view = GetView();
 			if (view == null)
 				return;
 
-			view.SetPresetStoredLabelVisibility(true);
-		}
-
-		private void HidePresetStoredLabel()
-		{
-			IVtcCameraView view = GetView();
-			if (view == null)
-				return;
-
-			view.SetPresetStoredLabelVisibility(false);
+			view.SetPresetStoredLabelVisibility(visible);
 		}
 
 		private void Zoom(eCameraZoomAction action)
@@ -300,7 +291,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			ushort index = (ushort)(eventArgs.Data + 1);
 			cameraControl.StorePreset(index);
 
-			ShowPresetStoredLabel();
+			ShowPresetStoredLabel(true);
 			m_PresetStoredTimer.Reset(PRESET_STORED_VISIBILITY_MILLISECONDS);
 		}
 
@@ -313,7 +304,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.ViewOnVisibilityChanged(sender, args);
 
-			HidePresetStoredLabel();
+			ShowPresetStoredLabel(false);
 
 			if (args.Data)
 			{
