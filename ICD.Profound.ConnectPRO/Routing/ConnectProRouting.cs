@@ -742,8 +742,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			IRouteSourceControl sourceControl = codec.Controls.GetControl<IRouteSourceControl>();
 			RoutingGraph.Unroute(sourceControl, EnumUtils.GetFlagsAllValue<eConnectionType>(), m_Room.Id);
-			
-			RouteOsd();
 		}
 
 		/// <summary>
