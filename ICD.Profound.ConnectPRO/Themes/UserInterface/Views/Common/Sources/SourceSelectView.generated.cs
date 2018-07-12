@@ -28,7 +28,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 			{
 				MaxSize = 8,
 				DigitalJoinIncrement = 2,
-				AnalogJoinIncrement = 1,
+				AnalogJoinIncrement = 2,
 				SerialJoinIncrement = 4
 			};
 

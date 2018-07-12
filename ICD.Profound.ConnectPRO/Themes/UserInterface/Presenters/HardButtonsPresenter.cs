@@ -143,10 +143,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="eventArgs"></param>
 		private void ViewOnPowerButtonPressed(object sender, EventArgs eventArgs)
 		{
-			if (Room == null)
-				return;
-
-			Room.EndMeeting(false);
+			if (Room != null)
+				Navigation.NavigateTo<IConfirmEndMeetingPresenter>();
 		}
 
 		/// <summary>
@@ -156,10 +154,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="eventArgs"></param>
 		private void ViewOnHomeButtonPressed(object sender, EventArgs eventArgs)
 		{
-			if (Room == null)
-				return;
-
-			Room.EndMeeting(false);
+			if (Room != null)
+				Navigation.NavigateTo<IConfirmEndMeetingPresenter>();
 		}
 
 		/// <summary>

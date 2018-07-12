@@ -715,19 +715,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 		}
 
 		/// <summary>
-		/// Unroutes the given video source from all display destinations.
-		/// </summary>
-		/// <param name="source"></param>
-		public void UnrouteVideo(ISource source)
-		{
-			if (source == null)
-				throw new ArgumentNullException("source");
-
-			foreach (IDestination destination in GetDisplayDestinations())
-				RoutingGraph.Unroute(source, destination, eConnectionType.Video, m_Room.Id);
-		}
-
-		/// <summary>
 		/// Fully unroutes the VTC from all displays.
 		/// </summary>
 		public void UnrouteVtc()
@@ -738,22 +725,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			IRouteSourceControl sourceControl = codec.Controls.GetControl<IRouteSourceControl>();
 			RoutingGraph.Unroute(sourceControl, EnumUtils.GetFlagsAllValue<eConnectionType>(), m_Room.Id);
-			
-			RouteOsd();
-		}
-
-		/// <summary>
-		/// Unroute all sources from all destinations.
-		/// </summary>
-		public void UnrouteAll()
-		{
-			UnrouteVtc();
-
-			foreach (IDestination display in GetDisplayDestinations())
-				RoutingGraph.Unroute(display, EnumUtils.GetFlagsAllValue<eConnectionType>(), m_Room.Id);
-
-			foreach (IDestination audio in GetAudioDestinations())
-				RoutingGraph.Unroute(audio, EnumUtils.GetFlagsAllValue<eConnectionType>(), m_Room.Id);
 		}
 
 		/// <summary>
@@ -767,7 +738,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 			{
 				IEnumerable<int> endpointIds =
 					GetActiveVideoEndpoints(display).Select(e => e.Device)
-					                                .Distinct();
+					                                .Distinct()
+													.ToArray();
 
 				foreach (int endpointId in endpointIds)
 				{

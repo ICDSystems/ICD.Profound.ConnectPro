@@ -41,6 +41,35 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		[CanBeNull]
 		private IRoutingGraph m_SubscribedRoutingGraph;
 
+		private ISource Selected
+		{
+			get { return m_Selected; }
+			set
+			{
+				if (value == m_Selected)
+					return;
+
+				m_Selected = value;
+
+				RefreshIfVisible();
+			}
+		}
+
+		private ISource Routed
+		{
+			get { return m_Routed; }
+			set
+			{
+				if (value == m_Routed)
+					return;
+
+				m_Routed = value;
+
+				Selected = null;
+				RefreshIfVisible();
+			}
+		}
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -128,27 +157,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			return m_SubscribedPresentationComponent != null && m_SubscribedPresentationComponent.PresentationActiveInput != null;
 		}
 
-		private void SetSelected(ISource source)
-		{
-			if (source == m_Selected)
-				return;
-
-			m_Selected = source;
-
-			RefreshIfVisible();
-		}
-
-		private void SetRouted(ISource source)
-		{
-			if (source == m_Routed)
-				return;
-
-			m_Routed = source;
-
-			SetSelected(null);
-			RefreshIfVisible();
-		}
-
 		#region Room Callbacks
 
 		/// <summary>
@@ -224,7 +232,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			// Update the routed presentation source
 			ISource source = Room.Routing.GetVtcPresentationSource();
-			SetRouted(source);
+			Routed = source;
 		}
 
 		private void VideoDialerOnSourceChanged(object sender, ConferenceSourceEventArgs eventArgs)
@@ -301,7 +309,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (IsInPresentation())
 				StartPresenting(source);
 			else
-				SetSelected(source);
+				Selected = source;
 		}
 
 		private void StartPresenting(ISource source)

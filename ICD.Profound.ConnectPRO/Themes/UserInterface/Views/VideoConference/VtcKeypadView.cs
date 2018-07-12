@@ -51,6 +51,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			foreach (VtProButton button in m_KeyMap.Keys)
 				button.OnPressed += ButtonOnPressed;
 
+			m_TextEntry.OnTextModified += TextEntryOnTextModified;
+			m_BackspaceButton.OnPressed += BackspaceButtonOnPressed;
 			m_DialButton.OnPressed += DialButtonOnPressed;
 			m_KeyboardButton.OnPressed += KeyboardButtonOnPressed;
 		}
