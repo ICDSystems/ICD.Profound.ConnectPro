@@ -121,6 +121,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			}
 		}
 
+		private void ShowPresetStoredLabel()
+		{
+			IVtcCameraView view = GetView();
+			if (view == null)
+				return;
+
+			view.SetPresetStoredLabelVisibility(true);
+		}
+
 		private void HidePresetStoredLabel()
 		{
 			IVtcCameraView view = GetView();
@@ -290,7 +299,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			ushort index = (ushort)(eventArgs.Data + 1);
 			cameraControl.StorePreset(index);
-			
+
+			ShowPresetStoredLabel();
 			m_PresetStoredTimer.Reset(PRESET_STORED_VISIBILITY_MILLISECONDS);
 		}
 
