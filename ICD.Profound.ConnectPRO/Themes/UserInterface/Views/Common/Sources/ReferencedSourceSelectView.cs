@@ -96,9 +96,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		/// Sets the routed state for the source.
 		/// </summary>
 		/// <param name="routed"></param>
-		public void SetRoutedState(bool routed)
+		public void SetRoutedState(eRoutedState routed)
 		{
-			m_RoutedButton.SetMode(routed ? MODE_ROUTED_GREEN : MODE_ROUTED_WHITE);
+			switch (routed)
+			{
+				case eRoutedState.Inactive:
+					m_RoutedButton.SetMode(MODE_ROUTED_WHITE);
+					break;
+				case eRoutedState.Processing:
+					m_RoutedButton.SetMode(MODE_ROUTED_YELLOW);
+					break;
+				case eRoutedState.Active:
+					m_RoutedButton.SetMode(MODE_ROUTED_GREEN);
+					break;
+				default:
+					throw new ArgumentOutOfRangeException("routed");
+			}
 		}
 
 		#endregion

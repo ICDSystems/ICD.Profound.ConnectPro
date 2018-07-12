@@ -1,5 +1,6 @@
 ﻿using System;
 using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources
@@ -12,6 +13,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Source
 
 		bool Selected { get; set; }
 
-		bool Routed { get; set; }
+		eRoutedState Routed { get; set; }
 	}
 }
