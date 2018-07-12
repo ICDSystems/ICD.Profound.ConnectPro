@@ -361,7 +361,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				throw new ArgumentNullException("source");
 
 			foreach (IDestination destination in GetDisplayDestinations())
-				Route(source, destination);
+				Route(source, destination, eConnectionType.Video);
 
 			if (source.ConnectionType.HasFlag(eConnectionType.Audio))
 				RouteAudio(source);
@@ -539,6 +539,11 @@ namespace ICD.Profound.ConnectPRO.Routing
 				RouteAudio(source);
 		}
 
+		/// <summary>
+		/// Routes audio from the source to the given destination.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
 		public void RouteAudio(ISource source, IDestination destination)
 		{
 			if (source == null)
@@ -551,19 +556,41 @@ namespace ICD.Profound.ConnectPRO.Routing
 		}
 
 		/// <summary>
+		/// Unroutes every destination that isn't currently showing the OSD.
+		/// 
 		/// Routes the OSD to the displays.
+		/// 
+		/// Powers off displays that have no OSD routed.
 		/// </summary>
 		public void RouteOsd()
 		{
+			// First unroute everything that isn't OSD
+			UnrouteAllExceptOsd();
+
 			OsdPanelDevice osd = m_Room.Core.Originators.GetChildren<OsdPanelDevice>().FirstOrDefault();
+
+			// Route the OSD or power off displays
 			if (osd == null)
-				return;
+			{
+				foreach (IDestination destination in GetDisplayDestinations())
+				{
+					IDeviceBase destinationDevice =
+						m_Room.Core.Originators.GetChild<IDeviceBase>(destination.Device);
 
-			IRouteSourceControl sourceControl = osd.Controls.GetControl<IRouteSourceControl>();
-			EndpointInfo sourceEndpoint = sourceControl.GetOutputEndpointInfo(1);
+					// Power off the destination
+					IPowerDeviceControl powerControl = destinationDevice.Controls.GetControl<IPowerDeviceControl>();
+					if (powerControl != null)
+						powerControl.PowerOff();
+				}
+			}
+			else
+			{
+				IRouteSourceControl sourceControl = osd.Controls.GetControl<IRouteSourceControl>();
+				EndpointInfo sourceEndpoint = sourceControl.GetOutputEndpointInfo(1);
 
-			foreach (IDestination destination in GetDisplayDestinations())
-				Route(sourceEndpoint, destination, eConnectionType.Video);
+				foreach (IDestination destination in GetDisplayDestinations())
+					Route(sourceEndpoint, destination, eConnectionType.Video);
+			}
 		}
 
 		private void Route(ConnectionPath path)
@@ -592,6 +619,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			int input = path.DestinationEndpoint.Address;
 			IRouteInputSelectControl inputSelectControl =
 				destinationDevice.Controls.GetControl<IRouteInputSelectControl>();
+
 			if (inputSelectControl != null && inputSelectControl.ActiveInput != input)
 				inputSelectControl.SetActiveInput(input);
 		}

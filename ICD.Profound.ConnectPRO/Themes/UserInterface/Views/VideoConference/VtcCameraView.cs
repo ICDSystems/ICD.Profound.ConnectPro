@@ -58,6 +58,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			m_PresetButtons[index].SetLabelText(label);
 		}
 
+		/// <summary>
+		/// Sets the visibility of the "Preset Stored" label.
+		/// </summary>
+		/// <param name="visible"></param>
+		public void SetPresetStoredLabelVisibility(bool visible)
+		{
+			m_PresetStoredLabel.Show(visible);
+		}
+
 		#region Control Callbacks
 
 		/// <summary>
