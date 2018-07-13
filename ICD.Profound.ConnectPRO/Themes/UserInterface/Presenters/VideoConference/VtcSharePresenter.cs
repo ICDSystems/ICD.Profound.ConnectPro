@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.ConferenceSources;
@@ -11,9 +12,9 @@ using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.Routing;
 using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Sources;
-using ICD.Connect.Routing.EventArguments;
 using ICD.Connect.Routing.Extensions;
 using ICD.Connect.Routing.RoutingGraphs;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -31,7 +32,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private ISource[] m_Sources;
 		private ISource m_Selected;
-		private ISource m_Routed;
+		private readonly IcdHashSet<ISource> m_Routed;
 
 		private IDialingDeviceControl m_SubscribedVideoDialer;
 
@@ -55,21 +56,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			}
 		}
 
-		private ISource Routed
-		{
-			get { return m_Routed; }
-			set
-			{
-				if (value == m_Routed)
-					return;
-
-				m_Routed = value;
-
-				Selected = null;
-				RefreshIfVisible();
-			}
-		}
-
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -80,6 +66,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
+			m_Routed = new IcdHashSet<ISource>();
 			m_Sources = new ISource[0];
 		}
 
@@ -98,8 +85,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				m_Sources = GetSources().ToArray();
 
 				bool inPresentation = IsInPresentation();
-				ISource select = inPresentation ? m_Routed : m_Selected;
-
+				
 				for (ushort index = 0; index < m_Sources.Length; index++)
 				{
 					ISource source = m_Sources[index];
@@ -113,7 +99,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 						? null
 						: Icons.GetSourceIcon(connectProSource.Icon, eSourceColor.White);
 
-					view.SetButtonSelected(index, source == select);
+					bool select = m_Routed.Count == 0
+						? source == m_Selected
+						: m_Routed.Contains(source);
+
+					view.SetButtonSelected(index, select);
 					view.SetButtonIcon(index, icon);
 					view.SetButtonLabel(index, source == null ? null : source.GetNameOrDeviceName(combine));
 				}
@@ -157,6 +147,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			return m_SubscribedPresentationComponent != null && m_SubscribedPresentationComponent.PresentationActiveInput != null;
 		}
 
+		private void UpdatePresentationRoutedSources()
+		{
+			m_Routed.Clear();
+
+			if (IsInPresentation())
+			{
+				// Update the routed presentation source
+				IEnumerable<ISource> sources = Room == null
+					? Enumerable.Empty<ISource>()
+					: Room.Routing.GetVtcPresentationSources().ToIcdHashSet();
+
+				m_Routed.AddRange(sources);
+
+				// Always clear selection in presentation mode
+				Selected = null;
+			}
+
+			RefreshIfVisible();
+		}
+
 		#region Room Callbacks
 
 		/// <summary>
@@ -179,7 +189,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			}
 
 			if (room.Core.TryGetRoutingGraph(out m_SubscribedRoutingGraph))
-				m_SubscribedRoutingGraph.OnRouteChanged += RoutingGraphOnRouteChanged;
+				m_SubscribedRoutingGraph.RoutingCache.OnEndpointRouteChanged += RoutingCacheOnEndpointRouteChanged;
 
 			IDialingDeviceControl dialer = room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
 			IVideoConferenceDevice codec = dialer == null ? null : dialer.Parent as IVideoConferenceDevice;
@@ -208,31 +218,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_SubscribedVideoDialer = null;
 
 			if (m_SubscribedRoutingGraph != null)
-				m_SubscribedRoutingGraph.OnRouteChanged -= RoutingGraphOnRouteChanged;
+				m_SubscribedRoutingGraph.RoutingCache.OnEndpointRouteChanged -= RoutingCacheOnEndpointRouteChanged;
 
 			m_SubscribedRoutingGraph = null;
 
-			if (m_SubscribedPresentationComponent == null)
-				return;
-
-			m_SubscribedPresentationComponent.OnPresentationActiveInputChanged -= SubscribedPresentationControlOnPresentationActiveInputChanged;
+			if (m_SubscribedPresentationComponent != null)
+				m_SubscribedPresentationComponent.OnPresentationActiveInputChanged -= SubscribedPresentationControlOnPresentationActiveInputChanged;
 
 			m_SubscribedPresentationComponent = null;
 		}
 
 		private void SubscribedPresentationControlOnPresentationActiveInputChanged(object sender, EventArgs eventArgs)
 		{
-			RefreshIfVisible();
+			UpdatePresentationRoutedSources();
 		}
 
-		private void RoutingGraphOnRouteChanged(object sender, SwitcherRouteChangeEventArgs eventArgs)
+		private void RoutingCacheOnEndpointRouteChanged(object sender, EndpointRouteChangedEventArgs endpointRouteChangedEventArgs)
 		{
-			if (Room == null)
-				return;
-
-			// Update the routed presentation source
-			ISource source = Room.Routing.GetVtcPresentationSource();
-			Routed = source;
+			UpdatePresentationRoutedSources();
 		}
 
 		private void VideoDialerOnSourceChanged(object sender, ConferenceSourceEventArgs eventArgs)

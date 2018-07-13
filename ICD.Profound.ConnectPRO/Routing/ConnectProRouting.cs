@@ -690,7 +690,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			                       source);
 		}
 
-		public ISource GetVtcPresentationSource()
+		public IEnumerable<ISource> GetVtcPresentationSources()
 		{
 			IVideoConferenceDevice codec = GetCodec();
 			if (codec == null)
@@ -709,8 +709,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 				return null;
 
 			return RoutingGraph.RoutingCache
-			                   .GetSourcesForDestinationEndpoint(control.GetInputEndpointInfo((int)activeInput), eConnectionType.Video)
-			                   .FirstOrDefault();
+			                   .GetSourcesForDestinationEndpoint(control.GetInputEndpointInfo((int)activeInput),
+			                                                     eConnectionType.Video);;
 		}
 
 		/// <summary>
