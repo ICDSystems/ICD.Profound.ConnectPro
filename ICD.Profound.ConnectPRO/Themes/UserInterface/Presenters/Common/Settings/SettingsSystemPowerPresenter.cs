@@ -21,7 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		private bool m_WeekendEnable;
 
 		private readonly TimeSpan HOUR_INCREMENT = TimeSpan.FromHours(1);
-		private readonly TimeSpan MINUTE_INCREMENT = TimeSpan.FromMinutes(5);
+		private readonly TimeSpan MINUTE_INCREMENT = TimeSpan.FromMinutes(1);
 
 		public bool Weekend
 		{
