@@ -220,7 +220,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 		public IEnumerable<KeyValuePair<IDestination, IcdHashSet<ISource>>> GetCachedActiveVideoSources()
 		{
-			return m_CacheSection.Execute(() => m_VideoRoutingCache.ToArray(m_VideoRoutingCache.Count));
+			return
+				m_CacheSection.Execute(() =>
+				                       m_VideoRoutingCache.ToDictionary(kvp => kvp.Key, kvp => new IcdHashSet<ISource>(kvp.Value)));
 		}
 
 		public IEnumerable<ISource> GetCachedActiveAudioSources()
