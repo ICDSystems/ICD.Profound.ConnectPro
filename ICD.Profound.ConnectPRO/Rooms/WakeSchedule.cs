@@ -15,11 +15,15 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 		private const string WAKE_ELEMENT = "Wake";
 		private const string SLEEP_ELEMENT = "Sleep";
+		private const string ENABLE_ELEMENT = "Enable";
 
-		private TimeSpan? _weekdayWakeTime;
-		private TimeSpan? _weekdaySleepTime;
-		private TimeSpan? _weekendWakeTime;
-		private TimeSpan? _weekendSleepTime;
+		private TimeSpan? m_WeekdayWakeTime;
+		private TimeSpan? m_WeekdaySleepTime;
+		private TimeSpan? m_WeekendWakeTime;
+		private TimeSpan? m_WeekendSleepTime;
+
+		private bool m_WeekdayEnable;
+		private bool m_WeekendEnable;
 		
 		#region Properties
 
@@ -28,10 +32,18 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public TimeSpan? WeekdayWakeTime
 		{
-			get { return _weekdayWakeTime; }
+			get { return m_WeekdayWakeTime; }
 			set
-			{ 
-				_weekdayWakeTime = value;
+			{
+				while (value >= TimeSpan.FromHours(24))
+					value -= TimeSpan.FromHours(24);
+				while (value < TimeSpan.Zero)
+					value += TimeSpan.FromHours(24);
+
+				if (m_WeekdayWakeTime == value)
+					return;
+
+				m_WeekdayWakeTime = value;
 				UpdateNextRunTime();
 			}
 		}
@@ -41,10 +53,18 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public TimeSpan? WeekdaySleepTime
 		{
-			get { return _weekdaySleepTime; }
+			get { return m_WeekdaySleepTime; }
 			set
 			{
-				_weekdaySleepTime = value;
+				while (value >= TimeSpan.FromHours(24))
+					value -= TimeSpan.FromHours(24);
+				while (value < TimeSpan.Zero)
+					value += TimeSpan.FromHours(24);
+
+				if (m_WeekdaySleepTime == value)
+					return;
+
+				m_WeekdaySleepTime = value;
 				UpdateNextRunTime();
 			}
 		}
@@ -54,10 +74,18 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public TimeSpan? WeekendWakeTime
 		{
-			get { return _weekendWakeTime; }
+			get { return m_WeekendWakeTime; }
 			set
 			{
-				_weekendWakeTime = value;
+				while (value >= TimeSpan.FromHours(24))
+					value -= TimeSpan.FromHours(24);
+				while (value < TimeSpan.Zero)
+					value += TimeSpan.FromHours(24);
+
+				if (m_WeekendWakeTime == value)
+					return;
+
+				m_WeekendWakeTime = value;
 				UpdateNextRunTime();
 			}
 		}
@@ -67,10 +95,50 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public TimeSpan? WeekendSleepTime
 		{
-			get { return _weekendSleepTime; }
+			get { return m_WeekendSleepTime; }
 			set
 			{
-				_weekendSleepTime = value;
+				while (value >= TimeSpan.FromHours(24))
+					value -= TimeSpan.FromHours(24);
+				while (value < TimeSpan.Zero)
+					value += TimeSpan.FromHours(24);
+
+				if (m_WeekdaySleepTime == value)
+					return;
+
+				m_WeekendSleepTime = value;
+				UpdateNextRunTime();
+			}
+		}
+
+		/// <summary>
+		/// Enables/disables the weekday wake/sleep schedule.
+		/// </summary>
+		public bool WeekdayEnable
+		{
+			get { return m_WeekdayEnable; }
+			set
+			{
+				if (m_WeekdayEnable == value)
+					return;
+
+				m_WeekdayEnable = value;
+				UpdateNextRunTime();
+			}
+		}
+
+		/// <summary>
+		/// Enables/disables the weekend wake/sleep schedule.
+		/// </summary>
+		public bool WeekendEnable
+		{
+			get { return m_WeekendEnable; }
+			set
+			{
+				if (m_WeekendEnable == value)
+					return;
+
+				m_WeekendEnable = value;
 				UpdateNextRunTime();
 			}
 		}
@@ -134,6 +202,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			WeekdaySleepTime = null;
 			WeekendWakeTime = null;
 			WeekendSleepTime = null;
+
+			WeekdayEnable = false;
+			WeekendEnable = false;
 		}
 
 		/// <summary>
@@ -149,6 +220,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			WeekdaySleepTime = other.WeekdaySleepTime;
 			WeekendWakeTime = other.WeekendWakeTime;
 			WeekendSleepTime = other.WeekendSleepTime;
+			
+			WeekdayEnable = other.WeekdayEnable;
+			WeekendEnable = other.WeekendEnable;
 		}
 
 		/// <summary>
@@ -179,15 +253,17 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			{
 				writer.WriteStartElement(WEEKDAY_ELEMENT);
 				{
-					writer.WriteElementString(WAKE_ELEMENT, WeekdayWakeTime == null ? null : IcdXmlConvert.ToString(WeekdayWakeTime));
-					writer.WriteElementString(SLEEP_ELEMENT, WeekdaySleepTime == null ? null : IcdXmlConvert.ToString(WeekdaySleepTime));
+					writer.WriteElementString(WAKE_ELEMENT, WeekdayWakeTime == null ? null : WeekdayWakeTime.ToString());
+					writer.WriteElementString(SLEEP_ELEMENT, WeekdaySleepTime == null ? null : WeekdaySleepTime.ToString());
+					writer.WriteElementString(ENABLE_ELEMENT, IcdXmlConvert.ToString(WeekdayEnable));
 				}
 				writer.WriteEndElement();
 
 				writer.WriteStartElement(WEEKEND_ELEMENT);
 				{
-					writer.WriteElementString(WAKE_ELEMENT, WeekendWakeTime == null ? null : IcdXmlConvert.ToString(WeekendWakeTime));
-					writer.WriteElementString(SLEEP_ELEMENT, WeekendSleepTime == null ? null : IcdXmlConvert.ToString(WeekendSleepTime));
+					writer.WriteElementString(WAKE_ELEMENT, WeekendWakeTime == null ? null : WeekendWakeTime.ToString());
+					writer.WriteElementString(SLEEP_ELEMENT, WeekendSleepTime == null ? null : WeekendSleepTime.ToString());
+					writer.WriteElementString(ENABLE_ELEMENT, IcdXmlConvert.ToString(WeekendEnable));
 				}
 				writer.WriteEndElement();
 			}
@@ -211,6 +287,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			string sleepXml;
 			if (XmlUtils.TryGetChildElementAsString(xml, SLEEP_ELEMENT, out sleepXml))
 				WeekdaySleepTime = ParseTimeSpan(sleepXml);
+
+			WeekdayEnable = XmlUtils.TryReadChildElementContentAsBoolean(xml, ENABLE_ELEMENT) ?? false;
 		}
 
 		/// <summary>
@@ -226,6 +304,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			string sleepXml;
 			if (XmlUtils.TryGetChildElementAsString(xml, SLEEP_ELEMENT, out sleepXml))
 				WeekendSleepTime = ParseTimeSpan(sleepXml);
+
+			WeekendEnable = XmlUtils.TryReadChildElementContentAsBoolean(xml, ENABLE_ELEMENT) ?? false;
 		}
 
 		/// <summary>
@@ -245,9 +325,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		private DateTime? GetSleepTimeForDay(DateTime day)
 		{
 			day = day.Date; // remove any time info
-			if (day.DayOfWeek.IsWeekday() && WeekdaySleepTime != null)
+			if (day.DayOfWeek.IsWeekday() && WeekdayEnable && WeekdaySleepTime != null)
 				return day.Add(WeekdaySleepTime.Value);
-			else if (day.DayOfWeek.IsWeekend() && WeekendSleepTime != null)
+			else if (day.DayOfWeek.IsWeekend() && WeekendEnable && WeekendSleepTime != null)
 				return day.Add(WeekendSleepTime.Value);
 
 			return null; // should not sleep today
@@ -256,9 +336,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		private DateTime? GetWakeTimeForDay(DateTime day)
 		{
 			day = day.Date; // remove any time info
-			if (day.DayOfWeek.IsWeekday() && WeekdayWakeTime != null)
+			if (day.DayOfWeek.IsWeekday() && WeekdayEnable && WeekdayWakeTime != null)
 				return day.Add(WeekdayWakeTime.Value);
-			else if (day.DayOfWeek.IsWeekend() && WeekendWakeTime != null)
+			else if (day.DayOfWeek.IsWeekend() && WeekendEnable && WeekendWakeTime != null)
 				return day.Add(WeekendWakeTime.Value);
 
 			return null; // should not wake today

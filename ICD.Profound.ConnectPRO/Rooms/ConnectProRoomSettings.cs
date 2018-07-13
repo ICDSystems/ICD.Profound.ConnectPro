@@ -9,6 +9,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 	[KrangSettings("ConnectProRoom", typeof(ConnectProRoom))]
 	public sealed class ConnectProRoomSettings : AbstractRoomSettings
 	{
+		private const string PASSCODE_ELEMENT = "Passcode";
 		private const string WAKE_SCHEDULE_ELEMENT = "WakeSchedule";
 
 		private readonly WakeSchedule m_WakeScheduleSettings;
@@ -40,6 +41,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			set { m_WakeScheduleSettings.WeekendSleepTime = value; }
 		}
 
+		public string Passcode { get; set; }
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -56,6 +59,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		{
 			base.WriteElements(writer);
 
+			writer.WriteElementString(PASSCODE_ELEMENT, Passcode);
+
 			m_WakeScheduleSettings.WriteElements(writer, WAKE_SCHEDULE_ELEMENT);
 		}
 
@@ -66,6 +71,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		public override void ParseXml(string xml)
 		{
 			base.ParseXml(xml);
+
+			Passcode = XmlUtils.TryReadChildElementContentAsString(xml, PASSCODE_ELEMENT);
 
 			string wakeScheduleXml;
 			if (XmlUtils.TryGetChildElementAsString(xml, WAKE_SCHEDULE_ELEMENT, out wakeScheduleXml))

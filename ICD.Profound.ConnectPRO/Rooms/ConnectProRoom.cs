@@ -57,6 +57,10 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public IConferenceManager ConferenceManager { get { return m_ConferenceManager; } }
 
+		public WakeSchedule WakeSchedule { get { return m_WakeSchedule; } }
+
+		public string Passcode { get; set; }
+
 		#endregion
 
 		/// <summary>
@@ -196,6 +200,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			base.CopySettingsFinal(settings);
 
 			settings.DialingPlan = m_DialingPlan;
+			settings.Passcode = Passcode;
 
 			settings.WakeSchedule.Copy(m_WakeSchedule);
 		}
@@ -212,6 +217,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			m_ConferenceManager.ClearDialingProviders();
 			m_ConferenceManager.Favorites = null;
 			m_ConferenceManager.DialingPlan.ClearMatchers();
+
+			Passcode = null;
 
 			m_WakeSchedule.Clear();
 		}
@@ -231,6 +238,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			// Favorites
 			string path = PathUtils.GetProgramConfigPath("favorites");
 			m_ConferenceManager.Favorites = new SqLiteFavorites(path);
+
+			// Passcode
+			Passcode = settings.Passcode;
 
 			// Wake Schedule
 			m_WakeSchedule.Copy(settings.WakeSchedule);

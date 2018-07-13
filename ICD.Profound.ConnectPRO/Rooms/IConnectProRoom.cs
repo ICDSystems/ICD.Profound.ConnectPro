@@ -25,6 +25,16 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		IConferenceManager ConferenceManager { get; }
 
 		/// <summary>
+		/// Gets the wake/sleep schedule.
+		/// </summary>
+		WakeSchedule WakeSchedule { get; }
+
+		/// <summary>
+		/// Gets/sets the passcode for the settings page.
+		/// </summary>
+		string Passcode { get; set; }
+
+		/// <summary>
 		/// Gets the volume control matching the configured volume point.
 		/// </summary>
 		/// <returns></returns>
