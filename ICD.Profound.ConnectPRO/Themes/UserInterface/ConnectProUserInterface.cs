@@ -51,7 +51,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private readonly INavigationController m_NavigationController;
 		private readonly SafeTimer m_SourceSelectionTimeout;
 
-		private readonly IcdHashSet<ISource> m_ProcessingSources; 
+		private ISource m_ProcessingSource; 
 
 		private IConnectProRoom m_Room;
 		private DefaultVisibilityNode m_RootVisibility;
@@ -77,8 +77,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			IViewFactory viewFactory = new ConnectProViewFactory(panel, theme);
 			m_NavigationController = new ConnectProNavigationController(viewFactory, theme);
-
-			m_ProcessingSources = new IcdHashSet<ISource>();
 
 			BuildVisibilityTree();
 			SubscribePresenters();
@@ -259,7 +257,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			{
 				if (source != null)
 				{
-					AddProcessingSource(source);
+					SetProcessingSource(source);
 
 					m_Room.Routing.Route(source);
 					m_Room.Routing.RouteAudio(source);
@@ -295,7 +293,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			// If a source is currently selected then we route that source to the selected display
 			else
 			{
-				AddProcessingSource(activeSource);
+				SetProcessingSource(activeSource);
 
 				m_Room.Routing.Route(activeSource, destination);
 				m_Room.Routing.RouteAudioIfUnrouted(activeSource);
@@ -306,12 +304,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			}
 		}
 
-		private void AddProcessingSource(ISource source)
+		private void SetProcessingSource(ISource source)
 		{
-			if (m_ProcessingSources.Contains(source))
+			if (source == m_ProcessingSource)
 				return;
 
-			m_ProcessingSources.Add(source);
+			m_ProcessingSource = source;
 
 			UpdateRouting();
 		}
@@ -485,10 +483,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			// Remove routed items from the processing sources collection
 			foreach (ISource source in routing.Values.SelectMany(v => v))
-				m_ProcessingSources.Remove(source);
+			{
+				if (source == m_ProcessingSource)
+					m_ProcessingSource = null;
+			}
 
-			foreach (ISource source in m_ProcessingSources)
-				routedSources.Add(source, eRoutedState.Processing);
+			if (m_ProcessingSource != null)
+				routedSources.Add(m_ProcessingSource, eRoutedState.Processing);
 
 			m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().SetRoutedSources(routedSources);
 			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().SetRouting(routing, activeAudio);
