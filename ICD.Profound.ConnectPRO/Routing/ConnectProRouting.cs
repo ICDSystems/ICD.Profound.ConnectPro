@@ -710,7 +710,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			return RoutingGraph.RoutingCache
 			                   .GetSourcesForDestinationEndpoint(control.GetInputEndpointInfo((int)activeInput),
-			                                                     eConnectionType.Video);;
+			                                                     eConnectionType.Video);
 		}
 
 		/// <summary>
