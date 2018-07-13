@@ -1,5 +1,6 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
+using ICD.Connect.Panels.Server.Osd;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
@@ -20,7 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		private bool m_WeekendEnable;
 
 		private readonly TimeSpan HOUR_INCREMENT = TimeSpan.FromHours(1);
-		private readonly TimeSpan MINUTE_INCREMENT = TimeSpan.FromMinutes(5);
+		private readonly TimeSpan MINUTE_INCREMENT = TimeSpan.FromMinutes(1);
 
 		public bool Weekend
 		{
@@ -127,6 +128,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				view.SetEnableButtonSelected(m_WeekdayEnable);
 				view.SetDisableButtonSelected(!m_WeekdayEnable);
 			}
+
+			view.SetSleepButtonVisibility(true);
+
+			bool hasOsd = Room != null && Room.Originators.HasInstances<OsdPanelDevice>();
+			view.SetWakeButtonVisibility(hasOsd);
 		}
 
 		private void OffsetWakeTime(TimeSpan offset)

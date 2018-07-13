@@ -41,5 +41,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings
 		void SetSleepHour(ushort hour);
 
 		void SetSleepMinute(ushort minute);
+
+		void SetWakeButtonVisibility(bool visible);
+
+		void SetSleepButtonVisibility(bool visible);
 	}
 }
