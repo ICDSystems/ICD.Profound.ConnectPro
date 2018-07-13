@@ -156,15 +156,15 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			if (sleepTime != null && wakeTime != null)
 			{
-				var time = now.PreviousLatestTime(sleepTime.Value, wakeTime.Value);
+				var time = now.PreviousLatestTime(true, sleepTime.Value, wakeTime.Value);
 				if (time != null && time == sleepTime.Value)
 					Sleep();
 				else if (time != null && time == wakeTime.Value)
 					Wake();
 			}
-			else if (wakeTime != null && now > wakeTime)
+			else if (wakeTime != null && now >= wakeTime)
 				Wake();
-			else if (sleepTime != null && now > sleepTime)
+			else if (sleepTime != null && now >= sleepTime)
 				Sleep();
 		}
 
@@ -179,7 +179,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 				if (sleepTime != null && wakeTime != null)
 				{
-					var time = now.NextEarliestTime(sleepTime.Value, wakeTime.Value);
+					var time = now.NextEarliestTime(false, sleepTime.Value, wakeTime.Value);
 					if (time != null)
 						return time;
 				}
