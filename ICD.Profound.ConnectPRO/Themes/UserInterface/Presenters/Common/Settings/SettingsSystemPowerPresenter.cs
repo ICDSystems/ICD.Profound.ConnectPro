@@ -51,8 +51,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			m_WeekdayWakeTime = new TimeSpan(7, 0, 0);
 			m_WeekdaySleepTime = new TimeSpan(19, 0, 0);
 
-			m_WeekendWakeTime = new TimeSpan(10, 0, 0);
-			m_WeekendSleepTime = new TimeSpan(16, 0, 0);
+			m_WeekendWakeTime = new TimeSpan(7, 0, 0);
+			m_WeekendSleepTime = new TimeSpan(19, 0, 0);
 		}
 
 		public override void SetRoom(IConnectProRoom room)
