@@ -594,6 +594,16 @@ namespace ICD.Profound.ConnectPRO.Routing
 			}
 		}
 
+		/// <summary>
+		/// Routes the OSD if if is available.
+		/// </summary>
+		public void RouteOsdPostVtc()
+		{
+			OsdPanelDevice osd = m_Room.Core.Originators.GetChildren<OsdPanelDevice>().FirstOrDefault();
+			if (osd != null)
+				RouteOsd();
+		}
+
 		private void Route(ConnectionPath path)
 		{
 			if (path == null)
