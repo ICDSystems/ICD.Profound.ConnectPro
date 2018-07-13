@@ -8,8 +8,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 {
 	public sealed class WakeSchedule : AbstractScheduledAction
 	{
-		public event EventHandler WakeActionRequested;
-		public event EventHandler SleepActionRequested;
+		public event EventHandler OnWakeActionRequested;
+		public event EventHandler OnSleepActionRequested;
 
 		private const string WEEKDAY_ELEMENT = "Weekday";
 		private const string WEEKEND_ELEMENT = "Weekend";
@@ -328,7 +328,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			day = day.Date; // remove any time info
 			if (day.DayOfWeek.IsWeekday() && WeekdayEnable && WeekdaySleepTime != null)
 				return day.Add(WeekdaySleepTime.Value);
-			else if (day.DayOfWeek.IsWeekend() && WeekendEnable && WeekendSleepTime != null)
+			if (day.DayOfWeek.IsWeekend() && WeekendEnable && WeekendSleepTime != null)
 				return day.Add(WeekendSleepTime.Value);
 
 			return null; // should not sleep today
@@ -339,7 +339,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			day = day.Date; // remove any time info
 			if (day.DayOfWeek.IsWeekday() && WeekdayEnable && WeekdayWakeTime != null)
 				return day.Add(WeekdayWakeTime.Value);
-			else if (day.DayOfWeek.IsWeekend() && WeekendEnable && WeekendWakeTime != null)
+			if (day.DayOfWeek.IsWeekend() && WeekendEnable && WeekendWakeTime != null)
 				return day.Add(WeekendWakeTime.Value);
 
 			return null; // should not wake today
@@ -347,12 +347,12 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 		private void Wake()
 		{
-			WakeActionRequested.Raise(this);
+			OnWakeActionRequested.Raise(this);
 		}
 
 		private void Sleep()
 		{
-			SleepActionRequested.Raise(this);
+			OnSleepActionRequested.Raise(this);
 		}
 
 		#endregion

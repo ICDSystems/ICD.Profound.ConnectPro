@@ -45,7 +45,19 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <summary>
 		/// Gets/sets the current meeting status.
 		/// </summary>
-		public bool IsInMeeting { get { return m_IsInMeeting; } }
+		public bool IsInMeeting
+		{
+			get { return m_IsInMeeting; }
+			private set
+			{
+				if (value == m_IsInMeeting)
+					return;
+
+				m_IsInMeeting = value;
+
+				OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
+			}
+		}
 
 		/// <summary>
 		/// Gets the routing features for this room.
@@ -113,14 +125,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public void StartMeeting()
 		{
-			if (m_IsInMeeting)
-				return;
-
-			m_IsInMeeting = true;
-
 			Routing.RouteOsd();
 
-			OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
+			IsInMeeting = true;
 		}
 
 		/// <summary>
@@ -129,11 +136,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <param name="shutdown"></param>
 		public void EndMeeting(bool shutdown)
 		{
-			if (!m_IsInMeeting)
-				return;
-
-			m_IsInMeeting = false;
-
 			// Hangup
 			if (ConferenceManager != null && ConferenceManager.ActiveConference != null)
 				ConferenceManager.ActiveConference.Hangup();
@@ -144,7 +146,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			if (shutdown)
 				Sleep();
 
-			OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
+			IsInMeeting = false;
 		}
 
 		/// <summary>
@@ -159,6 +161,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			Originators.GetInstancesRecursive<IPanelDevice>()
 					   .SelectMany(panel => panel.Controls.GetControls<IPowerDeviceControl>())
 					   .ForEach(c => c.PowerOn());
+
+			IsInMeeting = false;
 		}
 
 		/// <summary>
@@ -185,6 +189,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			Originators.GetInstancesRecursive<IPanelDevice>()
 			           .SelectMany(panel => panel.Controls.GetControls<IPowerDeviceControl>())
 			           .ForEach(c => c.PowerOff());
+
+			IsInMeeting = false;
 		}
 
 		#endregion
@@ -322,14 +328,14 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 		private void Subscribe(WakeSchedule schedule)
 		{
-			schedule.WakeActionRequested += ScheduleOnWakeActionRequested;
-			schedule.SleepActionRequested += ScheduleOnSleepActionRequested;
+			schedule.OnWakeActionRequested += ScheduleOnWakeActionRequested;
+			schedule.OnSleepActionRequested += ScheduleOnSleepActionRequested;
 		}
 
 		private void Unsubscribe(WakeSchedule schedule)
 		{
-			schedule.WakeActionRequested -= ScheduleOnWakeActionRequested;
-			schedule.SleepActionRequested -= ScheduleOnSleepActionRequested;
+			schedule.OnWakeActionRequested -= ScheduleOnWakeActionRequested;
+			schedule.OnSleepActionRequested -= ScheduleOnSleepActionRequested;
 		}
 
 		private void ScheduleOnSleepActionRequested(object sender, EventArgs eventArgs)
