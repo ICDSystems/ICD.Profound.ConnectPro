@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services.Scheduler;
 using ICD.Common.Utils.Xml;
@@ -149,9 +150,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 		public override void RunFinal()
 		{
-			var now = DateTime.Now;
-			var wakeTime = GetWakeTimeForDay(DateTime.Today);
-			var sleepTime = GetSleepTimeForDay(DateTime.Today);
+			var now = IcdEnvironment.GetLocalTime();
+			var wakeTime = GetWakeTimeForDay(now.Date);
+			var sleepTime = GetSleepTimeForDay(now.Date);
 
 			if (sleepTime != null && wakeTime != null)
 			{
@@ -169,8 +170,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 		public override DateTime? GetNextRunTime()
 		{
-			var now = DateTime.Now;
-			var currentDay = DateTime.Today;
+			var now = IcdEnvironment.GetLocalTime();
+			var currentDay = now.Date;
 			while (currentDay < now.AddDays(7)) // if no action found for a week, means all 4 times are null
 			{
 				var sleepTime = GetSleepTimeForDay(currentDay);

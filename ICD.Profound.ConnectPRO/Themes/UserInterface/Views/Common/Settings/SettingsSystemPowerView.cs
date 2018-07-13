@@ -97,6 +97,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 			m_SleepMinuteLabel.SetLabelText(minute.ToString("D2"));
 		}
 
+		public void SetWakeButtonVisibility(bool visible)
+		{
+			m_WakeButton.Show(visible);
+		}
+
+		public void SetSleepButtonVisibility(bool visible)
+		{
+			m_SleepButton.Show(visible);
+		}
+
 		#endregion
 
 		#region Control Callbacks
