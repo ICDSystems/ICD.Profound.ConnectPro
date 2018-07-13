@@ -184,7 +184,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				return;
 			}
 
-			// TODO - Actually store the new passcode somewhere
+			Room.Passcode = current;
 
 			State = ePasscodeState.Success;
 		}

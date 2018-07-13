@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Connect.Settings;
+using ICD.Connect.Settings.Core;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -194,6 +196,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			{
 				foreach (IPresenter presenter in m_NavPages.Values)
 					presenter.ShowView(false);
+
+				ICoreSettings settings = Room.Core.CopySettings();
+				FileOperations.SaveSettings(settings, true);
 			}
 		}
 
