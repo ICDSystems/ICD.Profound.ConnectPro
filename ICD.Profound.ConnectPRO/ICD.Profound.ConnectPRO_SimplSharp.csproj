@@ -173,6 +173,7 @@
     <Compile Include="Themes\UserInterface\IViews\Common\IVolumeView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Options\IOptionCameraView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\ISettingsBaseView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\Settings\ISettingsDirectoryView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\ISettingsPasscodeView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\ISettingsSystemPowerView.cs" />
     <Compile Include="Themes\UserInterface\IViews\eRoutedState.cs" />
@@ -297,6 +298,8 @@
     <Compile Include="Themes\UserInterface\Views\Common\PasscodeView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsBaseView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsBaseView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsDirectoryView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsDirectoryView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsPasscodeView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsPasscodeView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsSystemPowerView.cs" />
