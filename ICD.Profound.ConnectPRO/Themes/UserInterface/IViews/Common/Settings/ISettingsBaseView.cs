@@ -12,11 +12,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings
 		event EventHandler<UShortEventArgs> OnListItemPressed;
 
 		/// <summary>
-		/// Raised when the user presses the save button.
-		/// </summary>
-		event EventHandler OnSaveButtonPressed;
-
-		/// <summary>
 		/// Sets the selected state for the button at the given index.
 		/// </summary>
 		/// <param name="index"></param>
