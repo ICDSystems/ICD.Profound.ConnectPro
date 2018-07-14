@@ -530,6 +530,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			// Clear the selection
 			Selected = null;
+
+			// Return to root
+			m_DirectoryBrowser.GoToRoot();
 		}
 
 		#endregion
