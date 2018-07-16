@@ -133,6 +133,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			IVisibilityNode settingsVisibility = new SingleVisibilityNode();
 			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsPasscodePresenter>());
 			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsSystemPowerPresenter>());
+			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsDirectoryPresenter>());
 
 			m_RootVisibility.AddNode(settingsVisibility);
 
