@@ -11,6 +11,7 @@ using ICD.Connect.Conferencing.Controls.Directory;
 using ICD.Connect.Conferencing.Directory;
 using ICD.Connect.Conferencing.Directory.Tree;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Polycom.Devices.Codec;
 using ICD.Connect.Conferencing.Polycom.Devices.Codec.Components.Button;
 using ICD.Connect.Devices;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -336,6 +337,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (m_SubscribedConferenceManager == null)
 				return;
 
+			IDialingDeviceControl videoDialer = m_SubscribedConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			PolycomGroupSeriesDevice videoDialerDevice = videoDialer == null ? null : videoDialer.Parent as PolycomGroupSeriesDevice;
+			m_ButtonComponent = videoDialerDevice == null ? null : videoDialerDevice.Components.GetComponent<ButtonComponent>();
+
 			m_SubscribedConferenceManager.OnInCallChanged += ConferenceManagerOnInCallChanged;
 			m_SubscribedConferenceManager.OnActiveSourceStatusChanged += ConferenceManagerOnActiveSourceStatusChanged;
 
@@ -356,11 +361,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			m_DirectoryBrowser.SetControl(null);
 
-			if (m_SubscribedConferenceManager == null)
-				return;
+			if (m_SubscribedConferenceManager != null)
+			{
+				m_SubscribedConferenceManager.OnInCallChanged -= ConferenceManagerOnInCallChanged;
+				m_SubscribedConferenceManager.OnActiveSourceStatusChanged -= ConferenceManagerOnActiveSourceStatusChanged;
+			}
 
-			m_SubscribedConferenceManager.OnInCallChanged -= ConferenceManagerOnInCallChanged;
-			m_SubscribedConferenceManager.OnActiveSourceStatusChanged -= ConferenceManagerOnActiveSourceStatusChanged;
+			m_ButtonComponent = null;
 
 			m_SubscribedConferenceManager = null;
 		}
