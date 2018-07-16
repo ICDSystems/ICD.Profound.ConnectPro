@@ -13,12 +13,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 		/// <summary>
 		/// Raised when the user presses the directory button.
 		/// </summary>
-		public event EventHandler OnDirectoryButtonPressed;
+		public event EventHandler OnDPadButtonPressed;
 
 		/// <summary>
 		/// Raised when the user presses the favourites button.
 		/// </summary>
-		public event EventHandler OnFavoritesButtonPressed;
+		public event EventHandler OnLocalButtonPressed;
 
 		/// <summary>
 		/// Raised when the user presses the recent button.
@@ -48,7 +48,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 		/// <summary>
 		/// Raised when the user presses the search button.
 		/// </summary>
-		public event EventHandler OnSearchButtonPressed;
+		public event EventHandler OnDirectoryButtonPressed;
 
 		/// <summary>
 		/// Raised when the user presses the manual dial button.
@@ -78,14 +78,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 		/// </summary>
 		public override void Dispose()
 		{
-			OnDirectoryButtonPressed = null;
-			OnFavoritesButtonPressed = null;
+			OnDPadButtonPressed = null;
+			OnLocalButtonPressed = null;
 			OnRecentButtonPressed = null;
 			OnCallButtonPressed = null;
 			OnHangupButtonPressed = null;
 			OnBackButtonPressed = null;
 			OnHomeButtonPressed = null;
-			OnSearchButtonPressed = null;
+			OnDirectoryButtonPressed = null;
 			OnManualDialButtonPressed = null;
 
 			OnDPadUpButtonPressed = null;
@@ -235,7 +235,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 
 		private void DPadButtonOnPressed(object sender, EventArgs eventArgs)
 		{
-			OnDirectoryButtonPressed.Raise(this);
+			OnDPadButtonPressed.Raise(this);
 		}
 
 		private void RecentsButtonOnPressed(object sender, EventArgs eventArgs)
@@ -245,7 +245,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 
 		private void LocalButtonOnPressed(object sender, EventArgs eventArgs)
 		{
-			OnFavoritesButtonPressed.Raise(this);
+			OnLocalButtonPressed.Raise(this);
 		}
 
 		private void ManualDialButtonOnPressed(object sender, EventArgs eventArgs)
@@ -255,7 +255,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 
 		private void DirectoryButtonOnPressed(object sender, EventArgs eventArgs)
 		{
-			OnSearchButtonPressed.Raise(this);
+			OnDirectoryButtonPressed.Raise(this);
 		}
 
 		private void HomeButtonOnPressed(object sender, EventArgs eventArgs)

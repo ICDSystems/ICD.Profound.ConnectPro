@@ -390,13 +390,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			base.Subscribe(view);
 
 			view.OnCallButtonPressed += ViewOnCallButtonPressed;
-			view.OnDirectoryButtonPressed += ViewOnDPadButtonPressed;
-			view.OnFavoritesButtonPressed += ViewOnLocalButtonPressed;
+			view.OnDPadButtonPressed += ViewOnDPadButtonPressed;
+			view.OnLocalButtonPressed += ViewOnLocalButtonPressed;
 			view.OnHangupButtonPressed += ViewOnHangupButtonPressed;
 			view.OnRecentButtonPressed += ViewOnRecentButtonPressed;
 			view.OnBackButtonPressed += ViewOnBackButtonPressed;
 			view.OnHomeButtonPressed += ViewOnHomeButtonPressed;
-			view.OnSearchButtonPressed += ViewOnSearchButtonPressed;
+			view.OnDirectoryButtonPressed += ViewOnDirectoryButtonPressed;
 			view.OnManualDialButtonPressed += ViewOnManualDialButtonPressed;
 
 			view.OnDPadDownButtonPressed += ViewOnDPadDownButtonPressed;
@@ -415,13 +415,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			base.Unsubscribe(view);
 
 			view.OnCallButtonPressed -= ViewOnCallButtonPressed;
-			view.OnDirectoryButtonPressed -= ViewOnDPadButtonPressed;
-			view.OnFavoritesButtonPressed -= ViewOnLocalButtonPressed;
+			view.OnDPadButtonPressed -= ViewOnDPadButtonPressed;
+			view.OnLocalButtonPressed -= ViewOnLocalButtonPressed;
 			view.OnHangupButtonPressed -= ViewOnHangupButtonPressed;
 			view.OnRecentButtonPressed -= ViewOnRecentButtonPressed;
 			view.OnBackButtonPressed -= ViewOnBackButtonPressed;
 			view.OnHomeButtonPressed -= ViewOnHomeButtonPressed;
-			view.OnSearchButtonPressed -= ViewOnSearchButtonPressed;
+			view.OnDirectoryButtonPressed -= ViewOnDirectoryButtonPressed;
 			view.OnManualDialButtonPressed -= ViewOnManualDialButtonPressed;
 
 			view.OnDPadDownButtonPressed -= ViewOnDPadDownButtonPressed;
@@ -476,7 +476,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void ViewOnSearchButtonPressed(object sender, EventArgs eventArgs)
+		private void ViewOnDirectoryButtonPressed(object sender, EventArgs eventArgs)
 		{
 			switch (DirectoryMode)
 			{

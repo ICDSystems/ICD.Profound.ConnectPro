@@ -8,12 +8,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Co
 		/// <summary>
 		/// Raised when the user presses the directory button.
 		/// </summary>
-		event EventHandler OnDirectoryButtonPressed;
+		event EventHandler OnDPadButtonPressed;
 
 		/// <summary>
 		/// Raised when the user presses the favourites button.
 		/// </summary>
-		event EventHandler OnFavoritesButtonPressed;
+		event EventHandler OnLocalButtonPressed;
 
 		/// <summary>
 		/// Raised when the user presses the recent button.
@@ -43,7 +43,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Co
 		/// <summary>
 		/// Raised when the user presses the search button.
 		/// </summary>
-		event EventHandler OnSearchButtonPressed;
+		event EventHandler OnDirectoryButtonPressed;
 
 		/// <summary>
 		/// Raised when the user presses the manual dial button.
