@@ -104,7 +104,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 				while (value < TimeSpan.Zero)
 					value += TimeSpan.FromHours(24);
 
-				if (m_WeekdaySleepTime == value)
+				if (m_WeekendSleepTime == value)
 					return;
 
 				m_WeekendSleepTime = value;
