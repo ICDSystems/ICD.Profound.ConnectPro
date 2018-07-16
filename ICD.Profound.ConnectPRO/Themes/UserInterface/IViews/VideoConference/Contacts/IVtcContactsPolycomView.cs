@@ -8,7 +8,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Co
 		/// <summary>
 		/// Raised when the user presses the directory button.
 		/// </summary>
-		event EventHandler OnDPadButtonPressed;
+		event EventHandler OnNavigationButtonPressed;
 
 		/// <summary>
 		/// Raised when the user presses the favourites button.
@@ -100,10 +100,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Co
 		/// <param name="enabled"></param>
 		void SetHangupButtonEnabled(bool enabled);
 
-		/// <summary>
-		/// Sets the visibility of the navigation buttons.
-		/// </summary>
-		/// <param name="visible"></param>
-		void SetNavigationButtonsVisible(bool visible);
+		void SetBackButtonVisible(bool visible);
+		void SetHomeButtonVisible(bool visible);
+		void SetDirectoryButtonVisible(bool visible);
 	}
 }

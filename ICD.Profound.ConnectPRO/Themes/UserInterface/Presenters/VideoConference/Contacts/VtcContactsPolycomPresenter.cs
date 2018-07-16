@@ -26,7 +26,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 	{
 		private enum ePolycomDirectoryMode
 		{
-			DPad,
+			Navigation,
 			Local,
 			Recents
 		}
@@ -172,19 +172,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 					presenter.ShowView(true);
 				}
 
-				bool callEnabled = m_Selected != null;
+				bool callEnabled = m_DirectoryMode == ePolycomDirectoryMode.Navigation || m_Selected != null;
 
 				IConference active = m_SubscribedConferenceManager == null ? null : m_SubscribedConferenceManager.ActiveConference;
-				bool hangupEnabled = active != null;
+				bool hangupEnabled = m_DirectoryMode == ePolycomDirectoryMode.Navigation || active != null;
 
-				view.SetDPadVisible(m_DirectoryMode == ePolycomDirectoryMode.DPad);
+				view.SetDPadVisible(m_DirectoryMode == ePolycomDirectoryMode.Navigation);
 
-				view.SetDPadButtonSelected(m_DirectoryMode == ePolycomDirectoryMode.DPad);
+				view.SetDPadButtonSelected(m_DirectoryMode == ePolycomDirectoryMode.Navigation);
 				view.SetLocalButtonSelected(m_DirectoryMode == ePolycomDirectoryMode.Local);
 				view.SetRecentButtonSelected(m_DirectoryMode == ePolycomDirectoryMode.Recents);
 
-				view.SetNavigationButtonsVisible(m_DirectoryMode == ePolycomDirectoryMode.Local ||
-				                                 m_DirectoryMode == ePolycomDirectoryMode.DPad);
+				view.SetBackButtonVisible(m_DirectoryMode == ePolycomDirectoryMode.Local ||
+				                          m_DirectoryMode == ePolycomDirectoryMode.Navigation);
+				view.SetHomeButtonVisible(m_DirectoryMode == ePolycomDirectoryMode.Local ||
+				                          m_DirectoryMode == ePolycomDirectoryMode.Navigation);
+				view.SetDirectoryButtonVisible(m_DirectoryMode == ePolycomDirectoryMode.Navigation);
 
 				view.SetCallButtonEnabled(callEnabled);
 				view.SetHangupButtonEnabled(hangupEnabled);
@@ -211,7 +214,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			switch (directoryMode)
 			{
-				case ePolycomDirectoryMode.DPad:
+				case ePolycomDirectoryMode.Navigation:
 					return Enumerable.Empty<ModelPresenterTypeInfo>();
 
 				case ePolycomDirectoryMode.Local:
@@ -390,7 +393,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			base.Subscribe(view);
 
 			view.OnCallButtonPressed += ViewOnCallButtonPressed;
-			view.OnDPadButtonPressed += ViewOnDPadButtonPressed;
+			view.OnNavigationButtonPressed += ViewOnNavigationButtonPressed;
 			view.OnLocalButtonPressed += ViewOnLocalButtonPressed;
 			view.OnHangupButtonPressed += ViewOnHangupButtonPressed;
 			view.OnRecentButtonPressed += ViewOnRecentButtonPressed;
@@ -415,7 +418,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			base.Unsubscribe(view);
 
 			view.OnCallButtonPressed -= ViewOnCallButtonPressed;
-			view.OnDPadButtonPressed -= ViewOnDPadButtonPressed;
+			view.OnNavigationButtonPressed -= ViewOnNavigationButtonPressed;
 			view.OnLocalButtonPressed -= ViewOnLocalButtonPressed;
 			view.OnHangupButtonPressed -= ViewOnHangupButtonPressed;
 			view.OnRecentButtonPressed -= ViewOnRecentButtonPressed;
@@ -480,7 +483,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			switch (DirectoryMode)
 			{
-				case ePolycomDirectoryMode.DPad:
+				case ePolycomDirectoryMode.Navigation:
 					if (m_ButtonComponent != null)
 						m_ButtonComponent.PressButton(ButtonComponent.eMisc.Directory);
 					break;
@@ -496,7 +499,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			switch (DirectoryMode)
 			{
-				case ePolycomDirectoryMode.DPad:
+				case ePolycomDirectoryMode.Navigation:
 					if (m_ButtonComponent != null)
 						m_ButtonComponent.PressButton(ButtonComponent.eMisc.Home);
 					break;
@@ -516,7 +519,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			switch (DirectoryMode)
 			{
-				case ePolycomDirectoryMode.DPad:
+				case ePolycomDirectoryMode.Navigation:
 					if (m_ButtonComponent != null)
 						m_ButtonComponent.PressButton(ButtonComponent.eCall.Back);
 					break;
@@ -552,9 +555,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void ViewOnDPadButtonPressed(object sender, EventArgs eventArgs)
+		private void ViewOnNavigationButtonPressed(object sender, EventArgs eventArgs)
 		{
-			DirectoryMode = ePolycomDirectoryMode.DPad;
+			DirectoryMode = ePolycomDirectoryMode.Navigation;
 		}
 
 		/// <summary>
@@ -566,7 +569,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			switch (DirectoryMode)
 			{
-				case ePolycomDirectoryMode.DPad:
+				case ePolycomDirectoryMode.Navigation:
 					if (m_ButtonComponent != null)
 						m_ButtonComponent.PressButton(ButtonComponent.eCall.Call);
 					break;
@@ -596,7 +599,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			switch (DirectoryMode)
 			{
-				case ePolycomDirectoryMode.DPad:
+				case ePolycomDirectoryMode.Navigation:
 					if (m_ButtonComponent != null)
 						m_ButtonComponent.PressButton(ButtonComponent.eCall.Hangup);
 					break;

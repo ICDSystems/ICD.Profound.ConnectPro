@@ -14,7 +14,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 		private VtProSubpage m_Subpage;
 		private VtProSubpageReferenceList m_ContactList;
 		private VtProDPad m_DPad;
-		private VtProButton m_DPadButton;
+		private VtProButton m_NavigationButton;
 		private VtProButton m_LocalButton;
 		private VtProButton m_RecentsButton;
 		private VtProButton m_CallButton;
@@ -52,9 +52,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 				VisibilityDigitalJoin = 930
 			};
 
-			m_DPadButton = new VtProButton(panel, m_Subpage)
+			m_NavigationButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 911
+				DigitalPressJoin = 910
 			};
 
 			m_LocalButton = new VtProButton(panel, m_Subpage)
@@ -111,7 +111,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 		{
 			yield return m_Subpage;
 			yield return m_ContactList;
-			yield return m_DPadButton;
+			yield return m_NavigationButton;
 			yield return m_LocalButton;
 			yield return m_RecentsButton;
 			yield return m_CallButton;

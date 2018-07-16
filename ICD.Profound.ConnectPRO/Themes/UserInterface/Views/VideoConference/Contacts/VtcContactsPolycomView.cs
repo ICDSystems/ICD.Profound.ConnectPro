@@ -13,7 +13,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 		/// <summary>
 		/// Raised when the user presses the directory button.
 		/// </summary>
-		public event EventHandler OnDPadButtonPressed;
+		public event EventHandler OnNavigationButtonPressed;
 
 		/// <summary>
 		/// Raised when the user presses the favourites button.
@@ -78,7 +78,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 		/// </summary>
 		public override void Dispose()
 		{
-			OnDPadButtonPressed = null;
+			OnNavigationButtonPressed = null;
 			OnLocalButtonPressed = null;
 			OnRecentButtonPressed = null;
 			OnCallButtonPressed = null;
@@ -122,7 +122,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 
 		public void SetDPadButtonSelected(bool selected)
 		{
-			m_DPadButton.SetSelected(selected);
+			m_NavigationButton.SetSelected(selected);
 		}
 
 		public void SetLocalButtonSelected(bool selected)
@@ -145,17 +145,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 			m_HangupButton.Enable(enabled);
 		}
 
-		/// <summary>
-		/// Sets the visibility of the navigation buttons.
-		/// </summary>
-		/// <param name="visible"></param>
-		public void SetNavigationButtonsVisible(bool visible)
+		public void SetBackButtonVisible(bool visible)
 		{
 			m_BackButton.Show(visible);
-			m_HomeButton.Show(visible);
+		}
 
-			// TODO
-			m_DirectoryButton.Show(false);
+		public void SetHomeButtonVisible(bool visible)
+		{
+			m_HomeButton.Show(visible);
+		}
+
+		public void SetDirectoryButtonVisible(bool visible)
+		{
+			m_DirectoryButton.Show(visible);
 		}
 
 		#endregion
@@ -166,7 +168,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 		{
 			base.SubscribeControls();
 
-			m_DPadButton.OnPressed += DPadButtonOnPressed;
+			m_NavigationButton.OnPressed += NavigationButtonOnPressed;
 			m_LocalButton.OnPressed += LocalButtonOnPressed;
 			m_RecentsButton.OnPressed += RecentsButtonOnPressed;
 			m_CallButton.OnPressed += CallButtonOnPressed;
@@ -182,7 +184,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 		{
 			base.UnsubscribeControls();
 
-			m_DPadButton.OnPressed -= DPadButtonOnPressed;
+			m_NavigationButton.OnPressed -= NavigationButtonOnPressed;
 			m_LocalButton.OnPressed -= LocalButtonOnPressed;
 			m_RecentsButton.OnPressed -= RecentsButtonOnPressed;
 			m_CallButton.OnPressed -= CallButtonOnPressed;
@@ -233,9 +235,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 			OnCallButtonPressed.Raise(this);
 		}
 
-		private void DPadButtonOnPressed(object sender, EventArgs eventArgs)
+		private void NavigationButtonOnPressed(object sender, EventArgs eventArgs)
 		{
-			OnDPadButtonPressed.Raise(this);
+			OnNavigationButtonPressed.Raise(this);
 		}
 
 		private void RecentsButtonOnPressed(object sender, EventArgs eventArgs)
