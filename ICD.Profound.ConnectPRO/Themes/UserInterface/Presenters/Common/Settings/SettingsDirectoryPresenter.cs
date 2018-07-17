@@ -61,7 +61,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			IDirectoryControl directoryControl = parent == null ? null : parent.Controls.GetControl<IDirectoryControl>();
 
 			if (directoryControl != null)
+			{
 				directoryControl.Clear();
+				directoryControl.PopulateFolder(directoryControl.GetRoot());
+			}
 		}
 
 		#endregion
