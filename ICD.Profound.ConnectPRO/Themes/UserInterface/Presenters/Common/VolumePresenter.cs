@@ -3,6 +3,9 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Audio.Controls;
+using ICD.Connect.Devices;
+using ICD.Connect.Devices.Controls;
+using ICD.Connect.Devices.EventArguments;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -18,6 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private IVolumeDeviceControl m_VolumeControl;
+		private IPowerDeviceControl m_PowerControl;
 
 		/// <summary>
 		/// Gets/sets the volume device.
@@ -84,7 +88,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 				view.SetMuted(muted);
 				view.SetVolumePercentage(volume);
-				view.SetControlsEnabled(true);
+				view.SetControlsEnabled(m_PowerControl == null || m_PowerControl.IsPowered);
 			}
 			finally
 			{
@@ -291,6 +295,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			IVolumeLevelDeviceControl controlLevel = control as IVolumeLevelDeviceControl;
 			if (controlLevel != null)
 				controlLevel.OnVolumeChanged += DeviceOnVolumeChanged;
+
+			IDeviceBase parent = control.Parent;
+			m_PowerControl = parent == null ? null : parent.Controls.GetControl<IPowerDeviceControl>();
+			if (m_PowerControl != null)
+				m_PowerControl.OnIsPoweredChanged += PowerControlOnIsPoweredChanged;
 		}
 
 		/// <summary>
@@ -312,6 +321,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				controlLevel.VolumeLevelRampStop();
 				controlLevel.OnVolumeChanged -= DeviceOnVolumeChanged;
 			}
+
+			if (m_PowerControl != null)
+				m_PowerControl.OnIsPoweredChanged -= PowerControlOnIsPoweredChanged;
+			m_PowerControl = null;
+		}
+
+		private void PowerControlOnIsPoweredChanged(object sender, PowerDeviceControlPowerStateApiEventArgs powerDeviceControlPowerStateApiEventArgs)
+		{
+			RefreshIfVisible();
 		}
 
 		/// <summary>
