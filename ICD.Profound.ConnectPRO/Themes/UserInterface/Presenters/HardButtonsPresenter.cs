@@ -26,7 +26,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 
 		private IVolumePresenter m_CachedVolumePresenter;
 		private IPowerDeviceControl m_PowerControl;
-		private bool m_VolumeDevicePower;
 
 		/// <summary>
 		/// Gets the popup volume presenter.
@@ -36,18 +35,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			get
 			{
 				return m_CachedVolumePresenter ?? (m_CachedVolumePresenter = Navigation.LazyLoadPresenter<IVolumePresenter>());
-			}
-		}
-
-		public bool VolumeDevicePower
-		{
-			get { return m_VolumeDevicePower; }
-			set
-			{
-				if (m_VolumeDevicePower == value)
-					return;
-				m_VolumeDevicePower = value;
-				RefreshIfVisible();
 			}
 		}
 
@@ -87,8 +74,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 				control.SetBacklightEnabled(ADDRESS_POWER, isInMeeting);
 				control.SetBacklightEnabled(ADDRESS_HOME, isInMeeting);
 				control.SetBacklightEnabled(ADDRESS_LIGHT, false);
-				control.SetBacklightEnabled(ADDRESS_VOL_UP, hasVolumeControl && VolumeDevicePower);
-				control.SetBacklightEnabled(ADDRESS_VOL_DOWN, hasVolumeControl && VolumeDevicePower);
+				control.SetBacklightEnabled(ADDRESS_VOL_UP, hasVolumeControl && (m_PowerControl == null || m_PowerControl.IsPowered));
+				control.SetBacklightEnabled(ADDRESS_VOL_DOWN, hasVolumeControl && (m_PowerControl == null || m_PowerControl.IsPowered));
 			}
 			finally
 			{
@@ -235,7 +222,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
 
-			IVolumeDeviceControl control = Room.GetVolumeControl();
+			IVolumeDeviceControl control = room.GetVolumeControl();
 			if (control == null)
 				return;
 			IDeviceBase parent = control.Parent;
@@ -262,6 +249,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 
 			if (m_PowerControl != null)
 				m_PowerControl.OnIsPoweredChanged -= PowerControlOnIsPoweredChanged;
+			m_PowerControl = null;
 		}
 
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs boolEventArgs)
@@ -271,7 +259,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 
 		private void PowerControlOnIsPoweredChanged(object sender, PowerDeviceControlPowerStateApiEventArgs args)
 		{
-			VolumeDevicePower = args.Data;
+			RefreshIfVisible();
 		}
 
 		#endregion
