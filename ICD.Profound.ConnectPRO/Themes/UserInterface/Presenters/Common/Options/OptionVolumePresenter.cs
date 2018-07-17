@@ -41,6 +41,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		}
 
 		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
+		protected override void Refresh(IOptionVolumeView view)
+		{
+			base.Refresh(view);
+
+			view.SetButtonEnabled(true);
+		}
+
+		/// <summary>
 		/// Override to get the selected state for the button.
 		/// </summary>
 		/// <returns></returns>

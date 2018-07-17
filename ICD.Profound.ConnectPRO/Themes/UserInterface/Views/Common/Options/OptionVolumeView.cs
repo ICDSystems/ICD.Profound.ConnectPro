@@ -38,6 +38,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options
 			m_Button.SetSelected(active);
 		}
 
+		/// <summary>
+		/// Sets the enabled state of the button.
+		/// </summary>
+		/// <param name="enabled"></param>
+		public void SetButtonEnabled(bool enabled)
+		{
+			m_Button.Enable(enabled);
+		}
+
 		#region Control Callbacks
 
 		/// <summary>

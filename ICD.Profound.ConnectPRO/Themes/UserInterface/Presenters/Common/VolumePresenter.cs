@@ -51,8 +51,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			m_VisibilityTimer = SafeTimer.Stopped(() => ShowView(false));
 		}
 
-		#region Methods
-
 		/// <summary>
 		/// Release resources.
 		/// </summary>
@@ -61,7 +59,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			m_VisibilityTimer.Dispose();
 
 			base.Dispose();
+
+			VolumeControl = null;
 		}
+
+		#region Methods
 
 		/// <summary>
 		/// Updates the view.
@@ -82,6 +84,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 				view.SetMuted(muted);
 				view.SetVolumePercentage(volume);
+				view.SetControlsEnabled(true);
 			}
 			finally
 			{
