@@ -3,6 +3,9 @@ using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Audio.Controls;
+using ICD.Connect.Devices;
+using ICD.Connect.Devices.Controls;
+using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.Panels.Controls;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -22,6 +25,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private IVolumePresenter m_CachedVolumePresenter;
+		private IPowerDeviceControl m_PowerControl;
+		private bool m_VolumeDevicePower;
 
 		/// <summary>
 		/// Gets the popup volume presenter.
@@ -31,6 +36,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			get
 			{
 				return m_CachedVolumePresenter ?? (m_CachedVolumePresenter = Navigation.LazyLoadPresenter<IVolumePresenter>());
+			}
+		}
+
+		public bool VolumeDevicePower
+		{
+			get { return m_VolumeDevicePower; }
+			set
+			{
+				if (m_VolumeDevicePower == value)
+					return;
+				m_VolumeDevicePower = value;
+				RefreshIfVisible();
 			}
 		}
 
@@ -70,8 +87,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 				control.SetBacklightEnabled(ADDRESS_POWER, isInMeeting);
 				control.SetBacklightEnabled(ADDRESS_HOME, isInMeeting);
 				control.SetBacklightEnabled(ADDRESS_LIGHT, false);
-				control.SetBacklightEnabled(ADDRESS_VOL_UP, hasVolumeControl);
-				control.SetBacklightEnabled(ADDRESS_VOL_DOWN, hasVolumeControl);
+				control.SetBacklightEnabled(ADDRESS_VOL_UP, hasVolumeControl && VolumeDevicePower);
+				control.SetBacklightEnabled(ADDRESS_VOL_DOWN, hasVolumeControl && VolumeDevicePower);
 			}
 			finally
 			{
@@ -217,6 +234,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 				return;
 
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
+
+			IVolumeDeviceControl control = Room.GetVolumeControl();
+			if (control == null)
+				return;
+			IDeviceBase parent = control.Parent;
+			if (parent == null)
+				return;
+			m_PowerControl = parent.Controls.GetControl<IPowerDeviceControl>();
+			if (m_PowerControl == null)
+				return;
+			m_PowerControl.OnIsPoweredChanged += PowerControlOnIsPoweredChanged;
 		}
 
 		/// <summary>
@@ -231,11 +259,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 				return;
 
 			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
+
+			if (m_PowerControl != null)
+				m_PowerControl.OnIsPoweredChanged -= PowerControlOnIsPoweredChanged;
 		}
 
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs boolEventArgs)
 		{
 			RefreshIfVisible();
+		}
+
+		private void PowerControlOnIsPoweredChanged(object sender, PowerDeviceControlPowerStateApiEventArgs args)
+		{
+			VolumeDevicePower = args.Data;
 		}
 
 		#endregion
