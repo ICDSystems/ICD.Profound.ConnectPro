@@ -170,6 +170,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 					Subscribe(presenter);
 
 					presenter.Selected = presenter == m_Selected;
+					presenter.HideFavoriteIcon = true;
 					presenter.ShowView(true);
 				}
 
