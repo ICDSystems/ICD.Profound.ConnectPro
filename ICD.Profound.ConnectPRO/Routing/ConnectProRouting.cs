@@ -927,7 +927,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void RoutingCacheOnDestinationEndpointActiveChanged(object sender, EndpointStateChangedEventArgs eventArgs)
+		private void RoutingCacheOnDestinationEndpointActiveChanged(object sender, CacheStateChangedEventArgs eventArgs)
 		{
 			HandleRoutingChange(eventArgs.Type);
 		}
