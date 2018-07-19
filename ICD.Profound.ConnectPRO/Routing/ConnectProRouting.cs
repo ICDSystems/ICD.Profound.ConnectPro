@@ -736,7 +736,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		public void UnrouteVtc()
 		{
-			IVideoConferenceDevice codec = m_Room.Originators.GetInstanceRecursive<IVideoConferenceDevice>();
+			IVideoConferenceDevice codec = GetCodec();
 			if (codec == null)
 				return;
 
