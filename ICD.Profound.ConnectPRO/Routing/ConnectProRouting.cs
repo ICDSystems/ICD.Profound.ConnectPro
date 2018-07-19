@@ -484,8 +484,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (destination == null)
 				throw new ArgumentNullException("destination");
 
-			ConnectionPath path = IcdStopwatch.Profile(() =>
-			                                           RoutingGraph.FindPath(source, destination, flag, m_Room.Id), "Pathfinding");
+			ConnectionPath path = RoutingGraph.FindPath(source, destination, flag, m_Room.Id);
 			if (path == null)
 			{
 				m_Room.Logger.AddEntry(eSeverity.Error, "Failed to find {0} path from {1} to {2}", flag, source, destination);
