@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using ICD.Common.Utils.Collections;
+
 namespace ICD.Profound.ConnectPRO.Themes
 {
 	public interface IConnectProUserInterfaceFactory
@@ -12,5 +15,11 @@ namespace ICD.Profound.ConnectPRO.Themes
 		/// </summary>
 		/// <returns></returns>
 		void BuildUserInterfaces();
+
+		/// <summary>
+		/// Returns the user interfaces for the originators in the core.
+		/// </summary>
+		/// <returns></returns>
+		IEnumerable<IUserInterface> GetUserInterfaces();
 	}
 }

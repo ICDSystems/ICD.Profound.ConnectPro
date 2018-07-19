@@ -3,6 +3,7 @@ using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.Extensions;
+using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -32,6 +33,28 @@ namespace ICD.Profound.ConnectPRO.Themes
 			m_UserInterfaces = new IcdHashSet<TUserInterface>();
 			m_UserInterfacesSection = new SafeCriticalSection();
 		}
+
+		#region Properties
+
+		/// <summary>
+		/// Gets the UI Factories.
+		/// </summary>
+		public IEnumerable<IUserInterface> GetUserInterfaces()
+		{
+			m_UserInterfacesSection.Enter();
+
+			try
+			{
+				return m_UserInterfaces.Cast<IUserInterface>().ToArray(m_UserInterfaces.Count);
+			}
+			finally
+			{
+				m_UserInterfacesSection.Leave();
+			}
+			
+		}
+
+		#endregion
 
 		#region Methods
 
@@ -65,10 +88,15 @@ namespace ICD.Profound.ConnectPRO.Themes
 			{
 				Clear();
 
-				IEnumerable<TUserInterface> uis =
-					GetOriginatorsForUserInterface().Select(originator => CreateUserInterface(originator));
+				var ids = new IcdHashSet<int>();
+				GetRooms().ForEach(r => ids.AddRange(r.Originators.GetIds()));
 
-				m_UserInterfaces.AddRange(uis);
+				IEnumerable <TUserInterface> uis = GetOriginatorsForUserInterface().Where(o => ids.Contains(o.Id)).Select(originator => CreateUserInterface(originator));
+
+				if (uis.Any())
+				{
+					m_UserInterfaces.AddRange(uis);
+				}
 
 				AssignUserInterfaces(GetRooms());
 			}
@@ -87,12 +115,25 @@ namespace ICD.Profound.ConnectPRO.Themes
 
 			try
 			{
+				IcdHashSet<TUserInterface> visited = new IcdHashSet<TUserInterface>();
+
 				foreach (IConnectProRoom room in rooms)
 				{
 					foreach (TUserInterface ui in m_UserInterfaces)
 					{
+						if (visited.Contains(ui))
+						{
+							m_Theme.Log(eSeverity.Warning,
+								"Unable to assign {0} to {1} - A different room is already assigned", room,
+								typeof(TUserInterface).Name);
+							continue;
+						}
+
 						if (RoomContainsOriginator(room, ui))
+						{
 							ui.SetRoom(room);
+							visited.Add(ui);
+						}
 					}
 				}
 			}
