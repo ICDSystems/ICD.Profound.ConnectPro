@@ -51,6 +51,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private readonly INavigationController m_NavigationController;
 		private readonly SafeTimer m_SourceSelectionTimeout;
 
+		private ISource m_ProcessingSource; 
+
 		private IConnectProRoom m_Room;
 		private DefaultVisibilityNode m_RootVisibility;
 		private ISource m_ActiveSource;
@@ -101,6 +103,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			// Video Conference node
 			IVisibilityNode videoConferencingVisibility = new SingleVisibilityNode();
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcContactsPresenter>());
+			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcContactsPolycomPresenter>());
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcCameraPresenter>());
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcSharePresenter>());
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcDtmfPresenter>());
@@ -133,6 +136,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			IVisibilityNode settingsVisibility = new SingleVisibilityNode();
 			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsPasscodePresenter>());
 			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsSystemPowerPresenter>());
+			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsDirectoryPresenter>());
 
 			m_RootVisibility.AddNode(settingsVisibility);
 
@@ -257,6 +261,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			{
 				if (source != null)
 				{
+					SetProcessingSource(source);
+
 					m_Room.Routing.Route(source);
 					m_Room.Routing.RouteAudio(source);
 				}
@@ -291,6 +297,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			// If a source is currently selected then we route that source to the selected display
 			else
 			{
+				SetProcessingSource(activeSource);
+
 				m_Room.Routing.Route(activeSource, destination);
 				m_Room.Routing.RouteAudioIfUnrouted(activeSource);
 				routedSource = activeSource;
@@ -298,6 +306,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				if (ShowSourceContextualMenu(routedSource, true))
 					SetActiveSource(null);
 			}
+		}
+
+		private void SetProcessingSource(ISource source)
+		{
+			if (source == m_ProcessingSource)
+				return;
+
+			m_ProcessingSource = source;
+
+			UpdateRouting();
 		}
 
 		private bool ShowSourceContextualMenu(ISource source, bool vtcOnly)
@@ -461,10 +479,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 					         .GetCachedActiveVideoSources())
 					.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-			IcdHashSet<ISource> routedSources =
+			Dictionary<ISource, eRoutedState> routedSources =
 				routing.Values
 				       .SelectMany(v => v)
-				       .ToIcdHashSet();
+				       .Distinct()
+				       .ToDictionary(s => s, s => eRoutedState.Active);
+
+			// Remove routed items from the processing sources collection
+			foreach (ISource source in routing.Values.SelectMany(v => v))
+			{
+				if (source == m_ProcessingSource)
+					m_ProcessingSource = null;
+			}
+
+			if (m_ProcessingSource != null)
+				routedSources.Add(m_ProcessingSource, eRoutedState.Processing);
 
 			m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().SetRoutedSources(routedSources);
 			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().SetRouting(routing, activeAudio);

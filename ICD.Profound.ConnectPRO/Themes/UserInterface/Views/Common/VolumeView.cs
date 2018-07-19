@@ -58,6 +58,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			m_MuteButton.SetSelected(muted);
 		}
 
+		/// <summary>
+		/// Sets the enabled state of the volume controls.
+		/// </summary>
+		/// <param name="enabled"></param>
+		public void SetControlsEnabled(bool enabled)
+		{
+			m_VolumeDownButton.Enable(enabled);
+			m_VolumeUpButton.Enable(enabled);
+			m_MuteButton.Enable(enabled);
+		}
+
 		#endregion
 
 		#region Private Methods

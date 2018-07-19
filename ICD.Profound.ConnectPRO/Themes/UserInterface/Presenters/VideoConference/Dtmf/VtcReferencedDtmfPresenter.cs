@@ -1,5 +1,6 @@
 ﻿using System;
 using ICD.Common.Utils;
+using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.ConferenceSources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -22,6 +23,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private IConferenceSource m_Source;
 		private bool m_Selected;
 
+		#region Properties
+
 		public IConferenceSource Source
 		{
 			get { return m_Source; }
@@ -30,7 +33,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				if (value == m_Source)
 					return;
 
+				Unsubscribe(m_Source);
 				m_Source = value;
+				Subscribe(m_Source);
 
 				RefreshIfVisible();
 			}
@@ -50,6 +55,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			}
 		}
 
+		#endregion
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -60,6 +67,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
+		}
+
+		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			base.Dispose();
+
+			Source = null;
 		}
 
 		/// <summary>
@@ -74,7 +91,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			try
 			{
-				string label = m_Source == null ? string.Empty : m_Source.Name;
+				string label = m_Source == null ? string.Empty : m_Source.Name ?? m_Source.Number;
 				bool selected = m_Selected;
 
 				view.SetLabel(label);
@@ -85,6 +102,46 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				m_RefreshSection.Leave();
 			}
 		}
+
+		#region Source Callbacks
+
+		/// <summary>
+		/// Subscribe to the source events.
+		/// </summary>
+		/// <param name="source"></param>
+		private void Subscribe(IConferenceSource source)
+		{
+			if (source == null)
+				return;
+
+			source.OnNameChanged += SourceOnNameChanged;
+			source.OnNumberChanged += SourceOnNumberChanged;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the source events.
+		/// </summary>
+		/// <param name="source"></param>
+		private void Unsubscribe(IConferenceSource source)
+		{
+			if (source == null)
+				return;
+
+			source.OnNameChanged -= SourceOnNameChanged;
+			source.OnNumberChanged -= SourceOnNumberChanged;
+		}
+
+		private void SourceOnNumberChanged(object sender, StringEventArgs stringEventArgs)
+		{
+			RefreshIfVisible();
+		}
+
+		private void SourceOnNameChanged(object sender, StringEventArgs stringEventArgs)
+		{
+			RefreshIfVisible();
+		}
+
+		#endregion
 
 		#region View Callbacks
 

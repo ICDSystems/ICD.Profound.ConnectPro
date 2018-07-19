@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Connect.Settings;
+using ICD.Connect.Settings.Core;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -14,11 +16,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 	{
 		private const ushort SYSTEM_POWER = 0;
 		private const ushort PASSCODE_SETTINGS = 1;
+		private const ushort DIRECTORY = 2;
 
 		private static readonly Dictionary<ushort, Type> s_NavTypes = new Dictionary<ushort, Type>
 			{
 				{SYSTEM_POWER, typeof(ISettingsSystemPowerPresenter)},
-				{PASSCODE_SETTINGS, typeof(ISettingsPasscodePresenter)}
+				{PASSCODE_SETTINGS, typeof(ISettingsPasscodePresenter)},
+				{DIRECTORY, typeof(ISettingsDirectoryPresenter)}
 			};
 
 		private readonly Dictionary<ushort, IPresenter> m_NavPages;
@@ -142,7 +146,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			base.Subscribe(view);
 
 			view.OnListItemPressed += ViewOnListItemPressed;
-			view.OnSaveButtonPressed += ViewOnSaveButtonPressed;
 		}
 
 		/// <summary>
@@ -154,17 +157,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			base.Unsubscribe(view);
 
 			view.OnListItemPressed -= ViewOnListItemPressed;
-			view.OnSaveButtonPressed -= ViewOnSaveButtonPressed;
-		}
-
-		/// <summary>
-		/// Called when the user presses the save button.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="eventArgs"></param>
-		private void ViewOnSaveButtonPressed(object sender, EventArgs eventArgs)
-		{
-			throw new NotImplementedException();
 		}
 
 		/// <summary>
@@ -194,6 +186,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			{
 				foreach (IPresenter presenter in m_NavPages.Values)
 					presenter.ShowView(false);
+
+				ICoreSettings settings = Room == null ? null : Room.Core.CopySettings();
+				if (settings != null)
+					FileOperations.SaveSettings(settings, true);
 			}
 		}
 

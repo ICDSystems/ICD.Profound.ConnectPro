@@ -4,12 +4,12 @@ using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Pages;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 {
-	public sealed partial class OptionVolumeView
+	public sealed partial class SettingsDirectoryView
 	{
 		private VtProSubpage m_Subpage;
-		private VtProMultiModeButton m_Button;
+		private VtProButton m_ClearCacheButton;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -21,14 +21,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 40
+				DigitalVisibilityJoin = 144
 			};
 
-			m_Button = new VtProMultiModeButton(panel, m_Subpage)
+			m_ClearCacheButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 45,
-				DigitalEnableJoin = 527,
-				AnalogModeJoin = 45
+				DigitalPressJoin = 816
 			};
 		}
 
@@ -39,7 +37,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options
 		protected override IEnumerable<IVtProControl> GetChildren()
 		{
 			yield return m_Subpage;
-			yield return m_Button;
+			yield return m_ClearCacheButton;
 		}
 	}
 }

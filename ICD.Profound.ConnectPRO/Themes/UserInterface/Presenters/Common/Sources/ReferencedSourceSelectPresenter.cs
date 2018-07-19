@@ -25,7 +25,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 
 		private ISource m_Source;
 		private bool m_Selected;
-		private bool m_Routed;
+		private eRoutedState m_RoutedState;
 
 		#region Properties
 
@@ -63,15 +63,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// <summary>
 		/// Gets/sets the routed state of the source.
 		/// </summary>
-		public bool Routed
+		public eRoutedState Routed
 		{
-			get { return m_Routed; }
+			get { return m_RoutedState; }
 			set
 			{
-				if (value == m_Routed)
+				if (value == m_RoutedState)
 					return;
 
-				m_Routed = value;
+				m_RoutedState = value;
 
 				RefreshIfVisible();
 			}

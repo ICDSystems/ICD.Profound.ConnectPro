@@ -117,8 +117,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			string passcode = m_StringBuilder.ToString();
 
-			// TODO - Pull passcode from room settings
-			if (passcode == "1988")
+			if (Room != null && !string.IsNullOrEmpty(Room.Passcode) && passcode == Room.Passcode)
 			{
 				HandleSuccess();
 				return;

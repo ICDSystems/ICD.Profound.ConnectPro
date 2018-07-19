@@ -32,6 +32,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			}
 		}
 
+		public bool HideFavoriteIcon { get; set; }
+
 		[CanBeNull]
 		protected IFavorites Favorites
 		{
@@ -80,7 +82,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			{
 				string name = GetName();
 				bool favorite = GetIsFavorite();
-				bool favoriteVisible = GetIsFavoriteVisible();
+				bool favoriteVisible = !HideFavoriteIcon && GetIsFavoriteVisible();
 
 				view.SetContactName(name);
 				view.SetIsFavorite(favorite);

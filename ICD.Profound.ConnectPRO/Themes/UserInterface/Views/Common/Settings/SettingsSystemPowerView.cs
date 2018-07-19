@@ -84,7 +84,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 
 		public void SetWakeMinute(ushort minute)
 		{
-			m_WakeMinuteLabel.SetLabelText(minute.ToString());
+			m_WakeMinuteLabel.SetLabelText(minute.ToString("D2"));
 		}
 
 		public void SetSleepHour(ushort hour)
@@ -94,7 +94,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 
 		public void SetSleepMinute(ushort minute)
 		{
-			m_SleepMinuteLabel.SetLabelText(minute.ToString());
+			m_SleepMinuteLabel.SetLabelText(minute.ToString("D2"));
+		}
+
+		public void SetWakeButtonVisibility(bool visible)
+		{
+			m_WakeButton.Show(visible);
+		}
+
+		public void SetSleepButtonVisibility(bool visible)
+		{
+			m_SleepButton.Show(visible);
 		}
 
 		#endregion

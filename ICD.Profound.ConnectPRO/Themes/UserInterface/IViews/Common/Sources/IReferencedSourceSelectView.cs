@@ -43,6 +43,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources
 		/// Sets the routed state for the source.
 		/// </summary>
 		/// <param name="routed"></param>
-		void SetRoutedState(bool routed);
+		void SetRoutedState(eRoutedState routed);
 	}
 }

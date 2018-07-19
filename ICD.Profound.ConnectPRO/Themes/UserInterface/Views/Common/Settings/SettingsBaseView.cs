@@ -20,11 +20,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 		public event EventHandler<UShortEventArgs> OnListItemPressed;
 
 		/// <summary>
-		/// Raised when the user presses the save button.
-		/// </summary>
-		public event EventHandler OnSaveButtonPressed;
-
-		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="panel"></param>
@@ -41,7 +36,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 		{
 			OnCloseButtonPressed = null;
 			OnListItemPressed = null;
-			OnSaveButtonPressed = null;
 
 			base.Dispose();
 		}
@@ -66,7 +60,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 			base.SubscribeControls();
 
 			m_CloseButton.OnPressed += CloseButtonOnPressed;
-			m_SaveButton.OnPressed += SaveButtonOnPressed;
 			m_ItemList.OnButtonClicked += ItemListOnButtonClicked;
 		}
 
@@ -78,7 +71,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 			base.UnsubscribeControls();
 
 			m_CloseButton.OnPressed -= CloseButtonOnPressed;
-			m_SaveButton.OnPressed -= SaveButtonOnPressed;
 			m_ItemList.OnButtonClicked -= ItemListOnButtonClicked;
 		}
 
@@ -90,16 +82,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 		private void ItemListOnButtonClicked(object sender, UShortEventArgs uShortEventArgs)
 		{
 			OnListItemPressed.Raise(this, new UShortEventArgs(uShortEventArgs.Data));
-		}
-
-		/// <summary>
-		/// Called when the user presses the save button.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="eventArgs"></param>
-		private void SaveButtonOnPressed(object sender, EventArgs eventArgs)
-		{
-			OnSaveButtonPressed.Raise(this);
 		}
 
 		/// <summary>

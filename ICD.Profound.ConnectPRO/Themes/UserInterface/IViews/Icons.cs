@@ -57,9 +57,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews
 			switch (color)
 			{
 				case eSourceColor.White:
+					return SUFFIX_WHITE;
+
 				case eSourceColor.Grey:
-				case eSourceColor.Yellow:
 					return SUFFIX_TWOTONE;
+
+				case eSourceColor.Yellow:
+					return SUFFIX_YELLOW;
 
 				default:
 					throw new ArgumentOutOfRangeException("color");

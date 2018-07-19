@@ -17,12 +17,12 @@ using ICD.Connect.Devices.Controls;
 using ICD.Connect.Displays.Devices;
 using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.Routing;
 using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Controls;
 using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
-using ICD.Connect.Routing.EventArguments;
 using ICD.Connect.Routing.Extensions;
 using ICD.Connect.Routing.RoutingGraphs;
 using ICD.Connect.Sources.TvTuner.Controls;
@@ -220,7 +220,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 		public IEnumerable<KeyValuePair<IDestination, IcdHashSet<ISource>>> GetCachedActiveVideoSources()
 		{
-			return m_CacheSection.Execute(() => m_VideoRoutingCache.ToArray(m_VideoRoutingCache.Count));
+			return
+				m_CacheSection.Execute(() =>
+				                       m_VideoRoutingCache.ToDictionary(kvp => kvp.Key, kvp => new IcdHashSet<ISource>(kvp.Value)));
 		}
 
 		public IEnumerable<ISource> GetCachedActiveAudioSources()
@@ -327,7 +329,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (destination == null)
 				throw new ArgumentNullException("destination");
 
-			return RoutingGraph.GetActiveSourceEndpoints(destination, flag, false, false);
+			return RoutingGraph.RoutingCache.GetSourceEndpointsForDestination(destination, flag, false, true);
 		}
 
 		private IEnumerable<ISource> GetActiveVideoSources(IDestination destination)
@@ -360,6 +362,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (source == null)
 				throw new ArgumentNullException("source");
 
+			// Don't allow partial route of VTC
+			UnrouteVtc();
+
 			foreach (IDestination destination in GetDisplayDestinations())
 				Route(source, destination, eConnectionType.Video);
 
@@ -379,6 +384,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			if (destination == null)
 				throw new ArgumentNullException("destination");
+
+			// Don't allow partial route of VTC
+			UnrouteVtc();
 
 			eConnectionType intersection = EnumUtils.GetFlagsIntersection(source.ConnectionType, destination.ConnectionType);
 
@@ -476,9 +484,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (destination == null)
 				throw new ArgumentNullException("destination");
 
-			ConnectionPath path = IcdStopwatch.Profile(() =>
-
-			                                           RoutingGraph.FindPath(source, destination, flag, m_Room.Id), "Pathfinding");
+			ConnectionPath path = RoutingGraph.FindPath(source, destination, flag, m_Room.Id);
 			if (path == null)
 			{
 				m_Room.Logger.AddEntry(eSeverity.Error, "Failed to find {0} path from {1} to {2}", flag, source, destination);
@@ -594,6 +600,16 @@ namespace ICD.Profound.ConnectPRO.Routing
 			}
 		}
 
+		/// <summary>
+		/// Routes the OSD if if is available.
+		/// </summary>
+		public void RouteOsdPostVtc()
+		{
+			OsdPanelDevice osd = m_Room.Core.Originators.GetChildren<OsdPanelDevice>().FirstOrDefault();
+			if (osd != null)
+				RouteOsd();
+		}
+
 		private void Route(ConnectionPath path)
 		{
 			if (path == null)
@@ -679,7 +695,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			                       source);
 		}
 
-		public ISource GetVtcPresentationSource()
+		public IEnumerable<ISource> GetVtcPresentationSources()
 		{
 			IVideoConferenceDevice codec = GetCodec();
 			if (codec == null)
@@ -697,12 +713,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (activeInput == null)
 				return null;
 
-			EndpointInfo? endpoint =
-				RoutingGraph.GetActiveSourceEndpoint(control, (int)activeInput, eConnectionType.Video, false, false);
-
-			return endpoint.HasValue
-				       ? RoutingGraph.Sources.GetChildren(endpoint.Value, eConnectionType.Video).FirstOrDefault()
-				       : null;
+			return RoutingGraph.RoutingCache
+			                   .GetSourcesForDestinationEndpoint(control.GetInputEndpointInfo((int)activeInput),
+			                                                     eConnectionType.Video);
 		}
 
 		/// <summary>
@@ -723,7 +736,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		public void UnrouteVtc()
 		{
-			IVideoConferenceDevice codec = m_Room.Originators.GetInstanceRecursive<IVideoConferenceDevice>();
+			IVideoConferenceDevice codec = GetCodec();
 			if (codec == null)
 				return;
 
@@ -806,8 +819,10 @@ namespace ICD.Profound.ConnectPRO.Routing
 			{
 				case eControlOverride.Default:
 
-					IDeviceControl dialer = GetDeviceControl(device, eControlOverride.Vtc) ??
-											GetDeviceControl(device, eControlOverride.Atc);
+					IDeviceControl dialer =
+						GetDeviceControl(device, eControlOverride.Vtc) ??
+						GetDeviceControl(device, eControlOverride.Atc);
+
 					if (dialer != null)
 						return dialer;
 
@@ -883,7 +898,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			m_SubscribedRoutingGraph = routingGraph;
 
-			routingGraph.OnRouteChanged += RoutingGraphOnRouteChanged;
+			routingGraph.RoutingCache.OnSourceDestinationRouteChanged += RoutingCacheOnRouteToDestinationChanged;
+			routingGraph.RoutingCache.OnDestinationEndpointActiveChanged += RoutingCacheOnDestinationEndpointActiveChanged;
 		}
 
 		/// <summary>
@@ -897,17 +913,33 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			m_SubscribedRoutingGraph = null;
 
-			routingGraph.OnRouteChanged -= RoutingGraphOnRouteChanged;
+			routingGraph.RoutingCache.OnSourceDestinationRouteChanged -= RoutingCacheOnRouteToDestinationChanged;
+			routingGraph.RoutingCache.OnDestinationEndpointActiveChanged -= RoutingCacheOnDestinationEndpointActiveChanged;
 		}
 
 		/// <summary>
 		/// Called when a switcher changes routing.
 		/// </summary>
 		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		private void RoutingGraphOnRouteChanged(object sender, SwitcherRouteChangeEventArgs args)
+		/// <param name="eventArgs"></param>
+		private void RoutingCacheOnRouteToDestinationChanged(object sender, SourceDestinationRouteChangedEventArgs eventArgs)
 		{
-			UpdateRoutingCache(args.Type);
+			HandleRoutingChange(eventArgs.Type);
+		}
+
+		/// <summary>
+		/// Called when a destinations active inputs change.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void RoutingCacheOnDestinationEndpointActiveChanged(object sender, CacheStateChangedEventArgs eventArgs)
+		{
+			HandleRoutingChange(eventArgs.Type);
+		}
+
+		private void HandleRoutingChange(eConnectionType type)
+		{
+			UpdateRoutingCache(type);
 
 			if (m_Routing)
 				return;

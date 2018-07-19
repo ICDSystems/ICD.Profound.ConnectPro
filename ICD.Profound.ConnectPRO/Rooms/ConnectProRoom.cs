@@ -6,7 +6,9 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.IO;
+using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
+using ICD.Common.Utils.Services.Scheduler;
 using ICD.Connect.Audio.Controls;
 using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Conferencing.ConferenceManagers;
@@ -33,6 +35,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		private readonly IConferenceManager m_ConferenceManager;
 		private readonly ConnectProRouting m_Routing;
 
+		private readonly WakeSchedule m_WakeSchedule;
+
 		private bool m_IsInMeeting;
 		private DialingPlanInfo m_DialingPlan;
 
@@ -41,7 +45,19 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <summary>
 		/// Gets/sets the current meeting status.
 		/// </summary>
-		public bool IsInMeeting { get { return m_IsInMeeting; } }
+		public bool IsInMeeting
+		{
+			get { return m_IsInMeeting; }
+			private set
+			{
+				if (value == m_IsInMeeting)
+					return;
+
+				m_IsInMeeting = value;
+
+				OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
+			}
+		}
 
 		/// <summary>
 		/// Gets the routing features for this room.
@@ -53,6 +69,10 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public IConferenceManager ConferenceManager { get { return m_ConferenceManager; } }
 
+		public WakeSchedule WakeSchedule { get { return m_WakeSchedule; } }
+
+		public string Passcode { get; set; }
+
 		#endregion
 
 		/// <summary>
@@ -62,6 +82,17 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		{
 			m_Routing = new ConnectProRouting(this);
 			m_ConferenceManager = new ConferenceManager();
+			m_WakeSchedule = new WakeSchedule();
+			Subscribe(m_WakeSchedule);
+			ServiceProvider.TryGetService<IActionSchedulerService>().Add(m_WakeSchedule);
+		}
+
+		protected override void DisposeFinal(bool disposing)
+		{
+			base.DisposeFinal(disposing);
+
+			Unsubscribe(m_WakeSchedule);
+			ServiceProvider.TryGetService<IActionSchedulerService>().Remove(m_WakeSchedule);
 		}
 
 		#region Methods
@@ -94,14 +125,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public void StartMeeting()
 		{
-			if (m_IsInMeeting)
-				return;
-
-			m_IsInMeeting = true;
-
 			Routing.RouteOsd();
 
-			OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
+			IsInMeeting = true;
 		}
 
 		/// <summary>
@@ -110,11 +136,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <param name="shutdown"></param>
 		public void EndMeeting(bool shutdown)
 		{
-			if (!m_IsInMeeting)
-				return;
-
-			m_IsInMeeting = false;
-
 			// Hangup
 			if (ConferenceManager != null && ConferenceManager.ActiveConference != null)
 				ConferenceManager.ActiveConference.Hangup();
@@ -125,7 +146,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			if (shutdown)
 				Sleep();
 
-			OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
+			IsInMeeting = false;
 		}
 
 		/// <summary>
@@ -140,6 +161,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			Originators.GetInstancesRecursive<IPanelDevice>()
 					   .SelectMany(panel => panel.Controls.GetControls<IPowerDeviceControl>())
 					   .ForEach(c => c.PowerOn());
+
+			IsInMeeting = false;
 		}
 
 		/// <summary>
@@ -166,6 +189,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			Originators.GetInstancesRecursive<IPanelDevice>()
 			           .SelectMany(panel => panel.Controls.GetControls<IPowerDeviceControl>())
 			           .ForEach(c => c.PowerOff());
+
+			IsInMeeting = false;
 		}
 
 		#endregion
@@ -181,6 +206,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			base.CopySettingsFinal(settings);
 
 			settings.DialingPlan = m_DialingPlan;
+			settings.Passcode = Passcode;
+
+			settings.WakeSchedule.Copy(m_WakeSchedule);
 		}
 
 		/// <summary>
@@ -195,6 +223,10 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			m_ConferenceManager.ClearDialingProviders();
 			m_ConferenceManager.Favorites = null;
 			m_ConferenceManager.DialingPlan.ClearMatchers();
+
+			Passcode = null;
+
+			m_WakeSchedule.Clear();
 		}
 
 		/// <summary>
@@ -212,6 +244,12 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			// Favorites
 			string path = PathUtils.GetProgramConfigPath("favorites");
 			m_ConferenceManager.Favorites = new SqLiteFavorites(path);
+
+			// Passcode
+			Passcode = settings.Passcode;
+
+			// Wake Schedule
+			m_WakeSchedule.Copy(settings.WakeSchedule);
 		}
 
 		/// <summary>
@@ -282,6 +320,34 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			{
 				Log(eSeverity.Error, "failed add {0} dialing provider - {1}", sourceType, e.Message);
 			}
+		}
+
+		#endregion
+
+		#region WakeSchedule Callbacks
+
+		private void Subscribe(WakeSchedule schedule)
+		{
+			schedule.OnWakeActionRequested += ScheduleOnWakeActionRequested;
+			schedule.OnSleepActionRequested += ScheduleOnSleepActionRequested;
+		}
+
+		private void Unsubscribe(WakeSchedule schedule)
+		{
+			schedule.OnWakeActionRequested -= ScheduleOnWakeActionRequested;
+			schedule.OnSleepActionRequested -= ScheduleOnSleepActionRequested;
+		}
+
+		private void ScheduleOnSleepActionRequested(object sender, EventArgs eventArgs)
+		{
+			Log(eSeverity.Informational, "Scheduled sleep occurring at {0}", IcdEnvironment.GetLocalTime().ToShortTimeString());
+			Sleep();
+		}
+
+		private void ScheduleOnWakeActionRequested(object sender, EventArgs eventArgs)
+		{
+			Log(eSeverity.Informational, "Scheduled wake occurring at {0}", IcdEnvironment.GetLocalTime().ToShortTimeString());
+			Wake();
 		}
 
 		#endregion

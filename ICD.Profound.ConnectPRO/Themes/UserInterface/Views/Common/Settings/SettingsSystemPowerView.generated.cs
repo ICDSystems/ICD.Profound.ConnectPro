@@ -111,12 +111,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 
 			m_WakeButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 812
+				DigitalPressJoin = 812,
+				DigitalVisibilityJoin = 814
 			};
 
 			m_SleepButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 813
+				DigitalPressJoin = 813,
+				DigitalVisibilityJoin = 815
 			};
 
 			m_WakeHourLabel = new VtProSimpleLabel(panel, m_Subpage)

@@ -100,10 +100,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(ISettingsBaseView), (panel, theme) => new SettingsBaseView(panel, theme)},
 			{typeof(ISettingsSystemPowerView), (panel, theme) => new SettingsSystemPowerView(panel, theme)},
 			{typeof(ISettingsPasscodeView), (panel, theme) => new SettingsPasscodeView(panel, theme)},
+			{typeof(ISettingsDirectoryView), (panel, theme) => new SettingsDirectoryView(panel, theme)},
 
 			// Video Conference
 			{typeof(IVtcBaseView), (panel, theme) => new VtcBaseView(panel, theme)},
 			{typeof(IVtcContactsView), (panel, theme) => new VtcContactsView(panel, theme)},
+			{typeof(IVtcContactsPolycomView), (panel, theme) => new VtcContactsPolycomView(panel, theme)},
 			{typeof(IVtcCameraView), (panel, theme) => new VtcCameraView(panel, theme)},
 			{typeof(IVtcShareView), (panel, theme) => new VtcShareView(panel, theme)},
 			{typeof(IVtcDtmfView), (panel, theme) => new VtcDtmfView(panel, theme)},

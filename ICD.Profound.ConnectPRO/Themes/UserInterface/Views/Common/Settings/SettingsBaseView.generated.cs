@@ -11,7 +11,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 	{
 		private VtProSubpage m_Subpage;
 		private VtProDynamicButtonList m_ItemList;
-		private VtProButton m_SaveButton;
 		private VtProButton m_CloseButton;
 
 		/// <summary>
@@ -32,11 +31,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 				MaxSize = 2
 			};
 
-			m_SaveButton = new VtProButton(panel, m_Subpage)
-			{
-				DigitalPressJoin = 820
-			};
-
 			m_CloseButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 160
@@ -51,7 +45,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 		{
 			yield return m_Subpage;
 			yield return m_ItemList;
-			yield return m_SaveButton;
 			yield return m_CloseButton;
 		}
 	}

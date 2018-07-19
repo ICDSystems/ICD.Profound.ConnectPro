@@ -2,6 +2,8 @@
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Audio.Controls;
 using ICD.Connect.Devices;
+using ICD.Connect.Devices.Controls;
+using ICD.Connect.Devices.EventArguments;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
@@ -16,6 +18,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		private readonly IVolumePresenter m_Menu;
 
 		private IVolumeMuteFeedbackDeviceControl m_SubscribedVolumeControl;
+		private IPowerDeviceControl m_SubscribedPowerControl;
 
 		/// <summary>
 		/// Constructor.
@@ -38,6 +41,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 			base.Dispose();
 
 			Unsubscribe(m_Menu);
+		}
+
+		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
+		protected override void Refresh(IOptionVolumeView view)
+		{
+			base.Refresh(view);
+
+			view.SetButtonEnabled(m_SubscribedPowerControl == null || m_SubscribedPowerControl.IsPowered);
 		}
 
 		/// <summary>
@@ -146,6 +160,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 				m_SubscribedVolumeControl.OnMuteStateChanged += SubscribedVolumeControlOnMuteStateChanged;
 
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
+
+			IDeviceBase parent = m_SubscribedVolumeControl == null ? null : m_SubscribedVolumeControl.Parent;
+			m_SubscribedPowerControl = parent == null ? null : parent.Controls.GetControl<IPowerDeviceControl>();
+			if (m_SubscribedPowerControl != null)
+				m_SubscribedPowerControl.OnIsPoweredChanged += SubscribedPowerControlOnIsPoweredChanged;
 		}
 
 		/// <summary>
@@ -160,10 +179,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 				m_SubscribedVolumeControl.OnMuteStateChanged -= SubscribedVolumeControlOnMuteStateChanged;
 			m_SubscribedVolumeControl = null;
 
-			if (room == null)
-				return;
+			if (m_SubscribedPowerControl != null)
+				m_SubscribedPowerControl.OnIsPoweredChanged -= SubscribedPowerControlOnIsPoweredChanged;
+			m_SubscribedPowerControl = null;
 
-			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
+			if (room != null)
+				room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
+		}
+
+		private void SubscribedPowerControlOnIsPoweredChanged(object sender, PowerDeviceControlPowerStateApiEventArgs powerDeviceControlPowerStateApiEventArgs)
+		{
+			RefreshIfVisible();
 		}
 
 		/// <summary>
