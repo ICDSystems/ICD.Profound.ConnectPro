@@ -362,6 +362,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (source == null)
 				throw new ArgumentNullException("source");
 
+			// Don't allow partial route of VTC
+			UnrouteVtc();
+
 			foreach (IDestination destination in GetDisplayDestinations())
 				Route(source, destination, eConnectionType.Video);
 
@@ -381,6 +384,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			if (destination == null)
 				throw new ArgumentNullException("destination");
+
+			// Don't allow partial route of VTC
+			UnrouteVtc();
 
 			eConnectionType intersection = EnumUtils.GetFlagsIntersection(source.ConnectionType, destination.ConnectionType);
 
