@@ -781,15 +781,15 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		/// <param name="source"></param>
 		/// <returns></returns>
-		public IDeviceBase GetDevice(ISource source)
+		private static IDeviceBase GetDevice(ISource source)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
 
-			return m_Room.Core.Originators.GetChild<IDeviceBase>(source.Device);
+			return ServiceProvider.GetService<ICore>().Originators.GetChild<IDeviceBase>(source.Device);
 		}
 
-		public bool CanControl(ISource source)
+		public static bool CanControl(ISource source)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
@@ -801,7 +801,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			return controlOverride != eControlOverride.Default || GetDeviceControl(source, eControlOverride.Default) != null;
 		}
 
-		public IDeviceControl GetDeviceControl(ISource source, eControlOverride controlOverride)
+		public static IDeviceControl GetDeviceControl(ISource source, eControlOverride controlOverride)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
@@ -810,7 +810,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			return device == null ? null : GetDeviceControl(device, controlOverride);
 		}
 
-		public IDeviceControl GetDeviceControl(IDeviceBase device, eControlOverride controlOverride)
+		public static IDeviceControl GetDeviceControl(IDeviceBase device, eControlOverride controlOverride)
 		{
 			if (device == null)
 				throw new ArgumentNullException("device");
@@ -849,7 +849,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			return null;
 		}
 
-		public eControlOverride GetControlOverride(ISource source)
+		public static eControlOverride GetControlOverride(ISource source)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");

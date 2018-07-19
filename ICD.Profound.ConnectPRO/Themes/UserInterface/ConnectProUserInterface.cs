@@ -18,6 +18,7 @@ using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Sources.TvTuner.Controls;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.Routing;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
@@ -324,8 +325,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (source == null)
 				return false;
 
-			eControlOverride controlOverride = m_Room.Routing.GetControlOverride(source);
-			IDeviceControl control = m_Room.Routing.GetDeviceControl(source, controlOverride);
+			eControlOverride controlOverride = ConnectProRouting.GetControlOverride(source);
+			IDeviceControl control = ConnectProRouting.GetDeviceControl(source, controlOverride);
 
 			if (control is IDialingDeviceControl)
 			{
