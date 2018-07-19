@@ -69,13 +69,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 				IVolumeDeviceControl volumeControl = GetVolumeControl();
 
 				bool isInMeeting = Room != null && Room.IsInMeeting;
-				bool hasVolumeControl = volumeControl != null;
+				bool hasVolumeControl = volumeControl != null && (m_PowerControl == null || m_PowerControl.IsPowered);
 
 				control.SetBacklightEnabled(ADDRESS_POWER, isInMeeting);
 				control.SetBacklightEnabled(ADDRESS_HOME, isInMeeting);
 				control.SetBacklightEnabled(ADDRESS_LIGHT, false);
-				control.SetBacklightEnabled(ADDRESS_VOL_UP, hasVolumeControl && (m_PowerControl == null || m_PowerControl.IsPowered));
-				control.SetBacklightEnabled(ADDRESS_VOL_DOWN, hasVolumeControl && (m_PowerControl == null || m_PowerControl.IsPowered));
+				control.SetBacklightEnabled(ADDRESS_VOL_UP, hasVolumeControl);
+				control.SetBacklightEnabled(ADDRESS_VOL_DOWN, hasVolumeControl);
 			}
 			finally
 			{
