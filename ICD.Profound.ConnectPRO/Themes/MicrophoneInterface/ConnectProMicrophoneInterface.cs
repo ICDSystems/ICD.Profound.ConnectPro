@@ -20,7 +20,7 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		private IConferenceManager m_SubscribedConferenceManager;
 
 		[CanBeNull]
-		private IConnectProRoom Room { get; set; }
+		public IConnectProRoom Room { get; private set; }
 
 		public IShureMxaDevice Microphone { get { return m_Microphone; } }
 

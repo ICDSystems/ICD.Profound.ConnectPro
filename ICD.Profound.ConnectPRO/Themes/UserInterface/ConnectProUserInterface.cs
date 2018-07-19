@@ -61,6 +61,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		public IPanelDevice Panel { get { return m_Panel; } }
 
+		public IConnectProRoom Room { get { return m_Room; } }
+
 		#endregion
 
 		/// <summary>
