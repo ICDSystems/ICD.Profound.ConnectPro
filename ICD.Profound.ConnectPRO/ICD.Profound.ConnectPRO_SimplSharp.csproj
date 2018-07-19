@@ -224,6 +224,7 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmLeaveCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmSplashPowerPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\MenuDisplaysPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Displays\MenuDisplaysPresenterDisplay.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\EndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\HeaderPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\AbstractOptionPresenter.cs" />
