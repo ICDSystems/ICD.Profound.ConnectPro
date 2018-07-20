@@ -187,6 +187,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			bool isInCall = m_SubscribedVideoDialer != null && m_SubscribedVideoDialer.GetSources().Any(s => s.GetIsActive());
 
+			ShowView(isInCall);
 			m_CallListTogglePresenter.ShowView(isInCall);
 
 			if (isInCall)
