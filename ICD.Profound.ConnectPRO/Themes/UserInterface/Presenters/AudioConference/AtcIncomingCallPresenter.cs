@@ -73,7 +73,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 			try
 			{
 				IConferenceSource source = GetFirstSource();
-				string info = source == null ? string.Empty : string.Format("{0} - {1}", source.Name, source.Number);
+				string info = GetCallerInfo(source);
 
 				view.SetCallerInfo(info);
 			}
@@ -81,6 +81,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		private static string GetCallerInfo(IConferenceSource source)
+		{
+			string output = string.Empty;
+
+			if (source == null)
+				return output;
+
+			output = string.IsNullOrEmpty(source.Name) ? "Unknown" : source.Name;
+
+			if (!string.IsNullOrEmpty(source.Number))
+				output = string.Format("{0} - {1}", output, source.Number);
+
+			return output;
 		}
 
 		/// <summary>
