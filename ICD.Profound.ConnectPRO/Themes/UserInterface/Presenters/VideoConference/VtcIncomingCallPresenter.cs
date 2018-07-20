@@ -98,7 +98,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		/// <returns></returns>
 		[CanBeNull]
-		private IDialingDeviceControl GetVideoDialer(IConnectProRoom room)
+		private static IDialingDeviceControl GetVideoDialer(IConnectProRoom room)
 		{
 			IConferenceManager manager = room == null ? null : room.ConferenceManager;
 			return manager == null ? null : manager.GetDialingProvider(eConferenceSourceType.Video);
@@ -129,12 +129,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Unsubscribe(room);
 
-			if (m_SubscribedVideoDialer == null)
-				return;
-
-			m_SubscribedVideoDialer.OnSourceAdded -= VideoDialerOnSourceAdded;
+			if (m_SubscribedVideoDialer != null)
+				m_SubscribedVideoDialer.OnSourceAdded -= VideoDialerOnSourceAdded;
 
 			m_SubscribedVideoDialer = null;
+		}
+
+		/// <summary>
+		/// Called when a new source is detected.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void VideoDialerOnSourceAdded(object sender, ConferenceSourceEventArgs args)
+		{
+			IConferenceSource source = args.Data;
+			if (source.GetIsRingingIncomingCall())
+				AddSource(source);
 		}
 
 		/// <summary>
@@ -186,18 +196,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			ShowView(SourceCount > 0);
 		}
 
-		/// <summary>
-		/// Called when a new source is detected.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		private void VideoDialerOnSourceAdded(object sender, ConferenceSourceEventArgs args)
-		{
-			IConferenceSource source = args.Data;
-			if (source.GetIsRingingIncomingCall())
-				AddSource(source);
-		}
-
 		#endregion
 
 		#region Source Callbacks
@@ -210,7 +208,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			source.OnNameChanged += SourceOnNameChanged;
 			source.OnNumberChanged += SourceOnNumberChanged;
-			source.OnSourceTypeChanged += SourceOnSourceTypeChanged;
 			source.OnStatusChanged += SourceOnStatusChanged;
 		}
 
@@ -222,7 +219,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			source.OnNameChanged -= SourceOnNameChanged;
 			source.OnNumberChanged -= SourceOnNumberChanged;
-			source.OnSourceTypeChanged -= SourceOnSourceTypeChanged;
 			source.OnStatusChanged -= SourceOnStatusChanged;
 		}
 
@@ -239,16 +235,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			if (!source.GetIsRingingIncomingCall())
 				RemoveSource(source);
-		}
-
-		/// <summary>
-		/// Called when the source type changes.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		private void SourceOnSourceTypeChanged(object sender, EventArgs args)
-		{
-			RefreshIfVisible();
 		}
 
 		/// <summary>
