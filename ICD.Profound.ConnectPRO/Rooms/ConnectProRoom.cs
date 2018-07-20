@@ -125,7 +125,17 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public void StartMeeting()
 		{
-			Routing.RouteOsd();
+			StartMeeting(true);
+		}
+
+		/// <summary>
+		/// Enters the meeting state.
+		/// </summary>
+		/// <param name="resetRouting"></param>
+		public void StartMeeting(bool resetRouting)
+		{
+			if (resetRouting)
+				Routing.RouteOsd();
 
 			IsInMeeting = true;
 		}

@@ -47,6 +47,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		void StartMeeting();
 
 		/// <summary>
+		/// Enters the meeting state.
+		/// </summary>
+		void StartMeeting(bool resetRouting);
+
+		/// <summary>
 		/// Ends the meeting state. If shutdown is true fully powers down the room.
 		/// </summary>
 		/// <param name="shutdown"></param>

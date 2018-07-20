@@ -312,6 +312,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (source != null)
 				source.Answer();
 
+			if (Room != null)
+				Room.StartMeeting(false);
+
 			OnCallAnswered.Raise(this);
 
 			ShowView(false);
