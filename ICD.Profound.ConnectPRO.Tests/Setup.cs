@@ -3,6 +3,7 @@ using ICD.Common.Logging.Console.Loggers;
 using ICD.Common.Permissions;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
+using ICD.Common.Utils.Services.Scheduler;
 using NUnit.Framework;
 
 namespace ICD.Profound.ConnectPRO.Tests
@@ -20,7 +21,7 @@ namespace ICD.Profound.ConnectPRO.Tests
 			m_Logger.SeverityLevel = eSeverity.Debug;
 
 			ServiceProvider.AddService<ILoggerService>(m_Logger);
-
+			ServiceProvider.AddService<IActionSchedulerService>(new ActionSchedulerService());
 			ServiceProvider.AddService(new PermissionsManager());
 		}
 

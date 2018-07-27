@@ -25,7 +25,10 @@
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\..\ICD.Connect.Displays\ICD.Connect.Displays.Mock\ICD.Connect.Displays.Mock_NetStandard.csproj" />
+    <ProjectReference Include="..\..\ICD.Connect.Misc\ICD.Connect.Misc.GlobalCache\ICD.Connect.Misc.GlobalCache_NetStandard.csproj" />
     <ProjectReference Include="..\..\ICD.Connect.Panels\ICD.Connect.Panels.Mock\ICD.Connect.Panels.Mock_NetStandard.csproj" />
+    <ProjectReference Include="..\..\ICD.Connect.Routing\ICD.Connect.Routing.Atlona\ICD.Connect.Routing.Atlona_NetStandard.csproj" />
     <ProjectReference Include="..\ICD.Profound.ConnectPRO\ICD.Profound.ConnectPRO_NetStandard.csproj" />
   </ItemGroup>
 

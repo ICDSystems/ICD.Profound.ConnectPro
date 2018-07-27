@@ -57,8 +57,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes
 			    Assert.NotNull(connectProOsdInterfaceFactory);
 
 			    var connectProUserInterfaceList = connectProUserInterfaceFactory.GetUserInterfaces().ToList();
-			    var connectProMicrophoneInterfaceList =
-				    connectProMicrophoneInterfaceFactory.GetUserInterfaces().ToList();
+			    var connectProMicrophoneInterfaceList = connectProMicrophoneInterfaceFactory.GetUserInterfaces().ToList();
 			    var connectProOsdInterfaceList = connectProOsdInterfaceFactory.GetUserInterfaces().ToList();
 
 			    Assert.IsNull(connectProUserInterfaceList.FirstOrDefault());
