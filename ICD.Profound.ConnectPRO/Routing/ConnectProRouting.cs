@@ -123,11 +123,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 				}
 
 				// Make sure there are no audio routes without video routes
+				/*
 				IEnumerable<ISource> unrouteAudioSources =
 					m_AudioRoutingCache.Where(s => !m_VideoRoutingCache.Any(kvp => kvp.Value.Contains(s)))
 					                   .ToArray();
 				foreach (ISource source in unrouteAudioSources)
 					UnrouteAudio(source);
+				 */
 			}
 			finally
 			{
