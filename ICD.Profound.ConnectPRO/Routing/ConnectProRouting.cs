@@ -936,6 +936,16 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <param name="eventArgs"></param>
 		private void RoutingCacheOnDestinationEndpointActiveChanged(object sender, CacheStateChangedEventArgs eventArgs)
 		{
+			// Does this event concern destination inputs?
+			bool intersects =
+				GetDisplayDestinations().Concat(GetAudioDestinations())
+										.SelectMany(d => d.GetEndpoints())
+										.Intersect(eventArgs.Endpoints)
+										.Any();
+
+			if (!intersects)
+				return;
+
 			HandleRoutingChange(eventArgs.Type);
 		}
 
