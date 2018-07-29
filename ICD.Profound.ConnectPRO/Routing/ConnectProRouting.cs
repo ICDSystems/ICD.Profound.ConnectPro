@@ -946,6 +946,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (m_Routing)
 				return;
 
+			if (!type.HasFlag(eConnectionType.Video))
+				return;
+
 			// If nothing is routed to a display we route the OSD
 			OsdPanelDevice osd = m_Room.Core.Originators.GetChildren<OsdPanelDevice>().FirstOrDefault();
 			if (osd == null)
