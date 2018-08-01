@@ -617,30 +617,43 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (path == null)
 				throw new ArgumentNullException("path");
 
+			Route(new[] {path});
+		}
+
+		private void Route(IEnumerable<ConnectionPath> paths)
+		{
+			if (paths == null)
+				throw new ArgumentNullException("paths");
+
+			IList<ConnectionPath> pathsList = paths as IList<ConnectionPath> ?? paths.ToArray();
+
 			bool oldRouting = m_Routing;
 			m_Routing = true;
 
-			IcdStopwatch.Profile(() => RoutingGraph.RoutePath(path, m_Room.Id),
-			                     string.Format("Route - {0} {1}", path, path.ConnectionType));
+			IcdStopwatch.Profile(() => RoutingGraph.RoutePaths(pathsList, m_Room.Id),
+			                     string.Format("Route - {0}", StringUtils.ArrayFormat(pathsList)));
 
 			if (!oldRouting)
 				m_Routing = false;
 
-			IDeviceBase destinationDevice =
-				m_Room.Core.Originators.GetChild<IDeviceBase>(path.DestinationEndpoint.Device);
+			foreach (EndpointInfo destination in pathsList.Select(p => p.DestinationEndpoint).Distinct())
+			{
+				IDeviceBase destinationDevice =
+					m_Room.Core.Originators.GetChild<IDeviceBase>(destination.Device);
 
-			// Power on the destination
-			IPowerDeviceControl powerControl = destinationDevice.Controls.GetControl<IPowerDeviceControl>();
-			if (powerControl != null && !powerControl.IsPowered)
-				powerControl.PowerOn();
+				// Power on the destination
+				IPowerDeviceControl powerControl = destinationDevice.Controls.GetControl<IPowerDeviceControl>();
+				if (powerControl != null && !powerControl.IsPowered)
+					powerControl.PowerOn();
 
-			// Set the destination to the correct input
-			int input = path.DestinationEndpoint.Address;
-			IRouteInputSelectControl inputSelectControl =
-				destinationDevice.Controls.GetControl<IRouteInputSelectControl>();
+				// Set the destination to the correct input
+				int input = destination.Address;
+				IRouteInputSelectControl inputSelectControl =
+					destinationDevice.Controls.GetControl<IRouteInputSelectControl>();
 
-			if (inputSelectControl != null && inputSelectControl.ActiveInput != input)
-				inputSelectControl.SetActiveInput(input);
+				if (inputSelectControl != null && inputSelectControl.ActiveInput != input)
+					inputSelectControl.SetActiveInput(input);
+			}
 		}
 
 		/// <summary>
