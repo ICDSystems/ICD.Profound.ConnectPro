@@ -60,7 +60,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		private IRoutingGraph RoutingGraph { get { return m_SubscribedRoutingGraph; } }
 
-		private IPathFinder PathFinder { get { return m_PathFinder = m_PathFinder ?? new DefaultPathFinder(RoutingGraph); } }
+		private IPathFinder PathFinder { get { return m_PathFinder = m_PathFinder ?? new DefaultPathFinder(RoutingGraph, m_Room.Id); } }
 
 		/// <summary>
 		/// Returns true if the room contains more than 1 display.
