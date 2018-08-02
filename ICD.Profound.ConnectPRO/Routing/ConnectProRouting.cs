@@ -494,7 +494,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				           .From(source)
 				           .To(destination)
 				           .OfType(flag)
-						   .With(PathFinder);
+				           .With(PathFinder);
 
 			Route(paths);
 		}
