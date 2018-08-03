@@ -24,6 +24,7 @@ using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.Extensions;
+using ICD.Connect.Routing.Pathfinding;
 using ICD.Connect.Routing.RoutingGraphs;
 using ICD.Connect.Sources.TvTuner.Controls;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -51,12 +52,15 @@ namespace ICD.Profound.ConnectPRO.Routing
 		private readonly SafeCriticalSection m_CacheSection;
 
 		private IRoutingGraph m_SubscribedRoutingGraph;
+		private IPathFinder m_PathFinder;
 		private bool m_Routing;
 
 		/// <summary>
 		/// Gets the routing graph from the core.
 		/// </summary>
 		private IRoutingGraph RoutingGraph { get { return m_SubscribedRoutingGraph; } }
+
+		private IPathFinder PathFinder { get { return m_PathFinder = m_PathFinder ?? new DefaultPathFinder(RoutingGraph, m_Room.Id); } }
 
 		/// <summary>
 		/// Returns true if the room contains more than 1 display.
@@ -123,11 +127,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 				}
 
 				// Make sure there are no audio routes without video routes
+				/*
 				IEnumerable<ISource> unrouteAudioSources =
 					m_AudioRoutingCache.Where(s => !m_VideoRoutingCache.Any(kvp => kvp.Value.Contains(s)))
 					                   .ToArray();
 				foreach (ISource source in unrouteAudioSources)
 					UnrouteAudio(source);
+				 */
 			}
 			finally
 			{
@@ -451,9 +457,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			Connection firstOutput = RoutingGraph.Connections
 			                                     .GetOutputConnections(sourceControl.Parent.Id,
-			                                                           sourceControl.Id)
-			                                     .Where(c => c.ConnectionType.HasFlag(eConnectionType.Audio))
-			                                     .OrderBy(o => o.Source.Address)
+			                                                           sourceControl.Id,
+			                                                           eConnectionType.Audio)
 			                                     .FirstOrDefault();
 
 			if (firstOutput == null)
@@ -484,14 +489,14 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (destination == null)
 				throw new ArgumentNullException("destination");
 
-			ConnectionPath path = RoutingGraph.FindPath(source, destination, flag, m_Room.Id);
-			if (path == null)
-			{
-				m_Room.Logger.AddEntry(eSeverity.Error, "Failed to find {0} path from {1} to {2}", flag, source, destination);
-				return;
-			}
+			IEnumerable<ConnectionPath> paths =
+				PathBuilder.FindPaths()
+				           .From(source)
+				           .To(destination)
+				           .OfType(flag)
+				           .With(PathFinder);
 
-			Route(path);
+			Route(paths);
 		}
 
 		private void Route(EndpointInfo sourceEndpoint, IDestination destination, eConnectionType flag)
@@ -499,14 +504,14 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (destination == null)
 				throw new ArgumentNullException("destination");
 
-			ConnectionPath path = RoutingGraph.FindPath(sourceEndpoint, destination, flag, m_Room.Id);
-			if (path == null)
-			{
-				m_Room.Logger.AddEntry(eSeverity.Error, "Failed to find {0} path from {1} to {2}", flag, sourceEndpoint, destination);
-				return;
-			}
+			IEnumerable<ConnectionPath> paths =
+				PathBuilder.FindPaths()
+						   .From(sourceEndpoint)
+						   .To(destination)
+						   .OfType(flag)
+						   .With(PathFinder);
 
-			Route(path);
+			Route(paths);
 		}
 
 		private void Route(ISource source, EndpointInfo destinationEndpoint, eConnectionType flag)
@@ -514,14 +519,14 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (source == null)
 				throw new ArgumentNullException("source");
 
-			ConnectionPath path = RoutingGraph.FindPath(source, destinationEndpoint, flag, m_Room.Id);
-			if (path == null)
-			{
-				m_Room.Logger.AddEntry(eSeverity.Error, "Failed to find {0} path from {1} to {2}", flag, source, destinationEndpoint);
-				return;
-			}
+			IEnumerable<ConnectionPath> paths =
+				PathBuilder.FindPaths()
+						   .From(source)
+						   .To(destinationEndpoint)
+						   .OfType(flag)
+						   .With(PathFinder);
 
-			Route(path);
+			Route(paths);
 		}
 
 		public void RouteAudio(ISource source)
@@ -610,35 +615,40 @@ namespace ICD.Profound.ConnectPRO.Routing
 				RouteOsd();
 		}
 
-		private void Route(ConnectionPath path)
+		private void Route(IEnumerable<ConnectionPath> paths)
 		{
-			if (path == null)
-				throw new ArgumentNullException("path");
+			if (paths == null)
+				throw new ArgumentNullException("paths");
+
+			IList<ConnectionPath> pathsList = paths as IList<ConnectionPath> ?? paths.ToArray();
 
 			bool oldRouting = m_Routing;
 			m_Routing = true;
 
-			IcdStopwatch.Profile(() => RoutingGraph.RoutePath(path, m_Room.Id),
-			                     string.Format("Route - {0} {1}", path, path.ConnectionType));
+			IcdStopwatch.Profile(() => RoutingGraph.RoutePaths(pathsList, m_Room.Id),
+			                     string.Format("Route - {0}", StringUtils.ArrayFormat(pathsList)));
 
 			if (!oldRouting)
 				m_Routing = false;
 
-			IDeviceBase destinationDevice =
-				m_Room.Core.Originators.GetChild<IDeviceBase>(path.DestinationEndpoint.Device);
+			foreach (EndpointInfo destination in pathsList.Select(p => p.DestinationEndpoint).Distinct())
+			{
+				IDeviceBase destinationDevice =
+					m_Room.Core.Originators.GetChild<IDeviceBase>(destination.Device);
 
-			// Power on the destination
-			IPowerDeviceControl powerControl = destinationDevice.Controls.GetControl<IPowerDeviceControl>();
-			if (powerControl != null && !powerControl.IsPowered)
-				powerControl.PowerOn();
+				// Power on the destination
+				IPowerDeviceControl powerControl = destinationDevice.Controls.GetControl<IPowerDeviceControl>();
+				if (powerControl != null && !powerControl.IsPowered)
+					powerControl.PowerOn();
 
-			// Set the destination to the correct input
-			int input = path.DestinationEndpoint.Address;
-			IRouteInputSelectControl inputSelectControl =
-				destinationDevice.Controls.GetControl<IRouteInputSelectControl>();
+				// Set the destination to the correct input
+				int input = destination.Address;
+				IRouteInputSelectControl inputSelectControl =
+					destinationDevice.Controls.GetControl<IRouteInputSelectControl>();
 
-			if (inputSelectControl != null && inputSelectControl.ActiveInput != input)
-				inputSelectControl.SetActiveInput(input);
+				if (inputSelectControl != null && inputSelectControl.ActiveInput != input)
+					inputSelectControl.SetActiveInput(input);
+			}
 		}
 
 		/// <summary>
@@ -678,8 +688,15 @@ namespace ICD.Profound.ConnectPRO.Routing
 				EndpointInfo endpoint = control.GetInputEndpointInfo(input);
 
 				// Is there a path?
-				if (RoutingGraph.FindPath(source, endpoint, eConnectionType.Video, m_Room.Id) == null)
-					continue;
+				bool hasPath =
+					PathBuilder.FindPaths()
+					           .From(source)
+							   .To(endpoint)
+							   .OfType(eConnectionType.Video)
+					           .With(PathFinder)
+					           .Any();
+				if (!hasPath)
+					return;
 
 				// Route the source video and audio to the codec
 				Route(source, endpoint, eConnectionType.Video);
@@ -934,6 +951,16 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <param name="eventArgs"></param>
 		private void RoutingCacheOnDestinationEndpointActiveChanged(object sender, CacheStateChangedEventArgs eventArgs)
 		{
+			// Does this event concern destination inputs?
+			bool intersects =
+				GetDisplayDestinations().Concat(GetAudioDestinations())
+										.SelectMany(d => d.GetEndpoints())
+										.Intersect(eventArgs.Endpoints)
+										.Any();
+
+			if (!intersects)
+				return;
+
 			HandleRoutingChange(eventArgs.Type);
 		}
 
@@ -942,6 +969,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 			UpdateRoutingCache(type);
 
 			if (m_Routing)
+				return;
+
+			if (!type.HasFlag(eConnectionType.Video))
 				return;
 
 			// If nothing is routed to a display we route the OSD
