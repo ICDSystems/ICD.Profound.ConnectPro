@@ -1,8 +1,8 @@
 ﻿using ICD.Connect.Protocol.Sigs;
-using ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation;
+using ICD.Profound.ConnectPRO.Tests.RoomTypes;
 using NUnit.Framework;
 
-namespace ICD.Profound.ConnectPRO.Tests.RoomTypes.Common
+namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 {
     public abstract class AbstractMeetingTest<TRoomType> : AbstractNavigationTest<TRoomType>
 		where TRoomType : AbstractRoomType

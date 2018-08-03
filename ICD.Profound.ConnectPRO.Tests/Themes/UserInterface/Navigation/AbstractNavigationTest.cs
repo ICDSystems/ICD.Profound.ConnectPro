@@ -1,4 +1,4 @@
-﻿using ICD.Profound.ConnectPRO.Tests.RoomTypes.Common;
+﻿using ICD.Profound.ConnectPRO.Tests.RoomTypes;
 
 namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation
 {

@@ -3,7 +3,7 @@ using ICD.Connect.Panels.Mock;
 using ICD.Connect.Settings.Core;
 using ICD.Profound.ConnectPRO.Rooms;
 
-namespace ICD.Profound.ConnectPRO.Tests.RoomTypes.Common
+namespace ICD.Profound.ConnectPRO.Tests.RoomTypes
 {
     public abstract class AbstractRoomType : IDisposable
     {

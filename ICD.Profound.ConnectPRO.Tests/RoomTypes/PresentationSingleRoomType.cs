@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ICD.Common.Utils.Services;
 using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Displays.Mock.Devices;
@@ -14,10 +13,9 @@ using ICD.Connect.Routing.Mock.Switcher;
 using ICD.Connect.Routing.RoutingGraphs;
 using ICD.Connect.Settings.Core;
 using ICD.Profound.ConnectPRO.Rooms;
-using ICD.Profound.ConnectPRO.Tests.RoomTypes.Common;
 using ICD.Profound.ConnectPRO.Themes;
 
-namespace ICD.Profound.ConnectPRO.Tests.RoomTypes.PresentationSingle
+namespace ICD.Profound.ConnectPRO.Tests.RoomTypes
 {
 	public sealed class PresentationSingleRoomType : AbstractRoomType
 	{
@@ -46,7 +44,7 @@ namespace ICD.Profound.ConnectPRO.Tests.RoomTypes.PresentationSingle
 			var mockSourceDevice1 = new MockSourceDevice {Id = 20001604};
 			var mockSourceDevice2 = new MockSourceDevice {Id = 20001606};
 			var sharpDisplay = new MockDisplayWithAudio {Id = 20001661};
-			var connectProVolumePoint = new VolumePoint {Id = 90000045};
+			var connectProVolumePoint = new VolumePoint {Id = 90000045, DeviceId = 20001661 };
 
 			//Adding rooms and devices to core Originators
 			m_core.Originators.AddChild(m_room);
@@ -69,28 +67,28 @@ namespace ICD.Profound.ConnectPRO.Tests.RoomTypes.PresentationSingle
 			m_room.Originators.Add(connectProVolumePoint.Id, eCombineMode.Always);
 
 			// Add sources/destinations to the routing graph and core
-			var display = new Destination(60000040, 20001661, 0, new[] {1, 2, 3}, "Display", false, 0, false);
+			var display = new Destination(60000040, 20001661, 0, new[] {1, 2, 3}, "Display", false, 0, false) {ConnectionType = eConnectionType.Video};
 			routingGraph.Destinations.AddChild(display);
+			m_core.Originators.AddChild(display);
+			m_room.Originators.Add(display.Id, eCombineMode.Always);
 
 			var laptop = new Source(50000046, 20001606, 0, new[] {1, 2, 3}, "Laptop", false, 0, false);
 			routingGraph.Sources.AddChild(laptop);
+			m_core.Originators.AddChild(laptop);
+			m_room.Originators.Add(laptop.Id, eCombineMode.Always);
+
 			var webConferencing = new Source(50000047, 20001604, 0, new[] {1, 2}, "Web Conferencing", false, 1, false);
 			routingGraph.Sources.AddChild(webConferencing);
+			m_core.Originators.AddChild(webConferencing);
+			m_room.Originators.Add(webConferencing.Id, eCombineMode.Always);
 
 			// Add connections to the routing graph and core
 			var connections = new List<Connection>
 			{
-				new Connection(30000757, 20001605, 0, 1, 20001600, 0, 5, eConnectionType.Audio),
-				new Connection(30000757, 20001605, 0, 1, 20001600, 0, 5, eConnectionType.Video),
-
-				new Connection(30000758, 20001600, 0, 1, 20001661, 0, 1, eConnectionType.Audio),
-				new Connection(30000758, 20001600, 0, 1, 20001661, 0, 1, eConnectionType.Video),
-
-				new Connection(30000762, 20001606, 0, 1, 20001600, 0, 1, eConnectionType.Audio),
-				new Connection(30000762, 20001606, 0, 1, 20001600, 0, 1, eConnectionType.Video),
-
-				new Connection(30000763, 20001604, 0, 1, 20001600, 0, 2, eConnectionType.Audio),
-				new Connection(30000763, 20001604, 0, 1, 20001600, 0, 2, eConnectionType.Video)
+				new Connection(30000757, 20001605, 0, 1, 20001600, 0, 5, eConnectionType.Audio | eConnectionType.Video),
+				new Connection(30000758, 20001600, 0, 1, 20001661, 0, 1, eConnectionType.Audio | eConnectionType.Video),
+				new Connection(30000762, 20001606, 0, 1, 20001600, 0, 1, eConnectionType.Audio | eConnectionType.Video),
+				new Connection(30000763, 20001604, 0, 1, 20001600, 0, 2, eConnectionType.Audio | eConnectionType.Video)
 			};
 
 			routingGraph.Connections.AddChildren(connections);

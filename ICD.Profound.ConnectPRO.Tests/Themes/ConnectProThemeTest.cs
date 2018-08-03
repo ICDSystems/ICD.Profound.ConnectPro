@@ -8,6 +8,7 @@ using ICD.Connect.Partitioning;
 using ICD.Connect.Routing.RoutingGraphs;
 using ICD.Connect.Settings.Core;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.Tests.RoomTypes;
 using ICD.Profound.ConnectPRO.Themes;
 using ICD.Profound.ConnectPRO.Themes.MicrophoneInterface;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface;
@@ -19,38 +20,18 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes
 	[TestFixture]
     public sealed class ConnectProThemeTest
     {
+
 	    /// <summary>
 	    /// Clears and rebuilds the user interfaces.
 	    /// </summary>
 	    [Test]
-	    public void BuildUserInterfaces()
+	    public void BuildUserInterfacesEmptyRoom()
 	    {
-		    using (var core = new Core {Id = 100})
+		    using (var simpleTestRoomType = new SimpleTestRoomType())
 		    {
-				//instantiating rooms and devices
-				core.Originators.AddChild(new RoutingGraph {Id = 200});
-			    var connectProTheme = new ConnectProTheme {Id = 300};
-			    var connectProRoom1 = new ConnectProRoom {Id = 400};
-			    var connectProRoom2 = new ConnectProRoom {Id = 500};
-			    var mockPanelDevice = new MockPanelDevice {Id = 600};
-			    var microphoneDevice = new ShureMxa910Device {Id = 700};
-			    var osdDevice = new OsdPanelDevice {Id = 800};
-
-				//Adding rooms and devices to core Originators
-				core.Originators.AddChild(connectProRoom1);
-			    core.Originators.AddChild(connectProRoom2);
-			    core.Originators.AddChild(mockPanelDevice);
-			    core.Originators.AddChild(connectProTheme);
-			    core.Originators.AddChild(microphoneDevice);
-			    core.Originators.AddChild(osdDevice);
-
-				//Building User Interfaces for empty rooms
-				connectProTheme.BuildUserInterfaces();
-
-			    var uiFactories = connectProTheme.GetUiFactories().ToList();
-			    var connectProUserInterfaceFactory = uiFactories[0];
-			    var connectProMicrophoneInterfaceFactory = uiFactories[1];
-			    var connectProOsdInterfaceFactory = uiFactories[2];
+			    var connectProUserInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(0);
+			    var connectProMicrophoneInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(1);
+			    var connectProOsdInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(2);
 
 			    Assert.NotNull(connectProUserInterfaceFactory);
 			    Assert.NotNull(connectProMicrophoneInterfaceFactory);
@@ -63,48 +44,82 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes
 			    Assert.IsNull(connectProUserInterfaceList.FirstOrDefault());
 			    Assert.IsNull(connectProOsdInterfaceList.FirstOrDefault());
 			    Assert.IsNull(connectProMicrophoneInterfaceList.FirstOrDefault());
+			}
+	    }
 
+	    /// <summary>
+	    /// Clears and rebuilds the user interfaces.
+	    /// </summary>
+	    [Test]
+	    public void BuildUserInterfacesPanelMicrophone()
+	    {
+		    using (var simpleTestRoomType = new SimpleTestRoomType())
+		    {
 				//Adding devices to rooms (Panels and Microphone)
-				connectProRoom1.Originators.Add(mockPanelDevice.Id, eCombineMode.Always);
-			    connectProRoom2.Originators.Add(mockPanelDevice.Id, eCombineMode.Always);
-			    connectProRoom2.Originators.Add(microphoneDevice.Id, eCombineMode.Always);
+			    simpleTestRoomType.ConnectProRoom1.Originators.Add(simpleTestRoomType.MockPanelDevice.Id, eCombineMode.Always);
+			    simpleTestRoomType.ConnectProRoom1.Originators.Add(simpleTestRoomType.MockPanelDevice.Id, eCombineMode.Always);
+			    simpleTestRoomType.ConnectProRoom2.Originators.Add(simpleTestRoomType.MicrophoneDevice.Id, eCombineMode.Always);
 
-			    //Building User Interfaces for rooms
-				connectProTheme.BuildUserInterfaces();
+				//Building User Interfaces for rooms
+			    simpleTestRoomType.ConnectProTheme.BuildUserInterfaces();
 
-			    connectProUserInterfaceList = connectProUserInterfaceFactory.GetUserInterfaces().ToList();
-			    connectProMicrophoneInterfaceList = connectProMicrophoneInterfaceFactory.GetUserInterfaces().ToList();
-			    connectProOsdInterfaceList = connectProOsdInterfaceFactory.GetUserInterfaces().ToList();
+			    var connectProUserInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(0);
+			    var connectProMicrophoneInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(1);
+			    var connectProOsdInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(2);
 
-			    Assert.AreEqual(mockPanelDevice, (connectProUserInterfaceList.FirstOrDefault() as ConnectProUserInterface)?.Panel);
+			    Assert.NotNull(connectProUserInterfaceFactory);
+			    Assert.NotNull(connectProMicrophoneInterfaceFactory);
+			    Assert.NotNull(connectProOsdInterfaceFactory);
+
+				var connectProUserInterfaceList = connectProUserInterfaceFactory.GetUserInterfaces().ToList();
+			    var connectProMicrophoneInterfaceList = connectProMicrophoneInterfaceFactory.GetUserInterfaces().ToList();
+			    var connectProOsdInterfaceList = connectProOsdInterfaceFactory.GetUserInterfaces().ToList();
+
+			    Assert.AreEqual(simpleTestRoomType.MockPanelDevice, (connectProUserInterfaceList.FirstOrDefault() as ConnectProUserInterface)?.Panel);
 			    Assert.IsNull(connectProOsdInterfaceList.FirstOrDefault());
 
-			    Assert.AreEqual(connectProRoom1, (connectProUserInterfaceList.FirstOrDefault() as ConnectProUserInterface)?.Room);
-			    Assert.AreEqual(connectProRoom2, (connectProMicrophoneInterfaceList.FirstOrDefault() as ConnectProMicrophoneInterface)?.Room);
-
-				//Adding more devices to rooms (OSDs and Microphone)
-				connectProRoom1.Originators.Add(osdDevice.Id, eCombineMode.Always);
-			    connectProRoom1.Originators.Add(microphoneDevice.Id, eCombineMode.Always);
-			    connectProRoom2.Originators.Add(osdDevice.Id, eCombineMode.Always);
-
-			    //Building User Interfaces for rooms
-				connectProTheme.BuildUserInterfaces();
-
-			    connectProUserInterfaceList = connectProUserInterfaceFactory.GetUserInterfaces().ToList();
-			    connectProMicrophoneInterfaceList = connectProMicrophoneInterfaceFactory.GetUserInterfaces().ToList();
-			    connectProOsdInterfaceList = connectProOsdInterfaceFactory.GetUserInterfaces().ToList();
-
-			    Assert.AreEqual(mockPanelDevice, (connectProUserInterfaceList.FirstOrDefault() as ConnectProUserInterface)?.Panel);
-			    Assert.AreEqual(osdDevice, (connectProOsdInterfaceList.FirstOrDefault() as ConnectProOsdInterface)?.Panel);
-
-			    Assert.AreEqual(connectProRoom1, (connectProUserInterfaceList.FirstOrDefault() as ConnectProUserInterface)?.Room);
-			    Assert.AreEqual(connectProRoom1, (connectProOsdInterfaceList.FirstOrDefault() as ConnectProOsdInterface)?.Room);
-			    Assert.AreEqual(connectProRoom1, (connectProMicrophoneInterfaceList.FirstOrDefault() as ConnectProMicrophoneInterface)?.Room);
-
-			    Assert.IsNull(connectProUserInterfaceList.ElementAtOrDefault(1));
-			    Assert.IsNull(connectProOsdInterfaceList.ElementAtOrDefault(1));
-			    Assert.IsNull(connectProMicrophoneInterfaceList.ElementAtOrDefault(1));
-		    }
+			    Assert.AreEqual(simpleTestRoomType.ConnectProRoom1, (connectProUserInterfaceList.FirstOrDefault() as ConnectProUserInterface)?.Room);
+			    Assert.AreEqual(simpleTestRoomType.ConnectProRoom2, (connectProMicrophoneInterfaceList.FirstOrDefault() as ConnectProMicrophoneInterface)?.Room);
+			}
 	    }
-    }
+
+	    /// <summary>
+	    /// Clears and rebuilds the user interfaces.
+	    /// </summary>
+	    [Test]
+	    public void BuildUserInterfacesPanelMicrophoneOsd()
+	    {
+		    using (var simpleTestRoomType = new SimpleTestRoomType())
+		    {
+			    //Adding devices to rooms (Panels, Microphones and OSDs)
+			    simpleTestRoomType.ConnectProRoom1.Originators.Add(simpleTestRoomType.MockPanelDevice.Id, eCombineMode.Always);
+			    simpleTestRoomType.ConnectProRoom1.Originators.Add(simpleTestRoomType.MockPanelDevice.Id, eCombineMode.Always);
+			    simpleTestRoomType.ConnectProRoom2.Originators.Add(simpleTestRoomType.MicrophoneDevice.Id, eCombineMode.Always);
+			    simpleTestRoomType.ConnectProRoom1.Originators.Add(simpleTestRoomType.OsdDevice.Id, eCombineMode.Always);
+			    simpleTestRoomType.ConnectProRoom1.Originators.Add(simpleTestRoomType.MicrophoneDevice.Id, eCombineMode.Always);
+				simpleTestRoomType.ConnectProRoom2.Originators.Add(simpleTestRoomType.OsdDevice.Id, eCombineMode.Always);
+
+				//Building User Interfaces for rooms
+			    simpleTestRoomType.ConnectProTheme.BuildUserInterfaces();
+
+			    var connectProUserInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(0);
+			    var connectProMicrophoneInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(1);
+			    var connectProOsdInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(2);
+
+			    Assert.NotNull(connectProUserInterfaceFactory);
+			    Assert.NotNull(connectProMicrophoneInterfaceFactory);
+			    Assert.NotNull(connectProOsdInterfaceFactory);
+
+			    var connectProUserInterfaceList = connectProUserInterfaceFactory.GetUserInterfaces().ToList();
+			    var connectProMicrophoneInterfaceList = connectProMicrophoneInterfaceFactory.GetUserInterfaces().ToList();
+			    var connectProOsdInterfaceList = connectProOsdInterfaceFactory.GetUserInterfaces().ToList();
+
+			    Assert.AreEqual(simpleTestRoomType.MockPanelDevice, (connectProUserInterfaceList.FirstOrDefault() as ConnectProUserInterface)?.Panel);
+
+			    Assert.AreEqual(simpleTestRoomType.ConnectProRoom1, (connectProUserInterfaceList.FirstOrDefault() as ConnectProUserInterface)?.Room);
+			    Assert.AreEqual(simpleTestRoomType.ConnectProRoom1, (connectProMicrophoneInterfaceList.FirstOrDefault() as ConnectProMicrophoneInterface)?.Room);
+			    Assert.AreEqual(simpleTestRoomType.ConnectProRoom1, (connectProOsdInterfaceList.FirstOrDefault() as ConnectProOsdInterface)?.Room);
+			}
+	    }
+	}
 }
