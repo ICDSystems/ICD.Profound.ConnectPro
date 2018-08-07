@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
@@ -42,6 +45,23 @@ namespace ICD.Profound.ConnectPRO.Themes
 		/// Gets the web conferencing instructions.
 		/// </summary>
 		public WebConferencingInstructions WebConferencingInstructions { get { return m_WebConferencingInstructions; } }
+
+		/// <summary>
+		/// Gets the UI Factories.
+		/// </summary>
+		public IEnumerable<IConnectProUserInterfaceFactory> GetUiFactories()
+		{
+			m_UiFactoriesSection.Enter();
+
+			try
+			{
+				return m_UiFactories.ToArray(m_UiFactories.Count);
+			}
+			finally
+			{
+				m_UiFactoriesSection.Leave();
+			}
+		}
 
 		#endregion
 

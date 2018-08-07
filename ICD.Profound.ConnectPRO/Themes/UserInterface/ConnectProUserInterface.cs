@@ -62,6 +62,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		public IPanelDevice Panel { get { return m_Panel; } }
 
+		public IConnectProRoom Room { get { return m_Room; } }
+
 		#endregion
 
 		/// <summary>
@@ -244,7 +246,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				else if (source != null && audioDialer != null && source.Device == audioDialer.Parent.Id)
 				{
 					IRouteSourceControl sourceControl = m_Room.Core.GetControl<IRouteSourceControl>(source.Device, source.Control);
-					m_Room.Routing.RouteAtc(sourceControl);	
+					m_Room.Routing.RouteAtc(sourceControl);
 				}
 				// Typical case - continue routing
 				else
@@ -337,6 +339,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				else
 					m_NavigationController.NavigateTo<IAtcBasePresenter>();
 
+				SetActiveSource(null);
 				return true;
 			}
 
@@ -346,6 +349,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (control is ITvTunerControl)
 			{
 				m_NavigationController.NavigateTo<ICableTvPresenter>().Control = control as ITvTunerControl;
+				SetActiveSource(null);
 				return true;
 			}
 
@@ -353,6 +357,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			{
 				case eControlOverride.WebConference:
 					m_NavigationController.NavigateTo<IWebConferencingAlertPresenter>();
+					SetActiveSource(null);
 					return true;
 
 				default:

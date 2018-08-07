@@ -73,7 +73,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			try
 			{
 				IConferenceSource source = GetFirstSource();
-				string info = source == null ? string.Empty : string.Format("{0} - {1}", source.Name, source.Number);
+				string info = GetCallerInfo(source);
 
 				view.SetCallerInfo(info);
 			}
@@ -81,6 +81,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		private static string GetCallerInfo(IConferenceSource source)
+		{
+			string output = string.Empty;
+
+			if (source == null)
+				return output;
+
+			output = string.IsNullOrEmpty(source.Name) ? "Unknown" : source.Name;
+
+			if (!string.IsNullOrEmpty(source.Number))
+				output = string.Format("{0} - {1}", output, source.Number);
+
+			return output;
 		}
 
 		/// <summary>
@@ -98,7 +113,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		/// <returns></returns>
 		[CanBeNull]
-		private IDialingDeviceControl GetVideoDialer(IConnectProRoom room)
+		private static IDialingDeviceControl GetVideoDialer(IConnectProRoom room)
 		{
 			IConferenceManager manager = room == null ? null : room.ConferenceManager;
 			return manager == null ? null : manager.GetDialingProvider(eConferenceSourceType.Video);
@@ -118,7 +133,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (m_SubscribedVideoDialer == null)
 				return;
 
-			m_SubscribedVideoDialer.OnSourceAdded += VideoDialerOnSourceAdded;
+			m_SubscribedVideoDialer.OnSourceChanged += VideoDialerOnSourceChanged;
 		}
 
 		/// <summary>
@@ -129,12 +144,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Unsubscribe(room);
 
-			if (m_SubscribedVideoDialer == null)
-				return;
-
-			m_SubscribedVideoDialer.OnSourceAdded -= VideoDialerOnSourceAdded;
+			if (m_SubscribedVideoDialer != null)
+				m_SubscribedVideoDialer.OnSourceChanged -= VideoDialerOnSourceChanged;
 
 			m_SubscribedVideoDialer = null;
+		}
+
+		/// <summary>
+		/// Called when a new source is detected.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void VideoDialerOnSourceChanged(object sender, ConferenceSourceEventArgs args)
+		{
+			IConferenceSource source = args.Data;
+			if (source.GetIsRingingIncomingCall())
+				AddSource(source);
 		}
 
 		/// <summary>
@@ -186,18 +211,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			ShowView(SourceCount > 0);
 		}
 
-		/// <summary>
-		/// Called when a new source is detected.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		private void VideoDialerOnSourceAdded(object sender, ConferenceSourceEventArgs args)
-		{
-			IConferenceSource source = args.Data;
-			if (source.GetIsRingingIncomingCall())
-				AddSource(source);
-		}
-
 		#endregion
 
 		#region Source Callbacks
@@ -210,7 +223,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			source.OnNameChanged += SourceOnNameChanged;
 			source.OnNumberChanged += SourceOnNumberChanged;
-			source.OnSourceTypeChanged += SourceOnSourceTypeChanged;
 			source.OnStatusChanged += SourceOnStatusChanged;
 		}
 
@@ -222,7 +234,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			source.OnNameChanged -= SourceOnNameChanged;
 			source.OnNumberChanged -= SourceOnNumberChanged;
-			source.OnSourceTypeChanged -= SourceOnSourceTypeChanged;
 			source.OnStatusChanged -= SourceOnStatusChanged;
 		}
 
@@ -239,16 +250,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			if (!source.GetIsRingingIncomingCall())
 				RemoveSource(source);
-		}
-
-		/// <summary>
-		/// Called when the source type changes.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		private void SourceOnSourceTypeChanged(object sender, EventArgs args)
-		{
-			RefreshIfVisible();
 		}
 
 		/// <summary>
@@ -325,6 +326,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			if (source != null)
 				source.Answer();
+
+			if (Room != null)
+				Room.StartMeeting(false);
 
 			OnCallAnswered.Raise(this);
 

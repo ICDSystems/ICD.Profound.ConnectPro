@@ -10,5 +10,10 @@ namespace ICD.Profound.ConnectPRO.Themes
 		/// </summary>
 		/// <param name="room"></param>
 		void SetRoom(IConnectProRoom room);
+
+		/// <summary>
+		/// Returns the room to an UI.
+		/// </summary>
+		IConnectProRoom Room { get; }
 	}
 }

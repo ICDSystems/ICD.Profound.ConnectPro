@@ -33,6 +33,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private readonly IVtcCameraPresenter m_CameraPresenter;
 		private readonly IVtcKeyboardPresenter m_KeyboardPresenter;
 		private readonly IVtcKeypadPresenter m_KeypadPresenter;
+		private bool m_IsInCall;
 
 		/// <summary>
 		/// Constructor.
@@ -185,21 +186,38 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void UpdateVisibility()
 		{
-			bool isInCall = m_SubscribedVideoDialer != null && m_SubscribedVideoDialer.GetSources().Any(s => s.GetIsActive());
+			IsInCall =
+				m_SubscribedVideoDialer != null &&
+				m_SubscribedVideoDialer.GetSources()
+				                       .Any(s => s.GetIsOnline() ||
+				                                 (s.GetIsActive() && s.Direction == eConferenceSourceDirection.Outgoing));
+		}
 
-			m_CallListTogglePresenter.ShowView(isInCall);
+		private bool IsInCall
+		{
+			get { return m_IsInCall; }
+			set
+			{
+				if (value == m_IsInCall)
+					return;
+				
+				m_IsInCall = value;
 
-			if (isInCall)
-			{
-				ShowContactsPresenter(false);
-				m_ContactsPolycomPresenter.ShowView(false);
-				m_ButtonListPresenter.ShowView(true);
-			}
-			else
-			{
-				m_ButtonListPresenter.ShowView(false);
-				if (IsViewVisible)
-					ShowContactsPresenter(true);
+				ShowView(m_IsInCall);
+				m_CallListTogglePresenter.ShowView(m_IsInCall);
+
+				if (m_IsInCall)
+				{
+					ShowContactsPresenter(false);
+					m_ContactsPolycomPresenter.ShowView(false);
+					m_ButtonListPresenter.ShowView(true);
+				}
+				else
+				{
+					m_ButtonListPresenter.ShowView(false);
+					if (IsViewVisible)
+						ShowContactsPresenter(true);
+				}
 			}
 		}
 

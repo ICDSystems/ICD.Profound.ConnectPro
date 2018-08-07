@@ -73,18 +73,34 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			try
 			{
-				string name =
-					m_Source == null
-						? string.Empty
-						: string.Format("{0:hh\\:mm\\:ss} - {1} - {2}", m_Source.GetDuration(), m_Source.Name, m_Source.Number);
+				string label = GetLabelText(m_Source);
 
-				view.SetLabel(name);
+				view.SetLabel(label);
 				view.SetHangupButtonVisible(true);
 			}
 			finally
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		private static string GetLabelText(IConferenceSource source)
+		{
+			if (source == null)
+				return string.Empty;
+
+			string output = string.Format("{0}:{1:00}:{2:00}",
+			                              source.GetDuration().Hours,
+			                              source.GetDuration().Minutes,
+			                              source.GetDuration().Seconds);
+
+			string name = string.IsNullOrEmpty(source.Name) ? "Unknown" : source.Name;
+			output = string.Format("{0} - {1}", output, name);
+
+			if (!string.IsNullOrEmpty(source.Number))
+				output = string.Format("{0} - {1}", output, source.Number);
+
+			return output;
 		}
 
 		#region Source Callbacks

@@ -19,12 +19,14 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
     <PackageReference Include="NUnit" Version="3.10.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\..\ICD.Connect.Displays\ICD.Connect.Displays.Mock\ICD.Connect.Displays.Mock_NetStandard.csproj" />
+    <ProjectReference Include="..\..\ICD.Connect.Panels\ICD.Connect.Panels.Mock\ICD.Connect.Panels.Mock_NetStandard.csproj" />
     <ProjectReference Include="..\ICD.Profound.ConnectPRO\ICD.Profound.ConnectPRO_NetStandard.csproj" />
   </ItemGroup>
 

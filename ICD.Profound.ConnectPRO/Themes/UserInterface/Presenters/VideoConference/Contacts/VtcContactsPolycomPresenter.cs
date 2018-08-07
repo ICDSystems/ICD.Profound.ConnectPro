@@ -154,7 +154,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Refresh(view);
 
-			if (m_DirectoryBrowser != null && m_DirectoryBrowser.GetCurrentFolder().ChildCount == 0)
+			IDirectoryFolder current = m_DirectoryBrowser == null ? null : m_DirectoryBrowser.GetCurrentFolder();
+			if (current != null && current.ChildCount == 0)
 				m_DirectoryBrowser.PopulateCurrentFolder();
 
 			m_RefreshSection.Enter();
