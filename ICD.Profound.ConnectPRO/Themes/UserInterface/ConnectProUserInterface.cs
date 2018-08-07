@@ -320,8 +320,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		private bool ShowSourceContextualMenu(ISource source, bool vtcOnly)
 		{
-			SetActiveSource(null);
-
 			if (m_Room == null)
 				return false;
 
@@ -340,6 +338,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				else
 					m_NavigationController.NavigateTo<IAtcBasePresenter>();
 
+				SetActiveSource(null);
 				return true;
 			}
 
@@ -349,6 +348,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (control is ITvTunerControl)
 			{
 				m_NavigationController.NavigateTo<ICableTvPresenter>().Control = control as ITvTunerControl;
+				SetActiveSource(null);
 				return true;
 			}
 
@@ -356,6 +356,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			{
 				case eControlOverride.WebConference:
 					m_NavigationController.NavigateTo<IWebConferencingAlertPresenter>();
+					SetActiveSource(null);
 					return true;
 
 				default:
