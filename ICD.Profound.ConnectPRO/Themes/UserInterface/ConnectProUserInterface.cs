@@ -245,7 +245,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				else if (source != null && audioDialer != null && source.Device == audioDialer.Parent.Id)
 				{
 					IRouteSourceControl sourceControl = m_Room.Core.GetControl<IRouteSourceControl>(source.Device, source.Control);
-					m_Room.Routing.RouteAtc(sourceControl);	
+					m_Room.Routing.RouteAtc(sourceControl);
 				}
 				// Typical case - continue routing
 				else
@@ -320,6 +320,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		private bool ShowSourceContextualMenu(ISource source, bool vtcOnly)
 		{
+			SetActiveSource(null);
+
 			if (m_Room == null)
 				return false;
 
