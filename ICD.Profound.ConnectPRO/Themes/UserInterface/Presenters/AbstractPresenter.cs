@@ -16,6 +16,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 	public abstract class AbstractPresenter<T> : IPresenter<T>
 		where T : class, IView
 	{
+		/// <summary>
+		/// Raised when the view visibility changes.
+		/// </summary>
 		public event EventHandler<BoolEventArgs> OnViewVisibilityChanged;
 
 		private readonly INavigationController m_Navigation;
