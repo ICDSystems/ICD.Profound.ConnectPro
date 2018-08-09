@@ -74,13 +74,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			try
 			{
 				// Gather all of the models
-				TModel[] modelsArray = models as TModel[] ?? models.ToArray();
+				IList<TModel> modelsArray = models as IList<TModel> ?? models.ToArray();
 
 				// Clear the existing views
-				ClearChildViews(modelsArray.Length);
+				ClearChildViews(modelsArray.Count);
 
 				// Build the views (may be fewer than models due to list max size)
-				TView[] views = m_ViewFactory((ushort)modelsArray.Length).ToArray();
+				TView[] views = m_ViewFactory((ushort)modelsArray.Count).ToArray();
 
 				// Build the presenters
 				for (int index = 0; index < views.Length; index++)
@@ -187,14 +187,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			try
 			{
 				m_PresenterCache.PadRight(cacheIndex + 1);
+
 				TPresenter existing = m_PresenterCache[cacheIndex];
 
 				// Dispose the existing presenter if it does not match the requested type.
-				if (existing != null && !existing.GetType().IsAssignableTo(presenterType))
+				if (existing != null)
 				{
-					existing.ClearView();
-					existing.Dispose();
-					existing = null;
+					Type existingType = existing.GetType();
+
+					if (existingType != presenterType && !existingType.IsAssignableTo(presenterType))
+					{
+						existing.ClearView();
+						existing.Dispose();
+						existing = null;
+					}
 				}
 
 				// Create a new presenter if one doesn't already exist.

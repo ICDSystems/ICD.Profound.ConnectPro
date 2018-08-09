@@ -55,7 +55,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		/// <param name="count"></param>
 		public void SetSourceCount(ushort count)
 		{
+			if (count == m_SourceCount)
+				return;
+
 			m_SourceCount = count;
+
 			UpdateVisibility();
 		}
 
@@ -65,7 +69,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		/// <param name="count"></param>
 		public void SetDisplayCount(ushort count)
 		{
+			if (count == m_DisplayCount)
+				return;
+
 			m_DisplayCount = count;
+
 			UpdateVisibility();
 		}
 

@@ -4,6 +4,7 @@ using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
@@ -25,6 +26,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 
 		private ISource[] m_Sources;
 		private ISource m_ActiveSource;
+		private ushort m_DisplayCount;
 
 		#region Properties
 
@@ -90,12 +92,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			{
 				UnsubscribeChildren();
 
-				m_Sources = GetSources().ToArray();
-				ushort displayCount =
-					Room == null
-						? (ushort)0
-						: (ushort)Room.Routing.GetDisplayDestinations().Count();
-
 				foreach (IReferencedSourceSelectPresenter presenter in m_ChildrenFactory.BuildChildren(m_Sources))
 				{
 					Subscribe(presenter);
@@ -109,7 +105,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 				}
 
 				view.SetSourceCount((ushort)m_Sources.Length);
-				view.SetDisplayCount(displayCount);
+				view.SetDisplayCount(m_DisplayCount);
 			}
 			finally
 			{
@@ -117,11 +113,27 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			}
 		}
 
-		private IEnumerable<ISource> GetSources()
+		/// <summary>
+		/// Sets the room for this presenter to represent.
+		/// </summary>
+		/// <param name="room"></param>
+		public override void SetRoom(IConnectProRoom room)
 		{
-			return Room == null
+			m_Sources = GetSources(room).ToArray();
+
+			m_DisplayCount =
+					room == null
+						? (ushort)0
+						: (ushort)room.Routing.GetDisplayDestinations().Count();
+
+			base.SetRoom(room);
+		}
+
+		private static IEnumerable<ISource> GetSources(IConnectProRoom room)
+		{
+			return room == null
 				       ? Enumerable.Empty<ISource>()
-				       : Room.Routing
+					   : room.Routing
 				             .GetCoreSources()
 				             .Where(s =>
 				                    {
