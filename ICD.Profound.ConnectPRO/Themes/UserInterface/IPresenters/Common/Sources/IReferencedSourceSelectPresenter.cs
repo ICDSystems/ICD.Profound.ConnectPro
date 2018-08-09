@@ -7,12 +7,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Source
 {
 	public interface IReferencedSourceSelectPresenter : IPresenter<IReferencedSourceSelectView>
 	{
+		/// <summary>
+		/// Raised when the user presses the presenter.
+		/// </summary>
 		event EventHandler OnPressed;
 
+		/// <summary>
+		/// Gets/sets the source for this presenter.
+		/// </summary>
 		ISource Source { get; set; }
 
+		/// <summary>
+		/// Gets/sets the selected state for this presenter.
+		/// </summary>
 		bool Selected { get; set; }
 
+		/// <summary>
+		/// Gets/sets the routed state for this presenter.
+		/// </summary>
 		eRoutedState Routed { get; set; }
 	}
 }

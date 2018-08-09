@@ -17,6 +17,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 	public sealed class ReferencedSourceSelectPresenter : AbstractComponentPresenter<IReferencedSourceSelectView>,
 	                                                      IReferencedSourceSelectPresenter
 	{
+		/// <summary>
+		/// Raised when the user presses the presenter.
+		/// </summary>
 		private const int MAX_LINE_WIDTH = 10;
 
 		public event EventHandler OnPressed;
@@ -29,6 +32,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 
 		#region Properties
 
+		/// <summary>
+		/// Gets/sets the source for the presenter.
+		/// </summary>
 		public ISource Source
 		{
 			get { return m_Source; }
@@ -101,6 +107,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			base.Dispose();
 		}
 
+		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Refresh(IReferencedSourceSelectView view)
 		{
 			base.Refresh(view);
