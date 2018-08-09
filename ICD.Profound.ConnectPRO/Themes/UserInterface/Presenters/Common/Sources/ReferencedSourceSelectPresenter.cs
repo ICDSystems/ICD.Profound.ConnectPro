@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
-using ICD.Connect.Settings;
-using ICD.Connect.UI.Utils;
-using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -20,15 +17,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// <summary>
 		/// Raised when the user presses the presenter.
 		/// </summary>
-		private const int MAX_LINE_WIDTH = 10;
-
 		public event EventHandler OnPressed;
 
 		private readonly SafeCriticalSection m_RefreshSection;
-
-		private ISource m_Source;
-		private bool m_Selected;
-		private eRoutedState m_RoutedState;
+		private readonly ReferencedSourceSelectPresenterCache m_Cache;
 
 		#region Properties
 
@@ -37,15 +29,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// </summary>
 		public ISource Source
 		{
-			get { return m_Source; }
+			get { return m_Cache.Source; }
 			set
 			{
-				if (value == m_Source)
-					return;
+				IRoom room = Room == null || value == null ? null : Room.Routing.GetRoomForSource(value);
 
-				m_Source = value;
-
-				RefreshIfVisible();
+				if (m_Cache.SetSource(room, value))
+					RefreshIfVisible();
 			}
 		}
 
@@ -54,15 +44,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// </summary>
 		public bool Selected
 		{
-			get { return m_Selected; }
+			get { return m_Cache.Selected; }
 			set
 			{
-				if (value == m_Selected)
-					return;
-
-				m_Selected = value;
-
-				RefreshIfVisible();
+				if (m_Cache.SetSelected(value))
+					RefreshIfVisible();
 			}
 		}
 
@@ -71,15 +57,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// </summary>
 		public eRoutedState Routed
 		{
-			get { return m_RoutedState; }
+			get { return m_Cache.Routed; }
 			set
 			{
-				if (value == m_RoutedState)
-					return;
-
-				m_RoutedState = value;
-
-				RefreshIfVisible();
+				if (m_Cache.SetRouted(value))
+					RefreshIfVisible();
 			}
 		}
 
@@ -95,6 +77,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
+			m_Cache = new ReferencedSourceSelectPresenterCache();
 		}
 
 		/// <summary>
@@ -119,49 +102,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 
 			try
 			{
-				bool combine = Room != null && Room.IsCombineRoom();
-				IRoom room = Room == null ? null : Room.Routing.GetRoomForSource(m_Source);
-
-				string sourceName =
-					m_Source == null
-						? string.Empty
-						: m_Source.GetName(combine) ?? string.Empty;
-
-				string text = sourceName.ToUpper();
-
-				string line1 = text;
-				string line2 = string.Empty;
-				string feedback = room == null ? string.Empty : room.GetName(combine);
-
-				// Find the space closest to the middle of the text and split.
-				if (text.Length > MAX_LINE_WIDTH && text.Any(char.IsWhiteSpace))
-				{
-					int middleIndex = text.Length / 2;
-					int splitIndex = text.FindIndices(char.IsWhiteSpace).GetClosest(i => i - middleIndex);
-
-					line1 = text.Substring(0, splitIndex).Trim();
-					line2 = text.Substring(splitIndex + 1).Trim();
-				}
-
-				eSourceColor color = m_Selected ? eSourceColor.Yellow : eSourceColor.White;
-
-				// Icon
-				ConnectProSource source = m_Source as ConnectProSource;
-				string icon = source == null ? null : source.Icon;
-				icon = Icons.GetSourceIcon(icon, color);
-
-				// Text
-				string hexColor = Colors.SourceColorToTextColor(color);
-				line1 = HtmlUtils.FormatColoredText(line1, hexColor);
-				line2 = HtmlUtils.FormatColoredText(line2, hexColor);
-				feedback = HtmlUtils.FormatColoredText(feedback, hexColor);
-
-				view.SetColor(color);
-				view.SetFeedbackText(feedback);
-				view.SetLine1Text(line1);
-				view.SetLine2Text(line2);
-				view.SetIcon(icon);
-				view.SetRoutedState(Routed);
+				view.SetColor(m_Cache.Color);
+				view.SetFeedbackText(m_Cache.Feedback);
+				view.SetLine1Text(m_Cache.Line1);
+				view.SetLine2Text(m_Cache.Line2);
+				view.SetIcon(m_Cache.Icon);
+				view.SetRoutedState(m_Cache.Routed);
 			}
 			finally
 			{

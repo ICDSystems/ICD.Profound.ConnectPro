@@ -236,6 +236,7 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\SettingsDirectoryPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\SettingsPasscodePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\SettingsSystemPowerPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Sources\ReferencedSourceSelectPresenterCache.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\SourceSelectPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\ReferencedSourceSelectPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\ReferencedSourceSelectPresenterFactory.cs" />
