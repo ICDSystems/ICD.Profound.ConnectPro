@@ -46,23 +46,6 @@ namespace ICD.Profound.ConnectPRO.Themes
 		/// </summary>
 		public WebConferencingInstructions WebConferencingInstructions { get { return m_WebConferencingInstructions; } }
 
-		/// <summary>
-		/// Gets the UI Factories.
-		/// </summary>
-		public IEnumerable<IConnectProUserInterfaceFactory> GetUiFactories()
-		{
-			m_UiFactoriesSection.Enter();
-
-			try
-			{
-				return m_UiFactories.ToArray(m_UiFactories.Count);
-			}
-			finally
-			{
-				m_UiFactoriesSection.Leave();
-			}
-		}
-
 		#endregion
 
 		/// <summary>
@@ -84,6 +67,23 @@ namespace ICD.Profound.ConnectPRO.Themes
 		}
 
 		#region Public Methods
+
+		/// <summary>
+		/// Gets the UI Factories.
+		/// </summary>
+		public IEnumerable<IConnectProUserInterfaceFactory> GetUiFactories()
+		{
+			m_UiFactoriesSection.Enter();
+
+			try
+			{
+				return m_UiFactories.ToArray(m_UiFactories.Count);
+			}
+			finally
+			{
+				m_UiFactoriesSection.Leave();
+			}
+		}
 
 		/// <summary>
 		/// Sets the tv presets from the given xml document path.
