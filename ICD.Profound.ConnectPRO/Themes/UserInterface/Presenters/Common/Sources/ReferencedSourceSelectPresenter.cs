@@ -32,6 +32,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			get { return m_Cache.Source; }
 			set
 			{
+				if (value == m_Cache.Source)
+					return;
+
+				// Get the room that contains the source
 				IRoom room = Room == null || value == null ? null : Room.Routing.GetRoomForSource(value);
 
 				if (m_Cache.SetSource(room, value))

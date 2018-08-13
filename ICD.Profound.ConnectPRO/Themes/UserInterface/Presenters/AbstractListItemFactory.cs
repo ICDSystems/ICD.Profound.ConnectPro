@@ -76,18 +76,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 				// Gather all of the models
 				IList<TModel> modelsArray = models as IList<TModel> ?? models.ToArray();
 
-				// Clear the existing views
-				ClearChildViews(modelsArray.Count);
+				// Remove views from presenters that are outside of the current model count
+				RemovePresenterViews(modelsArray.Count);
 
 				// Build the views (may be fewer than models due to list max size)
-				TView[] views = m_ViewFactory((ushort)modelsArray.Count).ToArray();
+				IEnumerable<TView> views = m_ViewFactory((ushort)modelsArray.Count);
 
 				// Build the presenters
-				for (int index = 0; index < views.Length; index++)
+				int index = 0;
+				foreach (TView view in views)
 				{
-					// Get the view
-					TView view = views[index];
-
 					// Get the model
 					TModel model = modelsArray[index];
 					Type key = GetPresenterTypeForModel(model);
@@ -99,6 +97,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 					BindMvpTriad(model, presenter, view);
 
 					output.Add(presenter);
+
+					index++;
 				}
 			}
 			finally
@@ -148,9 +148,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		#region Private Methods
 
 		/// <summary>
-		/// Loops over the child presenters by index and sets the views to null.
+		/// Loops over the presenters starting at the given index and sets the view to null.
 		/// </summary>
-		private void ClearChildViews(int startIndex)
+		private void RemovePresenterViews(int startIndex)
 		{
 			m_CacheSection.Enter();
 
@@ -171,7 +171,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <returns></returns>
 		private IEnumerable<TPresenter> GetAllPresenters()
 		{
-			return m_CacheSection.Execute(() => new List<TPresenter>(m_PresenterCache));
+			return m_CacheSection.Execute(() => m_PresenterCache.ToArray(m_PresenterCache.Count));
 		}
 
 		/// <summary>
