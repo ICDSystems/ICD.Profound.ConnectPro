@@ -25,8 +25,6 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 
 		private T m_View;
 
-		[UsedImplicitly] private object m_AsyncRefreshHandle;
-
 		#region Properties
 
 		/// <summary>
@@ -89,7 +87,6 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 		public virtual void Dispose()
 		{
 			OnViewVisibilityChanged = null;
-			m_AsyncRefreshHandle = null;
 
 			SetRoom(null);
 
@@ -228,7 +225,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 		[PublicAPI]
 		public void RefreshAsync()
 		{
-			m_AsyncRefreshHandle = ThreadingUtils.SafeInvoke(Refresh);
+			ThreadingUtils.SafeInvoke(Refresh);
 		}
 
 		/// <summary>
