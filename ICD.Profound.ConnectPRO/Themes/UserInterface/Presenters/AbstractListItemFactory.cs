@@ -156,8 +156,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 
 			try
 			{
-				foreach (TPresenter presenter in m_PresenterCache.Skip(startIndex))
-					presenter.ClearView();
+				for (int index = startIndex; index < m_PresenterCache.Count; index++)
+					m_PresenterCache[index].ClearView();
 			}
 			finally
 			{
