@@ -57,13 +57,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			try
 			{
-				UnsubscribeChildren();
-
 				IEnumerable<IConferenceSource> sources = GetSources();
-				foreach (IVtcReferencedDtmfPresenter presenter in m_Factory.BuildChildren(sources))
+				foreach (IVtcReferencedDtmfPresenter presenter in m_Factory.BuildChildren(sources, Subscribe, Unsubscribe))
 				{
-					Subscribe(presenter);
-
 					presenter.Selected = presenter.Source == m_Selected;
 					presenter.ShowView(true);
 				}

@@ -15,7 +15,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.WebConf
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly ReferencedWebConferencingAlertPresenterFactory m_ChildrenFactory;
 
-		private WebConferencingAppInstructions[] m_Apps;
+		private readonly WebConferencingAppInstructions[] m_Apps;
 
 		/// <summary>
 		/// Constructor.
@@ -29,7 +29,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.WebConf
 			m_RefreshSection = new SafeCriticalSection();
 			m_ChildrenFactory = new ReferencedWebConferencingAlertPresenterFactory(nav, ItemFactory);
 
-			m_Apps = new WebConferencingAppInstructions[0];
+			m_Apps = theme.WebConferencingInstructions.ToArray();
+
+			m_ChildrenFactory.BuildChildren(m_Apps, Subscribe, Unsubscribe);
 		}
 
 		/// <summary>
@@ -55,15 +57,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.WebConf
 
 			try
 			{
-				UnsubscribeChildren();
-
-				m_Apps = Theme.WebConferencingInstructions.ToArray();
-
-				foreach (IReferencedWebConferencingAlertPresenter presenter in m_ChildrenFactory.BuildChildren(m_Apps))
-				{
-					Subscribe(presenter);
+				foreach (IReferencedWebConferencingAlertPresenter presenter in m_ChildrenFactory)
 					presenter.ShowView(true);
-				}
 
 				view.SetAppCount((ushort)m_Apps.Length);
 			}

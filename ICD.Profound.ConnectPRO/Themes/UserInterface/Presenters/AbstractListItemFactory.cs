@@ -26,9 +26,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 	public abstract class AbstractListItemFactory<TModel, TPresenter, TView> : IEnumerable<TPresenter>, IDisposable
 		where TPresenter : class, IPresenter
 	{
-		private readonly List<TPresenter> m_PresenterCache; 
+		private readonly Dictionary<Type, Queue<TPresenter>> m_PresenterPool;
+
+		private readonly List<TPresenter> m_Presenters; 
+		private readonly List<TModel> m_Models;
+
 		private readonly SafeCriticalSection m_CacheSection;
-		private readonly SafeCriticalSection m_BuildViewsSection;
 
 		private readonly INavigationController m_NavigationController;
 		private readonly ListItemFactory<TView> m_ViewFactory;
@@ -40,9 +43,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="viewFactory"></param>
 		protected AbstractListItemFactory(INavigationController navigationController, ListItemFactory<TView> viewFactory)
 		{
-			m_PresenterCache = new List<TPresenter>();
+			m_PresenterPool = new Dictionary<Type, Queue<TPresenter>>();
+
+			m_Presenters = new List<TPresenter>();
+			m_Models = new List<TModel>();
+
 			m_CacheSection = new SafeCriticalSection();
-			m_BuildViewsSection = new SafeCriticalSection();
 
 			m_NavigationController = navigationController;
 			m_ViewFactory = viewFactory;
@@ -55,58 +61,72 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// </summary>
 		public virtual void Dispose()
 		{
-			foreach (TPresenter presenter in m_PresenterCache)
+			foreach (TPresenter presenter in m_PresenterPool.SelectMany(kvp => kvp.Value))
 				presenter.Dispose();
-			m_PresenterCache.Clear();
+			m_PresenterPool.Clear();
+
+			foreach (TPresenter presenter in m_Presenters)
+				presenter.Dispose();
+			m_Presenters.Clear();
+
+			m_Models.Clear();
 		}
 
 		/// <summary>
 		/// Generates the presenters and views for the given sequence of models.
 		/// </summary>
 		/// <param name="models"></param>
+		/// <param name="subscribe">Called for each new presenter taken from the pool.</param>
+		/// <param name="unsubscribe">Called for each presenter put back into the pool.</param>
 		[PublicAPI]
-		public IEnumerable<TPresenter> BuildChildren(IEnumerable<TModel> models)
+		public IEnumerable<TPresenter> BuildChildren(IEnumerable<TModel> models, Action<TPresenter> subscribe, Action<TPresenter> unsubscribe)
 		{
-			List<TPresenter> output = new List<TPresenter>();
+			if (models == null)
+				throw new ArgumentNullException("models");
 
-			m_BuildViewsSection.Enter();
+			if (subscribe == null)
+				throw new ArgumentNullException("subscribeAction");
+
+			if (unsubscribe == null)
+				throw new ArgumentNullException("unsubscribeAction");
+
+			m_CacheSection.Enter();
 
 			try
 			{
-				// Gather all of the models
-				IList<TModel> modelsArray = models as IList<TModel> ?? models.ToArray();
-
-				// Remove views from presenters that are outside of the current model count
-				RemovePresenterViews(modelsArray.Count);
+				// Update the model cache to match the given models
+				if (!UpdateModelCache(models))
+					return m_Presenters.ToArray(m_Presenters.Count);
 
 				// Build the views (may be fewer than models due to list max size)
-				IEnumerable<TView> views = m_ViewFactory((ushort)modelsArray.Count);
+				IEnumerable<TView> views = m_ViewFactory((ushort)m_Models.Count);
+				IList<TView> viewsArray = views as IList<TView> ?? views.ToArray();
+				
+				// Return presenters that are outside of the current view count back to the pool
+				ReturnPresentersToPool(viewsArray.Count, unsubscribe);
 
 				// Build the presenters
-				int index = 0;
-				foreach (TView view in views)
+				for (int index = 0; index < viewsArray.Count; index++)
 				{
-					// Get the model
-					TModel model = modelsArray[index];
-					Type key = GetPresenterTypeForModel(model);
+					TView view = viewsArray[index];
 
+					// Get the model
+					TModel model = m_Models[index];
+					
 					// Get the presenter
-					TPresenter presenter = LazyLoadPresenterFromCache(key, index);
+					Type key = GetPresenterTypeForModel(model);
+					TPresenter presenter = LazyLoadPresenterFromPool(key, index, subscribe, unsubscribe);
 
 					// Bind
 					BindMvpTriad(model, presenter, view);
-
-					output.Add(presenter);
-
-					index++;
 				}
+
+				return m_Presenters.ToArray(m_Presenters.Count);
 			}
 			finally
 			{
-				m_BuildViewsSection.Leave();
+				m_CacheSection.Leave();
 			}
-
-			return output;
 		}
 
 		/// <summary>
@@ -115,8 +135,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="room"></param>
 		public void SetRoom(IConnectProRoom room)
 		{
-			foreach (TPresenter presenter in GetAllPresenters())
-				presenter.SetRoom(room);
+			m_CacheSection.Enter();
+
+			try
+			{
+				foreach (TPresenter presenter in m_PresenterPool.SelectMany(kvp => kvp.Value))
+					presenter.SetRoom(room);
+
+				foreach (TPresenter presenter in m_Presenters)
+					presenter.SetRoom(room);
+			}
+			finally
+			{
+				m_CacheSection.Leave();
+			}
 		}
 
 		#endregion
@@ -147,17 +179,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 
 		#region Private Methods
 
-		/// <summary>
-		/// Loops over the presenters starting at the given index and sets the view to null.
-		/// </summary>
-		private void RemovePresenterViews(int startIndex)
+		private bool UpdateModelCache(IEnumerable<TModel> models)
 		{
+			if (models == null)
+				throw new ArgumentNullException("models");
+
 			m_CacheSection.Enter();
 
 			try
 			{
-				for (int index = startIndex; index < m_PresenterCache.Count; index++)
-					m_PresenterCache[index].ClearView();
+				// Gather all of the models
+				IList<TModel> modelsArray = models as IList<TModel> ?? models.ToArray();
+
+				// Check if anything has actually changed
+				if (modelsArray.SequenceEqual(m_Models))
+					return false;
+
+				m_Models.Clear();
+				m_Models.AddRange(modelsArray);
+
+				return true;
 			}
 			finally
 			{
@@ -166,49 +207,152 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		}
 
 		/// <summary>
-		/// Gets the instantiated presenters.
-		/// </summary>
-		/// <returns></returns>
-		private IEnumerable<TPresenter> GetAllPresenters()
-		{
-			return m_CacheSection.Execute(() => m_PresenterCache.ToArray(m_PresenterCache.Count));
-		}
-
-		/// <summary>
-		/// Retrieves or generates a presenter from the cache.
+		/// Retrieves or generates a presenter from the pool and adds it to the cache at the given index.
 		/// </summary>
 		/// <param name="presenterType"></param>
-		/// <param name="cacheIndex"></param>
+		/// <param name="index"></param>
+		/// <param name="subscribe">Called for each item put into the presenter cache.</param>
+		/// <param name="unsubscribe">Called for each item put into the pool.</param>
 		/// <returns></returns>
-		private TPresenter LazyLoadPresenterFromCache(Type presenterType, int cacheIndex)
+		private TPresenter LazyLoadPresenterFromPool(Type presenterType, int index, Action<TPresenter> subscribe, Action<TPresenter> unsubscribe)
 		{
+			if (presenterType == null)
+				throw new ArgumentNullException("presenterType");
+
+			if (index < 0)
+				throw new ArgumentOutOfRangeException("index");
+
+			if (subscribe == null)
+				throw new ArgumentNullException("subscribe");
+
+			if (unsubscribe == null)
+				throw new ArgumentNullException("unsubscribe");
+
 			m_CacheSection.Enter();
 
 			try
 			{
-				m_PresenterCache.PadRight(cacheIndex + 1);
+				// Does the cache already contain the correct presenter type at the given index?
+				TPresenter existing = m_Presenters.Count > index ? m_Presenters[index] : null;
+				if (existing != null && existing.GetType().IsAssignableTo(presenterType))
+					return existing;
 
-				TPresenter existing = m_PresenterCache[cacheIndex];
-
-				// Dispose the existing presenter if it does not match the requested type.
+				// Return the existing presenter of the wrong type to the pool
 				if (existing != null)
-				{
-					Type existingType = existing.GetType();
+					ReturnPresenterToPool(index, unsubscribe);
 
-					if (existingType != presenterType && !existingType.IsAssignableTo(presenterType))
-					{
-						existing.ClearView();
-						existing.Dispose();
-						existing = null;
-					}
+				// Get the pool for the given type
+				Queue<TPresenter> pool;
+				if (!m_PresenterPool.TryGetValue(presenterType, out pool))
+				{
+					pool = new Queue<TPresenter>();
+					m_PresenterPool[presenterType] = pool;
 				}
 
-				// Create a new presenter if one doesn't already exist.
-				if (existing == null)
-					m_PresenterCache[cacheIndex] = m_NavigationController.GetNewPresenter(presenterType) as TPresenter;
+				// Create a new presenter if the pool is empty
+				TPresenter presenter =
+					pool.Dequeue(out presenter)
+						? presenter
+						: m_NavigationController.GetNewPresenter(presenterType) as TPresenter;
 
-				// Return the existing presenter
-				return m_PresenterCache[cacheIndex];
+				// Insert the presenter into the cache
+				m_Presenters.Insert(index, presenter);
+
+				// Call the subscription action
+				subscribe(presenter);
+
+				return presenter;
+			}
+			finally
+			{
+				m_CacheSection.Leave();
+			}
+		}
+
+		/// <summary>
+		/// Loops over the presenters starting at the given index, clears the views and moves the
+		/// presenters from the cache to the pool.
+		/// </summary>
+		private void ReturnPresentersToPool(int startIndex, Action<TPresenter> unsubscribe)
+		{
+			if (startIndex < 0)
+				throw new ArgumentOutOfRangeException("startIndex");
+
+			if (unsubscribe == null)
+				throw new ArgumentNullException("unsubscribeAction");
+
+			m_CacheSection.Enter();
+
+			try
+			{
+				for (int index = m_Presenters.Count - 1; index >= startIndex; index--)
+					ReturnPresenterToPool(index, unsubscribe);
+			}
+			finally
+			{
+				m_CacheSection.Leave();
+			}
+		}
+
+		/// <summary>
+		/// Removes the presenter at the given index and puts it back into the pool.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="unsubscribe"></param>
+		private void ReturnPresenterToPool(int index, Action<TPresenter> unsubscribe)
+		{
+			if (unsubscribe == null)
+				throw new ArgumentNullException("unsubscribe");
+
+			m_CacheSection.Enter();
+
+			try
+			{
+				if (index < 0 || index >= m_Presenters.Count)
+					throw new ArgumentOutOfRangeException("index");
+
+				TPresenter presenter = m_Presenters[index];
+
+				ReturnPresenterToPool(presenter, unsubscribe);
+
+				m_Presenters.RemoveAt(index);
+			}
+			finally
+			{
+				m_CacheSection.Leave();
+			}
+		}
+
+		/// <summary>
+		/// Puts the presenter back into the pool.
+		/// </summary>
+		/// <param name="presenter"></param>
+		/// <param name="unsubscribe"></param>
+		private void ReturnPresenterToPool(TPresenter presenter, Action<TPresenter> unsubscribe)
+		{
+			if (presenter == null)
+				throw new ArgumentNullException("presenter");
+
+			if (unsubscribe == null)
+				throw new ArgumentNullException("unsubscribe");
+
+			unsubscribe(presenter);
+			presenter.ClearView();
+
+			Type key = presenter.GetType();
+
+			m_CacheSection.Enter();
+
+			try
+			{
+				Queue<TPresenter> pool;
+				if (!m_PresenterPool.TryGetValue(key, out pool))
+				{
+					pool = new Queue<TPresenter>();
+					m_PresenterPool[key] = pool;
+				}
+
+				pool.Enqueue(presenter);
 			}
 			finally
 			{
@@ -220,7 +364,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 
 		public IEnumerator<TPresenter> GetEnumerator()
 		{
-			return GetAllPresenters().GetEnumerator();
+			return m_CacheSection.Execute(() => m_Presenters.ToList()).GetEnumerator();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()

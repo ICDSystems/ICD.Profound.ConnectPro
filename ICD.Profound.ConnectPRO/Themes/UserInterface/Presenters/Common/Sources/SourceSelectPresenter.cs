@@ -90,18 +90,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 
 			try
 			{
-				UnsubscribeChildren();
-
-				foreach (IReferencedSourceSelectPresenter presenter in m_ChildrenFactory.BuildChildren(m_Sources))
+				foreach (IReferencedSourceSelectPresenter presenter in m_ChildrenFactory)
 				{
-					Subscribe(presenter);
-
 					presenter.Selected = presenter.Source == m_ActiveSource;
 					presenter.ShowView(true);
 
-					presenter.Routed = presenter.Source == null
-						                   ? eRoutedState.Inactive
-						                   : m_RoutedSources.GetDefault(presenter.Source);
+					presenter.Routed =
+						presenter.Source == null
+							? eRoutedState.Inactive
+							: m_RoutedSources.GetDefault(presenter.Source);
 				}
 
 				view.SetSourceCount((ushort)m_Sources.Length);
@@ -120,6 +117,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		public override void SetRoom(IConnectProRoom room)
 		{
 			m_Sources = GetSources(room).ToArray();
+			m_ChildrenFactory.BuildChildren(m_Sources, Subscribe, Unsubscribe);
 
 			m_DisplayCount =
 					room == null

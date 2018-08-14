@@ -183,22 +183,27 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <returns></returns>
 		public IPresenter LazyLoadPresenter(Type type)
 		{
-			IPresenter output;
+			if (type == null)
+				throw new ArgumentNullException("type");
 
 			m_CacheSection.Enter();
 
 			try
 			{
-				if (!m_Cache.ContainsKey(type))
-					m_Cache[type] = GetNewPresenter(type);
-				output = m_Cache[type];
+				IPresenter presenter;
+
+				if (!m_Cache.TryGetValue(type, out presenter))
+				{
+					presenter = GetNewPresenter(type);
+					m_Cache[type] = presenter;
+				}
+
+				return presenter;
 			}
 			finally
 			{
 				m_CacheSection.Leave();
 			}
-
-			return output;
 		}
 
 		/// <summary>
@@ -208,13 +213,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <returns></returns>
 		public IPresenter GetNewPresenter(Type type)
 		{
-			if (!m_PresenterFactories.ContainsKey(type))
+			if (type == null)
+				throw new ArgumentNullException("type");
+
+			PresenterFactory factory;
+
+			if (!m_PresenterFactories.TryGetValue(type, out factory))
 			{
 				string message = string.Format("{0} does not contain factory for {1}", GetType().Name, type.Name);
 				throw new KeyNotFoundException(message);
 			}
 
-			PresenterFactory factory = m_PresenterFactories[type];
 			IPresenter output = factory(this, m_ViewFactory, m_Theme);
 			output.SetRoom(m_Room);
 

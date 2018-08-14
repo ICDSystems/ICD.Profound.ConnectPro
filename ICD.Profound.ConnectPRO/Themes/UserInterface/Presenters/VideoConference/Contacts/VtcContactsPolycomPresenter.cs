@@ -162,14 +162,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			try
 			{
-				UnsubscribeChildren();
-
 				IEnumerable<ModelPresenterTypeInfo> contacts = GetContacts();
 
-				foreach (IVtcReferencedContactsPresenterBase presenter in m_ContactsFactory.BuildChildren(contacts))
+				foreach (IVtcReferencedContactsPresenterBase presenter in m_ContactsFactory.BuildChildren(contacts, Subscribe, Unsubscribe))
 				{
-					Subscribe(presenter);
-
 					presenter.Selected = presenter == m_Selected;
 					presenter.HideFavoriteIcon = true;
 					presenter.ShowView(true);
