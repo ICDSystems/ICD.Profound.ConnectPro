@@ -13,6 +13,7 @@ using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Controls;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
@@ -52,6 +53,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private readonly INavigationController m_NavigationController;
 		private readonly SafeTimer m_SourceSelectionTimeout;
 
+		private readonly IcdHashSet<ISource> m_ActiveAudio;
+		private readonly Dictionary<IDestination, IcdHashSet<ISource>> m_ActiveVideo;
+		private readonly Dictionary<ISource, eRoutedState> m_SourceRoutedStates;
+
 		private ISource m_ProcessingSource; 
 
 		private IConnectProRoom m_Room;
@@ -73,6 +78,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="theme"></param>
 		public ConnectProUserInterface(IPanelDevice panel, ConnectProTheme theme)
 		{
+			m_ActiveAudio = new IcdHashSet<ISource>();
+			m_ActiveVideo = new Dictionary<IDestination, IcdHashSet<ISource>>();
+			m_SourceRoutedStates = new Dictionary<ISource, eRoutedState>();
+
 			m_Panel = panel;
 			UpdatePanelOnlineJoin();
 
@@ -192,7 +201,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			Subscribe(m_Room);
 
 			UpdateMeetingPresenters();
-			UpdateRouting();
+			UpdateRouting(eConnectionType.Audio | eConnectionType.Video);
 
 			UpdatePanelOnlineJoin();
 		}
@@ -316,7 +325,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			m_ProcessingSource = source;
 
-			UpdateRouting();
+			UpdateSourceRoutedStates();
 		}
 
 		private bool ShowSourceContextualMenu(ISource source, bool vtcOnly)
@@ -369,7 +378,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// Sets the source that is currently active for routing to the displays.
 		/// </summary>
 		/// <param name="source"></param>
-		private void SetActiveSource(ISource source)
+		public void SetActiveSource(ISource source)
 		{
 			if (source == m_ActiveSource)
 				return;
@@ -451,7 +460,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="eventArgs"></param>
 		private void RoutingOnAudioSourceChanged(object sender, EventArgs eventArgs)
 		{
-			UpdateRouting();
+			UpdateRouting(eConnectionType.Audio);
 		}
 
 		/// <summary>
@@ -461,13 +470,33 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="eventArgs"></param>
 		private void RoutingOnDisplaySourceChanged(object sender, EventArgs eventArgs)
 		{
-			UpdateRouting();
+			UpdateRouting(eConnectionType.Video);
 		}
 
 		/// <summary>
 		/// Updates the routing state in the UI.
 		/// </summary>
-		private void UpdateRouting()
+		/// <param name="type"></param>
+		private void UpdateRouting(eConnectionType type)
+		{
+			bool audioChange = false;
+			bool videoChange = false;
+
+			if (type.HasFlag(eConnectionType.Audio))
+				audioChange = UpdateActiveAudio();
+
+			if (type.HasFlag(eConnectionType.Video))
+				videoChange = UpdateActiveVideo();
+
+			if (audioChange || videoChange)
+				m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().SetRouting(m_ActiveVideo, m_ActiveAudio);
+		}
+
+		/// <summary>
+		/// Builds the set of active audio sources.
+		/// </summary>
+		/// <returns>True if the active audio sources changed.</returns>
+		private bool UpdateActiveAudio()
 		{
 			IcdHashSet<ISource> activeAudio =
 				(m_Room == null
@@ -476,6 +505,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 					         .GetCachedActiveAudioSources())
 					.ToIcdHashSet();
 
+			if (activeAudio.SetEquals(m_ActiveAudio))
+				return false;
+
+			m_ActiveAudio.Clear();
+			m_ActiveAudio.AddRange(activeAudio);
+
+			return true;
+		}
+
+		/// <summary>
+		/// Builds the map of destinations to active video sources.
+		/// </summary>
+		/// <returns>True if the active video sources changed.</returns>
+		private bool UpdateActiveVideo()
+		{
 			Dictionary<IDestination, IcdHashSet<ISource>> routing =
 				(m_Room == null
 					 ? Enumerable.Empty<KeyValuePair<IDestination, IcdHashSet<ISource>>>()
@@ -483,28 +527,47 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 					         .GetCachedActiveVideoSources())
 					.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-			Dictionary<ISource, eRoutedState> routedSources =
-				routing.Values
-				       .SelectMany(v => v)
-				       .Distinct()
-				       .ToDictionary(s => s, s => eRoutedState.Active);
+			if (routing.DictionaryEqual(m_ActiveVideo, (a, b) => a.SetEquals(b)))
+				return false;
+
+			m_ActiveVideo.Clear();
+			m_ActiveVideo.AddRange(routing.Keys, k => new IcdHashSet<ISource>(routing[k]));
 
 			// Remove routed items from the processing sources collection
-			foreach (ISource source in routing.Values.SelectMany(v => v))
-			{
-				if (source == m_ProcessingSource)
-					m_ProcessingSource = null;
-			}
+			// TODO - Track processing source per destination
+			if (m_ProcessingSource != null && m_ActiveVideo.Values.Any(v => v.Contains(m_ProcessingSource)))
+				m_ProcessingSource = null;
+
+			// If the active source is routed to all destinations we clear the active source
+			if (m_ActiveSource != null && m_ActiveVideo.All(kvp => kvp.Value.Contains(m_ActiveSource)))
+				SetActiveSource(null);
+
+			UpdateSourceRoutedStates();
+
+			return true;
+		}
+
+		private bool UpdateSourceRoutedStates()
+		{
+			// Build a map of video sources to their routed state
+			Dictionary<ISource, eRoutedState> routedSources =
+				m_ActiveVideo.Values
+				             .SelectMany(v => v)
+				             .Distinct()
+				             .ToDictionary(s => s, s => eRoutedState.Active);
 
 			if (m_ProcessingSource != null)
 				routedSources.Add(m_ProcessingSource, eRoutedState.Processing);
 
-			m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().SetRoutedSources(routedSources);
-			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().SetRouting(routing, activeAudio);
+			if (routedSources.DictionaryEqual(m_SourceRoutedStates))
+				return false;
 
-			// If the active source is routed to all destinations we clear the active source
-			if (m_ActiveSource != null && routing.All(kvp => kvp.Value.Contains(m_ActiveSource)))
-				SetActiveSource(null);
+			m_SourceRoutedStates.Clear();
+			m_SourceRoutedStates.AddRange(routedSources);
+
+			m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().SetRoutedSources(m_SourceRoutedStates);
+
+			return true;
 		}
 
 		#endregion
