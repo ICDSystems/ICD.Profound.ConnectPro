@@ -39,7 +39,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		public ReferencedSourceSelectPresenterCache()
 		{
 			Routed = eRoutedState.Inactive;
-			Color = eSourceColor.White;
+			
+			UpdateColor();
 		}
 
 		#region Methods
