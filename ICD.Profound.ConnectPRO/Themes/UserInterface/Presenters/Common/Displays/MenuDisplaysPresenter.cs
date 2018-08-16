@@ -107,27 +107,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 			try
 			{
-				/*IcdStopwatch.Profile(() =>
-				                     {
-									 */
-					                     // Display 1
-					                     view.SetDisplay1Color(m_Display1.Color);
-					                     view.SetDisplay1SourceText(m_Display1.SourceName);
-					                     view.SetDisplay1Line1Text(m_Display1.Line1);
-					                     view.SetDisplay1Line2Text(m_Display1.Line2);
-					                     view.SetDisplay1Icon(m_Display1.Icon);
-					                     view.ShowDisplay1SpeakerButton(m_Display1.ShowSpeaker);
-					                     view.SetDisplay1SpeakerButtonActive(m_Display1.AudioActive);
+				// Display 1
+				view.SetDisplay1Color(m_Display1.Color);
+				view.SetDisplay1SourceText(m_Display1.SourceName);
+				view.SetDisplay1Line1Text(m_Display1.Line1);
+				view.SetDisplay1Line2Text(m_Display1.Line2);
+				view.SetDisplay1Icon(m_Display1.Icon);
+				view.ShowDisplay1SpeakerButton(m_Display1.ShowSpeaker);
+				view.SetDisplay1SpeakerButtonActive(m_Display1.AudioActive);
 
-					                     // Display 2
-					                     view.SetDisplay2Color(m_Display2.Color);
-					                     view.SetDisplay2SourceText(m_Display2.SourceName);
-					                     view.SetDisplay2Line1Text(m_Display2.Line1);
-					                     view.SetDisplay2Line2Text(m_Display2.Line2);
-					                     view.SetDisplay2Icon(m_Display2.Icon);
-					                     view.ShowDisplay2SpeakerButton(m_Display2.ShowSpeaker);
-					                     view.SetDisplay2SpeakerButtonActive(m_Display2.AudioActive);
-									// }, string.Format("{0} refresh displays", GetType().Name));
+				// Display 2
+				view.SetDisplay2Color(m_Display2.Color);
+				view.SetDisplay2SourceText(m_Display2.SourceName);
+				view.SetDisplay2Line1Text(m_Display2.Line1);
+				view.SetDisplay2Line2Text(m_Display2.Line2);
+				view.SetDisplay2Icon(m_Display2.Icon);
+				view.ShowDisplay2SpeakerButton(m_Display2.ShowSpeaker);
+				view.SetDisplay2SpeakerButtonActive(m_Display2.AudioActive);
 			}
 			finally
 			{
