@@ -150,12 +150,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			if (destination == null)
 				return null;
 
-			if (!routing.ContainsKey(destination))
+			IcdHashSet<ISource> sources;
+			if (!routing.TryGetValue(destination, out sources))
 				return null;
 
-			return routing[destination].OrderBy(s => s.Order)
-			                           .ThenBy(s => s.Id)
-			                           .FirstOrDefault();
+			return sources.OrderBy(s => s.Order)
+			              .ThenBy(s => s.Id)
+			              .FirstOrDefault();
 		}
 
 		#region View Callbacks

@@ -144,12 +144,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// Sets the sources that are currently routed to displays.
 		/// </summary>
 		/// <param name="routedSources"></param>
-		public void SetRoutedSources(IEnumerable<KeyValuePair<ISource, eRoutedState>> routedSources)
+		public void SetRoutedSources(Dictionary<ISource, eRoutedState> routedSources)
 		{
+			if (routedSources == null)
+				throw new ArgumentNullException("routedSources");
+
 			m_RefreshSection.Enter();
 
 			try
 			{
+				if (routedSources.DictionaryEqual(m_RoutedSources))
+					return;
+
 				m_RoutedSources.Clear();
 				m_RoutedSources.AddRange(routedSources);
 			}
