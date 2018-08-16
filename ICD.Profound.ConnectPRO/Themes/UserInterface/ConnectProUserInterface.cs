@@ -557,7 +557,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				             .ToDictionary(s => s, s => eRoutedState.Active);
 
 			if (m_ProcessingSource != null)
-				routedSources.Add(m_ProcessingSource, eRoutedState.Processing);
+				routedSources[m_ProcessingSource] = eRoutedState.Processing;
 
 			if (routedSources.DictionaryEqual(m_SourceRoutedStates))
 				return false;
