@@ -27,7 +27,7 @@ namespace ICD.Profound.ConnectPRO.Tests.RoomTypes
 		public override ConnectProRoom Room { get { return m_room; } }
 		public override MockPanelDevice Panel { get { return m_panel; } }
 		public override ICore Core { get { return m_core; } }
-		public IcdHashSet<IConnectProUserInterfaceFactory> Interfaces { get { return m_interfaces; } }
+		public override IcdHashSet<IConnectProUserInterfaceFactory> Interfaces { get { return m_interfaces; } }
 
 		public ConnectProRoom ConnectProRoom1 { get; set; }
 		public ConnectProRoom ConnectProRoom2 { get; set; }

@@ -1,0 +1,302 @@
+﻿using System.Linq;
+using ICD.Connect.Audio.VolumePoints;
+using ICD.Connect.Devices;
+using ICD.Connect.Devices.Controls;
+using ICD.Connect.Displays.Devices;
+using ICD.Connect.Panels.Mock;
+using ICD.Connect.Protocol.Sigs;
+using ICD.Connect.Routing.Endpoints.Destinations;
+using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Profound.ConnectPRO.Routing;
+using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
+using ICD.Profound.ConnectPRO.Tests.RoomTypes;
+using ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Helpers;
+using NUnit.Framework;
+
+namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
+{
+	public abstract class AbstractMainMenuTest<TRoomType> : AbstractNavigationTest<TRoomType>
+		where TRoomType : AbstractRoomType
+	{
+		protected const ushort DigitalIncrement = 2;
+		protected const ushort AnalogIncrement = 2;
+
+		protected const ushort ButtonModeStart = 11;
+		protected const ushort FeedbackModeStart = 12;
+
+		[Test]
+		public void VolumeControlTest()
+		{
+			using (TRoomType roomType = InstantiateRoomType())
+			{
+				if (roomType.Room.GetVolumeControl() == null)
+					return;
+
+				// Simulate "start meeting" button press
+				NavigationHelpers.PressButton(91, roomType.Panel);
+
+				Assert.IsTrue(roomType.Room.IsInMeeting);
+
+				Assert.IsTrue(NavigationHelpers.CheckVisibilty(40, roomType.Panel));
+
+				NavigationHelpers.PressButton(45, roomType.Panel);
+
+				Assert.IsTrue(NavigationHelpers.CheckVisibilty(11, roomType.Panel));
+
+
+				IVolumePoint volumePoint = roomType.Room.Originators.GetInstance<IVolumePoint>();
+				Assert.NotNull(volumePoint);
+
+				DisplayVolumeDeviceControl volumeControl =
+					roomType.Room
+						.Core
+						.Originators
+						.GetChild<IDeviceBase>(volumePoint.DeviceId)
+						.Controls
+						.GetControl<DisplayVolumeDeviceControl>(volumePoint.ControlId);
+
+				Assert.AreEqual(0, volumeControl.VolumeRaw);
+
+				//vol up
+				NavigationHelpers.PressButton(523, roomType.Panel);
+				Assert.AreEqual(655, roomType.Panel.UShortInput[500].GetUShortValue());
+
+				//vol up
+				NavigationHelpers.PressButton(523, roomType.Panel, 0, true, 2000);
+				Assert.AreEqual((int)(65535 * 0.01 * volumeControl.VolumeRaw), roomType.Panel.UShortInput[500].GetUShortValue());
+
+				//vol down
+				NavigationHelpers.PressButton(522, roomType.Panel, 0, true, 2000);
+				Assert.AreEqual((int)(65535 * 0.01 * volumeControl.VolumeRaw), roomType.Panel.UShortInput[500].GetUShortValue());
+
+				//vol down
+				NavigationHelpers.PressButton(522, roomType.Panel);
+				Assert.AreEqual(0, roomType.Panel.UShortInput[500].GetUShortValue());
+
+				//mute
+				NavigationHelpers.PressButton(524, roomType.Panel);
+				Assert.IsTrue(volumeControl.VolumeIsMuted);
+				NavigationHelpers.PressButton(524, roomType.Panel);
+				Assert.IsFalse(volumeControl.VolumeIsMuted);
+
+				//exit
+				NavigationHelpers.PressButton(46, roomType.Panel);
+				Assert.IsFalse(NavigationHelpers.CheckVisibilty(11, roomType.Panel));
+			}
+		}
+
+		[Test]
+		public void VisibleHeaderTest()
+		{
+			using (TRoomType roomType = InstantiateRoomType())
+			{
+				// Simulate "start meeting" button press
+				NavigationHelpers.PressButton(91, roomType.Panel);
+
+				Assert.IsTrue(roomType.Room.IsInMeeting);
+
+				NavigationHelpers.CheckVisibilty(0, roomType.Panel);
+			}
+		}
+
+		protected void SourcePressTest(TRoomType roomType, ISource source)
+		{
+			//Source Override
+			eControlOverride controlOverride = ConnectProRouting.GetControlOverride(source);
+
+			//Source Index
+			uint sourceIndex = (uint)roomType.Room.Originators.GetInstances<ISource>().ToList().IndexOf(source);
+
+			// Get number of displays
+			var displayCount = roomType.Room.Originators.GetInstances<IDisplay>().Count();
+
+			MockSmartObject sourcesSmartObject = roomType.Panel.SmartObjects[1] as MockSmartObject;
+
+			NavigationHelpers.PressButton(4011 + (DigitalIncrement * sourceIndex), sourcesSmartObject, 1);
+
+			// If we have one display we check routed state
+			switch (controlOverride)
+			{
+				case eControlOverride.Vtc:
+					VtcSourcePress(roomType, source, displayCount > 1
+						, ButtonModeStart + (AnalogIncrement * sourceIndex)
+						, FeedbackModeStart + (AnalogIncrement * sourceIndex));
+					break;
+
+				case eControlOverride.Atc:
+					AtcSourcePress(roomType, source
+						, ButtonModeStart + (AnalogIncrement * sourceIndex)
+						, FeedbackModeStart + (AnalogIncrement * sourceIndex));
+					break;
+
+				case eControlOverride.CableTv:
+					TvSourcePress(roomType, source, displayCount > 1
+						, ButtonModeStart + (AnalogIncrement * sourceIndex)
+						, FeedbackModeStart + (AnalogIncrement * sourceIndex));
+					break;
+
+				case eControlOverride.WebConference:
+					WebSourcePress(roomType, source, displayCount > 1
+						, ButtonModeStart + (AnalogIncrement * sourceIndex)
+						, FeedbackModeStart + (AnalogIncrement * sourceIndex));
+					break;
+
+				case eControlOverride.Default:
+					DefaultSourcePress(roomType, source, displayCount > 1
+						, ButtonModeStart + (AnalogIncrement * sourceIndex)
+						, FeedbackModeStart + (AnalogIncrement * sourceIndex));
+					break;
+			}
+		}
+
+		private void DefaultSourcePress(TRoomType roomType, ISource source, bool dualDisplay, uint buttonModeId, uint feedbackModeId)
+		{
+			if (dualDisplay)
+			{
+				SelectiveMode(roomType, buttonModeId);
+			}
+
+			//Check source route/selective status
+			CheckRoutingAndSelctiveStatus(roomType.Panel, buttonModeId, feedbackModeId);
+
+			//Make sure the routes are active
+			CheckActiveRoutes(roomType, source);
+		}
+
+		private void TvSourcePress(TRoomType roomType, ISource source, bool dualDisplay, uint buttonModeId, uint feedbackModeId)
+		{
+			if (dualDisplay)
+			{
+				SelectiveMode(roomType, buttonModeId);
+			}
+
+			//Check source route/selective status
+			CheckRoutingAndSelctiveStatus(roomType.Panel, buttonModeId, feedbackModeId);
+
+			//Make sure the routes are active
+			CheckActiveRoutes(roomType, source);
+		}
+
+		private void VtcSourcePress(TRoomType roomType, ISource source, bool dualDisplay, uint buttonModeId, uint feedbackModeId)
+		{
+			if (dualDisplay)
+			{
+				//Check routing to second display
+			}
+
+			//Check source route/selective status
+			CheckRoutingAndSelctiveStatus(roomType.Panel, buttonModeId, feedbackModeId);
+
+			//Make sure the routes are active
+			CheckActiveRoutes(roomType, source);
+		}
+
+		private void AtcSourcePress(TRoomType roomType, ISource source, uint buttonModeId, uint feedbackModeId)
+		{
+			//Check source route/selective status
+			CheckRoutingAndSelctiveStatus(roomType.Panel, buttonModeId, feedbackModeId);
+
+			//Make sure the routes are active
+			CheckActiveRoutes(roomType, source);
+		}
+
+		private void WebSourcePress(TRoomType roomType, ISource source, bool dualDisplay, uint buttonModeId, uint feedbackModeId)
+		{
+			if (dualDisplay)
+			{
+				SelectiveMode(roomType, buttonModeId);
+			}
+
+			//Check source route/selective status
+			CheckRoutingAndSelctiveStatus(roomType.Panel, buttonModeId, feedbackModeId);
+
+			//Make sure the routes are active
+			CheckActiveRoutes(roomType, source);
+
+			//Check for visible alert
+			Assert.IsTrue(NavigationHelpers.CheckVisibilty(106, roomType.Panel));
+
+			var webAlert = roomType.Panel.SmartObjects[15] as MockSmartObject;
+
+			foreach (IBoolInputSig sig in webAlert.BooleanInput)
+			{
+				//Press button for step
+				NavigationHelpers.PressButton(2000 + sig.Number, webAlert, 15);
+
+				Assert.IsTrue(NavigationHelpers.CheckVisibilty(107, roomType.Panel));
+
+				string graphic = roomType.Panel.StringInput[500].GetStringValue();
+
+				//Press NEXT button
+				NavigationHelpers.PressButton(543, roomType.Panel);
+
+				//Check graphic
+				Assert.AreNotEqual(graphic, roomType.Panel.StringInput[500].GetStringValue());
+
+				//Press BACK button
+				NavigationHelpers.PressButton(542, roomType.Panel);
+
+				//Check graphic
+				Assert.AreEqual(graphic, roomType.Panel.StringInput[500].GetStringValue());
+
+				//Press Close button
+				NavigationHelpers.PressButton(113, roomType.Panel);
+
+				//Check for visible alert
+				Assert.IsFalse(NavigationHelpers.CheckVisibilty(107, roomType.Panel));
+			}
+
+			//Press 'Dismiss' button
+			NavigationHelpers.PressButton(140, roomType.Panel);
+
+			//Alert should not be visible
+			Assert.IsFalse(NavigationHelpers.CheckVisibilty(106, roomType.Panel));
+		}
+
+		private void SelectiveMode(TRoomType roomType, uint buttonModeId)
+		{
+			MockSmartObject sourcesSmartObject = roomType.Panel.SmartObjects[1] as MockSmartObject;
+
+			//Check source button status
+			Assert.AreEqual(2, sourcesSmartObject?.UShortInput[buttonModeId].GetUShortValue());
+
+			//Check/Click Display 1 button status
+			Assert.AreEqual(2, sourcesSmartObject?.UShortInput[300].GetUShortValue());
+			NavigationHelpers.PressButton(301, roomType.Panel);
+			Assert.AreEqual(1, sourcesSmartObject?.UShortInput[300].GetUShortValue());
+
+			//Check/Click Display 2 button status
+			Assert.AreEqual(2, sourcesSmartObject?.UShortInput[301].GetUShortValue());
+			NavigationHelpers.PressButton(304, roomType.Panel);
+			Assert.AreEqual(1, sourcesSmartObject?.UShortInput[301].GetUShortValue());
+		}
+
+		private void CheckRoutingAndSelctiveStatus(MockPanelDevice panel, uint buttonModeId, uint feedbackModeId)
+		{
+			//Check source route status
+			Assert.AreEqual(1, (panel.SmartObjects[1] as MockSmartObject)?.UShortInput[buttonModeId].GetUShortValue());
+
+			//Check source selective status
+			Assert.AreEqual(2, (panel.SmartObjects[1] as MockSmartObject)?.UShortInput[feedbackModeId].GetUShortValue());
+		}
+
+		private void CheckActiveRoutes(TRoomType roomType, ISource source)
+		{
+			//Get Displays
+			var destinations = roomType.Room.Routing.GetDisplayDestinations();
+
+			//Get active video routes
+			var routingVideo = roomType.Room.Routing.GetCachedActiveVideoSources()
+				.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+			//Check active video sources
+			Assert.IsTrue(roomType.Room.Routing.GetCachedActiveAudioSources().Contains(source));
+
+			//Check video routes
+			foreach (var destination in destinations)
+			{
+				Assert.True(routingVideo.ContainsKey(destination) && routingVideo.Values.Any(v => v.Contains(source)));
+			}
+		}
+	}
+}

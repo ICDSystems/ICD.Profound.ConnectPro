@@ -1,5 +1,6 @@
 ﻿using ICD.Connect.Protocol.Sigs;
 using ICD.Profound.ConnectPRO.Tests.RoomTypes;
+using ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Helpers;
 using NUnit.Framework;
 
 namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
@@ -13,8 +14,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 		    using (TRoomType roomType = InstantiateRoomType())
 		    {
 			    // Simulate "start meeting" button press
-			    roomType.Panel.RaiseOutputSigChange(new SigInfo(91, 0, true));
-			    roomType.Panel.RaiseOutputSigChange(new SigInfo(91, 0, false));
+			    NavigationHelpers.PressButton(91, roomType.Panel);
 
 				Assert.IsTrue(roomType.Room.IsInMeeting);
 		    }
@@ -25,25 +25,20 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 	    {
 		    using (TRoomType roomType = InstantiateRoomType())
 		    {
-			    // Simulate "start meeting" button press
-			    roomType.Panel.RaiseOutputSigChange(new SigInfo(91, 0, true));
-			    roomType.Panel.RaiseOutputSigChange(new SigInfo(91, 0, false));
+				// Simulate "start meeting" button press
+			    NavigationHelpers.PressButton(91, roomType.Panel);
 
 				Assert.IsTrue(roomType.Room.IsInMeeting);
 
 				// Simulate "end meeting" button press (cancel)
-				roomType.Panel.RaiseOutputSigChange(new SigInfo(30, 0, true));
-			    roomType.Panel.RaiseOutputSigChange(new SigInfo(30, 0, false));
-				roomType.Panel.RaiseOutputSigChange(new SigInfo(32, 0, true));
-			    roomType.Panel.RaiseOutputSigChange(new SigInfo(32, 0, false));
+			    NavigationHelpers.PressButton(30, roomType.Panel);
+			    NavigationHelpers.PressButton(32, roomType.Panel);
 
 				Assert.IsTrue(roomType.Room.IsInMeeting);
 
-			    // Simulate "end meeting" button press (yes)
-			    roomType.Panel.RaiseOutputSigChange(new SigInfo(30, 0, true));
-			    roomType.Panel.RaiseOutputSigChange(new SigInfo(30, 0, false));
-				roomType.Panel.RaiseOutputSigChange(new SigInfo(31, 0, true));
-			    roomType.Panel.RaiseOutputSigChange(new SigInfo(31, 0, false));
+				// Simulate "end meeting" button press (yes)
+			    NavigationHelpers.PressButton(30, roomType.Panel);
+			    NavigationHelpers.PressButton(31, roomType.Panel);
 
 				Assert.IsFalse(roomType.Room.IsInMeeting);
 		    }
