@@ -578,7 +578,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				             .Distinct()
 				             .ToDictionary(s => s, s => eRoutedState.Active);
 
-			foreach (ISource source in m_ProcessingSources.Values)
+			foreach (ISource source in m_ProcessingSources.Values.Where(s => s != null))
 				routedSources[source] = eRoutedState.Processing;
 
 			if (routedSources.DictionaryEqual(m_SourceRoutedStates))
