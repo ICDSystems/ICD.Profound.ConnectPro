@@ -27,13 +27,10 @@ namespace ICD.Profound.ConnectPRO.Tests.RoomTypes
 		private readonly ConnectProRoom m_room;
 		private readonly MockPanelDevice m_panel;
 		private readonly ICore m_core;
-		private readonly IcdHashSet<IConnectProUserInterfaceFactory> m_interfaces;
-		private readonly XmlDocument m_webConferencingInstructions = new XmlDocument();
 
 		public override ConnectProRoom Room { get { return m_room; } }
 		public override MockPanelDevice Panel { get { return m_panel; } }
 		public override ICore Core { get { return m_core; } }
-		public override IcdHashSet<IConnectProUserInterfaceFactory> Interfaces { get { return m_interfaces; } }
 
 		public PresentationSingleRoomType()
 		{
@@ -53,8 +50,7 @@ namespace ICD.Profound.ConnectPRO.Tests.RoomTypes
 			var mockSourceDevice2 = new MockSourceDevice {Id = 20001606};
 			var sharpDisplay = new MockDisplayWithAudio {Id = 20001661};
 			var connectProVolumePoint = new VolumePoint {Id = 90000045, DeviceId = 20001661 };
-			m_webConferencingInstructions.Load("../../../Themes/UserInterface/Navigation/PresentationSingle/ThemeInstructions/WebConferencing.xml");
-			connectProTheme.WebConferencingInstructions.Parse(m_webConferencingInstructions.InnerXml);
+			connectProTheme.WebConferencingInstructions.Parse(Properties.Resources.WebConferencing);
 
 			//Adding rooms and devices to core Originators
 			m_core.Originators.AddChild(m_room);
@@ -122,8 +118,6 @@ namespace ICD.Profound.ConnectPRO.Tests.RoomTypes
 
 			//Building User Interfaces for room
 			connectProTheme.BuildUserInterfaces();
-
-			m_interfaces = connectProTheme.GetUiFactories().ToIcdHashSet();
 		}
 
 		public override void Dispose()

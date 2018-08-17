@@ -15,8 +15,6 @@ namespace ICD.Profound.ConnectPRO.Tests.RoomTypes
 
 		public abstract ICore Core { get; }
 
-	    public abstract IcdHashSet<IConnectProUserInterfaceFactory> Interfaces { get; }
-
 		public abstract void Dispose();
     }
 }

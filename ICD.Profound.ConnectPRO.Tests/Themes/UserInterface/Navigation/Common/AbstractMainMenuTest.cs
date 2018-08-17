@@ -18,11 +18,11 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 	public abstract class AbstractMainMenuTest<TRoomType> : AbstractNavigationTest<TRoomType>
 		where TRoomType : AbstractRoomType
 	{
-		protected const ushort DigitalIncrement = 2;
-		protected const ushort AnalogIncrement = 2;
+		protected const ushort DIGITAL_INCREMENT = 2;
+		protected const ushort ANALOG_INCREMENT = 2;
 
-		protected const ushort ButtonModeStart = 11;
-		protected const ushort FeedbackModeStart = 12;
+		protected const ushort BUTTON_MODE_START = 11;
+		protected const ushort FEEDBACK_MODE_START = 12;
 
 		[Test]
 		public void VolumeControlTest()
@@ -63,15 +63,15 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 
 				//vol up
 				NavigationHelpers.PressButton(523, roomType.Panel, 0, true, 2000);
-				Assert.AreEqual((int)(65535 * 0.01 * volumeControl.VolumeRaw), roomType.Panel.UShortInput[500].GetUShortValue());
+				Assert.AreEqual((int)(65535 * 0.01 * volumeControl.VolumeRaw), roomType.Panel.UShortInput[500].GetUShortValue(), 655);
 
 				//vol down
 				NavigationHelpers.PressButton(522, roomType.Panel, 0, true, 2000);
-				Assert.AreEqual((int)(65535 * 0.01 * volumeControl.VolumeRaw), roomType.Panel.UShortInput[500].GetUShortValue());
+				Assert.AreEqual((int)(65535 * 0.01 * volumeControl.VolumeRaw), roomType.Panel.UShortInput[500].GetUShortValue(), 655);
 
 				//vol down
 				NavigationHelpers.PressButton(522, roomType.Panel);
-				Assert.AreEqual(0, roomType.Panel.UShortInput[500].GetUShortValue());
+				Assert.AreEqual(0, roomType.Panel.UShortInput[500].GetUShortValue(), 655);
 
 				//mute
 				NavigationHelpers.PressButton(524, roomType.Panel);
@@ -105,46 +105,46 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 			eControlOverride controlOverride = ConnectProRouting.GetControlOverride(source);
 
 			//Source Index
-			uint sourceIndex = (uint)roomType.Room.Originators.GetInstances<ISource>().ToList().IndexOf(source);
+			uint sourceIndex = (uint)roomType.Room.Routing.GetCoreSources().ToList().IndexOf(source);
 
 			// Get number of displays
-			var displayCount = roomType.Room.Originators.GetInstances<IDisplay>().Count();
+			var displayCount = roomType.Room.Routing.GetDisplayDestinations().Count();
 
 			MockSmartObject sourcesSmartObject = roomType.Panel.SmartObjects[1] as MockSmartObject;
 
-			NavigationHelpers.PressButton(4011 + (DigitalIncrement * sourceIndex), sourcesSmartObject, 1);
+			NavigationHelpers.PressButton(4011 + (DIGITAL_INCREMENT * sourceIndex), sourcesSmartObject, 1);
 
 			// If we have one display we check routed state
 			switch (controlOverride)
 			{
 				case eControlOverride.Vtc:
 					VtcSourcePress(roomType, source, displayCount > 1
-						, ButtonModeStart + (AnalogIncrement * sourceIndex)
-						, FeedbackModeStart + (AnalogIncrement * sourceIndex));
+						, BUTTON_MODE_START + (ANALOG_INCREMENT * sourceIndex)
+						, FEEDBACK_MODE_START + (ANALOG_INCREMENT * sourceIndex));
 					break;
 
 				case eControlOverride.Atc:
 					AtcSourcePress(roomType, source
-						, ButtonModeStart + (AnalogIncrement * sourceIndex)
-						, FeedbackModeStart + (AnalogIncrement * sourceIndex));
+						, BUTTON_MODE_START + (ANALOG_INCREMENT * sourceIndex)
+						, FEEDBACK_MODE_START + (ANALOG_INCREMENT * sourceIndex));
 					break;
 
 				case eControlOverride.CableTv:
 					TvSourcePress(roomType, source, displayCount > 1
-						, ButtonModeStart + (AnalogIncrement * sourceIndex)
-						, FeedbackModeStart + (AnalogIncrement * sourceIndex));
+						, BUTTON_MODE_START + (ANALOG_INCREMENT * sourceIndex)
+						, FEEDBACK_MODE_START + (ANALOG_INCREMENT * sourceIndex));
 					break;
 
 				case eControlOverride.WebConference:
 					WebSourcePress(roomType, source, displayCount > 1
-						, ButtonModeStart + (AnalogIncrement * sourceIndex)
-						, FeedbackModeStart + (AnalogIncrement * sourceIndex));
+						, BUTTON_MODE_START + (ANALOG_INCREMENT * sourceIndex)
+						, FEEDBACK_MODE_START + (ANALOG_INCREMENT * sourceIndex));
 					break;
 
 				case eControlOverride.Default:
 					DefaultSourcePress(roomType, source, displayCount > 1
-						, ButtonModeStart + (AnalogIncrement * sourceIndex)
-						, FeedbackModeStart + (AnalogIncrement * sourceIndex));
+						, BUTTON_MODE_START + (ANALOG_INCREMENT * sourceIndex)
+						, FEEDBACK_MODE_START + (ANALOG_INCREMENT * sourceIndex));
 					break;
 			}
 		}
@@ -157,7 +157,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 			}
 
 			//Check source route/selective status
-			CheckRoutingAndSelctiveStatus(roomType.Panel, buttonModeId, feedbackModeId);
+			CheckRoutingAndSelectiveStatus(roomType.Panel, buttonModeId, feedbackModeId);
 
 			//Make sure the routes are active
 			CheckActiveRoutes(roomType, source);
@@ -171,7 +171,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 			}
 
 			//Check source route/selective status
-			CheckRoutingAndSelctiveStatus(roomType.Panel, buttonModeId, feedbackModeId);
+			CheckRoutingAndSelectiveStatus(roomType.Panel, buttonModeId, feedbackModeId);
 
 			//Make sure the routes are active
 			CheckActiveRoutes(roomType, source);
@@ -185,7 +185,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 			}
 
 			//Check source route/selective status
-			CheckRoutingAndSelctiveStatus(roomType.Panel, buttonModeId, feedbackModeId);
+			CheckRoutingAndSelectiveStatus(roomType.Panel, buttonModeId, feedbackModeId);
 
 			//Make sure the routes are active
 			CheckActiveRoutes(roomType, source);
@@ -194,7 +194,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 		private void AtcSourcePress(TRoomType roomType, ISource source, uint buttonModeId, uint feedbackModeId)
 		{
 			//Check source route/selective status
-			CheckRoutingAndSelctiveStatus(roomType.Panel, buttonModeId, feedbackModeId);
+			CheckRoutingAndSelectiveStatus(roomType.Panel, buttonModeId, feedbackModeId);
 
 			//Make sure the routes are active
 			CheckActiveRoutes(roomType, source);
@@ -208,7 +208,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 			}
 
 			//Check source route/selective status
-			CheckRoutingAndSelctiveStatus(roomType.Panel, buttonModeId, feedbackModeId);
+			CheckRoutingAndSelectiveStatus(roomType.Panel, buttonModeId, feedbackModeId);
 
 			//Make sure the routes are active
 			CheckActiveRoutes(roomType, source);
@@ -271,7 +271,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 			Assert.AreEqual(1, sourcesSmartObject?.UShortInput[301].GetUShortValue());
 		}
 
-		private void CheckRoutingAndSelctiveStatus(MockPanelDevice panel, uint buttonModeId, uint feedbackModeId)
+		private void CheckRoutingAndSelectiveStatus(MockPanelDevice panel, uint buttonModeId, uint feedbackModeId)
 		{
 			//Check source route status
 			Assert.AreEqual(1, (panel.SmartObjects[1] as MockSmartObject)?.UShortInput[buttonModeId].GetUShortValue());
@@ -289,7 +289,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 			var routingVideo = roomType.Room.Routing.GetCachedActiveVideoSources()
 				.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-			//Check active video sources
+			//Check active audio sources
 			Assert.IsTrue(roomType.Room.Routing.GetCachedActiveAudioSources().Contains(source));
 
 			//Check video routes
