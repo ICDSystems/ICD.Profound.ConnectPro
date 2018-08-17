@@ -768,27 +768,15 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		public void UnrouteAllExceptOsd()
 		{
-			UnrouteVtc();
+			ISource[] sources =
+				GetCoreSources().Where(s => !(m_Room.Core.Originators.GetChild(s.Device) is OsdPanelDevice))
+				                .ToArray();
 
-			foreach (IDestination display in GetDisplayDestinations())
+			foreach (IDestination destination in GetDisplayDestinations().Concat(GetAudioDestinations()).Distinct())
 			{
-				IEnumerable<int> endpointIds =
-					GetActiveVideoEndpoints(display).Select(e => e.Device)
-					                                .Distinct()
-													.ToArray();
-
-				foreach (int endpointId in endpointIds)
-				{
-					OsdPanelDevice osd = m_Room.Core.Originators.GetChild(endpointId) as OsdPanelDevice;
-					if (osd != null)
-						continue;
-
-					RoutingGraph.Unroute(display, EnumUtils.GetFlagsAllValue<eConnectionType>(), m_Room.Id);
-				}
+				foreach (ISource source in sources)
+					RoutingGraph.Unroute(source, destination, EnumUtils.GetFlagsAllValue<eConnectionType>(), m_Room.Id);
 			}
-
-			foreach (IDestination audio in GetAudioDestinations())
-				RoutingGraph.Unroute(audio, EnumUtils.GetFlagsAllValue<eConnectionType>(), m_Room.Id);
 		}
 
 		#endregion
