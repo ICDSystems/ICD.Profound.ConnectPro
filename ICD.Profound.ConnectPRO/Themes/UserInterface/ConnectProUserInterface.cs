@@ -56,8 +56,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private readonly IcdHashSet<ISource> m_ActiveAudio;
 		private readonly Dictionary<IDestination, IcdHashSet<ISource>> m_ActiveVideo;
 		private readonly Dictionary<ISource, eRoutedState> m_SourceRoutedStates;
-
-		private ISource m_ProcessingSource; 
+		private readonly Dictionary<IDestination, ISource> m_ProcessingSources; 
 
 		private IConnectProRoom m_Room;
 		private DefaultVisibilityNode m_RootVisibility;
@@ -81,6 +80,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_ActiveAudio = new IcdHashSet<ISource>();
 			m_ActiveVideo = new Dictionary<IDestination, IcdHashSet<ISource>>();
 			m_SourceRoutedStates = new Dictionary<ISource, eRoutedState>();
+			m_ProcessingSources = new Dictionary<IDestination, ISource>();
 
 			m_Panel = panel;
 			UpdatePanelOnlineJoin();
@@ -307,7 +307,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			// If a source is currently selected then we route that source to the selected display
 			else
 			{
-				SetProcessingSource(activeSource);
+				SetProcessingSource(destination, activeSource);
 
 				m_Room.Routing.Route(activeSource, destination);
 				m_Room.Routing.RouteAudioIfUnrouted(activeSource);
@@ -318,12 +318,28 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			}
 		}
 
+		/// <summary>
+		/// Sets the processing source for the single display destination.
+		/// </summary>
+		/// <param name="source"></param>
 		private void SetProcessingSource(ISource source)
 		{
-			if (source == m_ProcessingSource)
+			IDestination destination = m_Room == null ? null : m_Room.Routing.GetDisplayDestinations().FirstOrDefault();
+			if (destination == null)
 				return;
 
-			m_ProcessingSource = source;
+			SetProcessingSource(destination, source);
+		}
+
+		private void SetProcessingSource(IDestination destination, ISource source)
+		{
+			if (destination == null)
+				throw new ArgumentNullException("destination");
+
+			if (source == m_ProcessingSources.GetDefault(destination))
+				return;
+
+			m_ProcessingSources[destination] = source;
 
 			UpdateSourceRoutedStates();
 		}
@@ -534,9 +550,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_ActiveVideo.AddRange(routing.Keys, k => new IcdHashSet<ISource>(routing[k]));
 
 			// Remove routed items from the processing sources collection
-			// TODO - Track processing source per destination
-			if (m_ProcessingSource != null && m_ActiveVideo.Values.Any(v => v.Contains(m_ProcessingSource)))
-				m_ProcessingSource = null;
+			foreach (KeyValuePair<IDestination, IcdHashSet<ISource>> kvp in m_ActiveVideo)
+			{
+				ISource processing = m_ProcessingSources.GetDefault(kvp.Key);
+				if (processing == null)
+					continue;
+
+				if (kvp.Value.Contains(processing))
+					m_ProcessingSources[kvp.Key] = null;
+			}
 
 			// If the active source is routed to all destinations we clear the active source
 			if (m_ActiveSource != null && m_ActiveVideo.All(kvp => kvp.Value.Contains(m_ActiveSource)))
@@ -556,8 +578,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				             .Distinct()
 				             .ToDictionary(s => s, s => eRoutedState.Active);
 
-			if (m_ProcessingSource != null)
-				routedSources[m_ProcessingSource] = eRoutedState.Processing;
+			foreach (ISource source in m_ProcessingSources.Values)
+				routedSources[source] = eRoutedState.Processing;
 
 			if (routedSources.DictionaryEqual(m_SourceRoutedStates))
 				return false;
