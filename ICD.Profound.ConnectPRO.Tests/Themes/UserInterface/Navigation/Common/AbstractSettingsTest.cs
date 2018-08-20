@@ -9,7 +9,6 @@ using ICD.Connect.Devices.Controls;
 using ICD.Connect.Displays.Devices;
 using ICD.Connect.Panels;
 using ICD.Connect.Routing.Endpoints.Destinations;
-using NUnit.Framework.Interfaces;
 
 namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 {

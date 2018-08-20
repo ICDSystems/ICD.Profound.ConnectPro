@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Provider name="Profound">
+	<BaseUrl>http://10.40.3.75/WebConferencing/</BaseUrl>
+	<Apps>
+		<App>
+			<Icon>icon_videxio.png</Icon>
+			<Name>Videxio VMR</Name>
+			<Steps>
+				<Step>
+					<Image>Videxio_1.png</Image>
+					<Text>First, open the Videxio Meeting Room in your web browser, then select the gear icon.</Text>
+				</Step>
+				<Step>
+					<Image>Videxio_2.png</Image>
+					<Text>Change the Camera, Microphone, and Speakers to the correct devices.</Text>
+				</Step>
+				<Step>
+					<Image>Videxio_3.png</Image>
+					<Text>Set Microphone to Crestron MMX6.</Text>
+				</Step>
+				<Step>
+					<Image>Videxio_4.png</Image>
+					<Text>Set Camera to Logitech C930, and Speakers to NEC E670.</Text>
+				</Step>
+			</Steps>
+		</App>
+		<App>
+			<Icon>icon_skype.png</Icon>
+			<Name>Skype for Business</Name>
+			<Steps>
+				<Step>
+					<Image>Skype_1.png</Image>
+					<Text>First, open the Skype for Business application, then select the preferences from the application menu.</Text>
+				</Step>
+				<Step>
+					<Image>Skype_2.png</Image>
+					<Text>Select the Audio/Video preferences submenu.</Text>
+				</Step>
+				<Step>
+					<Image>Skype_3.png</Image>
+					<Text>Change the Camera, Microphone, and Speakers to the correct devices.</Text>
+				</Step>
+				<Step>
+					<Image>Skype_4.png</Image>
+					<Text>Set Camera to Logitech C930, and Speakers to NEC E670.</Text>
+				</Step>
+				<Step>
+					<Image>Skype_5.png</Image>
+					<Text>Set Microphone to Crestron MMX6.</Text>
+				</Step>
+			</Steps>
+		</App>
+		<App>
+			<Icon>icon_cisco.png</Icon>
+			<Name>Cisco WebEx</Name>
+			<Steps>
+				<Step>
+					<Image>Cisco_1.png</Image>
+					<Text>First, open the Cisco WebEx Meeting in your web browser. You will be prompted for your audio/video method to join the meeting.</Text>
+				</Step>
+				<Step>
+					<Image>Cisco_2.png</Image>
+					<Text>For "Select Audio Connection", choose "Call Using Computer".</Text>
+				</Step>
+				<Step>
+					<Image>Cisco_3.png</Image>
+					<Text>Set Microphone to Crestron MMX6.</Text>
+				</Step>
+				<Step>
+					<Image>Cisco_4.png</Image>
+					<Text>For "Select Video Connection" choose the Camera. Set Camera to Logitech C930.</Text>
+				</Step>
+			</Steps>
+		</App>
+		<App>
+			<Icon>icon_webRTC.png</Icon>
+			<Name>Web RTV (BrowserBased)</Name>
+			<Steps>
+				<Step>
+					<Image>WebRTC_1.png</Image>
+					<Text>First, open the Video Meeting Room in your web browser, then look for the settings menu. Note: It may not look like this image.</Text>
+				</Step>
+				<Step>
+					<Image>WebRTC_2.png</Image>
+					<Text>Within the settings menu, change the Camera, Microphone, and Speakers to the correct devices.</Text>
+				</Step>
+				<Step>
+					<Image>WebRTC_3.png</Image>
+					<Text>Set Microphone to Crestron MMX6.</Text>
+				</Step>
+				<Step>
+					<Image>WebRTC_4.png</Image>
+					<Text>Set Camera to Logitech C930, and Speakers to NEC E670.</Text>
+				</Step>
+			</Steps>
+		</App>
+	</Apps>
+</Provider>

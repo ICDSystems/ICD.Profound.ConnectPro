@@ -1,7 +1,9 @@
 ﻿using System;
+using ICD.Common.Utils.Collections;
 using ICD.Connect.Panels.Mock;
 using ICD.Connect.Settings.Core;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.Themes;
 
 namespace ICD.Profound.ConnectPRO.Tests.RoomTypes
 {
@@ -13,6 +15,6 @@ namespace ICD.Profound.ConnectPRO.Tests.RoomTypes
 
 		public abstract ICore Core { get; }
 
-	    public abstract void Dispose();
+		public abstract void Dispose();
     }
 }
