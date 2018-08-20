@@ -37,16 +37,20 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 
 				Assert.IsTrue(roomType.Room.IsInMeeting);
 
+				//Check floating volume button visible
 				Assert.IsTrue(NavigationHelpers.CheckVisibilty(40, roomType.Panel));
 
+				//Click floating volume button
 				NavigationHelpers.PressButton(45, roomType.Panel);
 
+				//Check volume page is visible
 				Assert.IsTrue(NavigationHelpers.CheckVisibilty(11, roomType.Panel));
 
-
+				//Get volume point
 				IVolumePoint volumePoint = roomType.Room.Originators.GetInstance<IVolumePoint>();
 				Assert.NotNull(volumePoint);
 
+				//Get volume control
 				DisplayVolumeDeviceControl volumeControl =
 					roomType.Room
 						.Core
@@ -55,6 +59,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 						.Controls
 						.GetControl<DisplayVolumeDeviceControl>(volumePoint.ControlId);
 
+				//Check that volume is at zero
 				Assert.AreEqual(0, volumeControl.VolumeRaw);
 
 				//vol up
@@ -81,6 +86,8 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 
 				//exit
 				NavigationHelpers.PressButton(46, roomType.Panel);
+
+				//Check volume page is not visible
 				Assert.IsFalse(NavigationHelpers.CheckVisibilty(11, roomType.Panel));
 			}
 		}
@@ -112,6 +119,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 
 			MockSmartObject sourcesSmartObject = roomType.Panel.SmartObjects[1] as MockSmartObject;
 
+			//Select source
 			NavigationHelpers.PressButton(4011 + (DIGITAL_INCREMENT * sourceIndex), sourcesSmartObject, 1);
 
 			// If we have one display we check routed state
