@@ -25,7 +25,7 @@ using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.Extensions;
-using ICD.Connect.Routing.Pathfinding;
+using ICD.Connect.Routing.PathFinding;
 using ICD.Connect.Routing.RoutingGraphs;
 using ICD.Connect.Settings.Core;
 using ICD.Connect.Sources.TvTuner.Controls;
