@@ -165,10 +165,17 @@ namespace ICD.Profound.ConnectPRO.Routing
 			{
 				foreach (KeyValuePair<IDestination, IcdHashSet<ISource>> kvp in routing)
 				{
-					if (!m_VideoRoutingCache.ContainsKey(kvp.Key))
-						m_VideoRoutingCache.Add(kvp.Key, new IcdHashSet<ISource>());
+					IcdHashSet<ISource> cache;
+					if (!m_VideoRoutingCache.TryGetValue(kvp.Key, out cache))
+					{
+						cache = new IcdHashSet<ISource>();
+						m_VideoRoutingCache[kvp.Key] = cache;
+					}
 
-					output |= !m_VideoRoutingCache[kvp.Key].SetEquals(kvp.Value);
+					if (cache.SetEquals(kvp.Value))
+						continue;
+
+					output = true;
 
 					m_VideoRoutingCache[kvp.Key].Clear();
 					m_VideoRoutingCache[kvp.Key].AddRange(kvp.Value);
