@@ -13,7 +13,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 	public abstract class AbstractConnectProUserInterfaceFactory<TUserInterface, TOriginator> :
 		IConnectProUserInterfaceFactory
 		where TUserInterface : IUserInterface
-		where TOriginator : IOriginator
+		where TOriginator : class, IOriginator
 	{
 		private readonly ConnectProTheme m_Theme;
 
