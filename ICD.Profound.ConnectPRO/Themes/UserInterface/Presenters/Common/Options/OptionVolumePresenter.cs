@@ -17,7 +17,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 	{
 		private readonly IVolumePresenter m_Menu;
 
-		private IVolumeMuteFeedbackDeviceControl m_SubscribedVolumeControl;
+		private IVolumeDeviceControl m_SubscribedVolumeControl;
+		private IVolumeMuteFeedbackDeviceControl m_SubscribedMuteFeedbackControl;
 		private IPowerDeviceControl m_SubscribedPowerControl;
 
 		/// <summary>
@@ -60,32 +61,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// <returns></returns>
 		protected override bool GetActive()
 		{
-			IVolumeDeviceControl control = m_Menu.VolumeControl;
-			IDeviceBase device = control == null ? null : control.Parent;
-			IVolumeMuteFeedbackDeviceControl muteControl =
-				device == null
-					? null
-					: device.Controls.GetControl<IVolumeMuteFeedbackDeviceControl>();
-
-			return muteControl != null && muteControl.VolumeIsMuted;
+			return m_SubscribedMuteFeedbackControl != null && m_SubscribedMuteFeedbackControl.VolumeIsMuted;
 		}
 
 		/// <summary>
 		/// Gets the volume control for the current room.
 		/// </summary>
 		/// <returns></returns>
-		private IVolumeDeviceControl GetVolumeControl()
+		private static IVolumeDeviceControl GetVolumeControl(IConnectProRoom room)
 		{
-			return Room == null ? null : Room.GetVolumeControl();
+			return room == null ? null : room.GetVolumeControl();
 		}
 
 		/// <summary>
 		/// Gets the volume control for the current room.
 		/// </summary>
 		/// <returns></returns>
-		private IVolumeMuteFeedbackDeviceControl GetMuteFeedbackControl()
+		private static IVolumeMuteFeedbackDeviceControl GetMuteFeedbackControl(IConnectProRoom room)
 		{
-			IVolumeDeviceControl volumeControl = GetVolumeControl();
+			IVolumeDeviceControl volumeControl = GetVolumeControl(room);
 			if (volumeControl == null)
 				return null;
 
@@ -104,7 +98,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// <param name="eventArgs"></param>
 		protected override void ViewOnButtonPressed(object sender, EventArgs eventArgs)
 		{
-			m_Menu.VolumeControl = GetVolumeControl();
+			m_Menu.VolumeControl = m_SubscribedVolumeControl;
 			m_Menu.ShowView(!m_Menu.IsViewVisible);
 		}
 
@@ -155,9 +149,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 			if (room == null)
 				return;
 
-			m_SubscribedVolumeControl = GetMuteFeedbackControl();
-			if (m_SubscribedVolumeControl != null)
-				m_SubscribedVolumeControl.OnMuteStateChanged += SubscribedVolumeControlOnMuteStateChanged;
+			m_SubscribedVolumeControl = GetVolumeControl(room);
+
+			m_SubscribedMuteFeedbackControl = GetMuteFeedbackControl(room);
+			if (m_SubscribedMuteFeedbackControl != null)
+				m_SubscribedMuteFeedbackControl.OnMuteStateChanged += SubscribedMuteFeedbackControlOnMuteStateChanged;
 
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
 
@@ -175,9 +171,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		{
 			base.Unsubscribe(room);
 
-			if (m_SubscribedVolumeControl != null)
-				m_SubscribedVolumeControl.OnMuteStateChanged -= SubscribedVolumeControlOnMuteStateChanged;
 			m_SubscribedVolumeControl = null;
+
+			if (m_SubscribedMuteFeedbackControl != null)
+				m_SubscribedMuteFeedbackControl.OnMuteStateChanged -= SubscribedMuteFeedbackControlOnMuteStateChanged;
+			m_SubscribedMuteFeedbackControl = null;
 
 			if (m_SubscribedPowerControl != null)
 				m_SubscribedPowerControl.OnIsPoweredChanged -= SubscribedPowerControlOnIsPoweredChanged;
@@ -199,11 +197,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// <param name="eventArgs"></param>
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs eventArgs)
 		{
-			IVolumeDeviceControl volumeControl = GetVolumeControl();
-			ShowView(eventArgs.Data && volumeControl != null);
+			ShowView(eventArgs.Data && m_SubscribedVolumeControl != null);
 		}
 
-		private void SubscribedVolumeControlOnMuteStateChanged(object sender, BoolEventArgs boolEventArgs)
+		private void SubscribedMuteFeedbackControlOnMuteStateChanged(object sender, BoolEventArgs boolEventArgs)
 		{
 			RefreshIfVisible();
 		}
