@@ -33,6 +33,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 {
 	public sealed class ConnectProRoom : AbstractRoom<ConnectProRoomSettings>, IConnectProRoom
 	{
+		/// <summary>
+		/// Raised when the room starts/stops a meeting.
+		/// </summary>
 		public event EventHandler<BoolEventArgs> OnIsInMeetingChanged;
 
 		private readonly IConferenceManager m_ConferenceManager;
