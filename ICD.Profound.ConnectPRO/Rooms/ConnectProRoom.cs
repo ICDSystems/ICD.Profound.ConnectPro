@@ -49,6 +49,14 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		#region Properties
 
 		/// <summary>
+		/// Gets the scheduler service.
+		/// </summary>
+		private IActionSchedulerService SchedulerService
+		{
+			get { return ServiceProvider.TryGetService<IActionSchedulerService>(); }
+		}
+
+		/// <summary>
 		/// Gets/sets the current meeting status.
 		/// </summary>
 		public bool IsInMeeting
@@ -89,16 +97,23 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			m_Routing = new ConnectProRouting(this);
 			m_ConferenceManager = new ConferenceManager();
 			m_WakeSchedule = new WakeSchedule();
+
 			Subscribe(m_WakeSchedule);
-			ServiceProvider.TryGetService<IActionSchedulerService>().Add(m_WakeSchedule);
+
+			SchedulerService.Add(m_WakeSchedule);
 		}
 
+		/// <summary>
+		/// Release resources
+		/// </summary>
+		/// <param name="disposing"></param>
 		protected override void DisposeFinal(bool disposing)
 		{
 			base.DisposeFinal(disposing);
 
 			Unsubscribe(m_WakeSchedule);
-			ServiceProvider.TryGetService<IActionSchedulerService>().Remove(m_WakeSchedule);
+
+			SchedulerService.Remove(m_WakeSchedule);
 		}
 
 		#region Methods
