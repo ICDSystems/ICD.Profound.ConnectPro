@@ -127,15 +127,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 					m_AudioRoutingCache.Clear();
 					m_AudioRoutingCache.AddRange(activeAudio);
 				}
-
-				// Make sure there are no audio routes without video routes
-				/*
-				IEnumerable<ISource> unrouteAudioSources =
-					m_AudioRoutingCache.Where(s => !m_VideoRoutingCache.Any(kvp => kvp.Value.Contains(s)))
-					                   .ToArray();
-				foreach (ISource source in unrouteAudioSources)
-					UnrouteAudio(source);
-				 */
 			}
 			finally
 			{
@@ -321,19 +312,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 		}
 
 		/// <summary>
-		/// Gets all of the source endpoints actively routed to the given destination for video.
-		/// </summary>
-		/// <param name="destination"></param>
-		/// <returns></returns>
-		public IEnumerable<EndpointInfo> GetActiveVideoEndpoints(IDestination destination)
-		{
-			if (destination == null)
-				throw new ArgumentNullException("destination");
-
-			return GetActiveEndpoints(destination, eConnectionType.Video);
-		}
-
-		/// <summary>
 		/// Gets all of the source endpoints actively routed to the given destination.
 		/// </summary>
 		/// <param name="destination"></param>
@@ -377,9 +355,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (source == null)
 				throw new ArgumentNullException("source");
 
-			// Don't allow partial route of VTC
-			//UnrouteVtc();
-
 			foreach (IDestination destination in GetDisplayDestinations())
 				Route(source, destination, eConnectionType.Video);
 
@@ -399,9 +374,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			if (destination == null)
 				throw new ArgumentNullException("destination");
-
-			// Don't allow partial route of VTC
-			//UnrouteVtc();
 
 			eConnectionType intersection = EnumUtils.GetFlagsIntersection(source.ConnectionType, destination.ConnectionType);
 
@@ -742,32 +714,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 			return RoutingGraph.RoutingCache
 			                   .GetSourcesForDestinationEndpoint(control.GetInputEndpointInfo((int)activeInput),
 			                                                     eConnectionType.Video);
-		}
-
-		/// <summary>
-		/// Unroutes the given audio source from all audio destinations.
-		/// </summary>
-		/// <param name="source"></param>
-		public void UnrouteAudio(ISource source)
-		{
-			if (source == null)
-				throw new ArgumentNullException("source");
-
-			foreach (IDestination destination in GetAudioDestinations())
-				RoutingGraph.Unroute(source, destination, eConnectionType.Audio, m_Room.Id);
-		}
-
-		/// <summary>
-		/// Fully unroutes the VTC from all displays.
-		/// </summary>
-		public void UnrouteVtc()
-		{
-			IVideoConferenceDevice codec = GetCodec();
-			if (codec == null)
-				return;
-
-			IRouteSourceControl sourceControl = codec.Controls.GetControl<IRouteSourceControl>();
-			RoutingGraph.Unroute(sourceControl, EnumUtils.GetFlagsAllValue<eConnectionType>(), m_Room.Id);
 		}
 
 		/// <summary>
