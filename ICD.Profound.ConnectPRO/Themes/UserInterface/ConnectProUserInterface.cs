@@ -200,7 +200,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			Subscribe(m_Room);
 
-			UpdateMeetingPresenters();
+			UpdateMeetingPresentersVisibility();
 			UpdateRouting(eConnectionType.Audio | eConnectionType.Video);
 
 			UpdatePanelOnlineJoin();
@@ -248,12 +248,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				// Edge case - route the codec to both displays and open the context menu
 				if (source != null && videoDialer != null && source.Device == videoDialer.Parent.Id)
 				{
+					// Show the context menu before routing for UX
+					ShowSourceContextualMenu(source, false);
+
 					IRouteSourceControl sourceControl = m_Room.Core.GetControl<IRouteSourceControl>(source.Device, source.Control);
 					m_Room.Routing.RouteVtc(sourceControl);
 				}
 				// Edge case - open the audio conferencing context menu
 				else if (source != null && audioDialer != null && source.Device == audioDialer.Parent.Id)
 				{
+					// Show the context menu before routing for UX
+					ShowSourceContextualMenu(source, false);
+
 					IRouteSourceControl sourceControl = m_Room.Core.GetControl<IRouteSourceControl>(source.Device, source.Control);
 					m_Room.Routing.RouteAtc(sourceControl);
 				}
@@ -273,14 +279,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				{
 					SetProcessingSource(source);
 
+					// Show the context menu before routing for UX
+					ShowSourceContextualMenu(source, false);
+
 					m_Room.Routing.Route(source);
 					m_Room.Routing.RouteAudio(source);
 				}
 
 				SetActiveSource(null);
 			}
-
-			ShowSourceContextualMenu(source, false);
 		}
 
 		/// <summary>
@@ -446,13 +453,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="boolEventArgs"></param>
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs boolEventArgs)
 		{
-			UpdateMeetingPresenters();
+			UpdateMeetingPresentersVisibility();
 		}
 
 		/// <summary>
 		/// Sets the visibility of the subpages based on the meeting state.
 		/// </summary>
-		private void UpdateMeetingPresenters()
+		private void UpdateMeetingPresentersVisibility()
 		{
 			bool isInMeeting = m_Room != null && m_Room.IsInMeeting;
 

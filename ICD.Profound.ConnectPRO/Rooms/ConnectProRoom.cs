@@ -140,10 +140,12 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <param name="resetRouting"></param>
 		public void StartMeeting(bool resetRouting)
 		{
+			// Change meeting state before any routing for UX
+			IsInMeeting = true;
+
 			if (resetRouting)
 				Routing.RouteOsd();
 
-			IsInMeeting = true;
 		}
 
 		/// <summary>
@@ -156,13 +158,14 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			if (ConferenceManager != null && ConferenceManager.ActiveConference != null)
 				ConferenceManager.ActiveConference.Hangup();
 
+			// Change meeting state before any routing for UX
+			IsInMeeting = false;
+
 			// Reset all routing
 			Routing.RouteOsd();
 
 			if (shutdown)
 				Sleep();
-
-			IsInMeeting = false;
 		}
 
 		/// <summary>
@@ -170,6 +173,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public void Wake()
 		{
+			// Change meeting state before any routing for UX
+			IsInMeeting = false;
+
 			// Reset all routing
 			Routing.RouteOsd();
 
@@ -177,8 +183,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			Originators.GetInstancesRecursive<IPanelDevice>()
 					   .SelectMany(panel => panel.Controls.GetControls<IPowerDeviceControl>())
 					   .ForEach(c => c.PowerOn());
-
-			IsInMeeting = false;
 		}
 
 		/// <summary>
@@ -189,6 +193,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			// Hangup
 			if (ConferenceManager != null && ConferenceManager.ActiveConference != null)
 				ConferenceManager.ActiveConference.Hangup();
+
+			// Change meeting state before any routing for UX
+			IsInMeeting = false;
 
 			// Reset all routing
 			Routing.RouteOsd();
@@ -205,8 +212,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			Originators.GetInstancesRecursive<IPanelDevice>()
 			           .SelectMany(panel => panel.Controls.GetControls<IPowerDeviceControl>())
 			           .ForEach(c => c.PowerOff());
-
-			IsInMeeting = false;
 		}
 
 		#endregion
