@@ -27,6 +27,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		}
 
 		/// <summary>
+		/// Sets the image path for the logo.
+		/// </summary>
+		/// <param name="url"></param>
+		public void SetLogoPath(string url)
+		{
+			m_Logo.SetImageUrl(url);
+		}
+
+		/// <summary>
 		/// Release resources.
 		/// </summary>
 		public override void Dispose()

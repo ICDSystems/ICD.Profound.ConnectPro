@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +21,8 @@ namespace ICD.Profound.ConnectPRO.Themes
 {
 	public sealed class ConnectProTheme : AbstractTheme<ConnectProThemeSettings>
 	{
+		public const string LOGO_DEFAULT = "Logo.png";
+
 		private readonly IcdHashSet<IConnectProUserInterfaceFactory> m_UiFactories;
 		private readonly SafeCriticalSection m_UiFactoriesSection;
 
@@ -31,10 +32,26 @@ namespace ICD.Profound.ConnectPRO.Themes
 		// Used with settings.
 		private string m_TvPresetsPath;
 		private string m_WebConferencingInstructionsPath;
+		private string m_Logo;
 
 		#region Properties
 
 		public ICore Core { get { return ServiceProvider.GetService<ICore>(); } }
+
+		/// <summary>
+		/// Gets/sets the url to the logo image for the splash screen.
+		/// </summary>
+		public string Logo
+		{
+			get { return m_Logo; }
+			set
+			{
+				Uri baseUri = GenerateBaseUri();
+				Uri absolute = new Uri(baseUri, value);
+
+				m_Logo = absolute.ToString();
+			}
+		}
 
 		/// <summary>
 		/// Gets the tv presets.
@@ -53,6 +70,8 @@ namespace ICD.Profound.ConnectPRO.Themes
 		/// </summary>
 		public ConnectProTheme()
 		{
+			Logo = LOGO_DEFAULT;
+
 			m_TvPresets = new XmlTvPresets();
 			m_WebConferencingInstructions = new WebConferencingInstructions();
 
@@ -181,6 +200,18 @@ namespace ICD.Profound.ConnectPRO.Themes
 
 		#endregion
 
+		/// <summary>
+		/// Gets the base uri for the processor.
+		/// </summary>
+		/// <returns></returns>
+		private static Uri GenerateBaseUri()
+		{
+			string ip = IcdEnvironment.NetworkAddresses.FirstOrDefault();
+			string url = string.Format(@"http://{0}/", ip);
+			
+			return new Uri(url);
+		}
+
 		#region Settings
 
 		/// <summary>
@@ -190,6 +221,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 		{
 			base.ClearSettingsFinal();
 
+			Logo = LOGO_DEFAULT;
 			m_TvPresetsPath = null;
 			m_WebConferencingInstructionsPath = null;
 		}
@@ -202,6 +234,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 		{
 			base.CopySettingsFinal(settings);
 
+			settings.Logo = Logo;
 			settings.TvPresets = m_TvPresetsPath;
 			settings.WebConferencingInstructions = m_WebConferencingInstructionsPath;
 		}
@@ -215,6 +248,8 @@ namespace ICD.Profound.ConnectPRO.Themes
 		{
 			// Ensure the rooms are loaded
 			factory.LoadOriginators<IRoom>();
+
+			Logo = settings.Logo;
 
 			SetTvPresetsFromPath(settings.TvPresets);
 			SetWebConferencingInstructionsFromPath(settings.WebConferencingInstructions);

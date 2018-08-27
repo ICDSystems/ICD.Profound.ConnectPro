@@ -2,6 +2,7 @@
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
+using ICD.Connect.UI.Controls.Images;
 using ICD.Connect.UI.Controls.Pages;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
@@ -11,6 +12,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		private VtProSubpage m_Subpage;
 		private VtProButton m_StartMeetingButton;
 		private VtProButton m_SettingsButton;
+		private VtProImageObject m_Logo;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -34,6 +36,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			{
 				DigitalPressJoin = 115
 			};
+
+			m_Logo = new VtProImageObject(panel, m_Subpage)
+			{
+				SerialGraphicsJoin = 30
+			};
 		}
 
 		/// <summary>
@@ -45,6 +52,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			yield return m_Subpage;
 			yield return m_StartMeetingButton;
 			yield return m_SettingsButton;
+			yield return m_Logo;
 		}
 	}
 }
