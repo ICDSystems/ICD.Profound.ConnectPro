@@ -947,7 +947,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 			EndpointInfo sourceEndpoint = sourceControl.GetOutputEndpointInfo(1);
 
 			IEnumerable<IDestination> emptyDestinations =
-				GetCachedActiveVideoSources().Where(kvp => kvp.Value == null).Select(kvp => kvp.Key);
+				GetCachedActiveVideoSources().Where(kvp => kvp.Value == null || kvp.Value.Count == 0)
+				                             .Select(kvp => kvp.Key);
 
 			foreach (IDestination destination in emptyDestinations)
 				Route(sourceEndpoint, destination, eConnectionType.Video);
