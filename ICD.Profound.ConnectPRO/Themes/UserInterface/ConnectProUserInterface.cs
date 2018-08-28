@@ -229,6 +229,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="source"></param>
 		private void HandleSelectedSource(ISource source)
 		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
 			if (m_Room == null)
 				return;
 
@@ -259,11 +262,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="source"></param>
 		private void HandleSelectedSourceDualDisplay(ISource source)
 		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
 			IDialingDeviceControl videoDialer = m_Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
 			IDialingDeviceControl audioDialer = m_Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Audio);
 
 			// Edge case - route the codec to both displays and open the context menu
-			if (source != null && videoDialer != null && source.Device == videoDialer.Parent.Id)
+			if (videoDialer != null && source.Device == videoDialer.Parent.Id)
 			{
 				// Show the context menu before routing for UX
 				ShowSourceContextualMenu(source, false);
@@ -272,7 +278,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				m_Room.Routing.RouteVtc(sourceControl);
 			}
 			// Edge case - open the audio conferencing context menu
-			else if (source != null && audioDialer != null && source.Device == audioDialer.Parent.Id)
+			else if (audioDialer != null && source.Device == audioDialer.Parent.Id)
 			{
 				// Show the context menu before routing for UX
 				ShowSourceContextualMenu(source, false);
@@ -296,7 +302,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="source"></param>
 		private void HandleSelectedSourceSingleDisplay(ISource source)
 		{
-			if (source != null)
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			// Is the source already routed?     
+			if (m_RoutingSection.Execute(() => m_ActiveVideo.Any(kvp => kvp.Value.Contains(source))))
+			{
+				ShowSourceContextualMenu(source, false);
+			}
+			else
 			{
 				SetProcessingSource(source);
 
@@ -738,7 +752,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="source"></param>
 		private void SourceSelectPresenterOnSourcePressed(object sender, ISource source)
 		{
-			HandleSelectedSource(source);
+			if (source != null)
+				HandleSelectedSource(source);
 		}
 
 		#endregion
