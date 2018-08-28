@@ -532,19 +532,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 		}
 
 		/// <summary>
-		/// Route the source audio only if there is currently no audio routed.
-		/// </summary>
-		/// <param name="source"></param>
-		private void RouteAudioIfNoAudioRouted(ISource source)
-		{
-			if (source == null)
-				throw new ArgumentNullException("source");
-
-			if (!GetActiveAudioSources().Any())
-				RouteAudio(source);
-		}
-
-		/// <summary>
 		/// Routes audio from the source to the given destination.
 		/// </summary>
 		/// <param name="source"></param>
@@ -558,6 +545,19 @@ namespace ICD.Profound.ConnectPRO.Routing
 				throw new ArgumentNullException("destination");
 
 			Route(source, destination, eConnectionType.Audio);
+		}
+
+		/// <summary>
+		/// Route the source audio only if there is currently no audio routed.
+		/// </summary>
+		/// <param name="source"></param>
+		private void RouteAudioIfNoAudioRouted(ISource source)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			if (m_CacheSection.Execute(() => m_AudioRoutingCache.Count) == 0)
+				RouteAudio(source);
 		}
 
 		/// <summary>
