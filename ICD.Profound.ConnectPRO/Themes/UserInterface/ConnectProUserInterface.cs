@@ -317,8 +317,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				// Show the context menu before routing for UX
 				ShowSourceContextualMenu(source, false);
 
-				m_Room.Routing.Route(source);
-				m_Room.Routing.RouteAudio(source);
+				m_Room.Routing.RouteSingleDisplay(source);
 			}
 
 			SetActiveSource(null);
@@ -350,8 +349,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			{
 				SetProcessingSource(destination, activeSource);
 
-				m_Room.Routing.Route(activeSource, destination);
-				m_Room.Routing.RouteAudioIfUnrouted(activeSource);
+				m_Room.Routing.RouteDualDisplay(activeSource, destination);
+				
 				routedSource = activeSource;
 
 				if (ShowSourceContextualMenu(routedSource, true))
