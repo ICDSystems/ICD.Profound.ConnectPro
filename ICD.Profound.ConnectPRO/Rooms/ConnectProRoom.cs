@@ -83,8 +83,14 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public IConferenceManager ConferenceManager { get { return m_ConferenceManager; } }
 
+		/// <summary>
+		/// Gets the wake/sleep schedule.
+		/// </summary>
 		public WakeSchedule WakeSchedule { get { return m_WakeSchedule; } }
 
+		/// <summary>
+		/// Gets/sets the passcode for the settings page.
+		/// </summary>
 		public string Passcode { get; set; }
 
 		#endregion
