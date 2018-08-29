@@ -14,10 +14,11 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.AudioConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.AudioConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConference
 {
-	public sealed class AtcBasePresenter : AbstractPresenter<IAtcBaseView>, IAtcBasePresenter
+	public sealed class AtcBasePresenter : AbstractPopupPresenter<IAtcBaseView>, IAtcBasePresenter
 	{
 		private readonly KeypadStringBuilder m_Builder;
 		private readonly SafeCriticalSection m_RefreshSection;
@@ -175,7 +176,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		{
 			base.Subscribe(view);
 
-			view.OnCloseButtonPressed += ViewOnCloseButtonPressed;
 			view.OnClearButtonPressed += ViewOnClearButtonPressed;
 			view.OnDialButtonPressed += ViewOnDialButtonPressed;
 			view.OnHangupButtonPressed += ViewOnHangupButtonPressed;
@@ -190,16 +190,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		{
 			base.Unsubscribe(view);
 
-			view.OnCloseButtonPressed -= ViewOnCloseButtonPressed;
 			view.OnClearButtonPressed -= ViewOnClearButtonPressed;
 			view.OnDialButtonPressed -= ViewOnDialButtonPressed;
 			view.OnHangupButtonPressed -= ViewOnHangupButtonPressed;
 			view.OnKeypadButtonPressed -= ViewOnKeypadButtonPressed;
-		}
-
-		private void ViewOnCloseButtonPressed(object sender, EventArgs eventArgs)
-		{
-			ShowView(false);
 		}
 
 		private void ViewOnKeypadButtonPressed(object sender, CharEventArgs eventArgs)

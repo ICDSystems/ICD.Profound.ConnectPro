@@ -19,5 +19,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 		/// </summary>
 		/// <param name="enabled"></param>
 		void SetStartMeetingButtonEnabled(bool enabled);
+
+		/// <summary>
+		/// Sets the image path for the logo.
+		/// </summary>
+		/// <param name="url"></param>
+		void SetLogoPath(string url);
 	}
 }

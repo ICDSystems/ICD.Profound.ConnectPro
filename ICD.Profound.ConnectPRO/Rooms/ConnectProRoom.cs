@@ -24,6 +24,7 @@ using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Displays.Devices;
 using ICD.Connect.Panels;
+using ICD.Connect.Panels.Devices;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Settings.Core;
@@ -47,6 +48,14 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		private DialingPlanInfo m_DialingPlan;
 
 		#region Properties
+
+		/// <summary>
+		/// Gets the scheduler service.
+		/// </summary>
+		private IActionSchedulerService SchedulerService
+		{
+			get { return ServiceProvider.TryGetService<IActionSchedulerService>(); }
+		}
 
 		/// <summary>
 		/// Gets/sets the current meeting status.
@@ -75,8 +84,14 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public IConferenceManager ConferenceManager { get { return m_ConferenceManager; } }
 
+		/// <summary>
+		/// Gets the wake/sleep schedule.
+		/// </summary>
 		public WakeSchedule WakeSchedule { get { return m_WakeSchedule; } }
 
+		/// <summary>
+		/// Gets/sets the passcode for the settings page.
+		/// </summary>
 		public string Passcode { get; set; }
 
 		#endregion
@@ -89,16 +104,23 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			m_Routing = new ConnectProRouting(this);
 			m_ConferenceManager = new ConferenceManager();
 			m_WakeSchedule = new WakeSchedule();
+
 			Subscribe(m_WakeSchedule);
-			ServiceProvider.TryGetService<IActionSchedulerService>().Add(m_WakeSchedule);
+
+			SchedulerService.Add(m_WakeSchedule);
 		}
 
+		/// <summary>
+		/// Release resources
+		/// </summary>
+		/// <param name="disposing"></param>
 		protected override void DisposeFinal(bool disposing)
 		{
 			base.DisposeFinal(disposing);
 
 			Unsubscribe(m_WakeSchedule);
-			ServiceProvider.TryGetService<IActionSchedulerService>().Remove(m_WakeSchedule);
+
+			SchedulerService.Remove(m_WakeSchedule);
 		}
 
 		#region Methods
@@ -140,10 +162,12 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <param name="resetRouting"></param>
 		public void StartMeeting(bool resetRouting)
 		{
+			// Change meeting state before any routing for UX
+			IsInMeeting = true;
+
 			if (resetRouting)
 				Routing.RouteOsd();
 
-			IsInMeeting = true;
 		}
 
 		/// <summary>
@@ -156,13 +180,14 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			if (ConferenceManager != null && ConferenceManager.ActiveConference != null)
 				ConferenceManager.ActiveConference.Hangup();
 
+			// Change meeting state before any routing for UX
+			IsInMeeting = false;
+
 			// Reset all routing
 			Routing.RouteOsd();
 
 			if (shutdown)
 				Sleep();
-
-			IsInMeeting = false;
 		}
 
 		/// <summary>
@@ -170,6 +195,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public void Wake()
 		{
+			// Change meeting state before any routing for UX
+			IsInMeeting = false;
+
 			// Reset all routing
 			Routing.RouteOsd();
 
@@ -177,8 +205,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			Originators.GetInstancesRecursive<IPanelDevice>()
 					   .SelectMany(panel => panel.Controls.GetControls<IPowerDeviceControl>())
 					   .ForEach(c => c.PowerOn());
-
-			IsInMeeting = false;
 		}
 
 		/// <summary>
@@ -189,6 +215,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			// Hangup
 			if (ConferenceManager != null && ConferenceManager.ActiveConference != null)
 				ConferenceManager.ActiveConference.Hangup();
+
+			// Change meeting state before any routing for UX
+			IsInMeeting = false;
 
 			// Reset all routing
 			Routing.RouteOsd();
@@ -205,8 +234,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			Originators.GetInstancesRecursive<IPanelDevice>()
 			           .SelectMany(panel => panel.Controls.GetControls<IPowerDeviceControl>())
 			           .ForEach(c => c.PowerOff());
-
-			IsInMeeting = false;
 		}
 
 		#endregion

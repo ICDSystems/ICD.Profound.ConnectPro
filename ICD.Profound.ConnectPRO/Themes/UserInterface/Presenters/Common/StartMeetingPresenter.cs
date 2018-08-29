@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Common.Utils;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
@@ -9,6 +10,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
 	public sealed class StartMeetingPresenter : AbstractPresenter<IStartMeetingView>, IStartMeetingPresenter
 	{
+		private readonly SafeCriticalSection m_RefreshSection;
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -18,6 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		public StartMeetingPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
+			m_RefreshSection = new SafeCriticalSection();
 		}
 
 		/// <summary>
@@ -28,13 +32,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			base.Refresh(view);
 
-			// TODO - This will be handled by scheduling features
-			//foreach (IVtcReferencedContactsPresenterBase presenter in m_ContactsFactory.BuildChildren(contacts, Subscribe, Unsubscribe))
-			//{
-			//	presenter.Selected = presenter == m_Selected;
-			//	presenter.ShowView(true);
-			//}
-			view.SetStartMeetingButtonEnabled(true);
+			m_RefreshSection.Enter();
+
+			try
+			{
+				view.SetLogoPath(Theme.Logo);
+
+				// TODO - This will be handled by scheduling features
+				//foreach (IVtcReferencedContactsPresenterBase presenter in m_ContactsFactory.BuildChildren(contacts, Subscribe, Unsubscribe))
+				//{
+				//	presenter.Selected = presenter == m_Selected;
+				//	presenter.ShowView(true);
+				//}
+				view.SetStartMeetingButtonEnabled(true);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
 		}
 
 		#region View Callbacks

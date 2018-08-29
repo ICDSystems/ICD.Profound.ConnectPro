@@ -33,7 +33,40 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private readonly IVtcCameraPresenter m_CameraPresenter;
 		private readonly IVtcKeyboardPresenter m_KeyboardPresenter;
 		private readonly IVtcKeypadPresenter m_KeypadPresenter;
+
 		private bool m_IsInCall;
+
+		private bool IsInCall
+		{
+			get { return m_IsInCall; }
+			set
+			{
+				if (value == m_IsInCall)
+					return;
+				
+				m_IsInCall = value;
+
+				if (m_IsInCall)
+					ShowView(true);
+				else
+					Close();
+
+				m_CallListTogglePresenter.ShowView(m_IsInCall);
+
+				if (m_IsInCall)
+				{
+					ShowContactsPresenter(false);
+					m_ContactsPolycomPresenter.ShowView(false);
+					m_ButtonListPresenter.ShowView(true);
+				}
+				else
+				{
+					m_ButtonListPresenter.ShowView(false);
+					if (IsViewVisible)
+						ShowContactsPresenter(true);
+				}
+			}
+		}
 
 		/// <summary>
 		/// Constructor.
@@ -60,6 +93,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_CameraPresenter = nav.LazyLoadPresenter<IVtcCameraPresenter>();
 		}
 
+		/// <summary>
+		/// Closes the popup.
+		/// </summary>
+		public override void Close()
+		{
+			// Close before routing for UX
+			base.Close();
+
+			if (Room != null)
+				Room.Routing.RouteOsdPostVtc();
+		}
+
+		#region Private Methods
+
 		private void ContactsPolycomPresenterOnViewVisibilityChanged(object sender, BoolEventArgs boolEventArgs)
 		{
 			m_CallListTogglePresenter.SetContactsMode(!boolEventArgs.Data);
@@ -70,7 +117,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_CallListTogglePresenter.SetContactsMode(!boolEventArgs.Data);
 		}
 
-		private	IPowerDeviceControl GetSystemComponent(IConnectProRoom room)
+		private static IPowerDeviceControl GetSystemComponent(IConnectProRoom room)
 		{
 			if (room == null)
 				return null;
@@ -116,6 +163,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				m_ContactsPolycomPresenter.ShowView(false);
 			}
 		}
+
+		#endregion
 
 		#region Room Callbacks
 
@@ -191,34 +240,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				m_SubscribedVideoDialer.GetSources()
 				                       .Any(s => s.GetIsOnline() ||
 				                                 (s.GetIsActive() && s.Direction == eConferenceSourceDirection.Outgoing));
-		}
-
-		private bool IsInCall
-		{
-			get { return m_IsInCall; }
-			set
-			{
-				if (value == m_IsInCall)
-					return;
-				
-				m_IsInCall = value;
-
-				ShowView(m_IsInCall);
-				m_CallListTogglePresenter.ShowView(m_IsInCall);
-
-				if (m_IsInCall)
-				{
-					ShowContactsPresenter(false);
-					m_ContactsPolycomPresenter.ShowView(false);
-					m_ButtonListPresenter.ShowView(true);
-				}
-				else
-				{
-					m_ButtonListPresenter.ShowView(false);
-					if (IsViewVisible)
-						ShowContactsPresenter(true);
-				}
-			}
 		}
 
 		/// <summary>
@@ -308,9 +329,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 				if (active != null)
 					active.Hangup();
-
-				if (Room != null)
-					Room.Routing.RouteOsdPostVtc();
 			}
 
 			UpdateCodecAwakeState(true);

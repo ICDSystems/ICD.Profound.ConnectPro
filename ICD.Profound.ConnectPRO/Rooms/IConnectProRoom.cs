@@ -10,7 +10,12 @@ namespace ICD.Profound.ConnectPRO.Rooms
 {
 	public interface IConnectProRoom : IRoom
 	{
+		/// <summary>
+		/// Raised when the room starts/stops a meeting.
+		/// </summary>
 		event EventHandler<BoolEventArgs> OnIsInMeetingChanged;
+
+		#region Properties
 
 		bool IsInMeeting { get; }
 
@@ -33,6 +38,10 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// Gets/sets the passcode for the settings page.
 		/// </summary>
 		string Passcode { get; set; }
+
+		#endregion
+
+		#region Methods
 
 		/// <summary>
 		/// Gets the volume control matching the configured volume point.
@@ -66,5 +75,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// Shuts down the room.
 		/// </summary>
 		void Sleep();
+
+		#endregion
 	}
 }
