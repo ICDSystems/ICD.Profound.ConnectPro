@@ -17,11 +17,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews
 		Yellow
 	}
 
+	public enum eScheduleColor
+	{
+		Blue,
+		Red
+	}
+
 	public static class Colors
 	{
 		public const string COLOR_WHITE = "#FFFFFF";
 		public const string COLOR_LIGHT_GREY = "#8B8B8B";
 		public const string COLOR_DARK_GREY = "#535353";
+		public const string COLOR_LIGHT_BLUE = "#2998B0";
+		public const string COLOR_RED = "#F0544F";
 
 		/// <summary>
 		/// Gets the hex color code for the display text in the current color mode.
@@ -63,6 +71,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews
 
 				default:
 					throw new ArgumentOutOfRangeException("sourceColor");
+			}
+		}
+
+		/// <summary>
+		/// Gets the hex color code for the schedule text in the current color mode.
+		/// </summary>
+		/// <param name="scheduleColor"></param>
+		/// <returns></returns>
+		public static string ScheduleColorToTextColor(eScheduleColor scheduleColor)
+		{
+			switch (scheduleColor)
+			{
+				case eScheduleColor.Blue:
+					return COLOR_LIGHT_BLUE;
+				case eScheduleColor.Red:
+					return COLOR_RED;
+
+				default:
+					throw new ArgumentOutOfRangeException("scheduleColor");
 			}
 		}
 	}

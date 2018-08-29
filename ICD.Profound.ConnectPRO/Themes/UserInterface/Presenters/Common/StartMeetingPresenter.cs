@@ -27,8 +27,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		protected override void Refresh(IStartMeetingView view)
 		{
 			base.Refresh(view);
-			
+
 			// TODO - This will be handled by scheduling features
+			//foreach (IVtcReferencedContactsPresenterBase presenter in m_ContactsFactory.BuildChildren(contacts, Subscribe, Unsubscribe))
+			//{
+			//	presenter.Selected = presenter == m_Selected;
+			//	presenter.ShowView(true);
+			//}
 			view.SetStartMeetingButtonEnabled(true);
 		}
 
