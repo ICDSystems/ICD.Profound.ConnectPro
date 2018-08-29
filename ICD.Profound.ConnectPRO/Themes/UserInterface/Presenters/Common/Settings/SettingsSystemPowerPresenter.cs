@@ -11,7 +11,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 {
 	public sealed class SettingsSystemPowerPresenter : AbstractPresenter<ISettingsSystemPowerView>, ISettingsSystemPowerPresenter
 	{
-		private bool m_Weekend;
+		private static readonly TimeSpan s_HourIncrement = TimeSpan.FromHours(1);
+		private static readonly TimeSpan s_MinuteIncrement = TimeSpan.FromMinutes(1);
 
 		private TimeSpan m_WeekdayWakeTime;
 		private TimeSpan m_WeekendWakeTime;
@@ -20,8 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		private bool m_WeekdayEnable;
 		private bool m_WeekendEnable;
 
-		private readonly TimeSpan HOUR_INCREMENT = TimeSpan.FromHours(1);
-		private readonly TimeSpan MINUTE_INCREMENT = TimeSpan.FromMinutes(1);
+		private bool m_Weekend;
 
 		public bool Weekend
 		{
@@ -235,42 +235,42 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 		private void ViewOnWakeHourIncrementButtonPressed(object sender, EventArgs eventArgs)
 		{
-			OffsetWakeTime(HOUR_INCREMENT);
+			OffsetWakeTime(s_HourIncrement);
 		}
 
 		private void ViewOnWakeHourDecrementButtonPressed(object sender, EventArgs eventArgs)
 		{
-			OffsetWakeTime(-HOUR_INCREMENT);
+			OffsetWakeTime(-s_HourIncrement);
 		}
 
 		private void ViewOnWakeMinuteIncrementButtonPressed(object sender, EventArgs eventArgs)
 		{
-			OffsetWakeTime(MINUTE_INCREMENT);
+			OffsetWakeTime(s_MinuteIncrement);
 		}
 
 		private void ViewOnWakeMinuteDecrementButtonPressed(object sender, EventArgs eventArgs)
 		{
-			OffsetWakeTime(-MINUTE_INCREMENT);
+			OffsetWakeTime(-s_MinuteIncrement);
 		}
 
 		private void ViewOnSleepHourIncrementButtonPressed(object sender, EventArgs eventArgs)
 		{
-			OffsetSleepTime(HOUR_INCREMENT);
+			OffsetSleepTime(s_HourIncrement);
 		}
 
 		private void ViewOnSleepHourDecrementButtonPressed(object sender, EventArgs eventArgs)
 		{
-			OffsetSleepTime(-HOUR_INCREMENT);
+			OffsetSleepTime(-s_HourIncrement);
 		}
 
 		private void ViewOnSleepMinuteIncrementButtonPressed(object sender, EventArgs eventArgs)
 		{
-			OffsetSleepTime(MINUTE_INCREMENT);
+			OffsetSleepTime(s_MinuteIncrement);
 		}
 
 		private void ViewOnSleepMinuteDecrementButtonPressed(object sender, EventArgs eventArgs)
 		{
-			OffsetSleepTime(-MINUTE_INCREMENT);
+			OffsetSleepTime(-s_MinuteIncrement);
 		}
 
 		private void ViewOnEnableButtonPressed(object sender, EventArgs eventArgs)
