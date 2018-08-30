@@ -1027,27 +1027,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 		private void HandleRoutingChange(eConnectionType type)
 		{
 			UpdateRoutingCache(type);
-
-			if (m_Routing)
-				return;
-
-			if (!type.HasFlag(eConnectionType.Video))
-				return;
-
-			// If nothing is routed to a display we route the OSD
-			OsdPanelDevice osd = m_Room.Core.Originators.GetChildren<OsdPanelDevice>().FirstOrDefault();
-			if (osd == null)
-				return;
-
-			IRouteSourceControl sourceControl = osd.Controls.GetControl<IRouteSourceControl>();
-			EndpointInfo sourceEndpoint = sourceControl.GetOutputEndpointInfo(1);
-
-			IEnumerable<IDestination> emptyDestinations =
-				GetCachedActiveVideoSources().Where(kvp => kvp.Value == null || kvp.Value.Count == 0)
-				                             .Select(kvp => kvp.Key);
-
-			foreach (IDestination destination in emptyDestinations)
-				Route(sourceEndpoint, destination, eConnectionType.Video);
 		}
 
 		#endregion
