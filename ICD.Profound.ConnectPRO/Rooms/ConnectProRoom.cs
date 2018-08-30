@@ -218,9 +218,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			// Change meeting state before any routing for UX
 			IsInMeeting = false;
 
-			// Reset all routing
-			Routing.RouteOsd();
-
 			// Power off displays
 			foreach (IDestination destination in Routing.GetDisplayDestinations())
 			{
