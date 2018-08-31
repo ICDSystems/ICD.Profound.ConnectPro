@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using ICD.Connect.Panels;
+using ICD.Connect.Panels.Devices;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Images;
+using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.Pages;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
@@ -10,9 +12,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 	public sealed partial class StartMeetingView
 	{
 		private VtProSubpage m_Subpage;
-		private VtProButton m_StartMeetingButton;
+		private VtProButton m_StartMyMeetingButton;
+		private VtProButton m_StartNewMeetingButton;
 		private VtProButton m_SettingsButton;
 		private VtProImageObject m_Logo;
+		private VtProSubpageReferenceList m_ScheduleList;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -22,14 +26,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		/// <param name="index"></param>
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
-			m_Subpage = new VtProSubpage(panel, parent, index)
+			m_Subpage = new VtProSubpage(panel, parent)
 			{
-				DigitalVisibilityJoin = 90
+				DigitalVisibilityJoin = DEFAULT_SUBPAGE_VISIBILITY
 			};
 
-			m_StartMeetingButton = new VtProButton(panel, m_Subpage)
+			m_StartMyMeetingButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 91
+			};
+
+			m_StartNewMeetingButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 700,
+				DigitalEnableJoin = 701
 			};
 
 			m_SettingsButton = new VtProButton(panel, m_Subpage)
@@ -41,6 +51,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			{
 				SerialGraphicsJoin = 30
 			};
+
+			m_ScheduleList = new VtProSubpageReferenceList(5, panel as IPanelDevice, m_Subpage)
+			{
+				MaxSize = 7,
+				DigitalJoinIncrement = 2,
+				SerialJoinIncrement = 5
+			};
 		}
 
 		/// <summary>
@@ -50,9 +67,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		protected override IEnumerable<IVtProControl> GetChildren()
 		{
 			yield return m_Subpage;
-			yield return m_StartMeetingButton;
+			yield return m_StartMyMeetingButton;
+			yield return m_StartNewMeetingButton;
 			yield return m_SettingsButton;
 			yield return m_Logo;
+			yield return m_ScheduleList;
 		}
 	}
 }

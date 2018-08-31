@@ -13,30 +13,30 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 		/// Sets the text for the first label.
 		/// </summary>
 		/// <param name="text"></param>
-		void SetLine1Text(string text);
+		void SetDayLabel(string text);
 
 		/// <summary>
 		/// Sets the text for the second label.
 		/// </summary>
 		/// <param name="text"></param>
-		void SetLine2Text(string text);
+		void SetStartTimeLabel(string text);
 
 		/// <summary>
 		/// Sets the text for the third label.
 		/// </summary>
 		/// <param name="text"></param>
-		void SetLine3Text(string text);
+		void SetBodyLabel(string text);
 
 		/// <summary>
 		/// Sets the text for the forth label.
 		/// </summary>
 		/// <param name="text"></param>
-		void SetLine4Text(string text);
+		void SetEndTimeLabel(string text);
 
 		/// <summary>
 		/// Sets the text for the fifth label.
 		/// </summary>
 		/// <param name="text"></param>
-		void SetLine5Text(string text);
+		void SetPresenterNameLabel(string text);
 	}
 }

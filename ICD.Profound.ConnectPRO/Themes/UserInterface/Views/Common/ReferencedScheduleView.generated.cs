@@ -12,11 +12,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 	{
 		private VtProSubpage m_Subpage;
 		private VtProAdvancedButton m_BackgroundButton;
-		private VtProSimpleLabel m_Line1Label;
-		private VtProSimpleLabel m_Line2Label;
-		private VtProSimpleLabel m_Line3Label;
-		private VtProSimpleLabel m_Line4Label;
-		private VtProSimpleLabel m_Line5Label;
+		private VtProSimpleLabel m_DayLabel;
+		private VtProSimpleLabel m_StartTimeLabel;
+		private VtProSimpleLabel m_BodyLabel;
+		private VtProSimpleLabel m_EndTimeLabel;
+		private VtProSimpleLabel m_PresenterNameLabel;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -34,27 +34,27 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 				DigitalEnableJoin = 2
 			};
 
-			m_Line1Label = new VtProSimpleLabel(panel, m_Subpage)
+			m_DayLabel = new VtProSimpleLabel(panel, m_Subpage)
 			{
 				IndirectTextJoin = 1
 			};
 
-			m_Line2Label = new VtProSimpleLabel(panel, m_Subpage)
+			m_StartTimeLabel = new VtProSimpleLabel(panel, m_Subpage)
 			{
 				IndirectTextJoin = 2
 			};
 
-			m_Line3Label = new VtProSimpleLabel(panel, m_Subpage)
+			m_BodyLabel = new VtProSimpleLabel(panel, m_Subpage)
 			{
 				IndirectTextJoin = 3
 			};
 
-			m_Line4Label = new VtProSimpleLabel(panel, m_Subpage)
+			m_EndTimeLabel = new VtProSimpleLabel(panel, m_Subpage)
 			{
 				IndirectTextJoin = 4
 			};
 
-			m_Line5Label = new VtProSimpleLabel(panel, m_Subpage)
+			m_PresenterNameLabel = new VtProSimpleLabel(panel, m_Subpage)
 			{
 				IndirectTextJoin = 5
 			};
@@ -68,11 +68,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		{
 			yield return m_Subpage;
 			yield return m_BackgroundButton;
-			yield return m_Line1Label;
-			yield return m_Line2Label;
-			yield return m_Line3Label;
-			yield return m_Line4Label;
-			yield return m_Line5Label;
+			yield return m_DayLabel;
+			yield return m_StartTimeLabel;
+			yield return m_BodyLabel;
+			yield return m_EndTimeLabel;
+			yield return m_PresenterNameLabel;
 		}
 	}
 }

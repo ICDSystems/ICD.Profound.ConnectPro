@@ -37,6 +37,7 @@
     <ProjectReference Include="..\..\ICD.Connect.Cameras\ICD.Connect.Cameras\ICD.Connect.Cameras_NetStandard.csproj" />
     <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing.Cisco\ICD.Connect.Conferencing.Cisco_NetStandard.csproj" />
     <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing.Polycom\ICD.Connect.Conferencing.Polycom_NetStandard.csproj" />
+    <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing.Zoom\ICD.Connect.Conferencing.Zoom_NetStandard.csproj" />
     <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing\ICD.Connect.Conferencing_NetStandard.csproj" />
     <ProjectReference Include="..\..\ICD.Connect.Displays\ICD.Connect.Displays\ICD.Connect.Displays_NetStandard.csproj" />
     <ProjectReference Include="..\..\ICD.Connect.Misc\ICD.Connect.TvPresets\ICD.Connect.TvPresets_NetStandard.csproj" />

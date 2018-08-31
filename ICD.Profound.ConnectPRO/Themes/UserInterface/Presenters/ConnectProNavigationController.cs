@@ -74,6 +74,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IEndMeetingPresenter), (nav, views, theme) => new EndMeetingPresenter(nav, views, theme)},
 			{typeof(IHeaderPresenter), (nav, views, theme) => new HeaderPresenter(nav, views, theme)},
 			{typeof(IStartMeetingPresenter), (nav, views, theme) => new StartMeetingPresenter(nav, views, theme)},
+			{typeof(IReferencedSchedulePresenter), (nav, views, theme) => new ReferencedSchedulePresenter(nav, views, theme)},
 			{typeof(IVolumePresenter), (nav, views, theme) => new VolumePresenter(nav, views, theme)},
 			{typeof(IDisabledAlertPresenter), (nav, views, theme) => new DisabledAlertPresenter(nav, views, theme)},
 			{typeof(IPasscodePresenter), (nav, views, theme) => new PasscodePresenter(nav, views, theme)},

@@ -2,14 +2,12 @@
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 {
 	public sealed partial class ReferencedScheduleView : AbstractComponentView, IReferencedScheduleView
 	{
-
 		public event EventHandler OnButtonPressed;
 
 		/// <summary>
@@ -30,45 +28,45 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		/// Sets the text for the first label.
 		/// </summary>
 		/// <param name="text"></param>
-		public void SetLine1Text(string text)
+		public void SetDayLabel(string text)
 		{
-			m_Line1Label.SetLabelText(text);
+			m_DayLabel.SetLabelText(text);
 		}
 
 		/// <summary>
 		/// Sets the text for the second label.
 		/// </summary>
 		/// <param name="text"></param>
-		public void SetLine2Text(string text)
+		public void SetStartTimeLabel(string text)
 		{
-			m_Line2Label.SetLabelText(text);
+			m_StartTimeLabel.SetLabelText(text);
 		}
 
 		/// <summary>
 		/// Sets the text for the third label.
 		/// </summary>
 		/// <param name="text"></param>
-		public void SetLine3Text(string text)
+		public void SetBodyLabel(string text)
 		{
-			m_Line2Label.SetLabelText(text);
+			m_BodyLabel.SetLabelText(text);
 		}
 
 		/// <summary>
 		/// Sets the text for the forth label.
 		/// </summary>
 		/// <param name="text"></param>
-		public void SetLine4Text(string text)
+		public void SetEndTimeLabel(string text)
 		{
-			m_Line2Label.SetLabelText(text);
+			m_EndTimeLabel.SetLabelText(text);
 		}
 
 		/// <summary>
 		/// Sets the text for the fifth label.
 		/// </summary>
 		/// <param name="text"></param>
-		public void SetLine5Text(string text)
+		public void SetPresenterNameLabel(string text)
 		{
-			m_Line2Label.SetLabelText(text);
+			m_PresenterNameLabel.SetLabelText(text);
 		}
 
 		#endregion

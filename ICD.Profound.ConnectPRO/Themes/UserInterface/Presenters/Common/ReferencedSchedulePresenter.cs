@@ -20,7 +20,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		public event EventHandler OnPressed;
 
 		private readonly SafeCriticalSection m_RefreshSection;
-		private readonly ReferencedSchedulePresenterCache m_Cache;
+		private  IBooking m_Booking;
 
 		#region Properties
 
@@ -29,14 +29,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// </summary>
 		public IBooking Booking
 		{
-			get { return m_Cache.Booking; }
+			get { return m_Booking; }
 			set
 			{
-				if (value == m_Cache.Booking)
+				if (value == m_Booking)
 					return;
 
-				if (m_Cache.SetBooking(value))
-					RefreshIfVisible();
+				m_Booking = value;
+
+				RefreshIfVisible();
 			}
 		}
 
@@ -52,7 +53,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
-			m_Cache = new ReferencedSchedulePresenterCache();
 		}
 
 		/// <summary>
@@ -77,11 +77,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
-				view.SetLine1Text(m_Cache.Line1);
-				view.SetLine2Text(m_Cache.Line2);
-				view.SetLine3Text(m_Cache.Line3);
-				view.SetLine4Text(m_Cache.Line4);
-				view.SetLine5Text(m_Cache.Line5);
+				view.SetDayLabel(m_Booking.StartTime.Day.ToString());
+				view.SetStartTimeLabel(m_Booking.StartTime.ToShortTimeString());
+				view.SetBodyLabel(m_Booking.MeetingName);
+				view.SetEndTimeLabel(m_Booking.EndTime.ToShortTimeString());
+				view.SetPresenterNameLabel(m_Booking.OrganizerName);
 			}
 			finally
 			{
