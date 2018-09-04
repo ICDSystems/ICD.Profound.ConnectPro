@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.CalendarControl;
 using ICD.Connect.Conferencing.Contacts;
 using ICD.Connect.Conferencing.Directory.Tree;
+using ICD.Connect.Conferencing.Zoom.Components.Bookings;
+using ICD.Connect.Conferencing.Zoom.Controls.Calendar;
 using ICD.Connect.Devices;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -59,7 +62,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
-				IEnumerable<IBooking> bookings = m_CalendarControl == null ? Enumerable.Empty<IBooking>() : m_CalendarControl.GetBookings();
+				IEnumerable<IBooking> bookings =
+					m_CalendarControl == null
+						? Enumerable.Empty<IBooking>()
+						: m_CalendarControl.GetBookings()
+							.Where(b => b.EndTime > IcdEnvironment.GetLocalTime())
+							.Distinct();
 
 				foreach (IReferencedSchedulePresenter presenter in m_ChildrenFactory.BuildChildren(bookings, Subscribe, Unsubscribe))
 				{

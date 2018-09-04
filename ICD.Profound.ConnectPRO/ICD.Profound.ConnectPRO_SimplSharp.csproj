@@ -409,6 +409,10 @@
       <Project>{7CF948F3-D3D4-4102-835E-440D66D2AD35}</Project>
       <Name>ICD.Connect.Conferencing.Polycom_SimplSharp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing.Zoom\ICD.Connect.Conferencing.Zoom_SimplSharp.csproj">
+      <Project>{D86EE18A-B98A-46F0-B930-CDE4A6012E49}</Project>
+      <Name>ICD.Connect.Conferencing.Zoom_SimplSharp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing\ICD.Connect.Conferencing_SimplSharp.csproj">
       <Project>{1CCA89DA-1F1C-4997-A94F-ABCE878BD6DE}</Project>
       <Name>ICD.Connect.Conferencing_SimplSharp</Name>

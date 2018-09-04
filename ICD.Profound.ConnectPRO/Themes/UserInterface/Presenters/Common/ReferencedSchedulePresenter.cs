@@ -79,7 +79,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			{
 				view.SetDayLabel(m_Booking.StartTime.Day.ToString());
 				view.SetStartTimeLabel(m_Booking.StartTime.ToShortTimeString());
-				view.SetBodyLabel(m_Booking.MeetingName);
+				if (m_Booking.IsPrivate) { 
+					view.SetBodyLabel("Private Meeting");
+				}
+				else
+				{
+					view.SetBodyLabel(m_Booking.MeetingName);
+				}
 				view.SetEndTimeLabel(m_Booking.EndTime.ToShortTimeString());
 				view.SetPresenterNameLabel(m_Booking.OrganizerName);
 			}
