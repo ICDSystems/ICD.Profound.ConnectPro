@@ -17,24 +17,28 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		[HiddenSettingsProperty]
 		public WakeSchedule WakeSchedule { get { return m_WakeScheduleSettings; } }
 
+		[UsedImplicitly]
 		public TimeSpan? WeekdayWakeTime
 		{
 			get { return m_WakeScheduleSettings.WeekdayWakeTime; }
 			set { m_WakeScheduleSettings.WeekdayWakeTime = value; }
 		}
 
+		[UsedImplicitly]
 		public TimeSpan? WeekdaySleepTime
 		{
 			get { return m_WakeScheduleSettings.WeekdaySleepTime; }
 			set { m_WakeScheduleSettings.WeekdaySleepTime = value; }
 		}
 
+		[UsedImplicitly]
 		public TimeSpan? WeekendWakeTime
 		{
 			get { return m_WakeScheduleSettings.WeekendWakeTime; }
 			set { m_WakeScheduleSettings.WeekendWakeTime = value; }
 		}
 
+		[UsedImplicitly]
 		public TimeSpan? WeekendSleepTime
 		{
 			get { return m_WakeScheduleSettings.WeekendSleepTime; }
