@@ -448,24 +448,32 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (sourceControl == null)
 				throw new ArgumentNullException("sourceControl");
 
-			Connection firstOutput = RoutingGraph.Connections
-			                                     .GetOutputConnections(sourceControl.Parent.Id,
-			                                                           sourceControl.Id,
-			                                                           eConnectionType.Audio)
-			                                     .FirstOrDefault();
-
-			if (firstOutput == null)
-			{
-				m_Room.Logger.AddEntry(eSeverity.Error, "Failed to find {0} output connection for {1}",
-									   eConnectionType.Audio, sourceControl);
-				return;
-			}
-
 			foreach (IDestination audioDestination in GetAudioDestinations())
 			{
-				Route(sourceControl.GetOutputEndpointInfo(firstOutput.Source.Address),
-					  audioDestination, eConnectionType.Audio);
+				// Edge case - Often the DSP is also the ATC, in which case we don't need to do any routing
+				if (audioDestination.Device == sourceControl.Parent.Id)
+					continue;
+
+				Route(sourceControl, audioDestination, eConnectionType.Audio);
 			}
+		}
+
+		private void Route(IRouteSourceControl source, IDestination destination, eConnectionType flag)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			if (destination == null)
+				throw new ArgumentNullException("destination");
+
+			IEnumerable<ConnectionPath> paths =
+				PathBuilder.FindPaths()
+						   .From(source)
+						   .To(destination)
+						   .OfType(flag)
+						   .With(PathFinder);
+
+			Route(paths);
 		}
 
 		/// <summary>
