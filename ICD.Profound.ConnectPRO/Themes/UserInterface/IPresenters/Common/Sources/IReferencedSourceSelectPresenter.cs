@@ -25,6 +25,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Source
 		/// <summary>
 		/// Gets/sets the routed state for this presenter.
 		/// </summary>
-		eRoutedState Routed { get; set; }
+		eSourceState SourceState { get; set; }
 	}
 }

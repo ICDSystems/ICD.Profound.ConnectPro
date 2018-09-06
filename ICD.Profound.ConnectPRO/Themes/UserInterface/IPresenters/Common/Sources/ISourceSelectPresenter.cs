@@ -23,6 +23,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Source
 		/// Sets the sources that are currently routed to displays.
 		/// </summary>
 		/// <param name="routedSources"></param>
-		void SetRoutedSources(Dictionary<ISource, eRoutedState> routedSources);
+		void SetRoutedSources(Dictionary<ISource, eSourceState> routedSources);
 	}
 }

@@ -55,7 +55,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		private readonly IcdHashSet<ISource> m_ActiveAudio;
 		private readonly Dictionary<IDestination, IcdHashSet<ISource>> m_ActiveVideo;
-		private readonly Dictionary<ISource, eRoutedState> m_SourceRoutedStates;
+		private readonly Dictionary<ISource, eSourceState> m_SourceRoutedStates;
 		private readonly Dictionary<IDestination, ISource> m_ProcessingSources;
 		private readonly SafeCriticalSection m_RoutingSection;
 
@@ -80,7 +80,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		{
 			m_ActiveAudio = new IcdHashSet<ISource>();
 			m_ActiveVideo = new Dictionary<IDestination, IcdHashSet<ISource>>();
-			m_SourceRoutedStates = new Dictionary<ISource, eRoutedState>();
+			m_SourceRoutedStates = new Dictionary<ISource, eSourceState>();
 			m_ProcessingSources = new Dictionary<IDestination, ISource>();
 			m_RoutingSection = new SafeCriticalSection();
 
@@ -672,15 +672,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			try
 			{
 				// Build a map of video sources to their routed state
-				Dictionary<ISource, eRoutedState> routedSources =
+				Dictionary<ISource, eSourceState> routedSources =
 					m_ActiveVideo.Values
 								 .SelectMany(v => v)
 								 .Distinct()
-								 .ToDictionary(s => s, s => eRoutedState.Active);
+								 .ToDictionary(s => s, s => eSourceState.Active);
 
 				// A source may be processing for another display, so we override
 				foreach (ISource source in m_ProcessingSources.Values.Where(s => s != null))
-					routedSources[source] = eRoutedState.Processing;
+					routedSources[source] = eSourceState.Processing;
 
 				if (routedSources.DictionaryEqual(m_SourceRoutedStates))
 					return false;

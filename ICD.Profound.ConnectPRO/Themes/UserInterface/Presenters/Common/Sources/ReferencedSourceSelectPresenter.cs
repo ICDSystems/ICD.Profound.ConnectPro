@@ -58,9 +58,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// <summary>
 		/// Gets/sets the routed state of the source.
 		/// </summary>
-		public eRoutedState Routed
+		public eSourceState SourceState
 		{
-			get { return m_Cache.Routed; }
+			get { return m_Cache.SourceState; }
 			set
 			{
 				if (m_Cache.SetRouted(value))
@@ -110,7 +110,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 				view.SetLine1Text(m_Cache.Line1);
 				view.SetLine2Text(m_Cache.Line2);
 				view.SetIcon(m_Cache.Icon);
-				view.SetRoutedState(m_Cache.Routed);
+				view.SetRoutedState(m_Cache.SourceState);
 			}
 			finally
 			{

@@ -178,7 +178,7 @@
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\ISettingsDirectoryView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\ISettingsPasscodeView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\ISettingsSystemPowerView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\eRoutedState.cs" />
+    <Compile Include="Themes\UserInterface\IViews\eSourceState.cs" />
     <Compile Include="Themes\UserInterface\IViews\Icons.cs" />
     <Compile Include="Themes\UserInterface\IViews\IDisabledAlertView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IHardButtonsView.cs" />
