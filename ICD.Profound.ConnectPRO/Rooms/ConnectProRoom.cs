@@ -93,6 +93,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public string Passcode { get; set; }
 
+		/// <summary>
+		/// Gets/sets the ATC number for dialing into the room.
+		/// </summary>
+		public string AtcNumber { get; set; }
+
 		#endregion
 
 		/// <summary>
@@ -263,6 +268,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			m_ConferenceManager.Favorites = null;
 			m_ConferenceManager.DialingPlan.ClearMatchers();
 
+			AtcNumber = null;
 			Passcode = null;
 
 			m_WakeSchedule.Clear();
@@ -283,6 +289,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			// Favorites
 			string path = PathUtils.GetProgramConfigPath("favorites");
 			m_ConferenceManager.Favorites = new SqLiteFavorites(path);
+
+			// ATC Number
+			AtcNumber = settings.AtcNumber;
 
 			// Passcode
 			Passcode = settings.Passcode;

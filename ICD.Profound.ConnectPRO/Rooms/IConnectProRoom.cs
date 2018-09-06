@@ -39,6 +39,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		string Passcode { get; set; }
 
+		/// <summary>
+		/// Gets/sets the ATC number for dialing into the room.
+		/// </summary>
+		string AtcNumber { get; set; }
+
 		#endregion
 
 		#region Methods

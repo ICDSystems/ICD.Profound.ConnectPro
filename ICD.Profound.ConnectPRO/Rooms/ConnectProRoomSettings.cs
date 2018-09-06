@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Common.Properties;
 using ICD.Common.Utils.Xml;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings.Attributes;
@@ -9,10 +10,13 @@ namespace ICD.Profound.ConnectPRO.Rooms
 	[KrangSettings("ConnectProRoom", typeof(ConnectProRoom))]
 	public sealed class ConnectProRoomSettings : AbstractRoomSettings
 	{
+		private const string ATC_NUMBER_ELEMENT = "AtcNumber";
 		private const string PASSCODE_ELEMENT = "Passcode";
 		private const string WAKE_SCHEDULE_ELEMENT = "WakeSchedule";
 
 		private readonly WakeSchedule m_WakeScheduleSettings;
+
+		public string AtcNumber { get; set; }
 
 		[HiddenSettingsProperty]
 		public WakeSchedule WakeSchedule { get { return m_WakeScheduleSettings; } }
@@ -63,6 +67,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		{
 			base.WriteElements(writer);
 
+			writer.WriteElementString(ATC_NUMBER_ELEMENT, AtcNumber);
 			writer.WriteElementString(PASSCODE_ELEMENT, Passcode);
 
 			m_WakeScheduleSettings.WriteElements(writer, WAKE_SCHEDULE_ELEMENT);
@@ -76,6 +81,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		{
 			base.ParseXml(xml);
 
+			AtcNumber = XmlUtils.TryReadChildElementContentAsString(xml, ATC_NUMBER_ELEMENT);
 			Passcode = XmlUtils.TryReadChildElementContentAsString(xml, PASSCODE_ELEMENT);
 
 			string wakeScheduleXml;
