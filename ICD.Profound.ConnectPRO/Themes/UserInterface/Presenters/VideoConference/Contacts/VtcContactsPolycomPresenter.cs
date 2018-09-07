@@ -615,7 +615,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 						return;
 
 					// Go to the list of active calls
-					Navigation.LazyLoadPresenter<IVtcButtonListPresenter>().ShowMenu(VtcButtonListPresenter.INDEX_ACTIVE_CALLS);
+					Navigation.NavigateTo<IVtcButtonListPresenter>().ShowMenu(VtcButtonListPresenter.INDEX_ACTIVE_CALLS);
 					break;
 
 				default:
