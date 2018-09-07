@@ -5,6 +5,8 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.CalendarControl;
+using ICD.Connect.Calendaring.Controls;
+using ICD.Connect.Calendaring.Devices;
 using ICD.Connect.Conferencing.Contacts;
 using ICD.Connect.Conferencing.Directory.Tree;
 using ICD.Connect.Conferencing.Zoom.Components.Bookings;
@@ -23,7 +25,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly ReferencedSchedulePresenterFactory m_ChildrenFactory;
-		private ICalendarControl m_CalendarControl;
+		private IEnumerable<ICalendarControl> m_CalendarControls;
 
 		/// <summary>
 		/// Constructor.
@@ -62,12 +64,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
-				IEnumerable<IBooking> bookings =
-					m_CalendarControl == null
-						? Enumerable.Empty<IBooking>()
-						: m_CalendarControl.GetBookings()
-							.Where(b => b.EndTime > IcdEnvironment.GetLocalTime())
-							.Distinct();
+				ICalendarControl mockCalendarControl = new MockCalendarControl(new MockCalendarDevice(), 20001750);
+				mockCalendarControl.Refresh();
+
+			    IEnumerable<IBooking> bookings =
+			        m_CalendarControls == null
+			            ? Enumerable.Empty<IBooking>()
+			            : m_CalendarControls.SelectMany(c => c.GetBookings().Where(b => b.EndTime > IcdEnvironment.GetLocalTime()).Distinct());
 
 				foreach (IReferencedSchedulePresenter presenter in m_ChildrenFactory.BuildChildren(bookings, Subscribe, Unsubscribe))
 				{
@@ -79,7 +82,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				// TODO - This will be handled by scheduling features
 				view.SetStartMyMeetingButtonEnabled(true);
 
-				bool hasCalendarControl = m_CalendarControl != null;
+				bool hasCalendarControl = m_CalendarControls != null;
 
 				view.SetStartNewMeetingButtonEnabled(hasCalendarControl);
 				view.SetBookingsVisible(hasCalendarControl);
@@ -99,41 +102,45 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			base.SetRoom(room);
 
-			ICalendarControl calendarControl = room == null
+			IEnumerable<ICalendarControl> calendarControls = room == null
 				? null
 				: room.Originators.GetInstancesRecursive<IDeviceBase>()
-					.SelectMany(o => o.Controls.GetControls<ICalendarControl>())
-					.FirstOrDefault();
+					.SelectMany(o => o.Controls.GetControls<ICalendarControl>());
 
-			SetCalendarControl(calendarControl);
+			SetCalendarControl(calendarControls);
 		}
 
-		private void SetCalendarControl(ICalendarControl calendarControl)
+		private void SetCalendarControl(IEnumerable<ICalendarControl> calendarControls)
 		{
-			if (calendarControl == m_CalendarControl)
+			if (calendarControls == m_CalendarControls)
 				return;
 
-			Unsubscribe(m_CalendarControl);
-			m_CalendarControl = calendarControl;
-			Subscribe(m_CalendarControl);
+			Unsubscribe(m_CalendarControls);
+		    m_CalendarControls = calendarControls;
+			Subscribe(m_CalendarControls);
 
 			RefreshIfVisible();
 		}
 
-		private void Subscribe(ICalendarControl calendarControl)
+		private void Subscribe(IEnumerable<ICalendarControl> calendarControls)
 		{
-			if (calendarControl == null)
+			if (calendarControls == null)
 				return;
-
-			calendarControl.OnBookingsChanged += CalendarControlOnBookingsChanged;
+		    foreach (var calendarControl in calendarControls)
+		    {
+		        calendarControl.OnBookingsChanged += CalendarControlOnBookingsChanged;
+            }
 		}
 
-		private void Unsubscribe(ICalendarControl calendarControl)
+		private void Unsubscribe(IEnumerable<ICalendarControl> calendarControls)
 		{
-			if (calendarControl == null)
+			if (calendarControls == null)
 				return;
 
-			calendarControl.OnBookingsChanged -= CalendarControlOnBookingsChanged;
+		    foreach (var calendarControl in calendarControls)
+		    {
+		        calendarControl.OnBookingsChanged -= CalendarControlOnBookingsChanged;
+		    }
 		}
 
 		#region Private Methods
