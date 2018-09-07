@@ -8,7 +8,7 @@ using ICD.Connect.UI.Controls.TextControls;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Contacts
 {
-	public sealed partial class VtcContactsView
+	public sealed partial class VtcContactsNormalView
 	{
 		private VtProSubpage m_Subpage;
 		private VtProSubpageReferenceList m_ContactList;

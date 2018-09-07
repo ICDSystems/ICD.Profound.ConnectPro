@@ -23,7 +23,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contac
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Contacts
 {
-	public sealed class VtcContactsPolycomPresenter : AbstractPresenter<IVtcContactsPolycomView>, IVtcContactsPolycomPresenter
+	public sealed class VtcContactsPolycomPresenter : AbstractVtcContactsPresenter<IVtcContactsPolycomView>, IVtcContactsPolycomPresenter
 	{
 		private enum ePolycomDirectoryMode
 		{

@@ -21,7 +21,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contac
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Contacts
 {
-	public sealed class VtcContactsPresenter : AbstractPresenter<IVtcContactsView>, IVtcContactsPresenter
+	public sealed class VtcContactsNormalPresenter : AbstractVtcContactsPresenter<IVtcContactsNormalView>, IVtcContactsNormalPresenter
 	{
 		private enum eDirectoryMode
 		{
@@ -84,7 +84,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcContactsPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public VtcContactsNormalPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
@@ -146,7 +146,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Refresh the visual state of the view.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Refresh(IVtcContactsView view)
+		protected override void Refresh(IVtcContactsNormalView view)
 		{
 			base.Refresh(view);
 
@@ -382,7 +382,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Subscribe to the view events.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Subscribe(IVtcContactsView view)
+		protected override void Subscribe(IVtcContactsNormalView view)
 		{
 			base.Subscribe(view);
 
@@ -401,7 +401,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Unsubscribe from the view events.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Unsubscribe(IVtcContactsView view)
+		protected override void Unsubscribe(IVtcContactsNormalView view)
 		{
 			base.Unsubscribe(view);
 
