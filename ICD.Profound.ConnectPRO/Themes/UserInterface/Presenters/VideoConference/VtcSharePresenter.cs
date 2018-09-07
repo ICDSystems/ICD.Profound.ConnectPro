@@ -310,9 +310,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				return;
 
 			if (IsInPresentation())
+			{
 				StartPresenting(source);
-			else
-				Selected = source;
+				return;
+			}
+
+			Selected = source == Selected ? null : source;
 		}
 
 		private void StartPresenting(ISource source)
