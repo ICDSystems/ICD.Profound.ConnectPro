@@ -22,6 +22,13 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		public WakeSchedule WakeSchedule { get { return m_WakeScheduleSettings; } }
 
 		[UsedImplicitly]
+		public bool WeekdayEnable
+		{
+			get { return m_WakeScheduleSettings.WeekdayEnable; }
+			set { m_WakeScheduleSettings.WeekdayEnable = value; }
+		}
+
+		[UsedImplicitly]
 		public TimeSpan? WeekdayWakeTime
 		{
 			get { return m_WakeScheduleSettings.WeekdayWakeTime; }
@@ -33,6 +40,13 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		{
 			get { return m_WakeScheduleSettings.WeekdaySleepTime; }
 			set { m_WakeScheduleSettings.WeekdaySleepTime = value; }
+		}
+
+		[UsedImplicitly]
+		public bool WeekendEnable
+		{
+			get { return m_WakeScheduleSettings.WeekendEnable; }
+			set { m_WakeScheduleSettings.WeekendEnable = value; }
 		}
 
 		[UsedImplicitly]
