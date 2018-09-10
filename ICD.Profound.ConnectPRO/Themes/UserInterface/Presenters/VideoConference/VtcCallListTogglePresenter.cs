@@ -9,19 +9,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 {
 	public sealed class VtcCallListTogglePresenter : AbstractPresenter<IVtcCallListToggleView>, IVtcCallListTogglePresenter
 	{
+		/// <summary>
+		/// Raised when the user presses the button.
+		/// </summary>
 		public event EventHandler OnButtonPressed;
 
 		private bool m_Mode;
-
-		public void SetContactsMode(bool mode)
-		{
-			if (mode == m_Mode)
-				return;
-
-			m_Mode = mode;
-
-			RefreshIfVisible();
-		}
 
 		/// <summary>
 		/// Constructor.
@@ -34,6 +27,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 		}
 
+		/// <summary>
+		/// Release resources.
+		/// </summary>
 		public override void Dispose()
 		{
 			OnButtonPressed = null;
@@ -50,6 +46,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			base.Refresh(view);
 
 			view.SetContactsMode(m_Mode);
+		}
+
+		/// <summary>
+		/// When true shows the "contacts" button, otherwise shows the "call" button.
+		/// </summary>
+		/// <param name="mode"></param>
+		public void SetContactsMode(bool mode)
+		{
+			if (mode == m_Mode)
+				return;
+
+			m_Mode = mode;
+
+			RefreshIfVisible();
 		}
 
 		#region View Callbacks
