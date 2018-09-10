@@ -265,11 +265,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (source == null)
 				throw new ArgumentNullException("source");
 
-			IDialingDeviceControl videoDialer = m_Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
-			IDialingDeviceControl audioDialer = m_Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Audio);
+			IDeviceBase device = m_Room.Core.Originators.GetChild<IDeviceBase>(source.Device);
+			IDialingDeviceControl dialer = device.Controls.GetControl<IDialingDeviceControl>();
 
 			// Edge case - route the codec to both displays and open the context menu
-			if (videoDialer != null && source.Device == videoDialer.Parent.Id)
+			if (dialer != null && dialer.Supports.HasFlag(eConferenceSourceType.Video))
 			{
 				// Show the context menu before routing for UX
 				ShowSourceContextualMenu(source, false);
@@ -278,7 +278,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				m_Room.Routing.RouteVtc(sourceControl);
 			}
 			// Edge case - open the audio conferencing context menu
-			else if (audioDialer != null && source.Device == audioDialer.Parent.Id)
+			else if (dialer != null && dialer.Supports.HasFlag(eConferenceSourceType.Audio))
 			{
 				// Show the context menu before routing for UX
 				ShowSourceContextualMenu(source, false);
