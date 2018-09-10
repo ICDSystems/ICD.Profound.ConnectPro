@@ -11,15 +11,46 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 {
-	public sealed partial class VtcKeyboardView : AbstractView, IVtcKeyboardView
+	public sealed partial class VtcKeyboardView : AbstractVtcBaseKeyboardView, IVtcKeyboardView
 	{
-		public event EventHandler<KeyboardKeyEventArgs> OnKeyPressed;
-		public event EventHandler<StringEventArgs> OnTextEntered;
-		public event EventHandler OnBackspaceButtonPressed;
+		/// <summary>
+		/// Raised when the user presses a key button.
+		/// </summary>
+		public override event EventHandler<KeyboardKeyEventArgs> OnKeyPressed;
+
+		/// <summary>
+		/// Raised when the user enters text in the text field.
+		/// </summary>
+		public override event EventHandler<StringEventArgs> OnTextEntered;
+
+		/// <summary>
+		/// Raised when the user presses the backspace button.
+		/// </summary>
+		public override event EventHandler OnBackspaceButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the space button.
+		/// </summary>
 		public event EventHandler OnSpaceButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the caps button.
+		/// </summary>
 		public event EventHandler OnCapsButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the shift button.
+		/// </summary>
 		public event EventHandler OnShiftButtonPressed;
-		public event EventHandler OnDialButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the submit button.
+		/// </summary>
+		public override event EventHandler OnDialButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the exit button.
+		/// </summary>
 		public event EventHandler OnKeypadButtonPressed;
 
 		private Dictionary<VtProButton, KeyboardKey> m_KeyMap;
@@ -73,7 +104,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		/// Sets the text in the text entry field.
 		/// </summary>
 		/// <param name="text"></param>
-		public void SetText(string text)
+		public override void SetText(string text)
 		{
 			m_TextEntry.SetLabelTextAtJoin(m_TextEntry.SerialLabelJoins.First(), text);
 		}

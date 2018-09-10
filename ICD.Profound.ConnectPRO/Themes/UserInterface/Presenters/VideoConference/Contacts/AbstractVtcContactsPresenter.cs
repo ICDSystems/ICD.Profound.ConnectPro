@@ -25,9 +25,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private readonly VtcReferencedContactsPresenterFactory m_ContactsFactory;
 		private readonly DirectoryControlBrowser m_DirectoryBrowser;
 
-		private readonly IVtcKeyboardPresenter m_Keyboard;
-		private readonly IVtcKeypadPresenter m_Keypad;
-
 		private	IVtcReferencedContactsPresenterBase m_Selected;
 
 		private IConferenceManager m_SubscribedConferenceManager;
@@ -75,42 +72,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_RefreshSection = new SafeCriticalSection();
 			m_ContactsFactory = new VtcReferencedContactsPresenterFactory(nav, ItemFactory);
 
-			m_Keyboard = nav.LazyLoadPresenter<IVtcKeyboardPresenter>();
-			m_Keyboard.OnKeypadButtonPressed += KeyboardOnKeypadButtonPressed;
-			m_Keyboard.OnDialButtonPressed += KeyboardOnDialButtonPressed;
-
-			m_Keypad = nav.LazyLoadPresenter<IVtcKeypadPresenter>();
-			m_Keypad.OnKeyboardButtonPressed += KeypadOnKeyboardButtonPressed;
-			m_Keypad.OnDialButtonPressed += KeypadOnDialButtonPressed;
-
 			m_DirectoryBrowser = new DirectoryControlBrowser();
 			Subscribe(m_DirectoryBrowser);
-		}
-
-		private void KeypadOnDialButtonPressed(object sender, EventArgs eventArgs)
-		{
-			m_Keypad.ShowView(true);
-
-			ShowView(true);
-		}
-
-		private void KeyboardOnDialButtonPressed(object sender, EventArgs eventArgs)
-		{
-			m_Keypad.ShowView(false);
-
-			ShowView(true);
-		}
-
-		private void KeyboardOnKeypadButtonPressed(object sender, EventArgs eventArgs)
-		{
-			m_Keyboard.ShowView(false);
-			m_Keypad.ShowView(true);
-		}
-
-		private void KeypadOnKeyboardButtonPressed(object sender, EventArgs e)
-		{
-			m_Keypad.ShowView(false);
-			m_Keyboard.ShowView(true);
 		}
 
 		/// <summary>
@@ -330,7 +293,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="eventArgs"></param>
 		protected virtual void ViewOnManualDialButtonPressed(object sender, EventArgs eventArgs)
 		{
-			m_Keyboard.ShowView(true);
+			Navigation.LazyLoadPresenter<IVtcKeyboardPresenter>().ShowView(KeyboardDialCallback);
+		}
+
+		/// <summary>
+		/// Called when the user presses dial on the keyboard/keypad.
+		/// </summary>
+		/// <param name="number"></param>
+		private void KeyboardDialCallback(string number)
+		{
+			IDialingDeviceControl control = Room == null ? null : Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			if (control != null)
+				control.Dial(number);
+
+			ShowView(true);
 		}
 
 		/// <summary>
