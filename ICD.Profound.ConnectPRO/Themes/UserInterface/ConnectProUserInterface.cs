@@ -515,6 +515,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="boolEventArgs"></param>
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs boolEventArgs)
 		{
+			SetActiveSource(null);
+
 			UpdateMeetingPresentersVisibility();
 		}
 
