@@ -8,10 +8,15 @@ using ICD.Connect.Calendaring.CalendarControl;
 using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Calendaring.Devices;
 using ICD.Connect.Conferencing.Contacts;
+using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Conferencing.Directory.Tree;
+using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Zoom.Components.Bookings;
 using ICD.Connect.Conferencing.Zoom.Controls.Calendar;
 using ICD.Connect.Devices;
+using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.Routing.Controls;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
@@ -28,6 +33,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		private IEnumerable<ICalendarControl> m_CalendarControls;
 
 		private IReferencedSchedulePresenter m_SelectedSchedulePresenter;
+
+		private bool HasCalendarControl
+		{
+			get { return m_CalendarControls != null && m_CalendarControls.Any(); }
+		}
 
 		/// <summary>
 		/// Constructor.
@@ -80,12 +90,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 				view.SetLogoPath(Theme.Logo);
 
-				bool hasCalendarControl = m_CalendarControls != null;
+				view.SetStartMyMeetingButtonEnabled(!HasCalendarControl || m_SelectedSchedulePresenter != null);
 
-				view.SetStartMyMeetingButtonEnabled(!hasCalendarControl || m_SelectedSchedulePresenter != null);
-
-				view.SetStartNewMeetingButtonEnabled(hasCalendarControl);
-				view.SetBookingsVisible(hasCalendarControl);
+				view.SetStartNewMeetingButtonEnabled(HasCalendarControl);
+				view.SetBookingsVisible(HasCalendarControl);
 			}
 			finally
 			{
@@ -219,7 +227,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			base.Subscribe(view);
 
-			view.OnStartMeetingButtonPressed += ViewOnStartMeetingButtonPressed;
+			view.OnStartMyMeetingButtonPressed += ViewOnStartMyMeetingButtonPressed;
+			view.OnStartNewMeetingButtonPressed += ViewOnStartNewMeetingButtonPressed;
 			view.OnSettingsButtonPressed += ViewOnSettingsButtonPressed;
 		}
 
@@ -231,7 +240,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			base.Unsubscribe(view);
 
-			view.OnStartMeetingButtonPressed -= ViewOnStartMeetingButtonPressed;
+			view.OnStartMyMeetingButtonPressed -= ViewOnStartMyMeetingButtonPressed;
+			view.OnStartNewMeetingButtonPressed -= ViewOnStartNewMeetingButtonPressed;
 			view.OnSettingsButtonPressed -= ViewOnSettingsButtonPressed;
 		}
 
@@ -250,7 +260,46 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void ViewOnStartMeetingButtonPressed(object sender, EventArgs eventArgs)
+		private void ViewOnStartMyMeetingButtonPressed(object sender, EventArgs eventArgs)
+		{
+			if (Room == null)
+				return;
+
+			if(!HasCalendarControl)
+				Room.StartMeeting();
+			else if (m_SelectedSchedulePresenter != null)
+			{
+				Room.StartMeeting();
+
+				// check if booking exists
+				var booking = m_SelectedSchedulePresenter.Booking;
+				if (booking == null)
+					return;
+
+				// check if we have any dialers
+				var dialers = Room.GetControlsRecursive<IDialingDeviceControl>().ToList();
+				if (dialers == null || !dialers.Any())
+					return;
+
+				// check if any dialers support the booking
+				var preferredDialer = dialers.OrderByDescending(d => d.CanDial(booking)).FirstOrDefault();
+				if (preferredDialer == null || preferredDialer.CanDial(booking) <= eBookingSupport.Unsupported)
+					return;
+
+				// route device to displays and/or audio destination
+				var dialerDevice = preferredDialer.Parent;
+				var routeControl = dialerDevice.Controls.GetControl<IRouteSourceControl>();
+				if(dialerDevice is IVideoConferenceDevice)
+					Room.Routing.RouteVtc(routeControl);
+				else if (preferredDialer.Supports == eConferenceSourceType.Audio)
+					Room.Routing.RouteAtc(routeControl);
+
+				// dial booking
+				preferredDialer.Dial(booking);
+			}
+		}
+
+		private void ViewOnStartNewMeetingButtonPressed(object sender, EventArgs eventArgs)
 		{
 			if (Room != null)
 				Room.StartMeeting();

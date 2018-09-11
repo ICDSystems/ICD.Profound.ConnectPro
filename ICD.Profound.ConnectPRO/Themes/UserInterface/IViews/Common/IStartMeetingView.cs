@@ -6,9 +6,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 	public interface IStartMeetingView : IView
 	{
 		/// <summary>
-		/// Raised when the user presses the start meeting button.
+		/// Raised when the user presses the start my meeting button.
 		/// </summary>
-		event EventHandler OnStartMeetingButtonPressed;
+		event EventHandler OnStartMyMeetingButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the start new meeting button.
+		/// </summary>
+		event EventHandler OnStartNewMeetingButtonPressed;
 
 		/// <summary>
 		/// Raised when the user presses the settings button.
