@@ -27,6 +27,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		private readonly ReferencedSchedulePresenterFactory m_ChildrenFactory;
 		private IEnumerable<ICalendarControl> m_CalendarControls;
 
+		private IReferencedSchedulePresenter m_SelectedSchedulePresenter;
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -64,9 +66,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
-				ICalendarControl mockCalendarControl = new MockCalendarControl(new MockCalendarDevice(), 20001750);
-				mockCalendarControl.Refresh();
-
 			    IEnumerable<IBooking> bookings =
 			        m_CalendarControls == null
 			            ? Enumerable.Empty<IBooking>()
@@ -74,15 +73,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 				foreach (IReferencedSchedulePresenter presenter in m_ChildrenFactory.BuildChildren(bookings, Subscribe, Unsubscribe))
 				{
+					presenter.SetSelected(presenter == m_SelectedSchedulePresenter);
 					presenter.ShowView(true);
+					presenter.Refresh();
 				}
 
 				view.SetLogoPath(Theme.Logo);
 
-				// TODO - This will be handled by scheduling features
-				view.SetStartMyMeetingButtonEnabled(true);
-
 				bool hasCalendarControl = m_CalendarControls != null;
+
+				view.SetStartMyMeetingButtonEnabled(!hasCalendarControl || m_SelectedSchedulePresenter != null);
 
 				view.SetStartNewMeetingButtonEnabled(hasCalendarControl);
 				view.SetBookingsVisible(hasCalendarControl);
@@ -194,7 +194,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="eventArgs"></param>
 		private void ChildOnPressed(object sender, EventArgs eventArgs)
 		{
-			throw new NotImplementedException();
+			var schedulePresenter = sender as IReferencedSchedulePresenter;
+			if (schedulePresenter == null)
+				return;
+
+			m_SelectedSchedulePresenter = schedulePresenter;
+			RefreshIfVisible();
 		}
 
 		private void CalendarControlOnBookingsChanged(object sender, EventArgs eventArgs)

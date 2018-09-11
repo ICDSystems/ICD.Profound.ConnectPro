@@ -38,5 +38,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 		/// </summary>
 		/// <param name="text"></param>
 		void SetPresenterNameLabel(string text);
+
+		/// <summary>
+		/// Sets the background button selected state.
+		/// </summary>
+		/// <param name="selected"></param>
+		void SetSelected(bool selected);
 	}
 }

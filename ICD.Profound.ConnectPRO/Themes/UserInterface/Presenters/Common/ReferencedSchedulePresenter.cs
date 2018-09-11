@@ -20,7 +20,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		public event EventHandler OnPressed;
 
 		private readonly SafeCriticalSection m_RefreshSection;
-		private  IBooking m_Booking;
+		private IBooking m_Booking;
+		private bool m_Selected;
 
 		#region Properties
 
@@ -65,6 +66,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			base.Dispose();
 		}
 
+		public void SetSelected(bool selected)
+		{
+			m_Selected = selected;
+		}
+
 		/// <summary>
 		/// Updates the view.
 		/// </summary>
@@ -88,6 +94,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				}
 				view.SetEndTimeLabel(m_Booking.EndTime.ToShortTimeString());
 				view.SetPresenterNameLabel(m_Booking.OrganizerName);
+				view.SetSelected(m_Selected);
 			}
 			finally
 			{

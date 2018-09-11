@@ -69,6 +69,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			m_PresenterNameLabel.SetLabelText(text);
 		}
 
+		/// <summary>
+		/// Sets the background button selected state.
+		/// </summary>
+		/// <param name="selected"></param>
+		public void SetSelected(bool selected)
+		{
+			m_BackgroundButton.SetSelected(selected);
+		}
+
 		#endregion
 
 		#region Control Callbacks
