@@ -14,5 +14,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 		/// </summary>
 		/// <param name="mode"></param>
 		void SetContactsMode(bool mode);
+
+		/// <summary>
+		/// Sets the visibility of the button and label.
+		/// </summary>
+		/// <param name="visible"></param>
+		void SetButtonVisible(bool visible);
 	}
 }

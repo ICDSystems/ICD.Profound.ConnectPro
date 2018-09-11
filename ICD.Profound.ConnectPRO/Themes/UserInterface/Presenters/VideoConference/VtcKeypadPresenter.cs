@@ -66,6 +66,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private void ViewOnKeyboardButtonPressed(object sender, EventArgs eventArgs)
 		{
 			Navigation.LazyLoadPresenter<IVtcKeyboardPresenter>().ShowView(DialCallback);
+
+			ShowView(false);
 		}
 
 		#endregion

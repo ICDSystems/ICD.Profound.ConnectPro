@@ -41,6 +41,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			m_Button.SetSelected(!mode);
 		}
 
+		/// <summary>
+		/// Sets the visibility of the button and label.
+		/// </summary>
+		/// <param name="visible"></param>
+		public void SetButtonVisible(bool visible)
+		{
+			m_Button.Show(visible);
+		}
+
 		#region Control Callbacks
 
 		/// <summary>

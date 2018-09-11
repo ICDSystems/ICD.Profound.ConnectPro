@@ -147,9 +147,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="eventArgs"></param>
 		private void ViewOnKeypadButtonPressed(object sender, EventArgs eventArgs)
 		{
-			ShowView(false);
-
 			Navigation.LazyLoadPresenter<IVtcKeypadPresenter>().ShowView(DialCallback);
+
+			ShowView(false);
 		}
 
 		/// <summary>
