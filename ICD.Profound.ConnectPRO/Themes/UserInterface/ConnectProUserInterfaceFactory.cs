@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Partitioning.Rooms;
