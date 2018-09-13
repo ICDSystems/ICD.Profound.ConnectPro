@@ -32,6 +32,8 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		public ConnectProMicrophoneInterface(IShureMxaDevice microphone, ConnectProTheme theme)
 		{
 			m_Microphone = microphone;
+			Subscribe(m_Microphone);
+
 			m_Theme = theme;
 			m_RefreshSection = new SafeCriticalSection();
 		}
@@ -42,6 +44,8 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		public void Dispose()
 		{
 			m_IsDisposed = true;
+
+			Unsubscribe(m_Microphone);
 
 			SetRoom(null);
 		}
@@ -174,6 +178,39 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		#endregion
+
+		#region Microphone Callbacks
+
+		/// <summary>
+		/// Subscribe to the microphone events.
+		/// </summary>
+		/// <param name="microphone"></param>
+		private void Subscribe(IShureMxaDevice microphone)
+		{
+			microphone.OnMuteButtonStatusChanged += MicrophoneOnMuteButtonStatusChanged;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the microphone events.
+		/// </summary>
+		/// <param name="microphone"></param>
+		private void Unsubscribe(IShureMxaDevice microphone)
+		{
+			microphone.OnMuteButtonStatusChanged -= MicrophoneOnMuteButtonStatusChanged;
+		}
+
+		/// <summary>
+		/// Called when the mute button is pressed/released.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="boolEventArgs"></param>
+		private void MicrophoneOnMuteButtonStatusChanged(object sender, BoolEventArgs boolEventArgs)
+		{
+			if (boolEventArgs.Data && m_SubscribedConferenceManager != null)
+				m_SubscribedConferenceManager.TogglePrivacyMute();
 		}
 
 		#endregion

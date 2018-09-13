@@ -5,8 +5,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConferen
 {
 	public interface IVtcCallListTogglePresenter : IPresenter<IVtcCallListToggleView>
 	{
+		/// <summary>
+		/// Raised when the user presses the button.
+		/// </summary>
 		event EventHandler OnButtonPressed;
 
+		/// <summary>
+		/// When true shows the "contacts" button, otherwise shows the "call" button.
+		/// </summary>
+		/// <param name="mode"></param>
 		void SetContactsMode(bool mode);
 	}
 }

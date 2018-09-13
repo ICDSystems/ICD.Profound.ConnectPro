@@ -1,12 +1,8 @@
-﻿using System;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
+﻿using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference
 {
-	public interface IVtcKeypadPresenter : IPresenter<IVtcKeypadView>
+	public interface IVtcKeypadPresenter : IVtcBaseKeyboardPresenter<IVtcKeypadView>
 	{
-		event EventHandler OnKeyboardButtonPressed;
-
-		event EventHandler OnDialButtonPressed;
 	}
 }

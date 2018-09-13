@@ -7,12 +7,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 {
 	public sealed partial class VtcCallListToggleView : AbstractView, IVtcCallListToggleView
 	{
+		/// <summary>
+		/// Raised when the user presses the button.
+		/// </summary>
 		public event EventHandler OnButtonPressed;
-
-		public void SetContactsMode(bool mode)
-		{
-			m_Button.SetSelected(!mode);
-		}
 
 		/// <summary>
 		/// Constructor.
@@ -32,6 +30,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			OnButtonPressed = null;
 
 			base.Dispose();
+		}
+
+		/// <summary>
+		/// When true shows the "contacts" button, otherwise shows the "call" button.
+		/// </summary>
+		/// <param name="mode"></param>
+		public void SetContactsMode(bool mode)
+		{
+			m_Button.SetSelected(!mode);
+		}
+
+		/// <summary>
+		/// Sets the visibility of the button and label.
+		/// </summary>
+		/// <param name="visible"></param>
+		public void SetButtonVisible(bool visible)
+		{
+			m_Button.Show(visible);
 		}
 
 		#region Control Callbacks
@@ -56,6 +72,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			m_Button.OnPressed -= ButtonOnPressed;
 		}
 
+		/// <summary>
+		/// Called when the user presses the button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void ButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnButtonPressed.Raise(this);

@@ -27,7 +27,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private IDialingDeviceControl m_SubscribedVideoDialer;
 
 		private readonly IVtcCallListTogglePresenter m_CallListTogglePresenter;
-		private readonly IVtcContactsPresenter m_ContactsPresenter;
+		private readonly IVtcContactsNormalPresenter m_ContactsNormalPresenter;
 		private readonly IVtcContactsPolycomPresenter m_ContactsPolycomPresenter;
 		private readonly IVtcButtonListPresenter m_ButtonListPresenter;
 		private readonly IVtcCameraPresenter m_CameraPresenter;
@@ -80,8 +80,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_CallListTogglePresenter = nav.LazyLoadPresenter<IVtcCallListTogglePresenter>();
 			m_CallListTogglePresenter.OnButtonPressed += CallListTogglePresenterOnButtonPressed;
 
-			m_ContactsPresenter = nav.LazyLoadPresenter<IVtcContactsPresenter>();
-			m_ContactsPresenter.OnViewVisibilityChanged += ContactsPresenterOnViewVisibilityChanged;
+			m_ContactsNormalPresenter = nav.LazyLoadPresenter<IVtcContactsNormalPresenter>();
+			m_ContactsNormalPresenter.OnViewVisibilityChanged += ContactsNormalPresenterOnViewVisibilityChanged;
 
 			m_ContactsPolycomPresenter = nav.LazyLoadPresenter<IVtcContactsPolycomPresenter>();
 			m_ContactsPolycomPresenter.OnViewVisibilityChanged += ContactsPolycomPresenterOnViewVisibilityChanged;
@@ -112,7 +112,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_CallListTogglePresenter.SetContactsMode(!boolEventArgs.Data);
 		}
 
-		private void ContactsPresenterOnViewVisibilityChanged(object sender, BoolEventArgs boolEventArgs)
+		private void ContactsNormalPresenterOnViewVisibilityChanged(object sender, BoolEventArgs boolEventArgs)
 		{
 			m_CallListTogglePresenter.SetContactsMode(!boolEventArgs.Data);
 		}
@@ -154,12 +154,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			{
 				bool polycom = m_SubscribedVideoDialer is PolycomCodecDialingControl;
 
-				m_ContactsPresenter.ShowView(!polycom);
+				m_ContactsNormalPresenter.ShowView(!polycom);
 				m_ContactsPolycomPresenter.ShowView(polycom);
 			}
 			else
 			{
-				m_ContactsPresenter.ShowView(false);
+				m_ContactsNormalPresenter.ShowView(false);
 				m_ContactsPolycomPresenter.ShowView(false);
 			}
 		}
@@ -343,7 +343,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (m_CameraPresenter.IsViewVisible)
 				m_CameraPresenter.ShowView(false);
 
-			if (m_ContactsPresenter.IsViewVisible || m_ContactsPolycomPresenter.IsViewVisible)
+			if (m_ContactsNormalPresenter.IsViewVisible || m_ContactsPolycomPresenter.IsViewVisible)
 			{
 				ShowContactsPresenter(false);
 				m_ButtonListPresenter.ShowView(true);

@@ -108,7 +108,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 
 			// Video Conference
 			{typeof(IVtcBaseView), (panel, theme) => new VtcBaseView(panel, theme)},
-			{typeof(IVtcContactsView), (panel, theme) => new VtcContactsView(panel, theme)},
+			{typeof(IVtcContactsNormalView), (panel, theme) => new VtcContactsNormalView(panel, theme)},
 			{typeof(IVtcContactsPolycomView), (panel, theme) => new VtcContactsPolycomView(panel, theme)},
 			{typeof(IVtcCameraView), (panel, theme) => new VtcCameraView(panel, theme)},
 			{typeof(IVtcShareView), (panel, theme) => new VtcShareView(panel, theme)},
