@@ -69,6 +69,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 				m_IsInMeeting = value;
 
+				Log(eSeverity.Informational, "IsInMeeting changed to {0}", m_IsInMeeting);
+
 				OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
 			}
 		}
