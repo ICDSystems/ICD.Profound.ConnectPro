@@ -14,6 +14,7 @@ using ICD.Connect.API.Commands;
 using ICD.Connect.API.Nodes;
 using ICD.Connect.Audio.Controls;
 using ICD.Connect.Audio.VolumePoints;
+using ICD.Connect.Calendaring.CalendarControl;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
@@ -98,6 +99,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// Gets/sets the ATC number for dialing into the room.
 		/// </summary>
 		public string AtcNumber { get; set; }
+
+		/// <summary>
+		/// Gets/sets the calendar control for the room.
+		/// </summary>
+		public ICalendarControl CalendarControl { get; set; }
 
 		#endregion
 
@@ -269,6 +275,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			settings.DialingPlan = m_DialingPlan;
 			settings.Passcode = Passcode;
 
+			if (CalendarControl != null && CalendarControl.Parent != null)
+				settings.CalendarDevice = CalendarControl.Parent.Id;
+
 			settings.WakeSchedule.Copy(m_WakeSchedule);
 		}
 
@@ -287,6 +296,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			AtcNumber = null;
 			Passcode = null;
+			CalendarControl = null;
 
 			m_WakeSchedule.Clear();
 		}
@@ -312,6 +322,14 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			// Passcode
 			Passcode = settings.Passcode;
+
+			// Calendar Device
+			if (settings.CalendarDevice != null)
+			{
+				var calendarDevice = factory.GetOriginatorById<IDevice>(settings.CalendarDevice.Value);
+				if (calendarDevice != null)
+					CalendarControl = calendarDevice.Controls.GetControl<ICalendarControl>();
+			}
 
 			// Wake Schedule
 			m_WakeSchedule.Copy(settings.WakeSchedule);

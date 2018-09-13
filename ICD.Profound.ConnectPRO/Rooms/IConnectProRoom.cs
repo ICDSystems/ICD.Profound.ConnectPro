@@ -2,6 +2,7 @@
 using ICD.Common.Properties;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Audio.Controls;
+using ICD.Connect.Calendaring.CalendarControl;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Profound.ConnectPRO.Routing;
@@ -43,6 +44,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// Gets/sets the ATC number for dialing into the room.
 		/// </summary>
 		string AtcNumber { get; set; }
+
+		/// <summary>
+		/// Gets the CalendarControl for the room.
+		/// </summary>
+		ICalendarControl CalendarControl { get; }
 
 		#endregion
 

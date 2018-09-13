@@ -13,6 +13,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		private const string ATC_NUMBER_ELEMENT = "AtcNumber";
 		private const string PASSCODE_ELEMENT = "Passcode";
 		private const string WAKE_SCHEDULE_ELEMENT = "WakeSchedule";
+		private const string CALENDAR_DEVICE_ELEMENT = "CalendarDevice";
 
 		private readonly WakeSchedule m_WakeScheduleSettings;
 
@@ -65,6 +66,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 		public string Passcode { get; set; }
 
+		public int? CalendarDevice { get; set; }
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -83,6 +86,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			writer.WriteElementString(ATC_NUMBER_ELEMENT, AtcNumber);
 			writer.WriteElementString(PASSCODE_ELEMENT, Passcode);
+			writer.WriteElementString(CALENDAR_DEVICE_ELEMENT, IcdXmlConvert.ToString(CalendarDevice));
 
 			m_WakeScheduleSettings.WriteElements(writer, WAKE_SCHEDULE_ELEMENT);
 		}
@@ -97,6 +101,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			AtcNumber = XmlUtils.TryReadChildElementContentAsString(xml, ATC_NUMBER_ELEMENT);
 			Passcode = XmlUtils.TryReadChildElementContentAsString(xml, PASSCODE_ELEMENT);
+			CalendarDevice = XmlUtils.TryReadChildElementContentAsInt(xml, CALENDAR_DEVICE_ELEMENT);
 
 			string wakeScheduleXml;
 			if (XmlUtils.TryGetChildElementAsString(xml, WAKE_SCHEDULE_ELEMENT, out wakeScheduleXml))
