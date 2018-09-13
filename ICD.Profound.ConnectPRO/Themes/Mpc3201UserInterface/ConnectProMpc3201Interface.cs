@@ -184,7 +184,103 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// <param name="eventArgs"></param>
 		private void ControlOnButtonStateChange(object sender, KeypadButtonPressedEventArgs eventArgs)
 		{
-			IcdConsole.PrintLine(eConsoleColor.Cyan, "Button {0} State {1}", eventArgs.ButtonId, eventArgs.ButtonState);
+			switch (eventArgs.ButtonId)
+			{
+				case MPC3x201TouchScreenButtons.BUTTON_MUTE:
+					if (eventArgs.ButtonState == eButtonState.Pressed)
+						ToggleMute();
+					break;
+
+				case MPC3x201TouchScreenButtons.BUTTON_VOLUME_DOWN:
+					if (eventArgs.ButtonState == eButtonState.Pressed)
+						VolumeDown();
+					else if (eventArgs.ButtonState == eButtonState.Released)
+						VolumeRelease();
+					break;
+
+				case MPC3x201TouchScreenButtons.BUTTON_VOLUME_UP:
+					if (eventArgs.ButtonState == eButtonState.Pressed)
+						VolumeUp();
+					else if (eventArgs.ButtonState == eButtonState.Released)
+						VolumeRelease();
+					break;
+
+				case MPC3x201TouchScreenButtons.BUTTON_POWER:
+					if (eventArgs.ButtonState == eButtonState.Pressed)
+						TogglePower();
+					break;
+
+				case MPC3x201TouchScreenButtons.BUTTON_ACTION_1:
+					if (eventArgs.ButtonState == eButtonState.Pressed)
+						HandlePressedSource(0);
+					break;
+
+				case MPC3x201TouchScreenButtons.BUTTON_ACTION_2:
+					if (eventArgs.ButtonState == eButtonState.Pressed)
+						HandlePressedSource(1);
+					break;
+
+				case MPC3x201TouchScreenButtons.BUTTON_ACTION_3:
+					if (eventArgs.ButtonState == eButtonState.Pressed)
+						HandlePressedSource(2);
+					break;
+
+				case MPC3x201TouchScreenButtons.BUTTON_ACTION_4:
+					if (eventArgs.ButtonState == eButtonState.Pressed)
+						HandlePressedSource(3);
+					break;
+
+				case MPC3x201TouchScreenButtons.BUTTON_ACTION_5:
+					if (eventArgs.ButtonState == eButtonState.Pressed)
+						HandlePressedSource(4);
+					break;
+
+				case MPC3x201TouchScreenButtons.BUTTON_ACTION_6:
+					if (eventArgs.ButtonState == eButtonState.Pressed)
+						HandlePressedSource(5);
+					break;
+			}
+		}
+
+		private void HandlePressedSource(int index)
+		{
+			IcdConsole.PrintLine(eConsoleColor.Magenta, "Source {0}", index);
+
+			//throw new NotImplementedException();
+		}
+
+		private void TogglePower()
+		{
+			if (Room != null)
+				Room.EndMeeting(false);
+		}
+
+		private void VolumeUp()
+		{
+			IVolumeLevelBasicDeviceControl volumeControl = m_VolumeControl as IVolumeLevelBasicDeviceControl;
+			if (volumeControl != null)
+				volumeControl.VolumeLevelRampUp();
+		}
+
+		private void VolumeDown()
+		{
+			IVolumeLevelBasicDeviceControl volumeControl = m_VolumeControl as IVolumeLevelBasicDeviceControl;
+			if (volumeControl != null)
+				volumeControl.VolumeLevelRampDown();
+		}
+
+		private void VolumeRelease()
+		{
+			IVolumeLevelBasicDeviceControl volumeControl = m_VolumeControl as IVolumeLevelBasicDeviceControl;
+			if (volumeControl != null)
+				volumeControl.VolumeLevelRampStop();
+		}
+
+		private void ToggleMute()
+		{
+			IVolumeMuteBasicDeviceControl muteControl = m_VolumeControl as IVolumeMuteBasicDeviceControl;
+			if (muteControl != null)
+				muteControl.VolumeMuteToggle();
 		}
 
 		#endregion
