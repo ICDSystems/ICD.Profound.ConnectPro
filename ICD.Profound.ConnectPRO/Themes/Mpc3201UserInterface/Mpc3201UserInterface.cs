@@ -30,6 +30,8 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// </summary>
 		public IMPC3x201TouchScreenControl TouchScreen { get { return m_Control; } }
 
+		object IUserInterface.Target { get { return TouchScreen; } }
+
 		#endregion
 
 		/// <summary>

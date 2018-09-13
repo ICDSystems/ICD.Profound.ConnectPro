@@ -24,6 +24,8 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 
 		public IShureMxaDevice Microphone { get { return m_Microphone; } }
 
+		object IUserInterface.Target { get { return Microphone; } }
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
