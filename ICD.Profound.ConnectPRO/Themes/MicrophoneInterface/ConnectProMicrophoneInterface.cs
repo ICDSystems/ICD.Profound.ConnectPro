@@ -1,6 +1,8 @@
 ﻿using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Services;
+using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Audio.Shure;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
@@ -60,6 +62,9 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		{
 			if (room == Room)
 				return;
+
+			ServiceProvider.GetService<ILoggerService>()
+			               .AddEntry(eSeverity.Informational, "{0} setting room to {1}", this, room);
 
 			Unsubscribe(Room);
 			Room = room;

@@ -1,5 +1,7 @@
 ﻿using System;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Services;
+using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Audio.Controls;
 using ICD.Connect.Audio.EventArguments;
 using ICD.Connect.Misc.Keypads;
@@ -79,6 +81,9 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		{
 			if (room == Room)
 				return;
+
+			ServiceProvider.GetService<ILoggerService>()
+			               .AddEntry(eSeverity.Informational, "{0} setting room to {1}", this, room);
 
 			Unsubscribe(Room);
 			Room = room;
