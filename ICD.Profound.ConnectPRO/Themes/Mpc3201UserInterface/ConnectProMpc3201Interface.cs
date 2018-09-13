@@ -1,11 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Collections;
+using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Audio.Controls;
 using ICD.Connect.Audio.EventArguments;
 using ICD.Connect.Misc.Keypads;
 using ICD.Connect.Panels.Crestron.Controls.TouchScreens;
+using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
@@ -19,6 +24,17 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		private bool m_IsDisposed;
 
 		private IVolumeDeviceControl m_VolumeControl;
+		private ISource[] m_Sources;
+
+		private static readonly BiDictionary<int, uint> s_IndexToSourceButton = new BiDictionary<int, uint>
+		{
+			{0, MPC3x201TouchScreenButtons.BUTTON_ACTION_1},
+			{1, MPC3x201TouchScreenButtons.BUTTON_ACTION_2},
+			{2, MPC3x201TouchScreenButtons.BUTTON_ACTION_3},
+			{3, MPC3x201TouchScreenButtons.BUTTON_ACTION_4},
+			{4, MPC3x201TouchScreenButtons.BUTTON_ACTION_5},
+			{5, MPC3x201TouchScreenButtons.BUTTON_ACTION_6},
+		}; 
 
 		#region Properties
 
@@ -48,6 +64,8 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 
 			if (theme == null)
 				throw new ArgumentNullException("theme");
+
+			m_Sources = new ISource[0];
 
 			m_Control = control;
 			m_Theme = theme;
@@ -89,8 +107,17 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			Room = room;
 			Subscribe(Room);
 
+			m_Sources = GetSources(room).ToArray();
+
 			if (!m_IsDisposed)
 				Refresh();
+		}
+
+		private static IEnumerable<ISource> GetSources(IConnectProRoom room)
+		{
+			return room == null
+				       ? Enumerable.Empty<ISource>()
+				       : room.Routing.GetCoreSources();
 		}
 
 		/// <summary>
@@ -103,9 +130,16 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			try
 			{
 				// Sources
-				
+				for (int index = 0; index < 6; index++)
+				{
+					bool enabled = index < m_Sources.Length;
+
+					m_Control.SetNumericalButtonEnabled((uint)(index + 1), enabled);
+				}
 
 				// Volume
+				bool volumeEnabled = m_VolumeControl is IVolumeLevelBasicDeviceControl;
+
 				IVolumeMuteBasicDeviceControl muteControl = m_VolumeControl as IVolumeMuteBasicDeviceControl;
 				bool muteEnabled = muteControl != null;
 
@@ -115,6 +149,8 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 
 				m_Control.SetMuteButtonEnabled(muteEnabled);
 				m_Control.SetVolumeBargraph(percent);
+				m_Control.SetVolumeUpButtonEnabled(volumeEnabled);
+				m_Control.SetVolumeDownButtonEnabled(volumeEnabled);
 
 				// Power
 				m_Control.SetPowerButtonEnabled(true);
@@ -211,42 +247,32 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 					break;
 
 				case MPC3x201TouchScreenButtons.BUTTON_ACTION_1:
-					if (eventArgs.ButtonState == eButtonState.Pressed)
-						HandlePressedSource(0);
-					break;
-
 				case MPC3x201TouchScreenButtons.BUTTON_ACTION_2:
-					if (eventArgs.ButtonState == eButtonState.Pressed)
-						HandlePressedSource(1);
-					break;
-
 				case MPC3x201TouchScreenButtons.BUTTON_ACTION_3:
-					if (eventArgs.ButtonState == eButtonState.Pressed)
-						HandlePressedSource(2);
-					break;
-
 				case MPC3x201TouchScreenButtons.BUTTON_ACTION_4:
-					if (eventArgs.ButtonState == eButtonState.Pressed)
-						HandlePressedSource(3);
-					break;
-
 				case MPC3x201TouchScreenButtons.BUTTON_ACTION_5:
-					if (eventArgs.ButtonState == eButtonState.Pressed)
-						HandlePressedSource(4);
-					break;
-
 				case MPC3x201TouchScreenButtons.BUTTON_ACTION_6:
 					if (eventArgs.ButtonState == eButtonState.Pressed)
-						HandlePressedSource(5);
+					{
+						int index = s_IndexToSourceButton.GetKey(eventArgs.ButtonId);
+						HandlePressedSource(index);
+					}
 					break;
 			}
 		}
 
 		private void HandlePressedSource(int index)
 		{
-			IcdConsole.PrintLine(eConsoleColor.Magenta, "Source {0}", index);
+			if (Room == null)
+				return;
 
-			//throw new NotImplementedException();
+			ISource source;
+			m_Sources.TryElementAt(index, out source);
+
+			if (source == null)
+				return;
+
+			Room.Routing.RouteSingleDisplay(source);
 		}
 
 		private void TogglePower()
