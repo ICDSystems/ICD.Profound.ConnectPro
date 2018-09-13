@@ -32,7 +32,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		private readonly ReferencedSchedulePresenterFactory m_ChildrenFactory;
 		private IEnumerable<ICalendarControl> m_CalendarControls;
 
-		private IReferencedSchedulePresenter m_SelectedSchedulePresenter;
+		private IReferencedSchedulePresenter m_SelectedBooking;
 
 		private bool HasCalendarControl
 		{
@@ -83,14 +83,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 				foreach (IReferencedSchedulePresenter presenter in m_ChildrenFactory.BuildChildren(bookings, Subscribe, Unsubscribe))
 				{
-					presenter.SetSelected(presenter == m_SelectedSchedulePresenter);
+					presenter.SetSelected(presenter == m_SelectedBooking);
 					presenter.ShowView(true);
 					presenter.Refresh();
 				}
 
 				view.SetLogoPath(Theme.Logo);
 
-				view.SetStartMyMeetingButtonEnabled(!HasCalendarControl || m_SelectedSchedulePresenter != null);
+				view.SetStartMyMeetingButtonEnabled(!HasCalendarControl || m_SelectedBooking != null);
 
 				view.SetStartNewMeetingButtonEnabled(HasCalendarControl);
 				view.SetBookingsVisible(HasCalendarControl);
@@ -142,7 +142,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 		private void Unsubscribe(IEnumerable<ICalendarControl> calendarControls)
 		{
-			if (calendarControls == null)
+			if (calendarControls == null) 
 				return;
 
 		    foreach (var calendarControl in calendarControls)
@@ -202,11 +202,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="eventArgs"></param>
 		private void ChildOnPressed(object sender, EventArgs eventArgs)
 		{
-			var schedulePresenter = sender as IReferencedSchedulePresenter;
-			if (schedulePresenter == null)
+			var booking = sender as IReferencedSchedulePresenter;
+			if (booking == null)
 				return;
 
-			m_SelectedSchedulePresenter = schedulePresenter;
+			if (m_SelectedBooking == booking)
+				m_SelectedBooking = null;
+			else
+				m_SelectedBooking = booking;
 			RefreshIfVisible();
 		}
 
@@ -267,12 +270,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			if(!HasCalendarControl)
 				Room.StartMeeting();
-			else if (m_SelectedSchedulePresenter != null)
+			else if (m_SelectedBooking != null)
 			{
-				Room.StartMeeting();
+				Room.StartMeeting(false);
 
 				// check if booking exists
-				var booking = m_SelectedSchedulePresenter.Booking;
+				var booking = m_SelectedBooking.Booking;
 				if (booking == null)
 					return;
 

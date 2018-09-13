@@ -83,9 +83,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
-				view.SetDayLabel(m_Booking.StartTime.Day.ToString());
+				string icon = Icons.GetSourceIcon("display", eSourceColor.Grey);
+				if (Booking is IZoomBooking || Booking is ISipBooking)
+					icon = Icons.GetSourceIcon("videoConference", eSourceColor.Grey);
+				else if (Booking is IPstnBooking)
+					icon = Icons.GetSourceIcon("audioConference", eSourceColor.Grey);
+
+				view.SetBookingIcon(icon);
+
 				view.SetStartTimeLabel(m_Booking.StartTime.ToShortTimeString());
-				if (m_Booking.IsPrivate) { 
+				if (m_Booking.IsPrivate)
+				{ 
 					view.SetBodyLabel("Private Meeting");
 				}
 				else
