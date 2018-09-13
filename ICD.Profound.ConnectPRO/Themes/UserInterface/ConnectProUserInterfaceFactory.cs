@@ -1,13 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 {
-	public sealed class ConnectProUserInterfaceFactory :
-		AbstractConnectProUserInterfaceFactory<ConnectProUserInterface, IPanelDevice>
+	public sealed class ConnectProUserInterfaceFactory : AbstractConnectProUserInterfaceFactory<ConnectProUserInterface>
 	{
 		/// <summary>
 		/// Constructor.
@@ -21,11 +22,27 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <summary>
 		/// Instantiates the user interface for the given originator.
 		/// </summary>
-		/// <param name="originator"></param>
+		/// <param name="panel"></param>
 		/// <returns></returns>
-		protected override ConnectProUserInterface CreateUserInterface(IPanelDevice originator)
+		private ConnectProUserInterface CreateUserInterface(IPanelDevice panel)
 		{
-			return new ConnectProUserInterface(originator, Theme);
+			return new ConnectProUserInterface(panel, Theme);
+		}
+
+		/// <summary>
+		/// Creates the user interfaces for the given room.
+		/// </summary>
+		/// <param name="room"></param>
+		/// <returns></returns>
+		protected override IEnumerable<ConnectProUserInterface> CreateUserInterfaces(IConnectProRoom room)
+		{
+			if (room == null)
+				throw new ArgumentNullException("room");
+
+			return room.Originators
+			           .GetInstancesRecursive<IPanelDevice>()
+			           .Where(o => !(o is OsdPanelDevice))
+			           .Select(o => CreateUserInterface(o));
 		}
 
 		/// <summary>
@@ -37,12 +54,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		protected override bool RoomContainsOriginator(IRoom room, ConnectProUserInterface ui)
 		{
 			return room.Originators.ContainsRecursive(ui.Panel.Id);
-		}
-
-		protected override IEnumerable<IPanelDevice> GetOriginatorsForUserInterface()
-		{
-			// Don't create UIs for the OSD
-			return base.GetOriginatorsForUserInterface().Where(o => !(o is OsdPanelDevice));
 		}
 	}
 }
