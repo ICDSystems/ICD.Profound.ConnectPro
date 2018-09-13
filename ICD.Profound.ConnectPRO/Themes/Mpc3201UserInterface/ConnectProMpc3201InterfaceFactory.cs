@@ -8,13 +8,13 @@ using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 {
-	public sealed class Mpc3201UserInterfaceFactory : AbstractConnectProUserInterfaceFactory<Mpc3201UserInterface>
+	public sealed class ConnectProMpc3201InterfaceFactory : AbstractConnectProUserInterfaceFactory<ConnectProMpc3201Interface>
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="theme"></param>
-		public Mpc3201UserInterfaceFactory(ConnectProTheme theme)
+		public ConnectProMpc3201InterfaceFactory(ConnectProTheme theme)
 			: base(theme)
 		{
 		}
@@ -24,9 +24,9 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// </summary>
 		/// <param name="control"></param>
 		/// <returns></returns>
-		private Mpc3201UserInterface CreateUserInterface(IMPC3x201TouchScreenControl control)
+		private ConnectProMpc3201Interface CreateUserInterface(IMPC3x201TouchScreenControl control)
 		{
-			return new Mpc3201UserInterface(control, Theme);
+			return new ConnectProMpc3201Interface(control, Theme);
 		}
 
 		/// <summary>
@@ -34,7 +34,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// </summary>
 		/// <param name="room"></param>
 		/// <returns></returns>
-		protected override IEnumerable<Mpc3201UserInterface> CreateUserInterfaces(IConnectProRoom room)
+		protected override IEnumerable<ConnectProMpc3201Interface> CreateUserInterfaces(IConnectProRoom room)
 		{
 			if (room == null)
 				throw new ArgumentNullException("room");
@@ -51,7 +51,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// <param name="room"></param>
 		/// <param name="ui"></param>
 		/// <returns></returns>
-		protected override bool RoomContainsOriginator(IRoom room, Mpc3201UserInterface ui)
+		protected override bool RoomContainsOriginator(IRoom room, ConnectProMpc3201Interface ui)
 		{
 			return room.Originators
 			           .GetInstancesRecursive<IDeviceBase>()

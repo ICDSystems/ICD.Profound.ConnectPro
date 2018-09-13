@@ -8,7 +8,7 @@ using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 {
-	public sealed class Mpc3201UserInterface : IUserInterface
+	public sealed class ConnectProMpc3201Interface : IUserInterface
 	{
 		private readonly IMPC3x201TouchScreenControl m_Control;
 		private readonly ConnectProTheme m_Theme;
@@ -39,7 +39,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// </summary>
 		/// <param name="control"></param>
 		/// <param name="theme"></param>
-		public Mpc3201UserInterface(IMPC3x201TouchScreenControl control, ConnectProTheme theme)
+		public ConnectProMpc3201Interface(IMPC3x201TouchScreenControl control, ConnectProTheme theme)
 		{
 			if (control == null)
 				throw new ArgumentNullException("control");

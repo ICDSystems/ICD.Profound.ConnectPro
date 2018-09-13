@@ -82,8 +82,8 @@
     <Compile Include="Themes\ConnectProThemeSettings.cs" />
     <Compile Include="Themes\MicrophoneInterface\ConnectProMicrophoneInterface.cs" />
     <Compile Include="Themes\MicrophoneInterface\ConnectProMicrophoneInterfaceFactory.cs" />
-    <Compile Include="Themes\Mpc3201UserInterface\Mpc3201UserInterface.cs" />
-    <Compile Include="Themes\Mpc3201UserInterface\Mpc3201UserInterfaceFactory.cs" />
+    <Compile Include="Themes\Mpc3201UserInterface\ConnectProMpc3201Interface.cs" />
+    <Compile Include="Themes\Mpc3201UserInterface\ConnectProMpc3201InterfaceFactory.cs" />
     <Compile Include="Themes\OsdInterface\ConnectProOsdInterface.cs" />
     <Compile Include="Themes\OsdInterface\ConnectProOsdInterfaceFactory.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\IOsdIncomingCallPresenter.cs" />
