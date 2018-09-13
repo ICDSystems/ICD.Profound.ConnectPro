@@ -110,6 +110,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			{
 				m_CalendarControl = Room.CalendarControl;
 				Subscribe(m_CalendarControl);
+				m_CalendarControl.Refresh();
 			}
 
 			RefreshIfVisible();
