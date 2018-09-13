@@ -15,6 +15,7 @@ using ICD.Connect.Themes;
 using ICD.Connect.TvPresets;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.MicrophoneInterface;
+using ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface;
 using ICD.Profound.ConnectPRO.Themes.UserInterface;
 using ICD.Profound.ConnectPRO.WebConferencing;
@@ -81,7 +82,8 @@ namespace ICD.Profound.ConnectPRO.Themes
 			{
 				new ConnectProUserInterfaceFactory(this),
 				new ConnectProMicrophoneInterfaceFactory(this),
-				new ConnectProOsdInterfaceFactory(this)
+				new ConnectProOsdInterfaceFactory(this),
+				new ConnectProMpc3201InterfaceFactory(this)
 			};
 
 			m_UiFactoriesSection = new SafeCriticalSection();
