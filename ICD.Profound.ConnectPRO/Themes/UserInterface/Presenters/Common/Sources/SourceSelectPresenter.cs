@@ -21,7 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		public event SourcePressedCallback OnSourcePressed;
 
 		private readonly ReferencedSourceSelectPresenterFactory m_ChildrenFactory;
-		private readonly Dictionary<ISource, eRoutedState> m_RoutedSources;
+		private readonly Dictionary<ISource, eSourceState> m_RoutedSources;
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private ISource[] m_Sources;
@@ -62,7 +62,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			m_ChildrenFactory = new ReferencedSourceSelectPresenterFactory(nav, ItemFactory);
 
 			m_Sources = new ISource[0];
-			m_RoutedSources = new Dictionary<ISource, eRoutedState>();
+			m_RoutedSources = new Dictionary<ISource, eSourceState>();
 		}
 
 		/// <summary>
@@ -95,9 +95,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 					presenter.Selected = presenter.Source == m_ActiveSource;
 					presenter.ShowView(true);
 
-					presenter.Routed =
+					presenter.SourceState =
 						presenter.Source == null
-							? eRoutedState.Inactive
+							? eSourceState.Inactive
 							: m_RoutedSources.GetDefault(presenter.Source);
 				}
 
@@ -144,7 +144,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// Sets the sources that are currently routed to displays.
 		/// </summary>
 		/// <param name="routedSources"></param>
-		public void SetRoutedSources(Dictionary<ISource, eRoutedState> routedSources)
+		public void SetRoutedSources(Dictionary<ISource, eSourceState> routedSources)
 		{
 			if (routedSources == null)
 				throw new ArgumentNullException("routedSources");

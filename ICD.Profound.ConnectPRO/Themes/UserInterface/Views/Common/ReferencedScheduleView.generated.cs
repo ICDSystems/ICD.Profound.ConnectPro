@@ -12,7 +12,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 	{
 		private VtProSubpage m_Subpage;
 		private VtProAdvancedButton m_BackgroundButton;
-		private VtProSimpleLabel m_DayLabel;
+		private VtProDynamicIconObject m_BookingIcon;
 		private VtProSimpleLabel m_StartTimeLabel;
 		private VtProSimpleLabel m_BodyLabel;
 		private VtProSimpleLabel m_EndTimeLabel;
@@ -34,9 +34,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 				DigitalEnableJoin = 2
 			};
 
-			m_DayLabel = new VtProSimpleLabel(panel, m_Subpage)
+			m_BookingIcon = new VtProDynamicIconObject(panel, m_Subpage)
 			{
-				IndirectTextJoin = 1
+				DynamicIconSerialJoin = 1
 			};
 
 			m_StartTimeLabel = new VtProSimpleLabel(panel, m_Subpage)
@@ -68,7 +68,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		{
 			yield return m_Subpage;
 			yield return m_BackgroundButton;
-			yield return m_DayLabel;
+			yield return m_BookingIcon;
 			yield return m_StartTimeLabel;
 			yield return m_BodyLabel;
 			yield return m_EndTimeLabel;

@@ -14,6 +14,7 @@ using ICD.Connect.API.Commands;
 using ICD.Connect.API.Nodes;
 using ICD.Connect.Audio.Controls;
 using ICD.Connect.Audio.VolumePoints;
+using ICD.Connect.Calendaring.CalendarControl;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
@@ -94,6 +95,16 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public string Passcode { get; set; }
 
+		/// <summary>
+		/// Gets/sets the ATC number for dialing into the room.
+		/// </summary>
+		public string AtcNumber { get; set; }
+
+		/// <summary>
+		/// Gets/sets the calendar control for the room.
+		/// </summary>
+		public ICalendarControl CalendarControl { get; set; }
+
 		#endregion
 
 		/// <summary>
@@ -168,6 +179,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			if (resetRouting)
 				Routing.RouteOsd();
 
+			// Reset mute state
+			Mute(false);
 		}
 
 		/// <summary>
@@ -185,6 +198,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			// Reset all routing
 			Routing.RouteOsd();
+
+			// Reset mute state
+			Mute(false);
 
 			if (shutdown)
 				Sleep();
@@ -233,6 +249,17 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			           .ForEach(c => c.PowerOff());
 		}
 
+		/// <summary>
+		/// Sets the mute state on the room volume point.
+		/// </summary>
+		/// <param name="mute"></param>
+		private void Mute(bool mute)
+		{
+			IVolumeMuteDeviceControl muteControl = GetVolumeControl() as IVolumeMuteDeviceControl;
+			if (muteControl != null)
+				muteControl.SetVolumeMute(mute);
+		}
+
 		#endregion
 
 		#region Settings
@@ -247,6 +274,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			settings.DialingPlan = m_DialingPlan;
 			settings.Passcode = Passcode;
+
+			if (CalendarControl != null && CalendarControl.Parent != null)
+				settings.CalendarDevice = CalendarControl.Parent.Id;
 
 			settings.WakeSchedule.Copy(m_WakeSchedule);
 		}
@@ -264,7 +294,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			m_ConferenceManager.Favorites = null;
 			m_ConferenceManager.DialingPlan.ClearMatchers();
 
+			AtcNumber = null;
 			Passcode = null;
+			CalendarControl = null;
 
 			m_WakeSchedule.Clear();
 		}
@@ -285,8 +317,19 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			string path = PathUtils.GetProgramConfigPath("favorites");
 			m_ConferenceManager.Favorites = new SqLiteFavorites(path);
 
+			// ATC Number
+			AtcNumber = settings.AtcNumber;
+
 			// Passcode
 			Passcode = settings.Passcode;
+
+			// Calendar Device
+			if (settings.CalendarDevice != null)
+			{
+				var calendarDevice = factory.GetOriginatorById<IDevice>(settings.CalendarDevice.Value);
+				if (calendarDevice != null)
+					CalendarControl = calendarDevice.Controls.GetControl<ICalendarControl>();
+			}
 
 			// Wake Schedule
 			m_WakeSchedule.Copy(settings.WakeSchedule);

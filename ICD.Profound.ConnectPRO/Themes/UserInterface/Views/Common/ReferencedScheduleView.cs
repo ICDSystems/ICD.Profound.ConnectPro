@@ -25,12 +25,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		#region Methods
 
 		/// <summary>
-		/// Sets the text for the first label.
+		/// Sets the booking icon.
 		/// </summary>
-		/// <param name="text"></param>
-		public void SetDayLabel(string text)
+		/// <param name="icon"></param>
+		public void SetBookingIcon(string icon)
 		{
-			m_DayLabel.SetLabelText(text);
+			m_BookingIcon.SetIcon(icon);
 		}
 
 		/// <summary>
@@ -67,6 +67,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		public void SetPresenterNameLabel(string text)
 		{
 			m_PresenterNameLabel.SetLabelText(text);
+		}
+
+		/// <summary>
+		/// Sets the background button selected state.
+		/// </summary>
+		/// <param name="selected"></param>
+		public void SetSelected(bool selected)
+		{
+			m_BackgroundButton.SetSelected(selected);
 		}
 
 		#endregion

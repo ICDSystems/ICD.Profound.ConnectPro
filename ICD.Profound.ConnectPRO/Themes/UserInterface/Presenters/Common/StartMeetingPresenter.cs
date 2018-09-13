@@ -2,16 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
-using ICD.Common.Utils.Extensions;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.CalendarControl;
-using ICD.Connect.Calendaring.Controls;
-using ICD.Connect.Calendaring.Devices;
-using ICD.Connect.Conferencing.Contacts;
-using ICD.Connect.Conferencing.Directory.Tree;
-using ICD.Connect.Conferencing.Zoom.Components.Bookings;
-using ICD.Connect.Conferencing.Zoom.Controls.Calendar;
+using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.Devices;
+using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Devices;
+using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.Routing.Controls;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
@@ -25,7 +23,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly ReferencedSchedulePresenterFactory m_ChildrenFactory;
-		private IEnumerable<ICalendarControl> m_CalendarControls;
+
+		private IReferencedSchedulePresenter m_SelectedBooking;
+		private ICalendarControl m_CalendarControl;
+
+		private bool HasCalendarControl
+		{
+			get { return m_CalendarControl != null; }
+		}
 
 		/// <summary>
 		/// Constructor.
@@ -64,28 +69,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
-				ICalendarControl mockCalendarControl = new MockCalendarControl(new MockCalendarDevice(), 20001750);
-				mockCalendarControl.Refresh();
-
 			    IEnumerable<IBooking> bookings =
-			        m_CalendarControls == null
+			        m_CalendarControl == null
 			            ? Enumerable.Empty<IBooking>()
-			            : m_CalendarControls.SelectMany(c => c.GetBookings().Where(b => b.EndTime > IcdEnvironment.GetLocalTime()).Distinct());
+			            : m_CalendarControl.GetBookings().Where(b => b.EndTime > IcdEnvironment.GetLocalTime());
 
 				foreach (IReferencedSchedulePresenter presenter in m_ChildrenFactory.BuildChildren(bookings, Subscribe, Unsubscribe))
 				{
+					presenter.SetSelected(presenter == m_SelectedBooking);
 					presenter.ShowView(true);
+					presenter.Refresh();
 				}
 
 				view.SetLogoPath(Theme.Logo);
 
-				// TODO - This will be handled by scheduling features
-				view.SetStartMyMeetingButtonEnabled(true);
+				view.SetStartMyMeetingButtonEnabled(!HasCalendarControl || m_SelectedBooking != null);
 
-				bool hasCalendarControl = m_CalendarControls != null;
-
-				view.SetStartNewMeetingButtonEnabled(hasCalendarControl);
-				view.SetBookingsVisible(hasCalendarControl);
+				view.SetStartNewMeetingButtonEnabled(HasCalendarControl);
+				view.SetBookingsVisible(HasCalendarControl);
 			}
 			finally
 			{
@@ -102,45 +103,33 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			base.SetRoom(room);
 
-			IEnumerable<ICalendarControl> calendarControls = room == null
-				? null
-				: room.Originators.GetInstancesRecursive<IDeviceBase>()
-					.SelectMany(o => o.Controls.GetControls<ICalendarControl>());
+			Unsubscribe(m_CalendarControl);
+			m_CalendarControl = null;
 
-			SetCalendarControl(calendarControls);
-		}
-
-		private void SetCalendarControl(IEnumerable<ICalendarControl> calendarControls)
-		{
-			if (calendarControls == m_CalendarControls)
-				return;
-
-			Unsubscribe(m_CalendarControls);
-		    m_CalendarControls = calendarControls;
-			Subscribe(m_CalendarControls);
+			if (Room != null)
+			{
+				m_CalendarControl = Room.CalendarControl;
+				Subscribe(m_CalendarControl);
+				m_CalendarControl.Refresh();
+			}
 
 			RefreshIfVisible();
 		}
 
-		private void Subscribe(IEnumerable<ICalendarControl> calendarControls)
+		private void Subscribe(ICalendarControl calendarControl)
 		{
-			if (calendarControls == null)
+			if (calendarControl == null)
 				return;
-		    foreach (var calendarControl in calendarControls)
-		    {
-		        calendarControl.OnBookingsChanged += CalendarControlOnBookingsChanged;
-            }
+
+		    calendarControl.OnBookingsChanged += CalendarControlOnBookingsChanged;
 		}
 
-		private void Unsubscribe(IEnumerable<ICalendarControl> calendarControls)
+		private void Unsubscribe(ICalendarControl calendarControl)
 		{
-			if (calendarControls == null)
+			if (calendarControl == null) 
 				return;
 
-		    foreach (var calendarControl in calendarControls)
-		    {
-		        calendarControl.OnBookingsChanged -= CalendarControlOnBookingsChanged;
-		    }
+		    calendarControl.OnBookingsChanged -= CalendarControlOnBookingsChanged;
 		}
 
 		#region Private Methods
@@ -194,7 +183,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="eventArgs"></param>
 		private void ChildOnPressed(object sender, EventArgs eventArgs)
 		{
-			throw new NotImplementedException();
+			var booking = sender as IReferencedSchedulePresenter;
+			if (booking == null)
+				return;
+
+			if (m_SelectedBooking == booking)
+				m_SelectedBooking = null;
+			else
+				m_SelectedBooking = booking;
+			RefreshIfVisible();
 		}
 
 		private void CalendarControlOnBookingsChanged(object sender, EventArgs eventArgs)
@@ -214,7 +211,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			base.Subscribe(view);
 
-			view.OnStartMeetingButtonPressed += ViewOnStartMeetingButtonPressed;
+			view.OnStartMyMeetingButtonPressed += ViewOnStartMyMeetingButtonPressed;
+			view.OnStartNewMeetingButtonPressed += ViewOnStartNewMeetingButtonPressed;
 			view.OnSettingsButtonPressed += ViewOnSettingsButtonPressed;
 		}
 
@@ -226,7 +224,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			base.Unsubscribe(view);
 
-			view.OnStartMeetingButtonPressed -= ViewOnStartMeetingButtonPressed;
+			view.OnStartMyMeetingButtonPressed -= ViewOnStartMyMeetingButtonPressed;
+			view.OnStartNewMeetingButtonPressed -= ViewOnStartNewMeetingButtonPressed;
 			view.OnSettingsButtonPressed -= ViewOnSettingsButtonPressed;
 		}
 
@@ -245,7 +244,46 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void ViewOnStartMeetingButtonPressed(object sender, EventArgs eventArgs)
+		private void ViewOnStartMyMeetingButtonPressed(object sender, EventArgs eventArgs)
+		{
+			if (Room == null)
+				return;
+
+			if(!HasCalendarControl)
+				Room.StartMeeting();
+			else if (m_SelectedBooking != null)
+			{
+				Room.StartMeeting(false);
+
+				// check if booking exists
+				var booking = m_SelectedBooking.Booking;
+				if (booking == null)
+					return;
+
+				// check if we have any dialers
+				var dialers = Room.GetControlsRecursive<IDialingDeviceControl>().ToList();
+				if (dialers == null || !dialers.Any())
+					return;
+
+				// check if any dialers support the booking
+				var preferredDialer = dialers.OrderByDescending(d => d.CanDial(booking)).FirstOrDefault();
+				if (preferredDialer == null || preferredDialer.CanDial(booking) <= eBookingSupport.Unsupported)
+					return;
+
+				// route device to displays and/or audio destination
+				var dialerDevice = preferredDialer.Parent;
+				var routeControl = dialerDevice.Controls.GetControl<IRouteSourceControl>();
+				if(dialerDevice is IVideoConferenceDevice)
+					Room.Routing.RouteVtc(routeControl);
+				else if (preferredDialer.Supports == eConferenceSourceType.Audio)
+					Room.Routing.RouteAtc(routeControl);
+
+				// dial booking
+				preferredDialer.Dial(booking);
+			}
+		}
+
+		private void ViewOnStartNewMeetingButtonPressed(object sender, EventArgs eventArgs)
 		{
 			if (Room != null)
 				Room.StartMeeting();

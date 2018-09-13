@@ -309,7 +309,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (args.Data)
 			{
 				// Hide the conferencing subpages
-				Navigation.LazyLoadPresenter<IVtcContactsPresenter>().ShowView(false);
+				Navigation.LazyLoadPresenter<IVtcContactsNormalPresenter>().ShowView(false);
 				Navigation.LazyLoadPresenter<IVtcContactsPolycomPresenter>().ShowView(false);
 				Navigation.LazyLoadPresenter<IVtcButtonListPresenter>().ShowView(false);
 			}

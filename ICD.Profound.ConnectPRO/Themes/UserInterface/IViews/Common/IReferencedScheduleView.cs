@@ -12,8 +12,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 		/// <summary>
 		/// Sets the text for the first label.
 		/// </summary>
-		/// <param name="text"></param>
-		void SetDayLabel(string text);
+		/// <param name="icon"></param>
+		void SetBookingIcon(string icon);
 
 		/// <summary>
 		/// Sets the text for the second label.
@@ -38,5 +38,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 		/// </summary>
 		/// <param name="text"></param>
 		void SetPresenterNameLabel(string text);
+
+		/// <summary>
+		/// Sets the background button selected state.
+		/// </summary>
+		/// <param name="selected"></param>
+		void SetSelected(bool selected);
 	}
 }

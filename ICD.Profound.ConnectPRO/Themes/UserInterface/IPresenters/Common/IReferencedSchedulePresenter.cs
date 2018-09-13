@@ -15,5 +15,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common
 		/// Gets/sets the booking for this presenter.
 		/// </summary>
 		IBooking Booking { get; set; }
+
+		/// <summary>
+		/// Sets the
+		/// </summary>
+		/// <param name="selected"></param>
+		void SetSelected(bool selected);
 	}
 }

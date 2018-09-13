@@ -20,7 +20,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		public event EventHandler OnPressed;
 
 		private readonly SafeCriticalSection m_RefreshSection;
-		private  IBooking m_Booking;
+		private IBooking m_Booking;
+		private bool m_Selected;
 
 		#region Properties
 
@@ -65,6 +66,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			base.Dispose();
 		}
 
+		public void SetSelected(bool selected)
+		{
+			m_Selected = selected;
+		}
+
 		/// <summary>
 		/// Updates the view.
 		/// </summary>
@@ -77,9 +83,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
-				view.SetDayLabel(m_Booking.StartTime.Day.ToString());
+				string icon = Icons.GetSourceIcon("display", eSourceColor.Grey);
+				if (Booking is IZoomBooking || Booking is ISipBooking)
+					icon = Icons.GetSourceIcon("videoConference", eSourceColor.Grey);
+				else if (Booking is IPstnBooking)
+					icon = Icons.GetSourceIcon("audioConference", eSourceColor.Grey);
+
+				view.SetBookingIcon(icon);
+
 				view.SetStartTimeLabel(m_Booking.StartTime.ToShortTimeString());
-				if (m_Booking.IsPrivate) { 
+				if (m_Booking.IsPrivate)
+				{ 
 					view.SetBodyLabel("Private Meeting");
 				}
 				else
@@ -88,6 +102,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				}
 				view.SetEndTimeLabel(m_Booking.EndTime.ToShortTimeString());
 				view.SetPresenterNameLabel(m_Booking.OrganizerName);
+				view.SetSelected(m_Selected);
 			}
 			finally
 			{
