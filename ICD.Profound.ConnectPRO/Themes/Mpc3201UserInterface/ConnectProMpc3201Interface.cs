@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
+using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
@@ -21,9 +22,13 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		private readonly ConnectProTheme m_Theme;
 		private readonly SafeCriticalSection m_RefreshSection;
 
+		private readonly IcdHashSet<ISource> m_ActiveSources;
+		private readonly SafeCriticalSection m_ActiveSourcesSection;
+
 		private bool m_IsDisposed;
 
 		private IVolumeDeviceControl m_VolumeControl;
+		private IVolumeMuteFeedbackDeviceControl m_VolumeMuteFeedbackControl;
 		private ISource[] m_Sources;
 
 		private static readonly BiDictionary<int, uint> s_IndexToSourceButton = new BiDictionary<int, uint>
@@ -64,6 +69,9 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 
 			if (theme == null)
 				throw new ArgumentNullException("theme");
+
+			m_ActiveSources = new IcdHashSet<ISource>();
+			m_ActiveSourcesSection = new SafeCriticalSection();
 
 			m_Sources = new ISource[0];
 
@@ -130,11 +138,25 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			try
 			{
 				// Sources
-				for (int index = 0; index < 6; index++)
-				{
-					bool enabled = index < m_Sources.Length;
+				m_ActiveSourcesSection.Enter();
 
-					m_Control.SetNumericalButtonEnabled((uint)(index + 1), enabled);
+				try
+				{
+					for (int index = 0; index < 6; index++)
+					{
+						ISource source;
+						m_Sources.TryElementAt(index, out source);
+
+						bool enabled = source != null;
+						bool active = source != null && m_ActiveSources.Contains(source);
+
+						m_Control.SetNumericalButtonEnabled((uint)(index + 1), enabled);
+						m_Control.SetNumericalButtonSelected((uint)(index + 1), active);
+					}
+				}
+				finally
+				{
+					m_ActiveSourcesSection.Leave();
 				}
 
 				// Volume
@@ -142,18 +164,24 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 
 				IVolumeMuteBasicDeviceControl muteControl = m_VolumeControl as IVolumeMuteBasicDeviceControl;
 				bool muteEnabled = muteControl != null;
+				bool muteActive = m_VolumeMuteFeedbackControl != null && m_VolumeMuteFeedbackControl.VolumeIsMuted;
 
 				IVolumeLevelDeviceControl volumeControl = m_VolumeControl as IVolumeLevelDeviceControl;
 				ushort percent = 
 					volumeControl == null ? (ushort)0 : (ushort)(MathUtils.Clamp(volumeControl.VolumePosition, 0, 1) * ushort.MaxValue);
 
-				m_Control.SetMuteButtonEnabled(muteEnabled);
 				m_Control.SetVolumeBargraph(percent);
+
+				m_Control.SetMuteButtonEnabled(muteEnabled);
+				m_Control.SetMuteButtonSelected(muteActive);
+				
 				m_Control.SetVolumeUpButtonEnabled(volumeEnabled);
 				m_Control.SetVolumeDownButtonEnabled(volumeEnabled);
 
 				// Power
+				bool inMeeting = Room != null && Room.IsInMeeting;
 				m_Control.SetPowerButtonEnabled(true);
+				m_Control.SetPowerButtonSelected(inMeeting);
 			}
 			finally
 			{
@@ -174,7 +202,11 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			if (room == null)
 				return;
 
+			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
+			room.Routing.OnDisplaySourceChanged += RoutingOnDisplaySourceChanged;
+
 			m_VolumeControl = room.GetVolumeControl();
+			m_VolumeMuteFeedbackControl = m_VolumeControl as IVolumeMuteFeedbackDeviceControl;
 			Subscribe(m_VolumeControl);
 		}
 
@@ -187,8 +219,52 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			if (room == null)
 				return;
 
-			Unsubscribe(m_VolumeControl);
+			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
+			room.Routing.OnDisplaySourceChanged -= RoutingOnDisplaySourceChanged;
+
+			Unsubscribe(m_VolumeMuteFeedbackControl);
+			m_VolumeMuteFeedbackControl = null;
 			m_VolumeControl = null;
+		}
+
+		/// <summary>
+		/// Called when the room enters/leaves a meeting.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="boolEventArgs"></param>
+		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs boolEventArgs)
+		{
+			Refresh();
+		}
+
+		/// <summary>
+		/// Called when the active source for a display changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void RoutingOnDisplaySourceChanged(object sender, EventArgs eventArgs)
+		{
+			m_ActiveSourcesSection.Enter();
+
+			try
+			{
+				IcdHashSet<ISource> activeSources =
+					Room.Routing.GetCachedActiveVideoSources()
+					    .SelectMany(kvp => kvp.Value)
+					    .ToIcdHashSet();
+
+				if (activeSources.SetEquals(m_ActiveSources))
+					return;
+
+				m_ActiveSources.Clear();
+				m_ActiveSources.AddRange(activeSources);
+			}
+			finally
+			{
+				m_ActiveSourcesSection.Leave();
+			}
+
+			Refresh();
 		}
 
 		#endregion
@@ -228,17 +304,27 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 					break;
 
 				case MPC3x201TouchScreenButtons.BUTTON_VOLUME_DOWN:
-					if (eventArgs.ButtonState == eButtonState.Pressed)
-						VolumeDown();
-					else if (eventArgs.ButtonState == eButtonState.Released)
-						VolumeRelease();
+					switch (eventArgs.ButtonState)
+					{
+						case eButtonState.Pressed:
+							VolumeDown();
+							break;
+						case eButtonState.Released:
+							VolumeRelease();
+							break;
+					}
 					break;
 
 				case MPC3x201TouchScreenButtons.BUTTON_VOLUME_UP:
-					if (eventArgs.ButtonState == eButtonState.Pressed)
-						VolumeUp();
-					else if (eventArgs.ButtonState == eButtonState.Released)
-						VolumeRelease();
+					switch (eventArgs.ButtonState)
+					{
+						case eButtonState.Pressed:
+							VolumeUp();
+							break;
+						case eButtonState.Released:
+							VolumeRelease();
+							break;
+					}
 					break;
 
 				case MPC3x201TouchScreenButtons.BUTTON_POWER:
@@ -272,6 +358,11 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			if (source == null)
 				return;
 
+			// Start the meeting if we are not currently in one
+			if (!Room.IsInMeeting)
+				Room.StartMeeting(false);
+
+			// Route the source to the display
 			Room.Routing.RouteSingleDisplay(source);
 		}
 
@@ -320,10 +411,12 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		private void Subscribe(IVolumeDeviceControl volumeControl)
 		{
 			IVolumeLevelDeviceControl volumeLevelControl = volumeControl as IVolumeLevelDeviceControl;
-			if (volumeLevelControl == null)
-				return;
+			if (volumeLevelControl != null)
+				volumeLevelControl.OnVolumeChanged += VolumeLevelControlOnVolumeChanged;
 
-			volumeLevelControl.OnVolumeChanged += VolumeLevelControlOnVolumeChanged;
+			IVolumeMuteFeedbackDeviceControl volumeMuteControl = volumeControl as IVolumeMuteFeedbackDeviceControl;
+			if (volumeMuteControl != null)
+				volumeMuteControl.OnMuteStateChanged += VolumeMuteControlOnMuteStateChanged;
 		}
 
 		/// <summary>
@@ -333,10 +426,22 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		private void Unsubscribe(IVolumeDeviceControl volumeControl)
 		{
 			IVolumeLevelDeviceControl volumeLevelControl = volumeControl as IVolumeLevelDeviceControl;
-			if (volumeLevelControl == null)
-				return;
+			if (volumeLevelControl != null)
+				volumeLevelControl.OnVolumeChanged -= VolumeLevelControlOnVolumeChanged;
 
-			volumeLevelControl.OnVolumeChanged -= VolumeLevelControlOnVolumeChanged;
+			IVolumeMuteFeedbackDeviceControl volumeMuteControl = volumeControl as IVolumeMuteFeedbackDeviceControl;
+			if (volumeMuteControl != null)
+				volumeMuteControl.OnMuteStateChanged -= VolumeMuteControlOnMuteStateChanged;
+		}
+
+		/// <summary>
+		/// Called when the mute state changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="boolEventArgs"></param>
+		private void VolumeMuteControlOnMuteStateChanged(object sender, BoolEventArgs boolEventArgs)
+		{
+			Refresh();
 		}
 
 		/// <summary>
