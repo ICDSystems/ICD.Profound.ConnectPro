@@ -181,7 +181,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 				// Power
 				bool inMeeting = Room != null && Room.IsInMeeting;
 				m_Control.SetPowerButtonEnabled(true);
-				m_Control.SetPowerButtonSelected(inMeeting);
+				m_Control.SetPowerButtonSelected(!inMeeting);
 			}
 			finally
 			{
