@@ -1,4 +1,6 @@
 ﻿using System;
+using ICD.Common.Utils;
+using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
@@ -9,10 +11,77 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 {
 	public sealed class VtcCallListTogglePresenter : AbstractPresenter<IVtcCallListToggleView>, IVtcCallListTogglePresenter
 	{
+		/// <summary>
+		/// Raised when the user presses the button.
+		/// </summary>
 		public event EventHandler OnButtonPressed;
+
+		private readonly SafeCriticalSection m_RefreshSection;
+
+		private readonly IVtcKeyboardPresenter m_KeyboardPresenter;
+		private readonly IVtcKeypadPresenter m_KeypadPresenter;
 
 		private bool m_Mode;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="nav"></param>
+		/// <param name="views"></param>
+		/// <param name="theme"></param>
+		public VtcCallListTogglePresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+			: base(nav, views, theme)
+		{
+			m_RefreshSection = new SafeCriticalSection();
+
+			m_KeyboardPresenter = nav.LazyLoadPresenter<IVtcKeyboardPresenter>();
+			m_KeyboardPresenter.OnViewVisibilityChanged += KeyboardPresenterOnViewVisibilityChanged;
+
+			m_KeypadPresenter = nav.LazyLoadPresenter<IVtcKeypadPresenter>();
+			m_KeypadPresenter.OnViewVisibilityChanged += KeypadPresenterOnViewVisibilityChanged;
+		}
+
+		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			OnButtonPressed = null;
+
+			base.Dispose();
+
+			m_KeyboardPresenter.OnViewVisibilityChanged -= KeyboardPresenterOnViewVisibilityChanged;
+			m_KeypadPresenter.OnViewVisibilityChanged -= KeypadPresenterOnViewVisibilityChanged;
+		}
+
+		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
+		protected override void Refresh(IVtcCallListToggleView view)
+		{
+			base.Refresh(view);
+
+			m_RefreshSection.Enter();
+
+			try
+			{
+				view.SetContactsMode(m_Mode);
+
+				bool hide = m_KeyboardPresenter.IsViewVisible || m_KeypadPresenter.IsViewVisible;
+
+				view.SetButtonVisible(!hide);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+		}
+
+		/// <summary>
+		/// When true shows the "contacts" button, otherwise shows the "call" button.
+		/// </summary>
+		/// <param name="mode"></param>
 		public void SetContactsMode(bool mode)
 		{
 			if (mode == m_Mode)
@@ -24,32 +93,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		}
 
 		/// <summary>
-		/// Constructor.
+		/// Called when the keypad visibility state changes.
 		/// </summary>
-		/// <param name="nav"></param>
-		/// <param name="views"></param>
-		/// <param name="theme"></param>
-		public VtcCallListTogglePresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
-			: base(nav, views, theme)
+		/// <param name="sender"></param>
+		/// <param name="boolEventArgs"></param>
+		private void KeypadPresenterOnViewVisibilityChanged(object sender, BoolEventArgs boolEventArgs)
 		{
-		}
-
-		public override void Dispose()
-		{
-			OnButtonPressed = null;
-
-			base.Dispose();
+			RefreshIfVisible();
 		}
 
 		/// <summary>
-		/// Updates the view.
+		/// Called when the keyboard visibility state changes.
 		/// </summary>
-		/// <param name="view"></param>
-		protected override void Refresh(IVtcCallListToggleView view)
+		/// <param name="sender"></param>
+		/// <param name="boolEventArgs"></param>
+		private void KeyboardPresenterOnViewVisibilityChanged(object sender, BoolEventArgs boolEventArgs)
 		{
-			base.Refresh(view);
-
-			view.SetContactsMode(m_Mode);
+			RefreshIfVisible();
 		}
 
 		#region View Callbacks

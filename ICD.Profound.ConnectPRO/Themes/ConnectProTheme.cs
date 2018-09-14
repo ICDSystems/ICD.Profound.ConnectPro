@@ -8,11 +8,14 @@ using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.IO;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
+using ICD.Connect.API.Commands;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings.Core;
 using ICD.Connect.Themes;
 using ICD.Connect.TvPresets;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.MicrophoneInterface;
+using ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface;
 using ICD.Profound.ConnectPRO.Themes.UserInterface;
 using ICD.Profound.ConnectPRO.WebConferencing;
@@ -79,7 +82,8 @@ namespace ICD.Profound.ConnectPRO.Themes
 			{
 				new ConnectProUserInterfaceFactory(this),
 				new ConnectProMicrophoneInterfaceFactory(this),
-				new ConnectProOsdInterfaceFactory(this)
+				new ConnectProOsdInterfaceFactory(this),
+				new ConnectProMpc3201InterfaceFactory(this)
 			};
 
 			m_UiFactoriesSection = new SafeCriticalSection();
@@ -255,6 +259,50 @@ namespace ICD.Profound.ConnectPRO.Themes
 			SetWebConferencingInstructionsFromPath(settings.WebConferencingInstructions);
 
 			base.ApplySettingsFinal(settings, factory);
+		}
+
+		#endregion
+
+		#region Console
+
+		/// <summary>
+		/// Gets the child console commands.
+		/// </summary>
+		/// <returns></returns>
+		public override IEnumerable<IConsoleCommand> GetConsoleCommands()
+		{
+			foreach (IConsoleCommand command in GetBaseConsoleCommands())
+				yield return command;
+
+			yield return new ConsoleCommand("PrintUIs", "Prints information about the current UIs", () => ConsolePrintUis());
+		}
+
+		/// <summary>
+		/// Workaround for "unverifiable code" warning.
+		/// </summary>
+		/// <returns></returns>
+		private IEnumerable<IConsoleCommand> GetBaseConsoleCommands()
+		{
+			return base.GetConsoleCommands();
+		}
+
+		private string ConsolePrintUis()
+		{
+			TableBuilder builder = new TableBuilder("Type", "Room", "Target");
+
+			foreach (IConnectProUserInterfaceFactory factory in GetUiFactories())
+			{
+				foreach (IUserInterface ui in factory.GetUserInterfaces())
+				{
+					Type type = ui.GetType();
+					IConnectProRoom room = ui.Room;
+					object target = ui.Target;
+
+					builder.AddRow(type, room, target);
+				}
+			}
+
+			return builder.ToString();
 		}
 
 		#endregion

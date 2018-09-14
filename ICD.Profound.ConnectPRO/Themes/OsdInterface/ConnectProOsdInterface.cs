@@ -28,6 +28,8 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 
 		public IConnectProRoom Room { get { return m_Room; } }
 
+		object IUserInterface.Target { get { return Panel; } }
+
 		#endregion
 
 		/// <summary>

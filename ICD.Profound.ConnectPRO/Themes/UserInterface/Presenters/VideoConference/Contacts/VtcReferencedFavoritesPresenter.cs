@@ -91,7 +91,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			favorites.RemoveFavorite(m_Favorite);
 
-			Navigation.LazyLoadPresenter<IVtcContactsPresenter>().RefreshIfVisible();
+			Navigation.LazyLoadPresenter<IVtcContactsNormalPresenter>().RefreshIfVisible();
 			Navigation.LazyLoadPresenter<IVtcContactsPolycomPresenter>().RefreshIfVisible();
 		}
 	}

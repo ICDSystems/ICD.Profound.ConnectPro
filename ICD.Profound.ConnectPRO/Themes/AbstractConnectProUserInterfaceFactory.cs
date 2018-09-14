@@ -5,21 +5,21 @@ using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Partitioning.Rooms;
-using ICD.Connect.Settings;
 using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes
 {
-	public abstract class AbstractConnectProUserInterfaceFactory<TUserInterface, TOriginator> :
-		IConnectProUserInterfaceFactory
+	public abstract class AbstractConnectProUserInterfaceFactory<TUserInterface> : IConnectProUserInterfaceFactory
 		where TUserInterface : IUserInterface
-		where TOriginator : class, IOriginator
 	{
 		private readonly ConnectProTheme m_Theme;
 
 		private readonly IcdHashSet<TUserInterface> m_UserInterfaces;
 		private readonly SafeCriticalSection m_UserInterfacesSection;
 
+		/// <summary>
+		/// Gets the theme.
+		/// </summary>
 		protected ConnectProTheme Theme { get { return m_Theme; } }
 
 		/// <summary>
@@ -51,7 +51,6 @@ namespace ICD.Profound.ConnectPRO.Themes
 			{
 				m_UserInterfacesSection.Leave();
 			}
-			
 		}
 
 		#endregion
@@ -88,22 +87,16 @@ namespace ICD.Profound.ConnectPRO.Themes
 			{
 				Clear();
 
-				var ids = new IcdHashSet<int>();
-				GetRooms().ForEach(r => ids.AddRange(r.Originators.GetIds()));
+				IEnumerable<TUserInterface> uis = GetRooms().SelectMany(r => CreateUserInterfaces(r));
 
-				IEnumerable <TUserInterface> uis = GetOriginatorsForUserInterface().Where(o => ids.Contains(o.Id)).Select(originator => CreateUserInterface(originator));
-
-				if (uis.Any())
-				{
-					m_UserInterfaces.AddRange(uis);
-				}
-
-				AssignUserInterfaces(GetRooms());
+				m_UserInterfaces.AddRange(uis);
 			}
 			finally
 			{
 				m_UserInterfacesSection.Leave();
 			}
+
+			AssignUserInterfaces(GetRooms());
 		}
 
 		/// <summary>
@@ -129,11 +122,11 @@ namespace ICD.Profound.ConnectPRO.Themes
 							continue;
 						}
 
-						if (RoomContainsOriginator(room, ui))
-						{
-							ui.SetRoom(room);
-							visited.Add(ui);
-						}
+						if (!RoomContainsOriginator(room, ui))
+							continue;
+
+						ui.SetRoom(room);
+						visited.Add(ui);
 					}
 				}
 			}
@@ -148,20 +141,11 @@ namespace ICD.Profound.ConnectPRO.Themes
 		#region Protected Methods
 
 		/// <summary>
-		/// Override to control which originators are selected for UI instantiation.
+		/// Creates the user interfaces for the given room.
 		/// </summary>
+		/// <param name="room"></param>
 		/// <returns></returns>
-		protected virtual IEnumerable<TOriginator> GetOriginatorsForUserInterface()
-		{
-			return m_Theme.Core.Originators.GetChildren<TOriginator>();
-		}
-
-		/// <summary>
-		/// Instantiates the user interface for the given originator.
-		/// </summary>
-		/// <param name="originator"></param>
-		/// <returns></returns>
-		protected abstract TUserInterface CreateUserInterface(TOriginator originator);
+		protected abstract IEnumerable<TUserInterface> CreateUserInterfaces(IConnectProRoom room);
 
 		/// <summary>
 		/// Returns true if the room contains the originator in the given ui.

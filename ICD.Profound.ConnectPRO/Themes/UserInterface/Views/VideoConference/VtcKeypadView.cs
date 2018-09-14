@@ -11,26 +11,59 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 {
-	public partial class VtcKeypadView : AbstractView, IVtcKeypadView
+	public partial class VtcKeypadView : AbstractVtcBaseKeyboardView, IVtcKeypadView
 	{
-		public event EventHandler<KeyboardKeyEventArgs> OnKeyPressed;
-		public event EventHandler<StringEventArgs> OnTextEntered;
-		public event EventHandler OnBackspaceButtonPressed;
-		public event EventHandler OnDialButtonPressed;
+		/// <summary>
+		/// Raised when the user presses a key button.
+		/// </summary>
+		public override event EventHandler<KeyboardKeyEventArgs> OnKeyPressed;
+
+		/// <summary>
+		/// Raised when the user enters text in the text field.
+		/// </summary>
+		public override event EventHandler<StringEventArgs> OnTextEntered;
+
+		/// <summary>
+		/// Raised when the user presses the backspace button.
+		/// </summary>
+		public override event EventHandler OnBackspaceButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the submit button.
+		/// </summary>
+		public override event EventHandler OnDialButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the exit button.
+		/// </summary>
 		public event EventHandler OnKeyboardButtonPressed;
 
 		private Dictionary<VtProButton, KeyboardKey> m_KeyMap;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="panel"></param>
+		/// <param name="theme"></param>
 		public VtcKeypadView(ISigInputOutput panel, ConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}
 
-		public void SetText(string text)
+		/// <summary>
+		/// Sets the text in the text entry field.
+		/// </summary>
+		/// <param name="text"></param>
+		public override void SetText(string text)
 		{
 			m_TextEntry.SetLabelTextAtJoin(m_TextEntry.SerialLabelJoins.First(), text);
 		}
 
+		#region Private Methods
+
+		/// <summary>
+		/// Subscribes to the view controls.
+		/// </summary>
 		protected override void SubscribeControls()
 		{
 			base.SubscribeControls();
@@ -121,5 +154,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		{
 			OnKeyboardButtonPressed.Raise(this);
 		}
+
+		#endregion
 	}
 }

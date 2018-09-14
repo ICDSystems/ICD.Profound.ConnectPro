@@ -7,12 +7,12 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contac
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Contacts
 {
-	public sealed partial class VtcContactsView : AbstractView, IVtcContactsView
+	public sealed partial class VtcContactsNormalView : AbstractVtcContactsView, IVtcContactsNormalView
 	{
 		/// <summary>
 		/// Raised when the user presses the directory button.
 		/// </summary>
-		public event EventHandler OnDirectoryButtonPressed;
+		public override event EventHandler OnDirectoryButtonPressed;
 
 		/// <summary>
 		/// Raised when the user presses the favourites button.
@@ -22,27 +22,27 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 		/// <summary>
 		/// Raised when the user presses the recent button.
 		/// </summary>
-		public event EventHandler OnRecentButtonPressed;
+		public override event EventHandler OnRecentButtonPressed;
 
 		/// <summary>
 		/// Raised when the user presses the call button.
 		/// </summary>
-		public event EventHandler OnCallButtonPressed;
+		public override event EventHandler OnCallButtonPressed;
 
 		/// <summary>
 		/// Raised when the user presses the hangup button.
 		/// </summary>
-		public event EventHandler OnHangupButtonPressed;
+		public override event EventHandler OnHangupButtonPressed;
 
 		/// <summary>
 		/// Raised when the user presses the back button.
 		/// </summary>
-		public event EventHandler OnBackButtonPressed;
+		public override event EventHandler OnBackButtonPressed;
 
 		/// <summary>
 		/// Raised when the user presses the home button.
 		/// </summary>
-		public event EventHandler OnHomeButtonPressed;
+		public override event EventHandler OnHomeButtonPressed;
 
 		/// <summary>
 		/// Raised when the user presses the search button.
@@ -52,7 +52,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 		/// <summary>
 		/// Raised when the user presses the manual dial button.
 		/// </summary>
-		public event EventHandler OnManualDialButtonPressed;
+		public override event EventHandler OnManualDialButtonPressed;
 
 		private readonly List<IVtcReferencedContactsView> m_ChildList;
 
@@ -61,7 +61,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public VtcContactsView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
+		public VtcContactsNormalView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
 		{
 			m_ChildList = new List<IVtcReferencedContactsView>();
 		}
@@ -92,7 +92,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 		/// <param name="factory"></param>
 		/// <param name="count"></param>
 		/// <returns></returns>
-		public IEnumerable<IVtcReferencedContactsView> GetChildComponentViews(IViewFactory factory, ushort count)
+		public override IEnumerable<IVtcReferencedContactsView> GetChildComponentViews(IViewFactory factory, ushort count)
 		{
 			return GetChildViews(factory, m_ContactList, m_ChildList, count);
 		}
@@ -107,17 +107,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 			m_FavoritesButton.SetSelected(selected);
 		}
 
-		public void SetRecentButtonSelected(bool selected)
+		public override void SetRecentButtonSelected(bool selected)
 		{
 			m_RecentsButton.SetSelected(selected);
 		}
 
-		public void SetCallButtonEnabled(bool enabled)
+		public override void SetCallButtonEnabled(bool enabled)
 		{
 			m_CallButton.Enable(enabled);
 		}
 
-		public void SetHangupButtonEnabled(bool enabled)
+		public override void SetHangupButtonEnabled(bool enabled)
 		{
 			m_HangupButton.Enable(enabled);
 		}

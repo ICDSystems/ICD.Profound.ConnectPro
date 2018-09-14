@@ -1,6 +1,6 @@
 ﻿namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews
 {
-	public enum eRoutedState
+	public enum eSourceState
 	{
 		Inactive,
 		Processing,

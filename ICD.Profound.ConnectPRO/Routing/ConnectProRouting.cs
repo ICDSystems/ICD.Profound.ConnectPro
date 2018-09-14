@@ -448,24 +448,32 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (sourceControl == null)
 				throw new ArgumentNullException("sourceControl");
 
-			Connection firstOutput = RoutingGraph.Connections
-			                                     .GetOutputConnections(sourceControl.Parent.Id,
-			                                                           sourceControl.Id,
-			                                                           eConnectionType.Audio)
-			                                     .FirstOrDefault();
-
-			if (firstOutput == null)
-			{
-				m_Room.Logger.AddEntry(eSeverity.Error, "Failed to find {0} output connection for {1}",
-									   eConnectionType.Audio, sourceControl);
-				return;
-			}
-
 			foreach (IDestination audioDestination in GetAudioDestinations())
 			{
-				Route(sourceControl.GetOutputEndpointInfo(firstOutput.Source.Address),
-					  audioDestination, eConnectionType.Audio);
+				// Edge case - Often the DSP is also the ATC, in which case we don't need to do any routing
+				if (audioDestination.Device == sourceControl.Parent.Id)
+					continue;
+
+				Route(sourceControl, audioDestination, eConnectionType.Audio);
 			}
+		}
+
+		private void Route(IRouteSourceControl source, IDestination destination, eConnectionType flag)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			if (destination == null)
+				throw new ArgumentNullException("destination");
+
+			IEnumerable<ConnectionPath> paths =
+				PathBuilder.FindPaths()
+						   .From(source)
+						   .To(destination)
+						   .OfType(flag)
+						   .With(PathFinder);
+
+			Route(paths);
 		}
 
 		/// <summary>
@@ -795,20 +803,12 @@ namespace ICD.Profound.ConnectPRO.Routing
 		private void UnrouteAudio()
 		{
 			IDestination[] audioDestinations = GetAudioDestinations().ToArray();
+			ISource[] audioSources = m_CacheSection.Execute(() => m_AudioRoutingCache.ToArray(m_AudioRoutingCache.Count));
 
-			m_CacheSection.Enter();
-
-			try
+			foreach (ISource audioSource in audioSources)
 			{
-				foreach (ISource audioSource in m_AudioRoutingCache)
-				{
-					foreach (IDestination audioDestination in audioDestinations)
-						RoutingGraph.Unroute(audioSource, audioDestination, eConnectionType.Audio, m_Room.Id);
-				}
-			}
-			finally
-			{
-				m_CacheSection.Leave();
+				foreach (IDestination audioDestination in audioDestinations)
+					RoutingGraph.Unroute(audioSource, audioDestination, eConnectionType.Audio, m_Room.Id);
 			}
 		}
 
@@ -817,29 +817,29 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		public void UnrouteAllExceptOsd()
 		{
+			UnrouteAllVideoExceptOsd();
+			UnrouteAllAudioExceptOsd();
+		}
+
+		private void UnrouteAllVideoExceptOsd()
+		{
+			Dictionary<IDestination, IcdHashSet<ISource>> activeVideoSources = new Dictionary<IDestination, IcdHashSet<ISource>>();
+
 			m_CacheSection.Enter();
 
 			try
 			{
 				foreach (KeyValuePair<IDestination, IcdHashSet<ISource>> kvp in GetCachedActiveVideoSources())
 				{
+					IcdHashSet<ISource> sources = new IcdHashSet<ISource>();
+					activeVideoSources.Add(kvp.Key, sources);
+
 					foreach (ISource source in kvp.Value)
 					{
 						if (m_Room.Core.Originators.GetChild(source.Device) is OsdPanelDevice)
 							continue;
 
-						RoutingGraph.Unroute(source, kvp.Key, eConnectionType.Video, m_Room.Id);
-					}
-				}
-
-				foreach (IDestination destination in GetAudioDestinations())
-				{
-					foreach (ISource source in GetCachedActiveAudioSources())
-					{
-						if (m_Room.Core.Originators.GetChild(source.Device) is OsdPanelDevice)
-							continue;
-
-						RoutingGraph.Unroute(source, destination, eConnectionType.Audio, m_Room.Id);
+						sources.Add(source);
 					}
 				}
 			}
@@ -847,6 +847,41 @@ namespace ICD.Profound.ConnectPRO.Routing
 			{
 				m_CacheSection.Leave();
 			}
+
+			// Keep routing out of the critical section above
+			foreach (KeyValuePair<IDestination, IcdHashSet<ISource>> pair in activeVideoSources)
+				foreach (ISource videoSource in pair.Value)
+					RoutingGraph.Unroute(videoSource, pair.Key, eConnectionType.Video, m_Room.Id);
+		}
+
+		private void UnrouteAllAudioExceptOsd()
+		{
+			IcdHashSet<IDestination> audioDestinations = new IcdHashSet<IDestination>();
+			IcdHashSet<ISource> activeAudioSources = new IcdHashSet<ISource>();
+
+			m_CacheSection.Enter();
+
+			try
+			{
+				audioDestinations.AddRange(GetAudioDestinations());
+
+				foreach (ISource source in GetCachedActiveAudioSources())
+				{
+					if (m_Room.Core.Originators.GetChild(source.Device) is OsdPanelDevice)
+						continue;
+
+					activeAudioSources.Add(source);
+				}
+			}
+			finally
+			{
+				m_CacheSection.Leave();
+			}
+
+			// Keep routing out of the critical section above
+			foreach (IDestination destination in audioDestinations)
+				foreach (ISource source in activeAudioSources)
+					RoutingGraph.Unroute(source, destination, eConnectionType.Audio, m_Room.Id);
 		}
 
 		#endregion

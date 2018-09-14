@@ -24,7 +24,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 
 		public ISource Source { get; private set; }
 		public bool Selected { get; private set; }
-		public eRoutedState Routed { get; private set; }
+		public eSourceState SourceState { get; private set; }
 		public eSourceColor Color { get; private set; }
 		public string Feedback { get; private set; }
 		public string Line1 { get; private set; }
@@ -38,7 +38,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// </summary>
 		public ReferencedSourceSelectPresenterCache()
 		{
-			Routed = eRoutedState.Inactive;
+			SourceState = eSourceState.Inactive;
 			
 			UpdateColor();
 		}
@@ -97,12 +97,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			return true;
 		}
 
-		public bool SetRouted(eRoutedState routed)
+		public bool SetRouted(eSourceState sourceState)
 		{
-			if (routed == Routed)
+			if (sourceState == SourceState)
 				return false;
 
-			Routed = routed;
+			SourceState = sourceState;
 
 			return true;
 		}

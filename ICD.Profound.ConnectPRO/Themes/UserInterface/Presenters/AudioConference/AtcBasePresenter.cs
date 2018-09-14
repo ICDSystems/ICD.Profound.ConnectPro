@@ -65,12 +65,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 				IConferenceSource active = GetActiveSource();
 				eConferenceSourceStatus status = active == null ? eConferenceSourceStatus.Disconnected : active.Status;
 
+				string atcNumber = Room == null ? string.Empty : Room.AtcNumber;
 				string activeStatus = StringUtils.NiceName(status);
 				string dialString = m_Builder.ToString();
 				bool inACall = active != null;
 
-				// TODO
-				view.SetRoomNumber("(484)713-9601");
+				view.SetRoomNumber(atcNumber);
 				view.SetDialNumber(string.IsNullOrEmpty(dialString) && active == null ? "Dial Number" : dialString);
 				view.SetCallStatus(activeStatus);
 

@@ -23,7 +23,6 @@ using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Displays.Devices;
-using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Destinations;
@@ -70,6 +69,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 				m_IsInMeeting = value;
 
+				Log(eSeverity.Informational, "IsInMeeting changed to {0}", m_IsInMeeting);
+
 				OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
 			}
 		}
@@ -93,6 +94,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// Gets/sets the passcode for the settings page.
 		/// </summary>
 		public string Passcode { get; set; }
+
+		/// <summary>
+		/// Gets/sets the ATC number for dialing into the room.
+		/// </summary>
+		public string AtcNumber { get; set; }
 
 		#endregion
 
@@ -168,6 +174,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			if (resetRouting)
 				Routing.RouteOsd();
 
+			// Reset mute state
+			Mute(false);
 		}
 
 		/// <summary>
@@ -185,6 +193,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			// Reset all routing
 			Routing.RouteOsd();
+
+			// Reset mute state
+			Mute(false);
 
 			if (shutdown)
 				Sleep();
@@ -233,6 +244,17 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			           .ForEach(c => c.PowerOff());
 		}
 
+		/// <summary>
+		/// Sets the mute state on the room volume point.
+		/// </summary>
+		/// <param name="mute"></param>
+		private void Mute(bool mute)
+		{
+			IVolumeMuteDeviceControl muteControl = GetVolumeControl() as IVolumeMuteDeviceControl;
+			if (muteControl != null)
+				muteControl.SetVolumeMute(mute);
+		}
+
 		#endregion
 
 		#region Settings
@@ -264,6 +286,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			m_ConferenceManager.Favorites = null;
 			m_ConferenceManager.DialingPlan.ClearMatchers();
 
+			AtcNumber = null;
 			Passcode = null;
 
 			m_WakeSchedule.Clear();
@@ -284,6 +307,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			// Favorites
 			string path = PathUtils.GetProgramConfigPath("favorites");
 			m_ConferenceManager.Favorites = new SqLiteFavorites(path);
+
+			// ATC Number
+			AtcNumber = settings.AtcNumber;
 
 			// Passcode
 			Passcode = settings.Passcode;
