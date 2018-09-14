@@ -90,19 +90,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 					icon = Icons.GetSourceIcon("audioConference", eSourceColor.Grey);
 
 				view.SetBookingIcon(icon);
+                view.SetStartTimeLabel(m_Booking.StartTime.ToShortTimeString());
+			    view.SetEndTimeLabel(m_Booking.EndTime.ToShortTimeString());
+			    view.SetSelected(m_Selected);
+			    view.SetPresenterNameLabel(m_Booking.OrganizerName);
 
-				view.SetStartTimeLabel(m_Booking.StartTime.ToShortTimeString());
-				if (m_Booking.IsPrivate)
-				{ 
-					view.SetBodyLabel("Private Meeting");
-				}
-				else
-				{
-					view.SetBodyLabel(m_Booking.MeetingName);
-				}
-				view.SetEndTimeLabel(m_Booking.EndTime.ToShortTimeString());
-				view.SetPresenterNameLabel(m_Booking.OrganizerName);
-				view.SetSelected(m_Selected);
+			    view.SetBodyLabel(m_Booking.IsPrivate ? "Private Meeting" : m_Booking.MeetingName);
 			}
 			finally
 			{
