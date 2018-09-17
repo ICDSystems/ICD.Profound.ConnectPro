@@ -278,6 +278,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		private void Subscribe(IMPC3x201TouchScreenControl control)
 		{
 			control.OnButtonStateChange += ControlOnButtonStateChange;
+			control.OnProximityDetectedStateChange += ControlOnProximityDetectedStateChange;
 		}
 
 		/// <summary>
@@ -287,6 +288,22 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		private void Unsubscribe(IMPC3x201TouchScreenControl control)
 		{
 			control.OnButtonStateChange -= ControlOnButtonStateChange;
+			control.OnProximityDetectedStateChange -= ControlOnProximityDetectedStateChange;
+		}
+
+		/// <summary>
+		/// Called when the touchscreen proximity detection state changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ControlOnProximityDetectedStateChange(object sender, BoolEventArgs eventArgs)
+		{
+			if (!eventArgs.Data)
+				return;
+
+			// Reset the routing for the room when proximity is detected
+			if (Room != null && !Room.IsInMeeting)
+				Room.Routing.RouteOsd();
 		}
 
 		/// <summary>
