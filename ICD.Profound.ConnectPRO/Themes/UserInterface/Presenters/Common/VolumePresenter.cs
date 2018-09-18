@@ -127,6 +127,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			ShowView(true);
 			StopVisibilityTimer();
 
+			IVolumeMuteDeviceControl volumeControlMute = VolumeControl as IVolumeMuteDeviceControl;
+			if (volumeControlMute != null)
+				volumeControlMute.SetVolumeMute(false);
+
 			IVolumeLevelBasicDeviceControl volumeControlLevel = VolumeControl as IVolumeLevelBasicDeviceControl;
 			if (volumeControlLevel != null)
 				volumeControlLevel.VolumeLevelRampDown();
