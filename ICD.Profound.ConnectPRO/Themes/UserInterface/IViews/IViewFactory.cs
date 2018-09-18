@@ -1,5 +1,4 @@
-﻿using ICD.Connect.Panels;
-using ICD.Connect.Panels.Devices;
+﻿using ICD.Connect.Panels.Devices;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews
 {

@@ -29,7 +29,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			set { m_WakeScheduleSettings.WeekdayEnable = value; }
 		}
 
-
 		[UsedImplicitly]
 		public TimeSpan? WeekdayWakeTime
 		{

@@ -70,6 +70,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		public IConnectProRoom Room { get { return m_Room; } }
 
+		object IUserInterface.Target { get { return Panel; } }
+
 		#endregion
 
 		/// <summary>

@@ -12,8 +12,13 @@ namespace ICD.Profound.ConnectPRO.Themes
 		void SetRoom(IConnectProRoom room);
 
 		/// <summary>
-		/// Returns the room to an UI.
+		/// Gets the room attached to this UI.
 		/// </summary>
 		IConnectProRoom Room { get; }
+
+		/// <summary>
+		/// Gets the target instance attached to this UI.
+		/// </summary>
+		object Target { get; }
 	}
 }

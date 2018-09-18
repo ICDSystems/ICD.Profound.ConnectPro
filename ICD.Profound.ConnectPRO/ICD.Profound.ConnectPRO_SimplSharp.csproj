@@ -82,6 +82,8 @@
     <Compile Include="Themes\ConnectProThemeSettings.cs" />
     <Compile Include="Themes\MicrophoneInterface\ConnectProMicrophoneInterface.cs" />
     <Compile Include="Themes\MicrophoneInterface\ConnectProMicrophoneInterfaceFactory.cs" />
+    <Compile Include="Themes\Mpc3201UserInterface\ConnectProMpc3201Interface.cs" />
+    <Compile Include="Themes\Mpc3201UserInterface\ConnectProMpc3201InterfaceFactory.cs" />
     <Compile Include="Themes\OsdInterface\ConnectProOsdInterface.cs" />
     <Compile Include="Themes\OsdInterface\ConnectProOsdInterfaceFactory.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\IOsdIncomingCallPresenter.cs" />
@@ -433,9 +435,17 @@
       <Project>{FCC7D685-B801-43A5-AEB3-774442027A0D}</Project>
       <Name>ICD.Connect.Displays_SimplSharp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Misc\ICD.Connect.Misc\ICD.Connect.Misc_SimplSharp.csproj">
+      <Project>{3BAE6352-77B5-499A-9DA5-2AB198F53183}</Project>
+      <Name>ICD.Connect.Misc_SimplSharp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ICD.Connect.Misc\ICD.Connect.TvPresets\ICD.Connect.TvPresets_SimplSharp.csproj">
       <Project>{5752751F-FDEB-40A0-9249-6580A62A6D88}</Project>
       <Name>ICD.Connect.TvPresets_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Panels\ICD.Connect.Panels.Crestron\ICD.Connect.Panels.Crestron_SimplSharp.csproj">
+      <Project>{EF71F157-ED75-4B30-ABC9-1E7811615528}</Project>
+      <Name>ICD.Connect.Panels.Crestron_SimplSharp</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ICD.Connect.Panels\ICD.Connect.Panels.Server\ICD.Connect.Panels.Server_SimplSharp.csproj">
       <Project>{B14DB63B-1D7B-4112-8845-8187A2C7DF90}</Project>
