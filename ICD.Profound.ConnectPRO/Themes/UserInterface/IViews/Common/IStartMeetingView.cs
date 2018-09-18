@@ -33,6 +33,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 		void SetStartNewMeetingButtonEnabled(bool enabled);
 
 		/// <summary>
+		/// Sets the enabled state of the no meetings button.
+		/// </summary>
+		/// <param name="enabled"></param>
+		void SetNoMeetingsButtonEnabled(bool enabled);
+
+		/// <summary>
+		/// Sets the text of the no meetings label.
+		/// </summary>
+		/// <param name="text"></param>
+		void SetNoMeetingsLabel(string text);
+
+		/// <summary>
 		/// Sets the image path for the logo.
 		/// </summary>
 		/// <param name="url"></param>
@@ -42,7 +54,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 		/// Sets the visibility of the bookings list.
 		/// </summary>
 		/// <param name="visible"></param>
-		void SetBookingsVisible(bool visible);
+		/// <param name="bookings"></param>
+		void SetBookingsVisible(bool visible, int bookings);
 
 		/// <summary>
 		/// Returns child views for list items.

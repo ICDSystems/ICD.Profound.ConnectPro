@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.CalendarControl;
 using ICD.Connect.Conferencing.Controls.Dialing;
@@ -21,6 +22,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
 	public sealed class StartMeetingPresenter : AbstractPresenter<IStartMeetingView>, IStartMeetingPresenter
 	{
+		private const string NO_MEETING_LABEL_TEXT = "No Meetings Scheduled at this Time";
+
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly ReferencedSchedulePresenterFactory m_ChildrenFactory;
 
@@ -69,10 +72,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
-			    IEnumerable<IBooking> bookings =
+			    List<IBooking> bookings =
 			        m_CalendarControl == null
-			            ? Enumerable.Empty<IBooking>()
-			            : m_CalendarControl.GetBookings().Where(b => b.EndTime > IcdEnvironment.GetLocalTime());
+			            ? new List<IBooking>()
+			            : m_CalendarControl.GetBookings().Where(b => b.EndTime > IcdEnvironment.GetLocalTime()).ToList();
 
 				foreach (IReferencedSchedulePresenter presenter in m_ChildrenFactory.BuildChildren(bookings, Subscribe, Unsubscribe))
 				{
@@ -86,7 +89,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				view.SetStartMyMeetingButtonEnabled(!HasCalendarControl || m_SelectedBooking != null);
 
 				view.SetStartNewMeetingButtonEnabled(HasCalendarControl);
-				view.SetBookingsVisible(HasCalendarControl);
+
+				if (HasCalendarControl && bookings.Count < 1)
+				{
+					view.SetNoMeetingsButtonEnabled(true);
+					view.SetNoMeetingsLabel(NO_MEETING_LABEL_TEXT);
+				}
+
+				view.SetBookingsVisible(HasCalendarControl, bookings.Count);
 			}
 			finally
 			{
