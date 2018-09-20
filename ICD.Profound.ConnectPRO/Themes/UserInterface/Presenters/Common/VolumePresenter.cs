@@ -16,6 +16,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 	public sealed class VolumePresenter : AbstractPresenter<IVolumeView>, IVolumePresenter
 	{
 		private const ushort HIDE_TIME = 20 * 1000;
+		private const float RAMP_PERCENTAGE = 3.0f / 100.0f;
 
 		private readonly SafeTimer m_VisibilityTimer;
 		private readonly SafeCriticalSection m_RefreshSection;
@@ -83,8 +84,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			{
 				IVolumeMuteFeedbackDeviceControl volumeControlMute = VolumeControl as IVolumeMuteFeedbackDeviceControl;
 				bool muted = volumeControlMute != null && volumeControlMute.VolumeIsMuted;
-				IVolumeLevelDeviceControl volumeControlLevel = VolumeControl as IVolumeLevelDeviceControl;
-				float volume = volumeControlLevel == null ? 0 : volumeControlLevel.VolumePosition;
+				IVolumePositionDeviceControl volumePositionControl = VolumeControl as IVolumePositionDeviceControl;
+				float volume = volumePositionControl == null ? 0 : volumePositionControl.VolumePosition;
 
 				view.SetMuted(muted);
 				view.SetVolumePercentage(volume);
@@ -111,9 +112,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (volumeControlMute != null)
 				volumeControlMute.SetVolumeMute(false);
 
-			IVolumeLevelBasicDeviceControl volumeControlLevel = VolumeControl as IVolumeLevelBasicDeviceControl;
-			if (volumeControlLevel != null)
-				volumeControlLevel.VolumeLevelRampUp();
+			IVolumeRampDeviceControl volumeRampControl = VolumeControl as IVolumeRampDeviceControl;
+			IVolumePositionDeviceControl volumePositionControl = volumeRampControl as IVolumePositionDeviceControl;
+
+			if (volumePositionControl != null)
+				volumePositionControl.VolumePositionRampUp(RAMP_PERCENTAGE);
+			else if (volumeRampControl != null)
+				volumeRampControl.VolumeRampUp();
 		}
 
 		/// <summary>
@@ -131,9 +136,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (volumeControlMute != null)
 				volumeControlMute.SetVolumeMute(false);
 
-			IVolumeLevelBasicDeviceControl volumeControlLevel = VolumeControl as IVolumeLevelBasicDeviceControl;
-			if (volumeControlLevel != null)
-				volumeControlLevel.VolumeLevelRampDown();
+			IVolumeRampDeviceControl volumeRampControl = VolumeControl as IVolumeRampDeviceControl;
+			IVolumePositionDeviceControl volumePositionControl = volumeRampControl as IVolumePositionDeviceControl;
+
+			if (volumePositionControl != null)
+				volumePositionControl.VolumePositionRampDown(RAMP_PERCENTAGE);
+			else if (volumeRampControl != null)
+				volumeRampControl.VolumeRampDown();
 		}
 
 		/// <summary>
@@ -146,9 +155,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			ResetVisibilityTimer();
 
-			IVolumeLevelBasicDeviceControl volumeControlLevel = VolumeControl as IVolumeLevelBasicDeviceControl;
+			IVolumeRampDeviceControl volumeControlLevel = VolumeControl as IVolumeRampDeviceControl;
 			if (volumeControlLevel != null)
-				volumeControlLevel.VolumeLevelRampStop();
+				volumeControlLevel.VolumeRampStop();
 		}
 
 		/// <summary>
@@ -296,9 +305,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (controlMute != null)
 				controlMute.OnMuteStateChanged += DeviceOnMuteStateChanged;
 
-			IVolumeLevelDeviceControl controlLevel = control as IVolumeLevelDeviceControl;
-			if (controlLevel != null)
-				controlLevel.OnVolumeChanged += DeviceOnVolumeChanged;
+			IVolumePositionDeviceControl controlPosition = control as IVolumePositionDeviceControl;
+			if (controlPosition != null)
+				controlPosition.OnVolumeChanged += DeviceOnVolumeChanged;
 
 			IDeviceBase parent = control.Parent;
 			m_PowerControl = parent == null ? null : parent.Controls.GetControl<IPowerDeviceControl>();
@@ -319,11 +328,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (controlMute != null)
 				controlMute.OnMuteStateChanged -= DeviceOnMuteStateChanged;
 
-			IVolumeLevelDeviceControl controlLevel = control as IVolumeLevelDeviceControl;
-			if (controlLevel != null)
+			IVolumePositionDeviceControl controlPosition = control as IVolumePositionDeviceControl;
+			if (controlPosition != null)
 			{
-				controlLevel.VolumeLevelRampStop();
-				controlLevel.OnVolumeChanged -= DeviceOnVolumeChanged;
+				controlPosition.VolumeRampStop();
+				controlPosition.OnVolumeChanged -= DeviceOnVolumeChanged;
 			}
 
 			if (m_PowerControl != null)
