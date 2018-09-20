@@ -48,8 +48,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 				if (m_IsInCall)
 					ShowView(true);
-				else
-					Close();
 
 				m_CallListTogglePresenter.ShowView(m_IsInCall);
 
