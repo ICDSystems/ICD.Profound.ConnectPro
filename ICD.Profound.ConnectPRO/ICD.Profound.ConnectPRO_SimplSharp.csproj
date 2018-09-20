@@ -121,6 +121,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\IEndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IHeaderPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IPasscodePresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\IReferencedSchedulePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IStartMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IVolumePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionCameraPresenter.cs" />
@@ -175,6 +176,7 @@
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmEndMeetingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmSplashPowerView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IPasscodeView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\IReferencedScheduleView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IStartMeetingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IVolumeView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Options\IOptionCameraView.cs" />
@@ -238,6 +240,8 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionPrivacyMutePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionVolumePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\PasscodePresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\ReferencedSchedulePresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\ReferencedSchedulePresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\SettingsBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\SettingsDirectoryPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\SettingsPasscodePresenter.cs" />
@@ -311,6 +315,8 @@
     <Compile Include="Themes\UserInterface\Views\Common\Options\OptionPrivacyMuteView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\PasscodeView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\PasscodeView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\ReferencedScheduleView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\ReferencedScheduleView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsBaseView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsBaseView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsDirectoryView.cs" />
@@ -413,6 +419,10 @@
       <Project>{7CF948F3-D3D4-4102-835E-440D66D2AD35}</Project>
       <Name>ICD.Connect.Conferencing.Polycom_SimplSharp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing.Zoom\ICD.Connect.Conferencing.Zoom_SimplSharp.csproj">
+      <Project>{D86EE18A-B98A-46F0-B930-CDE4A6012E49}</Project>
+      <Name>ICD.Connect.Conferencing.Zoom_SimplSharp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing\ICD.Connect.Conferencing_SimplSharp.csproj">
       <Project>{1CCA89DA-1F1C-4997-A94F-ABCE878BD6DE}</Project>
       <Name>ICD.Connect.Conferencing_SimplSharp</Name>
@@ -456,6 +466,10 @@
     <ProjectReference Include="..\..\ICD.Connect.Routing\ICD.Connect.Routing\ICD.Connect.Routing_SimplSharp.csproj">
       <Project>{B0C0CA1C-FA55-4BEA-8A8B-EDB2141C523E}</Project>
       <Name>ICD.Connect.Routing_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Scheduling\ICD.Connect.Calendaring\ICD.Connect.Calendaring_SimplSharp.csproj">
+      <Project>{3C084F11-8810-4B87-970C-F97E2905ACEB}</Project>
+      <Name>ICD.Connect.Calendaring_SimplSharp</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ICD.Connect.Settings\ICD.Connect.Settings\ICD.Connect.Settings_SimplSharp.csproj">
       <Project>{5B84EB3C-1C3A-4C4D-98C2-69F67CF51D5A}</Project>
