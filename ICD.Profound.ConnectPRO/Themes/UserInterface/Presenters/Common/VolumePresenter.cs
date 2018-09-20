@@ -16,7 +16,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 	public sealed class VolumePresenter : AbstractPresenter<IVolumeView>, IVolumePresenter
 	{
 		private const ushort HIDE_TIME = 20 * 1000;
-		private const float RAMP_PERCENTAGE = 2.0f / 100.0f;
+		private const float RAMP_PERCENTAGE = 3.0f / 100.0f;
 
 		private readonly SafeTimer m_VisibilityTimer;
 		private readonly SafeCriticalSection m_RefreshSection;
