@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
-using ICD.Common.Utils.Extensions;
+using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.CalendarControl;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Conferencing.EventArguments;
-using ICD.Connect.Devices;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Controls;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -30,10 +29,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		private IReferencedSchedulePresenter m_SelectedBooking;
 		private ICalendarControl m_CalendarControl;
 
-		private bool HasCalendarControl
-		{
-			get { return m_CalendarControl != null; }
-		}
+		private bool HasCalendarControl { get { return m_CalendarControl != null; } }
 
 		/// <summary>
 		/// Constructor.
@@ -47,7 +43,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			m_RefreshSection = new SafeCriticalSection();
 			m_ChildrenFactory = new ReferencedSchedulePresenterFactory(nav, ItemFactory);
 		}
-
 
 		/// <summary>
 		/// Release resources.
@@ -308,6 +303,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			Navigation.LazyLoadPresenter<IPasscodePresenter>().ShowView(false);
 
 			Navigation.NavigateTo<ISettingsBasePresenter>();
+		}
+
+		/// <summary>
+		/// Called when the view visibility changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			base.ViewOnVisibilityChanged(sender, args);
+
+			// Clear the selection when we navigate away
+			m_SelectedBooking = null;
 		}
 
 		#endregion
