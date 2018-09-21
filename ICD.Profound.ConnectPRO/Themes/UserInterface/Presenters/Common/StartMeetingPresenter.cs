@@ -254,38 +254,45 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (Room == null)
 				return;
 
-			if(!HasCalendarControl)
+			if (!HasCalendarControl)
 				Room.StartMeeting();
-			else if (m_SelectedBooking != null)
-			{
-				Room.StartMeeting(false);
 
-				// check if booking exists
-				var booking = m_SelectedBooking.Booking;
-				if (booking == null)
-					return;
+			if (m_SelectedBooking == null)
+				return;
 
-				// check if we have any dialers
-				var dialers = Room.GetControlsRecursive<IDialingDeviceControl>().ToList();
-				if (dialers == null || !dialers.Any())
-					return;
+			var booking = m_SelectedBooking.Booking;
+			m_SelectedBooking = null;
 
-				// check if any dialers support the booking
-				var preferredDialer = dialers.OrderByDescending(d => d.CanDial(booking)).FirstOrDefault();
-				if (preferredDialer == null || preferredDialer.CanDial(booking) <= eBookingSupport.Unsupported)
-					return;
+			Room.StartMeeting(false);
 
-				// route device to displays and/or audio destination
-				var dialerDevice = preferredDialer.Parent;
-				var routeControl = dialerDevice.Controls.GetControl<IRouteSourceControl>();
-				if(dialerDevice is IVideoConferenceDevice)
-					Room.Routing.RouteVtc(routeControl);
-				else if (preferredDialer.Supports == eConferenceSourceType.Audio)
-					Room.Routing.RouteAtc(routeControl);
+			// check if booking exists
+			if (booking == null)
+				return;
 
-				// dial booking
-				preferredDialer.Dial(booking);
-			}
+			// check if we have any dialers
+			var dialers = Room.GetControlsRecursive<IDialingDeviceControl>().ToList();
+			if (dialers.Count == 0)
+				return;
+
+			// check if any dialers support the booking
+			var preferredDialer = dialers.Where(d => d.CanDial(booking) > eBookingSupport.Unsupported)
+				.OrderByDescending(d => d.CanDial(booking))
+				.ThenByDescending(d => d.Supports)
+				.FirstOrDefault();
+
+			if (preferredDialer == null)
+				return;
+
+			// route device to displays and/or audio destination
+			var dialerDevice = preferredDialer.Parent;
+			var routeControl = dialerDevice.Controls.GetControl<IRouteSourceControl>();
+			if (dialerDevice is IVideoConferenceDevice)
+				Room.Routing.RouteVtc(routeControl);
+			else if (preferredDialer.Supports == eConferenceSourceType.Audio)
+				Room.Routing.RouteAtc(routeControl);
+
+			// dial booking
+			preferredDialer.Dial(booking);
 		}
 
 		private void ViewOnStartNewMeetingButtonPressed(object sender, EventArgs eventArgs)
