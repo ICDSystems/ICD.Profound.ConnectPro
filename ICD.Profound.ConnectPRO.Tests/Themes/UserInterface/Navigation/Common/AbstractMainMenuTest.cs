@@ -60,7 +60,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 						.GetControl<DisplayVolumeDeviceControl>(volumePoint.ControlId);
 
 				//Check that volume is at zero
-				Assert.AreEqual(0, volumeControl.VolumeRaw);
+				Assert.AreEqual(0, volumeControl.VolumeLevel);
 
 				//vol up
 				NavigationHelpers.PressButton(523, roomType.Panel);
@@ -68,11 +68,11 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 
 				//vol up
 				NavigationHelpers.PressButton(523, roomType.Panel, 0, true, 2000);
-				Assert.AreEqual((int)(65535 * 0.01 * volumeControl.VolumeRaw), roomType.Panel.UShortInput[500].GetUShortValue(), 655);
+				Assert.AreEqual((int)(65535 * 0.01 * volumeControl.VolumeLevel), roomType.Panel.UShortInput[500].GetUShortValue(), 655);
 
 				//vol down
 				NavigationHelpers.PressButton(522, roomType.Panel, 0, true, 2000);
-				Assert.AreEqual((int)(65535 * 0.01 * volumeControl.VolumeRaw), roomType.Panel.UShortInput[500].GetUShortValue(), 655);
+				Assert.AreEqual((int)(65535 * 0.01 * volumeControl.VolumeLevel), roomType.Panel.UShortInput[500].GetUShortValue(), 655);
 
 				//vol down
 				NavigationHelpers.PressButton(522, roomType.Panel);
