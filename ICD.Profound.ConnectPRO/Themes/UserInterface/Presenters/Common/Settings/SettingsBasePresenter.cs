@@ -43,8 +43,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		private readonly Dictionary<ushort, IPresenter> m_NavPages;
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private bool HasDirectoryControl { get { return Room != null && Room.GetControlRecursive<IDirectoryControl>() != null; } }
-
 		private IPresenter m_Visible;
 
 		public IPresenter Visible
@@ -110,7 +108,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 					bool showButton = true;
 					if (kvp.Key == DIRECTORY)
 					{
-						showButton = HasDirectoryControl;
+						showButton = DirectoryControl != null;
 					}
 					view.SetButtonVisible(kvp.Key, showButton);
 				}
