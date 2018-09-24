@@ -29,7 +29,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			new Dictionary<ushort, string>
 			{
 				{SYSTEM_POWER, "System Power Preference"},
-				{PASSCODE_SETTINGS, "Passcode Setting"},
+				{PASSCODE_SETTINGS, "Passcode Settings"},
 				{DIRECTORY, "Directory"}
 			};
 
