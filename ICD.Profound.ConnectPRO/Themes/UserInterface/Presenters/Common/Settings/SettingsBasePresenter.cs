@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
@@ -11,6 +12,7 @@ using ICD.Connect.Devices;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings;
 using ICD.Connect.Settings.Core;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -42,6 +44,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 		private readonly Dictionary<ushort, IPresenter> m_NavPages;
 		private readonly SafeCriticalSection m_RefreshSection;
+
+		/// <summary>
+		/// Gets the directory control.
+		/// </summary>
+		[CanBeNull]
+		public IDirectoryControl DirectoryControl { get; private set; }
 
 		private IPresenter m_Visible;
 
@@ -75,6 +83,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				m_NavPages.Add(kvp.Key, nav.LazyLoadPresenter(kvp.Value));
 
 			SubscribePages();
+		}
+
+		/// <summary>
+		/// Sets the room for this presenter to represent.
+		/// </summary>
+		/// <param name="room"></param>
+		public override void SetRoom(IConnectProRoom room)
+		{
+			base.SetRoom(room);
+			DirectoryControl = Room.GetControlRecursive<IDirectoryControl>();
+			RefreshIfVisible();
 		}
 
 		/// <summary>

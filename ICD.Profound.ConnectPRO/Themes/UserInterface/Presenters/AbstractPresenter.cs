@@ -4,8 +4,6 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
-using ICD.Connect.Conferencing.Controls.Directory;
-using ICD.Connect.Partitioning.Rooms;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -43,12 +41,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// </summary>
 		[CanBeNull]
 		public IConnectProRoom Room { get; private set; }
-
-		/// <summary>
-		/// Gets the directory control.
-		/// </summary>
-		[CanBeNull]
-		public IDirectoryControl DirectoryControl { get; private set; }
 
 		/// <summary>
 		/// Gets the view factory.
@@ -121,7 +113,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 
 			Unsubscribe(Room);
 			Room = room;
-			DirectoryControl = Room.GetControlRecursive<IDirectoryControl>();
 			Subscribe(Room);
 
 			Refresh();
