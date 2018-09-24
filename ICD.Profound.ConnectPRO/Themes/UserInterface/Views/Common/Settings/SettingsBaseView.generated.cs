@@ -29,7 +29,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 
 			m_ItemList = new VtProDynamicButtonList(652, panel as IPanelDevice, m_Subpage)
 			{
-				MaxSize = 2
+				MaxSize = 10
 			};
 
 			m_CloseButton = new VtProButton(panel, m_Subpage)

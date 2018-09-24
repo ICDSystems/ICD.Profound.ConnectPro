@@ -348,7 +348,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				ShowSourceContextualMenu(routedSource, false);
 			}
 			// If a source is currently selected then we route that source to the selected display
-			else
+			else if (activeSource != routedSource)
 			{
 				SetProcessingSource(destination, activeSource);
 
