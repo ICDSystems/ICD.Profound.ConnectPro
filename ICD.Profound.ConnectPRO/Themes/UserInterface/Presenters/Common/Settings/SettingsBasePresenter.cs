@@ -2,6 +2,13 @@
 using System.Collections.Generic;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
+using ICD.Connect.Conferencing.ConferenceManagers;
+using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.Controls.Directory;
+using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Devices;
+using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings;
 using ICD.Connect.Settings.Core;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -18,6 +25,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		private const ushort PASSCODE_SETTINGS = 1;
 		private const ushort DIRECTORY = 2;
 
+		private static readonly Dictionary<ushort, string> s_ButtonLabels =
+			new Dictionary<ushort, string>
+			{
+				{SYSTEM_POWER, "System Power Preference"},
+				{PASSCODE_SETTINGS, "Passcode Setting"},
+				{DIRECTORY, "Directory"}
+			};
+
 		private static readonly Dictionary<ushort, Type> s_NavTypes = new Dictionary<ushort, Type>
 			{
 				{SYSTEM_POWER, typeof(ISettingsSystemPowerPresenter)},
@@ -27,6 +42,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 		private readonly Dictionary<ushort, IPresenter> m_NavPages;
 		private readonly SafeCriticalSection m_RefreshSection;
+
+		private bool HasDirectoryControl { get { return Room != null && Room.GetControlRecursive<IDirectoryControl>() != null; } }
 
 		private IPresenter m_Visible;
 
@@ -84,8 +101,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			try
 			{
+				IEnumerable<string> labels = s_ButtonLabels.OrderValuesByKey();
+				view.SetButtonLabels(labels);
+
 				foreach (KeyValuePair<ushort, IPresenter> kvp in m_NavPages)
+				{
 					view.SetItemSelected(kvp.Key, kvp.Value.IsViewVisible);
+					bool showButton = true;
+					if (kvp.Key == DIRECTORY)
+					{
+						showButton = HasDirectoryControl;
+					}
+					view.SetButtonVisible(kvp.Key, showButton);
+				}
 			}
 			finally
 			{
