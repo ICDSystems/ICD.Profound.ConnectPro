@@ -83,12 +83,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
-				string icon = Icons.GetSourceIcon("display", eSourceColor.Grey);
-				if (Booking is IZoomBooking || Booking is ISipBooking)
-					icon = Icons.GetSourceIcon("videoConference", eSourceColor.Grey);
-				else if (Booking is IPstnBooking)
-					icon = Icons.GetSourceIcon("audioConference", eSourceColor.Grey);
 
+				string meetingTypeIcon;
+				switch (Booking.Type)
+				{
+					case eMeetingType.VideoConference:
+						meetingTypeIcon = "videoConference";
+						break;
+					case eMeetingType.AudioConference:
+						meetingTypeIcon = "audioConference";
+						break;
+					case eMeetingType.Presentation:
+					default:
+						meetingTypeIcon = "display";
+						break;
+				}
+				string icon = Icons.GetSourceIcon(meetingTypeIcon, eSourceColor.Grey);
 				view.SetBookingIcon(icon);
 
 				view.SetStartTimeLabel(m_Booking.StartTime.ToShortTimeString());

@@ -4,9 +4,11 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Sources;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews.Sources;
 
-namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
+namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Sources
 {
 	public sealed class OsdSourcesPresenter : AbstractOsdPresenter<IOsdSourcesView>, IOsdSourcesPresenter
 	{

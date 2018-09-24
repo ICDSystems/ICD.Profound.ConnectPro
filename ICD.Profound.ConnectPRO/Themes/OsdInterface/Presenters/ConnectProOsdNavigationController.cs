@@ -8,7 +8,13 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Popups;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Sources;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Welcome;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Sources;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 {
@@ -24,6 +30,8 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 			{typeof(IOsdSourcesPresenter), (nav, views, theme) => new OsdSourcesPresenter(nav, views, theme)},
 			{typeof(IOsdIncomingCallPresenter), (nav, views, theme) => new OsdIncomingCallPresenter(nav, views, theme)},
 			{typeof(IOsdWelcomePresenter), (nav, views, theme) => new OsdWelcomePresenter(nav, views, theme)},
+
+            {typeof(IReferencedSchedulePresenter), (nav, views, theme) => new ReferencedSchedulePresenter(nav, views, theme)}
 		};
 
 		private readonly Dictionary<Type, IOsdPresenter> m_Cache;

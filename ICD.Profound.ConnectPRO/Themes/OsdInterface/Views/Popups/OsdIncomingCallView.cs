@@ -1,7 +1,7 @@
 ﻿using ICD.Connect.Panels;
-using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews.Popups;
 
-namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
+namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Popups
 {
 	public sealed partial class OsdIncomingCallView : AbstractOsdView, IOsdIncomingCallView
 	{

@@ -1,11 +1,11 @@
-﻿using ICD.Connect.Panels;
+﻿using System.Collections.Generic;
+using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Images;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Connect.UI.Controls.TextControls;
-using System.Collections.Generic;
 
-namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
+namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Sources
 {
 	public sealed partial class OsdSourcesView
 	{

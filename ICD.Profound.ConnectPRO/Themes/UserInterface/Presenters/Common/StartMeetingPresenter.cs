@@ -106,7 +106,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			Unsubscribe(m_CalendarControl);
 			m_CalendarControl = null;
 
-			if (Room != null)
+			if (Room != null && Room.CalendarControl != null)
 			{
 				m_CalendarControl = Room.CalendarControl;
 				Subscribe(m_CalendarControl);

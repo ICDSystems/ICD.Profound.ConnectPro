@@ -5,9 +5,11 @@ using ICD.Connect.Conferencing.ConferenceSources;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Popups;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews.Popups;
 
-namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
+namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups
 {
 	public sealed class OsdIncomingCallPresenter : AbstractOsdPresenter<IOsdIncomingCallView>, IOsdIncomingCallPresenter
 	{

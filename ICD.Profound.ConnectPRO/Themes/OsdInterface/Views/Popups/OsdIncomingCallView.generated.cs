@@ -5,7 +5,7 @@ using ICD.Connect.UI.Controls.Images;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Connect.UI.Controls.TextControls;
 
-namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
+namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Popups
 {
 	public sealed partial class OsdIncomingCallView
 	{
