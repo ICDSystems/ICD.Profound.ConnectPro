@@ -70,6 +70,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		public IConnectProRoom Room { get { return m_Room; } }
 
+		object IUserInterface.Target { get { return Panel; } }
+
 		#endregion
 
 		/// <summary>
@@ -341,7 +343,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			ISource activeSource = m_RoutingSection.Execute(() => m_ActiveSource);
 
 			// If no source is selected for routing then we open the contextual menu for the current routed source
-			if (activeSource == null)
+			if (activeSource == null || activeSource == routedSource)
 			{
 				ShowSourceContextualMenu(routedSource, false);
 			}

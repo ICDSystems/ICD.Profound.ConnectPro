@@ -1,10 +1,14 @@
-﻿using ICD.Connect.Audio.Shure;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ICD.Connect.Audio.Shure;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 {
 	public sealed class ConnectProMicrophoneInterfaceFactory :
-		AbstractConnectProUserInterfaceFactory<ConnectProMicrophoneInterface, IShureMxaDevice>
+		AbstractConnectProUserInterfaceFactory<ConnectProMicrophoneInterface>
 	{
 		/// <summary>
 		/// Constructor.
@@ -20,9 +24,24 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		/// </summary>
 		/// <param name="originator"></param>
 		/// <returns></returns>
-		protected override ConnectProMicrophoneInterface CreateUserInterface(IShureMxaDevice originator)
+		private ConnectProMicrophoneInterface CreateUserInterface(IShureMxaDevice originator)
 		{
 			return new ConnectProMicrophoneInterface(originator, Theme);
+		}
+
+		/// <summary>
+		/// Creates the user interfaces for the given room.
+		/// </summary>
+		/// <param name="room"></param>
+		/// <returns></returns>
+		protected override IEnumerable<ConnectProMicrophoneInterface> CreateUserInterfaces(IConnectProRoom room)
+		{
+			if (room == null)
+				throw new ArgumentNullException("room");
+
+			return room.Originators
+			           .GetInstancesRecursive<IShureMxaDevice>()
+			           .Select(originator => CreateUserInterface(originator));
 		}
 
 		/// <summary>

@@ -11,6 +11,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 	{
 		private const ushort DEFAULT_SUBPAGE_VISIBILITY = 90;
 		private const ushort BOOKINGS_SUBPAGE_VISIBILITY = 170;
+		private const ushort BOOKING_NOMEETINGS_SUBPAGE_VISIBILITY = 89;
 
 		/// <summary>
 		/// Raised when the user presses the start my meeting button.
@@ -58,10 +59,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		/// Sets the visibility of the bookings list.
 		/// </summary>
 		/// <param name="visible"></param>
-		public void SetBookingsVisible(bool visible)
+		/// <param name="bookings"></param>
+		public void SetBookingsVisible(bool visible, int bookings)
 		{
 			// This is a little hacky because we show two different subpages based on the availability of bookings
-			ushort join = visible ? BOOKINGS_SUBPAGE_VISIBILITY : DEFAULT_SUBPAGE_VISIBILITY;
+			ushort join;
+
+			if (visible)
+			{
+				join = bookings > 0 ? BOOKINGS_SUBPAGE_VISIBILITY : BOOKING_NOMEETINGS_SUBPAGE_VISIBILITY;
+			}
+			else
+			{
+				join = DEFAULT_SUBPAGE_VISIBILITY;
+			}
+
 			if (join == m_Subpage.DigitalVisibilityJoin)
 				return;
 
@@ -108,6 +120,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		public void SetStartNewMeetingButtonEnabled(bool enabled)
 		{
 			m_StartNewMeetingButton.Enable(enabled);
+		}
+
+		/// <summary>
+		/// Sets the enabled state of the no meetings button.
+		/// </summary>
+		/// <param name="enabled"></param>
+		public void SetNoMeetingsButtonEnabled(bool enabled)
+		{
+			m_NoMeetingsButton.Enable(enabled);
+		}
+
+		/// <summary>
+		/// Sets the text of the no meetings label.
+		/// </summary>
+		/// <param name="text"></param>
+		public void SetNoMeetingsLabel(string text)
+		{
+			m_NoMeetingsLabel.SetLabelText(text);
 		}
 
 		#endregion

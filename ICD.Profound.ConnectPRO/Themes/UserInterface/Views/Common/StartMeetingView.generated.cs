@@ -6,6 +6,7 @@ using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Images;
 using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.Pages;
+using ICD.Connect.UI.Controls.TextControls;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 {
@@ -17,6 +18,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		private VtProButton m_SettingsButton;
 		private VtProImageObject m_Logo;
 		private VtProSubpageReferenceList m_ScheduleList;
+		private VtProButton m_NoMeetingsButton;
+		private VtProSimpleLabel m_NoMeetingsLabel;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -58,6 +61,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 				DigitalJoinIncrement = 2,
 				SerialJoinIncrement = 5
 			};
+
+			m_NoMeetingsButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 1,
+				DigitalEnableJoin = 2
+			};
+
+			m_NoMeetingsLabel = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				IndirectTextJoin = 4
+			};
 		}
 
 		/// <summary>
@@ -72,6 +86,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			yield return m_SettingsButton;
 			yield return m_Logo;
 			yield return m_ScheduleList;
-		}
+			yield return m_NoMeetingsButton;
+			yield return m_NoMeetingsLabel;
+	}
 	}
 }

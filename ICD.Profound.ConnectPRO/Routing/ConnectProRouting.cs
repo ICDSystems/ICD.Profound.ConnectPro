@@ -815,7 +815,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <summary>
 		/// Unroute all sources except OSD from all destinations.
 		/// </summary>
-		public void UnrouteAllExceptOsd()
+		private void UnrouteAllExceptOsd()
 		{
 			UnrouteAllVideoExceptOsd();
 			UnrouteAllAudioExceptOsd();

@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
+using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.CalendarControl;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Conferencing.EventArguments;
-using ICD.Connect.Devices;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Controls;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -21,16 +21,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
 	public sealed class StartMeetingPresenter : AbstractPresenter<IStartMeetingView>, IStartMeetingPresenter
 	{
+		private const string NO_MEETING_LABEL_TEXT = "No Meetings Scheduled at this Time";
+
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly ReferencedSchedulePresenterFactory m_ChildrenFactory;
 
 		private IReferencedSchedulePresenter m_SelectedBooking;
 		private ICalendarControl m_CalendarControl;
 
-		private bool HasCalendarControl
-		{
-			get { return m_CalendarControl != null; }
-		}
+		private bool HasCalendarControl { get { return m_CalendarControl != null; } }
 
 		/// <summary>
 		/// Constructor.
@@ -44,7 +43,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			m_RefreshSection = new SafeCriticalSection();
 			m_ChildrenFactory = new ReferencedSchedulePresenterFactory(nav, ItemFactory);
 		}
-
 
 		/// <summary>
 		/// Release resources.
@@ -69,10 +67,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
-			    IEnumerable<IBooking> bookings =
+			    List<IBooking> bookings =
 			        m_CalendarControl == null
-			            ? Enumerable.Empty<IBooking>()
-			            : m_CalendarControl.GetBookings().Where(b => b.EndTime > IcdEnvironment.GetLocalTime());
+			            ? new List<IBooking>()
+			            : m_CalendarControl.GetBookings().Where(b => b.EndTime > IcdEnvironment.GetLocalTime()).ToList();
 
 				foreach (IReferencedSchedulePresenter presenter in m_ChildrenFactory.BuildChildren(bookings, Subscribe, Unsubscribe))
 				{
@@ -86,7 +84,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				view.SetStartMyMeetingButtonEnabled(!HasCalendarControl || m_SelectedBooking != null);
 
 				view.SetStartNewMeetingButtonEnabled(HasCalendarControl);
-				view.SetBookingsVisible(HasCalendarControl);
+
+				if (HasCalendarControl && bookings.Count < 1)
+				{
+					view.SetNoMeetingsButtonEnabled(true);
+					view.SetNoMeetingsLabel(NO_MEETING_LABEL_TEXT);
+				}
+
+				view.SetBookingsVisible(HasCalendarControl, bookings.Count);
 			}
 			finally
 			{
@@ -249,38 +254,45 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (Room == null)
 				return;
 
-			if(!HasCalendarControl)
+			if (!HasCalendarControl)
 				Room.StartMeeting();
-			else if (m_SelectedBooking != null)
-			{
-				Room.StartMeeting(false);
 
-				// check if booking exists
-				var booking = m_SelectedBooking.Booking;
-				if (booking == null)
-					return;
+			if (m_SelectedBooking == null)
+				return;
 
-				// check if we have any dialers
-				var dialers = Room.GetControlsRecursive<IDialingDeviceControl>().ToList();
-				if (dialers == null || !dialers.Any())
-					return;
+			var booking = m_SelectedBooking.Booking;
+			m_SelectedBooking = null;
 
-				// check if any dialers support the booking
-				var preferredDialer = dialers.OrderByDescending(d => d.CanDial(booking)).FirstOrDefault();
-				if (preferredDialer == null || preferredDialer.CanDial(booking) <= eBookingSupport.Unsupported)
-					return;
+			Room.StartMeeting(false);
 
-				// route device to displays and/or audio destination
-				var dialerDevice = preferredDialer.Parent;
-				var routeControl = dialerDevice.Controls.GetControl<IRouteSourceControl>();
-				if(dialerDevice is IVideoConferenceDevice)
-					Room.Routing.RouteVtc(routeControl);
-				else if (preferredDialer.Supports == eConferenceSourceType.Audio)
-					Room.Routing.RouteAtc(routeControl);
+			// check if booking exists
+			if (booking == null)
+				return;
 
-				// dial booking
-				preferredDialer.Dial(booking);
-			}
+			// check if we have any dialers
+			var dialers = Room.GetControlsRecursive<IDialingDeviceControl>().ToList();
+			if (dialers.Count == 0)
+				return;
+
+			// check if any dialers support the booking
+			var preferredDialer = dialers.Where(d => d.CanDial(booking) > eBookingSupport.Unsupported)
+				.OrderByDescending(d => d.CanDial(booking))
+				.ThenByDescending(d => d.Supports)
+				.FirstOrDefault();
+
+			if (preferredDialer == null)
+				return;
+
+			// route device to displays and/or audio destination
+			var dialerDevice = preferredDialer.Parent;
+			var routeControl = dialerDevice.Controls.GetControl<IRouteSourceControl>();
+			if (dialerDevice is IVideoConferenceDevice)
+				Room.Routing.RouteVtc(routeControl);
+			else if (preferredDialer.Supports == eConferenceSourceType.Audio)
+				Room.Routing.RouteAtc(routeControl);
+
+			// dial booking
+			preferredDialer.Dial(booking);
 		}
 
 		private void ViewOnStartNewMeetingButtonPressed(object sender, EventArgs eventArgs)
@@ -298,6 +310,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			Navigation.LazyLoadPresenter<IPasscodePresenter>().ShowView(false);
 
 			Navigation.NavigateTo<ISettingsBasePresenter>();
+		}
+
+		/// <summary>
+		/// Called when the view visibility changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			base.ViewOnVisibilityChanged(sender, args);
+
+			// Clear the selection when we navigate away
+			m_SelectedBooking = null;
 		}
 
 		#endregion

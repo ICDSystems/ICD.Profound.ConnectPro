@@ -7,7 +7,6 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
@@ -100,19 +99,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				}
 				string icon = Icons.GetSourceIcon(meetingTypeIcon, eSourceColor.Grey);
 				view.SetBookingIcon(icon);
+                view.SetStartTimeLabel(m_Booking.StartTime.ToShortTimeString());
+			    view.SetEndTimeLabel(m_Booking.EndTime.ToShortTimeString());
+			    view.SetSelected(m_Selected);
+			    view.SetPresenterNameLabel(m_Booking.OrganizerName);
 
-				view.SetStartTimeLabel(m_Booking.StartTime.ToShortTimeString());
-				if (m_Booking.IsPrivate)
-				{ 
-					view.SetBodyLabel("Private Meeting");
-				}
-				else
-				{
-					view.SetBodyLabel(m_Booking.MeetingName);
-				}
-				view.SetEndTimeLabel(m_Booking.EndTime.ToShortTimeString());
-				view.SetPresenterNameLabel(m_Booking.OrganizerName);
-				view.SetSelected(m_Selected);
+			    view.SetBodyLabel(m_Booking.IsPrivate ? "Private Meeting" : m_Booking.MeetingName);
 			}
 			finally
 			{
