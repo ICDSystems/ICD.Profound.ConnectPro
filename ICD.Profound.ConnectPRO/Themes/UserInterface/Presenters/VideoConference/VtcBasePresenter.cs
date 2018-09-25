@@ -23,9 +23,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 {
 	public sealed class VtcBasePresenter : AbstractPopupPresenter<IVtcBaseView>, IVtcBasePresenter
 	{
-		private IPowerDeviceControl m_SubscribedPowerControl;
-		private IDialingDeviceControl m_SubscribedVideoDialer;
-
 		private readonly IVtcCallListTogglePresenter m_CallListTogglePresenter;
 		private readonly IVtcContactsNormalPresenter m_ContactsNormalPresenter;
 		private readonly IVtcContactsPolycomPresenter m_ContactsPolycomPresenter;
@@ -33,6 +30,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private readonly IVtcCameraPresenter m_CameraPresenter;
 		private readonly IVtcKeyboardPresenter m_KeyboardPresenter;
 		private readonly IVtcKeypadPresenter m_KeypadPresenter;
+
+		private IPowerDeviceControl m_SubscribedPowerControl;
+		private IDialingDeviceControl m_SubscribedVideoDialer;
 
 		private bool m_IsInCall;
 
