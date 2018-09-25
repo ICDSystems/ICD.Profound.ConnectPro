@@ -250,7 +250,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			{
 				IcdHashSet<ISource> activeSources =
 					Room.Routing.GetCachedActiveVideoSources()
-					    .SelectMany(kvp => kvp.Value)
+					    .Select(kvp => kvp.Value)
 					    .ToIcdHashSet();
 
 				if (activeSources.SetEquals(m_ActiveSources))

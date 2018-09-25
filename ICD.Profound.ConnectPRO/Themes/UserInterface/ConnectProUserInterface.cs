@@ -55,7 +55,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private readonly SafeTimer m_SourceSelectionTimeout;
 
 		private readonly IcdHashSet<ISource> m_ActiveAudio;
-		private readonly Dictionary<IDestination, IcdHashSet<ISource>> m_ActiveVideo;
+		private readonly Dictionary<IDestination, ISource> m_ActiveVideo;
 		private readonly Dictionary<ISource, eSourceState> m_SourceRoutedStates;
 		private readonly Dictionary<IDestination, ISource> m_ProcessingSources;
 		private readonly SafeCriticalSection m_RoutingSection;
@@ -82,7 +82,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		public ConnectProUserInterface(IPanelDevice panel, ConnectProTheme theme)
 		{
 			m_ActiveAudio = new IcdHashSet<ISource>();
-			m_ActiveVideo = new Dictionary<IDestination, IcdHashSet<ISource>>();
+			m_ActiveVideo = new Dictionary<IDestination, ISource>();
 			m_SourceRoutedStates = new Dictionary<ISource, eSourceState>();
 			m_ProcessingSources = new Dictionary<IDestination, ISource>();
 			m_RoutingSection = new SafeCriticalSection();
@@ -309,7 +309,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				throw new ArgumentNullException("source");
 
 			// Is the source already routed?     
-			if (m_RoutingSection.Execute(() => m_ActiveVideo.Any(kvp => kvp.Value.Contains(source))))
+			if (m_RoutingSection.Execute(() => m_ActiveVideo.Any(kvp => kvp.Value == source)))
 			{
 				ShowSourceContextualMenu(source, false);
 			}
@@ -350,14 +350,85 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			// If a source is currently selected then we route that source to the selected display
 			else if (activeSource != routedSource)
 			{
-				SetProcessingSource(destination, activeSource);
+				bool overrideAudio;
 
-				m_Room.Routing.RouteDualDisplay(activeSource, destination);
+				m_RoutingSection.Enter();
+
+				try
+				{
+					SetProcessingSource(destination, activeSource);
+					overrideAudio = CanOverrideAudio(activeSource, destination);
+				}
+				finally
+				{
+					m_RoutingSection.Leave();
+				}
+
+				m_Room.Routing.RouteDualDisplay(activeSource, destination, overrideAudio);
 				
 				routedSource = activeSource;
 
 				if (ShowSourceContextualMenu(routedSource, true))
 					SetActiveSource(null);
+			}
+		}
+
+		/// <summary>
+		/// Returns true if we can override active audio when routing the given source to the given destination.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
+		/// <returns></returns>
+		private bool CanOverrideAudio(ISource source, IDestination destination)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			if (destination == null)
+				throw new ArgumentNullException("destination");
+
+			m_RoutingSection.Enter();
+
+			try
+			{
+				// Nothing is currently routed for audio
+				if (m_ActiveAudio.Count == 0)
+					return false;
+
+				// If there are no sources routed to the display then there is nothing to override
+				ISource oldSource = m_ActiveVideo.GetDefault(destination);
+				if (oldSource == null)
+					return false;
+
+				// No change
+				if (source == oldSource)
+					return false;
+
+				// Old source is not current active audio
+				if (!m_ActiveAudio.Contains(oldSource))
+					return false;
+
+				// Get the sources that are currently routed to other displays
+				IcdHashSet<ISource> otherDisplaySources =
+					m_ActiveVideo.Where(kvp =>
+					                    {
+						                    IDestination display = kvp.Key;
+						                    if (display == destination)
+							                    return false;
+
+											// Are we in the middle of routing a new source to the display?
+						                    ISource processing = m_ProcessingSources.GetDefault(display);
+						                    return processing == null;
+					                    })
+					             .Select(kvp => kvp.Value)
+					             .ToIcdHashSet();
+
+				// Return true if there are no other display sources currently being used for active audio
+				return !m_ActiveAudio.Intersect(otherDisplaySources).Any();
+			}
+			finally
+			{
+				m_RoutingSection.Leave();
 			}
 		}
 
@@ -393,8 +464,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 					return;
 
 				// Is the source already routed to the destination?
-				IcdHashSet<ISource> routed;
-				if (m_ActiveVideo.TryGetValue(destination, out routed) && routed.Contains(source))
+				ISource routed = m_ActiveVideo.GetDefault(destination);
+				if (source == routed)
 					return;
 
 				m_ProcessingSources[destination] = source;
@@ -632,32 +703,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			try
 			{
-				Dictionary<IDestination, IcdHashSet<ISource>> routing =
+				Dictionary<IDestination, ISource> routing =
 					(m_Room == null
-						 ? Enumerable.Empty<KeyValuePair<IDestination, IcdHashSet<ISource>>>()
+						 ? Enumerable.Empty<KeyValuePair<IDestination, ISource>>()
 						 : m_Room.Routing
 						         .GetCachedActiveVideoSources())
 						.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-				if (routing.DictionaryEqual(m_ActiveVideo, (a, b) => a.SetEquals(b)))
+				if (!m_ActiveVideo.Update(routing))
 					return false;
 
-				m_ActiveVideo.Clear();
-				m_ActiveVideo.AddRange(routing.Keys, k => new IcdHashSet<ISource>(routing[k]));
-
 				// Remove routed items from the processing sources collection
-				foreach (KeyValuePair<IDestination, IcdHashSet<ISource>> kvp in m_ActiveVideo)
+				foreach (KeyValuePair<IDestination, ISource> kvp in m_ActiveVideo)
 				{
 					ISource processing = m_ProcessingSources.GetDefault(kvp.Key);
 					if (processing == null)
 						continue;
 
-					if (kvp.Value.Contains(processing))
+					if (kvp.Value == processing)
 						m_ProcessingSources.Remove(kvp.Key);
 				}
 
 				// If the active source is routed to all destinations we clear the active source
-				if (m_ActiveSource != null && m_ActiveVideo.All(kvp => kvp.Value.Contains(m_ActiveSource)))
+				if (m_ActiveSource != null && m_ActiveVideo.All(kvp => kvp.Value == m_ActiveSource))
 					SetActiveSource(null);
 
 				UpdateSourceRoutedStates();
@@ -679,9 +747,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				// Build a map of video sources to their routed state
 				Dictionary<ISource, eSourceState> routedSources =
 					m_ActiveVideo.Values
-								 .SelectMany(v => v)
-								 .Distinct()
-								 .ToDictionary(s => s, s => eSourceState.Active);
+					             .Where(v => v != null)
+					             .Distinct()
+					             .ToDictionary(s => s, s => eSourceState.Active);
 
 				// A source may be processing for another display, so we override
 				foreach (ISource source in m_ProcessingSources.Values.Where(s => s != null))
