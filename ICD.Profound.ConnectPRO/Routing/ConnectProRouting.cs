@@ -55,7 +55,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 		private IRoutingGraph m_SubscribedRoutingGraph;
 		private IPathFinder m_PathFinder;
-		private bool m_Routing;
 
 		/// <summary>
 		/// Gets the routing graph from the core.
@@ -623,14 +622,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			IList<ConnectionPath> pathsList = paths as IList<ConnectionPath> ?? paths.ToArray();
 
-			bool oldRouting = m_Routing;
-			m_Routing = true;
-
 			IcdStopwatch.Profile(() => RoutingGraph.RoutePaths(pathsList, m_Room.Id),
 			                     string.Format("Route - {0}", StringUtils.ArrayFormat(pathsList)));
-
-			if (!oldRouting)
-				m_Routing = false;
 
 			foreach (EndpointInfo destination in pathsList.Select(p => p.DestinationEndpoint).Distinct())
 			{
