@@ -24,10 +24,6 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 
 		private ICalendarControl m_CalendarControl;
 
-	    private IBooking m_PastBooking;
-
-	    private int m_RefreshCount = 0;
-
 	    private const int DEFAULT_REFRESH_TIME = 15 * 60 * 1000;
 
 		/// <summary>
@@ -53,7 +49,6 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 
 		    try
 		    {
-		        m_RefreshCount++; // test to see how much it refreshes
 		        DateTime now = IcdEnvironment.GetLocalTime();
 
 		        List<IBooking> bookings =
@@ -62,17 +57,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 		                : m_CalendarControl.GetBookings().Where(b => b.EndTime > now)
 		                    .OrderBy(b => b.StartTime).ToList();
 
-                // TODO: REMOVE
-		        bookings = new List<IBooking>()
-		        {
-                    new MockBooking("Test meeting that will end", null, null, null, DateTime.Parse("2:40pm"), DateTime.Parse("2:41pm"), false),
-                    new MockBooking("Wowee", null, null, null, DateTime.Parse("2:42pm"), DateTime.Parse("2:43pm"), false),
-		            new MockBooking("Super Long Meeting Title Because People Don't Know How To Properly Book Meetings", null, null, null, DateTime.Parse("1:30pm"), DateTime.Parse("4:30pm"), false),
-		            new MockBooking("Super Long Meeting Title Because People Don't Know How To Properly Book Meetings", null, null, null, DateTime.Parse("4:30pm"), DateTime.Parse("5:00pm"), false),
-		            new MockBooking("Super Long Meeting Title Because People Don't Know How To Properly Book Meetings", null, null, null, DateTime.Parse("5:30pm"), DateTime.Parse("6:00pm"), false),
-		        }.Where(b => b.EndTime > now).ToList();
-
-		        string roomName = Room == null ? string.Empty : Room.Name + " RefreshCount: " + m_RefreshCount; 
+		        string roomName = Room == null ? string.Empty : Room.Name; 
 		        view.SetRoomName(roomName);
 
 		        List<IBooking> upcomingBookingsAndAvailability = new List<IBooking>();
@@ -119,7 +104,6 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 		        IBooking currentBooking = upcomingBookingsAndAvailability.FirstOrDefault();
 		        if (currentBooking != null && !(currentBooking is EmptyBooking))
 		        {
-		            m_PastBooking = currentBooking;
                     view.SetCurrentBookingIcon(GetBookingIcon(currentBooking.Type));
 		            view.SetCurrentBookingSubject(currentBooking.IsPrivate ? "Private Meeting" : currentBooking.MeetingName);
 		            view.SetCurrentBookingTime(string.Format("{0} - {1}",
