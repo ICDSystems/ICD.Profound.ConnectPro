@@ -6,6 +6,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [6.1.1] - 2018-09-27
+### Changed
+ - Better fix for audio routing in specific async switcher situations
+ - Fixed bug where incoming call text was not updating for subsequent calls
+
+## [6.1.0] - 2018-09-25
+### Changed
+ - Fixed audio routing in specific async switcher situations
+ - Fixed bug where VTC would not unroute after confirming end call
+ - Fixed bugs where a source could be routed multiple times to the same destination
+ - Fixed references to new volume controls
+ - Volume ramping is now positional rather than absolute, resulting in more responsive routing
+ - Mic LED no longer has initial white flash
+ - Return to VTC subpages after a call ends instead of immediately unrouting
+ - Volume down now unmutes as well
+ - Resetting routing when occupancy is detected
+
 ## [6.0.0] - 2018-09-14
 ### Changed
  - Considerable performance improvements, bug fixes, etc

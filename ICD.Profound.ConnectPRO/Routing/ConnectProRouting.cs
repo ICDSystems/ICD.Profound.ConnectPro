@@ -55,7 +55,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 		private IRoutingGraph m_SubscribedRoutingGraph;
 		private IPathFinder m_PathFinder;
-		private bool m_Routing;
 
 		/// <summary>
 		/// Gets the routing graph from the core.
@@ -372,7 +371,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		/// <param name="source"></param>
 		/// <param name="destination"></param>
-		public void RouteDualDisplay(ISource source, IDestination destination)
+		/// <param name="overrideAudio">When true routes audio, otherwise only routes audio if there is no active audio source</param>
+		public void RouteDualDisplay(ISource source, IDestination destination, bool overrideAudio)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
@@ -380,14 +380,12 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (destination == null)
 				throw new ArgumentNullException("destination");
 
-			bool unroutedAudio = UnrouteOrphanedAudioForDualDisplay(destination);
-
 			Route(source, destination, eConnectionType.Video);
 
 			if (!source.ConnectionType.HasFlag(eConnectionType.Audio))
 				return;
-			
-			if (unroutedAudio)
+
+			if (overrideAudio)
 				RouteAudio(source);
 			else
 				RouteAudioIfNoAudioRouted(source);
@@ -623,14 +621,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			IList<ConnectionPath> pathsList = paths as IList<ConnectionPath> ?? paths.ToArray();
 
-			bool oldRouting = m_Routing;
-			m_Routing = true;
-
 			IcdStopwatch.Profile(() => RoutingGraph.RoutePaths(pathsList, m_Room.Id),
 			                     string.Format("Route - {0}", StringUtils.ArrayFormat(pathsList)));
-
-			if (!oldRouting)
-				m_Routing = false;
 
 			foreach (EndpointInfo destination in pathsList.Select(p => p.DestinationEndpoint).Distinct())
 			{
@@ -734,67 +726,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 			return RoutingGraph.RoutingCache
 			                   .GetSourcesForDestinationEndpoint(control.GetInputEndpointInfo((int)activeInput),
 			                                                     eConnectionType.Video);
-		}
-
-		/// <summary>
-		/// When routing a source to the given destination for video, this method
-		/// unroutes any audio that would become orphaned as a result.
-		/// </summary>
-		/// <param name="destination"></param>
-		/// <returns>True if audio was unrouted.</returns>
-		private bool UnrouteOrphanedAudioForDualDisplay(IDestination destination)
-		{
-			if (destination == null)
-				throw new ArgumentNullException("destination");
-
-			IcdHashSet<ISource> unrouteAudio;
-
-			m_CacheSection.Enter();
-
-			try
-			{
-				IcdHashSet<ISource> oldSources;
-				if (!m_VideoRoutingCache.TryGetValue(destination, out oldSources))
-					return false;
-
-				if (oldSources.Count == 0)
-					return false;
-
-				unrouteAudio = oldSources.Where(s => m_AudioRoutingCache.Contains(s))
-				                         .ToIcdHashSet();
-
-				// Don't unroute audio if the source is routed to another display
-				foreach (ISource otherDisplaySource in m_VideoRoutingCache.Where(kvp => kvp.Key != destination)
-				                                                          .SelectMany(kvp => kvp.Value))
-				{
-					unrouteAudio.Remove(otherDisplaySource);
-				}
-
-				if (unrouteAudio.Count == 0)
-					return false;
-			}
-			finally
-			{
-				m_CacheSection.Leave();
-			}
-
-			foreach (ISource unrouteSource in unrouteAudio)
-				UnrouteAudio(unrouteSource);
-
-			return true;
-		}
-
-		/// <summary>
-		/// Unroutes the given audio source.
-		/// </summary>
-		/// <param name="source"></param>
-		private void UnrouteAudio(ISource source)
-		{
-			if (source == null)
-				throw new ArgumentNullException("source");
-
-			foreach (IDestination audioDestination in GetAudioDestinations())
-				RoutingGraph.Unroute(source, audioDestination, eConnectionType.Audio, m_Room.Id);
 		}
 
 		/// <summary>
@@ -922,7 +853,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			return device == null ? null : GetDeviceControl(device, controlOverride);
 		}
 
-		public static IDeviceControl GetDeviceControl(IDeviceBase device, eControlOverride controlOverride)
+		private static IDeviceControl GetDeviceControl(IDeviceBase device, eControlOverride controlOverride)
 		{
 			if (device == null)
 				throw new ArgumentNullException("device");
