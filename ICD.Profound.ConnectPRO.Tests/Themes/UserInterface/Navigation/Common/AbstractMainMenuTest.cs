@@ -301,7 +301,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 			//Check video routes
 			foreach (var destination in destinations)
 			{
-				Assert.True(routingVideo.ContainsKey(destination) && routingVideo.Values.Any(v => v.Contains(source)));
+				Assert.True(routingVideo.ContainsKey(destination) && routingVideo.Values.Any(v => v == source));
 			}
 		}
 	}
