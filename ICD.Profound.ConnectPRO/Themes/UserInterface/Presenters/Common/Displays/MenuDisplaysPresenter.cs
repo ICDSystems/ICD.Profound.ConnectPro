@@ -131,7 +131,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			}
 		}
 
-		public void SetRouting(Dictionary<IDestination, ISource> routing, IcdHashSet<ISource> activeAudio)
+		public void SetRouting(Dictionary<IDestination, IcdHashSet<ISource>> routing, IcdHashSet<ISource> activeAudio)
 		{
 			bool refresh = false;
 
@@ -145,9 +145,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				RefreshIfVisible();
 		}
 
-		private static ISource GetRoutedSource(IDestination destination, Dictionary<IDestination, ISource> routing)
+		private static ISource GetRoutedSource(IDestination destination, IDictionary<IDestination, IcdHashSet<ISource>> routing)
 		{
-			return destination == null ? null : routing.GetDefault(destination);
+			if (destination == null)
+				return null;
+
+			IcdHashSet<ISource> sources;
+			if (!routing.TryGetValue(destination, out sources))
+				return null;
+
+			return sources.OrderBy(s => s.Order)
+			              .ThenBy(s => s.Id)
+			              .FirstOrDefault();
 		}
 
 		#region View Callbacks

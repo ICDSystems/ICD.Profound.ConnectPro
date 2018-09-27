@@ -18,6 +18,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displa
 		/// </summary>
 		ISource ActiveSource { get; set; }
 
-		void SetRouting(Dictionary<IDestination, ISource> routing, IcdHashSet<ISource> activeAudio);
+		void SetRouting(Dictionary<IDestination, IcdHashSet<ISource>> routing, IcdHashSet<ISource> activeAudio);
 	}
 }
