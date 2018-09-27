@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [6.1.1] - 2018-09-27
+### Changed
+ - Better fix for audio routing in specific async switcher situations
+ - Fixed bug where incoming call text was not updating for subsequent calls
+
 ## [6.1.0] - 2018-09-25
 ### Changed
  - Fixed audio routing in specific async switcher situations
