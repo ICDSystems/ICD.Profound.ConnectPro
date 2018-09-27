@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
@@ -48,6 +50,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 		public void SetItemSelected(ushort index, bool selected)
 		{
 			m_ItemList.SetItemSelected(index, selected);
+		}
+
+		/// <summary>
+		/// Sets the labels for the buttons in the list.
+		/// </summary>
+		/// <param name="labels"></param>
+		public void SetButtonLabels(IEnumerable<string> labels)
+		{
+			m_ItemList.SetItemLabels(labels.ToArray());
+		}
+
+		/// <summary>
+		/// Sets the visibility of the button at the given index.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="visible"></param>
+		public void SetButtonVisible(ushort index, bool visible)
+		{
+			m_ItemList.SetItemVisible(index, visible);
 		}
 
 		#region Control Callbacks

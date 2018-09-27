@@ -1,9 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
+using ICD.Connect.Conferencing.ConferenceManagers;
+using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.Controls.Directory;
+using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Devices;
+using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings;
 using ICD.Connect.Settings.Core;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -18,6 +27,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		private const ushort PASSCODE_SETTINGS = 1;
 		private const ushort DIRECTORY = 2;
 
+		private static readonly Dictionary<ushort, string> s_ButtonLabels =
+			new Dictionary<ushort, string>
+			{
+				{SYSTEM_POWER, "System Power Preference"},
+				{PASSCODE_SETTINGS, "Passcode Settings"},
+				{DIRECTORY, "Directory"}
+			};
+
 		private static readonly Dictionary<ushort, Type> s_NavTypes = new Dictionary<ushort, Type>
 			{
 				{SYSTEM_POWER, typeof(ISettingsSystemPowerPresenter)},
@@ -27,6 +44,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 		private readonly Dictionary<ushort, IPresenter> m_NavPages;
 		private readonly SafeCriticalSection m_RefreshSection;
+
+		/// <summary>
+		/// Gets the directory control.
+		/// </summary>
+		[CanBeNull]
+		public IDirectoryControl DirectoryControl { get; private set; }
 
 		private IPresenter m_Visible;
 
@@ -63,6 +86,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		}
 
 		/// <summary>
+		/// Sets the room for this presenter to represent.
+		/// </summary>
+		/// <param name="room"></param>
+		public override void SetRoom(IConnectProRoom room)
+		{
+			base.SetRoom(room);
+			DirectoryControl = Room.GetControlRecursive<IDirectoryControl>();
+			RefreshIfVisible();
+		}
+
+		/// <summary>
 		/// Release resources.
 		/// </summary>
 		public override void Dispose()
@@ -84,8 +118,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			try
 			{
+				IEnumerable<string> labels = s_ButtonLabels.OrderValuesByKey();
+				view.SetButtonLabels(labels);
+
 				foreach (KeyValuePair<ushort, IPresenter> kvp in m_NavPages)
+				{
 					view.SetItemSelected(kvp.Key, kvp.Value.IsViewVisible);
+					bool showButton = true;
+					if (kvp.Key == DIRECTORY)
+					{
+						showButton = DirectoryControl != null;
+					}
+					view.SetButtonVisible(kvp.Key, showButton);
+				}
 			}
 			finally
 			{
