@@ -28,5 +28,10 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Popups
 		{
 			m_IncomingCallLabel.SetLabelText(number);
 		}
+
+		public void SetBackgroundMode(eOsdIncomingCallBackgroundMode mode)
+		{
+			m_Background.SetMode((ushort) mode);
+		}
 	}
 }

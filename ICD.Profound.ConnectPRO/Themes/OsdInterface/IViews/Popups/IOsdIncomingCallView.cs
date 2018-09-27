@@ -7,5 +7,13 @@
 		void SetSourceName(string name);
 
 		void SetCallerInfo(string number);
+
+		void SetBackgroundMode(eOsdIncomingCallBackgroundMode number);
+	}
+
+	public enum eOsdIncomingCallBackgroundMode
+	{
+		Ringing = 0,
+		Rejected = 1
 	}
 }

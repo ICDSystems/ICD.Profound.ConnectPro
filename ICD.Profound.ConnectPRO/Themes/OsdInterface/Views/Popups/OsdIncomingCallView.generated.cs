@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
+using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Images;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Connect.UI.Controls.TextControls;
@@ -13,6 +14,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Popups
 		private VtProSimpleLabel m_SourceNameLabel;
 		private VtProSimpleLabel m_IncomingCallLabel;
 		private VtProImageObject m_Icon;
+		private VtProAdvancedButton m_Background;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -40,6 +42,11 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Popups
 			m_Icon = new VtProImageObject(panel, m_Subpage)
 			{
 				SerialGraphicsJoin = 301
+			};
+
+			m_Background = new VtProAdvancedButton(panel, m_Subpage)
+			{
+				AnalogModeJoin = 301
 			};
 		}
 

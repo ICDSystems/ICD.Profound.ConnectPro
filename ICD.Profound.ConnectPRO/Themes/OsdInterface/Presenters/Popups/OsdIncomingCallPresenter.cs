@@ -1,19 +1,52 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.ConferenceSources;
+using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Popups;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews.Popups;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups
 {
 	public sealed class OsdIncomingCallPresenter : AbstractOsdPresenter<IOsdIncomingCallView>, IOsdIncomingCallPresenter
 	{
-		private IConferenceManager m_SubscribedConferenceManager;
+		private const long REJECTED_LINGER_TIME_MS = 4 * 1000;
+		private readonly SafeTimer m_CallIgnoredTimer;
+
+		private IEnumerable<IDialingDeviceControl> m_DialingProviders;
+
+		private IConferenceSource m_Source;
+
+		private IConferenceSource Source
+		{
+			get { return m_Source; }
+			set
+			{
+				if (m_Source == value)
+					return;
+
+				if (m_Source != null)
+					Unsubscribe(m_Source);
+
+				m_Source = value;
+
+				if (m_Source != null)
+					Subscribe(m_Source);
+
+				m_CallIgnoredTimer.Stop();
+
+				ShowView(Source != null);
+
+				RefreshIfVisible();
+			}
+		}
 
 		/// <summary>
 		/// Constructor.
@@ -23,6 +56,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups
 		/// <param name="theme"></param>
 		public OsdIncomingCallPresenter(IOsdNavigationController nav, IOsdViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
+			m_CallIgnoredTimer = new SafeTimer(RemoveSource, -1L);
 		}
 
 		/// <summary>
@@ -33,14 +67,22 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups
 		{
 			base.Refresh(view);
 
-			view.SetIcon("icon_videoConference_white");
-			view.SetSourceName("Video Conference");
+			if (Source == null)
+				return;
 
-			IConferenceSource source = GetSource();
-
-			string info = source == null ? string.Empty : string.Format("{0} - {1}", source.Name, source.Number);
-
-			view.SetCallerInfo(info);
+			if (Source.GetIsRingingIncomingCall())
+			{
+				string info = Source.Name == null ? Source.Number : string.Format("{0} - {1}", Source.Name, Source.Number);
+				view.SetIcon("call");
+				view.SetCallerInfo(string.Format("Incoming Call from {0}", info));
+				view.SetBackgroundMode(eOsdIncomingCallBackgroundMode.Ringing);
+			}
+			else if (Source.AnswerState == eConferenceSourceAnswerState.Ignored)
+			{
+				view.SetIcon("hangup");
+				view.SetCallerInfo("Call Was Declined");
+				view.SetBackgroundMode(eOsdIncomingCallBackgroundMode.Rejected);
+			}
 		}
 
 		/// <summary>
@@ -54,12 +96,16 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups
 			if (room == null)
 				return;
 
-			m_SubscribedConferenceManager = room.ConferenceManager;
-			if (m_SubscribedConferenceManager == null)
+			m_DialingProviders = room.ConferenceManager.GetDialingProviders();
+			
+			if (m_DialingProviders == null)
 				return;
 
-			m_SubscribedConferenceManager.OnRecentSourceAdded += SubscribedConferenceManagerOnRecentSourceAdded;
-			m_SubscribedConferenceManager.OnActiveSourceStatusChanged += SubscribedConferenceManagerOnActiveSourceStatusChanged;
+			foreach (var dialer in m_DialingProviders)
+			{
+				dialer.OnSourceAdded += DialerOnSourceAdded;
+				dialer.OnSourceChanged += DialerOnSourceChanged;
+			}
 		}
 
 		/// <summary>
@@ -70,44 +116,58 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups
 		{
 			base.Unsubscribe(room);
 
-			if (m_SubscribedConferenceManager == null)
+			if (m_DialingProviders == null)
 				return;
 
-			m_SubscribedConferenceManager.OnRecentSourceAdded += SubscribedConferenceManagerOnRecentSourceAdded;
-			m_SubscribedConferenceManager.OnActiveSourceStatusChanged -= SubscribedConferenceManagerOnActiveSourceStatusChanged;
+			foreach (var dialer in m_DialingProviders)
+			{
+				dialer.OnSourceAdded -= DialerOnSourceAdded;
+				dialer.OnSourceChanged -= DialerOnSourceChanged;
+			}
+
+			m_DialingProviders = null;
 		}
 
-		private void SubscribedConferenceManagerOnRecentSourceAdded(object sender, ConferenceSourceEventArgs conferenceSourceEventArgs)
+		private void DialerOnSourceAdded(object sender, ConferenceSourceEventArgs args)
 		{
-			UpdateVisibility();
+			UpdateSource(args.Data);
 		}
 
-		private void UpdateVisibility()
+		private void DialerOnSourceChanged(object sender, ConferenceSourceEventArgs args)
 		{
-			IConferenceSource source = GetSource();
+			UpdateSource(args.Data);
+		}
 
-			ShowView(source != null);
+		private void UpdateSource(IConferenceSource source)
+		{
+			if (source != null && source.GetIsRingingIncomingCall())
+				Source = source;
+		}
+
+		private void RemoveSource()
+		{
+			Source = null;
+		}
+
+		private void Subscribe(IConferenceSource source)
+		{
+			source.OnAnswerStateChanged += SourceOnAnswerStateChanged;
+		}
+
+		private void Unsubscribe(IConferenceSource source)
+		{
+			source.OnAnswerStateChanged -= SourceOnAnswerStateChanged;
+		}
+
+		private void SourceOnAnswerStateChanged(object sender, ConferenceSourceAnswerStateEventArgs e)
+		{
+			if (Source.AnswerState == eConferenceSourceAnswerState.Answered ||
+			    Source.AnswerState == eConferenceSourceAnswerState.Autoanswered)
+				RemoveSource();
+			else if (Source.AnswerState == eConferenceSourceAnswerState.Ignored)
+				m_CallIgnoredTimer.Reset(REJECTED_LINGER_TIME_MS);
 
 			RefreshIfVisible();
-		}
-
-		private IConferenceSource GetSource()
-		{
-			IConference conference = m_SubscribedConferenceManager == null
-				? null
-				: m_SubscribedConferenceManager.ActiveConference;
-			IConferenceSource source = conference == null
-				                           ? null
-				                           : conference.GetSources()
-				                                       .FirstOrDefault(s => s.Direction == eConferenceSourceDirection.Incoming &&
-				                                                            !s.GetIsAnswered() &&
-				                                                            !s.GetIsOnline());
-			return source;
-		}
-
-		private void SubscribedConferenceManagerOnActiveSourceStatusChanged(object sender, ConferenceSourceStatusEventArgs conferenceSourceStatusEventArgs)
-		{
-			UpdateVisibility();
 		}
 	}
 }

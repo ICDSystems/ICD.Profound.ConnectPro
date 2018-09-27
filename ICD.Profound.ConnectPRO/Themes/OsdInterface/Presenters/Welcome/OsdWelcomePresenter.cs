@@ -114,7 +114,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 		        }
 		        else
 		        {
-                    view.SetCurrentBookingIcon("tcThumbsUp");
+                    view.SetCurrentBookingIcon("thumbsUp");
 		            view.SetAvailabilityText("AVAILABLE");
 		            view.SetCurrentBookingSubject(roomName);
 
