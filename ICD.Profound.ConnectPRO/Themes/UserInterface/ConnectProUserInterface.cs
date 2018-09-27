@@ -350,14 +350,87 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			// If a source is currently selected then we route that source to the selected display
 			else if (activeSource != routedSource)
 			{
-				SetProcessingSource(destination, activeSource);
+				bool overrideAudio;
 
-				m_Room.Routing.RouteDualDisplay(activeSource, destination);
+				m_RoutingSection.Enter();
+
+				try
+				{
+					SetProcessingSource(destination, activeSource);
+					overrideAudio = CanOverrideAudio(activeSource, destination);
+				}
+				finally
+				{
+					m_RoutingSection.Leave();
+				}
+
+				m_Room.Routing.RouteDualDisplay(activeSource, destination, overrideAudio);
 				
 				routedSource = activeSource;
 
 				if (ShowSourceContextualMenu(routedSource, true))
 					SetActiveSource(null);
+			}
+		}
+
+		/// <summary>
+		/// Returns true if we can override active audio when routing the given source to the given destination.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
+		/// <returns></returns>
+		private bool CanOverrideAudio(ISource source, IDestination destination)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			if (destination == null)
+				throw new ArgumentNullException("destination");
+
+			m_RoutingSection.Enter();
+
+			try
+			{
+				// Nothing is currently routed for audio
+				if (m_ActiveAudio.Count == 0)
+					return false;
+
+				// If there are no sources routed to the display then there is nothing to override
+				IcdHashSet<ISource> oldSources;
+				if (!m_ActiveVideo.TryGetValue(destination, out oldSources) || oldSources.Count == 0)
+					return false;
+
+				// No change
+				if (oldSources.Contains(source))
+					return false;
+
+				// Old source is not current active audio
+				if (!m_ActiveAudio.Intersect(oldSources).Any())
+					return false;
+
+				// Is there another source routed for audio going to another display?
+				foreach (KeyValuePair<IDestination, IcdHashSet<ISource>> kvp in m_ActiveVideo)
+				{
+					// Skip the display we are currently routing to
+					IDestination display = kvp.Key;
+					if (display == destination)
+						continue;
+
+					// Are we in the middle of routing a new source to the display?
+					ISource processing = m_ProcessingSources.GetDefault(display);
+					if (processing != null)
+						continue;
+
+					// The display has a source that is being listened to
+					if (kvp.Value.Intersect(m_ActiveAudio).Any())
+						return false;
+				}
+
+				return true;
+			}
+			finally
+			{
+				m_RoutingSection.Leave();
 			}
 		}
 
