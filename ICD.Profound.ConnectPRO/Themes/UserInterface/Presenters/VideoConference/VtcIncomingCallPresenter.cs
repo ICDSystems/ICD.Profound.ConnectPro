@@ -134,6 +134,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				return;
 
 			m_SubscribedVideoDialer.OnSourceChanged += VideoDialerOnSourceChanged;
+			m_SubscribedVideoDialer.OnSourceAdded += VideoDialerOnSourceChanged;
+			m_SubscribedVideoDialer.OnSourceRemoved += VideoDialerOnSourceRemoved;
 		}
 
 		/// <summary>
@@ -145,7 +147,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			base.Unsubscribe(room);
 
 			if (m_SubscribedVideoDialer != null)
+			{
 				m_SubscribedVideoDialer.OnSourceChanged -= VideoDialerOnSourceChanged;
+				m_SubscribedVideoDialer.OnSourceAdded -= VideoDialerOnSourceChanged;
+				m_SubscribedVideoDialer.OnSourceRemoved -= VideoDialerOnSourceRemoved;
+			}
 
 			m_SubscribedVideoDialer = null;
 		}
@@ -160,6 +166,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			IConferenceSource source = args.Data;
 			if (source.GetIsRingingIncomingCall())
 				AddSource(source);
+		}
+
+		private void VideoDialerOnSourceRemoved(object sender, ConferenceSourceEventArgs args)
+		{
+			IConferenceSource source = args.Data;
+			RemoveSource(source);
 		}
 
 		/// <summary>
@@ -310,7 +322,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			IConferenceSource source = GetFirstSource();
 
 			if (source != null)
-				source.Hangup();
+				source.Reject();
 
 			ShowView(false);
 		}
