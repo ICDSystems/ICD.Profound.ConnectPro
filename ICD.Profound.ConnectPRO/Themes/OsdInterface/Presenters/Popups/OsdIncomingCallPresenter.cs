@@ -1,8 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using ICD.Common.Utils.Timers;
-using ICD.Connect.Conferencing.ConferenceManagers;
-using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.ConferenceSources;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
@@ -11,7 +8,6 @@ using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Popups;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews.Popups;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups
 {
