@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
+using ICD.Connect.Calendaring;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -83,9 +85,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			try
 			{
 				string icon = Icons.GetSourceIcon("display", eSourceColor.Grey);
-				if (Booking is IZoomBooking || Booking is ISipBooking)
+				if (Booking.GetBookingNumbers().FirstOrDefault(n => n.Protocol == eBookingProtocol.Zoom) != null || Booking.GetBookingNumbers().FirstOrDefault(n => n.Protocol == eBookingProtocol.Sip) != null)
 					icon = Icons.GetSourceIcon("videoConference", eSourceColor.Grey);
-				else if (Booking is IPstnBooking)
+				else if (Booking.GetBookingNumbers().FirstOrDefault(n => n.Protocol == eBookingProtocol.Pstn) != null)
 					icon = Icons.GetSourceIcon("audioConference", eSourceColor.Grey);
 
 				view.SetBookingIcon(icon);

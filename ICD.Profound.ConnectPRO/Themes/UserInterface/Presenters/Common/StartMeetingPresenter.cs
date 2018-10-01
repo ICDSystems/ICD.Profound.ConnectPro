@@ -260,13 +260,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (m_SelectedBooking == null)
 				return;
 
-			var booking = m_SelectedBooking.Booking;
+			var bookingNumber = m_SelectedBooking.Booking.GetBookingNumbers().FirstOrDefault();
 			m_SelectedBooking = null;
 
 			Room.StartMeeting(false);
 
 			// check if booking exists
-			if (booking == null)
+			if (bookingNumber == null)
 				return;
 
 			// check if we have any dialers
@@ -275,8 +275,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				return;
 
 			// check if any dialers support the booking
-			var preferredDialer = dialers.Where(d => d.CanDial(booking) > eBookingSupport.Unsupported)
-				.OrderByDescending(d => d.CanDial(booking))
+			var preferredDialer = dialers.Where(d => d.CanDial(bookingNumber) > eBookingSupport.Unsupported)
+				.OrderByDescending(d => d.CanDial(bookingNumber))
 				.ThenByDescending(d => d.Supports)
 				.FirstOrDefault();
 
@@ -292,7 +292,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				Room.Routing.RouteAtc(routeControl);
 
 			// dial booking
-			preferredDialer.Dial(booking);
+			preferredDialer.Dial(bookingNumber);
 		}
 
 		private void ViewOnStartNewMeetingButtonPressed(object sender, EventArgs eventArgs)
