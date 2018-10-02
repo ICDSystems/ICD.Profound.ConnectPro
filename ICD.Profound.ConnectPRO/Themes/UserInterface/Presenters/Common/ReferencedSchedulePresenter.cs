@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Linq;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
-using ICD.Connect.Calendaring;
 using ICD.Connect.Calendaring.Booking;
-using ICD.Connect.Partitioning.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -29,6 +27,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <summary>
 		/// Gets/sets the source for the presenter.
 		/// </summary>
+		[CanBeNull]
 		public IBooking Booking
 		{
 			get { return m_Booking; }
@@ -84,11 +83,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
-				string icon = Icons.GetSourceIcon("display", eSourceColor.Grey);
-				if (Booking.GetBookingNumbers().FirstOrDefault(n => n.Protocol == eBookingProtocol.Zoom) != null || Booking.GetBookingNumbers().FirstOrDefault(n => n.Protocol == eBookingProtocol.Sip) != null)
-					icon = Icons.GetSourceIcon("videoConference", eSourceColor.Grey);
-				else if (Booking.GetBookingNumbers().FirstOrDefault(n => n.Protocol == eBookingProtocol.Pstn) != null)
-					icon = Icons.GetSourceIcon("audioConference", eSourceColor.Grey);
+				string icon = GetIconForBooking(Booking);
 
 				view.SetBookingIcon(icon);
                 view.SetStartTimeLabel(m_Booking.StartTime.ToShortTimeString());
@@ -101,6 +96,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			finally
 			{
 				m_RefreshSection.Leave();
+			}
+		}
+
+		private static string GetIconForBooking(IBooking booking)
+		{
+			if (booking == null)
+				return null;
+
+			switch (booking.Type)
+			{
+				case eMeetingType.AudioConference:
+					return Icons.GetSourceIcon("audioConference", eSourceColor.Grey);
+				case eMeetingType.VideoConference:
+					return Icons.GetSourceIcon("videoConference", eSourceColor.Grey);
+				case eMeetingType.Presentation:
+					return Icons.GetSourceIcon("display", eSourceColor.Grey);
+				default:
+					throw new ArgumentOutOfRangeException();
 			}
 		}
 
