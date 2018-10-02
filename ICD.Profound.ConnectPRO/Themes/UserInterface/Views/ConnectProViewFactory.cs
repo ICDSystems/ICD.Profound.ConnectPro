@@ -166,7 +166,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			IView output = factory(m_Panel, m_Theme);
 
 			if (output as T == null)
-				throw new Exception(string.Format("View {0} is not of type {1}", output, typeof(T).Name));
+				throw new InvalidCastException(string.Format("View {0} is not of type {1}", output, typeof(T).Name));
 
 			return output as T;
 		}
@@ -192,7 +192,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			IView output = factory(panel, m_Theme, parent, index);
 
 			if (output as T == null)
-				throw new Exception(string.Format("View {0} is not of type {1}", output, typeof(T).Name));
+				throw new InvalidCastException(string.Format("View {0} is not of type {1}", output, typeof(T).Name));
 
 			return output as T;
 		}
