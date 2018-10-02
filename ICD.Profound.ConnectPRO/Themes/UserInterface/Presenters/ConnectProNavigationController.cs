@@ -233,7 +233,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 				     .GetTypeInfo()
 #endif
 				     .IsInstanceOfType(output))
-				throw new Exception(string.Format("Presenter {0} is not of type {1}", output, type.Name));
+				throw new InvalidCastException(string.Format("Presenter {0} is not of type {1}", output, type.Name));
 
 			return output;
 		}
