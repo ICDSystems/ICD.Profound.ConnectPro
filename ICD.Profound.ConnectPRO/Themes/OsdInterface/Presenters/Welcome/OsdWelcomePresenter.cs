@@ -63,6 +63,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 		        List<IBooking> upcomingBookingsAndAvailability = new List<IBooking>();
 
 		        IBooking firstBooking = bookings.FirstOrDefault();
+				// find out if room is currently available
                 if (firstBooking != null && firstBooking.StartTime - now > TimeSpan.FromMinutes(15))
                 {
                     upcomingBookingsAndAvailability.Add(new EmptyBooking()
@@ -71,6 +72,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
                         EndTime = firstBooking.StartTime
                     });
                 }
+				// build list of bookings and available times
 		        for (int i = 0; i < bookings.Count && upcomingBookingsAndAvailability.Count < 7; i++)
 		        {
 		            if (bookings[i] == null)
@@ -93,7 +95,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 		                    EndTime = bookings[i + 1].StartTime
 		                });
 		        }
-
+				// build presenters
 		        foreach (IReferencedSchedulePresenter presenter in m_ChildrenFactory.BuildChildren(
 		            upcomingBookingsAndAvailability.Skip(1), Subscribe, Unsubscribe))
 		        {
@@ -101,6 +103,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 		            presenter.Refresh();
 		        }
 
+				// display current room status
 		        IBooking currentBooking = upcomingBookingsAndAvailability.FirstOrDefault();
 		        if (currentBooking != null && !(currentBooking is EmptyBooking))
 		        {
@@ -176,7 +179,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
             if (m_CalendarControl != null)
 			    Unsubscribe(m_CalendarControl);
 
-			m_CalendarControl = room.CalendarControl;
+			m_CalendarControl = room == null ? null : room.CalendarControl;
 
             if (m_CalendarControl != null)
 			    Subscribe(m_CalendarControl);

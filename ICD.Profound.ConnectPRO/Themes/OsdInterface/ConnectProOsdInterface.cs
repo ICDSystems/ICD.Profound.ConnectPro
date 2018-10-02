@@ -8,6 +8,7 @@ using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Popups;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Sources;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.VisibilityTree;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Welcome;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters;
@@ -22,6 +23,10 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 	{
 		private readonly IPanelDevice m_Panel;
 		private readonly IOsdNavigationController m_NavigationController;
+
+		private IVisibilityNode m_DefaultNotification;
+		private IVisibilityNode m_MainPageVisibility;
+		private IVisibilityNode m_NotificationVisibility;
 
 		private IConnectProRoom m_Room;
 
@@ -48,7 +53,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 			IOsdViewFactory viewFactory = new ConnectProOsdViewFactory(panel, theme);
 			m_NavigationController = new ConnectProOsdNavigationController(viewFactory, theme);
 
-			m_NavigationController.LazyLoadPresenter<IOsdIncomingCallPresenter>();
+			BuildVisibilityTree();
 		}
 
 		/// <summary>
@@ -57,6 +62,28 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 		private void UpdatePanelOnlineJoin()
 		{
 			m_Panel.SendInputDigital(CommonJoins.DIGITAL_OFFLINE_JOIN, m_Room == null);
+		}
+
+		/// <summary>
+		/// Builds the rules for view visibility, e.g. prevent certain items from being visible at the same time.
+		/// </summary>
+		private void BuildVisibilityTree()
+		{
+			// Show "hello" when no notifications are visible
+			m_DefaultNotification = new DefaultVisibilityNode(m_NavigationController.LazyLoadPresenter<IHelloPresenter>());
+			m_DefaultNotification.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdIncomingCallPresenter>());
+
+			// Only one notification can show at a time, and hide "hello"
+			m_NotificationVisibility = new SingleVisibilityNode();
+			m_NotificationVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IHelloPresenter>());
+			m_NotificationVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdIncomingCallPresenter>());
+
+			m_MainPageVisibility = new DefaultVisibilityNode(m_NavigationController.LazyLoadPresenter<IOsdWelcomePresenter>());
+			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdSourcesPresenter>());
+
+			// these presenters are initially visible
+			m_NavigationController.NavigateTo<IHelloPresenter>();
+			m_NavigationController.NavigateTo<IOsdWelcomePresenter>();
 		}
 
 		#region Room Callbacks
