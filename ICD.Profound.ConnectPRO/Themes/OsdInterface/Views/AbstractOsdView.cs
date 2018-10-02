@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
+using ICD.Common.Utils.Services;
+using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Lists;
@@ -106,8 +108,8 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 			}
 			catch (Exception e)
 			{
-				string error = string.Format("Unable to show {0} - {1}", GetType().Name, e.Message);
-				throw new Exception(error, e);
+				Log(eSeverity.Error, e, string.Format("Unable to show {0}", GetType().Name));
+				throw;
 			}
 
 			OnVisibilityChanged.Raise(this, new BoolEventArgs(visible));
@@ -128,8 +130,8 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 			}
 			catch (Exception e)
 			{
-				string error = string.Format("Unable to enable {0} - {1}", GetType().Name, e.Message);
-				throw new Exception(error, e);
+				Log(eSeverity.Error, e, string.Format("Unable to enable {0}", GetType().Name));
+				throw;
 			}
 
 			OnEnabledChanged.Raise(this, new BoolEventArgs(enabled));
@@ -184,6 +186,20 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 		/// </summary>
 		protected virtual void UnsubscribeControls()
 		{
+		}
+
+		protected void Log(eSeverity severity, string message, params string[] args)
+		{
+			var logger = ServiceProvider.TryGetService<ILoggerService>();
+			if (logger != null)
+				logger.AddEntry(severity, message, args);
+		}
+
+		protected void Log(eSeverity severity, Exception ex, string message, params string[] args)
+		{
+			var logger = ServiceProvider.TryGetService<ILoggerService>();
+			if (logger != null)
+				logger.AddEntry(severity, ex, message, args);
 		}
 
 		#endregion
