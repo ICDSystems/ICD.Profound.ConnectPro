@@ -328,10 +328,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void StopPresenting()
 		{
-			if (m_SubscribedPresentationComponent == null)
+			if (Room == null)
 				return;
 
-			m_SubscribedPresentationComponent.StopPresentation();
+			Room.Routing.UnrouteVtcPresentation();
 		}
 
 		#endregion
