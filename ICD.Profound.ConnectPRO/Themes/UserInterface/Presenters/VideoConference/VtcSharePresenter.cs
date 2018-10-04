@@ -30,9 +30,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 
+		private readonly IcdHashSet<ISource> m_Routed;
 		private ISource[] m_Sources;
 		private ISource m_Selected;
-		private readonly IcdHashSet<ISource> m_Routed;
 
 		private IDialingDeviceControl m_SubscribedVideoDialer;
 
@@ -82,8 +82,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			try
 			{
-				m_Sources = GetSources().ToArray();
-
 				bool inPresentation = IsInPresentation();
 				
 				for (ushort index = 0; index < m_Sources.Length; index++)
@@ -99,16 +97,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 						? null
 						: Icons.GetSourceIcon(connectProSource.Icon, eSourceColor.White);
 
-					bool select = m_Routed.Count == 0
-						? source == m_Selected
-						: m_Routed.Contains(source);
+					bool select = inPresentation ? m_Routed.Contains(source) : source == m_Selected;
 
 					view.SetButtonSelected(index, select);
 					view.SetButtonIcon(index, icon);
 					view.SetButtonLabel(index, source == null ? null : source.GetNameOrDeviceName(combine));
 				}
 
-				bool enabled = inPresentation || m_Selected != null || m_Routed != null;
+				bool enabled = inPresentation || m_Selected != null;
 
 				view.SetButtonCount((ushort)m_Sources.Length);
 				view.SetShareButtonEnabled(enabled);
@@ -118,6 +114,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		/// <summary>
+		/// Sets the room for the presenter to represent.
+		/// </summary>
+		/// <param name="room"></param>
+		public override void SetRoom(IConnectProRoom room)
+		{
+			base.SetRoom(room);
+
+			m_Sources = GetSources().ToArray();
 		}
 
 		/// <summary>
@@ -156,7 +163,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				// Update the routed presentation source
 				IEnumerable<ISource> sources = Room == null
 					? Enumerable.Empty<ISource>()
-					: Room.Routing.GetVtcPresentationSources().ToIcdHashSet();
+					: Room.Routing.GetVtcPresentationSources();
 
 				m_Routed.AddRange(sources);
 
@@ -292,6 +299,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			view.OnShareButtonPressed -= ViewOnShareButtonPressed;
 		}
 
+		/// <summary>
+		/// Called when the view visibility changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			base.ViewOnVisibilityChanged(sender, args);
+
+			// Clear the selection state when visibility changes
+			Selected = null;
+		}
+
 		private void ViewOnShareButtonPressed(object sender, EventArgs eventArgs)
 		{
 			if (Room == null)
@@ -328,10 +348,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void StopPresenting()
 		{
-			if (m_SubscribedPresentationComponent == null)
+			if (Room == null)
 				return;
 
-			m_SubscribedPresentationComponent.StopPresentation();
+			Room.Routing.UnrouteVtcPresentation();
 		}
 
 		#endregion
