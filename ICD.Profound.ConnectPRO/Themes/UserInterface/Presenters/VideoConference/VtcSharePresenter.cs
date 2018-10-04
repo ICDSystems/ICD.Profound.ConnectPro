@@ -30,9 +30,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 
+		private readonly IcdHashSet<ISource> m_Routed;
 		private ISource[] m_Sources;
 		private ISource m_Selected;
-		private readonly IcdHashSet<ISource> m_Routed;
 
 		private IDialingDeviceControl m_SubscribedVideoDialer;
 
@@ -82,8 +82,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			try
 			{
-				m_Sources = GetSources().ToArray();
-
 				bool inPresentation = IsInPresentation();
 				
 				for (ushort index = 0; index < m_Sources.Length; index++)
@@ -118,6 +116,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		/// <summary>
+		/// Sets the room for the presenter to represent.
+		/// </summary>
+		/// <param name="room"></param>
+		public override void SetRoom(IConnectProRoom room)
+		{
+			base.SetRoom(room);
+
+			m_Sources = GetSources().ToArray();
 		}
 
 		/// <summary>
@@ -156,7 +165,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				// Update the routed presentation source
 				IEnumerable<ISource> sources = Room == null
 					? Enumerable.Empty<ISource>()
-					: Room.Routing.GetVtcPresentationSources().ToIcdHashSet();
+					: Room.Routing.GetVtcPresentationSources();
 
 				m_Routed.AddRange(sources);
 
