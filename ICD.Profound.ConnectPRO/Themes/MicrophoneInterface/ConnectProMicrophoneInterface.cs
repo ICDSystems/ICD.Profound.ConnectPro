@@ -178,8 +178,7 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 									  : eLedColor.Green;
 				}
 
-				m_Microphone.SetLedColor(color);
-				m_Microphone.SetLedBrightness(brightness);
+				m_Microphone.SetLedColor(color, brightness);
 			}
 			finally
 			{
