@@ -299,6 +299,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			view.OnShareButtonPressed -= ViewOnShareButtonPressed;
 		}
 
+		/// <summary>
+		/// Called when the view visibility changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			base.ViewOnVisibilityChanged(sender, args);
+
+			// Clear the selection state when visibility changes
+			Selected = null;
+		}
+
 		private void ViewOnShareButtonPressed(object sender, EventArgs eventArgs)
 		{
 			if (Room == null)
