@@ -97,16 +97,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 						? null
 						: Icons.GetSourceIcon(connectProSource.Icon, eSourceColor.White);
 
-					bool select = m_Routed.Count == 0
-						? source == m_Selected
-						: m_Routed.Contains(source);
+					bool select = inPresentation ? m_Routed.Contains(source) : source == m_Selected;
 
 					view.SetButtonSelected(index, select);
 					view.SetButtonIcon(index, icon);
 					view.SetButtonLabel(index, source == null ? null : source.GetNameOrDeviceName(combine));
 				}
 
-				bool enabled = inPresentation || m_Selected != null || m_Routed != null;
+				bool enabled = inPresentation || m_Selected != null;
 
 				view.SetButtonCount((ushort)m_Sources.Length);
 				view.SetShareButtonEnabled(enabled);
