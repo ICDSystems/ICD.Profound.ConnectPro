@@ -1,8 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Calendaring.Booking;
+using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.Devices;
+using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Partitioning.Rooms;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -83,7 +90,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
-				string icon = GetIconForBooking(Booking);
+				string icon = GetIconForBooking(Booking, Room);
 
 				view.SetBookingIcon(icon);
                 view.SetStartTimeLabel(m_Booking.StartTime.ToShortTimeString());
@@ -99,12 +106,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			}
 		}
 
-		private static string GetIconForBooking(IBooking booking)
+		private static string GetIconForBooking(IBooking booking, IConnectProRoom room)
 		{
 			if (booking == null)
 				return null;
 
-			switch (booking.Type)
+			switch (GetMeetingType(booking, room))
 			{
 				case eMeetingType.AudioConference:
 					return Icons.GetSourceIcon("audioConference", eSourceColor.Grey);
@@ -115,6 +122,48 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
+		}
+
+		private static eMeetingType GetMeetingType(IBooking booking, IConnectProRoom room)
+		{
+			// check if we have any dialers
+			var dialers = room.GetControlsRecursive<IDialingDeviceControl>().ToList();
+			if (dialers.Count == 0)
+				return eMeetingType.Presentation;
+
+			// Build map of dialer to best number
+			Dictionary<IDialingDeviceControl, IBookingNumber> map = dialers.ToDictionary(d => d, d => GetBestNumber(d, booking));
+
+			IDialingDeviceControl preferredDialer = dialers.Where(d => map.GetDefault(d) != null)
+			                                               .OrderByDescending(d => d.CanDial(map[d]))
+			                                               .ThenByDescending(d => d.Supports)
+			                                               .FirstOrDefault();
+
+			if (preferredDialer == null)
+				return eMeetingType.Presentation;
+
+			// route device to displays and/or audio destination
+			var dialerDevice = preferredDialer.Parent;
+			if (dialerDevice is IVideoConferenceDevice)
+				return eMeetingType.VideoConference;
+
+			if (preferredDialer.Supports == eConferenceSourceType.Audio)
+				return eMeetingType.AudioConference;
+
+			return eMeetingType.Presentation;
+		}
+
+		private static IBookingNumber GetBestNumber(IDialingDeviceControl dialer, IBooking booking)
+		{
+			if (dialer == null)
+				throw new ArgumentNullException("dialer");
+
+			if (booking == null)
+				throw new ArgumentNullException("booking");
+
+			return booking.GetBookingNumbers()
+			              .OrderByDescending(n => dialer.CanDial(n))
+			              .FirstOrDefault();
 		}
 
 		#region View Callbacks
