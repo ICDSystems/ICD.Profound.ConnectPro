@@ -50,19 +50,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 					ShowView(true);
 
 				m_CallListTogglePresenter.ShowView(m_IsInCall);
+				m_ButtonListPresenter.ShowView(m_IsInCall);
 
 				if (m_IsInCall)
-				{
 					ShowContactsPresenter(false);
-					m_ContactsPolycomPresenter.ShowView(false);
-					m_ButtonListPresenter.ShowView(true);
-				}
-				else
-				{
-					m_ButtonListPresenter.ShowView(false);
-					if (IsViewVisible)
-						ShowContactsPresenter(true);
-				}
+				else if (IsViewVisible)
+					ShowContactsPresenter(true);
 			}
 		}
 

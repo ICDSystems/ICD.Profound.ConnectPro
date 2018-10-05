@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.CalendarControl;
 using ICD.Connect.Conferencing.Controls.Dialing;
@@ -70,7 +71,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			    List<IBooking> bookings =
 			        m_CalendarControl == null
 			            ? new List<IBooking>()
-			            : m_CalendarControl.GetBookings().Where(b => b.EndTime > IcdEnvironment.GetLocalTime()).ToList();
+			            : m_CalendarControl.GetBookings()
+						.Where(b => b.EndTime > IcdEnvironment.GetLocalTime())
+						.ToList();
 
 				foreach (IReferencedSchedulePresenter presenter in m_ChildrenFactory.BuildChildren(bookings, Subscribe, Unsubscribe))
 				{
@@ -260,7 +263,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (m_SelectedBooking == null)
 				return;
 
-			var booking = m_SelectedBooking.Booking;
+			IBooking booking = m_SelectedBooking.Booking;
 			m_SelectedBooking = null;
 
 			Room.StartMeeting(false);
@@ -274,14 +277,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (dialers.Count == 0)
 				return;
 
-			// check if any dialers support the booking
-			var preferredDialer = dialers.Where(d => d.CanDial(booking) > eBookingSupport.Unsupported)
-				.OrderByDescending(d => d.CanDial(booking))
-				.ThenByDescending(d => d.Supports)
-				.FirstOrDefault();
+			// Build map of dialer to best number
+			Dictionary<IDialingDeviceControl, IBookingNumber> map = dialers.ToDictionary(d => d, d => GetBestNumber(d, booking));
+			IDialingDeviceControl preferredDialer = dialers.Where(d => map.GetDefault(d) != null)
+			                                               .OrderByDescending(d => d.CanDial(map[d]))
+			                                               .ThenByDescending(d => d.Supports)
+			                                               .FirstOrDefault();
 
 			if (preferredDialer == null)
 				return;
+
+			IBookingNumber bookingNumber = map[preferredDialer];
 
 			// route device to displays and/or audio destination
 			var dialerDevice = preferredDialer.Parent;
@@ -292,7 +298,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				Room.Routing.RouteAtc(routeControl);
 
 			// dial booking
-			preferredDialer.Dial(booking);
+			preferredDialer.Dial(bookingNumber);
+		}
+
+		private IBookingNumber GetBestNumber(IDialingDeviceControl dialer, IBooking booking)
+		{
+			if (dialer == null)
+				throw new ArgumentNullException("dialer");
+
+			if (booking == null)
+				throw new ArgumentNullException("booking");
+
+			return booking.GetBookingNumbers()
+			              .OrderByDescending(n => dialer.CanDial(n))
+			              .FirstOrDefault();
 		}
 
 		private void ViewOnStartNewMeetingButtonPressed(object sender, EventArgs eventArgs)

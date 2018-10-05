@@ -1,8 +1,8 @@
 ﻿using System;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Calendaring.Booking;
-using ICD.Connect.Partitioning.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -27,6 +27,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <summary>
 		/// Gets/sets the source for the presenter.
 		/// </summary>
+		[CanBeNull]
 		public IBooking Booking
 		{
 			get { return m_Booking; }
@@ -82,22 +83,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
+				string icon = GetIconForBooking(Booking);
 
-				string meetingTypeIcon;
-				switch (Booking.Type)
-				{
-					case eMeetingType.VideoConference:
-						meetingTypeIcon = "videoConference";
-						break;
-					case eMeetingType.AudioConference:
-						meetingTypeIcon = "audioConference";
-						break;
-					case eMeetingType.Presentation:
-					default:
-						meetingTypeIcon = "display";
-						break;
-				}
-				string icon = Icons.GetSourceIcon(meetingTypeIcon, eSourceColor.Grey);
 				view.SetBookingIcon(icon);
                 view.SetStartTimeLabel(m_Booking.StartTime.ToShortTimeString());
 			    view.SetEndTimeLabel(m_Booking.EndTime.ToShortTimeString());
@@ -109,6 +96,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			finally
 			{
 				m_RefreshSection.Leave();
+			}
+		}
+
+		private static string GetIconForBooking(IBooking booking)
+		{
+			if (booking == null)
+				return null;
+
+			switch (booking.Type)
+			{
+				case eMeetingType.AudioConference:
+					return Icons.GetSourceIcon("audioConference", eSourceColor.Grey);
+				case eMeetingType.VideoConference:
+					return Icons.GetSourceIcon("videoConference", eSourceColor.Grey);
+				case eMeetingType.Presentation:
+					return Icons.GetSourceIcon("display", eSourceColor.Grey);
+				default:
+					throw new ArgumentOutOfRangeException();
 			}
 		}
 

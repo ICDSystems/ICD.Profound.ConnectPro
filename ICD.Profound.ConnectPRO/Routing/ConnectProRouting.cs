@@ -705,6 +705,42 @@ namespace ICD.Profound.ConnectPRO.Routing
 			                       source);
 		}
 
+		/// <summary>
+		/// Unroutes the active VTC presentation source and ends the presentation.
+		/// </summary>
+		public void UnrouteVtcPresentation()
+		{
+			IVideoConferenceDevice codec = GetCodec();
+			if (codec == null)
+				throw new InvalidOperationException("No codec available.");
+
+			IPresentationControl presentation = codec.Controls.GetControl<IPresentationControl>();
+			if (presentation == null)
+				throw new InvalidOperationException("No presentation control available.");
+
+			IVideoConferenceRouteControl control = codec.Controls.GetControl<IVideoConferenceRouteControl>();
+			if (control == null)
+				throw new InvalidOperationException("No routing control available.");
+
+			// Get the content inputs
+			int[] inputs = control.GetCodecInputs(eCodecInputType.Content).ToArray();
+			if (inputs.Length == 0)
+			{
+				m_Room.Logger.AddEntry(eSeverity.Error,
+									   "Failed to end presentation - Codec has no inputs configured for content.");
+				return;
+			}
+
+			// Find the first input available
+			foreach (int input in inputs)
+			{
+				EndpointInfo endpoint = control.GetInputEndpointInfo(input);
+				RoutingGraph.UnrouteDestination(endpoint, eConnectionType.Audio | eConnectionType.Video, m_Room.Id);
+			}
+
+			presentation.StopPresentation();
+		}
+
 		public IEnumerable<ISource> GetVtcPresentationSources()
 		{
 			IVideoConferenceDevice codec = GetCodec();

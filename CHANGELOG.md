@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [6.1.2] - 2018-10-04
+### Changed
+ - Unroute VTC presentation source when ending presentation
+ - Fixing bad VTC share feedback
+ - Unselecting VTC share source on subpage visibility change
+ - Fixed bug where ShureMXA LED would temporarily flash white
+
 ## [6.1.1] - 2018-09-27
 ### Changed
  - Better fix for audio routing in specific async switcher situations
