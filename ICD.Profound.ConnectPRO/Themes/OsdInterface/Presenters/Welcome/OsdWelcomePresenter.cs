@@ -8,9 +8,7 @@ using ICD.Common.Utils;
 using ICD.Connect.Calendaring.Booking;
 using System.Collections.Generic;
 using System.Linq;
-using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
-using ICD.Connect.Calendaring.Devices;
 using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
@@ -183,6 +181,8 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 
             if (m_CalendarControl != null)
 			    Subscribe(m_CalendarControl);
+
+			Refresh();
 		}
 
 		private void Subscribe(ICalendarControl control)

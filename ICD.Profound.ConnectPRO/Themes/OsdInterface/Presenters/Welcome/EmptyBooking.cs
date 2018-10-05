@@ -1,5 +1,6 @@
 ﻿using System;
 using ICD.Connect.Calendaring.Booking;
+using System.Collections.Generic;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 {
@@ -53,6 +54,11 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 		public bool IsPrivate
 		{
 			get { return false; }
+		}
+
+		public IEnumerable<IBookingNumber> GetBookingNumbers()
+		{
+			yield break;
 		}
 	}
 }
