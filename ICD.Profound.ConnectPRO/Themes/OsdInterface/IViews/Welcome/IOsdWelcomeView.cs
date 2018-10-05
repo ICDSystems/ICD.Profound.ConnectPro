@@ -5,12 +5,6 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews.Welcome
     public interface IOsdWelcomeView : IOsdView
 	{
 		/// <summary>
-		/// Sets the name of the room.
-		/// </summary>
-		/// <param name="name"></param>
-		void SetRoomName(string name);
-
-		/// <summary>
 		/// Sets the text of the availability label.
 		/// </summary>
 		/// <param name="availability"></param>

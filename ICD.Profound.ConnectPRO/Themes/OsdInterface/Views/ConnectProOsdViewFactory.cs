@@ -43,8 +43,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 			{typeof(IOsdIncomingCallView), (panel, theme) => new OsdIncomingCallView(panel, theme)},
 			{typeof(IOsdWelcomeView), (panel, theme) => new OsdWelcomeView(panel, theme)},
 			{typeof(IHelloView), (panel, theme) => new HelloView(panel, theme)},
-
-            {typeof(IReferencedScheduleView), (panel, theme) => new ReferencedScheduleView(panel, theme)}
+			{typeof(IOsdHeaderView), (panel, theme) => new OsdHeaderView(panel, theme)}
 		};
 
 		private readonly IPanelDevice m_Panel;

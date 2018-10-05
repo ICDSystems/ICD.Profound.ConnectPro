@@ -15,11 +15,6 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Welcome
 		    m_ChildList = new List<IReferencedScheduleView>();
 		}
 
-		public void SetRoomName(string name)
-		{
-			m_RoomLabel.SetLabelText(name);
-		}
-
         public void SetAvailabilityText(string text)
         {
             m_RoomAvailabilityLabel.SetLabelText(text);

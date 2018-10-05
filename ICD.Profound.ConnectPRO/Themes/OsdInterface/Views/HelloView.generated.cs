@@ -28,9 +28,9 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 
 			m_Label = new VtProSimpleLabel(panel, m_Subpage)
 			{
-				IndirectTextJoin = 401
+				IndirectTextJoin = 401,
+				DigitalEnableJoin = 401
 			};
-
 		}
 
 		protected override IEnumerable<IVtProControl> GetChildren()

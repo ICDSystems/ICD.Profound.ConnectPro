@@ -31,7 +31,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 			{typeof(IOsdIncomingCallPresenter), (nav, views, theme) => new OsdIncomingCallPresenter(nav, views, theme)},
 			{typeof(IOsdWelcomePresenter), (nav, views, theme) => new OsdWelcomePresenter(nav, views, theme)},
 			{typeof(IHelloPresenter), (nav, views, theme) => new HelloPresenter(nav, views, theme)},
-
+			{typeof(IOsdHeaderPresenter), (nav, views, theme) => new OsdHeaderPresenter(nav, views, theme)},
             {typeof(IReferencedSchedulePresenter), (nav, views, theme) => new ReferencedSchedulePresenter(nav, views, theme)}
 		};
 

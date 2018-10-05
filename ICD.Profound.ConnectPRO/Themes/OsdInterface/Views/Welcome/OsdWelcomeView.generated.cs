@@ -12,7 +12,6 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Welcome
     public sealed partial class OsdWelcomeView
 	{
 		private VtProSubpage m_Subpage;
-		private VtProSimpleLabel m_RoomLabel;
 
 	    private VtProDynamicIconObject m_CurrentBookingIcon;
 	    private VtProSimpleLabel m_CurrentBookingTimeLabel;
@@ -26,11 +25,6 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Welcome
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
 				DigitalVisibilityJoin = 100
-			};
-
-			m_RoomLabel = new VtProSimpleLabel(panel, m_Subpage)
-			{
-				IndirectTextJoin = 101
 			};
 
 		    m_CurrentBookingIcon = new VtProDynamicIconObject(panel, m_Subpage)
@@ -63,8 +57,11 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Welcome
 		protected override IEnumerable<IVtProControl> GetChildren()
 		{
 			yield return m_Subpage;
-			yield return m_RoomLabel;
+			yield return m_CurrentBookingIcon;
+			yield return m_CurrentBookingTimeLabel;
+			yield return m_CurrentBookingNameLabel;
 			yield return m_RoomAvailabilityLabel;
+
 			yield return m_ScheduleList;
 		}
 	}

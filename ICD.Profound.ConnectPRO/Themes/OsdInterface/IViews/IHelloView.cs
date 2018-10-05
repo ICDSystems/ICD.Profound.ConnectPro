@@ -3,5 +3,7 @@
 	public interface IHelloView : IOsdView
 	{
 		void SetLabelText(string text);
+
+		void SetMainPageView(bool scheduler);
 	}
 }

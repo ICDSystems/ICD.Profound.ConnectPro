@@ -77,13 +77,12 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 			m_NotificationVisibility = new SingleVisibilityNode();
 			m_NotificationVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IHelloPresenter>());
 			m_NotificationVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdIncomingCallPresenter>());
-
-			m_MainPageVisibility = new DefaultVisibilityNode(m_NavigationController.LazyLoadPresenter<IOsdWelcomePresenter>());
-			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdSourcesPresenter>());
-
+			
 			// these presenters are initially visible
 			m_NavigationController.NavigateTo<IHelloPresenter>();
-			m_NavigationController.NavigateTo<IOsdWelcomePresenter>();
+			m_NavigationController.NavigateTo<IOsdHeaderPresenter>();
+			
+			UpdateVisibility();
 		}
 
 		#region Room Callbacks
@@ -119,7 +118,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 
 		private void UpdateVisibility()
 		{
-			m_NavigationController.LazyLoadPresenter<IOsdWelcomePresenter>().ShowView(m_Room != null && !m_Room.IsInMeeting);
+			m_NavigationController.LazyLoadPresenter<IOsdWelcomePresenter>().ShowView(m_Room != null && !m_Room.IsInMeeting && m_Room.CalendarControl != null);
 			m_NavigationController.LazyLoadPresenter<IOsdSourcesPresenter>().ShowView(m_Room != null && m_Room.IsInMeeting);
 		}
 

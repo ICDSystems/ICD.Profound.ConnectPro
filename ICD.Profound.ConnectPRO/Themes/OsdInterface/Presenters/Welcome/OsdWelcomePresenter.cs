@@ -45,18 +45,17 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 
 			m_RefreshSection.Enter();
 
-		    try
+			if (m_CalendarControl == null)
+				return;
+
+			try
 		    {
 		        DateTime now = IcdEnvironment.GetLocalTime();
 
-		        List<IBooking> bookings =
-		            m_CalendarControl == null
-		                ? Enumerable.Empty<IBooking>().ToList()
-		                : m_CalendarControl.GetBookings().Where(b => b.EndTime > now)
+		        List<IBooking> bookings = m_CalendarControl.GetBookings().Where(b => b.EndTime > now)
 		                    .OrderBy(b => b.StartTime).ToList();
 
-		        string roomName = Room == null ? string.Empty : Room.Name; 
-		        view.SetRoomName(roomName);
+		        string roomName = Room == null ? string.Empty : Room.Name;
 
 		        List<IBooking> upcomingBookingsAndAvailability = new List<IBooking>();
 
