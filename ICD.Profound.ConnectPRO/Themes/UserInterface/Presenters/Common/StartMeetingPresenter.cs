@@ -83,7 +83,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 					presenter.Refresh();
 				}
 
-				view.SetLogoPath(Theme.Logo);
+				view.SetLogoPath(Theme.LogoAbsolutePath);
 
 				view.SetStartMyMeetingButtonEnabled(!HasCalendarControl || m_SelectedBooking != null);
 
