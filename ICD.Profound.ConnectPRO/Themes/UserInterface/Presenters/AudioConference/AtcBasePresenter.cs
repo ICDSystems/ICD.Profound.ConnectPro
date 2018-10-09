@@ -74,8 +74,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 				view.SetDialNumber(string.IsNullOrEmpty(dialString) && active == null ? "Dial Number" : dialString);
 				view.SetCallStatus(activeStatus);
 
-				view.SetClearButtonEnabled(dialString.Length > 0);
-				view.SetDialButtonEnabled(dialString.Length > 0);
+				view.SetClearButtonEnabled(dialString.Length > 0 && !inACall);
+				view.SetDialButtonEnabled(dialString.Length > 0 && !inACall);
 				view.SetHangupButtonEnabled(inACall);
 			}
 			finally

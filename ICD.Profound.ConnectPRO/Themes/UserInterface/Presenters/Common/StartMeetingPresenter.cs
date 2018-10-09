@@ -9,6 +9,7 @@ using ICD.Connect.Calendaring.CalendarControl;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Utils;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Controls;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -82,7 +83,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 					presenter.Refresh();
 				}
 
-				view.SetLogoPath(Theme.Logo);
+				view.SetLogoPath(Theme.LogoAbsolutePath);
 
 				view.SetStartMyMeetingButtonEnabled(!HasCalendarControl || m_SelectedBooking != null);
 
@@ -273,21 +274,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				return;
 
 			// check if we have any dialers
-			var dialers = Room.GetControlsRecursive<IDialingDeviceControl>().ToList();
-			if (dialers.Count == 0)
-				return;
+			IEnumerable<IDialingDeviceControl> dialers = Room.GetControlsRecursive<IDialingDeviceControl>();
 
 			// Build map of dialer to best number
-			Dictionary<IDialingDeviceControl, IBookingNumber> map = dialers.ToDictionary(d => d, d => GetBestNumber(d, booking));
-			IDialingDeviceControl preferredDialer = dialers.Where(d => map.GetDefault(d) != null)
-			                                               .OrderByDescending(d => d.CanDial(map[d]))
-			                                               .ThenByDescending(d => d.Supports)
-			                                               .FirstOrDefault();
-
+			IBookingNumber bookingNumber;
+			IDialingDeviceControl preferredDialer = ConferencingBookingUtils.GetBestDialer(booking, dialers, out bookingNumber);
 			if (preferredDialer == null)
 				return;
-
-			IBookingNumber bookingNumber = map[preferredDialer];
 
 			// route device to displays and/or audio destination
 			var dialerDevice = preferredDialer.Parent;
@@ -299,19 +292,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			// dial booking
 			preferredDialer.Dial(bookingNumber);
-		}
-
-		private IBookingNumber GetBestNumber(IDialingDeviceControl dialer, IBooking booking)
-		{
-			if (dialer == null)
-				throw new ArgumentNullException("dialer");
-
-			if (booking == null)
-				throw new ArgumentNullException("booking");
-
-			return booking.GetBookingNumbers()
-			              .OrderByDescending(n => dialer.CanDial(n))
-			              .FirstOrDefault();
 		}
 
 		private void ViewOnStartNewMeetingButtonPressed(object sender, EventArgs eventArgs)

@@ -35,24 +35,27 @@ namespace ICD.Profound.ConnectPRO.Themes
 		// Used with settings.
 		private string m_TvPresetsPath;
 		private string m_WebConferencingInstructionsPath;
-		private string m_Logo;
 
 		#region Properties
 
 		public ICore Core { get { return ServiceProvider.GetService<ICore>(); } }
 
 		/// <summary>
-		/// Gets/sets the url to the logo image for the splash screen.
+		/// Gets/sets the configured relative or absolute path to the logo image for the splash screen.
 		/// </summary>
-		public string Logo
-		{
-			get { return m_Logo; }
-			set
-			{
-				Uri baseUri = GenerateBaseUri();
-				Uri absolute = new Uri(baseUri, value);
+		public string Logo { get; set; }
 
-				m_Logo = absolute.ToString();
+		/// <summary>
+		/// Gets/sets the absolute path to the configured logo image for the splash screen.
+		/// </summary>
+		public string LogoAbsolutePath
+		{
+			get
+			{
+				Uri defaultHost = new IcdUriBuilder {Host = IcdEnvironment.NetworkAddresses.FirstOrDefault()}.Uri;
+				Uri absolute = new Uri(defaultHost, Logo);
+
+				return absolute.ToString();
 			}
 		}
 
@@ -203,18 +206,6 @@ namespace ICD.Profound.ConnectPRO.Themes
 		}
 
 		#endregion
-
-		/// <summary>
-		/// Gets the base uri for the processor.
-		/// </summary>
-		/// <returns></returns>
-		private static Uri GenerateBaseUri()
-		{
-			string ip = IcdEnvironment.NetworkAddresses.FirstOrDefault();
-			string url = string.Format(@"http://{0}/", ip);
-			
-			return new Uri(url);
-		}
 
 		#region Settings
 

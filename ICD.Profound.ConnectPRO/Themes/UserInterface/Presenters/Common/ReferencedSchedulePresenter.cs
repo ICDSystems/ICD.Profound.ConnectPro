@@ -1,8 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Calendaring.Booking;
+using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.Devices;
+using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Utils;
+using ICD.Connect.Partitioning.Rooms;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -21,6 +29,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		private readonly SafeCriticalSection m_RefreshSection;
 		private IBooking m_Booking;
 		private bool m_Selected;
+		private string m_Icon;
 
 		#region Properties
 
@@ -37,6 +46,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 					return;
 
 				m_Booking = value;
+				m_Icon = GetIconForBooking(m_Booking);
 
 				RefreshIfVisible();
 			}
@@ -83,9 +93,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
-				string icon = GetIconForBooking(Booking);
-
-				view.SetBookingIcon(icon);
+				view.SetBookingIcon(m_Icon);
                 view.SetStartTimeLabel(m_Booking.StartTime.ToShortTimeString());
 			    view.SetEndTimeLabel(m_Booking.EndTime.ToShortTimeString());
 			    view.SetSelected(m_Selected);
@@ -99,12 +107,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			}
 		}
 
-		private static string GetIconForBooking(IBooking booking)
+		private string GetIconForBooking(IBooking booking)
 		{
 			if (booking == null)
 				return null;
 
-			switch (booking.Type)
+			IEnumerable<IDialingDeviceControl> dialers =
+				Room == null ? Enumerable.Empty<IDialingDeviceControl>() : Room.GetControlsRecursive<IDialingDeviceControl>();
+
+			switch (ConferencingBookingUtils.GetMeetingType(booking, dialers))
 			{
 				case eMeetingType.AudioConference:
 					return Icons.GetSourceIcon("audioConference", eSourceColor.Grey);
