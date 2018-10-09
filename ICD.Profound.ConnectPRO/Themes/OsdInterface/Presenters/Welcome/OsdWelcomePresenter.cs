@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Connect.Calendaring;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Welcome;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
@@ -104,8 +105,12 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 		        IBooking currentBooking = upcomingBookingsAndAvailability.FirstOrDefault();
 		        if (currentBooking != null && !(currentBooking is EmptyBooking))
 		        {
-                    view.SetCurrentBookingIcon(GetBookingIcon(currentBooking.Type));
-		            view.SetCurrentBookingSubject(currentBooking.IsPrivate ? "Private Meeting" : currentBooking.MeetingName);
+			        var firstNumber = currentBooking.GetBookingNumbers().FirstOrDefault();
+			        view.SetCurrentBookingIcon(GetBookingIcon(firstNumber == null
+				        ? eMeetingType.Presentation
+				        : firstNumber.Protocol.ToMeetingType()));
+
+			        view.SetCurrentBookingSubject(currentBooking.IsPrivate ? "Private Meeting" : currentBooking.MeetingName);
 		            view.SetCurrentBookingTime(string.Format("{0} - {1}",
 		                FormatTime(currentBooking.StartTime),
 		                FormatTime(currentBooking.EndTime)));
