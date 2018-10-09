@@ -70,13 +70,9 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 		private void BuildVisibilityTree()
 		{
 			// Show "hello" when no notifications are visible
-			m_DefaultNotification = new DefaultVisibilityNode(m_NavigationController.LazyLoadPresenter<IHelloPresenter>());
+			m_DefaultNotification = new NotificationVisibilityNode(m_NavigationController.LazyLoadPresenter<IHelloPresenter>());
 			m_DefaultNotification.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdIncomingCallPresenter>());
-
-			// Only one notification can show at a time, and hide "hello"
-			m_NotificationVisibility = new SingleVisibilityNode();
-			m_NotificationVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IHelloPresenter>());
-			m_NotificationVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdIncomingCallPresenter>());
+			m_DefaultNotification.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdMutePresenter>());
 			
 			// these presenters are initially visible
 			m_NavigationController.NavigateTo<IHelloPresenter>();

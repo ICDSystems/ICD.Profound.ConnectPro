@@ -39,11 +39,13 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 
 		private readonly Dictionary<Type, FactoryMethod> m_ViewFactories = new Dictionary<Type, FactoryMethod>
 		{
-			{typeof(IOsdSourcesView), (panel, theme) => new OsdSourcesView(panel, theme)},
-			{typeof(IOsdIncomingCallView), (panel, theme) => new OsdIncomingCallView(panel, theme)},
-			{typeof(IOsdWelcomeView), (panel, theme) => new OsdWelcomeView(panel, theme)},
-			{typeof(IHelloView), (panel, theme) => new HelloView(panel, theme)},
 			{typeof(IOsdHeaderView), (panel, theme) => new OsdHeaderView(panel, theme)},
+			{typeof(IOsdWelcomeView), (panel, theme) => new OsdWelcomeView(panel, theme)},
+			{typeof(IOsdSourcesView), (panel, theme) => new OsdSourcesView(panel, theme)},
+			
+			{typeof(IHelloView), (panel, theme) => new HelloView(panel, theme)},
+			{typeof(IOsdIncomingCallView), (panel, theme) => new OsdIncomingCallView(panel, theme)},
+			{typeof(IOsdMuteView), (panel, theme) => new OsdMuteView(panel, theme)},
 
 			{typeof(IReferencedScheduleView), (panel, theme) => new ReferencedScheduleView(panel, theme)}
 		};
