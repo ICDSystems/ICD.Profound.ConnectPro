@@ -7,6 +7,11 @@ using ICD.Connect.API.Info;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.VisibilityTree
 {
+	/// <summary>
+	/// Handles the notification tray visibility of the Profound CUE.
+	/// Combines SingleVisibilityNode and DefaultVisibilityNode functionality,
+	/// while making sure the HelloPresenter is always visible if not in the notification area.
+	/// </summary>
 	public sealed class NotificationVisibilityNode : AbstractVisibilityNode
 	{
 		private readonly IHelloPresenter m_HelloPresenter;
@@ -23,9 +28,11 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.VisibilityTree
 
 		private void HelloPresenterOnMainPageViewChanged(object sender, BoolEventArgs args)
 		{
+			// if main view activates, show the HelloPresenter.
 			if (args.Data)
 				m_HelloPresenter.ShowView(true);
 
+			// if main view deactivates, hide the HelloPresenter if a notification is showing
 			if (!args.Data && this.GetIsVisible())
 				m_HelloPresenter.ShowView(false);
 		}
@@ -80,6 +87,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.VisibilityTree
 			foreach (IOsdPresenter presenter in GetPresenters().Where(c => c != ignoreControl))
 				presenter.ShowView(false);
 
+			// only hide the HelloPresenter if Main Page View is not activated
 			if (!m_HelloPresenter.MainPageView && ignoreControl != m_HelloPresenter)
 				m_HelloPresenter.ShowView(false);
 		}
