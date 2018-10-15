@@ -196,10 +196,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (booking == null)
 				return;
 
-			if (m_SelectedBooking == booking)
-				m_SelectedBooking = null;
-			else
-				m_SelectedBooking = booking;
+			m_SelectedBooking = m_SelectedBooking == booking ? null : booking;
+
 			RefreshIfVisible();
 		}
 
