@@ -39,6 +39,27 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters
 		/// Sets the current view to null.
 		/// </summary>
 		void ClearView();
+
+		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		void Refresh();
+
+		/// <summary>
+		/// Refreshes the view asynchronously.
+		/// </summary>
+		void RefreshAsync();
+
+		/// <summary>
+		/// Asynchronously updates the view if it is currently visible.
+		/// </summary>
+		void RefreshIfVisible();
+
+		/// <summary>
+		/// Updates the view if it is currently visible.
+		/// </summary>
+		/// <param name="refreshAsync"></param>
+		void RefreshIfVisible(bool refreshAsync);
 	}
 
 	public interface IOsdPresenter<T> : IOsdPresenter

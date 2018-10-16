@@ -4,9 +4,12 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Sources;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews.Sources;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
-namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
+namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Sources
 {
 	public sealed class OsdSourcesPresenter : AbstractOsdPresenter<IOsdSourcesView>, IOsdSourcesPresenter
 	{
@@ -36,8 +39,6 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 				string name = source == null ? string.Empty : source.Name;
 				string description = proSource == null ? string.Empty : proSource.Description;
 				string icon = proSource == null ? string.Empty : proSource.Icon;
-
-				icon = string.Format("icon_{0}_white", icon);
 
 				view.SetLabel(index, name);
 				view.SetDescription(index, description);

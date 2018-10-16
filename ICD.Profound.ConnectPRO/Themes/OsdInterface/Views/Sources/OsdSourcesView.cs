@@ -1,7 +1,7 @@
 ﻿using ICD.Connect.Panels;
-using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews.Sources;
 
-namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
+namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Sources
 {
 	public sealed partial class OsdSourcesView : AbstractOsdView, IOsdSourcesView
 	{

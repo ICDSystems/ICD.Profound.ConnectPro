@@ -7,6 +7,12 @@ using ICD.Connect.Panels.SmartObjects;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Lists;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews.Popups;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews.Sources;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews.Welcome;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Popups;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Sources;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Welcome;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 {
@@ -28,13 +34,20 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 		private readonly Dictionary<Type, ComponentFactoryMethod> m_ComponentViewFactories = new Dictionary
 			<Type, ComponentFactoryMethod>
 		{
+		    {typeof(IReferencedScheduleView), (panel, theme, parent, index) => new ReferencedScheduleView(panel, theme, parent, index)}
 		};
 
 		private readonly Dictionary<Type, FactoryMethod> m_ViewFactories = new Dictionary<Type, FactoryMethod>
 		{
+			{typeof(IOsdHeaderView), (panel, theme) => new OsdHeaderView(panel, theme)},
+			{typeof(IOsdWelcomeView), (panel, theme) => new OsdWelcomeView(panel, theme)},
 			{typeof(IOsdSourcesView), (panel, theme) => new OsdSourcesView(panel, theme)},
+			
+			{typeof(IHelloView), (panel, theme) => new HelloView(panel, theme)},
 			{typeof(IOsdIncomingCallView), (panel, theme) => new OsdIncomingCallView(panel, theme)},
-			{typeof(IOsdWelcomeView), (panel, theme) => new OsdWelcomeView(panel, theme)}
+			{typeof(IOsdMuteView), (panel, theme) => new OsdMuteView(panel, theme)},
+
+			{typeof(IReferencedScheduleView), (panel, theme) => new ReferencedScheduleView(panel, theme)}
 		};
 
 		private readonly IPanelDevice m_Panel;
