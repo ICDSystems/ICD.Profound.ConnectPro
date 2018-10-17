@@ -200,20 +200,30 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
-				IReferencedSchedulePresenter oldBooking = m_SelectedBooking;
+				SetSelectedBooking(newBooking == m_SelectedBooking ? null : newBooking);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+		}
 
-				if (oldBooking == newBooking)
-				{
-					m_SelectedBooking = null;
-				}
-				else
-				{
-					m_SelectedBooking = newBooking;
+		private void SetSelectedBooking(IReferencedSchedulePresenter presenter)
+		{
+			m_RefreshSection.Enter();
+
+			try
+			{
+				if (presenter == m_SelectedBooking)
+					return;
+
+				if (m_SelectedBooking != null)
+					m_SelectedBooking.SetSelected(false);
+
+				m_SelectedBooking = presenter;
+
+				if (m_SelectedBooking != null)
 					m_SelectedBooking.SetSelected(true);
-				}
-
-				if (oldBooking != null)
-					oldBooking.SetSelected(false);
 			}
 			finally
 			{
