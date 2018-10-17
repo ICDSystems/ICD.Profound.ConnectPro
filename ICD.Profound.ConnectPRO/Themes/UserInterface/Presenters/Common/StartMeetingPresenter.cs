@@ -131,15 +131,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (calendarControl == null)
 				return;
 
-		    calendarControl.OnBookingsChanged += CalendarControlOnBookingsChanged;
+			calendarControl.OnBookingsChanged += CalendarControlOnBookingsChanged;
 		}
 
 		private void Unsubscribe(ICalendarControl calendarControl)
 		{
-			if (calendarControl == null) 
+			if (calendarControl == null)
 				return;
 
-		    calendarControl.OnBookingsChanged -= CalendarControlOnBookingsChanged;
+			calendarControl.OnBookingsChanged -= CalendarControlOnBookingsChanged;
 		}
 
 		#region Private Methods
