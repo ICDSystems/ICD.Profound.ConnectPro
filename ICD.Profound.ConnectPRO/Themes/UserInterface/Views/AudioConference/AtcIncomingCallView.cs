@@ -65,6 +65,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference
 			m_RejectButton.OnPressed += RejectButtonOnPressed;
 		}
 
+		/// <summary>
+		/// Unsubscribes from the view controls.
+		/// </summary>
+		protected override void UnsubscribeControls()
+		{
+			base.UnsubscribeControls();
+
+			m_AnswerButton.OnPressed -= AnswerButtonOnPressed;
+			m_RejectButton.OnPressed -= RejectButtonOnPressed;
+		}
+
 		private void RejectButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnIgnoreButtonPressed.Raise(this);
@@ -73,14 +84,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference
 		private void AnswerButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnAnswerButtonPressed.Raise(this);
-		}
-
-		/// <summary>
-		/// Unsubscribes from the view controls.
-		/// </summary>
-		protected override void UnsubscribeControls()
-		{
-			base.UnsubscribeControls();
 		}
 
 		#endregion
