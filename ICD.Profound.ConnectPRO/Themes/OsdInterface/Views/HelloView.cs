@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using ICD.Connect.Panels;
-using ICD.Connect.UI.Controls;
-using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
+﻿using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 {

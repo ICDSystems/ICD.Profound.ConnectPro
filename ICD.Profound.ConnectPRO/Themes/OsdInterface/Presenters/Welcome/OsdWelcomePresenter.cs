@@ -10,7 +10,6 @@ using ICD.Connect.Calendaring.Booking;
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils.Timers;
-using ICD.Connect.Conferencing.Polycom.Devices.Codec.Controls.Calender;
 using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
@@ -65,7 +64,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 				// find out if room is currently available
                 if (firstBooking != null && firstBooking.StartTime - now > TimeSpan.FromMinutes(15))
                 {
-                    upcomingBookingsAndAvailability.Add(new EmptyBooking()
+                    upcomingBookingsAndAvailability.Add(new EmptyBooking
                     {
                         StartTime = DateTime.MinValue,
                         EndTime = firstBooking.StartTime
@@ -80,7 +79,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 		            upcomingBookingsAndAvailability.Add(bookings[i]);
 
 		            if (i + 1 >= bookings.Count)
-		                upcomingBookingsAndAvailability.Add(new EmptyBooking()
+		                upcomingBookingsAndAvailability.Add(new EmptyBooking
 		                {
 		                    StartTime = bookings[i].EndTime,
 		                    EndTime = DateTime.MaxValue
@@ -88,7 +87,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 
 		            // calculate availability between this booking and next
 		            else if (bookings[i + 1].StartTime - bookings[i].EndTime >= TimeSpan.FromMinutes(30))
-		                upcomingBookingsAndAvailability.Add(new EmptyBooking()
+		                upcomingBookingsAndAvailability.Add(new EmptyBooking
 		                {
 		                    StartTime = bookings[i].EndTime,
 		                    EndTime = bookings[i + 1].StartTime

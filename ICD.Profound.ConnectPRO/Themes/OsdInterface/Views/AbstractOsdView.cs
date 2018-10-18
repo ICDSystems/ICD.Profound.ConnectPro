@@ -190,14 +190,14 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 
 		protected void Log(eSeverity severity, string message, params string[] args)
 		{
-			var logger = ServiceProvider.TryGetService<ILoggerService>();
+			ILoggerService logger = ServiceProvider.TryGetService<ILoggerService>();
 			if (logger != null)
 				logger.AddEntry(severity, message, args);
 		}
 
 		protected void Log(eSeverity severity, Exception ex, string message, params string[] args)
 		{
-			var logger = ServiceProvider.TryGetService<ILoggerService>();
+			ILoggerService logger = ServiceProvider.TryGetService<ILoggerService>();
 			if (logger != null)
 				logger.AddEntry(severity, ex, message, args);
 		}
