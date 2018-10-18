@@ -5,9 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [7.0.0] - 2018-10-18
+### Added
+ - One Button To Push and Calendaring features
+
 ### Changed
  - Improved performance when selecting bookings
  - Disable ATC clear and dial buttons while in a call
+ - OSD calendaring overhaul
 
 ## [6.1.2] - 2018-10-04
 ### Changed
