@@ -18,6 +18,8 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 {
 	public sealed class ConnectProMpc3201Interface : IUserInterface
 	{
+		private const float RAMP_PERCENTAGE = 3.0f / 100.0f;
+
 		private readonly IMPC3x201TouchScreenControl m_Control;
 		private readonly ConnectProTheme m_Theme;
 		private readonly SafeCriticalSection m_RefreshSection;
@@ -389,18 +391,46 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 				Room.EndMeeting(false);
 		}
 
-		private void VolumeUp()
+		/// <summary>
+		/// Begins ramping the device volume up.
+		/// </summary>
+		public void VolumeUp()
 		{
-			IVolumeRampDeviceControl volumeControl = m_VolumeControl as IVolumeRampDeviceControl;
-			if (volumeControl != null)
-				volumeControl.VolumeRampUp();
+			if (m_VolumeControl == null)
+				return;
+
+			IVolumeMuteDeviceControl volumeControlMute = m_VolumeControl as IVolumeMuteDeviceControl;
+			if (volumeControlMute != null)
+				volumeControlMute.SetVolumeMute(false);
+
+			IVolumeRampDeviceControl volumeRampControl = m_VolumeControl as IVolumeRampDeviceControl;
+			IVolumePositionDeviceControl volumePositionControl = volumeRampControl as IVolumePositionDeviceControl;
+
+			if (volumePositionControl != null)
+				volumePositionControl.VolumePositionRampUp(RAMP_PERCENTAGE);
+			else if (volumeRampControl != null)
+				volumeRampControl.VolumeRampUp();
 		}
 
-		private void VolumeDown()
+		/// <summary>
+		/// Begins ramping the device volume down.
+		/// </summary>
+		public void VolumeDown()
 		{
-			IVolumeRampDeviceControl volumeControl = m_VolumeControl as IVolumeRampDeviceControl;
-			if (volumeControl != null)
-				volumeControl.VolumeRampDown();
+			if (m_VolumeControl == null)
+				return;
+
+			IVolumeMuteDeviceControl volumeControlMute = m_VolumeControl as IVolumeMuteDeviceControl;
+			if (volumeControlMute != null)
+				volumeControlMute.SetVolumeMute(false);
+
+			IVolumeRampDeviceControl volumeRampControl = m_VolumeControl as IVolumeRampDeviceControl;
+			IVolumePositionDeviceControl volumePositionControl = volumeRampControl as IVolumePositionDeviceControl;
+
+			if (volumePositionControl != null)
+				volumePositionControl.VolumePositionRampDown(RAMP_PERCENTAGE);
+			else if (volumeRampControl != null)
+				volumeRampControl.VolumeRampDown();
 		}
 
 		private void VolumeRelease()
