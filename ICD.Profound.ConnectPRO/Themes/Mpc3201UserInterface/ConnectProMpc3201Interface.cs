@@ -20,6 +20,18 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 	{
 		private const float RAMP_PERCENTAGE = 3.0f / 100.0f;
 
+		private const long POWER_BUTTON_HOLD_MILLISECONDS = (long)(0.5f * 1000);
+
+		private static readonly BiDictionary<int, uint> s_IndexToSourceButton = new BiDictionary<int, uint>
+		{
+			{0, MPC3x201TouchScreenButtons.BUTTON_ACTION_1},
+			{1, MPC3x201TouchScreenButtons.BUTTON_ACTION_2},
+			{2, MPC3x201TouchScreenButtons.BUTTON_ACTION_3},
+			{3, MPC3x201TouchScreenButtons.BUTTON_ACTION_4},
+			{4, MPC3x201TouchScreenButtons.BUTTON_ACTION_5},
+			{5, MPC3x201TouchScreenButtons.BUTTON_ACTION_6},
+		};
+
 		private readonly IMPC3x201TouchScreenControl m_Control;
 		private readonly ConnectProTheme m_Theme;
 		private readonly SafeCriticalSection m_RefreshSection;
@@ -33,15 +45,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		private IVolumeMuteFeedbackDeviceControl m_VolumeMuteFeedbackControl;
 		private ISource[] m_Sources;
 
-		private static readonly BiDictionary<int, uint> s_IndexToSourceButton = new BiDictionary<int, uint>
-		{
-			{0, MPC3x201TouchScreenButtons.BUTTON_ACTION_1},
-			{1, MPC3x201TouchScreenButtons.BUTTON_ACTION_2},
-			{2, MPC3x201TouchScreenButtons.BUTTON_ACTION_3},
-			{3, MPC3x201TouchScreenButtons.BUTTON_ACTION_4},
-			{4, MPC3x201TouchScreenButtons.BUTTON_ACTION_5},
-			{5, MPC3x201TouchScreenButtons.BUTTON_ACTION_6},
-		}; 
+		private DateTime m_PowerButtonPressTime;
 
 		#region Properties
 
@@ -123,13 +127,6 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 				Refresh();
 		}
 
-		private static IEnumerable<ISource> GetSources(IConnectProRoom room)
-		{
-			return room == null
-				       ? Enumerable.Empty<ISource>()
-				       : room.Routing.GetCoreSources();
-		}
-
 		/// <summary>
 		/// Update the touchscreen LEDs.
 		/// </summary>
@@ -189,6 +186,79 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		public void TogglePower()
+		{
+			if (Room != null)
+				Room.EndMeeting(false);
+		}
+
+		/// <summary>
+		/// Begins ramping the device volume up.
+		/// </summary>
+		public void VolumeUp()
+		{
+			if (m_VolumeControl == null)
+				return;
+
+			IVolumeMuteDeviceControl volumeControlMute = m_VolumeControl as IVolumeMuteDeviceControl;
+			if (volumeControlMute != null)
+				volumeControlMute.SetVolumeMute(false);
+
+			IVolumeRampDeviceControl volumeRampControl = m_VolumeControl as IVolumeRampDeviceControl;
+			IVolumePositionDeviceControl volumePositionControl = volumeRampControl as IVolumePositionDeviceControl;
+
+			if (volumePositionControl != null)
+				volumePositionControl.VolumePositionRampUp(RAMP_PERCENTAGE);
+			else if (volumeRampControl != null)
+				volumeRampControl.VolumeRampUp();
+		}
+
+		/// <summary>
+		/// Begins ramping the device volume down.
+		/// </summary>
+		public void VolumeDown()
+		{
+			if (m_VolumeControl == null)
+				return;
+
+			IVolumeMuteDeviceControl volumeControlMute = m_VolumeControl as IVolumeMuteDeviceControl;
+			if (volumeControlMute != null)
+				volumeControlMute.SetVolumeMute(false);
+
+			IVolumeRampDeviceControl volumeRampControl = m_VolumeControl as IVolumeRampDeviceControl;
+			IVolumePositionDeviceControl volumePositionControl = volumeRampControl as IVolumePositionDeviceControl;
+
+			if (volumePositionControl != null)
+				volumePositionControl.VolumePositionRampDown(RAMP_PERCENTAGE);
+			else if (volumeRampControl != null)
+				volumeRampControl.VolumeRampDown();
+		}
+
+		public void VolumeRelease()
+		{
+			IVolumeRampDeviceControl volumeControl = m_VolumeControl as IVolumeRampDeviceControl;
+			if (volumeControl != null)
+				volumeControl.VolumeRampStop();
+		}
+
+		public void ToggleMute()
+		{
+			IVolumeMuteBasicDeviceControl muteControl = m_VolumeControl as IVolumeMuteBasicDeviceControl;
+			if (muteControl != null)
+				muteControl.VolumeMuteToggle();
+		}
+
+		#endregion
+
+		#region Private Methods
+
+		private static IEnumerable<ISource> GetSources(IConnectProRoom room)
+		{
+			return room == null
+				       ? Enumerable.Empty<ISource>()
+				       : room.Routing.GetCoreSources();
 		}
 
 		#endregion
@@ -318,37 +388,19 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			switch (eventArgs.ButtonId)
 			{
 				case MPC3x201TouchScreenButtons.BUTTON_MUTE:
-					if (eventArgs.ButtonState == eButtonState.Pressed)
-						ToggleMute();
+					HandleMuteButton(eventArgs.ButtonState == eButtonState.Pressed);
 					break;
 
 				case MPC3x201TouchScreenButtons.BUTTON_VOLUME_DOWN:
-					switch (eventArgs.ButtonState)
-					{
-						case eButtonState.Pressed:
-							VolumeDown();
-							break;
-						case eButtonState.Released:
-							VolumeRelease();
-							break;
-					}
+					HandleVolumeDownButton(eventArgs.ButtonState == eButtonState.Pressed);
 					break;
 
 				case MPC3x201TouchScreenButtons.BUTTON_VOLUME_UP:
-					switch (eventArgs.ButtonState)
-					{
-						case eButtonState.Pressed:
-							VolumeUp();
-							break;
-						case eButtonState.Released:
-							VolumeRelease();
-							break;
-					}
+					HandleVolumeUpButton(eventArgs.ButtonState == eButtonState.Pressed);
 					break;
 
 				case MPC3x201TouchScreenButtons.BUTTON_POWER:
-					if (eventArgs.ButtonState == eButtonState.Pressed)
-						TogglePower();
+					HandlePowerButton(eventArgs.ButtonState == eButtonState.Pressed);
 					break;
 
 				case MPC3x201TouchScreenButtons.BUTTON_ACTION_1:
@@ -357,24 +409,58 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 				case MPC3x201TouchScreenButtons.BUTTON_ACTION_4:
 				case MPC3x201TouchScreenButtons.BUTTON_ACTION_5:
 				case MPC3x201TouchScreenButtons.BUTTON_ACTION_6:
-					if (eventArgs.ButtonState == eButtonState.Pressed)
-					{
-						int index = s_IndexToSourceButton.GetKey(eventArgs.ButtonId);
-						HandlePressedSource(index);
-					}
+					int index = s_IndexToSourceButton.GetKey(eventArgs.ButtonId);
+					HandleSourceButton(index, eventArgs.ButtonState == eButtonState.Pressed);
 					break;
 			}
 		}
 
-		private void HandlePressedSource(int index)
+		private void HandleMuteButton(bool pressed)
 		{
+			ToggleMute();
+		}
+
+		private void HandleVolumeDownButton(bool pressed)
+		{
+			if (pressed)
+				VolumeDown();
+			else
+				VolumeRelease();
+		}
+
+		private void HandleVolumeUpButton(bool pressed)
+		{
+			if (pressed)
+				VolumeUp();
+			else
+				VolumeRelease();
+		}
+
+		private void HandlePowerButton(bool pressed)
+		{
+			if (pressed)
+			{
+				m_PowerButtonPressTime = IcdEnvironment.GetLocalTime();
+				return;
+			}
+
+			long deltaMilliseconds = (long)(IcdEnvironment.GetLocalTime() - m_PowerButtonPressTime).TotalMilliseconds;
+			bool shutdown = deltaMilliseconds >= POWER_BUTTON_HOLD_MILLISECONDS;
+
+			if (Room != null)
+				Room.EndMeeting(shutdown);
+		}
+
+		private void HandleSourceButton(int index, bool pressed)
+		{
+			if (!pressed)
+				return;
+
 			if (Room == null)
 				return;
 
 			ISource source;
-			m_Sources.TryElementAt(index, out source);
-
-			if (source == null)
+			if (!m_Sources.TryElementAt(index, out source) || source == null)
 				return;
 
 			// Start the meeting if we are not currently in one
@@ -383,68 +469,6 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 
 			// Route the source to the display
 			Room.Routing.RouteSingleDisplay(source);
-		}
-
-		private void TogglePower()
-		{
-			if (Room != null)
-				Room.EndMeeting(false);
-		}
-
-		/// <summary>
-		/// Begins ramping the device volume up.
-		/// </summary>
-		public void VolumeUp()
-		{
-			if (m_VolumeControl == null)
-				return;
-
-			IVolumeMuteDeviceControl volumeControlMute = m_VolumeControl as IVolumeMuteDeviceControl;
-			if (volumeControlMute != null)
-				volumeControlMute.SetVolumeMute(false);
-
-			IVolumeRampDeviceControl volumeRampControl = m_VolumeControl as IVolumeRampDeviceControl;
-			IVolumePositionDeviceControl volumePositionControl = volumeRampControl as IVolumePositionDeviceControl;
-
-			if (volumePositionControl != null)
-				volumePositionControl.VolumePositionRampUp(RAMP_PERCENTAGE);
-			else if (volumeRampControl != null)
-				volumeRampControl.VolumeRampUp();
-		}
-
-		/// <summary>
-		/// Begins ramping the device volume down.
-		/// </summary>
-		public void VolumeDown()
-		{
-			if (m_VolumeControl == null)
-				return;
-
-			IVolumeMuteDeviceControl volumeControlMute = m_VolumeControl as IVolumeMuteDeviceControl;
-			if (volumeControlMute != null)
-				volumeControlMute.SetVolumeMute(false);
-
-			IVolumeRampDeviceControl volumeRampControl = m_VolumeControl as IVolumeRampDeviceControl;
-			IVolumePositionDeviceControl volumePositionControl = volumeRampControl as IVolumePositionDeviceControl;
-
-			if (volumePositionControl != null)
-				volumePositionControl.VolumePositionRampDown(RAMP_PERCENTAGE);
-			else if (volumeRampControl != null)
-				volumeRampControl.VolumeRampDown();
-		}
-
-		private void VolumeRelease()
-		{
-			IVolumeRampDeviceControl volumeControl = m_VolumeControl as IVolumeRampDeviceControl;
-			if (volumeControl != null)
-				volumeControl.VolumeRampStop();
-		}
-
-		private void ToggleMute()
-		{
-			IVolumeMuteBasicDeviceControl muteControl = m_VolumeControl as IVolumeMuteBasicDeviceControl;
-			if (muteControl != null)
-				muteControl.VolumeMuteToggle();
 		}
 
 		#endregion
