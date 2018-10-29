@@ -417,7 +417,8 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 
 		private void HandleMuteButton(bool pressed)
 		{
-			ToggleMute();
+			if (pressed)
+				ToggleMute();
 		}
 
 		private void HandleVolumeDownButton(bool pressed)
