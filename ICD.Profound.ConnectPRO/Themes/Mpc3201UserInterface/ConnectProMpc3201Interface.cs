@@ -7,12 +7,16 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
+using ICD.Common.Utils.Timers;
 using ICD.Connect.Audio.Controls;
 using ICD.Connect.Audio.EventArguments;
 using ICD.Connect.Misc.Keypads;
 using ICD.Connect.Panels.Crestron.Controls.TouchScreens;
+using ICD.Connect.Routing.Connections;
+using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 {
@@ -32,12 +36,14 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			{5, MPC3x201TouchScreenButtons.BUTTON_ACTION_6},
 		};
 
+		private readonly Dictionary<IDestination, IcdHashSet<ISource>> m_ActiveVideo;
+		private readonly Dictionary<ISource, eSourceState> m_SourceRoutedStates;
+		private readonly Dictionary<IDestination, ISource> m_ProcessingSources;
+		private readonly SafeCriticalSection m_RoutingSection;
+
 		private readonly IMPC3x201TouchScreenControl m_Control;
 		private readonly ConnectProTheme m_Theme;
 		private readonly SafeCriticalSection m_RefreshSection;
-
-		private readonly IcdHashSet<ISource> m_ActiveSources;
-		private readonly SafeCriticalSection m_ActiveSourcesSection;
 
 		private bool m_IsDisposed;
 
@@ -45,7 +51,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		private IVolumeMuteFeedbackDeviceControl m_VolumeMuteFeedbackControl;
 		private ISource[] m_Sources;
 
-		private DateTime m_PowerButtonPressTime;
+		private readonly SafeTimer m_HoldTimer;
 
 		#region Properties
 
@@ -76,8 +82,10 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			if (theme == null)
 				throw new ArgumentNullException("theme");
 
-			m_ActiveSources = new IcdHashSet<ISource>();
-			m_ActiveSourcesSection = new SafeCriticalSection();
+			m_ActiveVideo = new Dictionary<IDestination, IcdHashSet<ISource>>();
+			m_SourceRoutedStates = new Dictionary<ISource, eSourceState>();
+			m_ProcessingSources = new Dictionary<IDestination, ISource>();
+			m_RoutingSection = new SafeCriticalSection();
 
 			m_Sources = new ISource[0];
 
@@ -85,6 +93,8 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			m_Theme = theme;
 
 			m_RefreshSection = new SafeCriticalSection();
+
+			m_HoldTimer = SafeTimer.Stopped(PowerButtonHeld);
 
 			Subscribe(m_Control);
 
@@ -123,6 +133,8 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 
 			m_Sources = GetSources(room).ToArray();
 
+			UpdateRouting(EnumUtils.GetFlagsAllValue<eConnectionType>());
+
 			if (!m_IsDisposed)
 				Refresh();
 		}
@@ -137,7 +149,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			try
 			{
 				// Sources
-				m_ActiveSourcesSection.Enter();
+				m_RoutingSection.Enter();
 
 				try
 				{
@@ -147,7 +159,11 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 						m_Sources.TryElementAt(index, out source);
 
 						bool enabled = source != null;
-						bool active = source != null && m_ActiveSources.Contains(source);
+
+						bool active = enabled &&
+						              m_SourceRoutedStates.GetDefault(source) != eSourceState.Inactive &&
+						              Room != null &&
+						              Room.IsInMeeting;
 
 						m_Control.SetNumericalButtonEnabled((uint)(index + 1), enabled);
 						m_Control.SetNumericalButtonSelected((uint)(index + 1), active);
@@ -155,7 +171,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 				}
 				finally
 				{
-					m_ActiveSourcesSection.Leave();
+					m_RoutingSection.Leave();
 				}
 
 				// Volume
@@ -261,6 +277,152 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 				       : room.Routing.GetCoreSources();
 		}
 
+		/// <summary>
+		/// Sets the processing source for the single display destination.
+		/// </summary>
+		/// <param name="source"></param>
+		private void SetProcessingSource(ISource source)
+		{
+			IDestination destination = Room == null ? null : Room.Routing.GetDisplayDestinations().FirstOrDefault();
+			if (destination == null)
+				return;
+
+			SetProcessingSource(destination, source);
+		}
+
+		/// <summary>
+		/// Sets the processing source for the given destination.
+		/// </summary>
+		/// <param name="destination"></param>
+		/// <param name="source"></param>
+		private void SetProcessingSource(IDestination destination, ISource source)
+		{
+			if (destination == null)
+				throw new ArgumentNullException("destination");
+
+			m_RoutingSection.Enter();
+
+			try
+			{
+				// No change
+				if (source == m_ProcessingSources.GetDefault(destination))
+					return;
+
+				// Is the source already routed to the destination?
+				IcdHashSet<ISource> routed;
+				if (m_ActiveVideo.TryGetValue(destination, out routed) && routed.Contains(source))
+					return;
+
+				m_ProcessingSources[destination] = source;
+
+				UpdateSourceRoutedStates();
+
+				Refresh();
+			}
+			finally
+			{
+				m_RoutingSection.Leave();
+			}
+		}
+
+		/// <summary>
+		/// Updates the routing state in the UI.
+		/// </summary>
+		/// <param name="type"></param>
+		private void UpdateRouting(eConnectionType type)
+		{
+			m_RoutingSection.Enter();
+
+			try
+			{
+				if (type.HasFlag(eConnectionType.Video) && UpdateActiveVideo())
+					Refresh();
+			}
+			finally
+			{
+				m_RoutingSection.Leave();
+			}
+		}
+
+		/// <summary>
+		/// Builds the map of destinations to active video sources.
+		/// </summary>
+		/// <returns>True if the active video sources changed.</returns>
+		private bool UpdateActiveVideo()
+		{
+			m_RoutingSection.Enter();
+
+			try
+			{
+				Dictionary<IDestination, IcdHashSet<ISource>> routing =
+					(Room == null
+						 ? Enumerable.Empty<KeyValuePair<IDestination, IcdHashSet<ISource>>>()
+						 : Room.Routing
+						       .GetCachedActiveVideoSources())
+						.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+				if (routing.DictionaryEqual(m_ActiveVideo, (a, b) => a.SetEquals(b)))
+					return false;
+
+				m_ActiveVideo.Clear();
+				m_ActiveVideo.AddRange(routing.Keys, k => new IcdHashSet<ISource>(routing[k]));
+
+				// Remove routed items from the processing sources collection
+				foreach (KeyValuePair<IDestination, IcdHashSet<ISource>> kvp in m_ActiveVideo)
+				{
+					ISource processing = m_ProcessingSources.GetDefault(kvp.Key);
+					if (processing == null)
+						continue;
+
+					if (kvp.Value.Contains(processing))
+						m_ProcessingSources.Remove(kvp.Key);
+				}
+
+				UpdateSourceRoutedStates();
+
+				Refresh();
+
+				return true;
+			}
+			finally
+			{
+				m_RoutingSection.Leave();
+			}
+		}
+
+		private bool UpdateSourceRoutedStates()
+		{
+			m_RoutingSection.Enter();
+
+			try
+			{
+				// Build a map of video sources to their routed state
+				Dictionary<ISource, eSourceState> routedSources =
+					m_ActiveVideo.Values
+					             .SelectMany(v => v)
+					             .Distinct()
+					             .ToDictionary(s => s, s => eSourceState.Active);
+
+				// A source may be processing for another display, so we override
+				foreach (ISource source in m_ProcessingSources.Values.Where(s => s != null))
+					routedSources[source] = eSourceState.Processing;
+
+				if (routedSources.DictionaryEqual(m_SourceRoutedStates))
+					return false;
+
+				m_SourceRoutedStates.Clear();
+				m_SourceRoutedStates.AddRange(routedSources);
+
+				Refresh();
+
+				return true;
+			}
+			finally
+			{
+				m_RoutingSection.Leave();
+			}
+		}
+
 		#endregion
 
 		#region Room Callbacks
@@ -316,27 +478,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// <param name="eventArgs"></param>
 		private void RoutingOnDisplaySourceChanged(object sender, EventArgs eventArgs)
 		{
-			m_ActiveSourcesSection.Enter();
-
-			try
-			{
-				IcdHashSet<ISource> activeSources =
-					Room.Routing.GetCachedActiveVideoSources()
-					    .SelectMany(kvp => kvp.Value)
-					    .ToIcdHashSet();
-
-				if (activeSources.SetEquals(m_ActiveSources))
-					return;
-
-				m_ActiveSources.Clear();
-				m_ActiveSources.AddRange(activeSources);
-			}
-			finally
-			{
-				m_ActiveSourcesSection.Leave();
-			}
-
-			Refresh();
+			UpdateRouting(eConnectionType.Video);
 		}
 
 		#endregion
@@ -441,15 +583,21 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		{
 			if (pressed)
 			{
-				m_PowerButtonPressTime = IcdEnvironment.GetLocalTime();
+				m_HoldTimer.Reset(POWER_BUTTON_HOLD_MILLISECONDS);
 				return;
 			}
 
-			long deltaMilliseconds = (long)(IcdEnvironment.GetLocalTime() - m_PowerButtonPressTime).TotalMilliseconds;
-			bool shutdown = deltaMilliseconds >= POWER_BUTTON_HOLD_MILLISECONDS;
+			m_HoldTimer.Stop();
 
+			// Check IsInMeeting because it's possible we're releasing after holding
+			if (Room != null && Room.IsInMeeting)
+				Room.EndMeeting(false);
+		}
+
+		private void PowerButtonHeld()
+		{
 			if (Room != null)
-				Room.EndMeeting(shutdown);
+				Room.EndMeeting(true);
 		}
 
 		private void HandleSourceButton(int index, bool pressed)
@@ -467,6 +615,8 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			// Start the meeting if we are not currently in one
 			if (!Room.IsInMeeting)
 				Room.StartMeeting(false);
+
+			SetProcessingSource(source);
 
 			// Route the source to the display
 			Room.Routing.RouteSingleDisplay(source);
