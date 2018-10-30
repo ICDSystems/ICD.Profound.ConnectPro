@@ -10,6 +10,9 @@ using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Audio.Controls;
 using ICD.Connect.Audio.EventArguments;
+using ICD.Connect.Devices;
+using ICD.Connect.Devices.Controls;
+using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.Misc.Keypads;
 using ICD.Connect.Panels.Crestron.Controls.TouchScreens;
 using ICD.Connect.Routing.Connections;
@@ -49,6 +52,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 
 		private IVolumeDeviceControl m_VolumeControl;
 		private IVolumeMuteFeedbackDeviceControl m_VolumeMuteFeedbackControl;
+		private IPowerDeviceControl m_VolumePowerControl;
 		private ISource[] m_Sources;
 
 		private readonly SafeTimer m_HoldTimer;
@@ -174,16 +178,26 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 					m_RoutingSection.Leave();
 				}
 
-				// Volume
-				bool volumeEnabled = m_VolumeControl is IVolumeRampDeviceControl;
+				// Volume power
+				bool volumeOff = m_VolumePowerControl != null && !m_VolumePowerControl.IsPowered;
 
-				IVolumeMuteBasicDeviceControl muteControl = m_VolumeControl as IVolumeMuteBasicDeviceControl;
-				bool muteEnabled = muteControl != null;
-				bool muteActive = m_VolumeMuteFeedbackControl != null && m_VolumeMuteFeedbackControl.VolumeIsMuted;
+				// Volume
+				bool volumeEnabled = !volumeOff && m_VolumeControl is IVolumeRampDeviceControl;
 
 				IVolumePositionDeviceControl volumeControl = m_VolumeControl as IVolumePositionDeviceControl;
-				ushort percent = 
-					volumeControl == null ? (ushort)0 : (ushort)(MathUtils.Clamp(volumeControl.VolumePosition, 0, 1) * ushort.MaxValue);
+				ushort percent =
+					volumeControl == null
+						? (ushort)0
+						: volumeEnabled
+							  ? (ushort)(MathUtils.Clamp(volumeControl.VolumePosition, 0, 1) * ushort.MaxValue)
+							  : (ushort)0;
+
+				// Mute
+				IVolumeMuteBasicDeviceControl muteControl = m_VolumeControl as IVolumeMuteBasicDeviceControl;
+				bool muteEnabled = !volumeOff && muteControl != null;
+				bool muteActive = muteEnabled &&
+				                  m_VolumeMuteFeedbackControl != null
+				                  && m_VolumeMuteFeedbackControl.VolumeIsMuted;
 
 				m_Control.SetVolumeBargraph(percent);
 
@@ -442,6 +456,10 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			m_VolumeControl = room.GetVolumeControl();
 			m_VolumeMuteFeedbackControl = m_VolumeControl as IVolumeMuteFeedbackDeviceControl;
 			Subscribe(m_VolumeControl);
+
+			IDeviceBase volumeParent = m_VolumeControl == null ? null : m_VolumeControl.Parent;
+			m_VolumePowerControl = volumeParent == null ? null : volumeParent.Controls.GetControl<IPowerDeviceControl>();
+			Subscribe(m_VolumePowerControl);
 		}
 
 		/// <summary>
@@ -459,6 +477,9 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			Unsubscribe(m_VolumeMuteFeedbackControl);
 			m_VolumeMuteFeedbackControl = null;
 			m_VolumeControl = null;
+
+			Unsubscribe(m_VolumePowerControl);
+			m_VolumePowerControl = null;
 		}
 
 		/// <summary>
@@ -672,6 +693,44 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
 		private void VolumeLevelControlOnVolumeChanged(object sender, VolumeDeviceVolumeChangedEventArgs eventArgs)
+		{
+			Refresh();
+		}
+
+		#endregion
+
+		#region Volume Power Control Callbacks
+
+		/// <summary>
+		/// Subscribe to the volume power control events.
+		/// </summary>
+		/// <param name="volumePowerControl"></param>
+		private void Subscribe(IPowerDeviceControl volumePowerControl)
+		{
+			if (volumePowerControl == null)
+				return;
+
+			volumePowerControl.OnIsPoweredChanged += VolumePowerControlOnIsPoweredChanged;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the volume power control events.
+		/// </summary>
+		/// <param name="volumePowerControl"></param>
+		private void Unsubscribe(IPowerDeviceControl volumePowerControl)
+		{
+			if (volumePowerControl == null)
+				return;
+
+			volumePowerControl.OnIsPoweredChanged -= VolumePowerControlOnIsPoweredChanged;
+		}
+
+		/// <summary>
+		/// Called when the volume device power state changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="powerDeviceControlPowerStateApiEventArgs"></param>
+		private void VolumePowerControlOnIsPoweredChanged(object sender, PowerDeviceControlPowerStateApiEventArgs powerDeviceControlPowerStateApiEventArgs)
 		{
 			Refresh();
 		}
