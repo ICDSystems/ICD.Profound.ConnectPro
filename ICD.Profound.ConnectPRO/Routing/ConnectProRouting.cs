@@ -108,24 +108,11 @@ namespace ICD.Profound.ConnectPRO.Routing
 			{
 				// Build a map of video destination => source
 				if (type.HasFlag(eConnectionType.Video))
-				{
-					Dictionary<IDestination, IcdHashSet<ISource>> routing =
-						GetDisplayDestinations()
-							.ToDictionary(destination => destination,
-							              destination => GetActiveVideoSources(destination).ToIcdHashSet());
-
-					videoChange = UpdateVideoRoutingCache(routing);
-				}
+					videoChange = UpdateVideoRoutingCache();
 
 				// Get a list of sources going to audio destinations
 				if (type.HasFlag(eConnectionType.Audio))
-				{
-					IcdHashSet<ISource> activeAudio = GetActiveAudioSources().ToIcdHashSet();
-					audioChange = !activeAudio.SetEquals(m_AudioRoutingCache);
-
-					m_AudioRoutingCache.Clear();
-					m_AudioRoutingCache.AddRange(activeAudio);
-				}
+					audioChange = UpdateAudioRoutingCache();
 			}
 			finally
 			{
@@ -140,6 +127,56 @@ namespace ICD.Profound.ConnectPRO.Routing
 		}
 
 		/// <summary>
+		/// Updates the current audio routing cache to match the routed sources.
+		/// Returns true if there are any changes.
+		/// </summary>
+		/// <returns></returns>
+		private bool UpdateAudioRoutingCache()
+		{
+			m_CacheSection.Enter();
+
+			try
+			{
+				IcdHashSet<ISource> activeAudio = GetActiveAudioSources().ToIcdHashSet();
+				if (activeAudio.SetEquals(m_AudioRoutingCache))
+					return false;
+
+				m_AudioRoutingCache.Clear();
+				m_AudioRoutingCache.AddRange(activeAudio);
+
+				return true;
+			}
+			finally
+			{
+				m_CacheSection.Leave();
+			}
+		}
+
+		/// <summary>
+		/// Updates the current video routing cache to match the routed sources.
+		/// Returns true if there are any changes.
+		/// </summary>
+		/// <returns></returns>
+		private bool UpdateVideoRoutingCache()
+		{
+			m_CacheSection.Enter();
+
+			try
+			{
+				Dictionary<IDestination, IcdHashSet<ISource>> routing =
+				GetDisplayDestinations()
+					.ToDictionary(destination => destination,
+								  destination => GetActiveVideoSources(destination).ToIcdHashSet());
+
+				return UpdateVideoRoutingCache(routing);
+			}
+			finally
+			{
+				m_CacheSection.Leave();
+			}
+		}
+
+		/// <summary>
 		/// Updates the current video routing cache to match the given dictionary.
 		/// Returns true if there are any changes.
 		/// </summary>
@@ -147,6 +184,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <returns></returns>
 		private bool UpdateVideoRoutingCache(Dictionary<IDestination, IcdHashSet<ISource>> routing)
 		{
+			if (routing == null)
+				throw new ArgumentNullException("routing");
+
 			bool output = false;
 
 			m_CacheSection.Enter();
@@ -167,8 +207,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 					output = true;
 
-					m_VideoRoutingCache[kvp.Key].Clear();
-					m_VideoRoutingCache[kvp.Key].AddRange(kvp.Value);
+					cache.Clear();
+					cache.AddRange(kvp.Value);
 				}
 			}
 			finally
@@ -1013,16 +1053,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <param name="eventArgs"></param>
 		private void RoutingCacheOnDestinationEndpointActiveChanged(object sender, CacheStateChangedEventArgs eventArgs)
 		{
-			// Does this event concern destination inputs?
-			bool intersects =
-				GetDisplayDestinations().Concat(GetAudioDestinations())
-										.SelectMany(d => d.GetEndpoints())
-										.Intersect(eventArgs.Endpoints)
-										.Any();
-
-			if (!intersects)
-				return;
-
 			HandleRoutingChange(eventArgs.Type);
 		}
 
