@@ -2,7 +2,7 @@
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Timers;
-using ICD.Connect.Conferencing.ConferenceSources;
+using ICD.Connect.Conferencing.Participants;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.ActiveCalls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -16,13 +16,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly SafeTimer m_RefreshTimer;
 
-		private IConferenceSource m_Source;
+		private ITraditionalParticipant m_Source;
 
 		/// <summary>
 		/// Sets the conference source for this presenter.
 		/// </summary>
 		/// <value></value>
-		public IConferenceSource ConferenceSource
+		public ITraditionalParticipant Participant
 		{
 			get { return m_Source; }
 			set
@@ -84,7 +84,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			}
 		}
 
-		private static string GetLabelText(IConferenceSource source)
+		private static string GetLabelText(ITraditionalParticipant source)
 		{
 			if (source == null)
 				return string.Empty;
@@ -109,7 +109,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Subscribe to the source events.
 		/// </summary>
 		/// <param name="source"></param>
-		private void Subscribe(IConferenceSource source)
+		private void Subscribe(ITraditionalParticipant source)
 		{
 			if (source == null)
 				return;
@@ -122,7 +122,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Unsubscribe from the source events.
 		/// </summary>
 		/// <param name="source"></param>
-		private void Unsubscribe(IConferenceSource source)
+		private void Unsubscribe(ITraditionalParticipant source)
 		{
 			if (source == null)
 				return;

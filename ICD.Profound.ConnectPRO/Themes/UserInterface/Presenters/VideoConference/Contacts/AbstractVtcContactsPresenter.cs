@@ -5,6 +5,7 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Directory;
+using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.Directory;
 using ICD.Connect.Conferencing.Directory.Tree;
 using ICD.Connect.Conferencing.EventArguments;
@@ -207,7 +208,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_SubscribedConferenceManager.OnInCallChanged += ConferenceManagerOnInCallChanged;
 			m_SubscribedConferenceManager.OnActiveSourceStatusChanged += ConferenceManagerOnActiveSourceStatusChanged;
 
-			IDialingDeviceControl dialer = m_SubscribedConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			IConferenceDeviceControl dialer = m_SubscribedConferenceManager.GetDialingProvider(eCallType.Video);
 			IDeviceBase parent = dialer == null ? null : dialer.Parent;
 			IDirectoryControl directory = parent == null ? null : parent.Controls.GetControl<IDirectoryControl>();
 			
@@ -243,7 +244,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			RefreshIfVisible();
 		}
 
-		private void ConferenceManagerOnActiveSourceStatusChanged(object sender, ConferenceSourceStatusEventArgs args)
+		private void ConferenceManagerOnActiveSourceStatusChanged(object sender, ParticipantStatusEventArgs args)
 		{
 			RefreshIfVisible();
 		}
@@ -302,9 +303,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="number"></param>
 		private void KeyboardDialCallback(string number)
 		{
-			IDialingDeviceControl control = Room == null ? null : Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			IConferenceDeviceControl control = Room == null ? null : Room.ConferenceManager.GetDialingProvider(eCallType.Video);
 			if (control != null)
-				control.Dial(number);
+				control.Dial(new SipDialContext { DialString = number, CallType = eCallType.Video });
 
 			ShowView(true);
 		}

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using ICD.Connect.Conferencing.Contacts;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
@@ -100,9 +99,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		protected override void Dial()
 		{
-			IDialingDeviceControl dialer = Room == null ? null : Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			IConferenceDeviceControl dialer = Room == null ? null : Room.ConferenceManager.GetDialingProvider(eCallType.Video);
 			if (dialer != null && m_Contact != null)
-				dialer.Dial(m_Contact.GetContactMethods().First().Number);
+				dialer.Dial(m_Contact);
 		}
 	}
 }

@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
-using ICD.Connect.Conferencing.ConferenceSources;
+using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Participants;
+using ICD.Connect.Partitioning.Rooms;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.ActiveCalls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.ActiveCalls;
@@ -17,8 +20,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 	{
 		private readonly VtcReferencedActiveCallsPresenterFactory m_ChildrenFactory;
 		private readonly SafeCriticalSection m_RefreshSection;
+		private readonly IVtcBasePresenter m_VtcBasePresenter;
 
-		private IDialingDeviceControl m_SubscribedVideoDialer;
+		private ITraditionalConferenceDeviceControl m_ActiveConferenceControl;
+
+		private ITraditionalConferenceDeviceControl ActiveConferenceControl
+		{
+			get { return m_ActiveConferenceControl; }
+			set
+			{
+				if (value == m_ActiveConferenceControl)
+					return;
+
+				Unsubscribe(m_ActiveConferenceControl);
+				m_ActiveConferenceControl = value;
+				Subscribe(m_ActiveConferenceControl);
+			}
+		}
 
 		/// <summary>
 		/// Constructor.
@@ -31,6 +49,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			m_ChildrenFactory = new VtcReferencedActiveCallsPresenterFactory(nav, ItemFactory);
 			m_RefreshSection = new SafeCriticalSection();
+
+			m_VtcBasePresenter = nav.LazyLoadPresenter<IVtcBasePresenter>();
+			m_VtcBasePresenter.OnActiveConferenceControlChanged += VtcBaseOnActiveConferenceControlChanged;
+		}
+
+		private void VtcBaseOnActiveConferenceControlChanged(object sender, EventArgs eventArgs)
+		{
+			ActiveConferenceControl = m_VtcBasePresenter.ActiveConferenceControl;
 		}
 
 		/// <summary>
@@ -55,7 +81,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			try
 			{
-				IConferenceSource[] sources = GetSources().ToArray();
+				ITraditionalParticipant[] sources = GetSources().ToArray();
 				foreach (IVtcReferencedActiveCallsPresenter presenter in m_ChildrenFactory.BuildChildren(sources, p => { }, p => { }))
 					presenter.ShowView(true);
 			}
@@ -80,11 +106,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Returns the current active sources.
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<IConferenceSource> GetSources()
+		public IEnumerable<ITraditionalParticipant> GetSources()
 		{
-			return m_SubscribedVideoDialer == null
-				       ? Enumerable.Empty<IConferenceSource>()
-					   : m_SubscribedVideoDialer.GetSources().Where(s => s.GetIsActive());
+			var conference = ActiveConferenceControl == null ? null : ActiveConferenceControl.GetActiveConference() as ITraditionalConference;
+			return conference == null
+				? Enumerable.Empty<ITraditionalParticipant>()
+				: conference.GetParticipants().Where(s => s.GetIsActive());
 		}
 
 		/// <summary>
@@ -92,8 +119,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		public void HangupAll()
 		{
-			foreach (IConferenceSource source in GetSources())
-				source.Hangup();
+			if (ActiveConferenceControl == null)
+				return;
+
+			var active = ActiveConferenceControl.GetActiveConference() as ITraditionalConference;
+
+			if(active != null)
+				active.Hangup();
 		}
 
 		#region Private Methods
@@ -110,57 +142,66 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		#endregion
 
-		#region Room Callbacks
+		#region Conference Control Callbacks
 
 		/// <summary>
-		/// Subscribe to the room events.
+		/// Subscribe to the conference control events.
 		/// </summary>
-		/// <param name="room"></param>
-		protected override void Subscribe(IConnectProRoom room)
+		/// <param name="control"></param>
+		private void Subscribe(ITraditionalConferenceDeviceControl control)
 		{
-			base.Subscribe(room);
+			control.OnConferenceAdded += DialerOnConferenceAdded;
+			control.OnConferenceRemoved += DialerOnConferenceRemoved;
 
-			if (room == null)
-				return;
-
-			m_SubscribedVideoDialer = room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
-			if (m_SubscribedVideoDialer == null)
-				return;
-
-			m_SubscribedVideoDialer.OnSourceAdded += VideoDialerOnSourceAdded;
-			m_SubscribedVideoDialer.OnSourceRemoved += VideoDialerOnSourceRemoved;
-			m_SubscribedVideoDialer.OnSourceChanged += VideoDialerOnSourceChanged;
+			foreach (var conference in control.GetConferences())
+				Subscribe(conference);
 		}
 
 		/// <summary>
-		/// Unsubscribe from the room events.
+		/// Unsubscribe from the conference control events.
 		/// </summary>
-		/// <param name="room"></param>
-		protected override void Unsubscribe(IConnectProRoom room)
+		/// <param name="control"></param>
+		private void Unsubscribe(ITraditionalConferenceDeviceControl control)
 		{
-			base.Unsubscribe(room);
-
-			if (m_SubscribedVideoDialer != null)
-			{
-				m_SubscribedVideoDialer.OnSourceAdded -= VideoDialerOnSourceAdded;
-				m_SubscribedVideoDialer.OnSourceRemoved -= VideoDialerOnSourceRemoved;
-				m_SubscribedVideoDialer.OnSourceChanged -= VideoDialerOnSourceChanged;
-			}
-
-			m_SubscribedVideoDialer = null;
+			control.OnConferenceAdded -= DialerOnConferenceAdded;
+			control.OnConferenceRemoved -= DialerOnConferenceRemoved;
+			
+			foreach (var conference in control.GetConferences())
+				Unsubscribe(conference);
 		}
 
-		private void VideoDialerOnSourceAdded(object sender, ConferenceSourceEventArgs e)
+		private void DialerOnConferenceAdded(object sender, ConferenceEventArgs e)
+		{
+			Subscribe(e.Data as ITraditionalConference);
+		}
+
+		private void DialerOnConferenceRemoved(object sender, ConferenceEventArgs e)
+		{
+			Unsubscribe(e.Data as ITraditionalConference);
+		}
+
+		#endregion
+
+		#region Conference Callbacks 
+
+		private void Subscribe(ITraditionalConference conference)
+		{
+			conference.OnParticipantAdded += ConferenceOnParticipantAdded;
+			conference.OnParticipantRemoved += ConferenceOnParticipantRemoved;
+		}
+
+		private void Unsubscribe(ITraditionalConference conference)
+		{
+			conference.OnParticipantAdded -= ConferenceOnParticipantAdded;
+			conference.OnParticipantRemoved -= ConferenceOnParticipantRemoved;
+		}
+
+		private void ConferenceOnParticipantAdded(object sender, ParticipantEventArgs participantEventArgs)
 		{
 			RefreshIfVisible();
 		}
 
-		private void VideoDialerOnSourceRemoved(object sender, ConferenceSourceEventArgs e)
-		{
-			RefreshIfVisible();
-		}
-
-		private void VideoDialerOnSourceChanged(object sender, ConferenceSourceEventArgs e)
+		private void ConferenceOnParticipantRemoved(object sender, ParticipantEventArgs participantEventArgs)
 		{
 			RefreshIfVisible();
 		}

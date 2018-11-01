@@ -5,10 +5,13 @@ using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
-using ICD.Connect.Conferencing.ConferenceManagers;
-using ICD.Connect.Conferencing.ConferenceSources;
+using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Participants;
+using ICD.Connect.Devices;
+using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.AudioConference;
@@ -22,19 +25,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		/// <summary>
 		/// Raised when the user answers the incoming call.
 		/// </summary>
-		public event EventHandler OnCallAnswered;
+		public event EventHandler<GenericEventArgs<IConferenceDeviceControl>>  OnCallAnswered;
 
-		private readonly List<IConferenceSource> m_Sources;
-		private readonly SafeCriticalSection m_SourcesSection;
+		private readonly Dictionary<IIncomingCall, IConferenceDeviceControl> m_IncomingCalls;
+		private readonly SafeCriticalSection m_IncomingCallsSection;
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		[CanBeNull]
-		private IDialingDeviceControl m_SubscribedAudioDialer;
+		private List<IConferenceDeviceControl> m_SubscribedAudioDialers;
 
 		/// <summary>
 		/// Gets the number of incoming sources.
 		/// </summary>
-		private int SourceCount { get { return m_SourcesSection.Execute(() => m_Sources.Count); } }
+		private int SourceCount { get { return m_IncomingCallsSection.Execute(() => m_IncomingCalls.Count); } }
 
 		/// <summary>
 		/// Constructor.
@@ -45,8 +48,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		public AtcIncomingCallPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
-			m_Sources = new List<IConferenceSource>();
-			m_SourcesSection = new SafeCriticalSection();
+			m_IncomingCalls = new Dictionary<IIncomingCall, IConferenceDeviceControl>();
+			m_IncomingCallsSection = new SafeCriticalSection();
 			m_RefreshSection = new SafeCriticalSection();
 		}
 
@@ -72,7 +75,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 
 			try
 			{
-				IConferenceSource source = GetFirstSource();
+				IIncomingCall source = GetFirstSource();
 				string info = GetCallerInfo(source);
 
 				view.SetCallerInfo(info);
@@ -83,29 +86,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 			}
 		}
 
-		private static string GetCallerInfo(IConferenceSource source)
+		private static string GetCallerInfo(IIncomingCall call)
 		{
 			string output = string.Empty;
 
-			if (source == null)
+			if (call == null)
 				return output;
 
-			output = string.IsNullOrEmpty(source.Name) ? "Unknown" : source.Name;
+			output = string.IsNullOrEmpty(call.Name) ? "Unknown" : call.Name;
 
-			if (!string.IsNullOrEmpty(source.Number))
-				output = string.Format("{0} - {1}", output, source.Number);
+			if (!string.IsNullOrEmpty(call.Number))
+				output = string.Format("{0} - {1}", output, call.Number);
 
 			return output;
 		}
 
 		/// <summary>
-		/// Gets the first unanswered source.
+		/// Gets the first unanswered call.
 		/// </summary>
 		/// <returns></returns>
 		[CanBeNull]
-		private IConferenceSource GetFirstSource()
+		private IIncomingCall GetFirstSource()
 		{
-			return m_SourcesSection.Execute(() => m_Sources.FirstOrDefault());
+			return m_IncomingCallsSection.Execute(() => m_IncomingCalls.Select(p => p.Key).FirstOrDefault());
 		}
 
 		/// <summary>
@@ -113,20 +116,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		/// </summary>
 		/// <returns></returns>
 		[CanBeNull]
-		private IDialingDeviceControl GetAudioDialer(IConnectProRoom room)
+		private IEnumerable<IConferenceDeviceControl> GetAudioDialers(IConnectProRoom room)
 		{
-			IConferenceManager manager = room == null ? null : room.ConferenceManager;
-			if (manager == null)
-				return null;
-
-			IDialingDeviceControl video = manager.GetDialingProvider(eConferenceSourceType.Video);
-			IDialingDeviceControl audio = manager.GetDialingProvider(eConferenceSourceType.Audio);
-
-			// Let the incoming video call popup take care of it
-			if (video == audio)
-				return null;
-
-			return audio;
+			return room.Originators.GetInstancesRecursive<ISource>()
+				.Select(s => room.Core.Originators[s.Device] as IDevice)
+				.SelectMany(d => d == null ? Enumerable.Empty<IConferenceDeviceControl>() : d.Controls.GetControls<IConferenceDeviceControl>())
+				.Where(c => c.Supports == eCallType.Audio);
 		}
 
 		#region Room Callbacks
@@ -139,11 +134,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		{
 			base.Subscribe(room);
 
-			m_SubscribedAudioDialer = GetAudioDialer(room);
-			if (m_SubscribedAudioDialer == null)
-				return;
-
-			m_SubscribedAudioDialer.OnSourceAdded += AudioDialerOnSourceAdded;
+			m_SubscribedAudioDialers = GetAudioDialers(room).ToList();
+			foreach (var dialer in m_SubscribedAudioDialers)
+			{
+				dialer.OnIncomingCallAdded += AudioDialerOnIncomingCallAdded;
+				dialer.OnIncomingCallRemoved += AudioDialerOnIncomingCallRemoved;
+			}
 		}
 
 		/// <summary>
@@ -154,33 +150,36 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		{
 			base.Unsubscribe(room);
 
-			if (m_SubscribedAudioDialer == null)
+			if (m_SubscribedAudioDialers == null)
 				return;
 
-			m_SubscribedAudioDialer.OnSourceAdded -= AudioDialerOnSourceAdded;
-
-			m_SubscribedAudioDialer = null;
+			foreach (var dialer in m_SubscribedAudioDialers)
+			{
+				dialer.OnIncomingCallAdded -= AudioDialerOnIncomingCallAdded;
+				dialer.OnIncomingCallRemoved -= AudioDialerOnIncomingCallRemoved;
+			}
 		}
 
 		/// <summary>
-		/// Adds the source to the collection.
+		/// Adds the call to the collection.
 		/// </summary>
-		/// <param name="source"></param>
-		private void AddSource(IConferenceSource source)
+		/// <param name="call"></param>
+		/// <param name="control"></param>
+		private void AddIncomingCall(IIncomingCall call, IConferenceDeviceControl control)
 		{
-			m_SourcesSection.Enter();
+			m_IncomingCallsSection.Enter();
 
 			try
 			{
-				if (m_Sources.Contains(source))
+				if (m_IncomingCalls.ContainsKey(call))
 					return;
 
-				m_Sources.Add(source);
-				Subscribe(source);
+				m_IncomingCalls.Add(call, control);
+				Subscribe(call);
 			}
 			finally
 			{
-				m_SourcesSection.Leave();
+				m_IncomingCallsSection.Leave();
 			}
 
 			ShowView(SourceCount > 0);
@@ -188,23 +187,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		}
 
 		/// <summary>
-		/// Removes the source from the collection.
+		/// Removes the call from the collection.
 		/// </summary>
-		/// <param name="source"></param>
-		private void RemoveSource(IConferenceSource source)
+		/// <param name="call"></param>
+		private void RemoveIncomingCall(IIncomingCall call)
 		{
-			m_SourcesSection.Enter();
+			m_IncomingCallsSection.Enter();
 			try
 			{
-				if (!m_Sources.Contains(source))
+				if (!m_IncomingCalls.ContainsKey(call))
 					return;
 
-				m_Sources.Remove(source);
-				Unsubscribe(source);
+				m_IncomingCalls.Remove(call);
+				Unsubscribe(call);
 			}
 			finally
 			{
-				m_SourcesSection.Leave();
+				m_IncomingCallsSection.Leave();
 			}
 
 			RefreshIfVisible();
@@ -212,15 +211,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		}
 
 		/// <summary>
-		/// Called when a new source is detected.
+		/// Called when a new call is detected.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		private void AudioDialerOnSourceAdded(object sender, ConferenceSourceEventArgs args)
+		private void AudioDialerOnIncomingCallAdded(object sender, GenericEventArgs<IIncomingCall> args)
 		{
-			IConferenceSource source = args.Data;
-			if (source.GetIsRingingIncomingCall())
-				AddSource(source);
+			IIncomingCall call = args.Data;
+			if (call.GetIsRingingIncomingCall())
+				AddIncomingCall(call, sender as IConferenceDeviceControl);
+		}
+
+		/// <summary>
+		/// Called when a new call is detected.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void AudioDialerOnIncomingCallRemoved(object sender, GenericEventArgs<IIncomingCall> args)
+		{
+			IIncomingCall call = args.Data;
+			RemoveIncomingCall(call);
 		}
 
 		#endregion
@@ -228,70 +238,58 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		#region Source Callbacks
 
 		/// <summary>
-		/// Subscribe to the source events.
+		/// Subscribe to the call events.
 		/// </summary>
-		/// <param name="source"></param>
-		private void Subscribe(IConferenceSource source)
+		/// <param name="call"></param>
+		private void Subscribe(IIncomingCall call)
 		{
-			source.OnNameChanged += SourceOnNameChanged;
-			source.OnNumberChanged += SourceOnNumberChanged;
-			source.OnSourceTypeChanged += SourceOnSourceTypeChanged;
-			source.OnStatusChanged += SourceOnStatusChanged;
+			call.OnAnswerStateChanged += CallOnAnswerStateChanged;
+			call.OnNameChanged += CallOnNameChanged;
+			call.OnNumberChanged += CallOnNumberChanged;
 		}
 
 		/// <summary>
-		/// Unsubscribe from the source events.
+		/// Unsubscribe from the call events.
 		/// </summary>
-		/// <param name="source"></param>
-		private void Unsubscribe(IConferenceSource source)
+		/// <param name="call"></param>
+		private void Unsubscribe(IIncomingCall call)
 		{
-			source.OnNameChanged -= SourceOnNameChanged;
-			source.OnNumberChanged -= SourceOnNumberChanged;
-			source.OnSourceTypeChanged -= SourceOnSourceTypeChanged;
-			source.OnStatusChanged -= SourceOnStatusChanged;
+			call.OnAnswerStateChanged -= CallOnAnswerStateChanged;
+			call.OnNameChanged -= CallOnNameChanged;
+			call.OnNumberChanged -= CallOnNumberChanged;
 		}
 
 		/// <summary>
-		/// Called when the source status changes.
+		/// Called when the call status changes.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		private void SourceOnStatusChanged(object sender, ConferenceSourceStatusEventArgs args)
+		private void CallOnAnswerStateChanged(object sender, IncomingCallAnswerStateEventArgs args)
 		{
-			IConferenceSource source = sender as IConferenceSource;
+			var source = sender as IIncomingCall;
 			if (sender == null)
 				return;
 
 			if (!source.GetIsRingingIncomingCall())
-				RemoveSource(source);
+				RemoveIncomingCall(source);
 		}
 
 		/// <summary>
-		/// Called when the source type changes.
+		/// Called when the call number changes.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		private void SourceOnSourceTypeChanged(object sender, EventArgs args)
+		private void CallOnNumberChanged(object sender, StringEventArgs args)
 		{
 			RefreshIfVisible();
 		}
 
 		/// <summary>
-		/// Called when the source number changes.
+		/// Called when the call name changes.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		private void SourceOnNumberChanged(object sender, StringEventArgs args)
-		{
-			RefreshIfVisible();
-		}
-
-		/// <summary>
-		/// Called when the source name changes.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		private void SourceOnNameChanged(object sender, StringEventArgs args)
+		private void CallOnNameChanged(object sender, StringEventArgs args)
 		{
 			RefreshIfVisible();
 		}
@@ -331,10 +329,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		/// <param name="e"></param>
 		private void ViewOnIgnoreButtonPressed(object sender, EventArgs e)
 		{
-			IConferenceSource source = GetFirstSource();
+			IIncomingCall call = GetFirstSource();
 
-			if (source != null)
-				source.Hangup();
+			if (call != null)
+				call.Reject();
 
 			ShowView(false);
 		}
@@ -346,15 +344,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		/// <param name="e"></param>
 		private void ViewOnAnswerButtonPressed(object sender, EventArgs e)
 		{
-			IConferenceSource source = GetFirstSource();
+			IIncomingCall call = GetFirstSource();
+			IConferenceDeviceControl control = null;
 
-			if (source != null)
-				source.Answer();
+			m_IncomingCallsSection.Enter();
+			try
+			{
+				if (m_IncomingCalls.ContainsKey(call))
+					control = m_IncomingCalls[call];
+			}
+			finally
+			{
+				m_IncomingCallsSection.Leave();
+			}
+
+			if (call != null)
+				call.Answer();
 
 			if (Room != null)
 				Room.StartMeeting(false);
-
-			OnCallAnswered.Raise(this);
+			OnCallAnswered.Raise(this, new GenericEventArgs<IConferenceDeviceControl>(control));
 
 			ShowView(false);
 		}

@@ -182,7 +182,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		[CanBeNull]
 		private IVideoConferenceDevice GetCodec()
 		{
-			IDialingDeviceControl dialer = m_Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			IConferenceDeviceControl dialer = m_Room.ConferenceManager.GetDialingProvider(eCallType.Video);
 			return dialer == null ? null : dialer.Parent as IVideoConferenceDevice;
 		}
 
@@ -916,7 +916,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 				case eControlOverride.Atc:
 				case eControlOverride.Vtc:
-					return device.Controls.GetControls<IDialingDeviceControl>().FirstOrDefault();
+					return device.Controls.GetControls<ITraditionalConferenceDeviceControl>().FirstOrDefault();
 					
 				case eControlOverride.WebConference:
 					return null;

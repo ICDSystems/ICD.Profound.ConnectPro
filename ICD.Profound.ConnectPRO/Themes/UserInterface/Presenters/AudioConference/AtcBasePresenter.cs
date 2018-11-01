@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
-using ICD.Common.Utils.Extensions;
-using ICD.Connect.Conferencing.ConferenceManagers;
-using ICD.Connect.Conferencing.ConferenceSources;
+using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Participants;
+using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -23,7 +25,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		private readonly KeypadStringBuilder m_Builder;
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private IDialingDeviceControl m_SubscribedAudioDialer;
+		private List<IConferenceDeviceControl> m_SubscribedAudioDialers;
 
 		/// <summary>
 		/// Constructor.
@@ -62,8 +64,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 
 			try
 			{
-				IConferenceSource active = GetActiveSource();
-				eConferenceSourceStatus status = active == null ? eConferenceSourceStatus.Disconnected : active.Status;
+				IParticipant active = GetActiveSource();
+				eParticipantStatus status = active == null ? eParticipantStatus.Disconnected : active.Status;
 
 				string atcNumber = Room == null ? string.Empty : Room.AtcNumber;
 				string activeStatus = StringUtils.NiceName(status);
@@ -89,10 +91,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		/// </summary>
 		/// <returns></returns>
 		[CanBeNull]
-		private IDialingDeviceControl GetAudioDialer(IConnectProRoom room)
+		private IEnumerable<IConferenceDeviceControl> GetAudioDialers(IConnectProRoom room)
 		{
-			IConferenceManager manager = room == null ? null : room.ConferenceManager;
-			return manager == null ? null : manager.GetDialingProvider(eConferenceSourceType.Audio);
+			return room.GetControlsRecursive<IConferenceDeviceControl>().Where(c => c.Supports == eCallType.Audio);
 		}
 
 		/// <summary>
@@ -100,12 +101,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		/// </summary>
 		/// <returns></returns>
 		[CanBeNull]
-		private IConferenceSource GetActiveSource()
+		private IParticipant GetActiveSource()
 		{
 			return
-				m_SubscribedAudioDialer == null
+				m_SubscribedAudioDialers == null
 					? null
-					: m_SubscribedAudioDialer.GetSources().FirstOrDefault(s => s.GetIsActive());
+					: m_SubscribedAudioDialers
+						.SelectMany(d => d.GetConferences())
+						.SelectMany(c => c.GetParticipants())
+						.FirstOrDefault(s => s.GetIsActive());
+		}
+
+		private IConference GetActiveConference()
+		{
+			return m_SubscribedAudioDialers == null
+				? null
+				: m_SubscribedAudioDialers.SelectMany(d => d.GetConferences())
+					.FirstOrDefault(c => 
+						c.Status == eConferenceStatus.Connected && 
+						c.GetParticipants().Any(p => p.GetIsActive()));
 		}
 
 		#region Room Callbacks
@@ -118,13 +132,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		{
 			base.Subscribe(room);
 
-			m_SubscribedAudioDialer = GetAudioDialer(room);
-			if (m_SubscribedAudioDialer == null)
+			m_SubscribedAudioDialers = GetAudioDialers(room).ToList();
+			if (m_SubscribedAudioDialers == null)
 				return;
 
-			m_SubscribedAudioDialer.OnSourceAdded += AudioDialerOnSourceAdded;
-			m_SubscribedAudioDialer.OnSourceRemoved += AudioDialerOnSourceRemoved;
-			m_SubscribedAudioDialer.OnSourceChanged += AudioDialerOnSourceChanged;
+			foreach (var dialer in m_SubscribedAudioDialers)
+			{
+				dialer.OnConferenceAdded += AudioDialerOnConferenceAdded;
+				dialer.OnConferenceRemoved += AudioDialerOnConferenceRemoved;
+
+				foreach (var conference in dialer.GetConferences())
+					Subscribe(conference);
+			}
 		}
 
 		/// <summary>
@@ -135,22 +154,65 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		{
 			base.Unsubscribe(room);
 
-			if (m_SubscribedAudioDialer == null)
+			if (m_SubscribedAudioDialers == null)
 				return;
 
-			m_SubscribedAudioDialer.OnSourceAdded -= AudioDialerOnSourceAdded;
-			m_SubscribedAudioDialer.OnSourceRemoved -= AudioDialerOnSourceRemoved;
-			m_SubscribedAudioDialer.OnSourceChanged -= AudioDialerOnSourceChanged;
+			foreach (var dialer in m_SubscribedAudioDialers)
+			{
+				dialer.OnConferenceAdded -= AudioDialerOnConferenceAdded;
+				dialer.OnConferenceRemoved -= AudioDialerOnConferenceRemoved;
 
-			m_SubscribedAudioDialer = null;
+				foreach (var conference in dialer.GetConferences())
+					Unsubscribe(conference);
+			}
+
+			m_SubscribedAudioDialers = null;
 		}
 
-		private void AudioDialerOnSourceAdded(object sender, ConferenceSourceEventArgs e)
+		private void AudioDialerOnConferenceAdded(object sender, ConferenceEventArgs e)
+		{
+			Subscribe(e.Data);
+			RefreshIfVisible();
+		}
+
+		private void AudioDialerOnConferenceRemoved(object sender, ConferenceEventArgs e)
+		{
+			// When the source goes offline we clear the dial string
+			if (GetActiveSource() == null)
+				m_Builder.Clear();
+
+			Unsubscribe(e.Data);
+			RefreshIfVisible();
+		}
+
+		#endregion
+
+		#region Conference Callbacks
+
+		private void Subscribe(IConference conference)
+		{
+			if (conference == null)
+				return;
+
+            conference.OnParticipantAdded += ConferenceOnParticipantAdded;
+			conference.OnParticipantRemoved += ConferenceOnParticipantRemoved;
+		}
+
+		private void Unsubscribe(IConference conference)
+		{
+			if (conference == null)
+				return;
+
+			conference.OnParticipantAdded -= ConferenceOnParticipantAdded;
+			conference.OnParticipantRemoved -= ConferenceOnParticipantRemoved;
+		}
+
+		private void ConferenceOnParticipantAdded(object sender, ParticipantEventArgs participantEventArgs)
 		{
 			RefreshIfVisible();
 		}
 
-		private void AudioDialerOnSourceRemoved(object sender, ConferenceSourceEventArgs e)
+		private void ConferenceOnParticipantRemoved(object sender, ParticipantEventArgs participantEventArgs)
 		{
 			// When the source goes offline we clear the dial string
 			if (GetActiveSource() == null)
@@ -159,12 +221,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 			RefreshIfVisible();
 		}
 
-		private void AudioDialerOnSourceChanged(object sender, ConferenceSourceEventArgs e)
-		{
-			RefreshIfVisible();
-		}
-
 		#endregion
+
 
 		#region View Callbacks
 
@@ -198,11 +256,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 
 		private void ViewOnKeypadButtonPressed(object sender, CharEventArgs eventArgs)
 		{
-			if (m_SubscribedAudioDialer == null)
+			if (m_SubscribedAudioDialers == null)
 				return;
 
 			// DTMF
-			foreach (IConferenceSource source in m_SubscribedAudioDialer.GetSources().Where(s => s.GetIsOnline()))
+			foreach (ITraditionalParticipant source in GetActiveConference().GetParticipants().Where(s => s.GetIsOnline()).OfType<ITraditionalParticipant>())
 				source.SendDtmf(eventArgs.Data);
 
 			m_Builder.AppendCharacter(eventArgs.Data);
@@ -210,22 +268,30 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 
 		private void ViewOnHangupButtonPressed(object sender, EventArgs eventArgs)
 		{
-			if (m_SubscribedAudioDialer == null)
+			if (m_SubscribedAudioDialers == null)
 				return;
 
-			m_SubscribedAudioDialer.GetSources().ForEach(s => s.Hangup());
+			var activeConference = GetActiveConference();
+
+			var traditionalConference = activeConference as ITraditionalConference;
+			if (traditionalConference != null)
+				traditionalConference.Hangup();
 		}
 
 		private void ViewOnDialButtonPressed(object sender, EventArgs eventArgs)
 		{
-			if (m_SubscribedAudioDialer == null)
+			if (m_SubscribedAudioDialers == null)
 				return;
 
 			string dialString = m_Builder.ToString();
 			if (string.IsNullOrEmpty(dialString))
 				return;
 
-			m_SubscribedAudioDialer.Dial(dialString);
+			var dialContext = new GenericDialContext { DialString = dialString, CallType = eCallType.Audio };
+
+			var bestDialer = m_SubscribedAudioDialers.GetBestDialer(dialContext);
+			if (bestDialer != null)
+				bestDialer.Dial(dialContext);
 		}
 
 		private void ViewOnClearButtonPressed(object sender, EventArgs eventArgs)

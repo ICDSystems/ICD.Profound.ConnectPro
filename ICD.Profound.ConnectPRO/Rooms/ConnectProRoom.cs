@@ -370,13 +370,13 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			// If there are no audio or video providers, search the available controls
 			if (m_DialingPlan.VideoEndpoint.DeviceId == 0 && m_DialingPlan.AudioEndpoint.DeviceId == 0)
 			{
-				IDialingDeviceControl[] dialers = this.GetControlsRecursive<IDialingDeviceControl>().ToArray();
+				ITraditionalConferenceDeviceControl[] dialers = this.GetControlsRecursive<ITraditionalConferenceDeviceControl>().ToArray();
 
-				DeviceControlInfo video = dialers.Where(d => d.Supports == eConferenceSourceType.Video)
+				DeviceControlInfo video = dialers.Where(d => d.Supports == eCallType.Video)
 												 .Select(d => d.DeviceControlInfo)
 												 .FirstOrDefault();
 
-				DeviceControlInfo audio = dialers.Where(d => d.Supports == eConferenceSourceType.Audio)
+				DeviceControlInfo audio = dialers.Where(d => d.Supports == eCallType.Audio)
 												 .Select(d => d.DeviceControlInfo)
 												 .FirstOrDefault(video);
 
@@ -385,18 +385,18 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			// Setup the dialing providers
 			if (m_DialingPlan.VideoEndpoint.DeviceId != 0)
-				TryRegisterDialingProvider(m_DialingPlan.VideoEndpoint, eConferenceSourceType.Video, factory);
+				TryRegisterDialingProvider(m_DialingPlan.VideoEndpoint, eCallType.Video, factory);
 
 			if (m_DialingPlan.AudioEndpoint.DeviceId != 0)
-				TryRegisterDialingProvider(m_DialingPlan.AudioEndpoint, eConferenceSourceType.Audio, factory);
+				TryRegisterDialingProvider(m_DialingPlan.AudioEndpoint, eCallType.Audio, factory);
 		}
 
-		private void TryRegisterDialingProvider(DeviceControlInfo info, eConferenceSourceType sourceType, IDeviceFactory factory)
+		private void TryRegisterDialingProvider(DeviceControlInfo info, eCallType sourceType, IDeviceFactory factory)
 		{
 			try
 			{
 				IDeviceBase device = factory.GetOriginatorById<IDeviceBase>(info.DeviceId);
-				IDialingDeviceControl control = device.Controls.GetControl<IDialingDeviceControl>(info.ControlId);
+				ITraditionalConferenceDeviceControl control = device.Controls.GetControl<ITraditionalConferenceDeviceControl>(info.ControlId);
 
 				m_ConferenceManager.RegisterDialingProvider(sourceType, control);
 			}

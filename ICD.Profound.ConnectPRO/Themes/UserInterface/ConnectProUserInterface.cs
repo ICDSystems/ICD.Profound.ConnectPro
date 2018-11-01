@@ -269,10 +269,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				throw new ArgumentNullException("source");
 
 			IDeviceBase device = m_Room.Core.Originators.GetChild<IDeviceBase>(source.Device);
-			IDialingDeviceControl dialer = device.Controls.GetControl<IDialingDeviceControl>();
+			ITraditionalConferenceDeviceControl dialer = device.Controls.GetControl<ITraditionalConferenceDeviceControl>();
 
 			// Edge case - route the codec to both displays and open the context menu
-			if (dialer != null && dialer.Supports.HasFlag(eConferenceSourceType.Video))
+			if (dialer != null && dialer.Supports.HasFlag(eCallType.Video))
 			{
 				// Show the context menu before routing for UX
 				ShowSourceContextualMenu(source, false);
@@ -281,7 +281,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				m_Room.Routing.RouteVtc(sourceControl);
 			}
 			// Edge case - open the audio conferencing context menu
-			else if (dialer != null && dialer.Supports.HasFlag(eConferenceSourceType.Audio))
+			else if (dialer != null && dialer.Supports.HasFlag(eCallType.Audio))
 			{
 				// Show the context menu before routing for UX
 				ShowSourceContextualMenu(source, false);
@@ -491,11 +491,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			eControlOverride controlOverride = ConnectProRouting.GetControlOverride(source);
 			IDeviceControl control = ConnectProRouting.GetDeviceControl(source, controlOverride);
 
-			if (control is IDialingDeviceControl)
+			if (control is ITraditionalConferenceDeviceControl)
 			{
-				IDialingDeviceControl dialer = control as IDialingDeviceControl;
+				ITraditionalConferenceDeviceControl dialer = control as ITraditionalConferenceDeviceControl;
 
-				if (dialer.Supports.HasFlag(eConferenceSourceType.Video))
+				if (dialer.Supports.HasFlag(eCallType.Video))
 					m_NavigationController.NavigateTo<IVtcBasePresenter>();
 				else
 					m_NavigationController.NavigateTo<IAtcBasePresenter>();
@@ -880,12 +880,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			presenter.OnCallAnswered -= VtcIncomingCallPresenterOnCallAnswered;
 		}
 
-		private void VtcIncomingCallPresenterOnCallAnswered(object sender, EventArgs e)
+		private void VtcIncomingCallPresenterOnCallAnswered(object sender, GenericEventArgs<IConferenceDeviceControl> e)
 		{
 			if (m_Room == null)
 				return;
 
-			IDialingDeviceControl videoDialer = m_Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			IConferenceDeviceControl videoDialer = e.Data;
 			IDeviceBase device = videoDialer == null ? null : videoDialer.Parent;
 
 			if (device == null)
@@ -912,12 +912,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			presenter.OnCallAnswered -= AtcIncomingCallPresenterOnCallAnswered;
 		}
 
-		private void AtcIncomingCallPresenterOnCallAnswered(object sender, EventArgs e)
+		private void AtcIncomingCallPresenterOnCallAnswered(object sender, GenericEventArgs<IConferenceDeviceControl> e)
 		{
 			if (m_Room == null)
 				return;
 
-			IDialingDeviceControl audioDialer = m_Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Audio);
+			IConferenceDeviceControl audioDialer = e.Data;
 			IDeviceBase device = audioDialer == null ? null : audioDialer.Parent;
 
 			if (device == null)

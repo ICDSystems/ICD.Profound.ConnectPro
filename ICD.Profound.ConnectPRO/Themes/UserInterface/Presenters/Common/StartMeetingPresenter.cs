@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
-using ICD.Common.Utils.Extensions;
+using ICD.Connect.Calendaring;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.CalendarControl;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Devices;
+using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
-using ICD.Connect.Conferencing.Utils;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Controls;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -274,11 +274,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				return;
 
 			// check if we have any dialers
-			IEnumerable<IDialingDeviceControl> dialers = Room.GetControlsRecursive<IDialingDeviceControl>();
+			IEnumerable<IConferenceDeviceControl> dialers = Room.GetControlsRecursive<IConferenceDeviceControl>();
 
 			// Build map of dialer to best number
-			IBookingNumber bookingNumber;
-			IDialingDeviceControl preferredDialer = ConferencingBookingUtils.GetBestDialer(booking, dialers, out bookingNumber);
+			IDialContext dialContext;
+			IConferenceDeviceControl preferredDialer = ConferencingBookingUtils.GetBestDialer(booking, dialers, out dialContext);
 			if (preferredDialer == null)
 				return;
 
@@ -287,11 +287,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			var routeControl = dialerDevice.Controls.GetControl<IRouteSourceControl>();
 			if (dialerDevice is IVideoConferenceDevice)
 				Room.Routing.RouteVtc(routeControl);
-			else if (preferredDialer.Supports == eConferenceSourceType.Audio)
+			else if (preferredDialer.Supports == eCallType.Audio)
 				Room.Routing.RouteAtc(routeControl);
 
 			// dial booking
-			preferredDialer.Dial(bookingNumber);
+			preferredDialer.Dial(dialContext);
 		}
 
 		private void ViewOnStartNewMeetingButtonPressed(object sender, EventArgs eventArgs)

@@ -56,7 +56,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		private void ViewOnClearDirectoryButtonPressed(object sender, EventArgs eventArgs)
 		{
 			IConferenceManager manager = Room == null ? null : Room.ConferenceManager;
-			IDialingDeviceControl videoDialer = manager == null ? null : manager.GetDialingProvider(eConferenceSourceType.Video);
+			IConferenceDeviceControl videoDialer = manager == null ? null : manager.GetDialingProvider(eCallType.Video);
 			IDeviceBase parent = videoDialer == null ? null : videoDialer.Parent;
 			IDirectoryControl directoryControl = parent == null ? null : parent.Controls.GetControl<IDirectoryControl>();
 

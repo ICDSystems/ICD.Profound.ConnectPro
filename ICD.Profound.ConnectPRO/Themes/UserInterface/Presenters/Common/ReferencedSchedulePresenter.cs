@@ -4,13 +4,10 @@ using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
+using ICD.Connect.Calendaring;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Conferencing.Controls.Dialing;
-using ICD.Connect.Conferencing.Devices;
-using ICD.Connect.Conferencing.EventArguments;
-using ICD.Connect.Conferencing.Utils;
 using ICD.Connect.Partitioning.Rooms;
-using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -112,8 +109,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (booking == null)
 				return null;
 
-			IEnumerable<IDialingDeviceControl> dialers =
-				Room == null ? Enumerable.Empty<IDialingDeviceControl>() : Room.GetControlsRecursive<IDialingDeviceControl>();
+			IEnumerable<IConferenceDeviceControl> dialers =
+				Room == null ? Enumerable.Empty<IConferenceDeviceControl>() : Room.GetControlsRecursive<IConferenceDeviceControl>();
 
 			switch (ConferencingBookingUtils.GetMeetingType(booking, dialers))
 			{

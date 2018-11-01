@@ -178,9 +178,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (room == null)
 				return;
 
-			IDialingDeviceControl videoDialer = ConferenceManager == null
+			IConferenceDeviceControl videoDialer = ConferenceManager == null
 				                                    ? null
-				                                    : ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+				                                    : ConferenceManager.GetDialingProvider(eCallType.Video);
 			PolycomGroupSeriesDevice videoDialerDevice = videoDialer == null
 				                                             ? null
 				                                             : videoDialer.Parent as PolycomGroupSeriesDevice;

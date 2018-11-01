@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Linq;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
-using ICD.Connect.Conferencing.ConferenceSources;
 using ICD.Connect.Conferencing.Controls.Dialing;
-using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Conferencing.Polycom.Devices.Codec.Controls;
+using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -23,6 +24,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 {
 	public sealed class VtcBasePresenter : AbstractPopupPresenter<IVtcBaseView>, IVtcBasePresenter
 	{
+		public event EventHandler OnActiveConferenceControlChanged;
+
 		private readonly IVtcCallListTogglePresenter m_CallListTogglePresenter;
 		private readonly IVtcContactsNormalPresenter m_ContactsNormalPresenter;
 		private readonly IVtcContactsPolycomPresenter m_ContactsPolycomPresenter;
@@ -32,7 +35,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private readonly IVtcKeypadPresenter m_KeypadPresenter;
 
 		private IPowerDeviceControl m_SubscribedPowerControl;
-		private IDialingDeviceControl m_SubscribedVideoDialer;
+		private ITraditionalConferenceDeviceControl m_SubscribedConferenceControl;
+
+		public ITraditionalConferenceDeviceControl ActiveConferenceControl
+		{
+			get { return m_SubscribedConferenceControl; }
+			private set
+			{
+				if (value == m_SubscribedConferenceControl)
+					return;
+
+				Unsubscribe(m_SubscribedConferenceControl);
+				m_SubscribedConferenceControl = value;
+				Subscribe(m_SubscribedConferenceControl);
+
+				OnActiveConferenceControlChanged.Raise(this);
+			}
+		}
 
 		private bool m_IsInCall;
 
@@ -89,8 +108,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		public override void Close()
 		{
-			// Close before routing for UX
+			// Close before routing for better UX
 			base.Close();
+
+			ActiveConferenceControl = null;
 
 			if (Room != null)
 				Room.Routing.RouteOsdPostVtc();
@@ -108,17 +129,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_CallListTogglePresenter.SetContactsMode(!boolEventArgs.Data);
 		}
 
-		private static IPowerDeviceControl GetSystemComponent(IConnectProRoom room)
+		private static IPowerDeviceControl GetVtcPowerControl(IConferenceDeviceControl conferenceControl)
 		{
-			if (room == null)
-				return null;
-
-			IDialingDeviceControl dialer = room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
-			if (dialer == null)
-				return null;
-
-			IVideoConferenceDevice codec = dialer.Parent as IVideoConferenceDevice;
-			return codec == null ? null : codec.Controls.GetControl<IPowerDeviceControl>();
+			IDevice conferenceDevice = conferenceControl.Parent as IDevice;
+			return conferenceDevice == null ? null : conferenceDevice.Controls.GetControl<IPowerDeviceControl>();
 		}
 
 		/// <summary>
@@ -143,7 +157,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			if (visible)
 			{
-				bool polycom = m_SubscribedVideoDialer is PolycomCodecDialingControl;
+				bool polycom = m_SubscribedConferenceControl is PolycomCodecTraditionalConferenceControl;
 
 				m_ContactsNormalPresenter.ShowView(!polycom);
 				m_ContactsPolycomPresenter.ShowView(polycom);
@@ -170,19 +184,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (room == null)
 				return;
 
-			m_SubscribedVideoDialer = room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
-			if (m_SubscribedVideoDialer != null)
-			{
-				m_SubscribedVideoDialer.OnSourceAdded += VideoDialerOnSourceAdded;
-				m_SubscribedVideoDialer.OnSourceChanged += VideoDialerOnSourceChanged;
-				m_SubscribedVideoDialer.OnSourceRemoved += VideoDialerOnSourceRemoved;
-			}
-
-			m_SubscribedPowerControl = GetSystemComponent(room);
-			if (m_SubscribedPowerControl == null)
-				return;
-
-			m_SubscribedPowerControl.OnIsPoweredChanged += SubscribedPowerControlOnIsPoweredChanged;
+			room.Routing.OnDisplaySourceChanged += RoutingOnOnDisplaySourceChanged;
 		}
 
 		/// <summary>
@@ -193,33 +195,62 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Unsubscribe(room);
 
-			if (m_SubscribedVideoDialer != null)
-			{
-				m_SubscribedVideoDialer.OnSourceAdded -= VideoDialerOnSourceAdded;
-				m_SubscribedVideoDialer.OnSourceChanged -= VideoDialerOnSourceChanged;
-				m_SubscribedVideoDialer.OnSourceRemoved -= VideoDialerOnSourceRemoved;
-			}
+			ActiveConferenceControl = null;
+		}
 
-			if (m_SubscribedPowerControl != null)
-			{
-				m_SubscribedPowerControl.OnIsPoweredChanged -= SubscribedPowerControlOnIsPoweredChanged;
-			}
+		private void RoutingOnOnDisplaySourceChanged(object sender, EventArgs eventArgs)
+		{
+			ActiveConferenceControl = Room.Routing
+				.GetCachedActiveVideoSources()
+				.SelectMany(kvp => kvp.Value)
+				.Select(s => Room.Core.Originators[s.Device] as IDevice)
+				.SelectMany(d => d == null ? Enumerable.Empty<ITraditionalConferenceDeviceControl>() : d.Controls.GetControls<ITraditionalConferenceDeviceControl>())
+				.FirstOrDefault(c => c != null);
+		}
 
-			m_SubscribedVideoDialer = null;
+		#endregion
+
+		#region Conference Control Callbacks
+
+		private void Subscribe(ITraditionalConferenceDeviceControl control)
+		{
+			if (control == null)
+				return;
+
+			// TODO subscribe to conferences and stuff
+
+			m_SubscribedPowerControl = GetVtcPowerControl(m_SubscribedConferenceControl);
+			if (m_SubscribedPowerControl == null)
+				return;
+
+			m_SubscribedPowerControl.OnIsPoweredChanged += SubscribedPowerControlOnIsPoweredChanged;
+		}
+
+		private void Unsubscribe(ITraditionalConferenceDeviceControl control)
+		{
+			if (control == null)
+				return;
+
+			// TODO unsubscribe from conferences and stuff
+
+			if (m_SubscribedPowerControl == null)
+				return;
+
+			m_SubscribedPowerControl.OnIsPoweredChanged -= SubscribedPowerControlOnIsPoweredChanged;
 			m_SubscribedPowerControl = null;
 		}
 
-		private void VideoDialerOnSourceChanged(object sender, ConferenceSourceEventArgs eventArgs)
+		private void VideoDialerOnSourceChanged(object sender, ParticipantEventArgs e)
 		{
 			UpdateVisibility();
 		}
 
-		private void VideoDialerOnSourceRemoved(object sender, ConferenceSourceEventArgs eventArgs)
+		private void VideoDialerOnParticipantRemoved(object sender, ParticipantEventArgs e)
 		{
 			UpdateVisibility();
 		}
 
-		private void VideoDialerOnSourceAdded(object sender, ConferenceSourceEventArgs eventArgs)
+		private void VideoDialerOnParticipantAdded(object sender, ParticipantEventArgs e)
 		{
 			UpdateVisibility();
 		}
@@ -227,10 +258,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private void UpdateVisibility()
 		{
 			IsInCall =
-				m_SubscribedVideoDialer != null &&
-				m_SubscribedVideoDialer.GetSources()
-				                       .Any(s => s.GetIsOnline() ||
-				                                 (s.GetIsActive() && s.Direction == eConferenceSourceDirection.Outgoing));
+				m_SubscribedConferenceControl != null &&
+				m_SubscribedConferenceControl.GetConferences().Any(c => c.Status == eConferenceStatus.Connected && c.GetParticipants()
+				                       .Any(s => s.GetIsOnline() || s.GetIsActive()));
 		}
 
 		/// <summary>
@@ -315,11 +345,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				ShowContactsPresenter(false);
 				m_CallListTogglePresenter.ShowView(false);
 
-				IConferenceManager manager = Room == null ? null : Room.ConferenceManager;
-				IConference active = manager == null ? null : manager.ActiveConference;
+				if (ActiveConferenceControl != null)
+				{
+					var active = ActiveConferenceControl.GetActiveConference() as ITraditionalConference;
 
-				if (active != null)
-					active.Hangup();
+					if (active != null)
+						active.Hangup();
+				}
 			}
 
 			UpdateCodecAwakeState(true);

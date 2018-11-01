@@ -1,4 +1,4 @@
-﻿using ICD.Connect.Conferencing.ConferenceSources;
+﻿using ICD.Connect.Conferencing.Participants;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.ActiveCalls;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.ActiveCalls
@@ -9,6 +9,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConferen
 		/// Sets the conference source for this presenter.
 		/// </summary>
 		/// <value></value>
-		IConferenceSource ConferenceSource { get; set; }
+		ITraditionalParticipant Participant { get; set; }
 	}
 }

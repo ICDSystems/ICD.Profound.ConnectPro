@@ -1,5 +1,7 @@
-﻿using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
+﻿using ICD.Common.Utils.EventArguments;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 using System;
+using ICD.Connect.Conferencing.Controls.Dialing;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference
 {
@@ -8,6 +10,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConferen
 		/// <summary>
 		/// Raised when the user answers the incoming call.
 		/// </summary>
-		event EventHandler OnCallAnswered;
+		event EventHandler<GenericEventArgs<IConferenceDeviceControl>> OnCallAnswered;
 	}
 }

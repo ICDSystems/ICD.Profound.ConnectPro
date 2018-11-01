@@ -6,11 +6,12 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
-using ICD.Connect.Conferencing.ConferenceSources;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Participants;
+using ICD.Connect.Conferencing.Participants.EventHelpers;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing;
 using ICD.Connect.Routing.Endpoints;
@@ -23,6 +24,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
+using ICD.Connect.Conferencing.Conferences;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference
 {
@@ -30,11 +32,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private readonly IcdHashSet<ISource> m_Routed;
+		private readonly IcdHashSet<ISource> m_RoutedSources;
+		private readonly IVtcBasePresenter m_VtcBasePresenter;
+		private readonly TraditionalParticipantEventHelper m_ParticipantEventHelper;
+
 		private ISource[] m_Sources;
 		private ISource m_Selected;
 
-		private IDialingDeviceControl m_SubscribedVideoDialer;
+		private ITraditionalConferenceDeviceControl m_ActiveConferenceControl;
 
 		[CanBeNull]
 		private IPresentationControl m_SubscribedPresentationComponent;
@@ -56,6 +61,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			}
 		}
 
+		private ITraditionalConferenceDeviceControl ActiveConferenceControl
+		{
+			get { return m_ActiveConferenceControl; }
+			set
+			{
+				if (value == m_ActiveConferenceControl)
+					return;
+
+				Unsubscribe(m_ActiveConferenceControl);
+				m_ActiveConferenceControl = value;
+				Subscribe(m_ActiveConferenceControl);
+			}
+		}
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -66,8 +85,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
-			m_Routed = new IcdHashSet<ISource>();
+			m_RoutedSources = new IcdHashSet<ISource>();
 			m_Sources = new ISource[0];
+
+			m_VtcBasePresenter = nav.LazyLoadPresenter<IVtcBasePresenter>();
+			m_VtcBasePresenter.OnActiveConferenceControlChanged += VtcBaseOnActiveConferenceControlChanged;
+			m_ParticipantEventHelper = new TraditionalParticipantEventHelper((_) => UpdateVisibility());
+		}
+
+		private void VtcBaseOnActiveConferenceControlChanged(object sender, EventArgs eventArgs)
+		{
+			ActiveConferenceControl = m_VtcBasePresenter.ActiveConferenceControl;
 		}
 
 		/// <summary>
@@ -97,7 +125,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 						? null
 						: Icons.GetSourceIcon(connectProSource.Icon, eSourceColor.White);
 
-					bool select = inPresentation ? m_Routed.Contains(source) : source == m_Selected;
+					bool select = inPresentation ? m_RoutedSources.Contains(source) : source == m_Selected;
 
 					view.SetButtonSelected(index, select);
 					view.SetButtonIcon(index, icon);
@@ -156,7 +184,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void UpdatePresentationRoutedSources()
 		{
-			m_Routed.Clear();
+			m_RoutedSources.Clear();
 
 			if (IsInPresentation())
 			{
@@ -165,7 +193,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 					? Enumerable.Empty<ISource>()
 					: Room.Routing.GetVtcPresentationSources();
 
-				m_Routed.AddRange(sources);
+				m_RoutedSources.AddRange(sources);
 
 				// Always clear selection in presentation mode
 				Selected = null;
@@ -187,25 +215,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (room == null)
 				return;
 
-			m_SubscribedVideoDialer = room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
-			if (m_SubscribedVideoDialer != null)
-			{
-				m_SubscribedVideoDialer.OnSourceAdded += VideoDialerOnSourceAdded;
-				m_SubscribedVideoDialer.OnSourceChanged += VideoDialerOnSourceChanged;
-				m_SubscribedVideoDialer.OnSourceRemoved += VideoDialerOnSourceRemoved;
-			}
-
 			if (room.Core.TryGetRoutingGraph(out m_SubscribedRoutingGraph))
 				m_SubscribedRoutingGraph.RoutingCache.OnEndpointRouteChanged += RoutingCacheOnEndpointRouteChanged;
-
-			IDialingDeviceControl dialer = room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
-			IVideoConferenceDevice codec = dialer == null ? null : dialer.Parent as IVideoConferenceDevice;
-			m_SubscribedPresentationComponent = codec == null ? null : codec.Controls.GetControl<IPresentationControl>();
-
-			if (m_SubscribedPresentationComponent == null)
-				return;
-
-			m_SubscribedPresentationComponent.OnPresentationActiveInputChanged += SubscribedPresentationControlOnPresentationActiveInputChanged;
+			
 		}
 
 		/// <summary>
@@ -216,18 +228,47 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Unsubscribe(room);
 
-			if (m_SubscribedVideoDialer != null)
-			{
-				m_SubscribedVideoDialer.OnSourceAdded -= VideoDialerOnSourceAdded;
-				m_SubscribedVideoDialer.OnSourceChanged -= VideoDialerOnSourceChanged;
-				m_SubscribedVideoDialer.OnSourceRemoved -= VideoDialerOnSourceRemoved;
-			}
-			m_SubscribedVideoDialer = null;
-
 			if (m_SubscribedRoutingGraph != null)
 				m_SubscribedRoutingGraph.RoutingCache.OnEndpointRouteChanged -= RoutingCacheOnEndpointRouteChanged;
 
 			m_SubscribedRoutingGraph = null;
+
+			
+		}
+
+		private void RoutingCacheOnEndpointRouteChanged(object sender, EndpointRouteChangedEventArgs endpointRouteChangedEventArgs)
+		{
+			UpdatePresentationRoutedSources();
+		}
+
+		#endregion
+
+		#region Conference Control Callbacks
+
+		private void Subscribe(IConferenceDeviceControl control)
+		{
+			if (control != null)
+			{
+				control.OnConferenceAdded += VideoDialerOnConferenceAdded;
+				control.OnConferenceRemoved += VideoDialerOnConferenceRemoved;
+			}
+
+			var device = control == null ? null : control.Parent;
+			m_SubscribedPresentationComponent = device == null ? null : device.Controls.GetControl<IPresentationControl>();
+
+			if (m_SubscribedPresentationComponent == null)
+				return;
+
+			m_SubscribedPresentationComponent.OnPresentationActiveInputChanged += SubscribedPresentationControlOnPresentationActiveInputChanged;
+		}
+
+		private void Unsubscribe(IConferenceDeviceControl control)
+		{
+			if (control != null)
+			{
+				control.OnConferenceAdded -= VideoDialerOnConferenceAdded;
+				control.OnConferenceRemoved -= VideoDialerOnConferenceRemoved;
+			}
 
 			if (m_SubscribedPresentationComponent != null)
 				m_SubscribedPresentationComponent.OnPresentationActiveInputChanged -= SubscribedPresentationControlOnPresentationActiveInputChanged;
@@ -240,23 +281,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			UpdatePresentationRoutedSources();
 		}
 
-		private void RoutingCacheOnEndpointRouteChanged(object sender, EndpointRouteChangedEventArgs endpointRouteChangedEventArgs)
+		private void VideoDialerOnConferenceAdded(object sender, ConferenceEventArgs e)
 		{
-			UpdatePresentationRoutedSources();
-		}
+			Subscribe(e.Data);
 
-		private void VideoDialerOnSourceChanged(object sender, ConferenceSourceEventArgs eventArgs)
-		{
 			UpdateVisibility();
 		}
 
-		private void VideoDialerOnSourceRemoved(object sender, ConferenceSourceEventArgs eventArgs)
+		private void VideoDialerOnConferenceRemoved(object sender, ConferenceEventArgs e)
 		{
-			UpdateVisibility();
-		}
+			Unsubscribe(e.Data);
 
-		private void VideoDialerOnSourceAdded(object sender, ConferenceSourceEventArgs eventArgs)
-		{
 			UpdateVisibility();
 		}
 
@@ -266,9 +301,41 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (m_SubscribedPresentationComponent != null)
 				StopPresenting();
 
-			bool isInCall = m_SubscribedVideoDialer != null && m_SubscribedVideoDialer.GetSources().Any(s => s.GetIsOnline());
+			bool isInCall = ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConference().GetParticipants().Any(s => s.GetIsOnline());
 			if (!isInCall)
 				ShowView(false);
+		}
+
+		#endregion
+
+		#region Conference Callbacks
+
+		private void Subscribe(IConference conference)
+		{
+			conference.OnParticipantAdded += ConferenceOnParticipantAdded;
+			conference.OnParticipantRemoved += ConferenceOnParticipantRemoved;
+
+			foreach (var participant in conference.GetParticipants())
+				m_ParticipantEventHelper.Subscribe(participant as ITraditionalParticipant);
+		}
+
+		private void Unsubscribe(IConference conference)
+		{
+			conference.OnParticipantAdded -= ConferenceOnParticipantAdded;
+			conference.OnParticipantRemoved -= ConferenceOnParticipantRemoved;
+
+			foreach (var participant in conference.GetParticipants())
+				m_ParticipantEventHelper.Unsubscribe(participant as ITraditionalParticipant);
+		}
+
+		private void ConferenceOnParticipantAdded(object sender, ParticipantEventArgs e)
+		{
+			m_ParticipantEventHelper.Subscribe(e.Data as ITraditionalParticipant);
+		}
+
+		private void ConferenceOnParticipantRemoved(object sender, ParticipantEventArgs e)
+		{
+			m_ParticipantEventHelper.Unsubscribe(e.Data as ITraditionalParticipant);
 		}
 
 		#endregion
