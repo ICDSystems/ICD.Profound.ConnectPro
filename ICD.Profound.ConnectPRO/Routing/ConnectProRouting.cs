@@ -12,7 +12,6 @@ using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.Devices;
-using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Displays.Devices;
@@ -217,13 +216,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 			}
 
 			return output;
-		}
-
-		[CanBeNull]
-		private IVideoConferenceDevice GetCodec()
-		{
-			IDialingDeviceControl dialer = m_Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
-			return dialer == null ? null : dialer.Parent as IVideoConferenceDevice;
 		}
 
 		#region Sources
@@ -688,25 +680,22 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// Routes the given source to the VTC and starts the presentation.
 		/// </summary>
 		/// <param name="source"></param>
-		public void RouteVtcPresentation(ISource source)
+		/// <param name="presentationControl"></param>
+		public void RouteVtcPresentation(ISource source, IPresentationControl presentationControl)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
 
-			IVideoConferenceDevice codec = GetCodec();
-			if (codec == null)
-				throw new InvalidOperationException("No codec available.");
+			if (presentationControl == null)
+				throw new ArgumentNullException("presentationControl");
 
-			IPresentationControl presentation = codec.Controls.GetControl<IPresentationControl>();
-			if (presentation == null)
-				throw new InvalidOperationException("No presentation control available.");
-
-			IVideoConferenceRouteControl control = codec.Controls.GetControl<IVideoConferenceRouteControl>();
-			if (control == null)
+			IVideoConferenceRouteControl routingControl =
+				presentationControl.Parent.Controls.GetControl<IVideoConferenceRouteControl>();
+			if (routingControl == null)
 				throw new InvalidOperationException("No routing control available.");
 
 			// Get the content inputs
-			int[] inputs = control.GetCodecInputs(eCodecInputType.Content).ToArray();
+			int[] inputs = routingControl.GetCodecInputs(eCodecInputType.Content).ToArray();
 			if (inputs.Length == 0)
 			{
 				m_Room.Logger.AddEntry(eSeverity.Error,
@@ -718,7 +707,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			// Find the first input available
 			foreach (int input in inputs)
 			{
-				EndpointInfo endpoint = control.GetInputEndpointInfo(input);
+				EndpointInfo endpoint = routingControl.GetInputEndpointInfo(input);
 
 				// Is there a path?
 				bool hasPath =
@@ -736,7 +725,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				Route(source, endpoint, eConnectionType.Audio);
 
 				// Start the presentation
-				presentation.StartPresentation(input);
+				presentationControl.StartPresentation(input);
 				return;
 			}
 
@@ -748,17 +737,14 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <summary>
 		/// Unroutes the active VTC presentation source and ends the presentation.
 		/// </summary>
-		public void UnrouteVtcPresentation()
+		/// <param name="presentationControl"></param>
+		public void UnrouteVtcPresentation(IPresentationControl presentationControl)
 		{
-			IVideoConferenceDevice codec = GetCodec();
-			if (codec == null)
-				throw new InvalidOperationException("No codec available.");
+			if (presentationControl == null)
+				throw new ArgumentNullException("presentationControl");
 
-			IPresentationControl presentation = codec.Controls.GetControl<IPresentationControl>();
-			if (presentation == null)
-				throw new InvalidOperationException("No presentation control available.");
-
-			IVideoConferenceRouteControl control = codec.Controls.GetControl<IVideoConferenceRouteControl>();
+			IVideoConferenceRouteControl control =
+				presentationControl.Parent.Controls.GetControl<IVideoConferenceRouteControl>();
 			if (control == null)
 				throw new InvalidOperationException("No routing control available.");
 
@@ -778,26 +764,27 @@ namespace ICD.Profound.ConnectPRO.Routing
 				RoutingGraph.UnrouteDestination(endpoint, eConnectionType.Audio | eConnectionType.Video, m_Room.Id);
 			}
 
-			presentation.StopPresentation();
+			presentationControl.StopPresentation();
 		}
 
-		public IEnumerable<ISource> GetVtcPresentationSources()
+		/// <summary>
+		/// Gets the sources currently being presented.
+		/// </summary>
+		/// <param name="presentationControl"></param>
+		/// <returns></returns>
+		public IEnumerable<ISource> GetVtcPresentationSources(IPresentationControl presentationControl)
 		{
-			IVideoConferenceDevice codec = GetCodec();
-			if (codec == null)
-				return null;
+			if (presentationControl == null)
+				throw new ArgumentNullException("presentationControl");
 
-			IVideoConferenceRouteControl control = codec.Controls.GetControl<IVideoConferenceRouteControl>();
+			IVideoConferenceRouteControl control =
+				presentationControl.Parent.Controls.GetControl<IVideoConferenceRouteControl>();
 			if (control == null)
-				return null;
+				throw new InvalidOperationException("No routing control available.");
 
-			IPresentationControl presentation = codec.Controls.GetControl<IPresentationControl>();
-			if (presentation == null)
-				return null;
-
-			int? activeInput = presentation.PresentationActiveInput;
+			int? activeInput = presentationControl.PresentationActiveInput;
 			if (activeInput == null)
-				return null;
+				return Enumerable.Empty<ISource>();
 
 			return RoutingGraph.RoutingCache
 			                   .GetSourcesForDestinationEndpoint(control.GetInputEndpointInfo((int)activeInput),

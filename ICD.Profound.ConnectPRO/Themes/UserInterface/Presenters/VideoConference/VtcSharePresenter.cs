@@ -163,7 +163,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				// Update the routed presentation source
 				IEnumerable<ISource> sources = Room == null
 					? Enumerable.Empty<ISource>()
-					: Room.Routing.GetVtcPresentationSources();
+					: Room.Routing.GetVtcPresentationSources(m_SubscribedPresentationComponent);
 
 				m_Routed.AddRange(sources);
 
@@ -343,7 +343,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (Room == null || source == null)
 				return;
 
-			Room.Routing.RouteVtcPresentation(source);
+			Room.Routing.RouteVtcPresentation(source, m_SubscribedPresentationComponent);
 		}
 
 		private void StopPresenting()
@@ -351,7 +351,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (Room == null)
 				return;
 
-			Room.Routing.UnrouteVtcPresentation();
+			Room.Routing.UnrouteVtcPresentation(m_SubscribedPresentationComponent);
 		}
 
 		#endregion
