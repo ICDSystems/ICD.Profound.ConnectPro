@@ -609,11 +609,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			bool dualDisplays = m_Room != null && m_Room.Routing.IsDualDisplayRoom;
 
-			// Set the visibility of the source a display subpages
-			bool displaysVisible = isInMeeting && dualDisplays;
-
 			m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().ShowView(true);
-			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().ShowView(displaysVisible);
+			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().ShowView(dualDisplays);
 		}
 
 		/// <summary>
