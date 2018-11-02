@@ -9,6 +9,7 @@ using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Extensions;
@@ -23,6 +24,7 @@ using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Routing;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.AudioConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Options;
@@ -38,8 +40,6 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VisibilityTree;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views;
-using ICD.Connect.Conferencing.EventArguments;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.AudioConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 {
