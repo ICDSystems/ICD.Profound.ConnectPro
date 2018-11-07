@@ -88,7 +88,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		public override void SetRoom(IConnectProRoom room)
 		{
 			base.SetRoom(room);
-			DirectoryControl = Room.GetControlRecursive<IDirectoryControl>();
+
+			DirectoryControl = room == null ? null : room.GetControlRecursive<IDirectoryControl>();
 			RefreshIfVisible();
 		}
 
