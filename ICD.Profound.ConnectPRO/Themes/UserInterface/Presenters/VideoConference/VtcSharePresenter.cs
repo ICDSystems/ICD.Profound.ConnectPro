@@ -13,6 +13,7 @@ using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing;
+using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.Extensions;
@@ -240,9 +241,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			UpdatePresentationRoutedSources();
 		}
 
-		private void RoutingCacheOnEndpointRouteChanged(object sender, EndpointRouteChangedEventArgs endpointRouteChangedEventArgs)
+		private void RoutingCacheOnEndpointRouteChanged(object sender, EndpointRouteChangedEventArgs eventArgs)
 		{
-			UpdatePresentationRoutedSources();
+			if (eventArgs.Type.HasFlag(eConnectionType.Video))
+				UpdatePresentationRoutedSources();
 		}
 
 		private void VideoDialerOnSourceChanged(object sender, ConferenceSourceEventArgs eventArgs)
