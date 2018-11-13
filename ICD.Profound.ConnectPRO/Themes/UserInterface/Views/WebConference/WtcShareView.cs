@@ -1,0 +1,83 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
+using ICD.Connect.Panels;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
+
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
+{
+	public sealed partial class WtcShareView : AbstractView, IWtcShareView
+	{
+		public event EventHandler OnShareButtonPressed;
+		public event EventHandler<UShortEventArgs> OnSourcePressed;
+
+		public WtcShareView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
+		{
+		}
+
+		public override void Dispose()
+		{
+			base.Dispose();
+
+			OnSourcePressed = null;
+			OnShareButtonPressed = null;
+		}
+
+		#region Methods
+
+		public void SetSwipeLabelsVisible(bool visible)
+		{
+			m_SwipeLabels.Show(visible);
+		}
+
+		public void SetButtonLabel(ushort index, string label)
+		{
+			m_SourceList.SetItemLabel(index, label);
+		}
+
+		public void SetButtonIcon(ushort index, string icon)
+		{
+			m_SourceList.SetItemIcon(index, icon);
+		}
+
+		public void SetButtonVisible(ushort index, bool visible)
+		{
+			m_SourceList.SetItemVisible(index, visible);
+		}
+
+		public void SetButtonEnabled(ushort index, bool enabled)
+		{
+			m_SourceList.SetItemEnabled(index, enabled);
+		}
+
+		public void SetButtonSelected(ushort index, bool selected)
+		{
+			m_SourceList.SetItemSelected(index, selected);
+		}
+		#endregion
+
+		#region Control Callbacks
+
+		protected override void SubscribeControls()
+		{
+			base.SubscribeControls();
+
+			m_SourceList.OnButtonClicked += SourceListOnOnButtonClicked;
+			m_ShareButton.OnPressed += ShareButtonOnOnPressed;
+		}
+
+		private void SourceListOnOnButtonClicked(object sender, UShortEventArgs args)
+		{
+			OnSourcePressed.Raise(this, new UShortEventArgs(args.Data));
+		}
+
+		private void ShareButtonOnOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnShareButtonPressed.Raise(this);
+		}
+
+		#endregion
+	}
+}

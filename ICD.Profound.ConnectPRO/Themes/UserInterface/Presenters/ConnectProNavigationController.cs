@@ -21,6 +21,9 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.ActiveCalls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Dtmf;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.ActiveMeeting;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common;
@@ -35,6 +38,9 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.ActiveCalls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Dtmf;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.ActiveMeeting;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.Contacts;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 {
@@ -100,6 +106,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IVtcButtonListPresenter), (nav, views, theme) => new VtcButtonListPresenter(nav, views, theme)},
 			{typeof(IVtcKeyboardPresenter), (nav, views, theme) => new VtcKeyboardPresenter(nav, views, theme)},
 			{typeof(IVtcKeypadPresenter), (nav, views, theme) => new VtcKeypadPresenter(nav, views, theme)},
+
+			// Web Conference
+			{typeof(IWtcBasePresenter), (nav, views, theme) => new WtcBasePresenter(nav, views, theme)},
+			{typeof(IWtcMainPagePresenter), (nav, views, theme) => new WtcMainPagePresenter(nav, views, theme)},
+			{typeof(IWtcContactListPresenter), (nav, views, theme) => new WtcContactListPresenter(nav, views, theme)},
+			{typeof(IWtcReferencedContactPresenter), (nav, views, theme) => new WtcReferencedContactPresenter(nav, views, theme)},
+			{typeof(IWtcJoinByIdPresenter), (nav, views, theme) => new WtcJoinByIdPresenter(nav, views, theme)},
+			{typeof(IWtcButtonListPresenter), (nav, views, theme) => new WtcButtonListPresenter(nav, views, theme)},
+			{typeof(IWtcActiveMeetingPresenter), (nav, views, theme) => new WtcActiveMeetingPresenter(nav, views, theme)},
+			{typeof(IWtcReferencedParticipantPresenter), (nav, views, theme) => new WtcReferencedParticipantPresenter(nav, views, theme)},
+			{typeof(IWtcSharePresenter), (nav, views, theme) => new WtcSharePresenter(nav, views, theme)},
+			{typeof(IWtcRecordingPresenter), (nav, views, theme) => new WtcRecordingPresenter(nav, views, theme)},
+			{typeof(IWtcCallOutPresenter), (nav, views, theme) => new WtcCallOutPresenter(nav, views, theme)},
+			{typeof(IWtcActiveMeetingTogglePresenter), (nav, views, theme) => new WtcActiveMeetingTogglePresenter(nav, views, theme)},
+			{typeof(IWtcContactsTogglePresenter), (nav, views, theme) => new WtcContactsTogglePresenter(nav, views, theme)},
 
 			// Video Conference Contacts
 			{typeof(IVtcReferencedContactsPresenter), (nav, views, theme) => new VtcReferencedContactsPresenter(nav, views, theme)},
@@ -205,6 +226,35 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{
 				m_CacheSection.Leave();
 			}
+		}
+
+		/// <summary>
+		/// Instantiates or returns an existing presenter for every presenter that can be assigned to the given type.
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public IEnumerable<IPresenter> LazyLoadPresenters(Type type)
+		{
+			if (type == null)
+				throw new ArgumentNullException("type");
+
+			List<IPresenter> presenters = new List<IPresenter>();
+
+			m_CacheSection.Enter();
+			try
+			{
+				foreach (var presenterType in m_PresenterFactories.Keys)
+				{
+					if (presenterType.IsAssignableTo(type))
+						presenters.Add(LazyLoadPresenter(presenterType));
+				}
+			}
+			finally
+			{
+				m_CacheSection.Leave();
+			}
+
+			return presenters;
 		}
 
 		/// <summary>

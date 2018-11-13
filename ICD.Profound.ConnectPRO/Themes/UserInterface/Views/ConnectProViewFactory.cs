@@ -20,6 +20,9 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.ActiveCalls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Dtmf;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.ActiveMeeting;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays;
@@ -33,6 +36,9 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.ActiveCalls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Dtmf;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.ActiveMeeting;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Contacts;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 {
@@ -65,6 +71,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(IVtcReferencedContactsView), (nav, views, theme, index) => new VtcReferencedContactsView(nav, views, theme, index)},
 			{typeof(IVtcReferencedDtmfView), (nav, views, theme, index) => new VtcReferencedDtmfView(nav, views, theme, index)},
 			{typeof(IVtcReferencedActiveCallsView), (nav, views, theme, index) => new VtcReferencedActiveCallsView(nav, views, theme, index)},
+
+			// Web Conference
+			{typeof(IWtcReferencedContactView), (nav, views, theme, index) => new WtcReferencedContactView(nav, views, theme, index)},
+			{typeof(IWtcReferencedParticipantView), (nav, views, theme, index) => new WtcReferencedParticipantView(nav, views, theme, index)},
 
 			// Common
 			{typeof(IReferencedScheduleView), (nav, views, theme, index) => new ReferencedScheduleView(nav, views, theme, index)}
@@ -119,6 +129,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(IVtcButtonListView), (panel, theme) => new VtcButtonListView(panel, theme)},
 			{typeof(IVtcKeyboardView), (panel, theme) => new VtcKeyboardView(panel, theme)},
 			{typeof(IVtcKeypadView), (panel, theme) => new VtcKeypadView(panel, theme)},
+
+			// Web Conference
+			{typeof(IWtcBaseView), (panel, theme) => new WtcBaseView(panel, theme)},
+			{typeof(IWtcButtonListView), (panel, theme) => new WtcButtonListView(panel, theme)},
+			{typeof(IWtcMainPageView), (panel, theme) => new WtcMainPageView(panel, theme)},
+			{typeof(IWtcContactListView), (panel, theme) => new WtcContactListView(panel, theme)},
+			{typeof(IWtcJoinByIdView), (panel, theme) => new WtcJoinByIdView(panel, theme)},
+			{typeof(IWtcActiveMeetingView), (panel, theme) => new WtcActiveMeetingView(panel, theme)},
+			{typeof(IWtcRecordingView), (panel, theme) => new WtcRecordingView(panel, theme)},
+			{typeof(IWtcShareView), (panel, theme) => new WtcShareView(panel, theme)},
+			{typeof(IWtcCallOutView), (panel, theme) => new WtcCallOutView(panel, theme)},
+			{typeof(IWtcActiveMeetingToggleView), (panel, theme) => new WtcActiveMeetingToggleView(panel, theme)},
+			{typeof(IWtcContactsToggleView), (panel, theme) => new WtcContactsToggleView(panel, theme)},
 
 			// Audio Conference
 			{typeof(IAtcBaseView), (panel, theme) => new AtcBaseView(panel, theme)},

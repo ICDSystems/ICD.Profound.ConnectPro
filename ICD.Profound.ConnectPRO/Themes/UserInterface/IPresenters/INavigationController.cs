@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters
@@ -21,6 +22,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters
 		/// <param name="type"></param>
 		/// <returns></returns>
 		IPresenter LazyLoadPresenter(Type type);
+
+		/// <summary>
+		/// Instantiates or returns an existing presenter for every presenter that can be assigned to the given type.
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		IEnumerable<IPresenter> LazyLoadPresenters(Type type);
 
 		/// <summary>
 		/// Instantiates a new presenter of the given type.
@@ -50,6 +58,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters
 				throw new InvalidCastException(string.Format("Failed to cast {0} to {1}", presenter, typeof(T).Name));
 
 			return output;
+		}
+
+		/// <summary>
+		/// Instantiates or returns an existing presenter of the given type.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		public static IEnumerable<T> LazyLoadPresenters<T>(this INavigationController extends)
+			where T : class, IPresenter
+		{
+			return extends.LazyLoadPresenters(typeof(T)).Cast<T>();
 		}
 
 		/// <summary>

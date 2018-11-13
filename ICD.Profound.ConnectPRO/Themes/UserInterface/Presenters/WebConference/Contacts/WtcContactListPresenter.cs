@@ -1,0 +1,120 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using ICD.Common.Utils;
+using ICD.Connect.Conferencing.Contacts;
+using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.Controls.Directory;
+using ICD.Connect.Conferencing.Directory;
+using ICD.Connect.Devices;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.Contacts;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts;
+
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.Contacts
+{
+	public sealed class WtcContactListPresenter : AbstractWtcPresenter<IWtcContactListView>, IWtcContactListPresenter
+	{
+		private readonly SafeCriticalSection m_RefreshSection;
+		private readonly WtcReferencedContactPresenterFactory m_PresenterFactory;
+		private readonly DirectoryControlBrowser m_DirectoryBrowser;
+		
+		private IWtcReferencedContactPresenter m_SelectedContact;
+
+		public WtcContactListPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		{
+			m_RefreshSection = new SafeCriticalSection();
+			m_PresenterFactory = new WtcReferencedContactPresenterFactory(nav, ItemFactory);
+			m_DirectoryBrowser = new DirectoryControlBrowser();
+
+			m_DirectoryBrowser.OnPathContentsChanged += DirectoryBrowserOnOnPathContentsChanged;
+		}
+
+		private void DirectoryBrowserOnOnPathContentsChanged(object sender, EventArgs e)
+		{
+			RefreshIfVisible();
+		}
+
+		protected override void Refresh(IWtcContactListView view)
+		{
+			base.Refresh(view);
+
+			m_RefreshSection.Enter();
+			try
+			{
+				var contacts = m_DirectoryBrowser.GetCurrentFolder() == null 
+					? Enumerable.Empty<IContact>() 
+					: m_DirectoryBrowser.GetCurrentFolder().GetContacts();
+				foreach (var presenter in m_PresenterFactory.BuildChildren(contacts, SubscribeChild, UnsubscribeChild))
+				{
+					presenter.Selected = presenter == m_SelectedContact;
+					presenter.ShowView(true);
+					presenter.Refresh();
+				}
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+		}
+
+		private void SubscribeChild(IWtcReferencedContactPresenter presenter)
+		{
+			if (presenter != null)
+				presenter.OnPressed += PresenterOnOnPressed;
+		}
+
+		private void UnsubscribeChild(IWtcReferencedContactPresenter presenter)
+		{
+			if (presenter != null)
+				presenter.OnPressed -= PresenterOnOnPressed;
+		}
+
+		private void PresenterOnOnPressed(object sender, EventArgs eventArgs)
+		{
+			m_SelectedContact = sender as IWtcReferencedContactPresenter;
+		}
+
+		#region Private Methods
+
+		private IEnumerable<IWtcReferencedContactView> ItemFactory(ushort count)
+		{
+			return GetView().GetChildComponentViews(ViewFactory, count);
+		}
+
+		#endregion
+
+		#region Control Callbacks
+
+		protected override void Subscribe(IWebConferenceDeviceControl control)
+		{
+			base.Subscribe(control);
+
+			if (control == null)
+				return;
+
+			var device = control.Parent as IDevice;
+			var directoryControl = device == null ? null : device.Controls.GetControl<IDirectoryControl>();
+			if (directoryControl == null)
+				return;
+
+			m_DirectoryBrowser.SetControl(directoryControl);
+			m_DirectoryBrowser.PopulateCurrentFolder();
+		}
+
+		protected override void Unsubscribe(IWebConferenceDeviceControl control)
+		{
+			base.Unsubscribe(control);
+
+			m_DirectoryBrowser.SetControl(null);
+		}
+
+		#endregion
+
+		#region View Callbacks
+
+		#endregion
+	}
+}

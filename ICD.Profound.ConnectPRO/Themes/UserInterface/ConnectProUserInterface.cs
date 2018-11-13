@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
@@ -35,6 +35,9 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.A
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Dtmf;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VisibilityTree;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.ActiveMeeting;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views;
@@ -125,6 +128,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcActiveCallsPresenter>());
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcKeyboardPresenter>());
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcKeypadPresenter>());
+			
+			// Web Conference node
+			IVisibilityNode webConferencingVisibility = new SingleVisibilityNode();
+			webConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcCallOutPresenter>());
+			webConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcSharePresenter>());
+			webConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcRecordingPresenter>());
+			webConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcActiveMeetingPresenter>());
+			webConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcContactListPresenter>());
+			webConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcJoinByIdPresenter>());
 
 			// Audio Conference node
 			IVisibilityNode audioConferencingVisibility = new SingleVisibilityNode();
@@ -502,6 +514,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 					else
 						m_NavigationController.NavigateTo<IAtcBasePresenter>();
 				}
+
+				IWebConferenceDeviceControl webControl = control as IWebConferenceDeviceControl;
+				if (webControl != null)
+					m_NavigationController.NavigateTo<IWtcBasePresenter>();
 
 				SetActiveSource(null);
 				return true;
