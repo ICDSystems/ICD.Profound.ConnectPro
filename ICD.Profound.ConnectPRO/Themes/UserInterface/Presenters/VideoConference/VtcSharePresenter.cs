@@ -87,9 +87,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_RefreshSection = new SafeCriticalSection();
 			m_RoutedSources = new IcdHashSet<ISource>();
 			m_Sources = new ISource[0];
-
-			m_VtcBasePresenter = nav.LazyLoadPresenter<IVtcBasePresenter>();
-			m_VtcBasePresenter.OnActiveConferenceControlChanged += VtcBaseOnActiveConferenceControlChanged;
+			
 			m_ParticipantEventHelper = new TraditionalParticipantEventHelper((_) => UpdateVisibility());
 		}
 

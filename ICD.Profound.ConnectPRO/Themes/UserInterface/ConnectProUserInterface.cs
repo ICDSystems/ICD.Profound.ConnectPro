@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
@@ -491,14 +491,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			eControlOverride controlOverride = ConnectProRouting.GetControlOverride(source);
 			IDeviceControl control = ConnectProRouting.GetDeviceControl(source, controlOverride);
 
-			if (control is ITraditionalConferenceDeviceControl)
+			if (control is IConferenceDeviceControl)
 			{
 				ITraditionalConferenceDeviceControl dialer = control as ITraditionalConferenceDeviceControl;
 
-				if (dialer.Supports.HasFlag(eCallType.Video))
-					m_NavigationController.NavigateTo<IVtcBasePresenter>();
-				else
-					m_NavigationController.NavigateTo<IAtcBasePresenter>();
+				if (dialer != null)
+				{
+					if (dialer.Supports.HasFlag(eCallType.Video))
+						m_NavigationController.NavigateTo<IVtcBasePresenter>();
+					else
+						m_NavigationController.NavigateTo<IAtcBasePresenter>();
+				}
 
 				SetActiveSource(null);
 				return true;

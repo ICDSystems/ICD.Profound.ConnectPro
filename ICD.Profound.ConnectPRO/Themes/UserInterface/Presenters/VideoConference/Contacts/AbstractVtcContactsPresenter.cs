@@ -206,7 +206,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				return;
 
 			m_SubscribedConferenceManager.OnInCallChanged += ConferenceManagerOnInCallChanged;
-			m_SubscribedConferenceManager.OnActiveSourceStatusChanged += ConferenceManagerOnActiveSourceStatusChanged;
 
 			IConferenceDeviceControl dialer = m_SubscribedConferenceManager.GetDialingProvider(eCallType.Video);
 			IDeviceBase parent = dialer == null ? null : dialer.Parent;
@@ -229,7 +228,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				return;
 
 			m_SubscribedConferenceManager.OnInCallChanged -= ConferenceManagerOnInCallChanged;
-			m_SubscribedConferenceManager.OnActiveSourceStatusChanged -= ConferenceManagerOnActiveSourceStatusChanged;
 
 			m_SubscribedConferenceManager = null;
 		}
@@ -240,11 +238,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
 		private void ConferenceManagerOnInCallChanged(object sender, InCallEventArgs args)
-		{
-			RefreshIfVisible();
-		}
-
-		private void ConferenceManagerOnActiveSourceStatusChanged(object sender, ParticipantStatusEventArgs args)
 		{
 			RefreshIfVisible();
 		}

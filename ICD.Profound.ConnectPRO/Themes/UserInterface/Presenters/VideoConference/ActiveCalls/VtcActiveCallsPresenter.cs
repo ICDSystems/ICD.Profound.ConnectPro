@@ -49,9 +49,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			m_ChildrenFactory = new VtcReferencedActiveCallsPresenterFactory(nav, ItemFactory);
 			m_RefreshSection = new SafeCriticalSection();
-
-			m_VtcBasePresenter = nav.LazyLoadPresenter<IVtcBasePresenter>();
-			m_VtcBasePresenter.OnActiveConferenceControlChanged += VtcBaseOnActiveConferenceControlChanged;
+		
 		}
 
 		private void VtcBaseOnActiveConferenceControlChanged(object sender, EventArgs eventArgs)

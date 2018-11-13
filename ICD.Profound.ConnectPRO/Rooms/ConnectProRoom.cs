@@ -190,9 +190,19 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <param name="shutdown"></param>
 		public void EndMeeting(bool shutdown)
 		{
+			var activeConference = ConferenceManager == null ? null : ConferenceManager.ActiveConference;
 			// Hangup
-			if (ConferenceManager != null && ConferenceManager.ActiveConference != null)
-				ConferenceManager.ActiveConference.Hangup();
+			if (activeConference != null)
+			{
+				// TODO - Actually use polymorphism like a good developer
+				var traditional = activeConference as ITraditionalConference;
+				if (traditional != null)
+					traditional.Hangup();
+
+				var web = activeConference as IWebConference;
+				if (web != null)
+					web.LeaveConference();
+			}
 
 			// Change meeting state before any routing for UX
 			IsInMeeting = false;
@@ -229,9 +239,19 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public void Sleep()
 		{
+			var activeConference = ConferenceManager == null ? null : ConferenceManager.ActiveConference;
 			// Hangup
-			if (ConferenceManager != null && ConferenceManager.ActiveConference != null)
-				ConferenceManager.ActiveConference.Hangup();
+			if (activeConference != null)
+			{
+				// TODO - Actually use polymorphism like a good developer
+				var traditional = activeConference as ITraditionalConference;
+				if (traditional != null)
+					traditional.Hangup();
+
+				var web = activeConference as IWebConference;
+				if (web != null)
+					web.LeaveConference();
+			}
 
 			// Change meeting state before any routing for UX
 			IsInMeeting = false;
@@ -367,10 +387,12 @@ namespace ICD.Profound.ConnectPRO.Rooms
 				Log(eSeverity.Error, "failed to load Dialing Plan {0} - {1}", dialingPlanPath, e.Message);
 			}
 
+			// TODO - remove single audio/video dialers
+			// TODO - seriously... fix this
 			// If there are no audio or video providers, search the available controls
 			if (m_DialingPlan.VideoEndpoint.DeviceId == 0 && m_DialingPlan.AudioEndpoint.DeviceId == 0)
 			{
-				ITraditionalConferenceDeviceControl[] dialers = this.GetControlsRecursive<ITraditionalConferenceDeviceControl>().ToArray();
+				IConferenceDeviceControl[] dialers = this.GetControlsRecursive<IConferenceDeviceControl>().ToArray();
 
 				DeviceControlInfo video = dialers.Where(d => d.Supports == eCallType.Video)
 												 .Select(d => d.DeviceControlInfo)
@@ -383,7 +405,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 				m_DialingPlan = new DialingPlanInfo(m_DialingPlan.ConfigPath, video, audio);
 			}
 
-			// Setup the dialing providers
+			//Setup the dialing providers
 			if (m_DialingPlan.VideoEndpoint.DeviceId != 0)
 				TryRegisterDialingProvider(m_DialingPlan.VideoEndpoint, eCallType.Video, factory);
 
@@ -396,7 +418,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			try
 			{
 				IDeviceBase device = factory.GetOriginatorById<IDeviceBase>(info.DeviceId);
-				ITraditionalConferenceDeviceControl control = device.Controls.GetControl<ITraditionalConferenceDeviceControl>(info.ControlId);
+				IConferenceDeviceControl control = device.Controls.GetControl<IConferenceDeviceControl>(info.ControlId);
 
 				m_ConferenceManager.RegisterDialingProvider(sourceType, control);
 			}

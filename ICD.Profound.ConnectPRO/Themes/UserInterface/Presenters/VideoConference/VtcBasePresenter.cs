@@ -114,7 +114,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			ActiveConferenceControl = null;
 
 			if (Room != null)
-				Room.Routing.RouteOsdPostVtc();
+				Room.Routing.RouteOsd();
 		}
 
 		#region Private Methods
