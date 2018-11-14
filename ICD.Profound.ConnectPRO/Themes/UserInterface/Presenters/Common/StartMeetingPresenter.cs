@@ -109,18 +109,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			base.SetRoom(room);
 
 			Unsubscribe(m_CalendarControl);
-			m_CalendarControl = null;
+			m_CalendarControl = Room == null ? null : Room.CalendarControl;
+			Subscribe(m_CalendarControl);
 
-			if (Room != null && Room.CalendarControl != null)
-			{
-				m_CalendarControl = Room.CalendarControl;
-				Subscribe(m_CalendarControl);
+			if (m_CalendarControl != null)
+				m_CalendarControl.Refresh();
 
-				if (m_CalendarControl != null)
-					m_CalendarControl.Refresh();
-
-				UpdateBookings();
-			}
+			UpdateBookings();
 
 			RefreshIfVisible();
 		}
