@@ -22,7 +22,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 		private readonly SafeTimer m_RefreshTimer;
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private bool m_MainPageView = false;
+		private bool m_MainPageView;
 		public bool MainPageView
 		{
 			get { return m_MainPageView; }
@@ -61,7 +61,9 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 						.OrderBy(b => b.StartTime).FirstOrDefault()
 					: null;
 
-				if (nextBooking == null || nextBooking.StartTime - TimeSpan.FromMinutes(15) > now || Room.IsInMeeting)
+				if (Room == null)
+					view.SetLabelText(string.Empty);
+				else if (nextBooking == null || nextBooking.StartTime - TimeSpan.FromMinutes(15) > now || Room.IsInMeeting)
 					view.SetLabelText("Welcome to your meeting.");
 				else
 					view.SetLabelText("Are you here for your meeting? Let's get started.");

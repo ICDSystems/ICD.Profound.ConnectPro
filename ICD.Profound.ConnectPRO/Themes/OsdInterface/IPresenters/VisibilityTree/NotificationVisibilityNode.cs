@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using ICD.Common.Utils.EventArguments;
-using ICD.Connect.API.Info;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.VisibilityTree
 {

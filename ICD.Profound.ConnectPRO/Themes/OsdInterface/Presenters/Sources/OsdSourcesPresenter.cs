@@ -7,7 +7,6 @@ using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Sources;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews.Sources;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Sources
 {

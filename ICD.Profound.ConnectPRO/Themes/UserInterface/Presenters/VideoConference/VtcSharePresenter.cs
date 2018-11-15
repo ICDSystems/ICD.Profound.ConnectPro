@@ -14,6 +14,7 @@ using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Conferencing.Participants.EventHelpers;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing;
+using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.Extensions;
@@ -189,7 +190,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				// Update the routed presentation source
 				IEnumerable<ISource> sources = Room == null
 					? Enumerable.Empty<ISource>()
-					: Room.Routing.GetVtcPresentationSources();
+					: Room.Routing.GetVtcPresentationSources(m_SubscribedPresentationComponent);
 
 				m_RoutedSources.AddRange(sources);
 
@@ -234,9 +235,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			
 		}
 
-		private void RoutingCacheOnEndpointRouteChanged(object sender, EndpointRouteChangedEventArgs endpointRouteChangedEventArgs)
+		private void RoutingCacheOnEndpointRouteChanged(object sender, EndpointRouteChangedEventArgs eventArgs)
 		{
-			UpdatePresentationRoutedSources();
+    	    if (eventArgs.Type.HasFlag(eConnectionType.Video))
+			    UpdatePresentationRoutedSources();
 		}
 
 		#endregion
@@ -408,7 +410,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (Room == null || source == null)
 				return;
 
-			Room.Routing.RouteVtcPresentation(source);
+			Room.Routing.RouteVtcPresentation(source, m_SubscribedPresentationComponent);
 		}
 
 		private void StopPresenting()
@@ -416,7 +418,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (Room == null)
 				return;
 
-			Room.Routing.UnrouteVtcPresentation();
+			Room.Routing.UnrouteVtcPresentation(m_SubscribedPresentationComponent);
 		}
 
 		#endregion

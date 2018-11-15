@@ -18,7 +18,8 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 
 		public IBooking Booking { get; set; }
 
-	    public ReferencedSchedulePresenter(IOsdNavigationController nav, IOsdViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+	    public ReferencedSchedulePresenter(IOsdNavigationController nav, IOsdViewFactory views, ConnectProTheme theme)
+			: base(nav, views, theme)
 	    {
             m_RefreshSection = new SafeCriticalSection();
 	    }
@@ -36,11 +37,10 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 		    {
 		        string color = Booking is EmptyBooking ? AVAILABLE_COLOR : RESERVED_COLOR;
 
-		        string timeString;
-		        if (Booking.EndTime == DateTime.MaxValue)
-		            timeString = "Remaining Time";
-		        else
-		            timeString = string.Format("{0} - {1}", FormatTime(Booking.StartTime), FormatTime(Booking.EndTime));
+			    string timeString =
+				    Booking.EndTime == DateTime.MaxValue
+					    ? "Remaining Time"
+					    : string.Format("{0} - {1}", FormatTime(Booking.StartTime), FormatTime(Booking.EndTime));
 
 		        view.SetTimeLabel(string.Format(TIME_HTML_FORMAT, color, timeString));
 

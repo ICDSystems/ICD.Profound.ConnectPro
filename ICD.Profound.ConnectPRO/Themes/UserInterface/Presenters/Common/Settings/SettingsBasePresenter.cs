@@ -4,11 +4,7 @@ using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
-using ICD.Connect.Conferencing.ConferenceManagers;
-using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Directory;
-using ICD.Connect.Conferencing.EventArguments;
-using ICD.Connect.Devices;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings;
 using ICD.Connect.Settings.Core;
@@ -92,7 +88,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		public override void SetRoom(IConnectProRoom room)
 		{
 			base.SetRoom(room);
-			DirectoryControl = Room.GetControlRecursive<IDirectoryControl>();
+
+			DirectoryControl = room == null ? null : room.GetControlRecursive<IDirectoryControl>();
 			RefreshIfVisible();
 		}
 
