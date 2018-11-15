@@ -17,7 +17,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		public IContact Contact { set; private get; }
+		public IContact Contact { get; set; }
 
 		public IWebConferenceDeviceControl ActiveConferenceControl { set; private get; }
 

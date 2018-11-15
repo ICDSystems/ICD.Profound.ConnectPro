@@ -17,12 +17,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 	{
 		private readonly IWtcContactListPresenter m_ContactListPresenter;
 		private readonly IWtcJoinByIdPresenter m_JoinByIdPresenter;
+		private readonly IWtcActiveMeetingTogglePresenter m_TogglePresenter;
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		public WtcMainPagePresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
 			m_ContactListPresenter = nav.LazyLoadPresenter<IWtcContactListPresenter>();
 			m_JoinByIdPresenter = nav.LazyLoadPresenter<IWtcJoinByIdPresenter>();
+			m_TogglePresenter = nav.LazyLoadPresenter<IWtcActiveMeetingTogglePresenter>();
 
 			m_RefreshSection = new SafeCriticalSection();
 		}
@@ -34,16 +36,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			m_RefreshSection.Enter();
 			try
 			{
-				bool enableMeetNow = ActiveConferenceControl is ZoomRoomConferenceControl && ActiveConferenceControl.GetActiveConference() == null;
-				view.SetMeetNowButtonEnabled(enableMeetNow);
-
-				bool enableJoinById = ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConference() == null;
-				view.SetJoinByIdButtonEnabled(enableJoinById);
+				bool inConference = IsInConference;
+				
+				view.SetMeetNowButtonEnabled(!inConference);
+				view.SetJoinByIdButtonEnabled(!inConference);
 			}
 			finally
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		private bool IsInConference
+		{
+			get { return ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConference() != null; }
 		}
 
 		#region Control Callbacks
@@ -155,6 +161,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			m_ContactListPresenter.ShowView(args.Data);
 			m_JoinByIdPresenter.ShowView(false);
+			m_TogglePresenter.ShowView(args.Data && IsInConference);
 		}
 
 		#endregion

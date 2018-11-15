@@ -57,7 +57,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 			m_MuteParticipantButton.OnPressed += MuteParticipantButtonOnOnPressed;
 			m_EndMeetingButton.OnPressed += EndMeetingButtonOnOnPressed;
 			m_LeaveMeetingButton.OnPressed += LeaveMeetingButtonOnOnPressed;
+			m_ShowHideCameraButton.OnPressed += ShowHideCameraButtonOnOnPressed;
 		}
+
 		protected override void UnsubscribeControls()
 		{
 			base.UnsubscribeControls();
@@ -66,6 +68,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 			m_MuteParticipantButton.OnPressed -= MuteParticipantButtonOnOnPressed;
 			m_EndMeetingButton.OnPressed -= EndMeetingButtonOnOnPressed;
 			m_LeaveMeetingButton.OnPressed -= LeaveMeetingButtonOnOnPressed;
+			m_ShowHideCameraButton.OnPressed -= ShowHideCameraButtonOnOnPressed;
 		}
 
 		private void LeaveMeetingButtonOnOnPressed(object sender, EventArgs eventArgs)
@@ -86,6 +89,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 		private void KickParticipantButtonOnOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnKickParticipantButtonPressed.Raise(this);
+		}
+
+		private void ShowHideCameraButtonOnOnPressed(object sender, EventArgs e)
+		{
+			OnShowHideCameraButtonPressed.Raise(this);
 		}
 
 		#endregion

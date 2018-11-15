@@ -25,6 +25,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 			{
 				MaxSize = 20,
 				DigitalJoinIncrement = 3,
+				AnalogJoinIncrement = 0,
 				SerialJoinIncrement = 1
 			};
 

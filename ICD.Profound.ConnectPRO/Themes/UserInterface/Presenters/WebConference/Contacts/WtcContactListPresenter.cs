@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
@@ -60,6 +59,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			}
 		}
 
+		#region Private Methods
+
+		private IEnumerable<IWtcReferencedContactView> ItemFactory(ushort count)
+		{
+			return GetView().GetChildComponentViews(ViewFactory, count);
+		}
+
+		#endregion
+
+		#region Contact Callbacks
+
 		private void SubscribeChild(IWtcReferencedContactPresenter presenter)
 		{
 			if (presenter != null)
@@ -74,14 +84,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private void PresenterOnOnPressed(object sender, EventArgs eventArgs)
 		{
-			m_SelectedContact = sender as IWtcReferencedContactPresenter;
-		}
-
-		#region Private Methods
-
-		private IEnumerable<IWtcReferencedContactView> ItemFactory(ushort count)
-		{
-			return GetView().GetChildComponentViews(ViewFactory, count);
+			
+			var presenter = sender as IWtcReferencedContactPresenter;
+			if (m_SelectedContact == presenter)
+				m_SelectedContact = null;
+			else
+				m_SelectedContact = presenter;
+			RefreshIfVisible();
 		}
 
 		#endregion
@@ -114,6 +123,35 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		#endregion
 
 		#region View Callbacks
+
+		protected override void Subscribe(IWtcContactListView view)
+		{
+			base.Subscribe(view);
+
+			view.OnInviteParticipantButtonPressed += ViewOnOnInviteParticipantButtonPressed;
+		}
+
+		protected override void Unsubscribe(IWtcContactListView view)
+		{
+			base.Unsubscribe(view);
+
+			view.OnInviteParticipantButtonPressed -= ViewOnOnInviteParticipantButtonPressed;
+		}
+
+		private void ViewOnOnInviteParticipantButtonPressed(object sender, EventArgs e)
+		{
+			if (ActiveConferenceControl == null || m_SelectedContact == null || m_SelectedContact.Contact == null ||
+			    !m_SelectedContact.Contact.GetDialContexts().Any())
+				return;
+
+			var bestDialContext = m_SelectedContact.Contact.GetDialContexts()
+				.OrderByDescending(d => ActiveConferenceControl.CanDial(d)).FirstOrDefault();
+			if (bestDialContext == null ||
+			    ActiveConferenceControl.CanDial(bestDialContext) == eDialContextSupport.Unsupported)
+				return;
+			
+			ActiveConferenceControl.Dial(bestDialContext);
+		}
 
 		#endregion
 	}

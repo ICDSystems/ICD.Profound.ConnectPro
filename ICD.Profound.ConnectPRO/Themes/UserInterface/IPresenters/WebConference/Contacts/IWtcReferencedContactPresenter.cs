@@ -8,7 +8,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference
 	{
 		event EventHandler OnPressed;
 
-		IContact Contact { set; }
+		IContact Contact { get; set; }
 
 		bool Selected { get; set; }
 

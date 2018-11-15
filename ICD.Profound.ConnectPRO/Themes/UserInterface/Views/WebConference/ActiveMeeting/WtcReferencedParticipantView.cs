@@ -20,6 +20,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 			m_ParticipantNameText.SetLabelText(name);
 		}
 
+		public void SetButtonSelected(bool selected)
+		{
+			m_ParticipantButton.SetSelected(selected);
+		}
+
 		#region Control Callbacks
 
 		protected override void SubscribeControls()

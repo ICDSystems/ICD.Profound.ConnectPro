@@ -130,13 +130,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcKeypadPresenter>());
 			
 			// Web Conference node
-			IVisibilityNode webConferencingVisibility = new SingleVisibilityNode();
-			webConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcCallOutPresenter>());
-			webConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcSharePresenter>());
-			webConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcRecordingPresenter>());
-			webConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcActiveMeetingPresenter>());
-			webConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcContactListPresenter>());
-			webConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcJoinByIdPresenter>());
+			IVisibilityNode wtcMeetingVisibility = new SingleVisibilityNode();
+			wtcMeetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcCallOutPresenter>());
+			wtcMeetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcSharePresenter>());
+			wtcMeetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcRecordingPresenter>());
+			wtcMeetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcActiveMeetingPresenter>());
+
+			IVisibilityNode wtcMainVisibility = new SingleVisibilityNode();
+			wtcMainVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcButtonListPresenter>());
+			wtcMainVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcMainPagePresenter>());
+
+			IVisibilityNode wtcToggleVisibility = new SingleVisibilityNode();
+			wtcToggleVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcActiveMeetingTogglePresenter>());
+			wtcToggleVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcContactsTogglePresenter>());
+
+			IVisibilityNode webConferencingVisibility = new VisibilityNode();
+			webConferencingVisibility.AddNode(wtcMeetingVisibility);
+			webConferencingVisibility.AddNode(wtcMainVisibility);
+			webConferencingVisibility.AddNode(wtcToggleVisibility);
 
 			// Audio Conference node
 			IVisibilityNode audioConferencingVisibility = new SingleVisibilityNode();
@@ -147,12 +158,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			meetingVisibility.AddNode(videoConferencingVisibility);
 			meetingVisibility.AddNode(audioConferencingVisibility);
+			meetingVisibility.AddNode(webConferencingVisibility);
 
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOptionPrivacyMutePresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOptionVolumePresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOptionCameraPresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcBasePresenter>());
+			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcBasePresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ICableTvPresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWebConferencingAlertPresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWebConferencingStepPresenter>());
@@ -281,7 +294,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				throw new ArgumentNullException("source");
 
 			IDeviceBase device = m_Room.Core.Originators.GetChild<IDeviceBase>(source.Device);
-			ITraditionalConferenceDeviceControl dialer = device.Controls.GetControl<ITraditionalConferenceDeviceControl>();
+			IConferenceDeviceControl dialer = device.Controls.GetControl<IConferenceDeviceControl>();
 
 			// Edge case - route the codec to both displays and open the context menu
 			if (dialer != null && dialer.Supports.HasFlag(eCallType.Video))

@@ -23,20 +23,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		{
 			{INDEX_PARTICIPANTS, "Participants"}, 
 			{INDEX_SHARE, "Share"},
-			{INDEX_RECORDING, "Recording"},
-			{INDEX_CALL_OUT, "Call Out"}
+			//{INDEX_RECORDING, "Recording"},
+			//{INDEX_CALL_OUT, "Call Out"}
 		};
 
 		private static readonly Dictionary<ushort, Type> s_NavTypes = new Dictionary<ushort, Type>
 		{
 			{INDEX_PARTICIPANTS, typeof (IWtcActiveMeetingPresenter)}, 
 			{INDEX_SHARE,  typeof (IWtcSharePresenter)},
-			{INDEX_RECORDING, typeof(IWtcRecordingPresenter)},
-			{INDEX_CALL_OUT, typeof(IWtcCallOutPresenter)}
+			//{INDEX_RECORDING, typeof(IWtcRecordingPresenter)},
+			//{INDEX_CALL_OUT, typeof(IWtcCallOutPresenter)}
 		};
 
 		private readonly Dictionary<ushort, IPresenter> m_NavPages;
 		private readonly SafeCriticalSection m_RefreshSection;
+		private readonly IWtcContactsTogglePresenter m_TogglePresenter;
 
 		private IPresenter m_Visible;
 
@@ -63,6 +64,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				m_NavPages.Add(kvp.Key, nav.LazyLoadPresenter(kvp.Value));
 
 			SubscribePages();
+
+			m_TogglePresenter = nav.LazyLoadPresenter<IWtcContactsTogglePresenter>();
 		}
 
 		/// <summary>
@@ -88,8 +91,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 				foreach (KeyValuePair<ushort, IPresenter> kvp in m_NavPages)
 				{
-					view.SetButtonVisible(kvp.Key, kvp.Key < 2);
-					view.SetButtonEnabled(kvp.Key, kvp.Key < 2);
+					view.SetButtonVisible(kvp.Key, true);
+					view.SetButtonEnabled(kvp.Key, true);
 					view.SetButtonSelected(kvp.Key, kvp.Value.IsViewVisible);
 				}
 			}
@@ -188,6 +191,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				foreach (IPresenter presenter in m_NavPages.Values)
 					presenter.ShowView(false);
 			}
+
+			m_TogglePresenter.ShowView(args.Data);
 		}
 
 		#endregion

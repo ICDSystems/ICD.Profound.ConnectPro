@@ -1,4 +1,10 @@
-﻿using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
+﻿using System;
+using System.Collections.Generic;
+using ICD.Common.Utils;
+using ICD.Connect.Conferencing.Conferences;
+using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.EventArguments;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.ActiveMeeting;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.ActiveMeeting;
@@ -7,8 +13,228 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 {
 	public class WtcActiveMeetingPresenter : AbstractWtcPresenter<IWtcActiveMeetingView>, IWtcActiveMeetingPresenter
 	{
+		private readonly SafeCriticalSection m_RefreshSection;
+		private readonly WtcReferencedParticipantPresenterFactory m_PresenterFactory;
+
+		private IWtcReferencedParticipantPresenter m_SelectedParticipant;
+
 		public WtcActiveMeetingPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
+			m_RefreshSection = new SafeCriticalSection();
+			m_PresenterFactory = new WtcReferencedParticipantPresenterFactory(nav, ItemFactory);
 		}
+
+		protected override void Refresh(IWtcActiveMeetingView view)
+		{
+			base.Refresh(view);
+
+			m_RefreshSection.Enter();
+			try
+			{
+				if (ActiveConferenceControl == null)
+				{
+					ShowView(false);
+					return;
+				}
+
+				var activeConference = ActiveConferenceControl.GetActiveConference() as IWebConference;
+				if (activeConference == null)
+					return;
+
+				view.SetEndMeetingButtonEnabled(true);
+				view.SetLeaveMeetingButtonEnabled(true);
+				view.SetKickParticipantButtonEnabled(m_SelectedParticipant != null);
+				view.SetMuteParticipantButtonEnabled(m_SelectedParticipant != null);
+
+				var participants = activeConference.GetParticipants();
+				foreach (var presenter in m_PresenterFactory.BuildChildren(participants, Subscribe, Unsubscribe))
+				{
+					presenter.Selected = presenter == m_SelectedParticipant;
+					presenter.ShowView(true);
+					presenter.Refresh();
+				}
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+		}
+
+		#region Private Methods
+
+		private IEnumerable<IWtcReferencedParticipantView> ItemFactory(ushort count)
+		{
+			return GetView().GetChildComponentViews(ViewFactory, count);
+		}
+
+		#endregion
+
+		#region Participant Callbacks
+
+		private void Subscribe(IWtcReferencedParticipantPresenter presenter)
+		{
+			presenter.OnPressed += PresenterOnOnPressed;
+		}
+
+		private void Unsubscribe(IWtcReferencedParticipantPresenter presenter)
+		{
+			presenter.OnPressed -= PresenterOnOnPressed;
+		}
+
+		private void PresenterOnOnPressed(object sender, EventArgs eventArgs)
+		{
+			var presenter = sender as IWtcReferencedParticipantPresenter;
+			if (m_SelectedParticipant == presenter)
+				m_SelectedParticipant = null;
+			else
+				m_SelectedParticipant = presenter;
+			RefreshIfVisible();
+		}
+
+		#endregion
+
+		#region Control Callbacks
+
+		protected override void Subscribe(IWebConferenceDeviceControl control)
+		{
+			base.Subscribe(control);
+
+			if (control == null)
+				return;
+
+			control.OnConferenceAdded += ControlOnOnConferenceAdded;
+			control.OnConferenceRemoved += ControlOnOnConferenceRemoved;
+
+			foreach (var conference in control.GetConferences())
+				Subscribe(conference);
+		}
+
+		protected override void Unsubscribe(IWebConferenceDeviceControl control)
+		{
+			base.Unsubscribe(control);
+
+			if (control == null)
+				return;
+
+			control.OnConferenceAdded -= ControlOnOnConferenceAdded;
+			control.OnConferenceRemoved -= ControlOnOnConferenceRemoved;
+			
+			foreach (var conference in control.GetConferences())
+				Unsubscribe(conference);
+		}
+
+		private void ControlOnOnConferenceRemoved(object sender, ConferenceEventArgs args)
+		{
+			Unsubscribe(args.Data);
+			RefreshIfVisible();
+		}
+
+		private void ControlOnOnConferenceAdded(object sender, ConferenceEventArgs args)
+		{
+			Subscribe(args.Data);
+			RefreshIfVisible();
+		}
+
+		#endregion
+
+		#region Conference Callbacks
+
+		private void Subscribe(IConference conference)
+		{
+			conference.OnParticipantAdded += ConferenceOnOnParticipantAdded;
+			conference.OnParticipantRemoved += ConferenceOnOnParticipantRemoved;
+		}
+
+		private void Unsubscribe(IConference conference)
+		{
+			conference.OnParticipantAdded -= ConferenceOnOnParticipantAdded;
+			conference.OnParticipantRemoved -= ConferenceOnOnParticipantRemoved;
+		}
+
+		private void ConferenceOnOnParticipantRemoved(object sender, ParticipantEventArgs participantEventArgs)
+		{
+			RefreshIfVisible();
+		}
+
+		private void ConferenceOnOnParticipantAdded(object sender, ParticipantEventArgs participantEventArgs)
+		{
+			RefreshIfVisible();
+		}
+
+		#endregion
+
+		#region View Callbacks
+
+		protected override void Subscribe(IWtcActiveMeetingView view)
+		{
+			base.Subscribe(view);
+
+			view.OnEndMeetingButtonPressed += ViewOnOnEndMeetingButtonPressed;
+			view.OnLeaveMeetingButtonPressed += ViewOnOnLeaveMeetingButtonPressed;
+			view.OnKickParticipantButtonPressed += ViewOnOnKickParticipantButtonPressed;
+			view.OnMuteParticipantButtonPressed += ViewOnOnMuteParticipantButtonPressed;
+			view.OnShowHideCameraButtonPressed += ViewOnOnShowHideCameraButtonPressed;
+		}
+
+		protected override void Unsubscribe(IWtcActiveMeetingView view)
+		{
+			base.Unsubscribe(view);
+
+			view.OnEndMeetingButtonPressed -= ViewOnOnEndMeetingButtonPressed;
+			view.OnLeaveMeetingButtonPressed -= ViewOnOnLeaveMeetingButtonPressed;
+			view.OnKickParticipantButtonPressed -= ViewOnOnKickParticipantButtonPressed;
+			view.OnMuteParticipantButtonPressed -= ViewOnOnMuteParticipantButtonPressed;
+			view.OnShowHideCameraButtonPressed -= ViewOnOnShowHideCameraButtonPressed;
+		}
+
+		private void ViewOnOnShowHideCameraButtonPressed(object sender, EventArgs eventArgs)
+		{
+			ActiveConferenceControl.SetCameraEnabled(!ActiveConferenceControl.CameraEnabled);
+		}
+
+		private void ViewOnOnMuteParticipantButtonPressed(object sender, EventArgs eventArgs)
+		{
+			if (m_SelectedParticipant == null)
+				return;
+			var participant = m_SelectedParticipant.Participant;
+			participant.Mute(!participant.IsMuted);
+		}
+
+		private void ViewOnOnKickParticipantButtonPressed(object sender, EventArgs eventArgs)
+		{
+			if (m_SelectedParticipant == null)
+				return;
+			var participant = m_SelectedParticipant.Participant;
+			participant.Kick();
+			m_SelectedParticipant = null;
+		}
+
+		private void ViewOnOnLeaveMeetingButtonPressed(object sender, EventArgs eventArgs)
+		{
+			if (ActiveConferenceControl == null)
+				return;
+
+			var conference = ActiveConferenceControl.GetActiveConference() as IWebConference;
+			if (conference == null)
+				return;
+
+			conference.LeaveConference();
+			m_SelectedParticipant = null;
+		}
+
+		private void ViewOnOnEndMeetingButtonPressed(object sender, EventArgs eventArgs)
+		{
+			if (ActiveConferenceControl == null)
+				return;
+
+			var conference = ActiveConferenceControl.GetActiveConference() as IWebConference;
+			if (conference == null)
+				return;
+
+			conference.EndConference();
+			m_SelectedParticipant = null;
+		}
+
+		#endregion
 	}
 }

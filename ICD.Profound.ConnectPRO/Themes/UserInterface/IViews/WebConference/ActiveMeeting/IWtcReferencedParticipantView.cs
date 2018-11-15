@@ -14,5 +14,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Acti
 		/// </summary>
 		/// <param name="name"></param>
 		void SetParticipantName(string name);
+
+		void SetButtonSelected(bool selected);
 	}
 }
