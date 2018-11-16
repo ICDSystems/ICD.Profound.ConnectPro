@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contacts;
@@ -6,7 +7,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contac
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Contacts
 {
 	public sealed class VtcReferencedContactsPresenterFactory :
-		AbstractListItemFactory<ModelPresenterTypeInfo, IVtcReferencedContactsPresenterBase, IVtcReferencedContactsView>
+		AbstractUiListItemFactory<ModelPresenterTypeInfo, IVtcReferencedContactsPresenterBase, IVtcReferencedContactsView>
 	{
 		/// <summary>
 		/// Constructor.

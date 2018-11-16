@@ -1,4 +1,5 @@
 ﻿using ICD.Connect.Calendaring.Booking;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
@@ -6,7 +7,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
 	public sealed class ReferencedSchedulePresenterFactory :
-		AbstractListItemFactory<IBooking, IReferencedSchedulePresenter, IReferencedScheduleView>
+		AbstractUiListItemFactory<IBooking, IReferencedSchedulePresenter, IReferencedScheduleView>
 	{
 		/// <summary>
 		/// Constructor.
@@ -14,7 +15,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="navigationController"></param>
 		/// <param name="viewFactory"></param>
 		public ReferencedSchedulePresenterFactory(IConnectProNavigationController navigationController,
-		                                              ListItemFactory<IReferencedScheduleView> viewFactory)
+		                                          ListItemFactory<IReferencedScheduleView> viewFactory)
 			: base(navigationController, viewFactory)
 		{
 		}
@@ -26,7 +27,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="presenter"></param>
 		/// <param name="view"></param>
 		protected override void BindMvpTriad(IBooking model, IReferencedSchedulePresenter presenter,
-											 IReferencedScheduleView view)
+		                                     IReferencedScheduleView view)
 		{
 			presenter.Booking = model;
 			presenter.SetView(view);
