@@ -656,8 +656,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 			IcdStopwatch.Profile(() => RoutingGraph.RoutePaths(pathsList, m_Room.Id),
 			                     string.Format("Route - {0}", StringUtils.ArrayFormat(pathsList)));
 
-			foreach (EndpointInfo destination in pathsList.Select(p => p.DestinationEndpoint).Distinct())
+			foreach (ConnectionPath path in pathsList)
 			{
+				EndpointInfo destination = path.DestinationEndpoint;
 				IDeviceBase destinationDevice =
 					m_Room.Core.Originators.GetChild<IDeviceBase>(destination.Device);
 
@@ -671,8 +672,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 				IRouteInputSelectControl inputSelectControl =
 					destinationDevice.Controls.GetControl<IRouteInputSelectControl>();
 
-				if (inputSelectControl != null && inputSelectControl.ActiveInput != input)
-					inputSelectControl.SetActiveInput(input);
+				if (inputSelectControl != null)
+					inputSelectControl.SetActiveInput(input, path.ConnectionType);
 			}
 		}
 
