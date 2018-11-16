@@ -7,6 +7,7 @@ using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.Panels.Controls;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
@@ -14,7 +15,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 {
-	public sealed class HardButtonsPresenter : AbstractPresenter<IHardButtonsView>, IHardButtonsPresenter
+	public sealed class HardButtonsPresenter : AbstractUiPresenter<IHardButtonsView>, IHardButtonsPresenter
 	{
 		private const int ADDRESS_POWER = 1;
 		private const int ADDRESS_HOME = 2;
@@ -46,7 +47,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public HardButtonsPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public HardButtonsPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
@@ -91,7 +92,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// </summary>
 		/// <returns></returns>
 		[CanBeNull]
-		private static IHardButtonBacklightControl GetHardButtonBacklightControl(IViewFactory viewFactory)
+		private static IHardButtonBacklightControl GetHardButtonBacklightControl(IUiViewFactory viewFactory)
 		{
 			return viewFactory.Panel.Controls.GetControl<IHardButtonBacklightControl>();
 		}

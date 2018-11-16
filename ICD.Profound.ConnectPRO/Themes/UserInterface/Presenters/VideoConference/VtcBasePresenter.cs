@@ -10,6 +10,7 @@ using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Polycom.Devices.Codec.Controls;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
@@ -65,7 +66,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcBasePresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public VtcBasePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_CallListTogglePresenter = nav.LazyLoadPresenter<IVtcCallListTogglePresenter>();

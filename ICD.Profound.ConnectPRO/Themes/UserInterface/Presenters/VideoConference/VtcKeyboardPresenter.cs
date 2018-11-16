@@ -1,6 +1,7 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.UI.EventArguments;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -57,7 +58,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcKeyboardPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public VtcKeyboardPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 		}

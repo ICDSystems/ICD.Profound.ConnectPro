@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using ICD.Connect.UI.Mvp.Views;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 {
-	public interface IStartMeetingView : IView
+	public interface IStartMeetingView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses the start my meeting button.

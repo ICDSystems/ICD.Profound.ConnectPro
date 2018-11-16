@@ -16,7 +16,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Displays
 {
-	public sealed class MenuDisplaysPresenter : AbstractPresenter<IMenuDisplaysView>, IMenuDisplaysPresenter
+	public sealed class MenuDisplaysPresenter : AbstractUiPresenter<IMenuDisplaysView>, IMenuDisplaysPresenter
 	{
 		public event MenuDestinationPressedCallback OnDestinationPressed;
 
@@ -56,7 +56,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public MenuDisplaysPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public MenuDisplaysPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

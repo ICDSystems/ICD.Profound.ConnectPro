@@ -15,7 +15,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
-	public sealed class ReferencedSchedulePresenter : AbstractComponentPresenter<IReferencedScheduleView>,
+	public sealed class ReferencedSchedulePresenter : AbstractUiComponentPresenter<IReferencedScheduleView>,
 														  IReferencedSchedulePresenter
 	{
 		/// <summary>
@@ -57,7 +57,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public ReferencedSchedulePresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public ReferencedSchedulePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

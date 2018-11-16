@@ -6,7 +6,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 {
-	public sealed partial class MenuDisplaysView : AbstractView, IMenuDisplaysView
+	public sealed partial class MenuDisplaysView : AbstractUiView, IMenuDisplaysView
 	{
 		private const ushort MODE_WHITE = 0;
 		private const ushort MODE_GREY = 1;

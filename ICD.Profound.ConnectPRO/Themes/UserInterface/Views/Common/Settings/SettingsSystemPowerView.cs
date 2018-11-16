@@ -5,7 +5,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 {
-	public sealed partial class SettingsSystemPowerView : AbstractView, ISettingsSystemPowerView
+	public sealed partial class SettingsSystemPowerView : AbstractUiView, ISettingsSystemPowerView
 	{
 		public event EventHandler OnWeekdaysButtonPressed;
 		public event EventHandler OnWeekendsButtonPressed;

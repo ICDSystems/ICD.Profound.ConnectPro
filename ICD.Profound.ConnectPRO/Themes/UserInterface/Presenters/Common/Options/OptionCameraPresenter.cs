@@ -3,6 +3,7 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Options;
@@ -23,7 +24,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public OptionCameraPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		public OptionCameraPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
 			m_Menu = Navigation.LazyLoadPresenter<IVtcCameraPresenter>();
 			Subscribe(m_Menu);

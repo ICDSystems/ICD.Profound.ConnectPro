@@ -10,7 +10,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contac
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Contacts
 {
-	public abstract class AbstractVtcReferencedContactsPresenterBase : AbstractComponentPresenter<IVtcReferencedContactsView>,
+	public abstract class AbstractVtcReferencedContactsPresenterBase : AbstractUiComponentPresenter<IVtcReferencedContactsView>,
 	                                                               IVtcReferencedContactsPresenterBase
 	{
 		public event EventHandler OnPressed;
@@ -52,7 +52,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		protected AbstractVtcReferencedContactsPresenterBase(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		protected AbstractVtcReferencedContactsPresenterBase(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

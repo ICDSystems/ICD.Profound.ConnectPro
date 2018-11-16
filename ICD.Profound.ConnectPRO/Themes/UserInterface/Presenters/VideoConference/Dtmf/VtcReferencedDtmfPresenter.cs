@@ -10,7 +10,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Dtmf;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Dtmf
 {
-	public sealed class VtcReferencedDtmfPresenter : AbstractComponentPresenter<IVtcReferencedDtmfView>,
+	public sealed class VtcReferencedDtmfPresenter : AbstractUiComponentPresenter<IVtcReferencedDtmfView>,
 	                                                 IVtcReferencedDtmfPresenter
 	{
 		/// <summary>
@@ -63,7 +63,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcReferencedDtmfPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public VtcReferencedDtmfPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

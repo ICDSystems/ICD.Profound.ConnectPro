@@ -6,7 +6,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.AudioConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference
 {
-	public sealed partial class AtcIncomingCallView : AbstractView, IAtcIncomingCallView
+	public sealed partial class AtcIncomingCallView : AbstractUiView, IAtcIncomingCallView
 	{
 		/// <summary>
 		/// Raised when the user presses the answer button.

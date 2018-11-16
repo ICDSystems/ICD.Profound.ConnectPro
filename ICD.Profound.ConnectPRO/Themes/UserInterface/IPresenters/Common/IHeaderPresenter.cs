@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common
 {
-	public interface IHeaderPresenter : IPresenter<IHeaderView>
+	public interface IHeaderPresenter : IUiPresenter<IHeaderView>
 	{
 	}
 }

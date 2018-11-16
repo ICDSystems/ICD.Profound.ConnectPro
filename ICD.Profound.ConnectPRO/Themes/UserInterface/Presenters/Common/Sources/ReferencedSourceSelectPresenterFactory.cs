@@ -13,7 +13,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// </summary>
 		/// <param name="navigationController"></param>
 		/// <param name="viewFactory"></param>
-		public ReferencedSourceSelectPresenterFactory(INavigationController navigationController,
+		public ReferencedSourceSelectPresenterFactory(IConnectProNavigationController navigationController,
 		                                              ListItemFactory<IReferencedSourceSelectView> viewFactory)
 			: base(navigationController, viewFactory)
 		{

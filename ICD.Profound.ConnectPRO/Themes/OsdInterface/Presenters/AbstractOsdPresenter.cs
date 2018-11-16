@@ -44,12 +44,6 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 		protected AbstractOsdPresenter(IOsdNavigationController nav, IOsdViewFactory views, ConnectProTheme theme)
 			: base(nav, views)
 		{
-			if (nav == null)
-				throw new ArgumentNullException("nav");
-
-			if (views == null)
-				throw new ArgumentNullException("views");
-
 			if (theme == null)
 				throw new ArgumentNullException("theme");
 

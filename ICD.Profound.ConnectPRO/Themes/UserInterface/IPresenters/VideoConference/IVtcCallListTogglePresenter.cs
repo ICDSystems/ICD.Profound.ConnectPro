@@ -3,7 +3,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference
 {
-	public interface IVtcCallListTogglePresenter : IPresenter<IVtcCallListToggleView>
+	public interface IVtcCallListTogglePresenter : IUiPresenter<IVtcCallListToggleView>
 	{
 		/// <summary>
 		/// Raised when the user presses the button.

@@ -1,6 +1,6 @@
 ﻿namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Cameras
 {
-	public interface ICamerasView : IView
+	public interface ICamerasView : IUiView
 	{
 	}
 }

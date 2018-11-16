@@ -27,7 +27,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference
 {
-	public sealed class VtcSharePresenter : AbstractPresenter<IVtcShareView>, IVtcSharePresenter
+	public sealed class VtcSharePresenter : AbstractUiPresenter<IVtcShareView>, IVtcSharePresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 
@@ -63,7 +63,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcSharePresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public VtcSharePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

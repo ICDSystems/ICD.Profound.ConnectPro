@@ -5,7 +5,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.WebConferencing
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups.WebConferencing
 {
-	public sealed partial class WebConferencingStepView : AbstractView, IWebConferencingStepView
+	public sealed partial class WebConferencingStepView : AbstractUiView, IWebConferencingStepView
 	{
 		public event EventHandler OnCloseButtonPressed;
 		public event EventHandler OnBackButtonPressed;

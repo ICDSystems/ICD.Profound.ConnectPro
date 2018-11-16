@@ -3,7 +3,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 {
-	public sealed partial class HeaderView : AbstractView, IHeaderView
+	public sealed partial class HeaderView : AbstractUiView, IHeaderView
 	{
 		/// <summary>
 		/// Constructor.

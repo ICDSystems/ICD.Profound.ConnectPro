@@ -3,7 +3,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common
 {
-	public interface IPasscodePresenter : IPresenter<IPasscodeView>
+	public interface IPasscodePresenter : IUiPresenter<IPasscodeView>
 	{
 		/// <summary>
 		/// Shows the view and sets the success callback.

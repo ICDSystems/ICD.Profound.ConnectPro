@@ -13,7 +13,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		/// <param name="navigationController"></param>
 		/// <param name="viewFactory"></param>
-		public VtcReferencedDtmfPresenterFactory(INavigationController navigationController,
+		public VtcReferencedDtmfPresenterFactory(IConnectProNavigationController navigationController,
 		                                         ListItemFactory<IVtcReferencedDtmfView> viewFactory)
 			: base(navigationController, viewFactory)
 		{

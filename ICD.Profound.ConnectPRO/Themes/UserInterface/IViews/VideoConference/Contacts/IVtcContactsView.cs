@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using ICD.Connect.UI.Mvp.Views;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contacts
 {
-	public interface IVtcContactsView : IView
+	public interface IVtcContactsView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses the directory button.

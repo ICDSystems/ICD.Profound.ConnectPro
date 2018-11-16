@@ -4,7 +4,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options
 {
-	public abstract class AbstractOptionView : AbstractView, IOptionView
+	public abstract class AbstractOptionView : AbstractUiView, IOptionView
 	{
 		public abstract event EventHandler OnButtonPressed;
 

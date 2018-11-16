@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common
 {
-	public interface IEndMeetingPresenter : IPresenter<IEndMeetingView>
+	public interface IEndMeetingPresenter : IUiPresenter<IEndMeetingView>
 	{
 	}
 }

@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 {
-	public interface IVolumeView : IView
+	public interface IVolumeView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses the volume up button.

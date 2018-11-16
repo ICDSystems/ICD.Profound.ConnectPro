@@ -8,7 +8,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference
 {
-	public abstract class AbstractVtcBaseKeyboardPresenter<TView> : AbstractPresenter<TView>, IVtcBaseKeyboardPresenter<TView>
+	public abstract class AbstractVtcBaseKeyboardPresenter<TView> : AbstractUiPresenter<TView>, IVtcBaseKeyboardPresenter<TView>
 		where TView : class, IVtcBaseKeyboardView
 	{
 		private readonly KeypadStringBuilder m_StringBuilder;
@@ -26,7 +26,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		protected AbstractVtcBaseKeyboardPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		protected AbstractVtcBaseKeyboardPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_StringBuilder = new KeypadStringBuilder();

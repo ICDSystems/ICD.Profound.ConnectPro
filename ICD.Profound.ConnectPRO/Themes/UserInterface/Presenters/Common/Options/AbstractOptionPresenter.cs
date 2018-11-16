@@ -7,7 +7,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 {
-	public abstract class AbstractOptionPresenter<TView> : AbstractPresenter<TView>, IOptionPresenter<TView>
+	public abstract class AbstractOptionPresenter<TView> : AbstractUiPresenter<TView>, IOptionPresenter<TView>
 		where TView : class, IOptionView
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
@@ -18,7 +18,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		protected AbstractOptionPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		protected AbstractOptionPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

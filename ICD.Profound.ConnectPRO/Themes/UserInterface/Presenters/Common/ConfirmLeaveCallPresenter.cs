@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
@@ -7,7 +8,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
-	public sealed class ConfirmLeaveCallPresenter : AbstractPresenter<IConfirmLeaveCallView>, IConfirmLeaveCallPresenter
+	public sealed class ConfirmLeaveCallPresenter : AbstractUiPresenter<IConfirmLeaveCallView>, IConfirmLeaveCallPresenter
 	{
 		/// <summary>
 		/// Constructor.
@@ -15,7 +16,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public ConfirmLeaveCallPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public ConfirmLeaveCallPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 		}

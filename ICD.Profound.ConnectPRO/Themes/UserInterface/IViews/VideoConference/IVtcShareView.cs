@@ -3,7 +3,7 @@ using ICD.Common.Utils.EventArguments;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 {
-	public interface IVtcShareView : IView
+	public interface IVtcShareView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses a source button.

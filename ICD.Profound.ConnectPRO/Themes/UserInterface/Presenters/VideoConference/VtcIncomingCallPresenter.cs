@@ -17,7 +17,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference
 {
-	public sealed class VtcIncomingCallPresenter : AbstractPresenter<IVtcIncomingCallView>, IVtcIncomingCallPresenter
+	public sealed class VtcIncomingCallPresenter : AbstractUiPresenter<IVtcIncomingCallView>, IVtcIncomingCallPresenter
 	{
 		/// <summary>
 		/// Raised when the user answers the incoming call.
@@ -42,7 +42,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcIncomingCallPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public VtcIncomingCallPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_Sources = new List<IConferenceSource>();

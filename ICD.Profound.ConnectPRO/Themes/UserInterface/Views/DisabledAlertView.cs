@@ -5,7 +5,7 @@ using System;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 {
-	public sealed partial class DisabledAlertView : AbstractView, IDisabledAlertView
+	public sealed partial class DisabledAlertView : AbstractUiView, IDisabledAlertView
 	{
 		public event EventHandler OnDismissButtonPressed;
 

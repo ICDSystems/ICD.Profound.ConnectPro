@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 {
-	public interface IVtcCallListToggleView : IView
+	public interface IVtcCallListToggleView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses the button.

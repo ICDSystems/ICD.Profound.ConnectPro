@@ -30,7 +30,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.CableTv
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public CableTvPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public CableTvPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

@@ -5,7 +5,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 {
-	public sealed partial class ConfirmSplashPowerView : AbstractView, IConfirmSplashPowerView
+	public sealed partial class ConfirmSplashPowerView : AbstractUiView, IConfirmSplashPowerView
 	{
 		/// <summary>
 		/// Raised when the user presses the Yes button.

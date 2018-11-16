@@ -6,7 +6,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 	/// <summary>
 	/// Simple binding class to ensure component views always have a parent and an index.
 	/// </summary>
-	public abstract class AbstractComponentView : AbstractView
+	public abstract class AbstractComponentView : AbstractUiView
 	{
 		/// <summary>
 		/// Constructor.

@@ -5,7 +5,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 {
-	public sealed partial class SettingsDirectoryView : AbstractView, ISettingsDirectoryView
+	public sealed partial class SettingsDirectoryView : AbstractUiView, ISettingsDirectoryView
 	{
 		/// <summary>
 		/// Raised when the user presses the clear directory button.

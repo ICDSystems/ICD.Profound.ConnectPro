@@ -8,7 +8,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 {
-	public sealed partial class SettingsPasscodeView : AbstractView, ISettingsPasscodeView
+	public sealed partial class SettingsPasscodeView : AbstractUiView, ISettingsPasscodeView
 	{
 		/// <summary>
 		/// Raised when the user presses a keypad button.

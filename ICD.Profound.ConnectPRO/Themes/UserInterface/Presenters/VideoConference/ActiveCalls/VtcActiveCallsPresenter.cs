@@ -13,7 +13,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Active
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.ActiveCalls
 {
-	public sealed class VtcActiveCallsPresenter : AbstractPresenter<IVtcActiveCallsView>, IVtcActiveCallsPresenter
+	public sealed class VtcActiveCallsPresenter : AbstractUiPresenter<IVtcActiveCallsView>, IVtcActiveCallsPresenter
 	{
 		private readonly VtcReferencedActiveCallsPresenterFactory m_ChildrenFactory;
 		private readonly SafeCriticalSection m_RefreshSection;
@@ -26,7 +26,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcActiveCallsPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public VtcActiveCallsPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_ChildrenFactory = new VtcReferencedActiveCallsPresenterFactory(nav, ItemFactory);

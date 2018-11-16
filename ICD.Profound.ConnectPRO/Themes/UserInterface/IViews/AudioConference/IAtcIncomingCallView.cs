@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.AudioConference
 {
-	public interface IAtcIncomingCallView : IView
+	public interface IAtcIncomingCallView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses the answer button.

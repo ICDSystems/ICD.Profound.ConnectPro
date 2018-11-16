@@ -6,7 +6,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 {
-	public abstract class AbstractVtcBaseKeyboardView : AbstractView, IVtcBaseKeyboardView
+	public abstract class AbstractVtcBaseKeyboardView : AbstractUiView, IVtcBaseKeyboardView
 	{
 		/// <summary>
 		/// Raised when the user presses a key button.

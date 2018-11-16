@@ -6,7 +6,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 {
-	public abstract class AbstractPopupPresenter<TView> : AbstractPresenter<TView>, IPopupPresenter<TView>
+	public abstract class AbstractPopupPresenter<TView> : AbstractUiPresenter<TView>, IPopupPresenter<TView>
 		where TView : class, IPopupView
 	{
 		/// <summary>
@@ -15,7 +15,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		protected AbstractPopupPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		protected AbstractPopupPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 		}

@@ -10,7 +10,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Active
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.ActiveCalls
 {
-	public sealed class VtcReferencedActiveCallsPresenter : AbstractComponentPresenter<IVtcReferencedActiveCallsView>,
+	public sealed class VtcReferencedActiveCallsPresenter : AbstractUiComponentPresenter<IVtcReferencedActiveCallsView>,
 	                                                   IVtcReferencedActiveCallsPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
@@ -44,7 +44,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcReferencedActiveCallsPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public VtcReferencedActiveCallsPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
