@@ -1,6 +1,6 @@
 ﻿namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews
 {
-	public interface IHelloView : IOsdView
+	public interface IOsdHelloView : IOsdView
 	{
 		void SetLabelText(string text);
 

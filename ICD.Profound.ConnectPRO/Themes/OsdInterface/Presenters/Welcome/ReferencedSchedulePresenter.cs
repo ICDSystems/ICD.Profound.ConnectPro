@@ -8,7 +8,7 @@ using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 {
-	public sealed class ReferencedSchedulePresenter : AbstractOsdPresenter<IReferencedScheduleView>, IReferencedSchedulePresenter
+	public sealed class ReferencedSchedulePresenter : AbstractOsdComponentPresenter<IReferencedScheduleView>, IReferencedSchedulePresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 
