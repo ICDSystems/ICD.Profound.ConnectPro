@@ -4,6 +4,7 @@ using System.Linq;
 using ICD.Common.Utils;
 using ICD.Connect.Conferencing.Contacts;
 using ICD.Connect.Conferencing.Directory.Tree;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -52,7 +53,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcContactsNormalPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public VtcContactsNormalPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

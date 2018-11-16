@@ -12,6 +12,7 @@ using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Controls;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
@@ -21,7 +22,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
-	public sealed class StartMeetingPresenter : AbstractPresenter<IStartMeetingView>, IStartMeetingPresenter
+	public sealed class StartMeetingPresenter : AbstractUiPresenter<IStartMeetingView>, IStartMeetingPresenter
 	{
 		private const string NO_MEETING_LABEL_TEXT = "No Meetings Scheduled at this Time";
 
@@ -40,7 +41,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public StartMeetingPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public StartMeetingPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
@@ -110,18 +111,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			base.SetRoom(room);
 
 			Unsubscribe(m_CalendarControl);
-			m_CalendarControl = null;
+			m_CalendarControl = Room == null ? null : Room.CalendarControl;
+			Subscribe(m_CalendarControl);
 
-			if (Room != null && Room.CalendarControl != null)
-			{
-				m_CalendarControl = Room.CalendarControl;
-				Subscribe(m_CalendarControl);
+			if (m_CalendarControl != null)
+				m_CalendarControl.Refresh();
 
-				if (m_CalendarControl != null)
-					m_CalendarControl.Refresh();
-
-				UpdateBookings();
-			}
+			UpdateBookings();
 
 			RefreshIfVisible();
 		}

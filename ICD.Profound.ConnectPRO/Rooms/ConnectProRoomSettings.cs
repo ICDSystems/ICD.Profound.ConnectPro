@@ -1,6 +1,7 @@
 ﻿using System;
 using ICD.Common.Properties;
 using ICD.Common.Utils.Xml;
+using ICD.Connect.Devices;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings.Attributes;
 using ICD.Connect.Settings.Attributes.SettingsProperties;
@@ -66,6 +67,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 		public string Passcode { get; set; }
 
+		[OriginatorIdSettingsProperty(typeof(IDeviceBase))]
 		public int? CalendarDevice { get; set; }
 
 		/// <summary>

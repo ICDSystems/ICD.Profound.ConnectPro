@@ -1,22 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ICD.Common.Utils;
+using ICD.Common.Utils.Timers;
 using ICD.Connect.Calendaring;
+using ICD.Connect.Calendaring.Booking;
+using ICD.Connect.Calendaring.CalendarControl;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Welcome;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews.Welcome;
-using ICD.Connect.Calendaring.CalendarControl;
-using ICD.Common.Utils;
-using ICD.Connect.Calendaring.Booking;
-using System.Collections.Generic;
-using System.Linq;
-using ICD.Common.Utils.Timers;
-using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 {
 	public sealed class OsdWelcomePresenter : AbstractOsdPresenter<IOsdWelcomeView>, IOsdWelcomePresenter
 	{
-
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly ReferencedSchedulePresenterFactory m_ChildrenFactory;
 	    private readonly SafeTimer m_RefreshTimer;
@@ -157,12 +156,11 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
             return "display";
         }
 
-
 	    #region Private Methods
 
 	    private IEnumerable<IReferencedScheduleView> ItemFactory(ushort count)
 	    {
-	        return GetView().GetChildComponentViews(ViewFactory, count);
+	        return GetView().GetChildComponentViews(ViewFactory as IOsdViewFactory, count);
 	    }
 
         private string FormatTime(DateTime time)

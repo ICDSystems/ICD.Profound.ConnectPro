@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common
 {
-	public interface IConfirmEndMeetingPresenter : IPresenter<IConfirmEndMeetingView>
+	public interface IConfirmEndMeetingPresenter : IUiPresenter<IConfirmEndMeetingView>
 	{
 	}
 }

@@ -13,7 +13,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.WebConf
 		/// </summary>
 		/// <param name="navigationController"></param>
 		/// <param name="viewFactory"></param>
-		public ReferencedWebConferencingAlertPresenterFactory(INavigationController navigationController,
+		public ReferencedWebConferencingAlertPresenterFactory(IConnectProNavigationController navigationController,
 		                                                      ListItemFactory<IReferencedWebConferencingAlertView> viewFactory)
 			: base(navigationController, viewFactory)
 		{

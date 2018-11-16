@@ -11,7 +11,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings
 {
-	public sealed class SettingsDirectoryPresenter : AbstractPresenter<ISettingsDirectoryView>, ISettingsDirectoryPresenter
+	public sealed class SettingsDirectoryPresenter : AbstractUiPresenter<ISettingsDirectoryView>, ISettingsDirectoryPresenter
 	{
 		/// <summary>
 		/// Constructor.
@@ -19,7 +19,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public SettingsDirectoryPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public SettingsDirectoryPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 		}

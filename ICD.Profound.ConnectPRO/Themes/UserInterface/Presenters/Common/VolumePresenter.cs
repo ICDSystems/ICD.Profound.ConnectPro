@@ -13,7 +13,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
-	public sealed class VolumePresenter : AbstractPresenter<IVolumeView>, IVolumePresenter
+	public sealed class VolumePresenter : AbstractUiPresenter<IVolumeView>, IVolumePresenter
 	{
 		private const ushort HIDE_TIME = 20 * 1000;
 		private const float RAMP_PERCENTAGE = 3.0f / 100.0f;
@@ -49,7 +49,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VolumePresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public VolumePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

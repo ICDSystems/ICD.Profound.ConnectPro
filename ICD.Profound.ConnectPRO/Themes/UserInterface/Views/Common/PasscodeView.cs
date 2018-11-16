@@ -8,7 +8,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 {
-	public sealed partial class PasscodeView : AbstractView, IPasscodeView
+	public sealed partial class PasscodeView : AbstractUiView, IPasscodeView
 	{
 		/// <summary>
 		/// Raised when the user presses the cancel button.

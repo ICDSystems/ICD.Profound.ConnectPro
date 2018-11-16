@@ -3,7 +3,7 @@ using ICD.Profound.ConnectPRO.WebConferencing;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.WebConferencing
 {
-	public interface IWebConferencingStepPresenter : IPresenter<IWebConferencingStepView>
+	public interface IWebConferencingStepPresenter : IUiPresenter<IWebConferencingStepView>
 	{
 		WebConferencingAppInstructions App { get; set; }
 	}

@@ -13,7 +13,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.CableTv
 		/// </summary>
 		/// <param name="navigationController"></param>
 		/// <param name="viewFactory"></param>
-		public ReferencedCableTvPresenterFactory(INavigationController navigationController,
+		public ReferencedCableTvPresenterFactory(IConnectProNavigationController navigationController,
 													  ListItemFactory<IReferencedCableTvView> viewFactory)
 			: base(navigationController, viewFactory)
 		{

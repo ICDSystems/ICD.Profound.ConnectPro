@@ -4,7 +4,7 @@ using ICD.Connect.UI.EventArguments;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 {
-	public interface IVtcBaseKeyboardView : IView
+	public interface IVtcBaseKeyboardView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses a key button.

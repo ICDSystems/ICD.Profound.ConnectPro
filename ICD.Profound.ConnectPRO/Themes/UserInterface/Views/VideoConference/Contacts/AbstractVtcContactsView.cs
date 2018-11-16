@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Mvp.Views;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contacts;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Contacts
 {
-	public abstract class AbstractVtcContactsView : AbstractView, IVtcContactsView
+	public abstract class AbstractVtcContactsView : AbstractUiView, IVtcContactsView
 	{
 		/// <summary>
 		/// Raised when the user presses the directory button.

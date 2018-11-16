@@ -5,7 +5,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 {
-	public sealed partial class EndMeetingView : AbstractView, IEndMeetingView
+	public sealed partial class EndMeetingView : AbstractUiView, IEndMeetingView
 	{
 		public event EventHandler OnEndMeetingButtonPressed;
 

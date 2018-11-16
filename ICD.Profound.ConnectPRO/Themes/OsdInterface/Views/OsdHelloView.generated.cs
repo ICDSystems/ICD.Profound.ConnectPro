@@ -6,16 +6,16 @@ using ICD.Connect.UI.Controls.TextControls;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 {
-	public partial class HelloView
+	public partial class OsdHelloView
 	{
 		private VtProSubpage m_Subpage;
 		private VtProSimpleLabel m_Label;
 
-		public HelloView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
+		public OsdHelloView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
 		{
 		}
 
-		public HelloView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index) : base(panel, theme, parent, index)
+		public OsdHelloView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index) : base(panel, theme, parent, index)
 		{
 		}
 

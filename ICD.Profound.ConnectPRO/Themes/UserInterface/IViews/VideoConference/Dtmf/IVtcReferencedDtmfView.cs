@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Dtmf
 {
-	public interface IVtcReferencedDtmfView : IView
+	public interface IVtcReferencedDtmfView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses the button.

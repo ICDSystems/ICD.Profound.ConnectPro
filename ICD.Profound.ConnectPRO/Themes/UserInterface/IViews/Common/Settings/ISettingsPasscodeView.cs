@@ -3,7 +3,7 @@ using ICD.Common.Utils.EventArguments;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings
 {
-	public interface ISettingsPasscodeView : IView
+	public interface ISettingsPasscodeView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses a keypad button.

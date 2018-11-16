@@ -33,7 +33,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public AtcBasePresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public AtcBasePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_Builder = new KeypadStringBuilder();

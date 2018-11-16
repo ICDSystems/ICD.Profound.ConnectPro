@@ -12,7 +12,7 @@ using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 {
-	public sealed class HelloPresenter : AbstractOsdPresenter<IHelloView>, IHelloPresenter
+	public sealed class OsdHelloPresenter : AbstractOsdPresenter<IOsdHelloView>, IOsdHelloPresenter
 	{
 		public event EventHandler<BoolEventArgs> OnMainPageViewChanged;
 
@@ -35,13 +35,13 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 			} 
 		}
 
-		public HelloPresenter(IOsdNavigationController nav, IOsdViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		public OsdHelloPresenter(IOsdNavigationController nav, IOsdViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
 			m_RefreshTimer = new SafeTimer(Refresh, DEFAULT_REFRESH_TIME);
 			m_RefreshSection = new SafeCriticalSection();
 		}
 
-		protected override void Refresh(IHelloView view)
+		protected override void Refresh(IOsdHelloView view)
 		{
 			base.Refresh(view);
 

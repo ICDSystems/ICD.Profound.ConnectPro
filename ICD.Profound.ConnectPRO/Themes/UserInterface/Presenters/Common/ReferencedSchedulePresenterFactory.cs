@@ -13,7 +13,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// </summary>
 		/// <param name="navigationController"></param>
 		/// <param name="viewFactory"></param>
-		public ReferencedSchedulePresenterFactory(INavigationController navigationController,
+		public ReferencedSchedulePresenterFactory(IConnectProNavigationController navigationController,
 		                                              ListItemFactory<IReferencedScheduleView> viewFactory)
 			: base(navigationController, viewFactory)
 		{

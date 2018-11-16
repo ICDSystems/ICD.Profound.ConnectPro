@@ -24,7 +24,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 	/// to bind the MVP triad.
 	/// </summary>
 	public abstract class AbstractListItemFactory<TModel, TPresenter, TView> : IEnumerable<TPresenter>, IDisposable
-		where TPresenter : class, IPresenter
+		where TPresenter : class, IUiPresenter
 	{
 		private readonly Dictionary<Type, Queue<TPresenter>> m_PresenterPool;
 
@@ -33,7 +33,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 
 		private readonly SafeCriticalSection m_CacheSection;
 
-		private readonly INavigationController m_NavigationController;
+		private readonly IConnectProNavigationController m_NavigationController;
 		private readonly ListItemFactory<TView> m_ViewFactory;
 
 		/// <summary>
@@ -41,7 +41,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// </summary>
 		/// <param name="navigationController"></param>
 		/// <param name="viewFactory"></param>
-		protected AbstractListItemFactory(INavigationController navigationController, ListItemFactory<TView> viewFactory)
+		protected AbstractListItemFactory(IConnectProNavigationController navigationController, ListItemFactory<TView> viewFactory)
 		{
 			m_PresenterPool = new Dictionary<Type, Queue<TPresenter>>();
 

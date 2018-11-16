@@ -20,7 +20,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.AudioConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConference
 {
-	public sealed class AtcIncomingCallPresenter : AbstractPresenter<IAtcIncomingCallView>, IAtcIncomingCallPresenter
+	public sealed class AtcIncomingCallPresenter : AbstractUiPresenter<IAtcIncomingCallView>, IAtcIncomingCallPresenter
 	{
 		/// <summary>
 		/// Raised when the user answers the incoming call.
@@ -45,7 +45,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public AtcIncomingCallPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public AtcIncomingCallPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_IncomingCalls = new Dictionary<IIncomingCall, IConferenceDeviceControl>();

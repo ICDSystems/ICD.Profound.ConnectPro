@@ -2,6 +2,7 @@
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -9,7 +10,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference
 {
-	public sealed class VtcCallListTogglePresenter : AbstractPresenter<IVtcCallListToggleView>, IVtcCallListTogglePresenter
+	public sealed class VtcCallListTogglePresenter : AbstractUiPresenter<IVtcCallListToggleView>, IVtcCallListTogglePresenter
 	{
 		/// <summary>
 		/// Raised when the user presses the button.
@@ -29,7 +30,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcCallListTogglePresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public VtcCallListTogglePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

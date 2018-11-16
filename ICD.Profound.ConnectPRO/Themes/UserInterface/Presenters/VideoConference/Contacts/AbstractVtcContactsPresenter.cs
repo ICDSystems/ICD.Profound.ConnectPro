@@ -10,6 +10,7 @@ using ICD.Connect.Conferencing.Directory;
 using ICD.Connect.Conferencing.Directory.Tree;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Devices;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
@@ -19,7 +20,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contac
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Contacts
 {
-	public abstract class AbstractVtcContactsPresenter<TView> : AbstractPresenter<TView>, IVtcContactsPresenter<TView>
+	public abstract class AbstractVtcContactsPresenter<TView> : AbstractUiPresenter<TView>, IVtcContactsPresenter<TView>
 		where TView : class, IVtcContactsView
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
@@ -67,7 +68,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		protected AbstractVtcContactsPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		protected AbstractVtcContactsPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

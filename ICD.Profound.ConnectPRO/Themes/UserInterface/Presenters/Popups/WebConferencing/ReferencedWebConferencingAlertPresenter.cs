@@ -10,7 +10,7 @@ using ICD.Profound.ConnectPRO.WebConferencing;
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.WebConferencing
 {
 	public sealed class ReferencedWebConferencingAlertPresenter :
-		AbstractComponentPresenter<IReferencedWebConferencingAlertView>, IReferencedWebConferencingAlertPresenter
+		AbstractUiComponentPresenter<IReferencedWebConferencingAlertView>, IReferencedWebConferencingAlertPresenter
 	{
 		public event EventHandler OnPressed;
 
@@ -38,7 +38,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.WebConf
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public ReferencedWebConferencingAlertPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public ReferencedWebConferencingAlertPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

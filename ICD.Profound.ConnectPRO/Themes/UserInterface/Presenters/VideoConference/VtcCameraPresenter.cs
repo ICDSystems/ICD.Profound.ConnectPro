@@ -8,6 +8,7 @@ using ICD.Common.Utils.Timers;
 using ICD.Connect.Cameras;
 using ICD.Connect.Cameras.Controls;
 using ICD.Connect.Cameras.Devices;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
@@ -16,7 +17,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference
 {
-	public sealed class VtcCameraPresenter : AbstractPresenter<IVtcCameraView>, IVtcCameraPresenter
+	public sealed class VtcCameraPresenter : AbstractUiPresenter<IVtcCameraView>, IVtcCameraPresenter
 	{
 		private const long PRESET_STORED_VISIBILITY_MILLISECONDS = 1000;
 
@@ -57,7 +58,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcCameraPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public VtcCameraPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

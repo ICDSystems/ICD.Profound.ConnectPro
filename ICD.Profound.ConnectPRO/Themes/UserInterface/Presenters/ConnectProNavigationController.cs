@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.AudioConference;
@@ -47,9 +48,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 	/// <summary>
 	/// Provides a way for presenters to access each other.
 	/// </summary>
-	public sealed class ConnectProNavigationController : INavigationController
+	public sealed class ConnectProNavigationController : AbstractNavigationController, IConnectProNavigationController
 	{
-		private delegate IPresenter PresenterFactory(INavigationController nav, IViewFactory views, ConnectProTheme theme);
+		private delegate IUiPresenter PresenterFactory(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme);
 
 		private readonly Dictionary<Type, PresenterFactory> m_PresenterFactories = new Dictionary<Type, PresenterFactory>
 		{
@@ -136,10 +137,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IHardButtonsPresenter), (nav, views, theme) => new HardButtonsPresenter(nav, views, theme)}
 		};
 
-		private readonly Dictionary<Type, IPresenter> m_Cache;
-		private readonly SafeCriticalSection m_CacheSection;
-		private readonly IViewFactory m_ViewFactory;
+		private readonly IUiViewFactory m_ViewFactory;
 		private readonly ConnectProTheme m_Theme;
+		private readonly SafeCriticalSection m_SetRoomSection;
 
 		private IConnectProRoom m_Room;
 
@@ -150,13 +150,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// </summary>
 		/// <param name="viewFactory"></param>
 		/// <param name="theme"></param>
-		public ConnectProNavigationController(IViewFactory viewFactory, ConnectProTheme theme)
+		public ConnectProNavigationController(IUiViewFactory viewFactory, ConnectProTheme theme)
 		{
-			m_Cache = new Dictionary<Type, IPresenter>();
-			m_CacheSection = new SafeCriticalSection();
-
 			m_ViewFactory = viewFactory;
 			m_Theme = theme;
+			m_SetRoomSection = new SafeCriticalSection();
 		}
 
 		#endregion
@@ -169,63 +167,32 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="room"></param>
 		public void SetRoom(IConnectProRoom room)
 		{
-			if (room == m_Room)
-				return;
-
-			m_Room = room;
-
-			m_CacheSection.Enter();
+			m_SetRoomSection.Enter();
 
 			try
 			{
-				foreach (IPresenter presenter in m_Cache.Values.ToArray())
+				if (room == m_Room)
+					return;
+
+				m_Room = room;
+
+				foreach (IUiPresenter presenter in GetPresenters().OfType<IUiPresenter>())
 					presenter.SetRoom(m_Room);
 			}
 			finally
 			{
-				m_CacheSection.Leave();
+				m_SetRoomSection.Leave();
 			}
 		}
 
 		/// <summary>
 		/// Release resources.
 		/// </summary>
-		public void Dispose()
+		public override void Dispose()
 		{
 			SetRoom(null);
 
-			m_Cache.Values.ForEach(p => p.Dispose());
-			m_Cache.Clear();
-		}
-
-		/// <summary>
-		/// Instantiates or returns an existing presenter of the given type.
-		/// </summary>
-		/// <param name="type"></param>
-		/// <returns></returns>
-		public IPresenter LazyLoadPresenter(Type type)
-		{
-			if (type == null)
-				throw new ArgumentNullException("type");
-
-			m_CacheSection.Enter();
-
-			try
-			{
-				IPresenter presenter;
-
-				if (!m_Cache.TryGetValue(type, out presenter))
-				{
-					presenter = GetNewPresenter(type);
-					m_Cache[type] = presenter;
-				}
-
-				return presenter;
-			}
-			finally
-			{
-				m_CacheSection.Leave();
-			}
+			base.Dispose();
 		}
 
 		/// <summary>
@@ -262,7 +229,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// </summary>
 		/// <param name="type"></param>
 		/// <returns></returns>
-		public IPresenter GetNewPresenter(Type type)
+		public override IPresenter GetNewPresenter(Type type)
 		{
 			if (type == null)
 				throw new ArgumentNullException("type");
@@ -275,7 +242,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 				throw new KeyNotFoundException(message);
 			}
 
-			IPresenter output = factory(this, m_ViewFactory, m_Theme);
+			IUiPresenter output = factory(this, m_ViewFactory, m_Theme);
 			output.SetRoom(m_Room);
 
 			if (!type

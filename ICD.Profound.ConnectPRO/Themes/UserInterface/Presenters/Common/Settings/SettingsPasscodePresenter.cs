@@ -9,7 +9,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings
 {
-	public sealed class SettingsPasscodePresenter : AbstractPresenter<ISettingsPasscodeView>, ISettingsPasscodePresenter
+	public sealed class SettingsPasscodePresenter : AbstractUiPresenter<ISettingsPasscodeView>, ISettingsPasscodePresenter
 	{
 		private const string INSTRUCTION_NEW_PASSCODE = "Please type in new passcode to change";
 		private const string INSTRUCTION_CONFIRM_PASSCODE = "Please confirm new passcode";
@@ -72,7 +72,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public SettingsPasscodePresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public SettingsPasscodePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_StringBuilder = new KeypadStringBuilder();

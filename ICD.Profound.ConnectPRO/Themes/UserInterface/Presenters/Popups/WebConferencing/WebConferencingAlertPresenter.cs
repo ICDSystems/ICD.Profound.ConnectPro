@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.WebConferencing;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -10,7 +11,7 @@ using ICD.Profound.ConnectPRO.WebConferencing;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.WebConferencing
 {
-	public sealed class WebConferencingAlertPresenter : AbstractPresenter<IWebConferencingAlertView>, IWebConferencingAlertPresenter
+	public sealed class WebConferencingAlertPresenter : AbstractUiPresenter<IWebConferencingAlertView>, IWebConferencingAlertPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly ReferencedWebConferencingAlertPresenterFactory m_ChildrenFactory;
@@ -23,7 +24,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.WebConf
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public WebConferencingAlertPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public WebConferencingAlertPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

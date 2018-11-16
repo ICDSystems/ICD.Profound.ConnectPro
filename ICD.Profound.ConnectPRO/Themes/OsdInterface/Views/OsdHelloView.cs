@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 {
-	public sealed partial class HelloView : AbstractOsdView, IHelloView
+	public sealed partial class OsdHelloView : AbstractOsdView, IOsdHelloView
 	{
 		public void SetLabelText(string text)
 		{

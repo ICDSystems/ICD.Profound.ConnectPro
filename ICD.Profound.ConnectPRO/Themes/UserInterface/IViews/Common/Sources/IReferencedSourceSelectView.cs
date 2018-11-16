@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources
 {
-	public interface IReferencedSourceSelectView : IView
+	public interface IReferencedSourceSelectView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses the button.

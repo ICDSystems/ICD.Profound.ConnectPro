@@ -5,7 +5,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 {
-	public sealed partial class VolumeView : AbstractView, IVolumeView
+	public sealed partial class VolumeView : AbstractUiView, IVolumeView
 	{
 		public event EventHandler OnVolumeUpButtonPressed;
 		public event EventHandler OnVolumeDownButtonPressed;

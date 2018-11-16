@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings
 {
-	public interface ISettingsPasscodePresenter : IPresenter<ISettingsPasscodeView>
+	public interface ISettingsPasscodePresenter : IUiPresenter<ISettingsPasscodeView>
 	{
 	}
 }

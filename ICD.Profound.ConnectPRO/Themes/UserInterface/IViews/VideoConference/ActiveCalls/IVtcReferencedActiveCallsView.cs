@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.ActiveCalls
 {
-	public interface IVtcReferencedActiveCallsView : IView
+	public interface IVtcReferencedActiveCallsView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses the hangup button.

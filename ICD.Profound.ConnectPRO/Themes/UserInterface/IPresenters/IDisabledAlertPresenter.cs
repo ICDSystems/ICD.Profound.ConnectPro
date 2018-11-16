@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters
 {
-	public interface IDisabledAlertPresenter : IPresenter<IDisabledAlertView>
+	public interface IDisabledAlertPresenter : IUiPresenter<IDisabledAlertView>
 	{
 	}
 }

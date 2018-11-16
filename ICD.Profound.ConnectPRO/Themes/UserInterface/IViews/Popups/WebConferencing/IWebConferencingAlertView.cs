@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using ICD.Connect.UI.Mvp.Views;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.WebConferencing
 {
-	public interface IWebConferencingAlertView : IView
+	public interface IWebConferencingAlertView : IUiView
 	{
 		event EventHandler OnDismissButtonPressed;
 

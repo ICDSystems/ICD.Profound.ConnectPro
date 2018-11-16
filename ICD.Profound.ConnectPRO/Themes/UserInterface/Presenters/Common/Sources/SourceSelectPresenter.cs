@@ -13,7 +13,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 {
-	public sealed class SourceSelectPresenter : AbstractPresenter<ISourceSelectView>, ISourceSelectPresenter
+	public sealed class SourceSelectPresenter : AbstractUiPresenter<ISourceSelectView>, ISourceSelectPresenter
 	{
 		/// <summary>
 		/// Raised when the user presses a source.
@@ -55,7 +55,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public SourceSelectPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public SourceSelectPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

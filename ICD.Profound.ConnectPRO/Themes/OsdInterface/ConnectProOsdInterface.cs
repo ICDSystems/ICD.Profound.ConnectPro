@@ -4,6 +4,8 @@ using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
+using ICD.Connect.UI.Mvp.Presenters;
+using ICD.Connect.UI.Mvp.VisibilityTree;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Popups;
@@ -70,12 +72,12 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 		private void BuildVisibilityTree()
 		{
 			// Show "hello" when no notifications are visible
-			m_DefaultNotification = new NotificationVisibilityNode(m_NavigationController.LazyLoadPresenter<IHelloPresenter>());
+			m_DefaultNotification = new NotificationVisibilityNode(m_NavigationController.LazyLoadPresenter<IOsdHelloPresenter>());
 			m_DefaultNotification.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdIncomingCallPresenter>());
 			m_DefaultNotification.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdMutePresenter>());
 			
 			// these presenters are initially visible
-			m_NavigationController.NavigateTo<IHelloPresenter>();
+			m_NavigationController.NavigateTo<IOsdHelloPresenter>();
 			m_NavigationController.NavigateTo<IOsdHeaderPresenter>();
 			
 			UpdateVisibility();

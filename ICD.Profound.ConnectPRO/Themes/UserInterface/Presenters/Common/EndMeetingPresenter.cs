@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -6,7 +7,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
-	public sealed class EndMeetingPresenter : AbstractPresenter<IEndMeetingView>, IEndMeetingPresenter
+	public sealed class EndMeetingPresenter : AbstractUiPresenter<IEndMeetingView>, IEndMeetingPresenter
 	{
 		/// <summary>
 		/// Constructor.
@@ -14,7 +15,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public EndMeetingPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public EndMeetingPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 		}

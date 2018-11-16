@@ -5,7 +5,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 {
-	public sealed partial class HardButtonsView : AbstractView, IHardButtonsView
+	public sealed partial class HardButtonsView : AbstractUiView, IHardButtonsView
 	{
 		public event EventHandler OnPowerButtonPressed;
 		public event EventHandler OnHomeButtonPressed;

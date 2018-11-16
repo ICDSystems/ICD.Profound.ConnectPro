@@ -4,7 +4,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 {
-	public abstract class AbstractPopupView : AbstractView, IPopupView
+	public abstract class AbstractPopupView : AbstractUiView, IPopupView
 	{
 		public abstract event EventHandler OnCloseButtonPressed;
 

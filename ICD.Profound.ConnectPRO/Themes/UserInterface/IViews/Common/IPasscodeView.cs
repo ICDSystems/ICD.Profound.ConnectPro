@@ -3,7 +3,7 @@ using ICD.Common.Utils.EventArguments;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 {
-	public interface IPasscodeView : IView
+	public interface IPasscodeView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses the cancel button.

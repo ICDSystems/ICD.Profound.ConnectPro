@@ -4,7 +4,7 @@ using ICD.Profound.ConnectPRO.WebConferencing;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.WebConferencing
 {
-	public interface IReferencedWebConferencingAlertPresenter : IPresenter<IReferencedWebConferencingAlertView>
+	public interface IReferencedWebConferencingAlertPresenter : IUiPresenter<IReferencedWebConferencingAlertView>
 	{
 		event EventHandler OnPressed;
 

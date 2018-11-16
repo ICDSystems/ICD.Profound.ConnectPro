@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 {
-	public interface IReferencedScheduleView : IView
+	public interface IReferencedScheduleView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses the button.
