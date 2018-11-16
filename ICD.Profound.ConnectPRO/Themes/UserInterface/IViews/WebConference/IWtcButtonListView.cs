@@ -4,7 +4,7 @@ using ICD.Common.Utils.EventArguments;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference
 {
-	public interface IWtcButtonListView : IView
+	public interface IWtcButtonListView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses a button.

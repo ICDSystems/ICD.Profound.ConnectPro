@@ -5,7 +5,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 {
-	public sealed partial class WtcContactsToggleView : AbstractView, IWtcContactsToggleView
+	public sealed partial class WtcContactsToggleView : AbstractUiView, IWtcContactsToggleView
 	{
 		public event EventHandler OnButtonPressed;
 

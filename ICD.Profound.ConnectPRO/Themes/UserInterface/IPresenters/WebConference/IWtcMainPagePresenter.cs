@@ -1,5 +1,4 @@
-﻿using ICD.Connect.Conferencing.Controls.Dialing;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
+﻿using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference
 {

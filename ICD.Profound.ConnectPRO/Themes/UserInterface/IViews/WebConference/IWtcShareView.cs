@@ -4,7 +4,7 @@ using ICD.Common.Utils.EventArguments;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference
 {
-	public interface IWtcShareView : IView
+	public interface IWtcShareView : IUiView
 	{
 		event EventHandler OnShareButtonPressed;
 

@@ -7,7 +7,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 {
 	public class WtcReferencedParticipantPresenterFactory : AbstractListItemFactory<IWebParticipant, IWtcReferencedParticipantPresenter, IWtcReferencedParticipantView>
 	{
-		public WtcReferencedParticipantPresenterFactory(INavigationController navigationController, ListItemFactory<IWtcReferencedParticipantView> viewFactory) : base(navigationController, viewFactory)
+		public WtcReferencedParticipantPresenterFactory(IConnectProNavigationController navigationController, ListItemFactory<IWtcReferencedParticipantView> viewFactory) : base(navigationController, viewFactory)
 		{
 		}
 

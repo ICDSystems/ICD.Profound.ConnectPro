@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference
 {
-	public interface IWtcContactsToggleView : IView
+	public interface IWtcContactsToggleView : IUiView
 	{
 		/// <summary>
 		/// Raised when the button is pressed.

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using ICD.Connect.UI.Mvp.Views;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts
 {
-	public interface IWtcContactListView : IView
+	public interface IWtcContactListView : IUiView
 	{
 		/// <summary>
 		/// Raised when Invite Participant button is pressed.

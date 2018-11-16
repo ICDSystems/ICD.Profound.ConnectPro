@@ -22,7 +22,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		
 		private IWtcReferencedContactPresenter m_SelectedContact;
 
-		public WtcContactListPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		public WtcContactListPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
 			m_PresenterFactory = new WtcReferencedContactPresenterFactory(nav, ItemFactory);

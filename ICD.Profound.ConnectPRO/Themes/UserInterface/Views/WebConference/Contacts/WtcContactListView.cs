@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
+using ICD.Connect.UI.Mvp.Views;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Contacts
 {
-	public sealed partial class WtcContactListView : AbstractView, IWtcContactListView
+	public sealed partial class WtcContactListView : AbstractUiView, IWtcContactListView
 	{
 		public event EventHandler OnInviteParticipantButtonPressed;
 

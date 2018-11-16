@@ -5,11 +5,12 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 {
-	public sealed partial class WtcActiveMeetingToggleView : AbstractView, IWtcActiveMeetingToggleView
+	public sealed partial class WtcActiveMeetingToggleView : AbstractUiView, IWtcActiveMeetingToggleView
 	{
 		public event EventHandler OnButtonPressed;
 
-		public WtcActiveMeetingToggleView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
+		public WtcActiveMeetingToggleView(ISigInputOutput panel, ConnectProTheme theme)
+			: base(panel, theme)
 		{
 		}
 

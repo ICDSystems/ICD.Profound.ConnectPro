@@ -190,7 +190,6 @@
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcKeyboardPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcKeypadPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcSharePresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\VisibilityNode.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\ActiveMeeting\IWtcActiveMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\ActiveMeeting\IWtcReferencedParticipantPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\Contacts\IWtcContactListPresenter.cs" />
@@ -274,7 +273,6 @@
     <Compile Include="Themes\UserInterface\IViews\WebConference\IWtcMainPageView.cs" />
     <Compile Include="Themes\UserInterface\IViews\WebConference\IWtcRecordingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\WebConference\IWtcShareView.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\AbstractComponentPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractUiComponentPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractListItemFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractUiPresenter.cs" />

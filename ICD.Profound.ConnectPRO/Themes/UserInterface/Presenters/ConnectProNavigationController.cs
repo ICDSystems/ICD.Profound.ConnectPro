@@ -205,23 +205,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			if (type == null)
 				throw new ArgumentNullException("type");
 
-			List<IPresenter> presenters = new List<IPresenter>();
+			return m_PresenterFactories.Keys
+			                           .Where(presenterType => presenterType.IsAssignableTo(type))
+			                           .Select(presenterType => LazyLoadPresenter(presenterType))
+									   .ToArray(m_PresenterFactories.Count);
+		}
 
-			m_CacheSection.Enter();
-			try
-			{
-				foreach (var presenterType in m_PresenterFactories.Keys)
-				{
-					if (presenterType.IsAssignableTo(type))
-						presenters.Add(LazyLoadPresenter(presenterType));
-				}
-			}
-			finally
-			{
-				m_CacheSection.Leave();
-			}
-
-			return presenters;
+		/// <summary>
+		/// Instantiates or returns an existing presenter for every presenter that can be assigned to the given type.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<T> LazyLoadPresenters<T>()
+			where T : IPresenter
+		{
+			return LazyLoadPresenters(typeof(T)).Cast<T>();
 		}
 
 		/// <summary>

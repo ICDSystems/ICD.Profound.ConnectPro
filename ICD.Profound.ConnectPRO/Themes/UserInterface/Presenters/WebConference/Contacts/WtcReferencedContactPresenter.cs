@@ -11,7 +11,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.Contacts
 {
-	public class WtcReferencedContactPresenter : AbstractComponentPresenter<IWtcReferencedContactView>, IWtcReferencedContactPresenter
+	public class WtcReferencedContactPresenter : AbstractUiComponentPresenter<IWtcReferencedContactView>, IWtcReferencedContactPresenter
 	{
 		public event EventHandler OnPressed;
 
@@ -23,7 +23,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		public bool Selected { get; set; }
 
-		public WtcReferencedContactPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		public WtcReferencedContactPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
 		}

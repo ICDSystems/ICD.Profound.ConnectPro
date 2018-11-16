@@ -5,6 +5,7 @@ using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Zoom.Controls;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.Contacts;
@@ -20,7 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		private readonly IWtcActiveMeetingTogglePresenter m_TogglePresenter;
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		public WtcMainPagePresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		public WtcMainPagePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
 			m_ContactListPresenter = nav.LazyLoadPresenter<IWtcContactListPresenter>();
 			m_JoinByIdPresenter = nav.LazyLoadPresenter<IWtcJoinByIdPresenter>();

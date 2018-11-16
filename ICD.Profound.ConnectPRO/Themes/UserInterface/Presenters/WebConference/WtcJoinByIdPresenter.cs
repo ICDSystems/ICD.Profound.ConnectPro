@@ -16,7 +16,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly StringBuilder m_Builder;
 
-		public WtcJoinByIdPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		public WtcJoinByIdPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+			: base(nav, views, theme)
 		{
 			m_Builder = new StringBuilder();
 

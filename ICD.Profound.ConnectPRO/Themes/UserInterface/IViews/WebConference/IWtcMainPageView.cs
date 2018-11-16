@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference
 {
-	public interface IWtcMainPageView : IView
+	public interface IWtcMainPageView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses the Meet Now button.

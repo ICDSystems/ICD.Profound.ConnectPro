@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference
 {
-	public interface IWtcContactsTogglePresenter : IPresenter<IWtcContactsToggleView>
+	public interface IWtcContactsTogglePresenter : IUiPresenter<IWtcContactsToggleView>
 	{
 		 
 	}

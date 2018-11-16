@@ -4,7 +4,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.ActiveMe
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.ActiveMeeting
 {
-	public interface IWtcReferencedParticipantPresenter : IPresenter<IWtcReferencedParticipantView>
+	public interface IWtcReferencedParticipantPresenter : IUiPresenter<IWtcReferencedParticipantView>
 	{
 		event EventHandler OnPressed;
 

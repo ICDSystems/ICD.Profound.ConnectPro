@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference
 {
-	public interface IWtcRecordingView : IView
+	public interface IWtcRecordingView : IUiView
 	{
 		event EventHandler OnStartRecordingButtonPressed;
 		event EventHandler OnStopRecordingButtonPressed;

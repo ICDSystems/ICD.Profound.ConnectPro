@@ -6,7 +6,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 {
-	public sealed partial class WtcMainPageView : AbstractView, IWtcMainPageView
+	public sealed partial class WtcMainPageView : AbstractUiView, IWtcMainPageView
 	{
 		public event EventHandler OnMeetNowButtonPressed;
 		public event EventHandler OnContactsButtonPressed;
