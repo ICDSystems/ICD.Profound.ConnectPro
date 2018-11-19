@@ -53,5 +53,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Acti
 		void SetEndMeetingButtonEnabled(bool enabled);
 
 		void SetLeaveMeetingButtonEnabled(bool enabled);
+
+		void SetMeetingIdLabelVisibility(bool visible);
+
+		void SetMeetingIdLabelText(string text);
+
+		void SetCallInLabelVisibility(bool visible);
+
+		void SetCallInLabelText(string text);
 	}
 }

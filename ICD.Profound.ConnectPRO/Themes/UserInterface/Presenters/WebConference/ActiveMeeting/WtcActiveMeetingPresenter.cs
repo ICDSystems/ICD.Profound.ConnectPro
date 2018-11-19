@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ICD.Common.Utils;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Participants;
+using ICD.Connect.Conferencing.Zoom.Components.Call;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.ActiveMeeting;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -38,21 +41,30 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				}
 
 				var activeConference = ActiveConferenceControl.GetActiveConference() as IWebConference;
-				if (activeConference == null)
-					return;
 
-				view.SetEndMeetingButtonEnabled(true);
-				view.SetLeaveMeetingButtonEnabled(true);
-				view.SetKickParticipantButtonEnabled(m_SelectedParticipant != null);
-				view.SetMuteParticipantButtonEnabled(m_SelectedParticipant != null);
+				view.SetEndMeetingButtonEnabled(activeConference != null);
+				view.SetLeaveMeetingButtonEnabled(activeConference != null);
+				view.SetKickParticipantButtonEnabled(activeConference != null && m_SelectedParticipant != null);
+				view.SetMuteParticipantButtonEnabled(activeConference != null && m_SelectedParticipant != null);
 
-				var participants = activeConference.GetParticipants();
+				var participants = activeConference == null
+					? Enumerable.Empty<IWebParticipant>()
+					: activeConference.GetParticipants();
 				foreach (var presenter in m_PresenterFactory.BuildChildren(participants, Subscribe, Unsubscribe))
 				{
 					presenter.Selected = presenter == m_SelectedParticipant;
-					presenter.ShowView(true);
+					presenter.ShowView(presenter.Participant != null);
 					presenter.Refresh();
 				}
+
+				var zoomConference = activeConference as CallComponent;
+				view.SetMeetingIdLabelVisibility(zoomConference != null);
+				view.SetCallInLabelVisibility(zoomConference != null);
+				if (zoomConference == null)
+					return;
+
+				view.SetMeetingIdLabelText(zoomConference.Number);
+				view.SetCallInLabelText(zoomConference.CallInfo.DialIn);
 			}
 			finally
 			{

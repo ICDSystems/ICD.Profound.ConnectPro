@@ -5,6 +5,7 @@ using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.Pages;
+using ICD.Connect.UI.Controls.TextControls;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.ActiveMeeting
 {
@@ -17,6 +18,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 		private VtProButton m_ShowHideCameraButton;
 		private VtProButton m_LeaveMeetingButton;
 		private VtProButton m_EndMeetingButton;
+		private VtProSimpleLabel m_MeetingIdLabel;
+		private VtProSimpleLabel m_CallInLabel;
 
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
@@ -60,6 +63,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 				DigitalJoinIncrement = 3,
 				SerialJoinIncrement = 1
 			};
+
+			m_MeetingIdLabel = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				DigitalVisibilityJoin = 755,
+				IndirectTextJoin = 700
+			};
+
+			m_CallInLabel = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				DigitalVisibilityJoin = 756,
+				IndirectTextJoin = 701
+			};
 		}
 
 		protected override IEnumerable<IVtProControl> GetChildren()
@@ -71,6 +86,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 			yield return m_ShowHideCameraButton;
 			yield return m_EndMeetingButton;
 			yield return m_LeaveMeetingButton;
+			yield return m_MeetingIdLabel;
+			yield return m_CallInLabel;
 		}
 	}
 }

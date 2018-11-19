@@ -47,6 +47,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 			m_LeaveMeetingButton.Enable(enabled);
 		}
 
+		public void SetMeetingIdLabelVisibility(bool visible)
+		{
+			m_MeetingIdLabel.Show(visible);
+		}
+
+		public void SetMeetingIdLabelText(string text)
+		{
+			m_MeetingIdLabel.SetLabelText(text);
+		}
+
+		public void SetCallInLabelVisibility(bool visible)
+		{
+			m_CallInLabel.Show(visible);
+		}
+
+		public void SetCallInLabelText(string text)
+		{
+			m_CallInLabel.SetLabelText(text);
+		}
+
 		#region Control Callbacks
 
 		protected override void SubscribeControls()
