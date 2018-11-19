@@ -8,7 +8,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 {
-	public sealed partial class WtcCallOutView : AbstractView, IWtcCallOutView
+	public sealed partial class WtcCallOutView : AbstractUiView, IWtcCallOutView
 	{
 		public event EventHandler<StringEventArgs> OnTextEntered;
 		public event EventHandler OnCallButtonPressed;

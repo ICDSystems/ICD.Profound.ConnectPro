@@ -7,7 +7,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 {
 	public class WtcSharePresenter : AbstractWtcPresenter<IWtcShareView>, IWtcSharePresenter
 	{
-		public WtcSharePresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		public WtcSharePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+			: base(nav, views, theme)
 		{
 		}
 	}

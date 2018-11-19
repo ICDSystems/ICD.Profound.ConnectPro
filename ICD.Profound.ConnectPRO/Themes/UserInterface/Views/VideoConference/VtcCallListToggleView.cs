@@ -5,7 +5,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 {
-	public sealed partial class VtcCallListToggleView : AbstractView, IVtcCallListToggleView
+	public sealed partial class VtcCallListToggleView : AbstractUiView, IVtcCallListToggleView
 	{
 		/// <summary>
 		/// Raised when the user presses the button.

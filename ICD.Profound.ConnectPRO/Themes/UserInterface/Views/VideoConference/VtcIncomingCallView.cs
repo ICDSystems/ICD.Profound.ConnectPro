@@ -5,7 +5,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 {
-	public sealed partial class VtcIncomingCallView : AbstractView, IVtcIncomingCallView
+	public sealed partial class VtcIncomingCallView : AbstractUiView, IVtcIncomingCallView
 	{
 		public event EventHandler OnAnswerButtonPressed;
 		public event EventHandler OnIgnoreButtonPressed;

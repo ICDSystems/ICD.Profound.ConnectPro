@@ -6,7 +6,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
-	public sealed class ConfirmSplashPowerPresenter : AbstractPresenter<IConfirmSplashPowerView>,
+	public sealed class ConfirmSplashPowerPresenter : AbstractUiPresenter<IConfirmSplashPowerView>,
 	                                                  IConfirmSplashPowerPresenter
 	{
 		/// <summary>
@@ -15,7 +15,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public ConfirmSplashPowerPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		public ConfirmSplashPowerPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
 		}
 

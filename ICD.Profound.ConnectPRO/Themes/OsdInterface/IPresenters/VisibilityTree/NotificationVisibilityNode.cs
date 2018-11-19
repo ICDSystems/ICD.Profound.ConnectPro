@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using ICD.Common.Utils.EventArguments;
+using ICD.Connect.UI.Mvp.Presenters;
+using ICD.Connect.UI.Mvp.VisibilityTree;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.VisibilityTree
 {
@@ -11,9 +13,9 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.VisibilityTree
 	/// </summary>
 	public sealed class NotificationVisibilityNode : AbstractVisibilityNode
 	{
-		private readonly IHelloPresenter m_HelloPresenter;
+		private readonly IOsdHelloPresenter m_HelloPresenter;
 
-		public NotificationVisibilityNode(IHelloPresenter helloPresenter)
+		public NotificationVisibilityNode(IOsdHelloPresenter helloPresenter)
 		{
 			if (helloPresenter == null)
 				throw new ArgumentNullException("helloPresenter");
@@ -59,7 +61,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.VisibilityTree
 		/// <param name="parent"></param>
 		/// <param name="presenter"></param>
 		/// <param name="visibility"></param>
-		protected override void NodeOnChildVisibilityChanged(IVisibilityNode parent, IOsdPresenter presenter, bool visibility)
+		protected override void NodeOnChildVisibilityChanged(IVisibilityNode parent, IPresenter presenter, bool visibility)
 		{
 			base.NodeOnChildVisibilityChanged(parent, presenter, visibility);
 
@@ -73,15 +75,13 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.VisibilityTree
 			}
 		}
 
-		
-
 		/// <summary>
 		/// Hides child presenters except the given presenter.
 		/// </summary>
 		/// <param name="ignoreControl"></param>
 		private void HideExcept(IOsdPresenter ignoreControl)
 		{
-			foreach (IOsdPresenter presenter in GetPresenters().Where(c => c != ignoreControl))
+			foreach (IPresenter presenter in GetPresenters().Where(c => c != ignoreControl))
 				presenter.ShowView(false);
 
 			// only hide the HelloPresenter if Main Page View is not activated

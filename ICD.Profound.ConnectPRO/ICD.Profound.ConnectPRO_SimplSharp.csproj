@@ -1,4 +1,5 @@
-﻿<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -86,22 +87,17 @@
     <Compile Include="Themes\Mpc3201UserInterface\ConnectProMpc3201InterfaceFactory.cs" />
     <Compile Include="Themes\OsdInterface\ConnectProOsdInterface.cs" />
     <Compile Include="Themes\OsdInterface\ConnectProOsdInterfaceFactory.cs" />
-    <Compile Include="Themes\OsdInterface\IPresenters\IHelloPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\IOsdHelloPresenter.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\IOsdHeaderPresenter.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\IOsdNavigationController.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\IOsdPresenter.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\Popups\IOsdIncomingCallPresenter.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\Popups\IOsdMutePresenter.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\Sources\IOsdSourcesPresenter.cs" />
-    <Compile Include="Themes\OsdInterface\IPresenters\VisibilityTree\AbstractVisibilityNode.cs" />
-    <Compile Include="Themes\OsdInterface\IPresenters\VisibilityTree\DefaultVisibilityNode.cs" />
-    <Compile Include="Themes\OsdInterface\IPresenters\VisibilityTree\IVisibilityNode.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\VisibilityTree\NotificationVisibilityNode.cs" />
-    <Compile Include="Themes\OsdInterface\IPresenters\VisibilityTree\SingleVisibilityNode.cs" />
-    <Compile Include="Themes\OsdInterface\IPresenters\VisibilityTree\VisibilityNode.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\Welcome\IOsdWelcomePresenter.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\Welcome\IReferencedSchedulePresenter.cs" />
-    <Compile Include="Themes\OsdInterface\IViews\IHelloView.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\IOsdHelloView.cs" />
     <Compile Include="Themes\OsdInterface\IViews\IOsdHeaderView.cs" />
     <Compile Include="Themes\OsdInterface\IViews\IOsdView.cs" />
     <Compile Include="Themes\OsdInterface\IViews\IOsdViewFactory.cs" />
@@ -114,7 +110,7 @@
     <Compile Include="Themes\OsdInterface\Presenters\AbstractOsdListItemFactory.cs" />
     <Compile Include="Themes\OsdInterface\Presenters\AbstractOsdPresenter.cs" />
     <Compile Include="Themes\OsdInterface\Presenters\ConnectProOsdNavigationController.cs" />
-    <Compile Include="Themes\OsdInterface\Presenters\HelloPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\OsdHelloPresenter.cs" />
     <Compile Include="Themes\OsdInterface\Presenters\OsdHeaderPresenter.cs" />
     <Compile Include="Themes\OsdInterface\Presenters\Popups\OsdIncomingCallPresenter.cs" />
     <Compile Include="Themes\OsdInterface\Presenters\Popups\OsdMutePresenter.cs" />
@@ -125,8 +121,8 @@
     <Compile Include="Themes\OsdInterface\Views\AbstractOsdComponentView.cs" />
     <Compile Include="Themes\OsdInterface\Views\AbstractOsdView.cs" />
     <Compile Include="Themes\OsdInterface\Views\ConnectProOsdViewFactory.cs" />
-    <Compile Include="Themes\OsdInterface\Views\HelloView.cs" />
-    <Compile Include="Themes\OsdInterface\Views\HelloView.generated.cs" />
+    <Compile Include="Themes\OsdInterface\Views\OsdHelloView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\OsdHelloView.generated.cs" />
     <Compile Include="Themes\OsdInterface\Views\OsdHeaderView.cs" />
     <Compile Include="Themes\OsdInterface\Views\OsdHeaderView.generated.cs" />
     <Compile Include="Themes\OsdInterface\Views\Popups\OsdIncomingCallView.cs" />
@@ -164,8 +160,8 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\Sources\ISourceSelectPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IDisabledAlertPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IHardButtonsPresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\INavigationController.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\IPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\IConnectProNavigationController.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\IUiPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Popups\CableTv\IReferencedCableTvPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Popups\IAppleTvPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Popups\CableTv\ICableTvPresenter.cs" />
@@ -194,7 +190,6 @@
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcKeyboardPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcKeypadPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcSharePresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\VisibilityNode.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\ActiveMeeting\IWtcActiveMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\ActiveMeeting\IWtcReferencedParticipantPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\Contacts\IWtcContactListPresenter.cs" />
@@ -241,8 +236,8 @@
     <Compile Include="Themes\UserInterface\IViews\Common\Sources\IReferencedSourceSelectView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Popups\CableTv\ICableTvView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Popups\IPopupView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\IView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\IViewFactory.cs" />
+    <Compile Include="Themes\UserInterface\IViews\IUiView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\IUiViewFactory.cs" />
     <Compile Include="Themes\UserInterface\ConnectProUserInterface.cs" />
     <Compile Include="Themes\UserInterface\ConnectProUserInterfaceFactory.cs" />
     <Compile Include="Themes\UserInterface\IViews\Popups\WebConferencing\IReferencedWebConferencingAlertView.cs" />
@@ -278,9 +273,9 @@
     <Compile Include="Themes\UserInterface\IViews\WebConference\IWtcMainPageView.cs" />
     <Compile Include="Themes\UserInterface\IViews\WebConference\IWtcRecordingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\WebConference\IWtcShareView.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\AbstractComponentPresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\AbstractListItemFactory.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\AbstractPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\AbstractUiComponentPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\AbstractUiListItemFactory.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\AbstractUiPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AudioConference\AtcBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AudioConference\AtcIncomingCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmEndMeetingPresenter.cs" />
@@ -360,7 +355,7 @@
     <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcRecordingPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcSharePresenter.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractComponentView.cs" />
-    <Compile Include="Themes\UserInterface\Views\AbstractView.cs" />
+    <Compile Include="Themes\UserInterface\Views\AbstractUiView.cs" />
     <Compile Include="Themes\UserInterface\Views\AudioConference\AtcBaseView.cs" />
     <Compile Include="Themes\UserInterface\Views\AudioConference\AtcBaseView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\AudioConference\AtcIncomingCallView.cs" />
@@ -404,7 +399,7 @@
     <Compile Include="Themes\UserInterface\Views\Common\StartMeetingView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\VolumeView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\VolumeView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\ConnectProViewFactory.cs" />
+    <Compile Include="Themes\UserInterface\Views\ConnectProUiViewFactory.cs" />
     <Compile Include="Themes\UserInterface\Views\DisabledAlertView.cs" />
     <Compile Include="Themes\UserInterface\Views\DisabledAlertView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\HardButtonsView.cs" />
@@ -412,10 +407,6 @@
     <Compile Include="Themes\UserInterface\Views\Popups\AbstractPopupView.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\AppleTvView.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\AppleTvView.generated.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\AbstractVisibilityNode.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\DefaultVisibilityNode.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\IVisibilityNode.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\SingleVisibilityNode.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\CableTv\CableTvView.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\CableTv\CableTvView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\CableTv\ReferencedCableTvView.cs" />

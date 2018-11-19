@@ -5,7 +5,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources
 {
-	public interface IReferencedSourceSelectPresenter : IPresenter<IReferencedSourceSelectView>
+	public interface IReferencedSourceSelectPresenter : IUiPresenter<IReferencedSourceSelectView>
 	{
 		/// <summary>
 		/// Raised when the user presses the presenter.

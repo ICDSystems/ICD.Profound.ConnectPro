@@ -5,7 +5,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 {
-	public sealed partial class ConfirmLeaveCallView : AbstractView, IConfirmLeaveCallView
+	public sealed partial class ConfirmLeaveCallView : AbstractUiView, IConfirmLeaveCallView
 	{
 		/// <summary>
 		/// Raised when the user presses the Yes button.

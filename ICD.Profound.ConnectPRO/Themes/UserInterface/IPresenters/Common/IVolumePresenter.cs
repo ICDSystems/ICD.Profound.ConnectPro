@@ -3,7 +3,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common
 {
-	public interface IVolumePresenter : IPresenter<IVolumeView>
+	public interface IVolumePresenter : IUiPresenter<IVolumeView>
 	{
 		/// <summary>
 		/// Gets/sets the volume control.

@@ -3,7 +3,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference
 {
-	public interface IVtcBaseKeyboardPresenter<TView> : IPresenter<TView>
+	public interface IVtcBaseKeyboardPresenter<TView> : IUiPresenter<TView>
 		where TView : IVtcBaseKeyboardView
 	{
 		/// <summary>

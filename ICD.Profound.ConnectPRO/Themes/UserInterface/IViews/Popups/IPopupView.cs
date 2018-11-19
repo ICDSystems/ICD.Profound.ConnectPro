@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups
 {
-	public interface IPopupView : IView
+	public interface IPopupView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses the close button.

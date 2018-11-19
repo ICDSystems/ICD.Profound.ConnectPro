@@ -21,7 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private IWtcReferencedParticipantPresenter m_SelectedParticipant;
 
-		public WtcActiveMeetingPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		public WtcActiveMeetingPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
 			m_PresenterFactory = new WtcReferencedParticipantPresenterFactory(nav, ItemFactory);

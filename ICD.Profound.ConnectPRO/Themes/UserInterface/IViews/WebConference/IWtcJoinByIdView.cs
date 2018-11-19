@@ -3,7 +3,7 @@ using ICD.Common.Utils.EventArguments;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference
 {
-	public interface IWtcJoinByIdView : IView
+	public interface IWtcJoinByIdView : IUiView
 	{
 		event EventHandler OnJoinMyMeetingButtonPressed;
 

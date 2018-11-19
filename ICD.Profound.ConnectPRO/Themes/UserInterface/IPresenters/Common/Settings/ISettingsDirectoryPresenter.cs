@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings
 {
-	public interface ISettingsDirectoryPresenter : IPresenter<ISettingsDirectoryView>
+	public interface ISettingsDirectoryPresenter : IUiPresenter<ISettingsDirectoryView>
 	{
 	}
 }

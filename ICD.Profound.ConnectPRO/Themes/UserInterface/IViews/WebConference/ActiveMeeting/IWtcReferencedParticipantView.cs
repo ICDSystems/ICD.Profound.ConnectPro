@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.ActiveMeeting
 {
-	public interface IWtcReferencedParticipantView : IView
+	public interface IWtcReferencedParticipantView : IUiView
 	{
 		/// <summary>
 		/// Raised when the participant is pressed.

@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using ICD.Connect.UI.Mvp.Views;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources
 {
-	public interface ISourceSelectView : IView
+	public interface ISourceSelectView : IUiView
 	{
 		/// <summary>
 		/// Returns child views for list items.

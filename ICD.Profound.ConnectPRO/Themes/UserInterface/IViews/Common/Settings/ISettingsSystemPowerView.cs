@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings
 {
-	public interface ISettingsSystemPowerView : IView
+	public interface ISettingsSystemPowerView : IUiView
 	{
 		event EventHandler OnWeekdaysButtonPressed;
 

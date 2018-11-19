@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.CableTv
 {
-	public interface IReferencedCableTvView : IView
+	public interface IReferencedCableTvView : IUiView
 	{
 		event EventHandler OnIconPressed;
 

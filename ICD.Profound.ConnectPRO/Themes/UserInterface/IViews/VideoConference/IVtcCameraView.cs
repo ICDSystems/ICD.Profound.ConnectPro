@@ -3,7 +3,7 @@ using ICD.Common.Utils.EventArguments;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 {
-	public interface IVtcCameraView : IView
+	public interface IVtcCameraView : IUiView
 	{
 		#region Events
 

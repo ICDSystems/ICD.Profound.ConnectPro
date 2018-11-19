@@ -3,7 +3,7 @@ using ICD.Common.Utils.EventArguments;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference
 {
-	public interface IWtcCallOutView : IView
+	public interface IWtcCallOutView : IUiView
 	{
 		/// <summary>
 		/// Raised when the text in the text entry changes.

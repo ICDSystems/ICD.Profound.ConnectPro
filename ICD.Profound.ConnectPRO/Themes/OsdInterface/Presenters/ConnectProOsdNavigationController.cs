@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
-using ICD.Common.Utils.Extensions;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Popups;
@@ -21,7 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 	/// <summary>
 	/// Provides a way for presenters to access each other.
 	/// </summary>
-	public sealed class ConnectProOsdNavigationController : IOsdNavigationController
+	public sealed class ConnectProOsdNavigationController : AbstractNavigationController, IOsdNavigationController
 	{
 		private delegate IOsdPresenter PresenterFactory(IOsdNavigationController nav, IOsdViewFactory views, ConnectProTheme theme);
 
@@ -31,17 +31,16 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 			{typeof(IOsdWelcomePresenter), (nav, views, theme) => new OsdWelcomePresenter(nav, views, theme)},
 			{typeof(IOsdSourcesPresenter), (nav, views, theme) => new OsdSourcesPresenter(nav, views, theme)},
 			
-			{typeof(IHelloPresenter), (nav, views, theme) => new HelloPresenter(nav, views, theme)},
+			{typeof(IOsdHelloPresenter), (nav, views, theme) => new OsdHelloPresenter(nav, views, theme)},
 			{typeof(IOsdIncomingCallPresenter), (nav, views, theme) => new OsdIncomingCallPresenter(nav, views, theme)},
 			{typeof(IOsdMutePresenter), (nav, views, theme) => new OsdMutePresenter(nav, views, theme)},
 
             {typeof(IReferencedSchedulePresenter), (nav, views, theme) => new ReferencedSchedulePresenter(nav, views, theme)},
 		};
 
-		private readonly Dictionary<Type, IOsdPresenter> m_Cache;
-		private readonly SafeCriticalSection m_CacheSection;
 		private readonly IOsdViewFactory m_ViewFactory;
 		private readonly ConnectProTheme m_Theme;
+		private readonly SafeCriticalSection m_SetRoomSection;
 
 		private IConnectProRoom m_Room;
 
@@ -54,11 +53,9 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 		/// <param name="theme"></param>
 		public ConnectProOsdNavigationController(IOsdViewFactory viewFactory, ConnectProTheme theme)
 		{
-			m_Cache = new Dictionary<Type, IOsdPresenter>();
-			m_CacheSection = new SafeCriticalSection();
-
 			m_ViewFactory = viewFactory;
 			m_Theme = theme;
+			m_SetRoomSection = new SafeCriticalSection();
 		}
 
 		#endregion
@@ -71,58 +68,32 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 		/// <param name="room"></param>
 		public void SetRoom(IConnectProRoom room)
 		{
-			if (room == m_Room)
-				return;
-
-			m_Room = room;
-
-			m_CacheSection.Enter();
+			m_SetRoomSection.Enter();
 
 			try
 			{
-				foreach (IOsdPresenter presenter in m_Cache.Values.ToArray())
+				if (room == m_Room)
+					return;
+
+				m_Room = room;
+
+				foreach (IOsdPresenter presenter in GetPresenters().OfType<IOsdPresenter>())
 					presenter.SetRoom(m_Room);
 			}
 			finally
 			{
-				m_CacheSection.Leave();
+				m_SetRoomSection.Leave();
 			}
 		}
 
 		/// <summary>
 		/// Release resources.
 		/// </summary>
-		public void Dispose()
+		public override void Dispose()
 		{
 			SetRoom(null);
 
-			m_Cache.Values.ForEach(p => p.Dispose());
-			m_Cache.Clear();
-		}
-
-		/// <summary>
-		/// Instantiates or returns an existing presenter of the given type.
-		/// </summary>
-		/// <param name="type"></param>
-		/// <returns></returns>
-		public IOsdPresenter LazyLoadPresenter(Type type)
-		{
-			IOsdPresenter output;
-
-			m_CacheSection.Enter();
-
-			try
-			{
-				if (!m_Cache.ContainsKey(type))
-					m_Cache[type] = GetNewPresenter(type);
-				output = m_Cache[type];
-			}
-			finally
-			{
-				m_CacheSection.Leave();
-			}
-
-			return output;
+			base.Dispose();
 		}
 
 		/// <summary>
@@ -130,7 +101,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 		/// </summary>
 		/// <param name="type"></param>
 		/// <returns></returns>
-		public IOsdPresenter GetNewPresenter(Type type)
+		public override IPresenter GetNewPresenter(Type type)
 		{
 			if (!m_PresenterFactories.ContainsKey(type))
 			{

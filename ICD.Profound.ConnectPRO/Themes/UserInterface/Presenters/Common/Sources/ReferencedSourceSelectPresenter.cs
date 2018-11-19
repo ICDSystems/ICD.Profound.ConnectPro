@@ -10,7 +10,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 {
-	public sealed class ReferencedSourceSelectPresenter : AbstractComponentPresenter<IReferencedSourceSelectView>,
+	public sealed class ReferencedSourceSelectPresenter : AbstractUiComponentPresenter<IReferencedSourceSelectView>,
 	                                                      IReferencedSourceSelectPresenter
 	{
 		/// <summary>
@@ -76,7 +76,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public ReferencedSourceSelectPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public ReferencedSourceSelectPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

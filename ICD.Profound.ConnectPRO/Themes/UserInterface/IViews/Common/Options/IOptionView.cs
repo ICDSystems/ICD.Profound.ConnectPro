@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options
 {
-	public interface IOptionView : IView
+	public interface IOptionView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses the option button.

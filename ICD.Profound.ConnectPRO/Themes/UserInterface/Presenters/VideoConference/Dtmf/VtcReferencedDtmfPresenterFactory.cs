@@ -1,4 +1,5 @@
 ﻿using ICD.Connect.Conferencing.Participants;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Dtmf;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Dtmf;
@@ -6,14 +7,14 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Dtmf;
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Dtmf
 {
 	public sealed class VtcReferencedDtmfPresenterFactory :
-		AbstractListItemFactory<ITraditionalParticipant, IVtcReferencedDtmfPresenter, IVtcReferencedDtmfView>
+		AbstractUiListItemFactory<ITraditionalParticipant, IVtcReferencedDtmfPresenter, IVtcReferencedDtmfView>
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="navigationController"></param>
 		/// <param name="viewFactory"></param>
-		public VtcReferencedDtmfPresenterFactory(INavigationController navigationController,
+		public VtcReferencedDtmfPresenterFactory(IConnectProNavigationController navigationController,
 		                                         ListItemFactory<IVtcReferencedDtmfView> viewFactory)
 			: base(navigationController, viewFactory)
 		{

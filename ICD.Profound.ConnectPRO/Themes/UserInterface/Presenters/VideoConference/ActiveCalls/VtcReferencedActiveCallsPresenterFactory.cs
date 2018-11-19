@@ -1,4 +1,5 @@
 ﻿using ICD.Connect.Conferencing.Participants;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.ActiveCalls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.ActiveCalls;
@@ -6,15 +7,15 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Active
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.ActiveCalls
 {
 	public sealed class VtcReferencedActiveCallsPresenterFactory :
-		AbstractListItemFactory<ITraditionalParticipant, IVtcReferencedActiveCallsPresenter, IVtcReferencedActiveCallsView>
+		AbstractUiListItemFactory<ITraditionalParticipant, IVtcReferencedActiveCallsPresenter, IVtcReferencedActiveCallsView>
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="navigationController"></param>
 		/// <param name="viewFactory"></param>
-		public VtcReferencedActiveCallsPresenterFactory(INavigationController navigationController,
-		                                        ListItemFactory<IVtcReferencedActiveCallsView> viewFactory)
+		public VtcReferencedActiveCallsPresenterFactory(IConnectProNavigationController navigationController,
+		                                                ListItemFactory<IVtcReferencedActiveCallsView> viewFactory)
 			: base(navigationController, viewFactory)
 		{
 		}

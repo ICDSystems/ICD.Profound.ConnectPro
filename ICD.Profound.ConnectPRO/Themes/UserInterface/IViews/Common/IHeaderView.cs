@@ -1,6 +1,6 @@
 ﻿namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 {
-	public interface IHeaderView : IView
+	public interface IHeaderView : IUiView
 	{
 		/// <summary>
 		/// Sets the room name label text.

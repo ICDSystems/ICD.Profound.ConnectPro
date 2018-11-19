@@ -9,7 +9,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.CableTv;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.CableTv
 {
-	public sealed class ReferencedCableTvPresenter : AbstractComponentPresenter<IReferencedCableTvView>, IReferencedCableTvPresenter
+	public sealed class ReferencedCableTvPresenter : AbstractUiComponentPresenter<IReferencedCableTvView>, IReferencedCableTvPresenter
 	{
 		public event EventHandler OnPressed;
 
@@ -37,7 +37,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.CableTv
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public ReferencedCableTvPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public ReferencedCableTvPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

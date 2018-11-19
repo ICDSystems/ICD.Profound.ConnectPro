@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using ICD.Connect.UI.Mvp.Views;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.ActiveMeeting
 {
-	public interface IWtcActiveMeetingView : IView
+	public interface IWtcActiveMeetingView : IUiView
 	{
 		/// <summary>
 		/// Raised when the Kick Participant button is pressed.

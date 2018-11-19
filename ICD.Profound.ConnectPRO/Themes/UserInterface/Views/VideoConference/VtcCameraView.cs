@@ -8,7 +8,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 {
-	public sealed partial class VtcCameraView : AbstractView, IVtcCameraView
+	public sealed partial class VtcCameraView : AbstractUiView, IVtcCameraView
 	{
 		public event EventHandler OnCameraMoveUpButtonPressed;
 		public event EventHandler OnCameraMoveLeftButtonPressed;

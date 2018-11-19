@@ -1,3 +1,4 @@
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.WebConferencing;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.WebConferencing;
@@ -6,14 +7,15 @@ using ICD.Profound.ConnectPRO.WebConferencing;
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.WebConferencing
 {
 	public sealed class ReferencedWebConferencingAlertPresenterFactory :
-		AbstractListItemFactory<WebConferencingAppInstructions, IReferencedWebConferencingAlertPresenter, IReferencedWebConferencingAlertView>
+		AbstractUiListItemFactory
+			<WebConferencingAppInstructions, IReferencedWebConferencingAlertPresenter, IReferencedWebConferencingAlertView>
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="navigationController"></param>
 		/// <param name="viewFactory"></param>
-		public ReferencedWebConferencingAlertPresenterFactory(INavigationController navigationController,
+		public ReferencedWebConferencingAlertPresenterFactory(IConnectProNavigationController navigationController,
 		                                                      ListItemFactory<IReferencedWebConferencingAlertView> viewFactory)
 			: base(navigationController, viewFactory)
 		{
@@ -25,7 +27,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.WebConf
 		/// <param name="model"></param>
 		/// <param name="presenter"></param>
 		/// <param name="view"></param>
-		protected override void BindMvpTriad(WebConferencingAppInstructions model, IReferencedWebConferencingAlertPresenter presenter,
+		protected override void BindMvpTriad(WebConferencingAppInstructions model,
+		                                     IReferencedWebConferencingAlertPresenter presenter,
 		                                     IReferencedWebConferencingAlertView view)
 		{
 			presenter.App = model;

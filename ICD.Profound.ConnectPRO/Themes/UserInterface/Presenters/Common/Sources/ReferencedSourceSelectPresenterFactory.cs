@@ -1,4 +1,5 @@
 ﻿using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
@@ -6,14 +7,14 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 {
 	public sealed class ReferencedSourceSelectPresenterFactory :
-		AbstractListItemFactory<ISource, IReferencedSourceSelectPresenter, IReferencedSourceSelectView>
+		AbstractUiListItemFactory<ISource, IReferencedSourceSelectPresenter, IReferencedSourceSelectView>
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="navigationController"></param>
 		/// <param name="viewFactory"></param>
-		public ReferencedSourceSelectPresenterFactory(INavigationController navigationController,
+		public ReferencedSourceSelectPresenterFactory(IConnectProNavigationController navigationController,
 		                                              ListItemFactory<IReferencedSourceSelectView> viewFactory)
 			: base(navigationController, viewFactory)
 		{

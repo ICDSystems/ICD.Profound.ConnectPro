@@ -4,7 +4,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common
 {
-	public interface IReferencedSchedulePresenter : IPresenter<IReferencedScheduleView>
+	public interface IReferencedSchedulePresenter : IUiPresenter<IReferencedScheduleView>
 	{
 		/// <summary>
 		/// Raised when the user presses the presenter.

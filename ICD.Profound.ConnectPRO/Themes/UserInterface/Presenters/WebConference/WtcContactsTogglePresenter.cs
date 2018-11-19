@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -6,9 +7,10 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 {
-	public class WtcContactsTogglePresenter : AbstractPresenter<IWtcContactsToggleView>, IWtcContactsTogglePresenter
+	public class WtcContactsTogglePresenter : AbstractUiPresenter<IWtcContactsToggleView>, IWtcContactsTogglePresenter
 	{
-		public WtcContactsTogglePresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		public WtcContactsTogglePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+			: base(nav, views, theme)
 		{
 		}
 

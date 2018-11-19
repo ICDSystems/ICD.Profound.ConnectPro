@@ -8,7 +8,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
-	public sealed class ConfirmEndMeetingPresenter : AbstractPresenter<IConfirmEndMeetingView>, IConfirmEndMeetingPresenter
+	public sealed class ConfirmEndMeetingPresenter : AbstractUiPresenter<IConfirmEndMeetingView>, IConfirmEndMeetingPresenter
 	{
 		/// <summary>
 		/// Constructor.
@@ -16,7 +16,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public ConfirmEndMeetingPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public ConfirmEndMeetingPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 		}

@@ -8,7 +8,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 {
-	public sealed partial class WtcButtonListView : AbstractView, IWtcButtonListView
+	public sealed partial class WtcButtonListView : AbstractUiView, IWtcButtonListView
 	{
 		public event EventHandler<UShortEventArgs> OnButtonPressed;
 

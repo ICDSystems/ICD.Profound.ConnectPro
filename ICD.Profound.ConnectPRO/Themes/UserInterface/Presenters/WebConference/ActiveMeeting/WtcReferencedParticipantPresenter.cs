@@ -9,7 +9,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.ActiveMe
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.ActiveMeeting
 {
-	public class WtcReferencedParticipantPresenter : AbstractComponentPresenter<IWtcReferencedParticipantView>, IWtcReferencedParticipantPresenter
+	public class WtcReferencedParticipantPresenter : AbstractUiComponentPresenter<IWtcReferencedParticipantView>, IWtcReferencedParticipantPresenter
 	{
 		public event EventHandler OnPressed;
 
@@ -19,7 +19,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		public bool Selected { get; set; }
 
-		public WtcReferencedParticipantPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		public WtcReferencedParticipantPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
 		}

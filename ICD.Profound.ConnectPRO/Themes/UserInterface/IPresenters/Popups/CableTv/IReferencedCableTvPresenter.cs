@@ -4,7 +4,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.CableTv;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.CableTv
 {
-	public interface IReferencedCableTvPresenter : IPresenter<IReferencedCableTvView>
+	public interface IReferencedCableTvPresenter : IUiPresenter<IReferencedCableTvView>
 	{
 		event EventHandler OnPressed;
 

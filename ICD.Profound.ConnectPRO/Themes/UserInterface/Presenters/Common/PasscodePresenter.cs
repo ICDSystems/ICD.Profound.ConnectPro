@@ -9,7 +9,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
-	public sealed class PasscodePresenter : AbstractPresenter<IPasscodeView>, IPasscodePresenter
+	public sealed class PasscodePresenter : AbstractUiPresenter<IPasscodeView>, IPasscodePresenter
 	{
 		private readonly KeypadStringBuilder m_StringBuilder;
 
@@ -22,7 +22,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public PasscodePresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public PasscodePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_StringBuilder = new KeypadStringBuilder();

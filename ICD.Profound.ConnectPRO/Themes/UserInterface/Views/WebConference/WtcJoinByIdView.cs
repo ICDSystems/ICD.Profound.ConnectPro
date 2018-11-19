@@ -7,7 +7,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 {
-	public sealed partial class WtcJoinByIdView : AbstractView, IWtcJoinByIdView
+	public sealed partial class WtcJoinByIdView : AbstractUiView, IWtcJoinByIdView
 	{
 		public event EventHandler OnJoinMyMeetingButtonPressed;
 		public event EventHandler<CharEventArgs> OnKeypadButtonPressed;

@@ -20,6 +20,8 @@ using ICD.Connect.Routing.Controls;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Sources.TvTuner.Controls;
+using ICD.Connect.UI.Mvp.Presenters;
+using ICD.Connect.UI.Mvp.VisibilityTree;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Routing;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
@@ -36,10 +38,8 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.ActiveCalls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Dtmf;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VisibilityTree;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.ActiveMeeting;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views;
@@ -54,7 +54,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private const long SOURCE_SELECTION_TIMEOUT = 8 * 1000;
 
 		private readonly IPanelDevice m_Panel;
-		private readonly INavigationController m_NavigationController;
+		private readonly IConnectProNavigationController m_NavigationController;
 		private readonly SafeTimer m_SourceSelectionTimeout;
 
 		private readonly IcdHashSet<ISource> m_ActiveAudio;
@@ -95,7 +95,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			m_SourceSelectionTimeout = SafeTimer.Stopped(() => SetActiveSource(null));
 
-			IViewFactory viewFactory = new ConnectProViewFactory(panel, theme);
+			IUiViewFactory viewFactory = new ConnectProUiViewFactory(panel, theme);
 			m_NavigationController = new ConnectProNavigationController(viewFactory, theme);
 
 			BuildVisibilityTree();

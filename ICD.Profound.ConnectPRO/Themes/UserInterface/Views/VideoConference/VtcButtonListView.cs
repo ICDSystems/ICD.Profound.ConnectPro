@@ -8,7 +8,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 {
-	public sealed partial class VtcButtonListView : AbstractView, IVtcButtonListView
+	public sealed partial class VtcButtonListView : AbstractUiView, IVtcButtonListView
 	{
 		/// <summary>
 		/// Raised when the user presses a button.

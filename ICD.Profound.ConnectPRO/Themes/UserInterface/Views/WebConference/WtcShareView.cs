@@ -8,7 +8,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 {
-	public sealed partial class WtcShareView : AbstractView, IWtcShareView
+	public sealed partial class WtcShareView : AbstractUiView, IWtcShareView
 	{
 		public event EventHandler OnShareButtonPressed;
 		public event EventHandler<UShortEventArgs> OnSourcePressed;

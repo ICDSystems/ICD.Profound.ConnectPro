@@ -5,9 +5,9 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 {
-	public class AbstractWtcPresenter<T> : AbstractPresenter<T>, IWtcPresenter<T> where T : class, IView
+	public class AbstractWtcPresenter<T> : AbstractUiPresenter<T>, IWtcPresenter<T> where T : class, IUiView
 	{
-		public AbstractWtcPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		public AbstractWtcPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
 		}
 

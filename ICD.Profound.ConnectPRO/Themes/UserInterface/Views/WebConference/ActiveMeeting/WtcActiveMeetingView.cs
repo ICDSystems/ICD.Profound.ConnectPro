@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Mvp.Views;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.ActiveMeeting;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.ActiveMeeting
 {
-	public sealed partial class WtcActiveMeetingView : AbstractView, IWtcActiveMeetingView
+	public sealed partial class WtcActiveMeetingView : AbstractUiView, IWtcActiveMeetingView
 	{
 		public event EventHandler OnKickParticipantButtonPressed;
 		public event EventHandler OnMuteParticipantButtonPressed;

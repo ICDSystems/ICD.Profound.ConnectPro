@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 {
-	public interface IConfirmSplashPowerView : IView
+	public interface IConfirmSplashPowerView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses the Yes button.

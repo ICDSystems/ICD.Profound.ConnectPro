@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.WebConferencing
 {
-	public interface IWebConferencingStepView : IView
+	public interface IWebConferencingStepView : IUiView
 	{
 		event EventHandler OnCloseButtonPressed;
 

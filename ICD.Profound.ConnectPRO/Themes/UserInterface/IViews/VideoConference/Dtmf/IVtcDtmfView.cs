@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using ICD.Common.Utils.EventArguments;
+using ICD.Connect.UI.Mvp.Views;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Dtmf
 {
-	public interface IVtcDtmfView : IView
+	public interface IVtcDtmfView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses a dialtone button.
