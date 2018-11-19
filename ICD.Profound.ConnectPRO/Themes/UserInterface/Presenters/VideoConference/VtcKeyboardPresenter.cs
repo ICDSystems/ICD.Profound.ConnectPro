@@ -164,16 +164,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		}
 
 		/// <summary>
-		/// Called when the view visibility changes.
+		/// Called when the view visibility is about to change.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
+		protected override void ViewOnPreVisibilityChanged(object sender, BoolEventArgs args)
 		{
-			base.ViewOnVisibilityChanged(sender, args);
+			base.ViewOnPreVisibilityChanged(sender, args);
 
-			Caps = false;
-			Shift = false;
+			if (args.Data)
+			{
+				Caps = false;
+				Shift = false;
+			}
 		}
 
 		#endregion

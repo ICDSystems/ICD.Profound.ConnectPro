@@ -59,7 +59,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
-			m_ChildrenFactory = new ReferencedSourceSelectPresenterFactory(nav, ItemFactory);
+			m_ChildrenFactory = new ReferencedSourceSelectPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
 
 			m_Sources = new ISource[0];
 			m_RoutedSources = new Dictionary<ISource, eSourceState>();
@@ -117,7 +117,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		public override void SetRoom(IConnectProRoom room)
 		{
 			m_Sources = GetSources(room).ToArray();
-			m_ChildrenFactory.BuildChildren(m_Sources, Subscribe, Unsubscribe);
+			m_ChildrenFactory.BuildChildren(m_Sources);
 
 			m_DisplayCount =
 					room == null

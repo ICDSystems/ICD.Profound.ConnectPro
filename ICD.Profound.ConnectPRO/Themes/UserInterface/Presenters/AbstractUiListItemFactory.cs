@@ -1,4 +1,5 @@
-﻿using ICD.Connect.UI.Mvp.Presenters;
+﻿using System;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 
@@ -17,8 +18,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// </summary>
 		/// <param name="navigationController"></param>
 		/// <param name="viewFactory"></param>
-		protected AbstractUiListItemFactory(IConnectProNavigationController navigationController, ListItemFactory<TView> viewFactory)
-			: base(navigationController, viewFactory)
+		/// <param name="subscribe"></param>
+		/// <param name="unsubscribe"></param>
+		protected AbstractUiListItemFactory(IConnectProNavigationController navigationController,
+		                                    ListItemFactory<TView> viewFactory, Action<TPresenter> subscribe,
+		                                    Action<TPresenter> unsubscribe)
+			: base(navigationController, viewFactory, subscribe, unsubscribe)
 		{
 		}
 

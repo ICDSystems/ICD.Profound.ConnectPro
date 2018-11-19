@@ -44,7 +44,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
-			m_ChildrenFactory = new ReferencedSchedulePresenterFactory(nav, ItemFactory);
+			m_ChildrenFactory = new ReferencedSchedulePresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
 
 			m_Bookings = new List<IBooking>();
 		}
@@ -72,8 +72,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
-				foreach (
-					IReferencedSchedulePresenter presenter in m_ChildrenFactory.BuildChildren(m_Bookings, Subscribe, Unsubscribe))
+				foreach (IReferencedSchedulePresenter presenter in m_ChildrenFactory.BuildChildren(m_Bookings))
 				{
 					presenter.SetSelected(presenter == m_SelectedBooking);
 					presenter.ShowView(true);

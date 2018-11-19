@@ -1,4 +1,5 @@
-﻿using ICD.Connect.TvPresets;
+﻿using System;
+using ICD.Connect.TvPresets;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.CableTv;
@@ -14,9 +15,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.CableTv
 		/// </summary>
 		/// <param name="navigationController"></param>
 		/// <param name="viewFactory"></param>
+		/// <param name="subscribe"></param>
+		/// <param name="unsubscribe"></param>
 		public ReferencedCableTvPresenterFactory(IConnectProNavigationController navigationController,
-		                                         ListItemFactory<IReferencedCableTvView> viewFactory)
-			: base(navigationController, viewFactory)
+		                                         ListItemFactory<IReferencedCableTvView> viewFactory,
+		                                         Action<IReferencedCableTvPresenter> subscribe,
+		                                         Action<IReferencedCableTvPresenter> unsubscribe)
+			: base(navigationController, viewFactory, subscribe, unsubscribe)
 		{
 		}
 

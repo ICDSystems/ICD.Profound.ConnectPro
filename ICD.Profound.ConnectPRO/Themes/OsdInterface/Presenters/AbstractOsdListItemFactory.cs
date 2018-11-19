@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
@@ -18,8 +18,11 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 		/// </summary>
 		/// <param name="navigationController"></param>
 		/// <param name="viewFactory"></param>
-		protected AbstractOsdListItemFactory(IOsdNavigationController navigationController, ListItemFactory<TView> viewFactory)
-			: base(navigationController, viewFactory)
+		/// <param name="subscribe"></param>
+		/// <param name="unsubscribe"></param>
+		protected AbstractOsdListItemFactory(IOsdNavigationController navigationController, ListItemFactory<TView> viewFactory,
+		                                     Action<TPresenter> subscribe, Action<TPresenter> unsubscribe)
+			: base(navigationController, viewFactory, subscribe, unsubscribe)
 		{
 		}
 

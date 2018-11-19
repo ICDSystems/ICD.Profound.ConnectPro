@@ -71,7 +71,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
-			m_ContactsFactory = new VtcReferencedContactsPresenterFactory(nav, ItemFactory);
+			m_ContactsFactory = new VtcReferencedContactsPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
 
 			m_DirectoryBrowser = new DirectoryControlBrowser();
 			Subscribe(m_DirectoryBrowser);
@@ -109,7 +109,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			{
 				IEnumerable<ModelPresenterTypeInfo> contacts = GetContacts();
 
-				foreach (IVtcReferencedContactsPresenterBase presenter in m_ContactsFactory.BuildChildren(contacts, Subscribe, Unsubscribe))
+				foreach (IVtcReferencedContactsPresenterBase presenter in m_ContactsFactory.BuildChildren(contacts))
 				{
 					presenter.Selected = presenter == m_Selected;
 					presenter.HideFavoriteIcon = HideFavoriteIcons;

@@ -34,7 +34,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 			base(nav, views, theme)
 		{
             m_RefreshSection = new SafeCriticalSection();
-		    m_ChildrenFactory = new ReferencedSchedulePresenterFactory(nav, ItemFactory);
+		    m_ChildrenFactory = new ReferencedSchedulePresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
 
 		    m_RefreshTimer = new SafeTimer(RefreshIfVisible, DEFAULT_REFRESH_TIME);
 		}
@@ -93,8 +93,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 		                });
 		        }
 				// build presenters
-		        foreach (IReferencedSchedulePresenter presenter in m_ChildrenFactory.BuildChildren(
-		            upcomingBookingsAndAvailability.Skip(1), Subscribe, Unsubscribe))
+		        foreach (IReferencedSchedulePresenter presenter in m_ChildrenFactory.BuildChildren(upcomingBookingsAndAvailability.Skip(1)))
 		        {
 		            presenter.ShowView(true);
 		            presenter.Refresh();

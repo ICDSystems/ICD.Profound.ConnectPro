@@ -1,4 +1,5 @@
-﻿using ICD.Connect.Routing.Endpoints.Sources;
+﻿using System;
+using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
@@ -14,9 +15,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// </summary>
 		/// <param name="navigationController"></param>
 		/// <param name="viewFactory"></param>
+		/// <param name="subscribe"></param>
+		/// <param name="unsubscribe"></param>
 		public ReferencedSourceSelectPresenterFactory(IConnectProNavigationController navigationController,
-		                                              ListItemFactory<IReferencedSourceSelectView> viewFactory)
-			: base(navigationController, viewFactory)
+		                                              ListItemFactory<IReferencedSourceSelectView> viewFactory,
+		                                              Action<IReferencedSourceSelectPresenter> subscribe,
+		                                              Action<IReferencedSourceSelectPresenter> unsubscribe)
+			: base(navigationController, viewFactory, subscribe, unsubscribe)
 		{
 		}
 

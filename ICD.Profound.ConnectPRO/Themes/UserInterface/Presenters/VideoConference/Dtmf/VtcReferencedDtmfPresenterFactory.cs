@@ -1,4 +1,5 @@
-﻿using ICD.Connect.Conferencing.ConferenceSources;
+﻿using System;
+using ICD.Connect.Conferencing.ConferenceSources;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Dtmf;
@@ -14,9 +15,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		/// <param name="navigationController"></param>
 		/// <param name="viewFactory"></param>
+		/// <param name="subscribe"></param>
+		/// <param name="unsubscribe"></param>
 		public VtcReferencedDtmfPresenterFactory(IConnectProNavigationController navigationController,
-		                                         ListItemFactory<IVtcReferencedDtmfView> viewFactory)
-			: base(navigationController, viewFactory)
+		                                         ListItemFactory<IVtcReferencedDtmfView> viewFactory,
+		                                         Action<IVtcReferencedDtmfPresenter> subscribe,
+		                                         Action<IVtcReferencedDtmfPresenter> unsubscribe)
+			: base(navigationController, viewFactory, subscribe, unsubscribe)
 		{
 		}
 

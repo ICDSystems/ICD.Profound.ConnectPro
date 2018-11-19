@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Mvp.Views;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contacts;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Contacts

@@ -1,4 +1,5 @@
-﻿using ICD.Connect.Calendaring.Booking;
+﻿using System;
+using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Welcome;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews.Welcome;
@@ -14,9 +15,13 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 		/// </summary>
 		/// <param name="navigationController"></param>
 		/// <param name="viewFactory"></param>
+		/// <param name="subscribe"></param>
+		/// <param name="unsubscribe"></param>
 		public ReferencedSchedulePresenterFactory(IOsdNavigationController navigationController,
-		                                          ListItemFactory<IReferencedScheduleView> viewFactory)
-			: base(navigationController, viewFactory)
+		                                          ListItemFactory<IReferencedScheduleView> viewFactory,
+		                                          Action<IReferencedSchedulePresenter> subscribe,
+		                                          Action<IReferencedSchedulePresenter> unsubscribe)
+			: base(navigationController, viewFactory, subscribe, unsubscribe)
 		{
 		}
 
