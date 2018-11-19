@@ -26,7 +26,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
-			m_PresenterFactory = new WtcReferencedContactPresenterFactory(nav, ItemFactory);
+			m_PresenterFactory = new WtcReferencedContactPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
 			m_DirectoryBrowser = new DirectoryControlBrowser();
 
 			m_DirectoryBrowser.OnPathContentsChanged += DirectoryBrowserOnOnPathContentsChanged;
@@ -47,7 +47,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				var contacts = m_DirectoryBrowser.GetCurrentFolder() == null 
 					? Enumerable.Empty<IContact>() 
 					: m_DirectoryBrowser.GetCurrentFolder().GetContacts();
-				foreach (var presenter in m_PresenterFactory.BuildChildren(contacts, SubscribeChild, UnsubscribeChild))
+				foreach (var presenter in m_PresenterFactory.BuildChildren(contacts))
 				{
 					presenter.Selected = presenter == m_SelectedContact;
 					presenter.ShowView(true);
@@ -71,13 +71,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		#region Contact Callbacks
 
-		private void SubscribeChild(IWtcReferencedContactPresenter presenter)
+		private void Subscribe(IWtcReferencedContactPresenter presenter)
 		{
 			if (presenter != null)
 				presenter.OnPressed += PresenterOnOnPressed;
 		}
 
-		private void UnsubscribeChild(IWtcReferencedContactPresenter presenter)
+		private void Unsubscribe(IWtcReferencedContactPresenter presenter)
 		{
 			if (presenter != null)
 				presenter.OnPressed -= PresenterOnOnPressed;

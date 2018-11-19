@@ -24,7 +24,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		public WtcActiveMeetingPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
-			m_PresenterFactory = new WtcReferencedParticipantPresenterFactory(nav, ItemFactory);
+			m_PresenterFactory = new WtcReferencedParticipantPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
 		}
 
 		protected override void Refresh(IWtcActiveMeetingView view)
@@ -50,7 +50,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				var participants = activeConference == null
 					? Enumerable.Empty<IWebParticipant>()
 					: activeConference.GetParticipants();
-				foreach (var presenter in m_PresenterFactory.BuildChildren(participants, Subscribe, Unsubscribe))
+				foreach (var presenter in m_PresenterFactory.BuildChildren(participants))
 				{
 					presenter.Selected = presenter == m_SelectedParticipant;
 					presenter.ShowView(presenter.Participant != null);
