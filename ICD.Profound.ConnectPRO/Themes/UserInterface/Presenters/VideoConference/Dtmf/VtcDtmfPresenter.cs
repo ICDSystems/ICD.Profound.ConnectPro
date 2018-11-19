@@ -36,7 +36,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
-			m_Factory = new VtcReferencedDtmfPresenterFactory(nav, ItemFactory);
+			m_Factory = new VtcReferencedDtmfPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
 			m_ParticipantEventHelper = new TraditionalParticipantEventHelper(ParticipantOnChange);
 		}
 
@@ -63,7 +63,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			try
 			{
 				IEnumerable<ITraditionalParticipant> sources = GetSources();
-				foreach (IVtcReferencedDtmfPresenter presenter in m_Factory.BuildChildren(sources, Subscribe, Unsubscribe))
+				foreach (IVtcReferencedDtmfPresenter presenter in m_Factory.BuildChildren(sources))
 				{
 					presenter.Selected = presenter.Source == m_Selected;
 					presenter.ShowView(true);

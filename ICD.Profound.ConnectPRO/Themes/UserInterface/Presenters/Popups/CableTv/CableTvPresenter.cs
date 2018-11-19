@@ -34,11 +34,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.CableTv
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
-			m_ChildrenFactory = new ReferencedCableTvPresenterFactory(nav, ItemFactory);
+			m_ChildrenFactory = new ReferencedCableTvPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
 
 			m_Stations = theme.TvPresets.ToArray();
 
-			m_ChildrenFactory.BuildChildren(m_Stations, Subscribe, Unsubscribe);
+			m_ChildrenFactory.BuildChildren(m_Stations);
 		}
 
 		/// <summary>

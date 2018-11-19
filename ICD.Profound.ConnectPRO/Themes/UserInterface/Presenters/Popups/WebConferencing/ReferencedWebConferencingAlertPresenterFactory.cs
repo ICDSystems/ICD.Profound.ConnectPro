@@ -1,3 +1,4 @@
+using System;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.WebConferencing;
@@ -15,9 +16,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.WebConf
 		/// </summary>
 		/// <param name="navigationController"></param>
 		/// <param name="viewFactory"></param>
+		/// <param name="subscribe"></param>
+		/// <param name="unsubscribe"></param>
 		public ReferencedWebConferencingAlertPresenterFactory(IConnectProNavigationController navigationController,
-		                                                      ListItemFactory<IReferencedWebConferencingAlertView> viewFactory)
-			: base(navigationController, viewFactory)
+		                                                      ListItemFactory<IReferencedWebConferencingAlertView> viewFactory,
+		                                                      Action<IReferencedWebConferencingAlertPresenter> subscribe,
+		                                                      Action<IReferencedWebConferencingAlertPresenter> unsubscribe)
+			: base(navigationController, viewFactory, subscribe, unsubscribe)
 		{
 		}
 

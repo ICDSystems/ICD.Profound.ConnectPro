@@ -28,11 +28,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.WebConf
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
-			m_ChildrenFactory = new ReferencedWebConferencingAlertPresenterFactory(nav, ItemFactory);
+			m_ChildrenFactory = new ReferencedWebConferencingAlertPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
 
 			m_Apps = theme.WebConferencingInstructions.ToArray();
 
-			m_ChildrenFactory.BuildChildren(m_Apps, Subscribe, Unsubscribe);
+			m_ChildrenFactory.BuildChildren(m_Apps);
 		}
 
 		/// <summary>

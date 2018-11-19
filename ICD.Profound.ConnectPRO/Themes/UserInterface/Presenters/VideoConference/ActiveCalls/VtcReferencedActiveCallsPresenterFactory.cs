@@ -1,3 +1,4 @@
+﻿using System;
 ﻿using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -14,9 +15,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		/// <param name="navigationController"></param>
 		/// <param name="viewFactory"></param>
+		/// <param name="subscribe"></param>
+		/// <param name="unsubscribe"></param>
 		public VtcReferencedActiveCallsPresenterFactory(IConnectProNavigationController navigationController,
-		                                                ListItemFactory<IVtcReferencedActiveCallsView> viewFactory)
-			: base(navigationController, viewFactory)
+		                                                ListItemFactory<IVtcReferencedActiveCallsView> viewFactory,
+		                                                Action<IVtcReferencedActiveCallsPresenter> subscribe,
+		                                                Action<IVtcReferencedActiveCallsPresenter> unsubscribe)
+			: base(navigationController, viewFactory, subscribe, unsubscribe)
 		{
 		}
 

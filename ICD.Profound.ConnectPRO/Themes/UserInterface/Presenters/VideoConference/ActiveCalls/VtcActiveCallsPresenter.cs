@@ -47,7 +47,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		public VtcActiveCallsPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
-			m_ChildrenFactory = new VtcReferencedActiveCallsPresenterFactory(nav, ItemFactory);
+			m_ChildrenFactory = new VtcReferencedActiveCallsPresenterFactory(nav, ItemFactory, null, null);
 			m_RefreshSection = new SafeCriticalSection();
 		
 		}
@@ -80,7 +80,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			try
 			{
 				ITraditionalParticipant[] sources = GetSources().ToArray();
-				foreach (IVtcReferencedActiveCallsPresenter presenter in m_ChildrenFactory.BuildChildren(sources, p => { }, p => { }))
+				foreach (IVtcReferencedActiveCallsPresenter presenter in m_ChildrenFactory.BuildChildren(sources))
 					presenter.ShowView(true);
 			}
 			finally

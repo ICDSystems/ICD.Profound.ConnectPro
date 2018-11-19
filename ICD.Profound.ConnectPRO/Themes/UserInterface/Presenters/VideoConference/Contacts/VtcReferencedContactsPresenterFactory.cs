@@ -14,9 +14,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		/// <param name="navigationController"></param>
 		/// <param name="viewFactory"></param>
+		/// <param name="subscribe"></param>
+		/// <param name="unsubscribe"></param>
 		public VtcReferencedContactsPresenterFactory(IConnectProNavigationController navigationController,
-		                                             ListItemFactory<IVtcReferencedContactsView> viewFactory)
-			: base(navigationController, viewFactory)
+		                                             ListItemFactory<IVtcReferencedContactsView> viewFactory,
+		                                             Action<IVtcReferencedContactsPresenterBase> subscribe,
+		                                             Action<IVtcReferencedContactsPresenterBase> unsubscribe)
+			: base(navigationController, viewFactory, subscribe, unsubscribe)
 		{
 		}
 
