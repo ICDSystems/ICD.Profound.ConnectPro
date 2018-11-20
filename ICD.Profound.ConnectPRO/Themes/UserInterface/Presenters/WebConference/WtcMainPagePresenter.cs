@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Conferences;
@@ -38,9 +38,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			try
 			{
 				bool inConference = IsInConference;
-				
 				view.SetMeetNowButtonEnabled(!inConference);
 				view.SetJoinByIdButtonEnabled(!inConference);
+				
+				m_TogglePresenter.ShowView(IsViewVisible && inConference);
 			}
 			finally
 			{
