@@ -34,13 +34,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			m_RefreshSection.Enter();
 			try
 			{
-				if (ActiveConferenceControl == null)
-				{
-					ShowView(false);
-					return;
-				}
+				var activeConference = ActiveConferenceControl == null
+					? null
+					: ActiveConferenceControl.GetActiveConference() as IWebConference;
 
-				var activeConference = ActiveConferenceControl.GetActiveConference() as IWebConference;
+				if (activeConference == null)
+					ShowView(false);
 
 				view.SetEndMeetingButtonEnabled(activeConference != null);
 				view.SetLeaveMeetingButtonEnabled(activeConference != null);
