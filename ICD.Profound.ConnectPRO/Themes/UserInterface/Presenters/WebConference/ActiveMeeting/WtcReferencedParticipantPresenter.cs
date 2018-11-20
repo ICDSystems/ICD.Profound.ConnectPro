@@ -25,6 +25,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			m_RefreshSection = new SafeCriticalSection();
 		}
 
+		public override void Dispose()
+		{
+			OnPressed = null;
+
+			base.Dispose();
+		}
+
 		protected override void Refresh(IWtcReferencedParticipantView view)
 		{
 			base.Refresh(view);
