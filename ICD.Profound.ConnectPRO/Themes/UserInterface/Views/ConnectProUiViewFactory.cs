@@ -139,14 +139,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 
 		#endregion
 
-		#region Methods
+		#region Protected Methods
 
 		/// <summary>
 		/// Instantiates a new view of the given type.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		public override T GetNewView<T>()
+		protected override T InstantiateView<T>()
 		{
 			if (!m_ViewFactories.ContainsKey(typeof(T)))
 			{
@@ -171,7 +171,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 		/// <param name="parent"></param>
 		/// <param name="index"></param>
 		/// <returns></returns>
-		public override T GetNewView<T>(ISmartObject panel, IVtProParent parent, ushort index)
+		protected override T InstantiateView<T>(ISmartObject panel, IVtProParent parent, ushort index)
 		{
 			if (!m_ComponentViewFactories.ContainsKey(typeof(T)))
 			{
