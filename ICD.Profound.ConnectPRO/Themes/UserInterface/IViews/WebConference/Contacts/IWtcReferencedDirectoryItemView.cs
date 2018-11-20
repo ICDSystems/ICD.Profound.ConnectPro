@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts
 {
-	public interface IWtcReferencedContactView : IUiView
+	public interface IWtcReferencedDirectoryItemView : IUiView
 	{
 		/// <summary>
 		/// Raised when the contact is pressed.

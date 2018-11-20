@@ -67,7 +67,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(IVtcReferencedActiveCallsView), (nav, views, theme, index) => new VtcReferencedActiveCallsView(nav, views, theme, index)},
 
 			// Web Conference
-			{typeof(IWtcReferencedContactView), (nav, views, theme, index) => new WtcReferencedContactView(nav, views, theme, index)},
+			{typeof(IWtcReferencedDirectoryItemView), (nav, views, theme, index) => new WtcReferencedDirectoryItemView(nav, views, theme, index)},
 			{typeof(IWtcReferencedParticipantView), (nav, views, theme, index) => new WtcReferencedParticipantView(nav, views, theme, index)},
 
 			// Common

@@ -12,6 +12,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 	{
 		private VtProSubpage m_Subpage;
 		private VtProSubpageReferenceList m_ContactList;
+		private VtProButton m_BackButton;
 		private VtProButton m_InviteParticipantButton;
 		
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
@@ -29,9 +30,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 				SerialJoinIncrement = 1
 			};
 
+			m_BackButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 752,
+				DigitalEnableJoin = 753
+			};
+
 			m_InviteParticipantButton = new VtProButton(panel, m_Subpage)
 			{
-                DigitalPressJoin = 721
+                DigitalPressJoin = 721,
+				DigitalEnableJoin = 754
 			};
 		}
 
@@ -40,6 +48,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 			yield return m_Subpage;
 			yield return m_ContactList;
 			yield return m_InviteParticipantButton;
+			yield return m_BackButton;
 		}
 	}
 }

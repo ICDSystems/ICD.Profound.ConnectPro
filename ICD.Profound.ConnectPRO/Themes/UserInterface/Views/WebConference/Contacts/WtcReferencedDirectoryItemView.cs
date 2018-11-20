@@ -6,11 +6,11 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Contacts
 {
-	public sealed partial class WtcReferencedContactView : AbstractComponentView, IWtcReferencedContactView
+	public sealed partial class WtcReferencedDirectoryItemView : AbstractComponentView, IWtcReferencedDirectoryItemView
 	{
 		public event EventHandler OnContactPressed;
 
-		public WtcReferencedContactView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index)
+		public WtcReferencedDirectoryItemView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index)
 			: base(panel, theme, parent, index)
 		{
 		}

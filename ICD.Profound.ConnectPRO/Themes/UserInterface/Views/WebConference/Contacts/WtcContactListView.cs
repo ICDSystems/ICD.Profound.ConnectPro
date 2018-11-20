@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
-using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Mvp.Views;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Contacts
@@ -12,25 +10,37 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 	public sealed partial class WtcContactListView : AbstractUiView, IWtcContactListView
 	{
 		public event EventHandler OnInviteParticipantButtonPressed;
+		public event EventHandler OnBackButtonPressed;
 
-		private readonly List<IWtcReferencedContactView> m_ChildList;
+		private readonly List<IWtcReferencedDirectoryItemView> m_ChildList;
 
 		public WtcContactListView(ISigInputOutput panel, ConnectProTheme theme) 
 			: base(panel, theme)
 		{
-			m_ChildList = new List<IWtcReferencedContactView>();
+			m_ChildList = new List<IWtcReferencedDirectoryItemView>();
 		}
 
 		public override void Dispose()
 		{
 			OnInviteParticipantButtonPressed = null;
+			OnBackButtonPressed = null;
 
 			base.Dispose();
 		}
 
-		public IEnumerable<IWtcReferencedContactView> GetChildComponentViews(IViewFactory factory, ushort count)
+		public IEnumerable<IWtcReferencedDirectoryItemView> GetChildComponentViews(IViewFactory factory, ushort count)
 		{
 			return GetChildViews(factory, m_ContactList, m_ChildList, count);
+		}
+
+		public void SetBackButtonEnabled(bool enabled)
+		{
+			m_BackButton.Enable(enabled);
+		}
+
+		public void SetInviteParticipantButtonEnabled(bool enabled)
+		{
+			m_InviteParticipantButton.Enable(enabled);
 		}
 
 		#region Control Callbacks
@@ -40,6 +50,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 			base.SubscribeControls();
 
 			m_InviteParticipantButton.OnPressed += InviteParticipantButtonOnPressed;
+			m_BackButton.OnPressed += BackButtonOnPressed;
 		}
 
 		protected override void UnsubscribeControls()
@@ -47,11 +58,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 			base.UnsubscribeControls();
 
 			m_InviteParticipantButton.OnPressed -= InviteParticipantButtonOnPressed;
+			m_BackButton.OnPressed -= BackButtonOnPressed;
 		}
 
 		private void InviteParticipantButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnInviteParticipantButtonPressed.Raise(this);
+		}
+
+		private void BackButtonOnPressed(object sender, EventArgs e)
+		{
+			OnBackButtonPressed.Raise(this);
 		}
 
 		#endregion

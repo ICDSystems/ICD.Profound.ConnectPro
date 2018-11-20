@@ -4,11 +4,10 @@ using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Connect.UI.Controls.TextControls;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Contacts
 {
-	public partial class WtcReferencedContactView
+	public partial class WtcReferencedDirectoryItemView
 	{
 		private VtProSubpage m_Subpage;
 		private VtProButton m_ContactButton;

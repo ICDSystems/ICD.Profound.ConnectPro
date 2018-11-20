@@ -193,7 +193,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\ActiveMeeting\IWtcActiveMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\ActiveMeeting\IWtcReferencedParticipantPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\Contacts\IWtcContactListPresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\WebConference\Contacts\IWtcReferencedContactPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\WebConference\Contacts\IWtcReferencedDirectoryItemPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\IWtcActiveMeetingTogglePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\IWtcBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\IWtcButtonListPresenter.cs" />
@@ -263,7 +263,7 @@
     <Compile Include="Themes\UserInterface\IViews\WebConference\ActiveMeeting\IWtcActiveMeetingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\WebConference\ActiveMeeting\IWtcReferencedParticipantView.cs" />
     <Compile Include="Themes\UserInterface\IViews\WebConference\Contacts\IWtcContactListView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\WebConference\Contacts\IWtcReferencedContactView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\WebConference\Contacts\IWtcReferencedDirectoryItemView.cs" />
     <Compile Include="Themes\UserInterface\IViews\WebConference\IWtcActiveMeetingToggleView.cs" />
     <Compile Include="Themes\UserInterface\IViews\WebConference\IWtcBaseView.cs" />
     <Compile Include="Themes\UserInterface\IViews\WebConference\IWtcButtonListView.cs" />
@@ -343,8 +343,8 @@
     <Compile Include="Themes\UserInterface\Presenters\WebConference\ActiveMeeting\WtcReferencedParticipantPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\ActiveMeeting\WtcReferencedParticipantPresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\Contacts\WtcContactListPresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\WebConference\Contacts\WtcReferencedContactPresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\WebConference\Contacts\WtcReferencedContactPresenterFactory.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\WebConference\Contacts\WtcReferencedDirectoryItemPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\WebConference\Contacts\WtcReferencedDirectoryItemPresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcActiveMeetingTogglePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcButtonListPresenter.cs" />
@@ -455,8 +455,8 @@
     <Compile Include="Themes\UserInterface\Views\WebConference\ActiveMeeting\WtcReferencedParticipantView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\WebConference\Contacts\WtcContactListView.cs" />
     <Compile Include="Themes\UserInterface\Views\WebConference\Contacts\WtcContactListView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\WebConference\Contacts\WtcReferencedContactView.cs" />
-    <Compile Include="Themes\UserInterface\Views\WebConference\Contacts\WtcReferencedContactView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\WebConference\Contacts\WtcReferencedDirectoryItemView.cs" />
+    <Compile Include="Themes\UserInterface\Views\WebConference\Contacts\WtcReferencedDirectoryItemView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\WebConference\WtcActiveMeetingToggleView.cs" />
     <Compile Include="Themes\UserInterface\Views\WebConference\WtcActiveMeetingToggleView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\WebConference\WtcBaseView.cs" />

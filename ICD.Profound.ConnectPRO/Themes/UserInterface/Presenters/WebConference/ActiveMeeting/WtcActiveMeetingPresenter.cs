@@ -59,12 +59,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 				var zoomConference = activeConference as CallComponent;
 				view.SetMeetingIdLabelVisibility(zoomConference != null);
-				view.SetCallInLabelVisibility(zoomConference != null);
+				view.SetCallInLabelVisibility(zoomConference != null && zoomConference.CallInfo != null);
 				if (zoomConference == null)
 					return;
 
 				view.SetMeetingIdLabelText(zoomConference.Number);
-				view.SetCallInLabelText(zoomConference.CallInfo.DialIn);
+				view.SetCallInLabelText(zoomConference.CallInfo == null ? string.Empty : zoomConference.CallInfo.DialIn);
 			}
 			finally
 			{
@@ -155,12 +155,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		{
 			conference.OnParticipantAdded += ConferenceOnOnParticipantAdded;
 			conference.OnParticipantRemoved += ConferenceOnOnParticipantRemoved;
+			conference.OnStatusChanged += ConferenceOnOnStatusChanged;
 		}
 
 		private void Unsubscribe(IConference conference)
 		{
 			conference.OnParticipantAdded -= ConferenceOnOnParticipantAdded;
 			conference.OnParticipantRemoved -= ConferenceOnOnParticipantRemoved;
+			conference.OnStatusChanged -= ConferenceOnOnStatusChanged;
 		}
 
 		private void ConferenceOnOnParticipantRemoved(object sender, ParticipantEventArgs participantEventArgs)
@@ -169,6 +171,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		}
 
 		private void ConferenceOnOnParticipantAdded(object sender, ParticipantEventArgs participantEventArgs)
+		{
+			RefreshIfVisible();
+		}
+
+		private void ConferenceOnOnStatusChanged(object sender, ConferenceStatusEventArgs args)
 		{
 			RefreshIfVisible();
 		}
