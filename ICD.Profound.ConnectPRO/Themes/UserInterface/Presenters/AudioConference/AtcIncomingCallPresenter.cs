@@ -90,12 +90,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 			if (source == null)
 				return output;
 
-			output = string.IsNullOrEmpty(source.Name) ? "Unknown" : source.Name;
+			string name = string.IsNullOrEmpty(source.Name) ? "Unknown" : source.Name.Trim();
+			string number = string.IsNullOrEmpty(source.Number) ? "Unknown" : source.Number.Trim();
 
-			if (!string.IsNullOrEmpty(source.Number))
-				output = string.Format("{0} - {1}", output, source.Number);
-
-			return output;
+			return number == name ? name : string.Format("{0} - {1}", name, number);
 		}
 
 		/// <summary>

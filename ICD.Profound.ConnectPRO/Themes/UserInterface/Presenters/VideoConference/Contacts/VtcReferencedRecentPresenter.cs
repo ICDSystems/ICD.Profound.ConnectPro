@@ -50,6 +50,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 					? Recent.Number
 					: Recent.Name;
 
+			if (string.IsNullOrEmpty(name))
+				name = "Unknown";
+
 			return string.Format("{0} - {1}", Recent.End ?? Recent.GetStartOrDialTime(), name);
 		}
 
