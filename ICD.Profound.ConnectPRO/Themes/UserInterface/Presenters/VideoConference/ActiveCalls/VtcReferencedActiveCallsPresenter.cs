@@ -94,11 +94,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			                              source.GetDuration().Minutes,
 			                              source.GetDuration().Seconds);
 
-			string name = string.IsNullOrEmpty(source.Name) ? "Unknown" : source.Name;
+			string name = string.IsNullOrEmpty(source.Name) ? "Unknown" : source.Name.Trim();
+
 			output = string.Format("{0} - {1}", output, name);
 
-			if (!string.IsNullOrEmpty(source.Number))
-				output = string.Format("{0} - {1}", output, source.Number);
+			if (!string.IsNullOrEmpty(source.Number) && source.Number.Trim() != name)
+				output = string.Format("{0} - {1}", output, source.Number.Trim());
 
 			return output;
 		}

@@ -6,7 +6,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Changed
+ - Don't show both caller-info name and number when they are identical 
+
+## [7.2.0] - 2018-11-21
+### Added
+ - Added originator id attribute to room calendar settings
+
+### Changed
  - Routing no longer assumes there is a single VTC device.
+ - UI and OSD are refactored to use common MVP framework
+ - Fixed null refs when stopping the program
 
 ## [7.1.0] - 2018-10-30
 ### Changed

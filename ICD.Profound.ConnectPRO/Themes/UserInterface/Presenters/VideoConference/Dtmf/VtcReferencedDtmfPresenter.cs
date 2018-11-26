@@ -91,10 +91,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			try
 			{
-				string label = m_Source == null ? string.Empty : m_Source.Name ?? m_Source.Number;
+				string name =
+					m_Source == null
+						? null
+						: string.IsNullOrEmpty(m_Source.Name)
+							  ? m_Source.Number
+							  : m_Source.Name;
+
+				if (string.IsNullOrEmpty(name))
+					name = "Unknown";
+
 				bool selected = m_Selected;
 
-				view.SetLabel(label);
+				view.SetLabel(name);
 				view.SetSelected(selected);
 			}
 			finally

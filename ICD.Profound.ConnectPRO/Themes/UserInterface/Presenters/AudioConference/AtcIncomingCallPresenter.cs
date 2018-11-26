@@ -93,12 +93,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 			if (call == null)
 				return output;
 
-			output = string.IsNullOrEmpty(call.Name) ? "Unknown" : call.Name;
+			string name = string.IsNullOrEmpty(call.Name) ? "Unknown" : call.Name.Trim();
+			string number = string.IsNullOrEmpty(call.Number) ? "Unknown" : call.Number.Trim();
 
-			if (!string.IsNullOrEmpty(call.Number))
-				output = string.Format("{0} - {1}", output, call.Number);
-
-			return output;
+			return number == name ? name : string.Format("{0} - {1}", name, number);
 		}
 
 		/// <summary>
