@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils.EventArguments;
-using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
@@ -34,6 +34,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private readonly IVtcCameraPresenter m_CameraPresenter;
 		private readonly IVtcKeyboardPresenter m_KeyboardPresenter;
 		private readonly IVtcKeypadPresenter m_KeypadPresenter;
+		private readonly List<IVtcPresenter> m_VtcPresenters;
 
 		private IPowerDeviceControl m_SubscribedPowerControl;
 		private ITraditionalConferenceDeviceControl m_SubscribedConferenceControl;
@@ -50,7 +51,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				m_SubscribedConferenceControl = value;
 				Subscribe(m_SubscribedConferenceControl);
 
-				OnActiveConferenceControlChanged.Raise(this);
+				SetVtcPresentersActiveConferenceControl(value);
 			}
 		}
 
@@ -102,6 +103,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			m_ButtonListPresenter = nav.LazyLoadPresenter<IVtcButtonListPresenter>();
 			m_CameraPresenter = nav.LazyLoadPresenter<IVtcCameraPresenter>();
+
+			m_VtcPresenters = nav.LazyLoadPresenters<IVtcPresenter>().ToList();
 		}
 
 		/// <summary>
@@ -114,9 +117,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			if (ActiveConferenceControl != null)
 			{
-				var conference = ActiveConferenceControl.GetActiveConference() as IWebConference;
+				var conference = ActiveConferenceControl.GetActiveConference() as ITraditionalConference;
 				if (conference != null)
-					conference.LeaveConference();
+					conference.Hangup();
 			}
 				
 			ActiveConferenceControl = null;
@@ -175,6 +178,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				m_ContactsNormalPresenter.ShowView(false);
 				m_ContactsPolycomPresenter.ShowView(false);
 			}
+		}
+
+		private void SetVtcPresentersActiveConferenceControl(ITraditionalConferenceDeviceControl value)
+		{
+			foreach (var presenter in m_VtcPresenters)
+				presenter.ActiveConferenceControl = value;
 		}
 
 		#endregion

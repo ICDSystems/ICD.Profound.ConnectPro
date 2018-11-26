@@ -88,7 +88,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		{
 			// Close before routing for better UX
 			base.Close();
-			
+
+			if (ActiveConferenceControl != null)
+			{
+				var conference = ActiveConferenceControl.GetActiveConference() as IWebConference;
+				if (conference != null)
+					conference.LeaveConference();
+			}
+
 			ActiveConferenceControl = null;
 
 			if (Room != null)

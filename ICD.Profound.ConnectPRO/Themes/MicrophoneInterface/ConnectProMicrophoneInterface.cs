@@ -1,4 +1,5 @@
-﻿using ICD.Common.Properties;
+﻿using System.Linq;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Services;
@@ -159,7 +160,7 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 				{
 					brightness = eLedBrightness.Default;
 
-					color = m_SubscribedConferenceManager.ActiveConference.Status == eConferenceStatus.OnHold
+					color = m_SubscribedConferenceManager.OnlineConferences.All(c => c.Status == eConferenceStatus.OnHold)
 								? eLedColor.Yellow
 								: m_SubscribedConferenceManager.PrivacyMuted
 									  ? eLedColor.Red

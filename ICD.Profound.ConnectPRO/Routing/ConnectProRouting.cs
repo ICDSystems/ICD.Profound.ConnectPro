@@ -219,13 +219,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 			return output;
 		}
 
-		[CanBeNull]
-		private IVideoConferenceDevice GetCodec()
-		{
-			IConferenceDeviceControl dialer = m_Room.ConferenceManager.GetDialingProvider(eCallType.Video);
-			return dialer == null ? null : dialer.Parent as IVideoConferenceDevice;
-		}
-
 		#region Sources
 
 		/// <summary>
