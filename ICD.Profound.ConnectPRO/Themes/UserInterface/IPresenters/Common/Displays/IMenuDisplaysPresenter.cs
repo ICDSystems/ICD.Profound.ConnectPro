@@ -9,7 +9,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displa
 	public delegate void MenuDestinationPressedCallback(
 		object sender, ISource routedSource, IDestination destination);
 
-	public interface IMenuDisplaysPresenter : IPresenter<IMenuDisplaysView>
+	public interface IMenuDisplaysPresenter : IUiPresenter<IMenuDisplaysView>
 	{
 		event MenuDestinationPressedCallback OnDestinationPressed;
 

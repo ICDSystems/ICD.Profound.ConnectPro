@@ -8,20 +8,29 @@ using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
-using ICD.Connect.Conferencing.Cisco.Controls;
+using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.Panels.Devices;
+using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Controls;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Sources.TvTuner.Controls;
+using ICD.Connect.UI.Mvp.Presenters;
+using ICD.Connect.UI.Mvp.VisibilityTree;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.Routing;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.AudioConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Options;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.CableTv;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.WebConferencing;
@@ -29,12 +38,9 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.ActiveCalls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Dtmf;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VisibilityTree;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views;
-using ICD.Connect.Conferencing.Cisco;
-using ICD.Connect.Conferencing.EventArguments;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 {
@@ -46,8 +52,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private const long SOURCE_SELECTION_TIMEOUT = 8 * 1000;
 
 		private readonly IPanelDevice m_Panel;
-		private readonly INavigationController m_NavigationController;
+		private readonly IConnectProNavigationController m_NavigationController;
 		private readonly SafeTimer m_SourceSelectionTimeout;
+
+		private readonly IcdHashSet<ISource> m_ActiveAudio;
+		private readonly Dictionary<IDestination, IcdHashSet<ISource>> m_ActiveVideo;
+		private readonly Dictionary<ISource, eSourceState> m_SourceRoutedStates;
+		private readonly Dictionary<IDestination, ISource> m_ProcessingSources;
+		private readonly SafeCriticalSection m_RoutingSection;
 
 		private IConnectProRoom m_Room;
 		private DefaultVisibilityNode m_RootVisibility;
@@ -56,6 +68,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		#region Properties
 
 		public IPanelDevice Panel { get { return m_Panel; } }
+
+		public IConnectProRoom Room { get { return m_Room; } }
+
+		object IUserInterface.Target { get { return Panel; } }
 
 		#endregion
 
@@ -66,12 +82,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="theme"></param>
 		public ConnectProUserInterface(IPanelDevice panel, ConnectProTheme theme)
 		{
+			m_ActiveAudio = new IcdHashSet<ISource>();
+			m_ActiveVideo = new Dictionary<IDestination, IcdHashSet<ISource>>();
+			m_SourceRoutedStates = new Dictionary<ISource, eSourceState>();
+			m_ProcessingSources = new Dictionary<IDestination, ISource>();
+			m_RoutingSection = new SafeCriticalSection();
+
 			m_Panel = panel;
 			UpdatePanelOnlineJoin();
 
 			m_SourceSelectionTimeout = SafeTimer.Stopped(() => SetActiveSource(null));
 
-			IViewFactory viewFactory = new ConnectProViewFactory(panel, theme);
+			IUiViewFactory viewFactory = new ConnectProUiViewFactory(panel, theme);
 			m_NavigationController = new ConnectProNavigationController(viewFactory, theme);
 
 			BuildVisibilityTree();
@@ -96,25 +118,43 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			// Video Conference node
 			IVisibilityNode videoConferencingVisibility = new SingleVisibilityNode();
-			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcContactsPresenter>());
+			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcContactsNormalPresenter>());
+			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcContactsPolycomPresenter>());
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcCameraPresenter>());
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcSharePresenter>());
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcDtmfPresenter>());
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcActiveCallsPresenter>());
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcKeyboardPresenter>());
+			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcKeypadPresenter>());
 
+			// Audio Conference node
+			IVisibilityNode audioConferencingVisibility = new SingleVisibilityNode();
+			audioConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IAtcBasePresenter>());
+
+			// Meeting node
 			IVisibilityNode meetingVisibility = new VisibilityNode();
+
+			meetingVisibility.AddNode(videoConferencingVisibility);
+			meetingVisibility.AddNode(audioConferencingVisibility);
+
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOptionPrivacyMutePresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOptionVolumePresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOptionCameraPresenter>());
-			meetingVisibility.AddNode(videoConferencingVisibility);
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcBasePresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ICableTvPresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWebConferencingAlertPresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWebConferencingStepPresenter>());
 
 			m_RootVisibility.AddNode(meetingVisibility);
+
+			// Settings node
+			IVisibilityNode settingsVisibility = new SingleVisibilityNode();
+			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsPasscodePresenter>());
+			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsSystemPowerPresenter>());
+			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsDirectoryPresenter>());
+
+			m_RootVisibility.AddNode(settingsVisibility);
 
 			// These presenters are initially visible.
 			m_NavigationController.NavigateTo<IHeaderPresenter>();
@@ -128,7 +168,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_NavigationController.LazyLoadPresenter<IOptionCameraPresenter>();
 			m_NavigationController.LazyLoadPresenter<IVtcCallListTogglePresenter>();
 			m_NavigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>();
-			
+			m_NavigationController.LazyLoadPresenter<IAtcIncomingCallPresenter>();
 		}
 
 		#region Methods
@@ -166,8 +206,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			Subscribe(m_Room);
 
-			UpdateMeetingPresenters();
-			UpdateRouting();
+			UpdateMeetingPresentersVisibility();
+			UpdateRouting(EnumUtils.GetFlagsAllValue<eConnectionType>());
 
 			UpdatePanelOnlineJoin();
 		}
@@ -193,52 +233,98 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="source"></param>
 		private void HandleSelectedSource(ISource source)
 		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
 			if (m_Room == null)
 				return;
 
 			// If the source is already active then clear the active state
-			if (source == m_ActiveSource)
+			m_RoutingSection.Enter();
+			try
 			{
-				SetActiveSource(null);
+				if (source == m_ActiveSource)
+				{
+					SetActiveSource(null);
+					return;
+				}
+			}
+			finally
+			{
+				m_RoutingSection.Leave();
+			}
+
+			if (m_Room.Routing.IsDualDisplayRoom)
+				HandleSelectedSourceDualDisplay(source);
+			else
+				HandleSelectedSourceSingleDisplay(source);
+		}
+
+		/// <summary>
+		/// In dual display mode we allow the user to select which display to route to.
+		/// </summary>
+		/// <param name="source"></param>
+		private void HandleSelectedSourceDualDisplay(ISource source)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			IDeviceBase device = m_Room.Core.Originators.GetChild<IDeviceBase>(source.Device);
+			IDialingDeviceControl dialer = device.Controls.GetControl<IDialingDeviceControl>();
+
+			// Edge case - route the codec to both displays and open the context menu
+			if (dialer != null && dialer.Supports.HasFlag(eConferenceSourceType.Video))
+			{
+				// Show the context menu before routing for UX
+				ShowSourceContextualMenu(source, false);
+
+				IRouteSourceControl sourceControl = m_Room.Core.GetControl<IRouteSourceControl>(source.Device, source.Control);
+				m_Room.Routing.RouteVtc(sourceControl);
+			}
+			// Edge case - open the audio conferencing context menu
+			else if (dialer != null && dialer.Supports.HasFlag(eConferenceSourceType.Audio))
+			{
+				// Show the context menu before routing for UX
+				ShowSourceContextualMenu(source, false);
+
+				IRouteSourceControl sourceControl = m_Room.Core.GetControl<IRouteSourceControl>(source.Device, source.Control);
+				m_Room.Routing.RouteAtc(sourceControl);
+			}
+			// Typical case - continue routing
+			else
+			{
+				SetActiveSource(source);
 				return;
 			}
 
-			bool dualDisplays = m_Room.Routing.IsDualDisplayRoom;
+			m_SourceSelectionTimeout.Reset(SOURCE_SELECTION_TIMEOUT);
+		}
 
-			// In a dual display room we allow the user to select which display to route to
-			if (dualDisplays)
+		/// <summary>
+		/// In single display mode we route the source immediately.
+		/// </summary>
+		/// <param name="source"></param>
+		private void HandleSelectedSourceSingleDisplay(ISource source)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			// Is the source already routed?     
+			if (m_RoutingSection.Execute(() => m_ActiveVideo.Any(kvp => kvp.Value.Contains(source))))
 			{
-				// Edge case - route the codec to both displays and open the context menu
-				CiscoCodecRoutingControl codecControl =
-					source == null
-						? null
-						: m_Room.Core.GetControl<IRouteSourceControl>(source.Device, source.Control) as
-						  CiscoCodecRoutingControl;
-
-				if (codecControl == null)
-				{
-					SetActiveSource(source);
-					return;
-				}
-
-				m_Room.Routing.Route(codecControl);
-
-				ShowSourceContextualMenu(source, true);
-				SetActiveSource(null);
+				ShowSourceContextualMenu(source, false);
 			}
-			// In a single display room just route the source immediately
 			else
 			{
-				if (source != null)
-				{
-					m_Room.Routing.Route(source);
-					m_Room.Routing.RouteAudio(source);
-				}
+				SetProcessingSource(source);
 
-				SetActiveSource(null);
+				// Show the context menu before routing for UX
+				ShowSourceContextualMenu(source, false);
+
+				m_Room.Routing.RouteSingleDisplay(source);
 			}
 
-			ShowSourceContextualMenu(source, false);
+			SetActiveSource(null);
 		}
 
 		/// <summary>
@@ -254,56 +340,190 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (destination == null)
 				return;
 
+			// Store in local variable because route feedback will change the field
+			ISource activeSource = m_RoutingSection.Execute(() => m_ActiveSource);
+
 			// If no source is selected for routing then we open the contextual menu for the current routed source
-			if (m_ActiveSource == null)
+			if (activeSource == null || activeSource == routedSource)
 			{
 				ShowSourceContextualMenu(routedSource, false);
 			}
 			// If a source is currently selected then we route that source to the selected display
-			else
+			else if (activeSource != routedSource)
 			{
-				m_Room.Routing.Route(m_ActiveSource, destination);
-				m_Room.Routing.RouteAudioIfUnrouted(m_ActiveSource);
-				routedSource = m_ActiveSource;
+				bool overrideAudio;
 
-				ShowSourceContextualMenu(routedSource, true);
+				m_RoutingSection.Enter();
+
+				try
+				{
+					SetProcessingSource(destination, activeSource);
+					overrideAudio = CanOverrideAudio(activeSource, destination);
+				}
+				finally
+				{
+					m_RoutingSection.Leave();
+				}
+
+				m_Room.Routing.RouteDualDisplay(activeSource, destination, overrideAudio);
+				
+				routedSource = activeSource;
+
+				if (ShowSourceContextualMenu(routedSource, true))
+					SetActiveSource(null);
 			}
-
-			// Clear the selected source for routing
-			SetActiveSource(null);
 		}
 
-		private void ShowSourceContextualMenu(ISource source, bool vtcOnly)
+		/// <summary>
+		/// Returns true if we can override active audio when routing the given source to the given destination.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
+		/// <returns></returns>
+		private bool CanOverrideAudio(ISource source, IDestination destination)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			if (destination == null)
+				throw new ArgumentNullException("destination");
+
+			m_RoutingSection.Enter();
+
+			try
+			{
+				// Nothing is currently routed for audio
+				if (m_ActiveAudio.Count == 0)
+					return false;
+
+				// If there are no sources routed to the display then there is nothing to override
+				IcdHashSet<ISource> oldSources;
+				if (!m_ActiveVideo.TryGetValue(destination, out oldSources) || oldSources.Count == 0)
+					return false;
+
+				// No change
+				if (oldSources.Contains(source))
+					return false;
+
+				// Old source is not current active audio
+				if (!m_ActiveAudio.Intersect(oldSources).Any())
+					return false;
+
+				// Is there another source routed for audio going to another display?
+				foreach (KeyValuePair<IDestination, IcdHashSet<ISource>> kvp in m_ActiveVideo)
+				{
+					// Skip the display we are currently routing to
+					IDestination display = kvp.Key;
+					if (display == destination)
+						continue;
+
+					// Are we in the middle of routing a new source to the display?
+					ISource processing = m_ProcessingSources.GetDefault(display);
+					if (processing != null)
+						continue;
+
+					// The display has a source that is being listened to
+					if (kvp.Value.Intersect(m_ActiveAudio).Any())
+						return false;
+				}
+
+				return true;
+			}
+			finally
+			{
+				m_RoutingSection.Leave();
+			}
+		}
+
+		/// <summary>
+		/// Sets the processing source for the single display destination.
+		/// </summary>
+		/// <param name="source"></param>
+		private void SetProcessingSource(ISource source)
+		{
+			IDestination destination = m_Room == null ? null : m_Room.Routing.GetDisplayDestinations().FirstOrDefault();
+			if (destination == null)
+				return;
+
+			SetProcessingSource(destination, source);
+		}
+
+		/// <summary>
+		/// Sets the processing source for the given destination.
+		/// </summary>
+		/// <param name="destination"></param>
+		/// <param name="source"></param>
+		private void SetProcessingSource(IDestination destination, ISource source)
+		{
+			if (destination == null)
+				throw new ArgumentNullException("destination");
+
+			m_RoutingSection.Enter();
+
+			try
+			{
+				// No change
+				if (source == m_ProcessingSources.GetDefault(destination))
+					return;
+
+				// Is the source already routed to the destination?
+				IcdHashSet<ISource> routed;
+				if (m_ActiveVideo.TryGetValue(destination, out routed) && routed.Contains(source))
+					return;
+
+				m_ProcessingSources[destination] = source;
+
+				UpdateSourceRoutedStates();
+			}
+			finally
+			{
+				m_RoutingSection.Leave();
+			}
+		}
+
+		private bool ShowSourceContextualMenu(ISource source, bool vtcOnly)
 		{
 			if (m_Room == null)
-				return;
+				return false;
 
 			if (source == null)
-				return;
+				return false;
 
-			eControlOverride controlOverride = m_Room.Routing.GetControlOverride(source);
-			IDeviceControl control = m_Room.Routing.GetDeviceControl(source, controlOverride);
+			eControlOverride controlOverride = ConnectProRouting.GetControlOverride(source);
+			IDeviceControl control = ConnectProRouting.GetDeviceControl(source, controlOverride);
 
-			if (control is CiscoDialingDeviceControl)
+			if (control is IDialingDeviceControl)
 			{
-				m_NavigationController.NavigateTo<IVtcBasePresenter>();
-				return;
+				IDialingDeviceControl dialer = control as IDialingDeviceControl;
+
+				if (dialer.Supports.HasFlag(eConferenceSourceType.Video))
+					m_NavigationController.NavigateTo<IVtcBasePresenter>();
+				else
+					m_NavigationController.NavigateTo<IAtcBasePresenter>();
+
+				SetActiveSource(null);
+				return true;
 			}
 
 			if (vtcOnly)
-				return;
+				return false;
 
 			if (control is ITvTunerControl)
 			{
 				m_NavigationController.NavigateTo<ICableTvPresenter>().Control = control as ITvTunerControl;
-				return;
+				SetActiveSource(null);
+				return true;
 			}
 
 			switch (controlOverride)
 			{
 				case eControlOverride.WebConference:
 					m_NavigationController.NavigateTo<IWebConferencingAlertPresenter>();
-					break;
+					SetActiveSource(null);
+					return true;
+
+				default:
+					return false;
 			}
 		}
 
@@ -313,15 +533,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="source"></param>
 		private void SetActiveSource(ISource source)
 		{
-			if (source == m_ActiveSource)
-				return;
+			m_RoutingSection.Enter();
 
-			m_ActiveSource = source;
+			try
+			{
+				if (source == m_ActiveSource)
+					return;
 
-			m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().ActiveSource = m_ActiveSource;
-			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().ActiveSource = m_ActiveSource;
+				m_ActiveSource = source;
 
-			m_SourceSelectionTimeout.Reset(SOURCE_SELECTION_TIMEOUT);
+				m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().ActiveSource = m_ActiveSource;
+				m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().ActiveSource = m_ActiveSource;
+
+				m_SourceSelectionTimeout.Reset(SOURCE_SELECTION_TIMEOUT);
+			}
+			finally
+			{
+				m_RoutingSection.Leave();
+			}
 		}
 
 		#endregion
@@ -338,7 +567,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				return;
 
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
-			room.Routing.OnDisplayTrackingChanged += RoutingOnDisplayTrackingChanged;
+			room.Routing.OnDisplaySourceChanged += RoutingOnDisplaySourceChanged;
 			room.Routing.OnAudioSourceChanged += RoutingOnAudioSourceChanged;
 		}
 
@@ -352,7 +581,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				return;
 
 			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
-			room.Routing.OnDisplayTrackingChanged -= RoutingOnDisplayTrackingChanged;
+			room.Routing.OnDisplaySourceChanged -= RoutingOnDisplaySourceChanged;
 			room.Routing.OnAudioSourceChanged -= RoutingOnAudioSourceChanged;
 		}
 
@@ -363,13 +592,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="boolEventArgs"></param>
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs boolEventArgs)
 		{
-			UpdateMeetingPresenters();
+			SetActiveSource(null);
+
+			UpdateMeetingPresentersVisibility();
 		}
 
 		/// <summary>
 		/// Sets the visibility of the subpages based on the meeting state.
 		/// </summary>
-		private void UpdateMeetingPresenters()
+		private void UpdateMeetingPresentersVisibility()
 		{
 			bool isInMeeting = m_Room != null && m_Room.IsInMeeting;
 
@@ -379,11 +610,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			bool dualDisplays = m_Room != null && m_Room.Routing.IsDualDisplayRoom;
 
-			// Set the visibility of the source a display subpages
-			bool displaysVisible = isInMeeting && dualDisplays;
-
 			m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().ShowView(true);
-			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().ShowView(displaysVisible);
+			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().ShowView(dualDisplays);
 		}
 
 		/// <summary>
@@ -393,7 +621,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="eventArgs"></param>
 		private void RoutingOnAudioSourceChanged(object sender, EventArgs eventArgs)
 		{
-			UpdateRouting();
+			UpdateRouting(eConnectionType.Audio);
 		}
 
 		/// <summary>
@@ -401,37 +629,149 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void RoutingOnDisplayTrackingChanged(object sender, EventArgs eventArgs)
+		private void RoutingOnDisplaySourceChanged(object sender, EventArgs eventArgs)
 		{
-			UpdateRouting();
+			UpdateRouting(eConnectionType.Video);
 		}
 
 		/// <summary>
 		/// Updates the routing state in the UI.
 		/// </summary>
-		private void UpdateRouting()
+		/// <param name="type"></param>
+		private void UpdateRouting(eConnectionType type)
 		{
-			IcdHashSet<ISource> activeAudio =
-				(m_Room == null
-					 ? Enumerable.Empty<ISource>()
-					 : m_Room.Routing
-					         .GetCachedActiveAudioSources())
-					.ToIcdHashSet();
+			m_RoutingSection.Enter();
 
-			Dictionary<IDestination, IcdHashSet<ISource>> routing =
-				(m_Room == null
-					 ? Enumerable.Empty<KeyValuePair<IDestination, IcdHashSet<ISource>>>()
-					 : m_Room.Routing
-					         .GetTrackedVideoSources())
-					.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+			try
+			{
+				bool audioChange = false;
+				bool videoChange = false;
 
-			IcdHashSet<ISource> routedSources =
-				routing.Values
-				       .SelectMany(v => v)
-				       .ToIcdHashSet();
+				if (type.HasFlag(eConnectionType.Audio))
+					audioChange = UpdateActiveAudio();
 
-			m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().SetRoutedSources(routedSources);
-			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().SetRouting(routing, activeAudio);
+				if (type.HasFlag(eConnectionType.Video))
+					videoChange = UpdateActiveVideo();
+
+				if (audioChange || videoChange)
+					m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().SetRouting(m_ActiveVideo, m_ActiveAudio);
+			}
+			finally
+			{
+				m_RoutingSection.Leave();
+			}
+		}
+
+		/// <summary>
+		/// Builds the set of active audio sources.
+		/// </summary>
+		/// <returns>True if the active audio sources changed.</returns>
+		private bool UpdateActiveAudio()
+		{
+			m_RoutingSection.Enter();
+
+			try
+			{
+				IcdHashSet<ISource> activeAudio =
+					(m_Room == null
+						 ? Enumerable.Empty<ISource>()
+						 : m_Room.Routing
+						         .GetCachedActiveAudioSources())
+						.ToIcdHashSet();
+
+				if (activeAudio.SetEquals(m_ActiveAudio))
+					return false;
+
+				m_ActiveAudio.Clear();
+				m_ActiveAudio.AddRange(activeAudio);
+
+				return true;
+			}
+			finally
+			{
+				m_RoutingSection.Leave();
+			}
+		}
+
+		/// <summary>
+		/// Builds the map of destinations to active video sources.
+		/// </summary>
+		/// <returns>True if the active video sources changed.</returns>
+		private bool UpdateActiveVideo()
+		{
+			m_RoutingSection.Enter();
+
+			try
+			{
+				Dictionary<IDestination, IcdHashSet<ISource>> routing =
+					(m_Room == null
+						 ? Enumerable.Empty<KeyValuePair<IDestination, IcdHashSet<ISource>>>()
+						 : m_Room.Routing
+						         .GetCachedActiveVideoSources())
+						.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+				if (routing.DictionaryEqual(m_ActiveVideo, (a, b) => a.SetEquals(b)))
+					return false;
+
+				m_ActiveVideo.Clear();
+				m_ActiveVideo.AddRange(routing.Keys, k => new IcdHashSet<ISource>(routing[k]));
+
+				// Remove routed items from the processing sources collection
+				foreach (KeyValuePair<IDestination, IcdHashSet<ISource>> kvp in m_ActiveVideo)
+				{
+					ISource processing = m_ProcessingSources.GetDefault(kvp.Key);
+					if (processing == null)
+						continue;
+
+					if (kvp.Value.Contains(processing))
+						m_ProcessingSources.Remove(kvp.Key);
+				}
+
+				// If the active source is routed to all destinations we clear the active source
+				if (m_ActiveSource != null && m_ActiveVideo.All(kvp => kvp.Value.Contains(m_ActiveSource)))
+					SetActiveSource(null);
+
+				UpdateSourceRoutedStates();
+
+				return true;
+			}
+			finally
+			{
+				m_RoutingSection.Leave();
+			}
+		}
+
+		private bool UpdateSourceRoutedStates()
+		{
+			m_RoutingSection.Enter();
+
+			try
+			{
+				// Build a map of video sources to their routed state
+				Dictionary<ISource, eSourceState> routedSources =
+					m_ActiveVideo.Values
+								 .SelectMany(v => v)
+								 .Distinct()
+								 .ToDictionary(s => s, s => eSourceState.Active);
+
+				// A source may be processing for another display, so we override
+				foreach (ISource source in m_ProcessingSources.Values.Where(s => s != null))
+					routedSources[source] = eSourceState.Processing;
+
+				if (routedSources.DictionaryEqual(m_SourceRoutedStates))
+					return false;
+
+				m_SourceRoutedStates.Clear();
+				m_SourceRoutedStates.AddRange(routedSources);
+
+				m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().SetRoutedSources(m_SourceRoutedStates);
+
+				return true;
+			}
+			finally
+			{
+				m_RoutingSection.Leave();
+			}
 		}
 
 		#endregion
@@ -445,6 +785,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			Subscribe(m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>());
 
 			Subscribe(m_NavigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>());
+			Subscribe(m_NavigationController.LazyLoadPresenter<IAtcIncomingCallPresenter>());
 		}
 
 		/// <summary>
@@ -456,6 +797,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>());
 
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>());
+			Unsubscribe(m_NavigationController.LazyLoadPresenter<IAtcIncomingCallPresenter>());
 		}
 
 		#region Source Select Callbacks
@@ -485,7 +827,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="source"></param>
 		private void SourceSelectPresenterOnSourcePressed(object sender, ISource source)
 		{
-			HandleSelectedSource(source);
+			if (source != null)
+				HandleSelectedSource(source);
 		}
 
 		#endregion
@@ -521,6 +864,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			HandleSelectedDisplay(routedSource, destination);
 		}
 
+		#endregion
+
+		#region Incoming Video Call Presenter Callbacks
+
 		private void Subscribe(IVtcIncomingCallPresenter presenter)
 		{
 			presenter.OnCallAnswered += VtcIncomingCallPresenterOnCallAnswered;
@@ -536,15 +883,49 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (m_Room == null)
 				return;
 
-			CiscoCodec codec = m_Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video).Parent as CiscoCodec;
-			if (codec == null)
+			IDialingDeviceControl videoDialer = m_Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			IDeviceBase device = videoDialer == null ? null : videoDialer.Parent;
+
+			if (device == null)
 				return;
 
-			ISource codecSource = m_Room.Originators.GetInstancesRecursive<ISource>(s => s.Device == codec.Id).FirstOrDefault();
-			if (codecSource == null)
+			ISource source = m_Room.Originators.GetInstancesRecursive<ISource>(s => s.Device == device.Id).FirstOrDefault();
+			if (source == null)
 				return;
 
-			HandleSelectedSource(codecSource);
+			HandleSelectedSource(source);
+		}
+
+		#endregion
+
+		#region Incoming Audio Call Presenter Callbacks
+
+		private void Subscribe(IAtcIncomingCallPresenter presenter)
+		{
+			presenter.OnCallAnswered += AtcIncomingCallPresenterOnCallAnswered;
+		}
+
+		private void Unsubscribe(IAtcIncomingCallPresenter presenter)
+		{
+			presenter.OnCallAnswered -= AtcIncomingCallPresenterOnCallAnswered;
+		}
+
+		private void AtcIncomingCallPresenterOnCallAnswered(object sender, EventArgs e)
+		{
+			if (m_Room == null)
+				return;
+
+			IDialingDeviceControl audioDialer = m_Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Audio);
+			IDeviceBase device = audioDialer == null ? null : audioDialer.Parent;
+
+			if (device == null)
+				return;
+
+			ISource source = m_Room.Originators.GetInstancesRecursive<ISource>(s => s.Device == device.Id).FirstOrDefault();
+			if (source == null)
+				return;
+
+			HandleSelectedSource(source);
 		}
 
 		#endregion

@@ -10,7 +10,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Active
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.ActiveCalls
 {
-	public sealed class VtcReferencedActiveCallsPresenter : AbstractComponentPresenter<IVtcReferencedActiveCallsView>,
+	public sealed class VtcReferencedActiveCallsPresenter : AbstractUiComponentPresenter<IVtcReferencedActiveCallsView>,
 	                                                   IVtcReferencedActiveCallsPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
@@ -44,7 +44,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcReferencedActiveCallsPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public VtcReferencedActiveCallsPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
@@ -73,18 +73,35 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			try
 			{
-				string name =
-					m_Source == null
-						? string.Empty
-						: string.Format("{0:hh\\:mm\\:ss} - {1} - {2}", m_Source.GetDuration().ToString(), m_Source.Name, m_Source.Number);
+				string label = GetLabelText(m_Source);
 
-				view.SetLabel(name);
+				view.SetLabel(label);
 				view.SetHangupButtonVisible(true);
 			}
 			finally
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		private static string GetLabelText(IConferenceSource source)
+		{
+			if (source == null)
+				return string.Empty;
+
+			string output = string.Format("{0}:{1:00}:{2:00}",
+			                              source.GetDuration().Hours,
+			                              source.GetDuration().Minutes,
+			                              source.GetDuration().Seconds);
+
+			string name = string.IsNullOrEmpty(source.Name) ? "Unknown" : source.Name.Trim();
+
+			output = string.Format("{0} - {1}", output, name);
+
+			if (!string.IsNullOrEmpty(source.Number) && source.Number.Trim() != name)
+				output = string.Format("{0} - {1}", output, source.Number.Trim());
+
+			return output;
 		}
 
 		#region Source Callbacks

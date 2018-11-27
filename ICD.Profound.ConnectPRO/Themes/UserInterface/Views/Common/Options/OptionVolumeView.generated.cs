@@ -27,6 +27,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options
 			m_Button = new VtProMultiModeButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 45,
+				DigitalEnableJoin = 527,
 				AnalogModeJoin = 45
 			};
 		}

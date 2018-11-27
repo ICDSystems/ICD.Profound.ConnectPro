@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using ICD.Connect.UI.Mvp.Views;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contacts
 {
-	public interface IVtcContactsView : IView
+	public interface IVtcContactsView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses the directory button.
 		/// </summary>
 		event EventHandler OnDirectoryButtonPressed;
-
-		/// <summary>
-		/// Raised when the user presses the favourites button.
-		/// </summary>
-		event EventHandler OnFavoritesButtonPressed;
 
 		/// <summary>
 		/// Raised when the user presses the recent button.
@@ -41,11 +37,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Co
 		event EventHandler OnHomeButtonPressed;
 
 		/// <summary>
-		/// Raised when the user presses the search button.
-		/// </summary>
-		event EventHandler OnSearchButtonPressed;
-
-		/// <summary>
 		/// Raised when the user presses the manual dial button.
 		/// </summary>
 		event EventHandler OnManualDialButtonPressed;
@@ -57,18 +48,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Co
 		/// <param name="count"></param>
 		/// <returns></returns>
 		IEnumerable<IVtcReferencedContactsView> GetChildComponentViews(IViewFactory factory, ushort count);
-
-		/// <summary>
-		/// Sets the selected state of the directory button.
-		/// </summary>
-		/// <param name="selected"></param>
-		void SetDirectoryButtonSelected(bool selected);
-
-		/// <summary>
-		/// Sets the selected state of the favorites button.
-		/// </summary>
-		/// <param name="selected"></param>
-		void SetFavoritesButtonSelected(bool selected);
 
 		/// <summary>
 		/// Sets the selected state of the recent button.

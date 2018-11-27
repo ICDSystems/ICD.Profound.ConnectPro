@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common
 {
-	public interface IConfirmLeaveCallPresenter : IPresenter<IConfirmLeaveCallView>
+	public interface IConfirmLeaveCallPresenter : IUiPresenter<IConfirmLeaveCallView>
 	{
 	}
 }

@@ -3,7 +3,7 @@ using ICD.Common.Utils.EventArguments;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 {
-	public interface IVtcCameraView : IView
+	public interface IVtcCameraView : IUiView
 	{
 		#region Events
 
@@ -60,5 +60,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 		/// <param name="index"></param>
 		/// <param name="label"></param>
 		void SetPresetButtonLabel(ushort index, string label);
+
+		/// <summary>
+		/// Sets the visibility of the "Preset Stored" label.
+		/// </summary>
+		/// <param name="visible"></param>
+		void SetPresetStoredLabelVisibility(bool visible);
 	}
 }

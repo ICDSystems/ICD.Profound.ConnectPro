@@ -1,6 +1,9 @@
 ﻿using System;
-using ICD.Connect.Conferencing.ConferenceManagers;
+using System.Linq;
+using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Favorites;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -32,7 +35,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcReferencedFavoritesPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public VtcReferencedFavoritesPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 		}
@@ -71,9 +74,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		protected override void Dial()
 		{
-			IConferenceManager manager = Room == null ? null : Room.ConferenceManager;
-			if (manager != null && m_Favorite != null)
-				manager.Dial(m_Favorite);
+			IDialingDeviceControl dialer = Room == null ? null : Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			if (dialer != null && m_Favorite != null)
+				dialer.Dial(m_Favorite.GetContactMethods().First().Number);
 		}
 
 		protected override void ViewOnFavoriteButtonPressed(object sender, EventArgs eventArgs)
@@ -89,7 +92,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			favorites.RemoveFavorite(m_Favorite);
 
-			Navigation.LazyLoadPresenter<IVtcContactsPresenter>().RefreshIfVisible();
+			Navigation.LazyLoadPresenter<IVtcContactsNormalPresenter>().RefreshIfVisible();
+			Navigation.LazyLoadPresenter<IVtcContactsPolycomPresenter>().RefreshIfVisible();
 		}
 	}
 }

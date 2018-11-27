@@ -3,6 +3,7 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Options;
@@ -23,7 +24,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public OptionCameraPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		public OptionCameraPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
 			m_Menu = Navigation.LazyLoadPresenter<IVtcCameraPresenter>();
 			Subscribe(m_Menu);
@@ -146,19 +147,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 
 			if (m_SubscribedConferenceManager == null)
 				return;
-
-			m_SubscribedConferenceManager.OnPrivacyMuteStatusChange -= ConferenceManagerOnPrivacyMuteStatusChange;
+			
 			m_SubscribedConferenceManager.OnInCallChanged -= SubscribedConferenceManagerOnInCallChanged;
-		}
-
-		private void ConferenceManagerOnPrivacyMuteStatusChange(object sender, BoolEventArgs boolEventArgs)
-		{
-			RefreshIfVisible();
 		}
 
 		private void SubscribedConferenceManagerOnInCallChanged(object sender, InCallEventArgs callEventArgs)
 		{
-			ShowView(callEventArgs.Data >= eInCall.Audio && GetCamera() != null);
+			ShowView(callEventArgs.Data == eInCall.Video && GetCamera() != null);
 		}
 
 		#endregion

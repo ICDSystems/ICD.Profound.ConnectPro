@@ -8,7 +8,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
-	public sealed class ConfirmEndMeetingPresenter : AbstractPresenter<IConfirmEndMeetingView>, IConfirmEndMeetingPresenter
+	public sealed class ConfirmEndMeetingPresenter : AbstractUiPresenter<IConfirmEndMeetingView>, IConfirmEndMeetingPresenter
 	{
 		/// <summary>
 		/// Constructor.
@@ -16,7 +16,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public ConfirmEndMeetingPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public ConfirmEndMeetingPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 		}
@@ -75,7 +75,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			view.OnYesButtonPressed += ViewOnYesButtonPressed;
 			view.OnCancelButtonPressed += ViewOnCancelButtonPressed;
-			view.OnShutdownButtonPressed += ViewOnShutdownButtonPressed;
 		}
 
 		/// <summary>
@@ -88,7 +87,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			view.OnYesButtonPressed -= ViewOnYesButtonPressed;
 			view.OnCancelButtonPressed -= ViewOnCancelButtonPressed;
-			view.OnShutdownButtonPressed -= ViewOnShutdownButtonPressed;
 		}
 
 		/// <summary>
@@ -110,12 +108,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			if (Room != null)
 				Room.EndMeeting(false);
-		}
-
-		private void ViewOnShutdownButtonPressed(object sender, EventArgs eventArgs)
-		{
-			Navigation.NavigateTo<IDisabledAlertPresenter>();
-			//Navigation.NavigateTo<IConfirmSplashPowerPresenter>();
 		}
 
 		#endregion

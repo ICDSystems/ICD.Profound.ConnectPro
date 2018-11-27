@@ -1,10 +1,14 @@
-﻿using ICD.Connect.Panels.Server.Osd;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ICD.Connect.Panels.Devices;
+using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 {
-	public sealed class ConnectProOsdInterfaceFactory :
-		AbstractConnectProUserInterfaceFactory<ConnectProOsdInterface, OsdPanelDevice>
+	public sealed class ConnectProOsdInterfaceFactory : AbstractConnectProUserInterfaceFactory<ConnectProOsdInterface>
 	{
 		/// <summary>
 		/// Constructor.
@@ -20,9 +24,24 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 		/// </summary>
 		/// <param name="originator"></param>
 		/// <returns></returns>
-		protected override ConnectProOsdInterface CreateUserInterface(OsdPanelDevice originator)
+		private ConnectProOsdInterface CreateUserInterface(IPanelDevice originator)
 		{
 			return new ConnectProOsdInterface(originator, Theme);
+		}
+
+		/// <summary>
+		/// Creates the user interfaces for the given room.
+		/// </summary>
+		/// <param name="room"></param>
+		/// <returns></returns>
+		protected override IEnumerable<ConnectProOsdInterface> CreateUserInterfaces(IConnectProRoom room)
+		{
+			if (room == null)
+				throw new ArgumentNullException("room");
+
+			return room.Originators
+			           .GetInstancesRecursive<OsdPanelDevice>()
+			           .Select(o => CreateUserInterface(o));
 		}
 
 		/// <summary>

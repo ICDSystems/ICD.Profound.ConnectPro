@@ -1,6 +1,10 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Audio.Controls;
+using ICD.Connect.Devices;
+using ICD.Connect.Devices.Controls;
+using ICD.Connect.Devices.EventArguments;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
@@ -14,13 +18,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 	{
 		private readonly IVolumePresenter m_Menu;
 
+		private IVolumeDeviceControl m_SubscribedVolumeControl;
+		private IVolumeMuteFeedbackDeviceControl m_SubscribedMuteFeedbackControl;
+		private IPowerDeviceControl m_SubscribedPowerControl;
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public OptionVolumePresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public OptionVolumePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_Menu = Navigation.LazyLoadPresenter<IVolumePresenter>();
@@ -38,21 +46,48 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		}
 
 		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
+		protected override void Refresh(IOptionVolumeView view)
+		{
+			base.Refresh(view);
+
+			view.SetButtonEnabled(m_SubscribedPowerControl == null || m_SubscribedPowerControl.IsPowered);
+		}
+
+		/// <summary>
 		/// Override to get the selected state for the button.
 		/// </summary>
 		/// <returns></returns>
 		protected override bool GetActive()
 		{
-			return m_Menu.IsViewVisible;
+			return m_SubscribedMuteFeedbackControl != null && m_SubscribedMuteFeedbackControl.VolumeIsMuted;
 		}
 
 		/// <summary>
 		/// Gets the volume control for the current room.
 		/// </summary>
 		/// <returns></returns>
-		private IVolumeDeviceControl GetVolumeControl()
+		private static IVolumeDeviceControl GetVolumeControl(IConnectProRoom room)
 		{
-			return Room == null ? null : Room.GetVolumeControl();
+			return room == null ? null : room.GetVolumeControl();
+		}
+
+		/// <summary>
+		/// Gets the volume control for the current room.
+		/// </summary>
+		/// <returns></returns>
+		private static IVolumeMuteFeedbackDeviceControl GetMuteFeedbackControl(IConnectProRoom room)
+		{
+			IVolumeDeviceControl volumeControl = GetVolumeControl(room);
+			if (volumeControl == null)
+				return null;
+
+			if (volumeControl is IVolumeMuteFeedbackDeviceControl)
+				return volumeControl as IVolumeMuteFeedbackDeviceControl;
+
+			return volumeControl.Parent.Controls.GetControl<IVolumeMuteFeedbackDeviceControl>();
 		}
 
 		#region View Callbacks
@@ -64,7 +99,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// <param name="eventArgs"></param>
 		protected override void ViewOnButtonPressed(object sender, EventArgs eventArgs)
 		{
-			m_Menu.VolumeControl = GetVolumeControl();
+			m_Menu.VolumeControl = m_SubscribedVolumeControl;
 			m_Menu.ShowView(!m_Menu.IsViewVisible);
 		}
 
@@ -115,7 +150,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 			if (room == null)
 				return;
 
+			m_SubscribedVolumeControl = GetVolumeControl(room);
+
+			m_SubscribedMuteFeedbackControl = GetMuteFeedbackControl(room);
+			if (m_SubscribedMuteFeedbackControl != null)
+				m_SubscribedMuteFeedbackControl.OnMuteStateChanged += SubscribedMuteFeedbackControlOnMuteStateChanged;
+
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
+
+			IDeviceBase parent = m_SubscribedVolumeControl == null ? null : m_SubscribedVolumeControl.Parent;
+			m_SubscribedPowerControl = parent == null ? null : parent.Controls.GetControl<IPowerDeviceControl>();
+			if (m_SubscribedPowerControl != null)
+				m_SubscribedPowerControl.OnIsPoweredChanged += SubscribedPowerControlOnIsPoweredChanged;
 		}
 
 		/// <summary>
@@ -126,10 +172,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		{
 			base.Unsubscribe(room);
 
-			if (room == null)
-				return;
+			m_SubscribedVolumeControl = null;
 
-			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
+			if (m_SubscribedMuteFeedbackControl != null)
+				m_SubscribedMuteFeedbackControl.OnMuteStateChanged -= SubscribedMuteFeedbackControlOnMuteStateChanged;
+			m_SubscribedMuteFeedbackControl = null;
+
+			if (m_SubscribedPowerControl != null)
+				m_SubscribedPowerControl.OnIsPoweredChanged -= SubscribedPowerControlOnIsPoweredChanged;
+			m_SubscribedPowerControl = null;
+
+			if (room != null)
+				room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
+		}
+
+		private void SubscribedPowerControlOnIsPoweredChanged(object sender, PowerDeviceControlPowerStateApiEventArgs powerDeviceControlPowerStateApiEventArgs)
+		{
+			RefreshIfVisible();
 		}
 
 		/// <summary>
@@ -139,8 +198,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// <param name="eventArgs"></param>
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs eventArgs)
 		{
-			IVolumeDeviceControl volumeControl = GetVolumeControl();
-			ShowView(eventArgs.Data && volumeControl != null);
+			ShowView(eventArgs.Data && m_SubscribedVolumeControl != null);
+		}
+
+		private void SubscribedMuteFeedbackControlOnMuteStateChanged(object sender, BoolEventArgs boolEventArgs)
+		{
+			RefreshIfVisible();
 		}
 
 		#endregion

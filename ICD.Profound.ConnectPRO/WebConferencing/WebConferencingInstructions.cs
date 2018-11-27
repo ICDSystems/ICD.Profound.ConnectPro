@@ -78,19 +78,20 @@ namespace ICD.Profound.ConnectPRO.WebConferencing
 		[PublicAPI]
 		public static IEnumerable<WebConferencingAppInstructions> ParseApps(string xml)
 		{
-			string baseUrl = XmlUtils.TryReadChildElementContentAsString(xml, "BaseUrl") ?? GenerateBaseUrl();
+			string baseUrl = XmlUtils.TryReadChildElementContentAsString(xml, "BaseUrl") ?? BuildDefaultBaseUrl();
 			string apps = XmlUtils.GetChildElementAsString(xml, "Apps");
 
 			return XmlUtils.GetChildElementsAsString(apps, "App")
 						   .Select(s => WebConferencingAppInstructions.FromXml(baseUrl, s));
 		}
 
-		private static string GenerateBaseUrl()
+		private static string BuildDefaultBaseUrl()
 		{
-			const string format = @"http://{0}/WebConferencing/";
-			string ip = IcdEnvironment.NetworkAddresses.FirstOrDefault();
-
-			return string.Format(format, ip);
+			return new IcdUriBuilder
+			{
+				Host = IcdEnvironment.NetworkAddresses.FirstOrDefault(),
+				Path = "/WebConferencing/",
+			}.ToString();
 		}
 
 		public IEnumerator<WebConferencingAppInstructions> GetEnumerator()

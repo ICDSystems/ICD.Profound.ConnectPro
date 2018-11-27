@@ -4,9 +4,11 @@ using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Timers;
 using ICD.Connect.Cameras;
 using ICD.Connect.Cameras.Controls;
 using ICD.Connect.Cameras.Devices;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
@@ -15,14 +17,21 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference
 {
-	public sealed class VtcCameraPresenter : AbstractPresenter<IVtcCameraView>, IVtcCameraPresenter
+	public sealed class VtcCameraPresenter : AbstractUiPresenter<IVtcCameraView>, IVtcCameraPresenter
 	{
+		private const long PRESET_STORED_VISIBILITY_MILLISECONDS = 1000;
+
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private readonly Dictionary<int, CameraPreset> m_CameraPresets;
 
+		private readonly SafeTimer m_PresetStoredTimer;
+
 		[CanBeNull]
 		private ICameraDevice m_Camera;
+
+		[CanBeNull]
+		private IPresetControl m_SubscribedPresetControl;
 
 		/// <summary>
 		/// Gets/sets the current camera control.
@@ -35,7 +44,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				if (value == m_Camera)
 					return;
 
+				Unsubscribe(m_Camera);
 				m_Camera = value;
+				Subscribe(m_Camera);
 
 				RefreshIfVisible();
 			}
@@ -47,11 +58,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcCameraPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public VtcCameraPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
 			m_CameraPresets = new Dictionary<int, CameraPreset>();
+			m_PresetStoredTimer = SafeTimer.Stopped(() => ShowPresetStoredLabel(false));
+		}
+
+		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			m_PresetStoredTimer.Dispose();
+
+			base.Dispose();
 		}
 
 		/// <summary>
@@ -100,6 +122,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			}
 		}
 
+		private void ShowPresetStoredLabel(bool visible)
+		{
+			IVtcCameraView view = GetView();
+			if (view == null)
+				return;
+
+			view.SetPresetStoredLabelVisibility(visible);
+		}
+
 		private void Zoom(eCameraZoomAction action)
 		{
 			if (m_Camera == null)
@@ -119,6 +150,43 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (panTilt != null)
 				panTilt.PanTilt(action);
 		}
+
+		#region Camera Callbacks
+
+		/// <summary>
+		/// Subscribe to the camera events.
+		/// </summary>
+		/// <param name="camera"></param>
+		private void Subscribe(ICameraDevice camera)
+		{
+			m_SubscribedPresetControl = camera == null ? null : camera.Controls.GetControl<IPresetControl>();
+			if (m_SubscribedPresetControl != null)
+				m_SubscribedPresetControl.OnPresetsChanged += SubscribedPresetControlOnPresetsChanged;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the camera events.
+		/// </summary>
+		/// <param name="camera"></param>
+		private void Unsubscribe(ICameraDevice camera)
+		{
+			if (m_SubscribedPresetControl != null)
+				m_SubscribedPresetControl.OnPresetsChanged -= SubscribedPresetControlOnPresetsChanged;
+
+			m_SubscribedPresetControl = null;
+		}
+
+		/// <summary>
+		/// Called when the presets change.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void SubscribedPresetControlOnPresetsChanged(object sender, EventArgs eventArgs)
+		{
+			RefreshIfVisible();
+		}
+
+		#endregion
 
 		#region View Callbacks
 
@@ -223,7 +291,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			ushort index = (ushort)(eventArgs.Data + 1);
 			cameraControl.StorePreset(index);
-			RefreshIfVisible();
+
+			ShowPresetStoredLabel(true);
+			m_PresetStoredTimer.Reset(PRESET_STORED_VISIBILITY_MILLISECONDS);
 		}
 
 		/// <summary>
@@ -235,10 +305,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.ViewOnVisibilityChanged(sender, args);
 
+			ShowPresetStoredLabel(false);
+
 			if (args.Data)
 			{
 				// Hide the conferencing subpages
-				Navigation.LazyLoadPresenter<IVtcContactsPresenter>().ShowView(false);
+				Navigation.LazyLoadPresenter<IVtcContactsNormalPresenter>().ShowView(false);
+				Navigation.LazyLoadPresenter<IVtcContactsPolycomPresenter>().ShowView(false);
 				Navigation.LazyLoadPresenter<IVtcButtonListPresenter>().ShowView(false);
 			}
 			else

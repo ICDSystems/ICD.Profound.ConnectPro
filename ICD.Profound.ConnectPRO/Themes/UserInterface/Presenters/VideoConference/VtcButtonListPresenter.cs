@@ -12,7 +12,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference
 {
-	public sealed class VtcButtonListPresenter : AbstractPresenter<IVtcButtonListView>, IVtcButtonListPresenter
+	public sealed class VtcButtonListPresenter : AbstractUiPresenter<IVtcButtonListView>, IVtcButtonListPresenter
 	{
 		public const ushort INDEX_ACTIVE_CALLS = 0;
 		private const ushort INDEX_SHARE = 1;
@@ -34,12 +34,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				{INDEX_DTMF, typeof(IVtcDtmfPresenter)}
 			};
 
-		private readonly Dictionary<ushort, IPresenter> m_NavPages; 
+		private readonly Dictionary<ushort, IUiPresenter> m_NavPages; 
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private IPresenter m_Visible;
+		private IUiPresenter m_Visible;
 
-		public IPresenter Visible
+		public IUiPresenter Visible
 		{
 			get { return m_Visible; }
 			set
@@ -59,14 +59,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcButtonListPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public VtcButtonListPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
 
-			m_NavPages = new Dictionary<ushort, IPresenter>();
+			m_NavPages = new Dictionary<ushort, IUiPresenter>();
 			foreach (KeyValuePair<ushort, Type> kvp in s_NavTypes)
-				m_NavPages.Add(kvp.Key, nav.LazyLoadPresenter(kvp.Value));
+				m_NavPages.Add(kvp.Key, nav.LazyLoadPresenter(kvp.Value) as IUiPresenter);
 
 			SubscribePages();
 		}
@@ -96,7 +96,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				IEnumerable<string> labels = s_ButtonLabels.OrderValuesByKey();
 				view.SetButtonLabels(labels);
 
-				foreach (KeyValuePair<ushort, IPresenter> kvp in m_NavPages)
+				foreach (KeyValuePair<ushort, IUiPresenter> kvp in m_NavPages)
 				{
 					view.SetButtonVisible(kvp.Key, true);
 					view.SetButtonEnabled(kvp.Key, true);
@@ -121,7 +121,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		private void SubscribePages()
 		{
-			foreach (IPresenter presenter in m_NavPages.Values)
+			foreach (IUiPresenter presenter in m_NavPages.Values)
 				presenter.OnViewVisibilityChanged += PresenterOnViewVisibilityChanged;
 		}
 
@@ -130,7 +130,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		private void UnsubscribePages()
 		{
-			foreach (IPresenter presenter in m_NavPages.Values)
+			foreach (IUiPresenter presenter in m_NavPages.Values)
 				presenter.OnViewVisibilityChanged -= PresenterOnViewVisibilityChanged;
 		}
 
@@ -142,7 +142,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private void PresenterOnViewVisibilityChanged(object sender, BoolEventArgs boolEventArgs)
 		{
 			if (boolEventArgs.Data)
-				Visible = sender as IPresenter;
+				Visible = sender as IUiPresenter;
 			else if (Visible == sender)
 				Visible = null;
 
@@ -191,11 +191,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			if (args.Data)
 			{
-				m_NavPages[INDEX_ACTIVE_CALLS].ShowView(true);
+				ShowMenu(INDEX_ACTIVE_CALLS);
 			}
 			else
 			{
-				foreach (IPresenter presenter in m_NavPages.Values)
+				foreach (IUiPresenter presenter in m_NavPages.Values)
 					presenter.ShowView(false);
 			}
 		}

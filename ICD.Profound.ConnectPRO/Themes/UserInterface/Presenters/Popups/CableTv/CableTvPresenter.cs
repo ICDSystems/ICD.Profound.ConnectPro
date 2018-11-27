@@ -17,7 +17,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.CableTv
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly ReferencedCableTvPresenterFactory m_ChildrenFactory;
 
-		private Station[] m_Stations;
+		private readonly Station[] m_Stations;
 
 		/// <summary>
 		/// Gets/sets the tv tuner control that this preseter controls.
@@ -30,13 +30,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.CableTv
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public CableTvPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public CableTvPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
-			m_ChildrenFactory = new ReferencedCableTvPresenterFactory(nav, ItemFactory);
+			m_ChildrenFactory = new ReferencedCableTvPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
 
-			m_Stations = new Station[0];
+			m_Stations = theme.TvPresets.ToArray();
+
+			m_ChildrenFactory.BuildChildren(m_Stations);
 		}
 
 		/// <summary>
@@ -62,15 +64,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.CableTv
 
 			try
 			{
-				UnsubscribeChildren();
-
-				m_Stations = Theme.TvPresets.ToArray();
-
-				foreach (IReferencedCableTvPresenter presenter in m_ChildrenFactory.BuildChildren(m_Stations))
-				{
-					Subscribe(presenter);
+				foreach (IReferencedCableTvPresenter presenter in m_ChildrenFactory)
 					presenter.ShowView(true);
-				}
 
 				view.ShowSwipeIcons(m_Stations.Length > 6);
 			}

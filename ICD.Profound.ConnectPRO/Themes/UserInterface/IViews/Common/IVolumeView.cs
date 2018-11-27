@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 {
-	public interface IVolumeView : IView
+	public interface IVolumeView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses the volume up button.
@@ -40,5 +40,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 		/// </summary>
 		/// <param name="muted"></param>
 		void SetMuted(bool muted);
+
+		/// <summary>
+		/// Sets the enabled state of the volume controls.
+		/// </summary>
+		/// <param name="enabled"></param>
+		void SetControlsEnabled(bool enabled);
 	}
 }

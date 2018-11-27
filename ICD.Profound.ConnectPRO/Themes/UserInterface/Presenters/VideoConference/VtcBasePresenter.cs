@@ -1,11 +1,16 @@
 ﻿using System;
+using System.Linq;
 using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Conferencing.Cisco;
-using ICD.Connect.Conferencing.Cisco.Components.System;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
-using ICD.Connect.Conferencing.Controls;
+using ICD.Connect.Conferencing.ConferenceSources;
+using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Polycom.Devices.Codec.Controls;
+using ICD.Connect.Devices.Controls;
+using ICD.Connect.Devices.EventArguments;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
@@ -19,15 +24,41 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 {
 	public sealed class VtcBasePresenter : AbstractPopupPresenter<IVtcBaseView>, IVtcBasePresenter
 	{
-		private SystemComponent m_SubscribedCodecSystem;
-
-		private IConferenceManager m_SubscribedConferenceManager;
-
 		private readonly IVtcCallListTogglePresenter m_CallListTogglePresenter;
-		private readonly IVtcContactsPresenter m_ContactsPresenter;
+		private readonly IVtcContactsNormalPresenter m_ContactsNormalPresenter;
+		private readonly IVtcContactsPolycomPresenter m_ContactsPolycomPresenter;
 		private readonly IVtcButtonListPresenter m_ButtonListPresenter;
 		private readonly IVtcCameraPresenter m_CameraPresenter;
 		private readonly IVtcKeyboardPresenter m_KeyboardPresenter;
+		private readonly IVtcKeypadPresenter m_KeypadPresenter;
+
+		private IPowerDeviceControl m_SubscribedPowerControl;
+		private IDialingDeviceControl m_SubscribedVideoDialer;
+
+		private bool m_IsInCall;
+
+		private bool IsInCall
+		{
+			get { return m_IsInCall; }
+			set
+			{
+				if (value == m_IsInCall)
+					return;
+				
+				m_IsInCall = value;
+
+				if (m_IsInCall)
+					ShowView(true);
+
+				m_CallListTogglePresenter.ShowView(m_IsInCall);
+				m_ButtonListPresenter.ShowView(m_IsInCall);
+
+				if (m_IsInCall)
+					ShowContactsPresenter(false);
+				else if (IsViewVisible)
+					ShowContactsPresenter(true);
+			}
+		}
 
 		/// <summary>
 		/// Constructor.
@@ -35,26 +66,50 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcBasePresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public VtcBasePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_CallListTogglePresenter = nav.LazyLoadPresenter<IVtcCallListTogglePresenter>();
 			m_CallListTogglePresenter.OnButtonPressed += CallListTogglePresenterOnButtonPressed;
 
-			m_ContactsPresenter = nav.LazyLoadPresenter<IVtcContactsPresenter>();
-			m_ContactsPresenter.OnViewVisibilityChanged += ContactsPresenterOnViewVisibilityChanged;
+			m_ContactsNormalPresenter = nav.LazyLoadPresenter<IVtcContactsNormalPresenter>();
+			m_ContactsNormalPresenter.OnViewVisibilityChanged += ContactsNormalPresenterOnViewVisibilityChanged;
+
+			m_ContactsPolycomPresenter = nav.LazyLoadPresenter<IVtcContactsPolycomPresenter>();
+			m_ContactsPolycomPresenter.OnViewVisibilityChanged += ContactsPolycomPresenterOnViewVisibilityChanged;
 
 			m_KeyboardPresenter = nav.LazyLoadPresenter<IVtcKeyboardPresenter>();
+			m_KeypadPresenter = nav.LazyLoadPresenter<IVtcKeypadPresenter>();
+
 			m_ButtonListPresenter = nav.LazyLoadPresenter<IVtcButtonListPresenter>();
 			m_CameraPresenter = nav.LazyLoadPresenter<IVtcCameraPresenter>();
 		}
 
-		private void ContactsPresenterOnViewVisibilityChanged(object sender, BoolEventArgs boolEventArgs)
+		/// <summary>
+		/// Closes the popup.
+		/// </summary>
+		public override void Close()
+		{
+			// Close before routing for UX
+			base.Close();
+
+			if (Room != null)
+				Room.Routing.RouteOsdPostVtc();
+		}
+
+		#region Private Methods
+
+		private void ContactsPolycomPresenterOnViewVisibilityChanged(object sender, BoolEventArgs boolEventArgs)
 		{
 			m_CallListTogglePresenter.SetContactsMode(!boolEventArgs.Data);
 		}
 
-		private SystemComponent GetSystemComponent(IConnectProRoom room)
+		private void ContactsNormalPresenterOnViewVisibilityChanged(object sender, BoolEventArgs boolEventArgs)
+		{
+			m_CallListTogglePresenter.SetContactsMode(!boolEventArgs.Data);
+		}
+
+		private static IPowerDeviceControl GetSystemComponent(IConnectProRoom room)
 		{
 			if (room == null)
 				return null;
@@ -63,27 +118,45 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (dialer == null)
 				return null;
 
-			CiscoCodec codec = dialer.Parent as CiscoCodec;
-			return codec == null ? null : codec.Components.GetComponent<SystemComponent>();
+			IVideoConferenceDevice codec = dialer.Parent as IVideoConferenceDevice;
+			return codec == null ? null : codec.Controls.GetControl<IPowerDeviceControl>();
 		}
 
 		/// <summary>
 		/// Ensures the codec is awake while the view is visible.
 		/// </summary>
-		private void UpdateCodecAwakeState()
+		private void UpdateCodecAwakeState(bool forcePowerOff)
 		{
-			if (m_SubscribedCodecSystem == null)
+			if (m_SubscribedPowerControl == null)
 				return;
 
 			bool visible = IsViewVisible;
-			if (visible == m_SubscribedCodecSystem.Awake)
+			if (visible == m_SubscribedPowerControl.IsPowered)
 				return;
 
 			if (visible)
-				m_SubscribedCodecSystem.Wake();
-			else
-				m_SubscribedCodecSystem.Standby();
+				m_SubscribedPowerControl.PowerOn();
+			else if (forcePowerOff)
+				m_SubscribedPowerControl.PowerOff();
 		}
+
+		private void ShowContactsPresenter(bool visible)
+		{
+			if (visible)
+			{
+				bool polycom = m_SubscribedVideoDialer is PolycomCodecDialingControl;
+
+				m_ContactsNormalPresenter.ShowView(!polycom);
+				m_ContactsPolycomPresenter.ShowView(polycom);
+			}
+			else
+			{
+				m_ContactsNormalPresenter.ShowView(false);
+				m_ContactsPolycomPresenter.ShowView(false);
+			}
+		}
+
+		#endregion
 
 		#region Room Callbacks
 
@@ -98,14 +171,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (room == null)
 				return;
 
-			m_SubscribedConferenceManager = room.ConferenceManager;
-			m_SubscribedConferenceManager.OnInCallChanged += SubscribedConferenceManagerOnInCallChanged;
+			m_SubscribedVideoDialer = room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			if (m_SubscribedVideoDialer != null)
+			{
+				m_SubscribedVideoDialer.OnSourceAdded += VideoDialerOnSourceAdded;
+				m_SubscribedVideoDialer.OnSourceChanged += VideoDialerOnSourceChanged;
+				m_SubscribedVideoDialer.OnSourceRemoved += VideoDialerOnSourceRemoved;
+			}
 
-			m_SubscribedCodecSystem = GetSystemComponent(room);
-			if (m_SubscribedCodecSystem == null)
+			m_SubscribedPowerControl = GetSystemComponent(room);
+			if (m_SubscribedPowerControl == null)
 				return;
 
-			m_SubscribedCodecSystem.OnAwakeStateChanged += SubscribedCodecSystemOnAwakeStateChanged;
+			m_SubscribedPowerControl.OnIsPoweredChanged += SubscribedPowerControlOnIsPoweredChanged;
 		}
 
 		/// <summary>
@@ -116,32 +194,44 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Unsubscribe(room);
 
-			if (m_SubscribedConferenceManager != null)
-				m_SubscribedConferenceManager.OnInCallChanged -= SubscribedConferenceManagerOnInCallChanged;
+			if (m_SubscribedVideoDialer != null)
+			{
+				m_SubscribedVideoDialer.OnSourceAdded -= VideoDialerOnSourceAdded;
+				m_SubscribedVideoDialer.OnSourceChanged -= VideoDialerOnSourceChanged;
+				m_SubscribedVideoDialer.OnSourceRemoved -= VideoDialerOnSourceRemoved;
+			}
 
-			if (m_SubscribedCodecSystem == null)
-				return;
+			if (m_SubscribedPowerControl != null)
+			{
+				m_SubscribedPowerControl.OnIsPoweredChanged -= SubscribedPowerControlOnIsPoweredChanged;
+			}
 
-			m_SubscribedCodecSystem.OnAwakeStateChanged -= SubscribedCodecSystemOnAwakeStateChanged;
+			m_SubscribedVideoDialer = null;
+			m_SubscribedPowerControl = null;
 		}
 
-		private void SubscribedConferenceManagerOnInCallChanged(object sender, InCallEventArgs inCallEventArgs)
+		private void VideoDialerOnSourceChanged(object sender, ConferenceSourceEventArgs eventArgs)
 		{
-			bool isInCall = inCallEventArgs.Data >= eInCall.Audio;
+			UpdateVisibility();
+		}
 
-			m_CallListTogglePresenter.ShowView(isInCall);
+		private void VideoDialerOnSourceRemoved(object sender, ConferenceSourceEventArgs eventArgs)
+		{
+			UpdateVisibility();
+		}
 
-			if (isInCall)
-			{
-				m_ContactsPresenter.ShowView(false);
-				m_ButtonListPresenter.ShowView(true);
-			}
-			else
-			{
-				m_ButtonListPresenter.ShowView(false);
-				if (IsViewVisible)
-					m_ContactsPresenter.ShowView(true);
-			}
+		private void VideoDialerOnSourceAdded(object sender, ConferenceSourceEventArgs eventArgs)
+		{
+			UpdateVisibility();
+		}
+
+		private void UpdateVisibility()
+		{
+			IsInCall =
+				m_SubscribedVideoDialer != null &&
+				m_SubscribedVideoDialer.GetSources()
+				                       .Any(s => s.GetIsOnline() ||
+				                                 (s.GetIsActive() && s.Direction == eConferenceSourceDirection.Outgoing));
 		}
 
 		/// <summary>
@@ -149,9 +239,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void SubscribedCodecSystemOnAwakeStateChanged(object sender, BoolEventArgs eventArgs)
+		private void SubscribedPowerControlOnIsPoweredChanged(object sender, PowerDeviceControlPowerStateApiEventArgs eventArgs)
 		{
-			UpdateCodecAwakeState();
+			UpdateCodecAwakeState(false);
 		}
 
 		#endregion
@@ -165,6 +255,32 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="eventArgs"></param>
 		protected override void ViewOnCloseButtonPressed(object sender, EventArgs eventArgs)
 		{
+			// If the camera subpage is open close that instead
+			IVtcCameraPresenter cameraPresenter = Navigation.LazyLoadPresenter<IVtcCameraPresenter>();
+			if (cameraPresenter.IsViewVisible)
+			{
+				cameraPresenter.ShowView(false);
+				return;
+			}
+
+			// If the keyboard subpage is open close that instead
+			IVtcKeyboardPresenter keyboardPresenter = Navigation.LazyLoadPresenter<IVtcKeyboardPresenter>();
+			if (keyboardPresenter.IsViewVisible)
+			{
+				keyboardPresenter.ShowView(false);
+				ShowContactsPresenter(true);
+				return;
+			}
+
+			// If the keypad subpage is open close that instead
+			IVtcKeypadPresenter keypadPresenter = Navigation.LazyLoadPresenter<IVtcKeypadPresenter>();
+			if (keypadPresenter.IsViewVisible)
+			{
+				keypadPresenter.ShowView(false);
+				ShowContactsPresenter(true);
+				return;
+			}
+
 			// If we are in a call we want to confirm before closing
 			IConferenceManager manager = Room == null ? null : Room.ConferenceManager;
 			bool isInCall = manager != null && manager.IsInCall >= eInCall.Audio;
@@ -187,16 +303,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_CameraPresenter.ShowView(false);
 			m_ButtonListPresenter.ShowView(false);
 			m_KeyboardPresenter.ShowView(false);
+			m_KeypadPresenter.ShowView(false);
 
 			// View became visible
 			if (args.Data)
 			{
-				m_ContactsPresenter.ShowView(true);
+				ShowContactsPresenter(true);
 			}
 			// View became hidden
 			else
 			{
-				m_ContactsPresenter.ShowView(false);
+				ShowContactsPresenter(false);
 				m_CallListTogglePresenter.ShowView(false);
 
 				IConferenceManager manager = Room == null ? null : Room.ConferenceManager;
@@ -204,12 +321,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 				if (active != null)
 					active.Hangup();
-
-				if (Room != null)
-					Room.Routing.UnrouteVtc();
 			}
 
-			UpdateCodecAwakeState();
+			UpdateCodecAwakeState(true);
 		}
 
 		#endregion
@@ -221,15 +335,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (m_CameraPresenter.IsViewVisible)
 				m_CameraPresenter.ShowView(false);
 
-			if (m_ContactsPresenter.IsViewVisible)
+			if (m_ContactsNormalPresenter.IsViewVisible || m_ContactsPolycomPresenter.IsViewVisible)
 			{
-				m_ContactsPresenter.ShowView(false);
+				ShowContactsPresenter(false);
 				m_ButtonListPresenter.ShowView(true);
 			}
 			else
 			{
 				m_ButtonListPresenter.ShowView(false);
-				m_ContactsPresenter.ShowView(true);
+				ShowContactsPresenter(true);
 			}
 		}
 

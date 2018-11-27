@@ -1,4 +1,5 @@
-﻿<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -58,7 +59,7 @@
     </Reference>
     <Reference Include="SimplSharpReflectionInterface, Version=1.0.5583.25238, Culture=neutral, PublicKeyToken=1099c178b3b54c3b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\ProgramData\Crestron\SDK\SimplSharpReflectionInterface.dll</HintPath>
+      <HintPath>C:\ProgramData\Crestron\SDK\SimplSharpReflectionInterface.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -71,6 +72,7 @@
     <Compile Include="Rooms\ConnectProRoom.cs" />
     <Compile Include="Rooms\ConnectProRoomSettings.cs" />
     <Compile Include="Rooms\IConnectProRoom.cs" />
+    <Compile Include="Rooms\WakeSchedule.cs" />
     <Compile Include="Routing\ConnectProRouting.cs" />
     <Compile Include="Routing\Endpoints\Sources\ConnectProSource.cs" />
     <Compile Include="Routing\Endpoints\Sources\ConnectProSourceSettings.cs" />
@@ -81,52 +83,85 @@
     <Compile Include="Themes\ConnectProThemeSettings.cs" />
     <Compile Include="Themes\MicrophoneInterface\ConnectProMicrophoneInterface.cs" />
     <Compile Include="Themes\MicrophoneInterface\ConnectProMicrophoneInterfaceFactory.cs" />
+    <Compile Include="Themes\Mpc3201UserInterface\ConnectProMpc3201Interface.cs" />
+    <Compile Include="Themes\Mpc3201UserInterface\ConnectProMpc3201InterfaceFactory.cs" />
     <Compile Include="Themes\OsdInterface\ConnectProOsdInterface.cs" />
     <Compile Include="Themes\OsdInterface\ConnectProOsdInterfaceFactory.cs" />
-    <Compile Include="Themes\OsdInterface\IPresenters\IOsdIncomingCallPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\IOsdHelloPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\IOsdHeaderPresenter.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\IOsdNavigationController.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\IOsdPresenter.cs" />
-    <Compile Include="Themes\OsdInterface\IPresenters\IOsdSourcesPresenter.cs" />
-    <Compile Include="Themes\OsdInterface\IPresenters\IOsdWelcomePresenter.cs" />
-    <Compile Include="Themes\OsdInterface\IViews\IOsdIncomingCallView.cs" />
-    <Compile Include="Themes\OsdInterface\IViews\IOsdSourcesView.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\Popups\IOsdIncomingCallPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\Popups\IOsdMutePresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\Sources\IOsdSourcesPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\VisibilityTree\NotificationVisibilityNode.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\Welcome\IOsdWelcomePresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\Welcome\IReferencedSchedulePresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\IOsdHelloView.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\IOsdHeaderView.cs" />
     <Compile Include="Themes\OsdInterface\IViews\IOsdView.cs" />
     <Compile Include="Themes\OsdInterface\IViews\IOsdViewFactory.cs" />
-    <Compile Include="Themes\OsdInterface\IViews\IOsdWelcomeView.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\Popups\IOsdIncomingCallView.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\Popups\IOsdMuteView.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\Sources\IOsdSourcesView.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\Welcome\IOsdWelcomeView.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\Welcome\IReferencedScheduleView.cs" />
     <Compile Include="Themes\OsdInterface\Presenters\AbstractOsdComponentPresenter.cs" />
     <Compile Include="Themes\OsdInterface\Presenters\AbstractOsdListItemFactory.cs" />
     <Compile Include="Themes\OsdInterface\Presenters\AbstractOsdPresenter.cs" />
     <Compile Include="Themes\OsdInterface\Presenters\ConnectProOsdNavigationController.cs" />
-    <Compile Include="Themes\OsdInterface\Presenters\OsdIncomingCallPresenter.cs" />
-    <Compile Include="Themes\OsdInterface\Presenters\OsdSourcesPresenter.cs" />
-    <Compile Include="Themes\OsdInterface\Presenters\OsdWelcomePresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\OsdHelloPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\OsdHeaderPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\Popups\OsdIncomingCallPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\Popups\OsdMutePresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\Sources\OsdSourcesPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\Welcome\OsdWelcomePresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\Welcome\ReferencedSchedulePresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\Welcome\ReferencedSchedulePresenterFactory.cs" />
     <Compile Include="Themes\OsdInterface\Views\AbstractOsdComponentView.cs" />
     <Compile Include="Themes\OsdInterface\Views\AbstractOsdView.cs" />
     <Compile Include="Themes\OsdInterface\Views\ConnectProOsdViewFactory.cs" />
-    <Compile Include="Themes\OsdInterface\Views\OsdIncomingCallView.cs" />
-    <Compile Include="Themes\OsdInterface\Views\OsdIncomingCallView.generated.cs" />
-    <Compile Include="Themes\OsdInterface\Views\OsdSourcesView.cs" />
-    <Compile Include="Themes\OsdInterface\Views\OsdSourcesView.generated.cs" />
-    <Compile Include="Themes\OsdInterface\Views\OsdWelcomeView.cs" />
-    <Compile Include="Themes\OsdInterface\Views\OsdWelcomeView.generated.cs" />
+    <Compile Include="Themes\OsdInterface\Views\OsdHelloView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\OsdHelloView.generated.cs" />
+    <Compile Include="Themes\OsdInterface\Views\OsdHeaderView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\OsdHeaderView.generated.cs" />
+    <Compile Include="Themes\OsdInterface\Views\Popups\OsdIncomingCallView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\Popups\OsdIncomingCallView.generated.cs" />
+    <Compile Include="Themes\OsdInterface\Views\Popups\OsdMuteView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\Popups\OsdMuteView.generated.cs" />
+    <Compile Include="Themes\OsdInterface\Views\Sources\OsdSourcesView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\Sources\OsdSourcesView.generated.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\Welcome\EmptyBooking.cs" />
+    <Compile Include="Themes\OsdInterface\Views\Welcome\OsdWelcomeView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\Welcome\OsdWelcomeView.generated.cs" />
+    <Compile Include="Themes\OsdInterface\Views\Welcome\ReferencedScheduleView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\Welcome\ReferencedScheduleView.generated.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\AudioConference\IAtcBasePresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\AudioConference\IAtcIncomingCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IMenuDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmLeaveCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmEndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmSplashPowerPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IEndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IHeaderPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\IPasscodePresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\IReferencedSchedulePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IStartMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IVolumePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionCameraPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionPrivacyMutePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Options\IOptionVolumePresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\ISettingsBasePresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\ISettingsDirectoryPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\ISettingsPasscodePresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\ISettingsSystemPowerPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Sources\IReferencedSourceSelectPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Sources\ISourceSelectPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IDisabledAlertPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IHardButtonsPresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\INavigationController.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\IPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\IConnectProNavigationController.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\IUiPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Popups\CableTv\IReferencedCableTvPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Popups\IAppleTvPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Popups\CableTv\ICableTvPresenter.cs" />
@@ -134,6 +169,8 @@
     <Compile Include="Themes\UserInterface\IPresenters\Popups\WebConferencing\IReferencedWebConferencingAlertPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Popups\WebConferencing\IWebConferencingAlertPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Popups\WebConferencing\IWebConferencingStepPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcContactsPolycomPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcContactsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcReferencedContactsPresenterBase.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcReferencedFolderPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcReferencedFavoritesPresenter.cs" />
@@ -141,26 +178,36 @@
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Dtmf\IVtcReferencedDtmfPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\ActiveCalls\IVtcActiveCallsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\ActiveCalls\IVtcReferencedActiveCallsPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcBaseKeyboardPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcButtonListPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcCallListTogglePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcCameraPresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcContactsPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcContactsNormalPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Dtmf\IVtcDtmfPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcIncomingCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcReferencedContactsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcKeyboardPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcKeypadPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcSharePresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\VisibilityNode.cs" />
+    <Compile Include="Themes\UserInterface\IViews\AudioConference\IAtcBaseView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\AudioConference\IAtcIncomingCallView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Cameras\ICamerasView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Colors.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Displays\IMenuDisplaysView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmLeaveCallView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmEndMeetingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmSplashPowerView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\IPasscodeView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\IReferencedScheduleView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IStartMeetingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IVolumeView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Options\IOptionCameraView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\Settings\ISettingsBaseView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\Settings\ISettingsDirectoryView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\Settings\ISettingsPasscodeView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\Settings\ISettingsSystemPowerView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\eSourceState.cs" />
     <Compile Include="Themes\UserInterface\IViews\Icons.cs" />
     <Compile Include="Themes\UserInterface\IViews\IDisabledAlertView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IHardButtonsView.cs" />
@@ -175,18 +222,21 @@
     <Compile Include="Themes\UserInterface\IViews\Common\Sources\IReferencedSourceSelectView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Popups\CableTv\ICableTvView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Popups\IPopupView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\IView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\IViewFactory.cs" />
+    <Compile Include="Themes\UserInterface\IViews\IUiView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\IUiViewFactory.cs" />
     <Compile Include="Themes\UserInterface\ConnectProUserInterface.cs" />
     <Compile Include="Themes\UserInterface\ConnectProUserInterfaceFactory.cs" />
     <Compile Include="Themes\UserInterface\IViews\Popups\WebConferencing\IReferencedWebConferencingAlertView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Popups\WebConferencing\IWebConferencingAlertView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Popups\WebConferencing\IWebConferencingStepView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\VideoConference\Contacts\IVtcContactsPolycomView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\VideoConference\Contacts\IVtcContactsView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcBaseKeyboardView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcBaseView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcButtonListView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcCallListToggleView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcCameraView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\VideoConference\Contacts\IVtcContactsView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\VideoConference\Contacts\IVtcContactsNormalView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\Dtmf\IVtcDtmfView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\ActiveCalls\IVtcActiveCallsView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcIncomingCallView.cs" />
@@ -194,20 +244,32 @@
     <Compile Include="Themes\UserInterface\IViews\VideoConference\Dtmf\IVtcReferencedDtmfView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\ActiveCalls\IVtcReferencedActiveCallsView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcKeyboardView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcKeypadView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcShareView.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\AbstractComponentPresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\AbstractListItemFactory.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\AbstractPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\AbstractUiComponentPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\AbstractUiListItemFactory.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\AbstractUiPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\AudioConference\AtcBasePresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\AudioConference\AtcIncomingCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmEndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmLeaveCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmSplashPowerPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\MenuDisplaysPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Displays\MenuDisplaysPresenterDisplay.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\EndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\HeaderPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\AbstractOptionPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionCameraPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionPrivacyMutePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\OptionVolumePresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\PasscodePresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\ReferencedSchedulePresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\ReferencedSchedulePresenterFactory.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Settings\SettingsBasePresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Settings\SettingsDirectoryPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Settings\SettingsPasscodePresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Settings\SettingsSystemPowerPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Sources\ReferencedSourceSelectPresenterCache.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\SourceSelectPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\ReferencedSourceSelectPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\ReferencedSourceSelectPresenterFactory.cs" />
@@ -225,8 +287,11 @@
     <Compile Include="Themes\UserInterface\Presenters\Popups\WebConferencing\ReferencedWebConferencingAlertPresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\WebConferencing\WebConferencingAlertPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\WebConferencing\WebConferencingStepPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\VideoConference\AbstractVtcBaseKeyboardPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\AbstractVtcContactsPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\AbstractVtcReferencedContactsPresenterBase.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\VtcContactsPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\VtcContactsPolycomPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\VtcContactsNormalPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\VtcReferencedContactsPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\VtcReferencedContactsPresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\VtcReferencedFavoritesPresenter.cs" />
@@ -244,11 +309,14 @@
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Dtmf\VtcDtmfPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcIncomingCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcKeyboardPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcKeypadPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcSharePresenter.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractComponentView.cs" />
-    <Compile Include="Themes\UserInterface\Views\AbstractView.cs" />
-    <Compile Include="Themes\UserInterface\Views\Cameras\CamerasView.cs" />
-    <Compile Include="Themes\UserInterface\Views\Cameras\CamerasView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\AbstractUiView.cs" />
+    <Compile Include="Themes\UserInterface\Views\AudioConference\AtcBaseView.cs" />
+    <Compile Include="Themes\UserInterface\Views\AudioConference\AtcBaseView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\AudioConference\AtcIncomingCallView.cs" />
+    <Compile Include="Themes\UserInterface\Views\AudioConference\AtcIncomingCallView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmEndMeetingView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmEndMeetingView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmLeaveCallView.cs" />
@@ -268,6 +336,18 @@
     <Compile Include="Themes\UserInterface\Views\Common\Options\OptionVolumeView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Options\OptionPrivacyMuteView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Options\OptionPrivacyMuteView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\PasscodeView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\PasscodeView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\ReferencedScheduleView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\ReferencedScheduleView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsBaseView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsBaseView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsDirectoryView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsDirectoryView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsPasscodeView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsPasscodeView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsSystemPowerView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsSystemPowerView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\ReferencedSourceSelectView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\ReferencedSourceSelectView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\SourceSelectView.cs" />
@@ -276,7 +356,7 @@
     <Compile Include="Themes\UserInterface\Views\Common\StartMeetingView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\VolumeView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\VolumeView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\ConnectProViewFactory.cs" />
+    <Compile Include="Themes\UserInterface\Views\ConnectProUiViewFactory.cs" />
     <Compile Include="Themes\UserInterface\Views\DisabledAlertView.cs" />
     <Compile Include="Themes\UserInterface\Views\DisabledAlertView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\HardButtonsView.cs" />
@@ -284,10 +364,6 @@
     <Compile Include="Themes\UserInterface\Views\Popups\AbstractPopupView.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\AppleTvView.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\AppleTvView.generated.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\AbstractVisibilityNode.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\DefaultVisibilityNode.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\IVisibilityNode.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\VisibilityTree\SingleVisibilityNode.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\CableTv\CableTvView.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\CableTv\CableTvView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\CableTv\ReferencedCableTvView.cs" />
@@ -298,6 +374,10 @@
     <Compile Include="Themes\UserInterface\Views\Popups\WebConferencing\WebConferencingAlertView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\WebConferencing\WebConferencingStepView.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\WebConferencing\WebConferencingStepView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\AbstractVtcBaseKeyboardView.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\Contacts\AbstractVtcContactsView.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\Contacts\VtcContactsPolycomView.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\Contacts\VtcContactsPolycomView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\Dtmf\VtcReferencedDtmfView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\Dtmf\VtcReferencedDtmfView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcBaseView.cs" />
@@ -308,8 +388,8 @@
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcCallListToggleView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcCameraView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcCameraView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\VideoConference\Contacts\VtcContactsView.cs" />
-    <Compile Include="Themes\UserInterface\Views\VideoConference\Contacts\VtcContactsView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\Contacts\VtcContactsNormalView.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\Contacts\VtcContactsNormalView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\Dtmf\VtcDtmfView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\Dtmf\VtcDtmfView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\ActiveCalls\VtcActiveCallsView.cs" />
@@ -322,6 +402,8 @@
     <Compile Include="Themes\UserInterface\Views\VideoConference\ActiveCalls\VtcReferencedActiveCallsView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcKeyboardView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcKeyboardView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcKeypadView.cs" />
+    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcKeypadView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcShareView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcShareView.generated.cs" />
     <Compile Include="VolumePoints\ConnectProVolumePoint.cs" />
@@ -348,13 +430,21 @@
       <Project>{8ED25D96-E9A5-4E9A-A890-B4EF3AB62041}</Project>
       <Name>ICD.Connect.Audio_SimplSharp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Calendaring\ICD.Connect.Calendaring\ICD.Connect.Calendaring_SimplSharp.csproj">
+      <Project>{3C084F11-8810-4B87-970C-F97E2905ACEB}</Project>
+      <Name>ICD.Connect.Calendaring_SimplSharp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ICD.Connect.Cameras\ICD.Connect.Cameras\ICD.Connect.Cameras_SimplSharp.csproj">
       <Project>{B13D593D-8BBF-4E20-ABD8-47C6095E7D3E}</Project>
       <Name>ICD.Connect.Cameras_SimplSharp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing.Cisco\ICD.Connect.Conferencing.Cisco_SimplSharp.csproj">
-      <Project>{B2DF3389-5C95-4CAF-BA30-3A4D0AAC9CE3}</Project>
-      <Name>ICD.Connect.Conferencing.Cisco_SimplSharp</Name>
+    <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing.Polycom\ICD.Connect.Conferencing.Polycom_SimplSharp.csproj">
+      <Project>{7CF948F3-D3D4-4102-835E-440D66D2AD35}</Project>
+      <Name>ICD.Connect.Conferencing.Polycom_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing.Zoom\ICD.Connect.Conferencing.Zoom_SimplSharp.csproj">
+      <Project>{D86EE18A-B98A-46F0-B930-CDE4A6012E49}</Project>
+      <Name>ICD.Connect.Conferencing.Zoom_SimplSharp</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing\ICD.Connect.Conferencing_SimplSharp.csproj">
       <Project>{1CCA89DA-1F1C-4997-A94F-ABCE878BD6DE}</Project>
@@ -368,9 +458,17 @@
       <Project>{FCC7D685-B801-43A5-AEB3-774442027A0D}</Project>
       <Name>ICD.Connect.Displays_SimplSharp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Misc\ICD.Connect.Misc\ICD.Connect.Misc_SimplSharp.csproj">
+      <Project>{3BAE6352-77B5-499A-9DA5-2AB198F53183}</Project>
+      <Name>ICD.Connect.Misc_SimplSharp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ICD.Connect.Misc\ICD.Connect.TvPresets\ICD.Connect.TvPresets_SimplSharp.csproj">
       <Project>{5752751F-FDEB-40A0-9249-6580A62A6D88}</Project>
       <Name>ICD.Connect.TvPresets_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Panels\ICD.Connect.Panels.Crestron\ICD.Connect.Panels.Crestron_SimplSharp.csproj">
+      <Project>{EF71F157-ED75-4B30-ABC9-1E7811615528}</Project>
+      <Name>ICD.Connect.Panels.Crestron_SimplSharp</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ICD.Connect.Panels\ICD.Connect.Panels.Server\ICD.Connect.Panels.Server_SimplSharp.csproj">
       <Project>{B14DB63B-1D7B-4112-8845-8187A2C7DF90}</Project>

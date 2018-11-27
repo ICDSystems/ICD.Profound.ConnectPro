@@ -1,5 +1,6 @@
-﻿using ICD.Connect.Conferencing.ConferenceManagers;
-using ICD.Connect.Conferencing.ConferenceSources;
+﻿using ICD.Connect.Conferencing.ConferenceSources;
+using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.EventArguments;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -30,7 +31,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcReferencedRecentPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public VtcReferencedRecentPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 		}
@@ -49,7 +50,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 					? Recent.Number
 					: Recent.Name;
 
-			return string.Format("{0} - {1}", Recent.End ?? Recent.Start, name);
+			if (string.IsNullOrEmpty(name))
+				name = "Unknown";
+
+			return string.Format("{0} - {1}", Recent.End ?? Recent.GetStartOrDialTime(), name);
 		}
 
 		/// <summary>
@@ -77,9 +81,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		protected override void Dial()
 		{
-			IConferenceManager manager = Room == null ? null : Room.ConferenceManager;
-			if (manager != null && m_Recent != null)
-				manager.Dial(m_Recent);
+			IDialingDeviceControl dialer = Room == null ? null : Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			if (dialer != null && m_Recent != null)
+				dialer.Dial(m_Recent.Number);
 		}
 	}
 }

@@ -5,7 +5,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 {
-	public sealed partial class VolumeView : AbstractView, IVolumeView
+	public sealed partial class VolumeView : AbstractUiView, IVolumeView
 	{
 		public event EventHandler OnVolumeUpButtonPressed;
 		public event EventHandler OnVolumeDownButtonPressed;
@@ -56,6 +56,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		{
 			m_Guage.Enable(!muted);
 			m_MuteButton.SetSelected(muted);
+		}
+
+		/// <summary>
+		/// Sets the enabled state of the volume controls.
+		/// </summary>
+		/// <param name="enabled"></param>
+		public void SetControlsEnabled(bool enabled)
+		{
+			m_VolumeDownButton.Enable(enabled);
+			m_VolumeUpButton.Enable(enabled);
+			m_MuteButton.Enable(enabled);
 		}
 
 		#endregion

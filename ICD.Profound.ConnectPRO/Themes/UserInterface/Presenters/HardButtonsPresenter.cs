@@ -3,7 +3,11 @@ using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Audio.Controls;
+using ICD.Connect.Devices;
+using ICD.Connect.Devices.Controls;
+using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.Panels.Controls;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
@@ -11,7 +15,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 {
-	public sealed class HardButtonsPresenter : AbstractPresenter<IHardButtonsView>, IHardButtonsPresenter
+	public sealed class HardButtonsPresenter : AbstractUiPresenter<IHardButtonsView>, IHardButtonsPresenter
 	{
 		private const int ADDRESS_POWER = 1;
 		private const int ADDRESS_HOME = 2;
@@ -22,6 +26,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private IVolumePresenter m_CachedVolumePresenter;
+		private IPowerDeviceControl m_PowerControl;
+		private readonly IHardButtonBacklightControl m_ButtonsControl;
+		private IVolumeDeviceControl m_VolumeControl;
 
 		/// <summary>
 		/// Gets the popup volume presenter.
@@ -40,10 +47,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public HardButtonsPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public HardButtonsPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
+
+			m_ButtonsControl = GetHardButtonBacklightControl(views);
 		}
 
 		/// <summary>
@@ -58,20 +67,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 
 			try
 			{
-				IHardButtonBacklightControl control = GetHardButtonBacklightControl();
-				if (control == null)
+				if (m_ButtonsControl == null)
 					return;
 
-				IVolumeDeviceControl volumeControl = GetVolumeControl();
-
 				bool isInMeeting = Room != null && Room.IsInMeeting;
-				bool hasVolumeControl = volumeControl != null;
+				bool hasVolumeControl = m_VolumeControl != null && (m_PowerControl == null || m_PowerControl.IsPowered);
 
-				control.SetBacklightEnabled(ADDRESS_POWER, isInMeeting);
-				control.SetBacklightEnabled(ADDRESS_HOME, isInMeeting);
-				control.SetBacklightEnabled(ADDRESS_LIGHT, false);
-				control.SetBacklightEnabled(ADDRESS_VOL_UP, hasVolumeControl);
-				control.SetBacklightEnabled(ADDRESS_VOL_DOWN, hasVolumeControl);
+				m_ButtonsControl.SetBacklightEnabled(ADDRESS_POWER, isInMeeting);
+				m_ButtonsControl.SetBacklightEnabled(ADDRESS_HOME, isInMeeting);
+				m_ButtonsControl.SetBacklightEnabled(ADDRESS_LIGHT, false);
+				m_ButtonsControl.SetBacklightEnabled(ADDRESS_VOL_UP, hasVolumeControl);
+				m_ButtonsControl.SetBacklightEnabled(ADDRESS_VOL_DOWN, hasVolumeControl);
 			}
 			finally
 			{
@@ -86,18 +92,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// </summary>
 		/// <returns></returns>
 		[CanBeNull]
-		private IHardButtonBacklightControl GetHardButtonBacklightControl()
+		private static IHardButtonBacklightControl GetHardButtonBacklightControl(IUiViewFactory viewFactory)
 		{
-			return ViewFactory.Panel.Controls.GetControl<IHardButtonBacklightControl>();
-		}
-
-		/// <summary>
-		/// Gets the volume control for the current room.
-		/// </summary>
-		/// <returns></returns>
-		private IVolumeDeviceControl GetVolumeControl()
-		{
-			return Room == null ? null : Room.GetVolumeControl();
+			return viewFactory.Panel.Controls.GetControl<IHardButtonBacklightControl>();
 		}
 
 		#endregion
@@ -143,10 +140,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="eventArgs"></param>
 		private void ViewOnPowerButtonPressed(object sender, EventArgs eventArgs)
 		{
-			if (Room == null)
-				return;
-
-			Room.EndMeeting(false);
+			if (Room != null)
+				Navigation.NavigateTo<IConfirmEndMeetingPresenter>();
 		}
 
 		/// <summary>
@@ -156,10 +151,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="eventArgs"></param>
 		private void ViewOnHomeButtonPressed(object sender, EventArgs eventArgs)
 		{
-			if (Room == null)
-				return;
-
-			Room.EndMeeting(false);
+			if (Room != null)
+				Navigation.NavigateTo<IConfirmEndMeetingPresenter>();
 		}
 
 		/// <summary>
@@ -178,7 +171,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="eventArgs"></param>
 		private void ViewOnVolumeUpButtonPressed(object sender, EventArgs eventArgs)
 		{
-			VolumePresenter.VolumeControl = GetVolumeControl();
+			VolumePresenter.VolumeControl = m_VolumeControl;
 			if (VolumePresenter.VolumeControl != null)
 				VolumePresenter.VolumeUp();
 		}
@@ -190,7 +183,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="eventArgs"></param>
 		private void ViewOnVolumeDownButtonPressed(object sender, EventArgs eventArgs)
 		{
-			VolumePresenter.VolumeControl = GetVolumeControl();
+			VolumePresenter.VolumeControl = m_VolumeControl;
 			if (VolumePresenter.VolumeControl != null)
 				VolumePresenter.VolumeDown();
 		}
@@ -221,6 +214,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 				return;
 
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
+
+			m_VolumeControl = room.GetVolumeControl();
+			if (m_VolumeControl == null)
+				return;
+
+			IDeviceBase parent = m_VolumeControl.Parent;
+			if (parent == null)
+				return;
+
+			m_PowerControl = parent.Controls.GetControl<IPowerDeviceControl>();
+			if (m_PowerControl == null)
+				return;
+
+			m_PowerControl.OnIsPoweredChanged += PowerControlOnIsPoweredChanged;
 		}
 
 		/// <summary>
@@ -235,9 +242,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 				return;
 
 			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
+
+			m_VolumeControl = null;
+
+			if (m_PowerControl != null)
+				m_PowerControl.OnIsPoweredChanged -= PowerControlOnIsPoweredChanged;
+			m_PowerControl = null;
 		}
 
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs boolEventArgs)
+		{
+			RefreshIfVisible();
+		}
+
+		private void PowerControlOnIsPoweredChanged(object sender, PowerDeviceControlPowerStateApiEventArgs args)
 		{
 			RefreshIfVisible();
 		}

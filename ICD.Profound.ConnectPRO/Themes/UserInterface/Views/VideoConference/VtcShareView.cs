@@ -6,7 +6,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 {
-	public sealed partial class VtcShareView : AbstractView, IVtcShareView
+	public sealed partial class VtcShareView : AbstractUiView, IVtcShareView
 	{
 		public event EventHandler<UShortEventArgs> OnSourceButtonPressed;
 		public event EventHandler OnShareButtonPressed;

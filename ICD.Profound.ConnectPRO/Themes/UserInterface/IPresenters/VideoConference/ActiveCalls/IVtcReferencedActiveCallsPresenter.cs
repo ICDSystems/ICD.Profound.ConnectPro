@@ -3,7 +3,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Active
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.ActiveCalls
 {
-	public interface IVtcReferencedActiveCallsPresenter : IPresenter<IVtcReferencedActiveCallsView>
+	public interface IVtcReferencedActiveCallsPresenter : IUiPresenter<IVtcReferencedActiveCallsView>
 	{
 		/// <summary>
 		/// Sets the conference source for this presenter.

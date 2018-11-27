@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
-using ICD.Common.Utils.Collections;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
@@ -12,7 +13,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 {
-	public sealed class SourceSelectPresenter : AbstractPresenter<ISourceSelectView>, ISourceSelectPresenter
+	public sealed class SourceSelectPresenter : AbstractUiPresenter<ISourceSelectView>, ISourceSelectPresenter
 	{
 		/// <summary>
 		/// Raised when the user presses a source.
@@ -20,11 +21,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		public event SourcePressedCallback OnSourcePressed;
 
 		private readonly ReferencedSourceSelectPresenterFactory m_ChildrenFactory;
-		private readonly IcdHashSet<ISource> m_RoutedSources;
+		private readonly Dictionary<ISource, eSourceState> m_RoutedSources;
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private ISource[] m_Sources;
 		private ISource m_ActiveSource;
+		private ushort m_DisplayCount;
 
 		#region Properties
 
@@ -53,14 +55,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public SourceSelectPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public SourceSelectPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
-			m_ChildrenFactory = new ReferencedSourceSelectPresenterFactory(nav, ItemFactory);
+			m_ChildrenFactory = new ReferencedSourceSelectPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
 
 			m_Sources = new ISource[0];
-			m_RoutedSources = new IcdHashSet<ISource>();
+			m_RoutedSources = new Dictionary<ISource, eSourceState>();
 		}
 
 		/// <summary>
@@ -88,25 +90,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 
 			try
 			{
-				UnsubscribeChildren();
-
-				m_Sources = GetSources().ToArray();
-				ushort displayCount =
-					Room == null
-						? (ushort)0
-						: (ushort)Room.Routing.GetDisplayDestinations().Count();
-
-				foreach (IReferencedSourceSelectPresenter presenter in m_ChildrenFactory.BuildChildren(m_Sources))
+				foreach (IReferencedSourceSelectPresenter presenter in m_ChildrenFactory)
 				{
-					Subscribe(presenter);
-
 					presenter.Selected = presenter.Source == m_ActiveSource;
 					presenter.ShowView(true);
-					presenter.Routed = presenter.Source != null && m_RoutedSources.Contains(presenter.Source);
+
+					presenter.SourceState =
+						presenter.Source == null
+							? eSourceState.Inactive
+							: m_RoutedSources.GetDefault(presenter.Source);
 				}
 
 				view.SetSourceCount((ushort)m_Sources.Length);
-				view.SetDisplayCount(displayCount);
+				view.SetDisplayCount(m_DisplayCount);
 			}
 			finally
 			{
@@ -114,11 +110,28 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			}
 		}
 
-		private IEnumerable<ISource> GetSources()
+		/// <summary>
+		/// Sets the room for this presenter to represent.
+		/// </summary>
+		/// <param name="room"></param>
+		public override void SetRoom(IConnectProRoom room)
 		{
-			return Room == null
+			m_Sources = GetSources(room).ToArray();
+			m_ChildrenFactory.BuildChildren(m_Sources);
+
+			m_DisplayCount =
+					room == null
+						? (ushort)0
+						: (ushort)room.Routing.GetDisplayDestinations().Count();
+
+			base.SetRoom(room);
+		}
+
+		private static IEnumerable<ISource> GetSources(IConnectProRoom room)
+		{
+			return room == null
 				       ? Enumerable.Empty<ISource>()
-				       : Room.Routing
+					   : room.Routing
 				             .GetCoreSources()
 				             .Where(s =>
 				                    {
@@ -131,12 +144,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// Sets the sources that are currently routed to displays.
 		/// </summary>
 		/// <param name="routedSources"></param>
-		public void SetRoutedSources(IEnumerable<ISource> routedSources)
+		public void SetRoutedSources(Dictionary<ISource, eSourceState> routedSources)
 		{
+			if (routedSources == null)
+				throw new ArgumentNullException("routedSources");
+
 			m_RefreshSection.Enter();
 
 			try
 			{
+				if (routedSources.DictionaryEqual(m_RoutedSources))
+					return;
+
 				m_RoutedSources.Clear();
 				m_RoutedSources.AddRange(routedSources);
 			}

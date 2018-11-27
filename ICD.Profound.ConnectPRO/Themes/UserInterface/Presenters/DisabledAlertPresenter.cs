@@ -5,7 +5,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 {
-	public sealed class DisabledAlertPresenter : AbstractPresenter<IDisabledAlertView>, IDisabledAlertPresenter
+	public sealed class DisabledAlertPresenter : AbstractUiPresenter<IDisabledAlertView>, IDisabledAlertPresenter
 	{
 		private readonly SafeTimer m_HideTimer;
 
@@ -15,7 +15,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public DisabledAlertPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		public DisabledAlertPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
 			m_HideTimer = SafeTimer.Stopped(() => ShowView(false));
 		}

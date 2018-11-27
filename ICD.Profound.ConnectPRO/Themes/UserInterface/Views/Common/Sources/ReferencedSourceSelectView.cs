@@ -13,6 +13,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		private const ushort MODE_WHITE = 1;
 		private const ushort MODE_YELLOW = 2;
 
+		private const ushort MODE_ROUTED_WHITE = 0;
+		private const ushort MODE_ROUTED_YELLOW = 1;
+		private const ushort MODE_ROUTED_GREEN = 2;
+
 		public event EventHandler OnButtonPressed;
 
 		/// <summary>
@@ -91,10 +95,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		/// <summary>
 		/// Sets the routed state for the source.
 		/// </summary>
-		/// <param name="routed"></param>
-		public void SetRoutedState(bool routed)
+		/// <param name="sourceState"></param>
+		public void SetRoutedState(eSourceState sourceState)
 		{
-			m_RoutedButton.SetSelected(routed);
+			switch (sourceState)
+			{
+				case eSourceState.Inactive:
+					m_RoutedButton.SetMode(MODE_ROUTED_WHITE);
+					break;
+				case eSourceState.Processing:
+					m_RoutedButton.SetMode(MODE_ROUTED_YELLOW);
+					break;
+				case eSourceState.Active:
+					m_RoutedButton.SetMode(MODE_ROUTED_GREEN);
+					break;
+				default:
+					throw new ArgumentOutOfRangeException("routed");
+			}
 		}
 
 		#endregion

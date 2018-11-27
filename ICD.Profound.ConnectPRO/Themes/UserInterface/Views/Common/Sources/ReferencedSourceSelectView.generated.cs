@@ -16,7 +16,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		private VtProSimpleLabel m_Line1Label;
 		private VtProSimpleLabel m_Line2Label;
 		private VtProSimpleLabel m_FeedbackLabel;
-		private VtProButton m_RoutedButton;
+		private VtProAdvancedButton m_RoutedButton;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -54,9 +54,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 				IndirectTextJoin = 3
 			};
 
-			m_RoutedButton = new VtProButton(panel, m_Subpage)
+			m_RoutedButton = new VtProAdvancedButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 2
+				DigitalPressJoin = 2,
+				AnalogModeJoin = 2
 			};
 		}
 

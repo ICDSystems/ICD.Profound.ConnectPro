@@ -4,7 +4,7 @@ using ICD.Common.Utils.EventArguments;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 {
-	public interface IVtcButtonListView : IView
+	public interface IVtcButtonListView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses a button.

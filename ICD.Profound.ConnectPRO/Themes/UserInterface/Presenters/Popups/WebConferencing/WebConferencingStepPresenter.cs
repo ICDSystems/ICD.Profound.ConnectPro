@@ -10,7 +10,7 @@ using ICD.Profound.ConnectPRO.WebConferencing;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.WebConferencing
 {
-	public sealed class WebConferencingStepPresenter : AbstractPresenter<IWebConferencingStepView>, IWebConferencingStepPresenter
+	public sealed class WebConferencingStepPresenter : AbstractUiPresenter<IWebConferencingStepView>, IWebConferencingStepPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 
@@ -57,7 +57,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.WebConf
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public WebConferencingStepPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public WebConferencingStepPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

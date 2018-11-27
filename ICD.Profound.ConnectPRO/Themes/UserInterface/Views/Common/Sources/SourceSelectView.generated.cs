@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ICD.Connect.Panels;
+using ICD.Connect.Panels.Devices;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Lists;
@@ -28,7 +29,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 			{
 				MaxSize = 8,
 				DigitalJoinIncrement = 2,
-				AnalogJoinIncrement = 1,
+				AnalogJoinIncrement = 2,
 				SerialJoinIncrement = 4
 			};
 

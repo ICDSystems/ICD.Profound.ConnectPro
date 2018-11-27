@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
-using ICD.Connect.Conferencing.ConferenceManagers;
-using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.ConferenceSources;
+using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -14,12 +13,12 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Active
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.ActiveCalls
 {
-	public sealed class VtcActiveCallsPresenter : AbstractPresenter<IVtcActiveCallsView>, IVtcActiveCallsPresenter
+	public sealed class VtcActiveCallsPresenter : AbstractUiPresenter<IVtcActiveCallsView>, IVtcActiveCallsPresenter
 	{
 		private readonly VtcReferencedActiveCallsPresenterFactory m_ChildrenFactory;
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private IConferenceManager m_SubscribedConferenceManager;
+		private IDialingDeviceControl m_SubscribedVideoDialer;
 
 		/// <summary>
 		/// Constructor.
@@ -27,10 +26,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcActiveCallsPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public VtcActiveCallsPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
-			m_ChildrenFactory = new VtcReferencedActiveCallsPresenterFactory(nav, ItemFactory);
+			m_ChildrenFactory = new VtcReferencedActiveCallsPresenterFactory(nav, ItemFactory, null, null);
 			m_RefreshSection = new SafeCriticalSection();
 		}
 
@@ -83,12 +82,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <returns></returns>
 		public IEnumerable<IConferenceSource> GetSources()
 		{
-			IConference conference = m_SubscribedConferenceManager == null
-				                         ? null
-				                         : m_SubscribedConferenceManager.ActiveConference;
-			return conference == null
+			return m_SubscribedVideoDialer == null
 				       ? Enumerable.Empty<IConferenceSource>()
-				       : conference.GetSources().Where(CanHangup);
+					   : m_SubscribedVideoDialer.GetSources().Where(s => s.GetIsActive());
 		}
 
 		/// <summary>
@@ -112,31 +108,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			return GetView().GetChildComponentViews(ViewFactory, count);
 		}
 
-		private bool CanHangup(IConferenceSource source)
-		{
-			switch (source.Status)
-			{
-				case eConferenceSourceStatus.Undefined:
-				case eConferenceSourceStatus.Disconnecting:
-				case eConferenceSourceStatus.Disconnected:
-				case eConferenceSourceStatus.Idle:
-					return false;
-
-				case eConferenceSourceStatus.Dialing:
-				case eConferenceSourceStatus.Connecting:
-				case eConferenceSourceStatus.Ringing:
-				case eConferenceSourceStatus.Connected:
-				case eConferenceSourceStatus.OnHold:
-				case eConferenceSourceStatus.EarlyMedia:
-				case eConferenceSourceStatus.Preserved:
-				case eConferenceSourceStatus.RemotePreserved:
-					return true;
-
-				default:
-					throw new ArgumentOutOfRangeException();
-			}
-		}
-
 		#endregion
 
 		#region Room Callbacks
@@ -152,14 +123,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (room == null)
 				return;
 
-			m_SubscribedConferenceManager = room.ConferenceManager;
-			if (m_SubscribedConferenceManager == null)
+			m_SubscribedVideoDialer = room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			if (m_SubscribedVideoDialer == null)
 				return;
 
-			m_SubscribedConferenceManager.OnInCallChanged += ConferenceManagerOnInCallChanged;
-			m_SubscribedConferenceManager.OnRecentSourceAdded += ConferenceManagerOnRecentSourceAdded;
-			m_SubscribedConferenceManager.OnActiveSourceStatusChanged += ConferenceManagerOnActiveSourceStatusChanged;
-			m_SubscribedConferenceManager.OnActiveConferenceChanged += ConferenceManagerOnActiveConferenceChanged;
+			m_SubscribedVideoDialer.OnSourceAdded += VideoDialerOnSourceAdded;
+			m_SubscribedVideoDialer.OnSourceRemoved += VideoDialerOnSourceRemoved;
+			m_SubscribedVideoDialer.OnSourceChanged += VideoDialerOnSourceChanged;
 		}
 
 		/// <summary>
@@ -170,51 +140,27 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Unsubscribe(room);
 
-			if (m_SubscribedConferenceManager == null)
-				return;
+			if (m_SubscribedVideoDialer != null)
+			{
+				m_SubscribedVideoDialer.OnSourceAdded -= VideoDialerOnSourceAdded;
+				m_SubscribedVideoDialer.OnSourceRemoved -= VideoDialerOnSourceRemoved;
+				m_SubscribedVideoDialer.OnSourceChanged -= VideoDialerOnSourceChanged;
+			}
 
-			m_SubscribedConferenceManager.OnInCallChanged -= ConferenceManagerOnInCallChanged;
-			m_SubscribedConferenceManager.OnRecentSourceAdded -= ConferenceManagerOnRecentSourceAdded;
-			m_SubscribedConferenceManager.OnActiveSourceStatusChanged -= ConferenceManagerOnActiveSourceStatusChanged;
-			m_SubscribedConferenceManager.OnActiveConferenceChanged -= ConferenceManagerOnActiveConferenceChanged;
+			m_SubscribedVideoDialer = null;
 		}
 
-		/// <summary>
-		/// Called when we enter/leave a call.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		private void ConferenceManagerOnInCallChanged(object sender, InCallEventArgs args)
+		private void VideoDialerOnSourceAdded(object sender, ConferenceSourceEventArgs e)
 		{
 			RefreshIfVisible();
 		}
 
-		/// <summary>
-		/// Called when an active source status changes.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		private void ConferenceManagerOnActiveSourceStatusChanged(object sender, ConferenceSourceStatusEventArgs args)
+		private void VideoDialerOnSourceRemoved(object sender, ConferenceSourceEventArgs e)
 		{
 			RefreshIfVisible();
 		}
 
-		/// <summary>
-		/// Called when a new source is added.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		private void ConferenceManagerOnRecentSourceAdded(object sender, ConferenceSourceEventArgs args)
-		{
-			RefreshIfVisible();
-		}
-
-		/// <summary>
-		/// Called when the active conference changes.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="conferenceEventArgs"></param>
-		private void ConferenceManagerOnActiveConferenceChanged(object sender, ConferenceEventArgs conferenceEventArgs)
+		private void VideoDialerOnSourceChanged(object sender, ConferenceSourceEventArgs e)
 		{
 			RefreshIfVisible();
 		}

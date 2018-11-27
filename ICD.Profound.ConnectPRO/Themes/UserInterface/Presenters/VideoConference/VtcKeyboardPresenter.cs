@@ -1,9 +1,7 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
-using ICD.Common.Utils.Extensions;
-using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.UI.EventArguments;
-using ICD.Connect.UI.Utils;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -11,15 +9,10 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference
 {
-	public sealed class VtcKeyboardPresenter : AbstractPresenter<IVtcKeyboardView>, IVtcKeyboardPresenter
+	public sealed class VtcKeyboardPresenter : AbstractVtcBaseKeyboardPresenter<IVtcKeyboardView>, IVtcKeyboardPresenter
 	{
-		public event EventHandler OnExitButtonPressed; 
-
-		private readonly KeypadStringBuilder m_StringBuilder;
-
 		private bool m_Shift;
 		private bool m_Caps;
-		private bool m_RefreshTextField;
 
 		#region Properties
 
@@ -65,23 +58,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcKeyboardPresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme)
+		public VtcKeyboardPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
-			m_StringBuilder = new KeypadStringBuilder();
-			m_StringBuilder.OnStringChanged += StringBuilderOnStringChanged;
-
-			m_RefreshTextField = true;
-		}
-
-		/// <summary>
-		/// Release resources.
-		/// </summary>
-		public override void Dispose()
-		{
-			OnExitButtonPressed = null;
-
-			base.Dispose();
 		}
 
 		/// <summary>
@@ -92,23 +71,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Refresh(view);
 
-			if (m_RefreshTextField)
-				view.SetText(m_StringBuilder.ToString());
-
 			view.SelectCapsButton(Caps);
 			view.SelectShiftButton(Shift);
 			view.SetShift(Shift, Caps);
-		}
-
-		/// <summary>
-		/// Called when the stringbuilder string changes.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="stringEventArgs"></param>
-		private void StringBuilderOnStringChanged(object sender, StringEventArgs stringEventArgs)
-		{
-			// Refresh synchronously to avoid interfering with user input.
-			RefreshIfVisible(false);
 		}
 
 		#region View Callbacks
@@ -121,14 +86,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Subscribe(view);
 
-			view.OnBackspaceButtonPressed += ViewOnBackspaceButtonPressed;
 			view.OnCapsButtonPressed += ViewOnCapsButtonPressed;
-			view.OnSubmitButtonPressed += ViewOnSubmitButtonPressed;
 			view.OnShiftButtonPressed += ViewOnShiftButtonPressed;
 			view.OnSpaceButtonPressed += ViewOnSpaceButtonPressed;
-			view.OnTextEntered += ViewOnTextEntered;
 			view.OnKeyPressed += ViewOnKeyPressed;
-			view.OnExitButtonPressed += ViewOnExitButtonPressed;
+			view.OnKeypadButtonPressed += ViewOnKeypadButtonPressed;
 		}
 
 		/// <summary>
@@ -139,26 +101,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Unsubscribe(view);
 
-			view.OnBackspaceButtonPressed -= ViewOnBackspaceButtonPressed;
 			view.OnCapsButtonPressed -= ViewOnCapsButtonPressed;
-			view.OnSubmitButtonPressed -= ViewOnSubmitButtonPressed;
 			view.OnShiftButtonPressed -= ViewOnShiftButtonPressed;
 			view.OnSpaceButtonPressed -= ViewOnSpaceButtonPressed;
-			view.OnTextEntered -= ViewOnTextEntered;
 			view.OnKeyPressed -= ViewOnKeyPressed;
-			view.OnExitButtonPressed -= ViewOnExitButtonPressed;
-		}
-
-		/// <summary>
-		/// Called when the user enters text directly in the text field.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="stringEventArgs"></param>
-		private void ViewOnTextEntered(object sender, StringEventArgs stringEventArgs)
-		{
-			m_RefreshTextField = false;
-			m_StringBuilder.SetString(stringEventArgs.Data);
-			m_RefreshTextField = true;
+			view.OnKeypadButtonPressed -= ViewOnKeypadButtonPressed;
 		}
 
 		/// <summary>
@@ -171,7 +118,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			char character = eventArgs.Data.GetChar(Shift, Caps);
 
 			Shift = false;
-			m_StringBuilder.AppendCharacter(character);
+			AppendCharacter(character);
 		}
 
 		/// <summary>
@@ -181,7 +128,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="eventArgs"></param>
 		private void ViewOnSpaceButtonPressed(object sender, EventArgs eventArgs)
 		{
-			m_StringBuilder.AppendCharacter(' ');
+			AppendCharacter(' ');
 		}
 
 		/// <summary>
@@ -195,24 +142,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		}
 
 		/// <summary>
-		/// Called when the user presses the submit button.
+		/// Called when the user presses the keypad button.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void ViewOnSubmitButtonPressed(object sender, EventArgs eventArgs)
+		private void ViewOnKeypadButtonPressed(object sender, EventArgs eventArgs)
 		{
-			string number = m_StringBuilder.ToString();
-
-			IConferenceManager manager = Room == null ? null : Room.ConferenceManager;
-			if (manager != null)
-				manager.Dial(number);
+			Navigation.LazyLoadPresenter<IVtcKeypadPresenter>().ShowView(DialCallback);
 
 			ShowView(false);
-		}
-
-		private void ViewOnExitButtonPressed(object sender, EventArgs eventArgs)
-		{
-			OnExitButtonPressed.Raise(this);
 		}
 
 		/// <summary>
@@ -226,28 +164,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		}
 
 		/// <summary>
-		/// Called when the iser presses the backspace button.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="eventArgs"></param>
-		private void ViewOnBackspaceButtonPressed(object sender, EventArgs eventArgs)
-		{
-			m_StringBuilder.Backspace();
-		}
-
-		/// <summary>
-		/// Called when the view visibility changes.
+		/// Called when the view visibility is about to change.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
+		protected override void ViewOnPreVisibilityChanged(object sender, BoolEventArgs args)
 		{
-			base.ViewOnVisibilityChanged(sender, args);
+			base.ViewOnPreVisibilityChanged(sender, args);
 
-			Caps = false;
-			Shift = false;
-
-			m_StringBuilder.Clear();
+			if (args.Data)
+			{
+				Caps = false;
+				Shift = false;
+			}
 		}
 
 		#endregion

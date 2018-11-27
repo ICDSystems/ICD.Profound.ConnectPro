@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common
 {
-	public interface IConfirmSplashPowerPresenter : IPresenter<IConfirmSplashPowerView>
+	public interface IConfirmSplashPowerPresenter : IUiPresenter<IConfirmSplashPowerView>
 	{
 	}
 }

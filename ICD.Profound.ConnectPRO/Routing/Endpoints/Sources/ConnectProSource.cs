@@ -8,6 +8,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 		Default,
 		CableTv,
 		Vtc,
+		Atc,
 		WebConference
 	}
 

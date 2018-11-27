@@ -5,12 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
-using ICD.Common.Utils.Extensions;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.AudioConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Options;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.CableTv;
@@ -20,9 +22,11 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.A
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Dtmf;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.CableTv;
@@ -37,9 +41,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 	/// <summary>
 	/// Provides a way for presenters to access each other.
 	/// </summary>
-	public sealed class ConnectProNavigationController : INavigationController
+	public sealed class ConnectProNavigationController : AbstractNavigationController, IConnectProNavigationController
 	{
-		private delegate IPresenter PresenterFactory(INavigationController nav, IViewFactory views, ConnectProTheme theme);
+		private delegate IUiPresenter PresenterFactory(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme);
 
 		private readonly Dictionary<Type, PresenterFactory> m_PresenterFactories = new Dictionary<Type, PresenterFactory>
 		{
@@ -70,12 +74,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IEndMeetingPresenter), (nav, views, theme) => new EndMeetingPresenter(nav, views, theme)},
 			{typeof(IHeaderPresenter), (nav, views, theme) => new HeaderPresenter(nav, views, theme)},
 			{typeof(IStartMeetingPresenter), (nav, views, theme) => new StartMeetingPresenter(nav, views, theme)},
+			{typeof(IReferencedSchedulePresenter), (nav, views, theme) => new ReferencedSchedulePresenter(nav, views, theme)},
 			{typeof(IVolumePresenter), (nav, views, theme) => new VolumePresenter(nav, views, theme)},
 			{typeof(IDisabledAlertPresenter), (nav, views, theme) => new DisabledAlertPresenter(nav, views, theme)},
+			{typeof(IPasscodePresenter), (nav, views, theme) => new PasscodePresenter(nav, views, theme)},
+
+			// Settings
+			{typeof(ISettingsBasePresenter), (nav, views, theme) => new SettingsBasePresenter(nav, views, theme)},
+			{typeof(ISettingsSystemPowerPresenter), (nav, views, theme) => new SettingsSystemPowerPresenter(nav, views, theme)},
+			{typeof(ISettingsPasscodePresenter), (nav, views, theme) => new SettingsPasscodePresenter(nav, views, theme)},
+			{typeof(ISettingsDirectoryPresenter), (nav, views, theme) => new SettingsDirectoryPresenter(nav, views, theme)},
 
 			// Video Conference
 			{typeof(IVtcBasePresenter), (nav, views, theme) => new VtcBasePresenter(nav, views, theme)},
-			{typeof(IVtcContactsPresenter), (nav, views, theme) => new VtcContactsPresenter(nav, views, theme)},
+			{typeof(IVtcContactsNormalPresenter), (nav, views, theme) => new VtcContactsNormalPresenter(nav, views, theme)},
+			{typeof(IVtcContactsPolycomPresenter), (nav, views, theme) => new VtcContactsPolycomPresenter(nav, views, theme)},
 			{typeof(IVtcCameraPresenter), (nav, views, theme) => new VtcCameraPresenter(nav, views, theme)},
 			{typeof(IVtcSharePresenter), (nav, views, theme) => new VtcSharePresenter(nav, views, theme)},
 			{typeof(IVtcDtmfPresenter), (nav, views, theme) => new VtcDtmfPresenter(nav, views, theme)},
@@ -86,6 +99,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IVtcCallListTogglePresenter), (nav, views, theme) => new VtcCallListTogglePresenter(nav, views, theme)},
 			{typeof(IVtcButtonListPresenter), (nav, views, theme) => new VtcButtonListPresenter(nav, views, theme)},
 			{typeof(IVtcKeyboardPresenter), (nav, views, theme) => new VtcKeyboardPresenter(nav, views, theme)},
+			{typeof(IVtcKeypadPresenter), (nav, views, theme) => new VtcKeypadPresenter(nav, views, theme)},
 
 			// Video Conference Contacts
 			{typeof(IVtcReferencedContactsPresenter), (nav, views, theme) => new VtcReferencedContactsPresenter(nav, views, theme)},
@@ -93,14 +107,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IVtcReferencedRecentPresenter), (nav, views, theme) => new VtcReferencedRecentPresenter(nav, views, theme)},
 			{typeof(IVtcReferencedFolderPresenter), (nav, views, theme) => new VtcReferencedFolderPresenter(nav, views, theme)},
 
+			// Audio Conference
+			{typeof(IAtcBasePresenter), (nav, views, theme) => new AtcBasePresenter(nav, views, theme)},
+			{typeof(IAtcIncomingCallPresenter), (nav, views, theme) => new AtcIncomingCallPresenter(nav, views, theme)},
+
 			// Panel
 			{typeof(IHardButtonsPresenter), (nav, views, theme) => new HardButtonsPresenter(nav, views, theme)}
 		};
 
-		private readonly Dictionary<Type, IPresenter> m_Cache;
-		private readonly SafeCriticalSection m_CacheSection;
-		private readonly IViewFactory m_ViewFactory;
+		private readonly IUiViewFactory m_ViewFactory;
 		private readonly ConnectProTheme m_Theme;
+		private readonly SafeCriticalSection m_SetRoomSection;
 
 		private IConnectProRoom m_Room;
 
@@ -111,13 +128,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// </summary>
 		/// <param name="viewFactory"></param>
 		/// <param name="theme"></param>
-		public ConnectProNavigationController(IViewFactory viewFactory, ConnectProTheme theme)
+		public ConnectProNavigationController(IUiViewFactory viewFactory, ConnectProTheme theme)
 		{
-			m_Cache = new Dictionary<Type, IPresenter>();
-			m_CacheSection = new SafeCriticalSection();
-
 			m_ViewFactory = viewFactory;
 			m_Theme = theme;
+			m_SetRoomSection = new SafeCriticalSection();
 		}
 
 		#endregion
@@ -130,58 +145,32 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="room"></param>
 		public void SetRoom(IConnectProRoom room)
 		{
-			if (room == m_Room)
-				return;
-
-			m_Room = room;
-
-			m_CacheSection.Enter();
+			m_SetRoomSection.Enter();
 
 			try
 			{
-				foreach (IPresenter presenter in m_Cache.Values.ToArray())
+				if (room == m_Room)
+					return;
+
+				m_Room = room;
+
+				foreach (IUiPresenter presenter in GetPresenters().OfType<IUiPresenter>())
 					presenter.SetRoom(m_Room);
 			}
 			finally
 			{
-				m_CacheSection.Leave();
+				m_SetRoomSection.Leave();
 			}
 		}
 
 		/// <summary>
 		/// Release resources.
 		/// </summary>
-		public void Dispose()
+		public override void Dispose()
 		{
 			SetRoom(null);
 
-			m_Cache.Values.ForEach(p => p.Dispose());
-			m_Cache.Clear();
-		}
-
-		/// <summary>
-		/// Instantiates or returns an existing presenter of the given type.
-		/// </summary>
-		/// <param name="type"></param>
-		/// <returns></returns>
-		public IPresenter LazyLoadPresenter(Type type)
-		{
-			IPresenter output;
-
-			m_CacheSection.Enter();
-
-			try
-			{
-				if (!m_Cache.ContainsKey(type))
-					m_Cache[type] = GetNewPresenter(type);
-				output = m_Cache[type];
-			}
-			finally
-			{
-				m_CacheSection.Leave();
-			}
-
-			return output;
+			base.Dispose();
 		}
 
 		/// <summary>
@@ -189,16 +178,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// </summary>
 		/// <param name="type"></param>
 		/// <returns></returns>
-		public IPresenter GetNewPresenter(Type type)
+		public override IPresenter GetNewPresenter(Type type)
 		{
-			if (!m_PresenterFactories.ContainsKey(type))
+			if (type == null)
+				throw new ArgumentNullException("type");
+
+			PresenterFactory factory;
+
+			if (!m_PresenterFactories.TryGetValue(type, out factory))
 			{
 				string message = string.Format("{0} does not contain factory for {1}", GetType().Name, type.Name);
 				throw new KeyNotFoundException(message);
 			}
 
-			PresenterFactory factory = m_PresenterFactories[type];
-			IPresenter output = factory(this, m_ViewFactory, m_Theme);
+			IUiPresenter output = factory(this, m_ViewFactory, m_Theme);
 			output.SetRoom(m_Room);
 
 			if (!type
@@ -206,7 +199,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 				     .GetTypeInfo()
 #endif
 				     .IsInstanceOfType(output))
-				throw new Exception(string.Format("Presenter {0} is not of type {1}", output, type.Name));
+				throw new InvalidCastException(string.Format("Presenter {0} is not of type {1}", output, type.Name));
 
 			return output;
 		}

@@ -6,8 +6,96 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Changed
+ - Don't show both caller-info name and number when they are identical 
+
+## [7.2.0] - 2018-11-21
+### Added
+ - Added originator id attribute to room calendar settings
+
+### Changed
+ - Routing no longer assumes there is a single VTC device.
+ - UI and OSD are refactored to use common MVP framework
+ - Fixed null refs when stopping the program
+
+## [7.1.0] - 2018-10-30
+### Changed
+ - Increased MPC3 volume ramp speed
+ - Holding power button on the MPC3 shuts down the system
+ - Disable MPC3 volume buttons when the display is powered off
+
+## [7.0.0] - 2018-10-18
+### Added
+ - One Button To Push and Calendaring features
+
+### Changed
+ - Improved performance when selecting bookings
+ - Disable ATC clear and dial buttons while in a call
+ - OSD calendaring overhaul
+
+## [6.1.2] - 2018-10-04
+### Changed
+ - Unroute VTC presentation source when ending presentation
+ - Fixing bad VTC share feedback
+ - Unselecting VTC share source on subpage visibility change
+ - Fixed bug where ShureMXA LED would temporarily flash white
+
+## [6.1.1] - 2018-09-27
+### Changed
+ - Better fix for audio routing in specific async switcher situations
+ - Fixed bug where incoming call text was not updating for subsequent calls
+
+## [6.1.0] - 2018-09-25
+### Changed
+ - Fixed audio routing in specific async switcher situations
+ - Fixed bug where VTC would not unroute after confirming end call
+ - Fixed bugs where a source could be routed multiple times to the same destination
+ - Fixed references to new volume controls
+ - Volume ramping is now positional rather than absolute, resulting in more responsive routing
+ - Mic LED no longer has initial white flash
+ - Return to VTC subpages after a call ends instead of immediately unrouting
+ - Volume down now unmutes as well
+ - Resetting routing when occupancy is detected
+
+## [6.0.0] - 2018-09-14
+### Changed
+ - Considerable performance improvements, bug fixes, etc
+
+## [5.0.0] - 2018-07-19
+### Added
+ - Settings pages
+ - Automatic wake/sleep scheduling
+ - Added VTC page for polycom remote control 
+
+### Changed
+ - Fixed source label formatting bug
+ - Always set Start Meeting button high so new panel changes are not disruptive
+ - Navigate to active calls when a call starts dialing
+ - Improved workflows for rooms without OSD.
+ - UserInterfaces are only created for originator(s) in a room
+
+## [4.1.1] - 2018-07-02
+### Changed
+ - Updated routing to include audio destinations that have a video flag in addition to the audio flag
+
+## [4.1.0] - 2018-06-19
+### Changed
+ - Removed dependency on Cisco
+
+## [4.0.1] - 2018-06-04
+### Changed
+ - Routing performance optimizations
+ - No longer setting phonebook type on directory browser
+
+## [4.0.0] - 2018-05-24
+### Added
+ - ATC implementation
+
+### Changed
  - Default web conferencing path to processor address
- - UI refreshes are async to prevent blocking
+ - Volume button goes red when volume is muted
+ - Allowing user to route source to 2 destinations without reselecting the source
+ - User can switch presentation source without ending presentation and starting again.
+ - VTC Camera close button closes the camera page instead of ending conference
 
 ## [3.2.0] - 2018-05-09
 ### Changed

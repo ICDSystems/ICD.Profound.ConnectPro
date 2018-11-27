@@ -1,4 +1,6 @@
-﻿using ICD.Connect.Conferencing.ConferenceSources;
+﻿using System;
+using ICD.Connect.Conferencing.ConferenceSources;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Dtmf;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Dtmf;
@@ -6,16 +8,20 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Dtmf;
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Dtmf
 {
 	public sealed class VtcReferencedDtmfPresenterFactory :
-		AbstractListItemFactory<IConferenceSource, IVtcReferencedDtmfPresenter, IVtcReferencedDtmfView>
+		AbstractUiListItemFactory<IConferenceSource, IVtcReferencedDtmfPresenter, IVtcReferencedDtmfView>
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="navigationController"></param>
 		/// <param name="viewFactory"></param>
-		public VtcReferencedDtmfPresenterFactory(INavigationController navigationController,
-		                                         ListItemFactory<IVtcReferencedDtmfView> viewFactory)
-			: base(navigationController, viewFactory)
+		/// <param name="subscribe"></param>
+		/// <param name="unsubscribe"></param>
+		public VtcReferencedDtmfPresenterFactory(IConnectProNavigationController navigationController,
+		                                         ListItemFactory<IVtcReferencedDtmfView> viewFactory,
+		                                         Action<IVtcReferencedDtmfPresenter> subscribe,
+		                                         Action<IVtcReferencedDtmfPresenter> unsubscribe)
+			: base(navigationController, viewFactory, subscribe, unsubscribe)
 		{
 		}
 
@@ -26,7 +32,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="presenter"></param>
 		/// <param name="view"></param>
 		protected override void BindMvpTriad(IConferenceSource model, IVtcReferencedDtmfPresenter presenter,
-											 IVtcReferencedDtmfView view)
+		                                     IVtcReferencedDtmfView view)
 		{
 			presenter.SetView(view);
 			presenter.Source = model;

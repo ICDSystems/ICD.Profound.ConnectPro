@@ -1,4 +1,6 @@
-﻿using ICD.Connect.Routing.Endpoints.Sources;
+﻿using System;
+using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
@@ -6,16 +8,20 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 {
 	public sealed class ReferencedSourceSelectPresenterFactory :
-		AbstractListItemFactory<ISource, IReferencedSourceSelectPresenter, IReferencedSourceSelectView>
+		AbstractUiListItemFactory<ISource, IReferencedSourceSelectPresenter, IReferencedSourceSelectView>
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="navigationController"></param>
 		/// <param name="viewFactory"></param>
-		public ReferencedSourceSelectPresenterFactory(INavigationController navigationController,
-		                                              ListItemFactory<IReferencedSourceSelectView> viewFactory)
-			: base(navigationController, viewFactory)
+		/// <param name="subscribe"></param>
+		/// <param name="unsubscribe"></param>
+		public ReferencedSourceSelectPresenterFactory(IConnectProNavigationController navigationController,
+		                                              ListItemFactory<IReferencedSourceSelectView> viewFactory,
+		                                              Action<IReferencedSourceSelectPresenter> subscribe,
+		                                              Action<IReferencedSourceSelectPresenter> unsubscribe)
+			: base(navigationController, viewFactory, subscribe, unsubscribe)
 		{
 		}
 

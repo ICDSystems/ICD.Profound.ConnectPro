@@ -1,6 +1,8 @@
 ﻿using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Services;
+using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Audio.Shure;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
@@ -20,9 +22,11 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		private IConferenceManager m_SubscribedConferenceManager;
 
 		[CanBeNull]
-		private IConnectProRoom Room { get; set; }
+		public IConnectProRoom Room { get; private set; }
 
 		public IShureMxaDevice Microphone { get { return m_Microphone; } }
+
+		object IUserInterface.Target { get { return Microphone; } }
 
 		/// <summary>
 		/// Constructor.
@@ -32,6 +36,8 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		public ConnectProMicrophoneInterface(IShureMxaDevice microphone, ConnectProTheme theme)
 		{
 			m_Microphone = microphone;
+			Subscribe(m_Microphone);
+
 			m_Theme = theme;
 			m_RefreshSection = new SafeCriticalSection();
 		}
@@ -42,6 +48,8 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		public void Dispose()
 		{
 			m_IsDisposed = true;
+
+			Unsubscribe(m_Microphone);
 
 			SetRoom(null);
 		}
@@ -54,6 +62,9 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		{
 			if (room == Room)
 				return;
+
+			ServiceProvider.GetService<ILoggerService>()
+			               .AddEntry(eSeverity.Informational, "{0} setting room to {1}", this, room);
 
 			Unsubscribe(Room);
 			Room = room;
@@ -97,6 +108,8 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 			m_SubscribedConferenceManager.OnRecentConferenceAdded -= ConferenceManagerOnRecentConferenceAdded;
 			m_SubscribedConferenceManager.OnActiveConferenceStatusChanged -= ConferenceManagerOnActiveConferenceStatusChanged;
 			m_SubscribedConferenceManager.OnPrivacyMuteStatusChange -= ConferenceManagerOnPrivacyMuteStatusChange;
+
+			m_SubscribedConferenceManager = null;
 		}
 
 		/// <summary>
@@ -165,13 +178,45 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 									  : eLedColor.Green;
 				}
 
-				m_Microphone.SetLedBrightness(brightness);
-				m_Microphone.SetLedColor(color);
+				m_Microphone.SetLedColor(color, brightness);
 			}
 			finally
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		#endregion
+
+		#region Microphone Callbacks
+
+		/// <summary>
+		/// Subscribe to the microphone events.
+		/// </summary>
+		/// <param name="microphone"></param>
+		private void Subscribe(IShureMxaDevice microphone)
+		{
+			microphone.OnMuteButtonStatusChanged += MicrophoneOnMuteButtonStatusChanged;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the microphone events.
+		/// </summary>
+		/// <param name="microphone"></param>
+		private void Unsubscribe(IShureMxaDevice microphone)
+		{
+			microphone.OnMuteButtonStatusChanged -= MicrophoneOnMuteButtonStatusChanged;
+		}
+
+		/// <summary>
+		/// Called when the mute button is pressed/released.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="boolEventArgs"></param>
+		private void MicrophoneOnMuteButtonStatusChanged(object sender, BoolEventArgs boolEventArgs)
+		{
+			if (boolEventArgs.Data && m_SubscribedConferenceManager != null)
+				m_SubscribedConferenceManager.TogglePrivacyMute();
 		}
 
 		#endregion

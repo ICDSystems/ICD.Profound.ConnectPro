@@ -1,4 +1,6 @@
-﻿using ICD.Connect.Conferencing.ConferenceSources;
+﻿using System;
+using ICD.Connect.Conferencing.ConferenceSources;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.ActiveCalls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.ActiveCalls;
@@ -6,16 +8,20 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Active
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.ActiveCalls
 {
 	public sealed class VtcReferencedActiveCallsPresenterFactory :
-		AbstractListItemFactory<IConferenceSource, IVtcReferencedActiveCallsPresenter, IVtcReferencedActiveCallsView>
+		AbstractUiListItemFactory<IConferenceSource, IVtcReferencedActiveCallsPresenter, IVtcReferencedActiveCallsView>
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="navigationController"></param>
 		/// <param name="viewFactory"></param>
-		public VtcReferencedActiveCallsPresenterFactory(INavigationController navigationController,
-		                                        ListItemFactory<IVtcReferencedActiveCallsView> viewFactory)
-			: base(navigationController, viewFactory)
+		/// <param name="subscribe"></param>
+		/// <param name="unsubscribe"></param>
+		public VtcReferencedActiveCallsPresenterFactory(IConnectProNavigationController navigationController,
+		                                                ListItemFactory<IVtcReferencedActiveCallsView> viewFactory,
+		                                                Action<IVtcReferencedActiveCallsPresenter> subscribe,
+		                                                Action<IVtcReferencedActiveCallsPresenter> unsubscribe)
+			: base(navigationController, viewFactory, subscribe, unsubscribe)
 		{
 		}
 

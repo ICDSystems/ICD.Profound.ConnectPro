@@ -4,12 +4,12 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.EventArguments;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
+using ICD.Connect.UI.Mvp.Views;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Dtmf;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Dtmf
 {
-	public sealed partial class VtcDtmfView : AbstractView, IVtcDtmfView
+	public sealed partial class VtcDtmfView : AbstractUiView, IVtcDtmfView
 	{
 		public event EventHandler<CharEventArgs> OnToneButtonPressed;
 

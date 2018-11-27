@@ -8,7 +8,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 {
-	public sealed partial class VtcCameraView : AbstractView, IVtcCameraView
+	public sealed partial class VtcCameraView : AbstractUiView, IVtcCameraView
 	{
 		public event EventHandler OnCameraMoveUpButtonPressed;
 		public event EventHandler OnCameraMoveLeftButtonPressed;
@@ -55,7 +55,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		/// <param name="label"></param>
 		public void SetPresetButtonLabel(ushort index, string label)
 		{
-			m_PresetButtons[index].SetLabelText(label);
+			m_PresetButtons.GetValue(index).SetLabelText(label);
+		}
+
+		/// <summary>
+		/// Sets the visibility of the "Preset Stored" label.
+		/// </summary>
+		/// <param name="visible"></param>
+		public void SetPresetStoredLabelVisibility(bool visible)
+		{
+			m_PresetStoredLabel.Show(visible);
 		}
 
 		#region Control Callbacks
@@ -153,13 +162,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 
 		private void PresetButtonOnReleased(object sender, EventArgs eventArgs)
 		{
-			ushort index = m_PresetButtonsInverse[sender as VtProButton];
+			ushort index = m_PresetButtons.GetKey(sender as VtProButton);
 			OnPresetButtonReleased.Raise(this, new UShortEventArgs(index));
 		}
 
 		private void PresetButtonOnHeld(object sender, EventArgs eventArgs)
 		{
-			ushort index = m_PresetButtonsInverse[sender as VtProButton];
+			ushort index = m_PresetButtons.GetKey(sender as VtProButton);
 			OnPresetButtonHeld.Raise(this, new UShortEventArgs(index));
 		}
 

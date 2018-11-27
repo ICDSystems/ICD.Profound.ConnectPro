@@ -43,17 +43,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 
 			m_VolumeUpButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 523
+				DigitalPressJoin = 523,
+				DigitalEnableJoin = 526
 			};
 
 			m_VolumeDownButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 522
+				DigitalPressJoin = 522,
+				DigitalEnableJoin = 526
 			};
 
 			m_MuteButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 524
+				DigitalPressJoin = 524,
+				DigitalEnableJoin = 526
 			};
 		}
 

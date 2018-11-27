@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
@@ -6,12 +8,15 @@ using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.IO;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
+using ICD.Connect.API.Commands;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings;
 using ICD.Connect.Settings.Cores;
 using ICD.Connect.Themes;
 using ICD.Connect.TvPresets;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.MicrophoneInterface;
+using ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface;
 using ICD.Profound.ConnectPRO.Themes.UserInterface;
 using ICD.Profound.ConnectPRO.WebConferencing;
@@ -20,6 +25,8 @@ namespace ICD.Profound.ConnectPRO.Themes
 {
 	public sealed class ConnectProTheme : AbstractTheme<ConnectProThemeSettings>
 	{
+		public const string LOGO_DEFAULT = "Logo.png";
+
 		private readonly IcdHashSet<IConnectProUserInterfaceFactory> m_UiFactories;
 		private readonly SafeCriticalSection m_UiFactoriesSection;
 
@@ -33,6 +40,25 @@ namespace ICD.Profound.ConnectPRO.Themes
 		#region Properties
 
 		public ICore Core { get { return ServiceProvider.GetService<ICore>(); } }
+
+		/// <summary>
+		/// Gets/sets the configured relative or absolute path to the logo image for the splash screen.
+		/// </summary>
+		public string Logo { get; set; }
+
+		/// <summary>
+		/// Gets/sets the absolute path to the configured logo image for the splash screen.
+		/// </summary>
+		public string LogoAbsolutePath
+		{
+			get
+			{
+				Uri defaultHost = new IcdUriBuilder {Host = IcdEnvironment.NetworkAddresses.FirstOrDefault()}.Uri;
+				Uri absolute = new Uri(defaultHost, Logo);
+
+				return absolute.ToString();
+			}
+		}
 
 		/// <summary>
 		/// Gets the tv presets.
@@ -51,6 +77,8 @@ namespace ICD.Profound.ConnectPRO.Themes
 		/// </summary>
 		public ConnectProTheme()
 		{
+			Logo = LOGO_DEFAULT;
+
 			m_TvPresets = new XmlTvPresets();
 			m_WebConferencingInstructions = new WebConferencingInstructions();
 
@@ -58,13 +86,31 @@ namespace ICD.Profound.ConnectPRO.Themes
 			{
 				new ConnectProUserInterfaceFactory(this),
 				new ConnectProMicrophoneInterfaceFactory(this),
-				new ConnectProOsdInterfaceFactory(this)
+				new ConnectProOsdInterfaceFactory(this),
+				new ConnectProMpc3201InterfaceFactory(this)
 			};
 
 			m_UiFactoriesSection = new SafeCriticalSection();
 		}
 
 		#region Public Methods
+
+		/// <summary>
+		/// Gets the UI Factories.
+		/// </summary>
+		public IEnumerable<IConnectProUserInterfaceFactory> GetUiFactories()
+		{
+			m_UiFactoriesSection.Enter();
+
+			try
+			{
+				return m_UiFactories.ToArray(m_UiFactories.Count);
+			}
+			finally
+			{
+				m_UiFactoriesSection.Leave();
+			}
+		}
 
 		/// <summary>
 		/// Sets the tv presets from the given xml document path.
@@ -171,6 +217,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 		{
 			base.ClearSettingsFinal();
 
+			Logo = LOGO_DEFAULT;
 			m_TvPresetsPath = null;
 			m_WebConferencingInstructionsPath = null;
 		}
@@ -183,6 +230,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 		{
 			base.CopySettingsFinal(settings);
 
+			settings.Logo = Logo;
 			settings.TvPresets = m_TvPresetsPath;
 			settings.WebConferencingInstructions = m_WebConferencingInstructionsPath;
 		}
@@ -197,10 +245,56 @@ namespace ICD.Profound.ConnectPRO.Themes
 			// Ensure the rooms are loaded
 			factory.LoadOriginators<IRoom>();
 
+			Logo = settings.Logo;
+
 			SetTvPresetsFromPath(settings.TvPresets);
 			SetWebConferencingInstructionsFromPath(settings.WebConferencingInstructions);
 
 			base.ApplySettingsFinal(settings, factory);
+		}
+
+		#endregion
+
+		#region Console
+
+		/// <summary>
+		/// Gets the child console commands.
+		/// </summary>
+		/// <returns></returns>
+		public override IEnumerable<IConsoleCommand> GetConsoleCommands()
+		{
+			foreach (IConsoleCommand command in GetBaseConsoleCommands())
+				yield return command;
+
+			yield return new ConsoleCommand("PrintUIs", "Prints information about the current UIs", () => ConsolePrintUis());
+		}
+
+		/// <summary>
+		/// Workaround for "unverifiable code" warning.
+		/// </summary>
+		/// <returns></returns>
+		private IEnumerable<IConsoleCommand> GetBaseConsoleCommands()
+		{
+			return base.GetConsoleCommands();
+		}
+
+		private string ConsolePrintUis()
+		{
+			TableBuilder builder = new TableBuilder("Type", "Room", "Target");
+
+			foreach (IConnectProUserInterfaceFactory factory in GetUiFactories())
+			{
+				foreach (IUserInterface ui in factory.GetUserInterfaces())
+				{
+					Type type = ui.GetType();
+					IConnectProRoom room = ui.Room;
+					object target = ui.Target;
+
+					builder.AddRow(type, room, target);
+				}
+			}
+
+			return builder.ToString();
 		}
 
 		#endregion

@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources
 {
-	public interface IReferencedSourceSelectView : IView
+	public interface IReferencedSourceSelectView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses the button.
@@ -42,7 +42,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources
 		/// <summary>
 		/// Sets the routed state for the source.
 		/// </summary>
-		/// <param name="routed"></param>
-		void SetRoutedState(bool routed);
+		/// <param name="sourceState"></param>
+		void SetRoutedState(eSourceState sourceState);
 	}
 }

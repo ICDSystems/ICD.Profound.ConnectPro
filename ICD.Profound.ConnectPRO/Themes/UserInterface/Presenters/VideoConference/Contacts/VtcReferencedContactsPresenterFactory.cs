@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contacts;
@@ -6,16 +7,20 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contac
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Contacts
 {
 	public sealed class VtcReferencedContactsPresenterFactory :
-		AbstractListItemFactory<ModelPresenterTypeInfo, IVtcReferencedContactsPresenterBase, IVtcReferencedContactsView>
+		AbstractUiListItemFactory<ModelPresenterTypeInfo, IVtcReferencedContactsPresenterBase, IVtcReferencedContactsView>
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="navigationController"></param>
 		/// <param name="viewFactory"></param>
-		public VtcReferencedContactsPresenterFactory(INavigationController navigationController,
-		                                             ListItemFactory<IVtcReferencedContactsView> viewFactory)
-			: base(navigationController, viewFactory)
+		/// <param name="subscribe"></param>
+		/// <param name="unsubscribe"></param>
+		public VtcReferencedContactsPresenterFactory(IConnectProNavigationController navigationController,
+		                                             ListItemFactory<IVtcReferencedContactsView> viewFactory,
+		                                             Action<IVtcReferencedContactsPresenterBase> subscribe,
+		                                             Action<IVtcReferencedContactsPresenterBase> unsubscribe)
+			: base(navigationController, viewFactory, subscribe, unsubscribe)
 		{
 		}
 
