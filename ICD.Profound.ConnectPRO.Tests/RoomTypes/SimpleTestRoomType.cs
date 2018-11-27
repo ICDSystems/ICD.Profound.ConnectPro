@@ -8,7 +8,7 @@ using ICD.Connect.Panels.Mock;
 using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Partitioning;
 using ICD.Connect.Routing.RoutingGraphs;
-using ICD.Connect.Settings.Core;
+using ICD.Connect.Settings.Cores;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes;
 using ICD.Profound.ConnectPRO.Themes.MicrophoneInterface;
