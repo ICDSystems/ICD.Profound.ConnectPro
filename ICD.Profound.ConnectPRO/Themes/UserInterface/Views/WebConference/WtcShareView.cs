@@ -11,7 +11,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 	public sealed partial class WtcShareView : AbstractUiView, IWtcShareView
 	{
 		public event EventHandler OnShareButtonPressed;
-		public event EventHandler<UShortEventArgs> OnSourcePressed;
+		public event EventHandler<UShortEventArgs> OnSourceButtonPressed;
 
 		public WtcShareView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
 		{
@@ -21,7 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 		{
 			base.Dispose();
 
-			OnSourcePressed = null;
+			OnSourceButtonPressed = null;
 			OnShareButtonPressed = null;
 		}
 
@@ -56,6 +56,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 		{
 			m_SourceList.SetItemSelected(index, selected);
 		}
+
+		public void SetButtonCount(ushort count)
+		{
+			m_SourceList.SetNumberOfItems(count);
+		}
+
+		public void SetShareButtonEnabled(bool enabled)
+		{
+			m_ShareButton.Enable(enabled);
+		}
+
+		public void SetShareButtonSelected(bool selected)
+		{
+			m_ShareButton.SetSelected(selected);
+		}
+
 		#endregion
 
 		#region Control Callbacks
@@ -70,7 +86,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 
 		private void SourceListOnOnButtonClicked(object sender, UShortEventArgs args)
 		{
-			OnSourcePressed.Raise(this, new UShortEventArgs(args.Data));
+			OnSourceButtonPressed.Raise(this, new UShortEventArgs(args.Data));
 		}
 
 		private void ShareButtonOnOnPressed(object sender, EventArgs eventArgs)
