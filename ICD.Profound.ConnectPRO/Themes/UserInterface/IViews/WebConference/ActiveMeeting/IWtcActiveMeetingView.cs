@@ -62,5 +62,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Acti
 		void SetCallInLabelVisibility(bool visible);
 
 		void SetCallInLabelText(string text);
+
+		void SetNoParticipantsLabelVisibility(bool visible);
 	}
 }

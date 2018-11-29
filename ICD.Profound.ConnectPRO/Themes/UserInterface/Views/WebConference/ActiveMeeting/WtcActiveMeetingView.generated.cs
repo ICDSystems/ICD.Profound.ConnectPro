@@ -20,6 +20,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 		private VtProButton m_EndMeetingButton;
 		private VtProSimpleLabel m_MeetingIdLabel;
 		private VtProSimpleLabel m_CallInLabel;
+		private VtProSimpleLabel m_NoParticipantsLabel;
 
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
@@ -74,6 +75,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 			{
 				DigitalVisibilityJoin = 756,
 				IndirectTextJoin = 701
+			};
+
+			m_NoParticipantsLabel = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				DigitalVisibilityJoin = 757
 			};
 		}
 

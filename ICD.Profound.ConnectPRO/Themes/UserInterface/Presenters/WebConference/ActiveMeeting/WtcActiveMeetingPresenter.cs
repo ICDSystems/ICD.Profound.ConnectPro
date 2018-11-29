@@ -47,8 +47,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				view.SetMuteParticipantButtonEnabled(activeConference != null && m_SelectedParticipant != null);
 
 				var participants = activeConference == null
-					? Enumerable.Empty<IWebParticipant>()
-					: activeConference.GetParticipants();
+					? Enumerable.Empty<IWebParticipant>().ToList()
+					: activeConference.GetParticipants().ToList();
 				foreach (var presenter in m_PresenterFactory.BuildChildren(participants))
 				{
 					presenter.Selected = presenter == m_SelectedParticipant;
@@ -63,7 +63,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 					return;
 
 				view.SetMeetingIdLabelText(zoomConference.Number);
-				view.SetCallInLabelText(zoomConference.CallInfo == null ? string.Empty : zoomConference.CallInfo.DialIn);
+				view.SetCallInLabelText(zoomConference.CallInfo == null ? string.Empty : zoomConference.CallInfo.DialIn.Split(';').First());
+				view.SetNoParticipantsLabelVisibility(participants == null || !participants.Any());
 			}
 			finally
 			{
@@ -136,13 +137,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private void ControlOnOnConferenceRemoved(object sender, ConferenceEventArgs args)
 		{
-			Unsubscribe(args.Data);
+			Unsubscribe(args.Data as IWebConference);
 			RefreshIfVisible();
 		}
 
 		private void ControlOnOnConferenceAdded(object sender, ConferenceEventArgs args)
 		{
-			Subscribe(args.Data);
+			Subscribe(args.Data as IWebConference);
 			RefreshIfVisible();
 		}
 
@@ -150,14 +151,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		#region Conference Callbacks
 
-		private void Subscribe(IConference conference)
+		private void Subscribe(IWebConference conference)
 		{
 			conference.OnParticipantAdded += ConferenceOnOnParticipantAdded;
 			conference.OnParticipantRemoved += ConferenceOnOnParticipantRemoved;
 			conference.OnStatusChanged += ConferenceOnOnStatusChanged;
 		}
 
-		private void Unsubscribe(IConference conference)
+		private void Unsubscribe(IWebConference conference)
 		{
 			conference.OnParticipantAdded -= ConferenceOnOnParticipantAdded;
 			conference.OnParticipantRemoved -= ConferenceOnOnParticipantRemoved;

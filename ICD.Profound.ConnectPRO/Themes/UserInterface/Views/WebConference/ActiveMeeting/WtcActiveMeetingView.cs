@@ -68,6 +68,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 			m_CallInLabel.SetLabelText(text);
 		}
 
+		public void SetNoParticipantsLabelVisibility(bool visible)
+		{
+			m_NoParticipantsLabel.Show(visible);
+		}
+
 		#region Control Callbacks
 
 		protected override void SubscribeControls()
