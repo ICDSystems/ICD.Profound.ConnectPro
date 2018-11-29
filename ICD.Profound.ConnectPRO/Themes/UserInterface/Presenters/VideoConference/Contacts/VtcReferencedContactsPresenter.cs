@@ -99,7 +99,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		protected override void Dial()
 		{
-			IConferenceDeviceControl dialer = Room == null ? null : Room.ConferenceManager.GetDialingProvider(eCallType.Video);
+
+			var dialer = ActiveConferenceControl;
 			if (dialer != null && m_Contact != null)
 				dialer.Dial(m_Contact);
 		}

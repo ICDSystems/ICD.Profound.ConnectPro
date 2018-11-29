@@ -82,7 +82,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		protected override void Dial()
 		{
-			IConferenceDeviceControl dialer = Room == null ? null : Room.ConferenceManager.GetDialingProvider(eCallType.Video);
+			var dialer = ActiveConferenceControl;
 			if (dialer != null && m_Recent != null)
 				dialer.Dial(new SipDialContext { DialString = m_Recent.Number });
 		}

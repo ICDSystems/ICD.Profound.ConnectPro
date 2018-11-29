@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts
 {
-	public interface IVtcContactsPresenter<TView> : IUiPresenter<TView>
+	public interface IVtcContactsPresenter<TView> : IUiPresenter<TView>, IVtcPresenter
 		where TView : IVtcContactsView
 	{
 	}

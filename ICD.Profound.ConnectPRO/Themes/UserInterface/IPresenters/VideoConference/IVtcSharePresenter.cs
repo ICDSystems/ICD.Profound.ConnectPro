@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference
 {
-	public interface IVtcSharePresenter : IUiPresenter<IVtcShareView>
+	public interface IVtcSharePresenter : IUiPresenter<IVtcShareView>, IVtcPresenter
 	{
 	}
 }

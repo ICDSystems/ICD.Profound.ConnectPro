@@ -186,6 +186,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				presenter.ActiveConferenceControl = value;
 		}
 
+		private void UpdateVisibility()
+		{
+			IsInCall =
+				m_SubscribedConferenceControl != null &&
+				m_SubscribedConferenceControl.GetConferences().Any(c => c.Status == eConferenceStatus.Connected && c.GetParticipants()
+					                                                        .Any(s => s.GetIsOnline() || s.GetIsActive()));
+		}
+
 		#endregion
 
 		#region Room Callbacks
@@ -221,7 +229,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				.GetCachedActiveVideoSources()
 				.SelectMany(kvp => kvp.Value)
 				.Select(s => Room.Core.Originators[s.Device] as IDevice)
-				.SelectMany(d => d == null ? Enumerable.Empty<ITraditionalConferenceDeviceControl>() : d.Controls.GetControls<ITraditionalConferenceDeviceControl>())
+				.SelectMany(d => d == null 
+					? Enumerable.Empty<ITraditionalConferenceDeviceControl>() 
+					: d.Controls.GetControls<ITraditionalConferenceDeviceControl>())
 				.FirstOrDefault(c => c != null);
 		}
 
@@ -234,7 +244,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (control == null)
 				return;
 
-			// TODO subscribe to conferences and stuff
+			control.OnConferenceAdded += ControlOnOnConferenceAdded;
+			control.OnConferenceRemoved += ControlOnOnConferenceRemoved;
 
 			m_SubscribedPowerControl = GetVtcPowerControl(m_SubscribedConferenceControl);
 			if (m_SubscribedPowerControl == null)
@@ -257,27 +268,45 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_SubscribedPowerControl = null;
 		}
 
-		private void VideoDialerOnSourceChanged(object sender, ParticipantEventArgs e)
+		private void ControlOnOnConferenceAdded(object sender, ConferenceEventArgs e)
+		{
+			Subscribe(e.Data as ITraditionalConference);
+
+			UpdateVisibility();
+		}
+
+		private void ControlOnOnConferenceRemoved(object sender, ConferenceEventArgs e)
+		{
+			Unsubscribe(e.Data as ITraditionalConference);
+
+			UpdateVisibility();
+		}
+
+		#endregion
+
+		#region Conference Callbacks
+
+		private void Subscribe(ITraditionalConference conference)
+		{
+			conference.OnParticipantAdded += ConferenceOnParticipantsChanged;
+			conference.OnParticipantRemoved += ConferenceOnParticipantsChanged;
+			conference.OnStatusChanged += ConferenceOnStatusChanged;
+		}
+		private void Unsubscribe(ITraditionalConference conference)
+		{
+			conference.OnParticipantAdded -= ConferenceOnParticipantsChanged;
+			conference.OnParticipantRemoved -= ConferenceOnParticipantsChanged;
+			conference.OnStatusChanged -= ConferenceOnStatusChanged;
+		}
+
+		private void ConferenceOnParticipantsChanged(object sender, ParticipantEventArgs e)
 		{
 			UpdateVisibility();
 		}
 
-		private void VideoDialerOnParticipantRemoved(object sender, ParticipantEventArgs e)
+		private void ConferenceOnStatusChanged(object sender, ConferenceStatusEventArgs e)
 		{
 			UpdateVisibility();
-		}
-
-		private void VideoDialerOnParticipantAdded(object sender, ParticipantEventArgs e)
-		{
-			UpdateVisibility();
-		}
-
-		private void UpdateVisibility()
-		{
-			IsInCall =
-				m_SubscribedConferenceControl != null &&
-				m_SubscribedConferenceControl.GetConferences().Any(c => c.Status == eConferenceStatus.Connected && c.GetParticipants()
-				                       .Any(s => s.GetIsOnline() || s.GetIsActive()));
 		}
 
 		/// <summary>

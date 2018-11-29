@@ -8,7 +8,6 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Presentation;
-using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Conferencing.Participants.EventHelpers;
@@ -29,18 +28,15 @@ using ICD.Connect.Conferencing.Conferences;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference
 {
-	public sealed class VtcSharePresenter : AbstractUiPresenter<IVtcShareView>, IVtcSharePresenter
+	public sealed class VtcSharePresenter : AbstractVtcPresenter<IVtcShareView>, IVtcSharePresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private readonly IcdHashSet<ISource> m_RoutedSources;
-		private readonly IVtcBasePresenter m_VtcBasePresenter;
 		private readonly TraditionalParticipantEventHelper m_ParticipantEventHelper;
 
 		private ISource[] m_Sources;
 		private ISource m_Selected;
-
-		private ITraditionalConferenceDeviceControl m_ActiveConferenceControl;
 
 		[CanBeNull]
 		private IPresentationControl m_SubscribedPresentationComponent;
@@ -62,20 +58,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			}
 		}
 
-		private ITraditionalConferenceDeviceControl ActiveConferenceControl
-		{
-			get { return m_ActiveConferenceControl; }
-			set
-			{
-				if (value == m_ActiveConferenceControl)
-					return;
-
-				Unsubscribe(m_ActiveConferenceControl);
-				m_ActiveConferenceControl = value;
-				Subscribe(m_ActiveConferenceControl);
-			}
-		}
-
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -90,11 +72,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_Sources = new ISource[0];
 			
 			m_ParticipantEventHelper = new TraditionalParticipantEventHelper((_) => UpdateVisibility());
-		}
-
-		private void VtcBaseOnActiveConferenceControlChanged(object sender, EventArgs eventArgs)
-		{
-			ActiveConferenceControl = m_VtcBasePresenter.ActiveConferenceControl;
 		}
 
 		/// <summary>
@@ -245,7 +222,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		#region Conference Control Callbacks
 
-		private void Subscribe(IConferenceDeviceControl control)
+		protected override void Subscribe(ITraditionalConferenceDeviceControl control)
 		{
 			if (control != null)
 			{
@@ -262,7 +239,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_SubscribedPresentationComponent.OnPresentationActiveInputChanged += SubscribedPresentationControlOnPresentationActiveInputChanged;
 		}
 
-		private void Unsubscribe(IConferenceDeviceControl control)
+		protected override void Unsubscribe(ITraditionalConferenceDeviceControl control)
 		{
 			if (control != null)
 			{
@@ -283,14 +260,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void VideoDialerOnConferenceAdded(object sender, ConferenceEventArgs e)
 		{
-			Subscribe(e.Data);
+			Subscribe(e.Data as ITraditionalConference);
 
 			UpdateVisibility();
 		}
 
 		private void VideoDialerOnConferenceRemoved(object sender, ConferenceEventArgs e)
 		{
-			Unsubscribe(e.Data);
+			Unsubscribe(e.Data as ITraditionalConference);
 
 			UpdateVisibility();
 		}
@@ -301,7 +278,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (m_SubscribedPresentationComponent != null)
 				StopPresenting();
 
-			bool isInCall = ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConference().GetParticipants().Any(s => s.GetIsOnline());
+			bool isInCall = ActiveConferenceControl != null 
+			                && ActiveConferenceControl.GetActiveConference() != null 
+			                && ActiveConferenceControl.GetActiveConference().GetParticipants().Any(s => s.GetIsOnline());
 			if (!isInCall)
 				ShowView(false);
 		}
@@ -310,22 +289,28 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		#region Conference Callbacks
 
-		private void Subscribe(IConference conference)
+		private void Subscribe(ITraditionalConference conference)
 		{
+			if (conference == null)
+				return;
+
 			conference.OnParticipantAdded += ConferenceOnParticipantAdded;
 			conference.OnParticipantRemoved += ConferenceOnParticipantRemoved;
 
 			foreach (var participant in conference.GetParticipants())
-				m_ParticipantEventHelper.Subscribe(participant as ITraditionalParticipant);
+				m_ParticipantEventHelper.Subscribe(participant);
 		}
 
-		private void Unsubscribe(IConference conference)
+		private void Unsubscribe(ITraditionalConference conference)
 		{
+			if (conference == null)
+				return;
+
 			conference.OnParticipantAdded -= ConferenceOnParticipantAdded;
 			conference.OnParticipantRemoved -= ConferenceOnParticipantRemoved;
 
 			foreach (var participant in conference.GetParticipants())
-				m_ParticipantEventHelper.Unsubscribe(participant as ITraditionalParticipant);
+				m_ParticipantEventHelper.Unsubscribe(participant);
 		}
 
 		private void ConferenceOnParticipantAdded(object sender, ParticipantEventArgs e)

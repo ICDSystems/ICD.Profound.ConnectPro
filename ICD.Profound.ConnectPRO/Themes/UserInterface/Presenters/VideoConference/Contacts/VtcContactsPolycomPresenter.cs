@@ -178,13 +178,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (room == null)
 				return;
 
-			IConferenceDeviceControl videoDialer = ConferenceManager == null
-				                                    ? null
-				                                    : ConferenceManager.GetDialingProvider(eCallType.Video);
-			PolycomGroupSeriesDevice videoDialerDevice = videoDialer == null
-				                                             ? null
-				                                             : videoDialer.Parent as PolycomGroupSeriesDevice;
-			m_ButtonComponent = videoDialerDevice == null ? null : videoDialerDevice.Components.GetComponent<ButtonComponent>();
+			
 		}
 
 		/// <summary>
@@ -194,6 +188,27 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		protected override void Unsubscribe(IConnectProRoom room)
 		{
 			base.Unsubscribe(room);
+
+			m_ButtonComponent = null;
+		}
+
+		#endregion
+
+		#region Conference Control Callbacks
+
+		protected override void Subscribe(ITraditionalConferenceDeviceControl control)
+		{
+			base.Subscribe(control);
+
+			PolycomGroupSeriesDevice videoDialerDevice = control == null
+															 ? null
+															 : control.Parent as PolycomGroupSeriesDevice;
+			m_ButtonComponent = videoDialerDevice == null ? null : videoDialerDevice.Components.GetComponent<ButtonComponent>();
+		}
+
+		protected override void Unsubscribe(ITraditionalConferenceDeviceControl control)
+		{
+			base.Unsubscribe(control);
 
 			m_ButtonComponent = null;
 		}

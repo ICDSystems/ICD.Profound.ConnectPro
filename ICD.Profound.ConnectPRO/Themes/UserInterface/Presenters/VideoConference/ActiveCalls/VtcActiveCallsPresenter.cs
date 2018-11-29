@@ -16,27 +16,10 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Active
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.ActiveCalls
 {
-	public sealed class VtcActiveCallsPresenter : AbstractUiPresenter<IVtcActiveCallsView>, IVtcActiveCallsPresenter
+	public sealed class VtcActiveCallsPresenter : AbstractVtcPresenter<IVtcActiveCallsView>, IVtcActiveCallsPresenter
 	{
 		private readonly VtcReferencedActiveCallsPresenterFactory m_ChildrenFactory;
 		private readonly SafeCriticalSection m_RefreshSection;
-		private readonly IVtcBasePresenter m_VtcBasePresenter;
-
-		private ITraditionalConferenceDeviceControl m_ActiveConferenceControl;
-
-		private ITraditionalConferenceDeviceControl ActiveConferenceControl
-		{
-			get { return m_ActiveConferenceControl; }
-			set
-			{
-				if (value == m_ActiveConferenceControl)
-					return;
-
-				Unsubscribe(m_ActiveConferenceControl);
-				m_ActiveConferenceControl = value;
-				Subscribe(m_ActiveConferenceControl);
-			}
-		}
 
 		/// <summary>
 		/// Constructor.
@@ -50,11 +33,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_ChildrenFactory = new VtcReferencedActiveCallsPresenterFactory(nav, ItemFactory, null, null);
 			m_RefreshSection = new SafeCriticalSection();
 		
-		}
-
-		private void VtcBaseOnActiveConferenceControlChanged(object sender, EventArgs eventArgs)
-		{
-			ActiveConferenceControl = m_VtcBasePresenter.ActiveConferenceControl;
 		}
 
 		/// <summary>
@@ -146,7 +124,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Subscribe to the conference control events.
 		/// </summary>
 		/// <param name="control"></param>
-		private void Subscribe(ITraditionalConferenceDeviceControl control)
+		protected override void Subscribe(ITraditionalConferenceDeviceControl control)
 		{
 			control.OnConferenceAdded += DialerOnConferenceAdded;
 			control.OnConferenceRemoved += DialerOnConferenceRemoved;
@@ -159,7 +137,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Unsubscribe from the conference control events.
 		/// </summary>
 		/// <param name="control"></param>
-		private void Unsubscribe(ITraditionalConferenceDeviceControl control)
+		protected override void Unsubscribe(ITraditionalConferenceDeviceControl control)
 		{
 			control.OnConferenceAdded -= DialerOnConferenceAdded;
 			control.OnConferenceRemoved -= DialerOnConferenceRemoved;

@@ -4,7 +4,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Active
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.ActiveCalls
 {
-	public interface IVtcActiveCallsPresenter : IUiPresenter<IVtcActiveCallsView>
+	public interface IVtcActiveCallsPresenter : IUiPresenter<IVtcActiveCallsView>, IVtcPresenter
 	{
 		/// <summary>
 		/// Returns the current active sources.
