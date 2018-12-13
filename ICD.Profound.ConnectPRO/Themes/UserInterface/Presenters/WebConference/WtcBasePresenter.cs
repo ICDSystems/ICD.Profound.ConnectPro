@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils.EventArguments;
@@ -7,6 +7,8 @@ using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Zoom.Controls;
+using ICD.Connect.Conferencing.Zoom.Responses;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
@@ -204,6 +206,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			foreach (var conference in control.GetConferences())
 				Subscribe(conference);
 
+			var zoomControl = control as ZoomRoomConferenceControl;
+			if(zoomControl != null)
+				zoomControl.OnCallError += ZoomControlOnOnCallError;
+
 			UpdateVisibility();
 
 			m_SubscribedPowerControl = GetWtcPowerControl(m_SubscribedConferenceControl);
@@ -224,6 +230,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			foreach (var conference in control.GetConferences())
 				Unsubscribe(conference);
 
+			var zoomControl = control as ZoomRoomConferenceControl;
+			if(zoomControl != null)
+				zoomControl.OnCallError -= ZoomControlOnOnCallError;
+			
 			UpdateVisibility();
 
 			if (m_SubscribedPowerControl == null)
@@ -243,6 +253,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		{
 			Unsubscribe(args.Data);
 			UpdateVisibility();
+		}
+
+		private void ZoomControlOnOnCallError(object sender, GenericEventArgs<CallConnectError> e)
+		{
+			Navigation.LazyLoadPresenter<IGenericAlertPresenter>().Show(e.Data.ErrorMessage);
 		}
 
 		/// <summary>

@@ -4,6 +4,7 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.DialContexts;
+using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -13,6 +14,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 {
 	public class WtcJoinByIdPresenter : AbstractWtcPresenter<IWtcJoinByIdView>, IWtcJoinByIdPresenter
 	{
+		private const int MAX_LENGTH = 10;
+
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly StringBuilder m_Builder;
 
@@ -74,6 +77,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		private void ViewOnOnKeypadButtonPressed(object sender, CharEventArgs e)
 		{
+			if (m_Builder.Length > MAX_LENGTH)
+				return;
+
 			m_Builder.Append(e.Data);
 			RefreshIfVisible();
 		}
@@ -93,7 +99,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		private void ViewOnOnTextEntered(object sender, StringEventArgs e)
 		{
 			m_Builder.Clear();
-			m_Builder.Append(e.Data);
+			if (e.Data.Length > MAX_LENGTH)
+				m_Builder.Append(e.Data.Substring(0, MAX_LENGTH));
+			else
+				m_Builder.Append(e.Data);
 		}
 
 		#endregion
