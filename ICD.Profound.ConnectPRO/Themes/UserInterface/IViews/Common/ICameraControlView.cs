@@ -1,9 +1,9 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 {
-	public interface IVtcCameraView : IUiView
+	public interface ICameraControlView : IUiView
 	{
 		#region Events
 

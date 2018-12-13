@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
@@ -139,6 +139,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\AudioConference\IAtcBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\AudioConference\IAtcIncomingCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IMenuDisplaysPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\ICameraControlPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmLeaveCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmEndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmSplashPowerPresenter.cs" />
@@ -182,7 +183,6 @@
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcButtonListPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcCallListTogglePresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcCameraPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcContactsNormalPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Dtmf\IVtcDtmfPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcIncomingCallPresenter.cs" />
@@ -210,6 +210,7 @@
     <Compile Include="Themes\UserInterface\IViews\Cameras\ICamerasView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Colors.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Displays\IMenuDisplaysView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\ICameraControlView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmLeaveCallView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmEndMeetingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmSplashPowerView.cs" />
@@ -250,7 +251,6 @@
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcBaseView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcButtonListView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcCallListToggleView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcCameraView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\Contacts\IVtcContactsNormalView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\Dtmf\IVtcDtmfView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\ActiveCalls\IVtcActiveCallsView.cs" />
@@ -279,6 +279,7 @@
     <Compile Include="Themes\UserInterface\Presenters\AbstractUiPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AudioConference\AtcBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AudioConference\AtcIncomingCallPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\CameraControlPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmEndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmLeaveCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmSplashPowerPresenter.cs" />
@@ -334,7 +335,6 @@
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcButtonListPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcCallListTogglePresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcCameraPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Dtmf\VtcDtmfPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcIncomingCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcKeyboardPresenter.cs" />
@@ -362,6 +362,8 @@
     <Compile Include="Themes\UserInterface\Views\AudioConference\AtcBaseView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\AudioConference\AtcIncomingCallView.cs" />
     <Compile Include="Themes\UserInterface\Views\AudioConference\AtcIncomingCallView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\CameraControlView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\CameraControlView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmEndMeetingView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmEndMeetingView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmLeaveCallView.cs" />
@@ -431,8 +433,6 @@
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcButtonListView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcCallListToggleView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcCallListToggleView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcCameraView.cs" />
-    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcCameraView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\Contacts\VtcContactsNormalView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\Contacts\VtcContactsNormalView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\Dtmf\VtcDtmfView.cs" />

@@ -6,6 +6,7 @@ using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Options;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -15,7 +16,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 {
 	public sealed class OptionCameraPresenter : AbstractOptionPresenter<IOptionCameraView>, IOptionCameraPresenter
 	{
-		private readonly IVtcCameraPresenter m_Menu;
+		public event EventHandler OnCloseCameraPage;
+
+		private readonly ICameraControlPresenter m_Menu;
 		private IConferenceManager m_SubscribedConferenceManager;
 
 		/// <summary>
@@ -26,7 +29,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// <param name="theme"></param>
 		public OptionCameraPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
-			m_Menu = Navigation.LazyLoadPresenter<IVtcCameraPresenter>();
+			m_Menu = Navigation.LazyLoadPresenter<ICameraControlPresenter>();
 			Subscribe(m_Menu);
 		}
 
@@ -94,7 +97,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// Subscribe to the menu events.
 		/// </summary>
 		/// <param name="menu"></param>
-		private void Subscribe(IVtcCameraPresenter menu)
+		private void Subscribe(ICameraControlPresenter menu)
 		{
 			menu.OnViewVisibilityChanged += MenuOnViewVisibilityChanged;
 		}
@@ -103,7 +106,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// Unsubscribe from the menu events.
 		/// </summary>
 		/// <param name="menu"></param>
-		private void Unsubscribe(IVtcCameraPresenter menu)
+		private void Unsubscribe(ICameraControlPresenter menu)
 		{
 			menu.OnViewVisibilityChanged -= MenuOnViewVisibilityChanged;
 		}

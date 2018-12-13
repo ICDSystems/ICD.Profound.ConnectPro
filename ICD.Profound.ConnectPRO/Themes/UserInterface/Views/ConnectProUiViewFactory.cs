@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
@@ -114,7 +114,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(IVtcBaseView), (panel, theme) => new VtcBaseView(panel, theme)},
 			{typeof(IVtcContactsNormalView), (panel, theme) => new VtcContactsNormalView(panel, theme)},
 			{typeof(IVtcContactsPolycomView), (panel, theme) => new VtcContactsPolycomView(panel, theme)},
-			{typeof(IVtcCameraView), (panel, theme) => new VtcCameraView(panel, theme)},
+			{typeof(ICameraControlView), (panel, theme) => new CameraControlView(panel, theme)},
 			{typeof(IVtcShareView), (panel, theme) => new VtcShareView(panel, theme)},
 			{typeof(IVtcDtmfView), (panel, theme) => new VtcDtmfView(panel, theme)},
 			{typeof(IVtcIncomingCallView), (panel, theme) => new VtcIncomingCallView(panel, theme)},

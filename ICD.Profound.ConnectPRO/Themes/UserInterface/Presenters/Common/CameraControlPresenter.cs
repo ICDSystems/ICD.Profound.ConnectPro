@@ -8,16 +8,14 @@ using ICD.Common.Utils.Timers;
 using ICD.Connect.Cameras;
 using ICD.Connect.Cameras.Controls;
 using ICD.Connect.Cameras.Devices;
-using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
-	public sealed class VtcCameraPresenter : AbstractUiPresenter<IVtcCameraView>, IVtcCameraPresenter
+	public sealed class CameraControlPresenter : AbstractUiPresenter<ICameraControlView>, ICameraControlPresenter
 	{
 		private const long PRESET_STORED_VISIBILITY_MILLISECONDS = 1000;
 
@@ -58,7 +56,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcCameraPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+		public CameraControlPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
@@ -80,7 +78,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Updates the view.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Refresh(IVtcCameraView view)
+		protected override void Refresh(ICameraControlView view)
 		{
 			base.Refresh(view);
 
@@ -124,7 +122,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void ShowPresetStoredLabel(bool visible)
 		{
-			IVtcCameraView view = GetView();
+			ICameraControlView view = GetView();
 			if (view == null)
 				return;
 
@@ -194,7 +192,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Subscribe to the view events.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Subscribe(IVtcCameraView view)
+		protected override void Subscribe(ICameraControlView view)
 		{
 			base.Subscribe(view);
 
@@ -213,7 +211,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Unsubscribe from the view events.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Unsubscribe(IVtcCameraView view)
+		protected override void Unsubscribe(ICameraControlView view)
 		{
 			base.Unsubscribe(view);
 
@@ -307,18 +305,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			ShowPresetStoredLabel(false);
 
-			if (args.Data)
-			{
-				// Hide the conferencing subpages
-				Navigation.LazyLoadPresenter<IVtcContactsNormalPresenter>().ShowView(false);
-				Navigation.LazyLoadPresenter<IVtcContactsPolycomPresenter>().ShowView(false);
-				Navigation.LazyLoadPresenter<IVtcButtonListPresenter>().ShowView(false);
-			}
-			else
-			{
-				// Show the conferencing subpages
-				Navigation.LazyLoadPresenter<IVtcButtonListPresenter>().ShowView(true);
-			}
+			// TODO remove if not needed after fixing
+			//if (args.Data)
+			//{
+			//	// Hide the conferencing subpages
+			//	Navigation.LazyLoadPresenter<IVtcContactsNormalPresenter>().ShowView(false);
+			//	Navigation.LazyLoadPresenter<IVtcContactsPolycomPresenter>().ShowView(false);
+			//	Navigation.LazyLoadPresenter<IVtcButtonListPresenter>().ShowView(false);
+			//}
+			//else
+			//{
+			//	// Show the conferencing subpages
+			//	Navigation.LazyLoadPresenter<IVtcButtonListPresenter>().ShowView(true);
+			//}
 		}
 
 		#endregion

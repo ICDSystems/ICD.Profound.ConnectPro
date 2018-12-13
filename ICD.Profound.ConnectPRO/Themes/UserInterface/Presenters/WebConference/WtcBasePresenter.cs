@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils.EventArguments;
@@ -25,6 +25,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 	{
 		private readonly IWtcMainPagePresenter m_MainPagePresenter;
 		private readonly IWtcButtonListPresenter m_ButtonListPresenter;
+		private readonly ICameraControlPresenter m_CameraControlPresenter;
 		private readonly List<IWtcPresenter> m_WtcPresenters;
 
 		private IPowerDeviceControl m_SubscribedPowerControl;
@@ -43,6 +44,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				Subscribe(m_SubscribedConferenceControl);
 
 				SetWtcPresenterConferenceControls(value);
+
+				if (m_SubscribedConferenceControl == null)
+					ShowView(false);
 			}
 		}
 
@@ -77,6 +81,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		{
 			m_MainPagePresenter = nav.LazyLoadPresenter<IWtcMainPagePresenter>();
 			m_ButtonListPresenter = nav.LazyLoadPresenter<IWtcButtonListPresenter>();
+
+			m_CameraControlPresenter = nav.LazyLoadPresenter<ICameraControlPresenter>();
+			m_CameraControlPresenter.OnViewVisibilityChanged += CameraControlPresenterOnViewVisibilityChanged;
 
 			m_WtcPresenters = nav.LazyLoadPresenters<IWtcPresenter>().ToList();
 		}
@@ -197,6 +204,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			foreach (var conference in control.GetConferences())
 				Subscribe(conference);
 
+			UpdateVisibility();
+
 			m_SubscribedPowerControl = GetWtcPowerControl(m_SubscribedConferenceControl);
 			if (m_SubscribedPowerControl == null)
 				return;
@@ -212,6 +221,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			control.OnConferenceAdded -= ControlOnConferenceAdded;
 			control.OnConferenceRemoved -= ControlOnConferenceRemoved;
 
+			foreach (var conference in control.GetConferences())
+				Unsubscribe(conference);
+
+			UpdateVisibility();
+
 			if (m_SubscribedPowerControl == null)
 				return;
 
@@ -222,11 +236,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		private void ControlOnConferenceAdded(object sender, ConferenceEventArgs args)
 		{
 			Subscribe(args.Data);
+			UpdateVisibility();
 		}
 
 		private void ControlOnConferenceRemoved(object sender, ConferenceEventArgs args)
 		{
 			Unsubscribe(args.Data);
+			UpdateVisibility();
 		}
 
 		/// <summary>
@@ -269,6 +285,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// <param name="eventArgs"></param>
 		protected override void ViewOnCloseButtonPressed(object sender, EventArgs eventArgs)
 		{
+			var cameraPresenter = Navigation.LazyLoadPresenter<ICameraControlPresenter>();
+			if(cameraPresenter != null && cameraPresenter.IsViewVisible && IsViewVisible)
+			{
+				cameraPresenter.ShowView(false);
+				m_ButtonListPresenter.ShowView(true);
+				return;
+			}
+
 			// If we are in a call we want to confirm before closing
 			IConferenceManager manager = Room == null ? null : Room.ConferenceManager;
 			bool isInCall = manager != null && manager.IsInCall >= eInCall.Audio;
@@ -315,6 +339,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		#endregion
 
 		#region Subpage Callbacks
+		
+		private void CameraControlPresenterOnViewVisibilityChanged(object sender, BoolEventArgs e)
+		{
+			if (!e.Data && IsViewVisible)
+				Navigation.NavigateTo<IWtcButtonListPresenter>();
+		}
 
 		#endregion
 	}

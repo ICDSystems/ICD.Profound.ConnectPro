@@ -4,11 +4,11 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.EventArguments;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 {
-	public sealed partial class VtcCameraView : AbstractUiView, IVtcCameraView
+	public sealed partial class CameraControlView : AbstractUiView, ICameraControlView
 	{
 		public event EventHandler OnCameraMoveUpButtonPressed;
 		public event EventHandler OnCameraMoveLeftButtonPressed;
@@ -25,7 +25,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public VtcCameraView(ISigInputOutput panel, ConnectProTheme theme)
+		public CameraControlView(ISigInputOutput panel, ConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

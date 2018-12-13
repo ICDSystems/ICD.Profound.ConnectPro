@@ -16,6 +16,7 @@ using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.ActiveCalls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
@@ -31,7 +32,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private readonly IVtcContactsNormalPresenter m_ContactsNormalPresenter;
 		private readonly IVtcContactsPolycomPresenter m_ContactsPolycomPresenter;
 		private readonly IVtcButtonListPresenter m_ButtonListPresenter;
-		private readonly IVtcCameraPresenter m_CameraPresenter;
+		private readonly ICameraControlPresenter m_CameraControlPresenter;
 		private readonly IVtcKeyboardPresenter m_KeyboardPresenter;
 		private readonly IVtcKeypadPresenter m_KeypadPresenter;
 		private readonly List<IVtcPresenter> m_VtcPresenters;
@@ -98,11 +99,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_ContactsPolycomPresenter = nav.LazyLoadPresenter<IVtcContactsPolycomPresenter>();
 			m_ContactsPolycomPresenter.OnViewVisibilityChanged += ContactsPolycomPresenterOnViewVisibilityChanged;
 
+			m_CameraControlPresenter = nav.LazyLoadPresenter<ICameraControlPresenter>();
+			m_CameraControlPresenter.OnViewVisibilityChanged += CameraControlPresenterOnOnViewVisibilityChanged;
+
 			m_KeyboardPresenter = nav.LazyLoadPresenter<IVtcKeyboardPresenter>();
 			m_KeypadPresenter = nav.LazyLoadPresenter<IVtcKeypadPresenter>();
 
 			m_ButtonListPresenter = nav.LazyLoadPresenter<IVtcButtonListPresenter>();
-			m_CameraPresenter = nav.LazyLoadPresenter<IVtcCameraPresenter>();
 
 			m_VtcPresenters = nav.LazyLoadPresenters<IVtcPresenter>().ToList();
 		}
@@ -331,27 +334,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		protected override void ViewOnCloseButtonPressed(object sender, EventArgs eventArgs)
 		{
 			// If the camera subpage is open close that instead
-			IVtcCameraPresenter cameraPresenter = Navigation.LazyLoadPresenter<IVtcCameraPresenter>();
-			if (cameraPresenter.IsViewVisible)
+			if (m_CameraControlPresenter != null && m_CameraControlPresenter.IsViewVisible && IsViewVisible)
 			{
-				cameraPresenter.ShowView(false);
+				m_CameraControlPresenter.ShowView(false);
+				m_ButtonListPresenter.ShowView(true);
 				return;
 			}
 
 			// If the keyboard subpage is open close that instead
-			IVtcKeyboardPresenter keyboardPresenter = Navigation.LazyLoadPresenter<IVtcKeyboardPresenter>();
-			if (keyboardPresenter.IsViewVisible)
+			if (m_KeyboardPresenter != null && m_KeyboardPresenter.IsViewVisible)
 			{
-				keyboardPresenter.ShowView(false);
+				m_KeyboardPresenter.ShowView(false);
 				ShowContactsPresenter(true);
 				return;
 			}
 
 			// If the keypad subpage is open close that instead
-			IVtcKeypadPresenter keypadPresenter = Navigation.LazyLoadPresenter<IVtcKeypadPresenter>();
-			if (keypadPresenter.IsViewVisible)
+			if (m_KeypadPresenter != null && m_KeypadPresenter.IsViewVisible)
 			{
-				keypadPresenter.ShowView(false);
+				m_KeypadPresenter.ShowView(false);
 				ShowContactsPresenter(true);
 				return;
 			}
@@ -375,7 +376,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.ViewOnVisibilityChanged(sender, args);
 
-			m_CameraPresenter.ShowView(false);
+			m_CameraControlPresenter.ShowView(false);
 			m_ButtonListPresenter.ShowView(false);
 			m_KeyboardPresenter.ShowView(false);
 			m_KeypadPresenter.ShowView(false);
@@ -407,10 +408,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		#region Subpage Callbacks
 
+		private void CameraControlPresenterOnOnViewVisibilityChanged(object sender, BoolEventArgs e)
+		{
+			if (!e.Data && IsViewVisible)
+				Navigation.NavigateTo<IVtcButtonListPresenter>();
+		}
+
 		private void CallListTogglePresenterOnButtonPressed(object sender, EventArgs eventArgs)
 		{
-			if (m_CameraPresenter.IsViewVisible)
-				m_CameraPresenter.ShowView(false);
+			if (m_CameraControlPresenter.IsViewVisible && IsViewVisible)
+				m_CameraControlPresenter.ShowView(false);
 
 			if (m_ContactsNormalPresenter.IsViewVisible || m_ContactsPolycomPresenter.IsViewVisible)
 			{

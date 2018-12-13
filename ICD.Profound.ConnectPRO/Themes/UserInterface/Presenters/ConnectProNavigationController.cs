@@ -1,4 +1,4 @@
-﻿#if !SIMPLSHARP
+#if !SIMPLSHARP
 using System.Reflection;
 #endif
 using System;
@@ -96,7 +96,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IVtcBasePresenter), (nav, views, theme) => new VtcBasePresenter(nav, views, theme)},
 			{typeof(IVtcContactsNormalPresenter), (nav, views, theme) => new VtcContactsNormalPresenter(nav, views, theme)},
 			{typeof(IVtcContactsPolycomPresenter), (nav, views, theme) => new VtcContactsPolycomPresenter(nav, views, theme)},
-			{typeof(IVtcCameraPresenter), (nav, views, theme) => new VtcCameraPresenter(nav, views, theme)},
+			{typeof(ICameraControlPresenter), (nav, views, theme) => new CameraControlPresenter(nav, views, theme)},
 			{typeof(IVtcSharePresenter), (nav, views, theme) => new VtcSharePresenter(nav, views, theme)},
 			{typeof(IVtcDtmfPresenter), (nav, views, theme) => new VtcDtmfPresenter(nav, views, theme)},
 			{typeof(IVtcReferencedDtmfPresenter), (nav, views, theme) => new VtcReferencedDtmfPresenter(nav, views, theme)},
