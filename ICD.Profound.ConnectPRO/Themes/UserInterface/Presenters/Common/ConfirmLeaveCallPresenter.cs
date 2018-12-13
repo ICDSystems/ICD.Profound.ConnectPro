@@ -3,6 +3,7 @@ using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
@@ -64,7 +65,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="eventArgs"></param>
 		private void ViewOnYesButtonPressed(object sender, EventArgs eventArgs)
 		{
-			Navigation.LazyLoadPresenter<IVtcBasePresenter>().Close();
+			var vtc = Navigation.LazyLoadPresenter<IVtcBasePresenter>();
+			if (vtc.IsViewVisible)
+				vtc.Close();
+
+			var wtc = Navigation.LazyLoadPresenter<IWtcBasePresenter>();
+			if (wtc.IsViewVisible)
+				wtc.Close();
+
 			ShowView(false);
 		}
 
