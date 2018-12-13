@@ -1,7 +1,9 @@
 ﻿using System;
 using ICD.Common.Utils;
+using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Participants;
+using ICD.Connect.Conferencing.Zoom.Components.Call;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.ActiveMeeting;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -15,7 +17,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		public IWebParticipant Participant { get; set; }
+		private IWebParticipant m_Participant;
+		public IWebParticipant Participant
+		{
+			get { return m_Participant; }
+			set
+			{
+				if (m_Participant == value)
+					return;
+
+				if (m_Participant != null)
+					Unsubscribe(m_Participant);
+
+				m_Participant = value;
+
+				if (m_Participant != null)
+					Subscribe(m_Participant);
+
+				RefreshIfVisible();
+			}
+		}
 
 		public bool Selected { get; set; }
 
@@ -41,12 +62,36 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			{
 				view.SetParticipantName(Participant.Name);
 				view.SetButtonSelected(Selected);
-			}
+				view.SetMuteIconVisibility(Participant.IsMuted);
+
+				var zoomParticipant = Participant as ZoomParticipant;
+				view.SetAvatarImageVisibility(zoomParticipant != null && !string.IsNullOrEmpty(zoomParticipant.AvatarUrl));
+				view.SetAvatarImagePath(zoomParticipant == null ? null : zoomParticipant.AvatarUrl);
+			}                                                                                                    
 			finally
 			{
 				m_RefreshSection.Leave();
 			}
 		}
+
+		#region Participant Callbacks
+
+		private void Subscribe(IWebParticipant participant)
+		{
+			participant.OnIsMutedChanged += ParticipantOnOnIsMutedChanged;
+		}
+
+		private void Unsubscribe(IWebParticipant participant)
+		{
+			participant.OnIsMutedChanged -= ParticipantOnOnIsMutedChanged;
+		}
+
+		private void ParticipantOnOnIsMutedChanged(object sender, BoolEventArgs e)
+		{
+			RefreshIfVisible();
+		}
+
+		#endregion
 
 		#region View Callbacks
 

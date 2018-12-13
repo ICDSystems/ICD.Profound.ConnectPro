@@ -8,6 +8,7 @@ using ICD.Connect.Conferencing.Controls.Directory;
 using ICD.Connect.Conferencing.Directory;
 using ICD.Connect.Conferencing.Directory.Tree;
 using ICD.Connect.Devices;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -54,7 +55,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			try
 			{
 				view.SetBackButtonEnabled(!m_DirectoryBrowser.IsCurrentFolderRoot);
-				view.SetInviteParticipantButtonEnabled(m_SelectedDirectoryItem != null);
+
+				var contact = m_SelectedDirectoryItem == null ? null : m_SelectedDirectoryItem.DirectoryItem.Model as IContact;
+				var onlineContact = contact == null ? null : contact as IContactWithOnlineState;
+				var inviteEnabled = onlineContact == null
+					? contact != null
+					: onlineContact.OnlineState != eOnlineState.Offline;
+				view.SetInviteParticipantButtonEnabled(inviteEnabled);
 
 				var contacts = GetContacts();
 				foreach (var presenter in m_PresenterFactory.BuildChildren(contacts))
@@ -199,6 +206,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				return;
 			
 			ActiveConferenceControl.Dial(bestDialContext);
+
+			Navigation.LazyLoadPresenter<IGenericAlertPresenter>().Show("Invitation sent.", 1000);
 		}
 		private void ViewOnOnBackButtonPressed(object sender, EventArgs e)
 		{

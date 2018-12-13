@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
-using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;

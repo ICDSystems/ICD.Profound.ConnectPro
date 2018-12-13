@@ -26,8 +26,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 			{
 				MaxSize = 20,
 				DigitalJoinIncrement = 3,
-				AnalogJoinIncrement = 0,
-				SerialJoinIncrement = 1
+				AnalogJoinIncrement = 1,
+				SerialJoinIncrement = 2
 			};
 
 			m_BackButton = new VtProButton(panel, m_Subpage)

@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Connect.Conferencing.Contacts;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts
 {
@@ -16,5 +17,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Cont
 		void SetContactName(string name);
 
 		void SetButtonSelected(bool selected);
+
+		void SetAvatarImagePath(string url);
+
+		void SetAvatarImageVisibility(bool visible);
+
+		void SetOnlineStateMode(eOnlineState state);
 	}
 }

@@ -5,6 +5,8 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Contacts;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Directory.Tree;
+using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Zoom.Components.Directory;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -18,7 +20,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		public DirectoryItem DirectoryItem { get; set; }
+		private DirectoryItem m_DirectoryItem;
+		public DirectoryItem DirectoryItem
+		{
+			get { return m_DirectoryItem; }
+			set
+			{
+				if (m_DirectoryItem == value)
+					return;
+
+				Unsubscribe(m_DirectoryItem);
+				m_DirectoryItem = value;
+				Subscribe(m_DirectoryItem);
+
+				RefreshIfVisible();
+			}
+		}
 
 		public bool Selected { get; set; }
 
@@ -42,10 +59,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			m_RefreshSection.Enter();
 			try
 			{
-				if(DirectoryItem.ModelType == DirectoryItem.eModelType.Folder)
-					view.SetContactName((DirectoryItem.Model as IDirectoryFolder).Name);
+				if (DirectoryItem.ModelType == DirectoryItem.eModelType.Folder)
+				{
+					var folder = DirectoryItem.Model as IDirectoryFolder;
+					view.SetContactName(folder == null ? "Missing Folder Name" : folder.Name);
+					view.SetOnlineStateMode(eOnlineState.Offline);
+					view.SetAvatarImageVisibility(false);
+					view.SetAvatarImagePath(null);
+				}
 				else if (DirectoryItem.ModelType == DirectoryItem.eModelType.Contact)
-					view.SetContactName((DirectoryItem.Model as IContact).Name);
+				{
+					var contact = DirectoryItem.Model as IContact;
+					view.SetContactName(contact == null ? "Missing Contact Name" : contact.Name);
+
+					var onlineContact = contact as IContactWithOnlineState;
+					view.SetOnlineStateMode(onlineContact == null ? eOnlineState.Offline : onlineContact.OnlineState);
+
+					var zoomContact = contact as ZoomContact;
+					view.SetAvatarImageVisibility(zoomContact != null && !string.IsNullOrEmpty(zoomContact.AvatarUrl));
+					view.SetAvatarImagePath(zoomContact == null ? null : zoomContact.AvatarUrl);
+				}
 				view.SetButtonSelected(Selected);
 			}
 			finally
@@ -53,6 +86,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				m_RefreshSection.Leave();
 			}
 		}
+
+		#region Contact Callbacks 
+
+		private void Subscribe(DirectoryItem item)
+		{
+			var contact = item.Model as IContactWithOnlineState;
+			if (contact != null)
+				contact.OnOnlineStateChanged += ContactOnOnOnlineStateChanged;
+		}
+
+		private void Unsubscribe(DirectoryItem item)
+		{
+			var contact = item.Model as IContactWithOnlineState;
+			if (contact != null)
+				contact.OnOnlineStateChanged -= ContactOnOnOnlineStateChanged;
+		}
+
+		private void ContactOnOnOnlineStateChanged(object sender, OnlineStateEventArgs e)
+		{
+			RefreshIfVisible();
+		}
+
+		#endregion
 
 		#region View Callbacks
 

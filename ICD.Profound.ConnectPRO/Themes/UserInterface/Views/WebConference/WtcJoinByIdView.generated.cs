@@ -29,7 +29,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 			m_TextEntry = new VtProTextEntry(panel, m_Subpage)
 			{
 				IndirectTextJoin = 3032,
-				SerialOutputJoin = 3032,
+				SerialOutputJoin = 3032
 			};
 
 			m_MeetingIdLabel = new VtProSimpleLabel(panel, m_Subpage)

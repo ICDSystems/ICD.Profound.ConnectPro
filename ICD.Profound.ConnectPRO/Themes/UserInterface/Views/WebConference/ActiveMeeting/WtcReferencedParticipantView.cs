@@ -24,6 +24,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 		{
 			m_ParticipantButton.SetSelected(selected);
 		}
+		
+		public void SetAvatarImageVisibility(bool visible)
+		{
+			m_AvatarImage.Show(visible);
+		}
+		public void SetAvatarImagePath(string url)
+		{
+			m_AvatarImage.SetImageUrl(url);
+		}
+
+		public void SetMuteIconVisibility(bool visible)
+		{
+			m_MuteIcon.Show(visible);
+		}
 
 		#region Control Callbacks
 

@@ -16,5 +16,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Acti
 		void SetParticipantName(string name);
 
 		void SetButtonSelected(bool selected);
+
+		void SetAvatarImageVisibility(bool visible);
+
+		void SetAvatarImagePath(string url);
+
+		void SetMuteIconVisibility(bool visible);
 	}
 }
