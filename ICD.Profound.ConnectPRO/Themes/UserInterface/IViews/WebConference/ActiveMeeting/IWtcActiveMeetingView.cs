@@ -32,6 +32,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Acti
 		event EventHandler OnLeaveMeetingButtonPressed;
 
 		/// <summary>
+		/// Raised when the Meeting Info button is pressed.
+		/// </summary>
+		event EventHandler OnMeetingInfoButtonPressed;
+
+		/// <summary>
 		/// Returns child views for list items.
 		/// </summary>
 		/// <param name="factory"></param>
@@ -55,14 +60,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Acti
 
 		void SetLeaveMeetingButtonEnabled(bool enabled);
 
-		void SetMeetingIdLabelVisibility(bool visible);
-
-		void SetMeetingIdLabelText(string text);
-
-		void SetCallInLabelVisibility(bool visible);
-
-		void SetCallInLabelText(string text);
-
 		void SetNoParticipantsLabelVisibility(bool visible);
+
+		void SetMeetingInfoButtonEnabled(bool enable);
+
+		void SetShowHideCameraButtonState(bool cameraEnabled);
+
+		void SetMuteParticipantButtonState(bool muted);
 	}
 }

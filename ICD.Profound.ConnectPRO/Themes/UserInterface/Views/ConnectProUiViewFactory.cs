@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
@@ -103,6 +103,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(IVolumeView), (panel, theme) => new VolumeView(panel, theme)},
 			{typeof(IDisabledAlertView), (panel, theme) => new DisabledAlertView(panel, theme)},
 			{typeof(IPasscodeView), (panel, theme) => new PasscodeView(panel, theme)},
+			{typeof(IGenericAlertView), (panel, theme) => new GenericAlertView(panel, theme)},
 
 			// Settings
 			{typeof(ISettingsBaseView), (panel, theme) => new SettingsBaseView(panel, theme)},

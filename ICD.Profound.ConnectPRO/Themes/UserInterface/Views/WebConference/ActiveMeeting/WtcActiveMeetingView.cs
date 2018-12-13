@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Mvp.Views;
@@ -15,6 +16,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 		public event EventHandler OnShowHideCameraButtonPressed;
 		public event EventHandler OnEndMeetingButtonPressed;
 		public event EventHandler OnLeaveMeetingButtonPressed;
+		public event EventHandler OnMeetingInfoButtonPressed;
 
 		private readonly List<IWtcReferencedParticipantView> m_ChildList; 
 
@@ -48,29 +50,34 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 			m_LeaveMeetingButton.Enable(enabled);
 		}
 
-		public void SetMeetingIdLabelVisibility(bool visible)
-		{
-			m_MeetingIdLabel.Show(visible);
-		}
-
-		public void SetMeetingIdLabelText(string text)
-		{
-			m_MeetingIdLabel.SetLabelText(text);
-		}
-
-		public void SetCallInLabelVisibility(bool visible)
-		{
-			m_CallInLabel.Show(visible);
-		}
-
-		public void SetCallInLabelText(string text)
-		{
-			m_CallInLabel.SetLabelText(text);
-		}
-
 		public void SetNoParticipantsLabelVisibility(bool visible)
 		{
 			m_NoParticipantsLabel.Show(visible);
+		}
+
+		public void SetMeetingInfoButtonEnabled(bool enabled)
+		{
+			m_MeetingInfoButton.Enable(enabled);
+		}
+		
+		/// <summary>
+		/// Sets the state of the Show/Hide Camera button.
+		/// If true, "Unmute" is displayed. If false, "Mute" is displayed.
+		/// </summary>
+		/// <param name="show"></param>
+		public void SetMuteParticipantButtonState(bool muted)
+		{
+			m_MuteParticipantButton.SetLabelTextAtJoin(m_MuteParticipantButton.DigitalLabelJoins.First(), muted);
+		}
+
+		/// <summary>
+		/// Sets the state of the Show/Hide Camera button.
+		/// If true, "Hide" is displayed. If false, "Show" is displayed.
+		/// </summary>
+		/// <param name="hide"></param>
+		public void SetShowHideCameraButtonState(bool cameraEnabled)
+		{
+			m_ShowHideCameraButton.SetLabelTextAtJoin(m_ShowHideCameraButton.DigitalLabelJoins.First(), cameraEnabled);
 		}
 
 		#region Control Callbacks
@@ -84,6 +91,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 			m_EndMeetingButton.OnPressed += EndMeetingButtonOnOnPressed;
 			m_LeaveMeetingButton.OnPressed += LeaveMeetingButtonOnOnPressed;
 			m_ShowHideCameraButton.OnPressed += ShowHideCameraButtonOnOnPressed;
+			m_MeetingInfoButton.OnPressed += MeetingInfoButtonOnOnPressed;
 		}
 
 		protected override void UnsubscribeControls()
@@ -95,6 +103,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 			m_EndMeetingButton.OnPressed -= EndMeetingButtonOnOnPressed;
 			m_LeaveMeetingButton.OnPressed -= LeaveMeetingButtonOnOnPressed;
 			m_ShowHideCameraButton.OnPressed -= ShowHideCameraButtonOnOnPressed;
+			m_MeetingInfoButton.OnPressed -= MeetingInfoButtonOnOnPressed;
 		}
 
 		private void LeaveMeetingButtonOnOnPressed(object sender, EventArgs eventArgs)
@@ -120,6 +129,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 		private void ShowHideCameraButtonOnOnPressed(object sender, EventArgs e)
 		{
 			OnShowHideCameraButtonPressed.Raise(this);
+		}
+
+		private void MeetingInfoButtonOnOnPressed(object sender, EventArgs e)
+		{
+			OnMeetingInfoButtonPressed.Raise(this);
 		}
 
 		#endregion

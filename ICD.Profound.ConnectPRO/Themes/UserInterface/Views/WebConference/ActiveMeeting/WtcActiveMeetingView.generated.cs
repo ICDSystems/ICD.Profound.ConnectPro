@@ -18,8 +18,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 		private VtProButton m_ShowHideCameraButton;
 		private VtProButton m_LeaveMeetingButton;
 		private VtProButton m_EndMeetingButton;
-		private VtProSimpleLabel m_MeetingIdLabel;
-		private VtProSimpleLabel m_CallInLabel;
+		private VtProButton m_MeetingInfoButton;
 		private VtProSimpleLabel m_NoParticipantsLabel;
 
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
@@ -38,12 +37,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 			m_MuteParticipantButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 707,
-				DigitalEnableJoin = 751
+				DigitalEnableJoin = 751,
+				DigitalLabelJoins = { 755 }
 			};
 
 			m_ShowHideCameraButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 708
+				DigitalPressJoin = 708,
+				DigitalLabelJoins = { 758 }
 			};
 
 			m_EndMeetingButton = new VtProButton(panel, m_Subpage)
@@ -58,23 +59,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 				DigitalEnableJoin = 705
 			};
 
+			m_MeetingInfoButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 759,
+				DigitalEnableJoin = 760
+			};
+
 			m_ParticipantList = new VtProSubpageReferenceList(700, panel as IPanelDevice, m_Subpage)
 			{
 				MaxSize = 20,
 				DigitalJoinIncrement = 3,
-				SerialJoinIncrement = 1
-			};
-
-			m_MeetingIdLabel = new VtProSimpleLabel(panel, m_Subpage)
-			{
-				DigitalVisibilityJoin = 755,
-				IndirectTextJoin = 700
-			};
-
-			m_CallInLabel = new VtProSimpleLabel(panel, m_Subpage)
-			{
-				DigitalVisibilityJoin = 756,
-				IndirectTextJoin = 701
+				SerialJoinIncrement = 2
 			};
 
 			m_NoParticipantsLabel = new VtProSimpleLabel(panel, m_Subpage)
@@ -92,8 +87,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 			yield return m_ShowHideCameraButton;
 			yield return m_EndMeetingButton;
 			yield return m_LeaveMeetingButton;
-			yield return m_MeetingIdLabel;
-			yield return m_CallInLabel;
+			yield return m_MeetingInfoButton;
+			yield return m_NoParticipantsLabel;
 		}
 	}
 }

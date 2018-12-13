@@ -1,4 +1,4 @@
-#if !SIMPLSHARP
+﻿#if !SIMPLSHARP
 using System.Reflection;
 #endif
 using System;
@@ -85,6 +85,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IVolumePresenter), (nav, views, theme) => new VolumePresenter(nav, views, theme)},
 			{typeof(IDisabledAlertPresenter), (nav, views, theme) => new DisabledAlertPresenter(nav, views, theme)},
 			{typeof(IPasscodePresenter), (nav, views, theme) => new PasscodePresenter(nav, views, theme)},
+			{typeof(IGenericAlertPresenter), (nav, views, theme) => new GenericAlertPresenter(nav, views, theme)},
 
 			// Settings
 			{typeof(ISettingsBasePresenter), (nav, views, theme) => new SettingsBasePresenter(nav, views, theme)},
