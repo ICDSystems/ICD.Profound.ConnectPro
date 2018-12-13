@@ -70,8 +70,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			m_RefreshSection = new SafeCriticalSection();
 			m_RoutedSources = new IcdHashSet<ISource>();
 			m_Sources = new ISource[0];
-
-			m_ParticipantEventHelper = new WebParticipantEventHelper((_) => UpdateVisibility());
 		}
 
 		/// <summary>
@@ -178,6 +176,33 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			RefreshIfVisible();
 		}
 
+		private void UpdateVisibility()
+		{
+			// Ensure we leave presentation mode when we leave a call
+			if (m_SubscribedPresentationComponent != null)
+				StopPresenting();
+
+			bool isInCall = ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConference() != null;
+			if (!isInCall)
+				ShowView(false);
+		}
+
+		private void StartPresenting(ISource source)
+		{
+			if (Room == null || source == null)
+				return;
+
+			Room.Routing.RouteVtcPresentation(source, m_SubscribedPresentationComponent);
+		}
+
+		private void StopPresenting()
+		{
+			if (Room == null)
+				return;
+
+			Room.Routing.UnrouteVtcPresentation(m_SubscribedPresentationComponent);
+		}
+
 		#region Room Callbacks
 
 		/// <summary>
@@ -272,17 +297,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			UpdateVisibility();
 		}
 
-		private void UpdateVisibility()
-		{
-			// Ensure we leave presentation mode when we leave a call
-			if (m_SubscribedPresentationComponent != null)
-				StopPresenting();
-
-			bool isInCall = ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConference().GetParticipants().Any(s => s.GetIsOnline());
-			if (!isInCall)
-				ShowView(false);
-		}
-
 		#endregion
 
 		#region Conference Callbacks
@@ -292,11 +306,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			if (conference == null)
 				return;
 
-			conference.OnParticipantAdded += ConferenceOnParticipantAdded;
-			conference.OnParticipantRemoved += ConferenceOnParticipantRemoved;
-
-			foreach (var participant in conference.GetParticipants())
-				m_ParticipantEventHelper.Subscribe(participant);
+			conference.OnStatusChanged += ConferenceOnStatusChanged;
 		}
 
 		private void Unsubscribe(IWebConference conference)
@@ -304,21 +314,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			if (conference == null)
 				return;
 
-			conference.OnParticipantAdded -= ConferenceOnParticipantAdded;
-			conference.OnParticipantRemoved -= ConferenceOnParticipantRemoved;
-
-			foreach (var participant in conference.GetParticipants())
-				m_ParticipantEventHelper.Unsubscribe(participant);
+			conference.OnStatusChanged -= ConferenceOnStatusChanged;
 		}
 
-		private void ConferenceOnParticipantAdded(object sender, ParticipantEventArgs e)
+		private void ConferenceOnStatusChanged(object sender, ConferenceStatusEventArgs e)
 		{
-			m_ParticipantEventHelper.Subscribe(e.Data as IWebParticipant);
-		}
-
-		private void ConferenceOnParticipantRemoved(object sender, ParticipantEventArgs e)
-		{
-			m_ParticipantEventHelper.Unsubscribe(e.Data as IWebParticipant);
+			UpdateVisibility();
 		}
 
 		#endregion
@@ -362,17 +363,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			Selected = null;
 		}
 
-		private void ViewOnShareButtonPressed(object sender, EventArgs eventArgs)
-		{
-			if (Room == null)
-				return;
-
-			if (IsInPresentation())
-				StopPresenting();
-			else
-				StartPresenting(m_Selected);
-		}
-
 		private void ViewOnSourceButtonPressed(object sender, UShortEventArgs eventArgs)
 		{
 			ISource source;
@@ -388,20 +378,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			Selected = source == Selected ? null : source;
 		}
 
-		private void StartPresenting(ISource source)
-		{
-			if (Room == null || source == null)
-				return;
-
-			Room.Routing.RouteVtcPresentation(source, m_SubscribedPresentationComponent);
-		}
-
-		private void StopPresenting()
+		private void ViewOnShareButtonPressed(object sender, EventArgs eventArgs)
 		{
 			if (Room == null)
 				return;
 
-			Room.Routing.UnrouteVtcPresentation(m_SubscribedPresentationComponent);
+			if (IsInPresentation())
+				StopPresenting();
+			else
+				StartPresenting(m_Selected);
 		}
 
 		#endregion
