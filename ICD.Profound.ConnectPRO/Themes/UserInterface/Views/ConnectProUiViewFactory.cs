@@ -134,8 +134,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(IWtcRecordingView), (panel, theme) => new WtcRecordingView(panel, theme)},
 			{typeof(IWtcShareView), (panel, theme) => new WtcShareView(panel, theme)},
 			{typeof(IWtcCallOutView), (panel, theme) => new WtcCallOutView(panel, theme)},
-			{typeof(IWtcActiveMeetingToggleView), (panel, theme) => new WtcActiveMeetingToggleView(panel, theme)},
-			{typeof(IWtcContactsToggleView), (panel, theme) => new WtcContactsToggleView(panel, theme)},
 
 			// Audio Conference
 			{typeof(IAtcBaseView), (panel, theme) => new AtcBaseView(panel, theme)},

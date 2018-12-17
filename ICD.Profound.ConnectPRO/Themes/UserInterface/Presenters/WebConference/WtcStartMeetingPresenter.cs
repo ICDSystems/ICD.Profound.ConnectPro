@@ -21,14 +21,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		private const int MAX_LENGTH = 10;
 
 		private readonly IWtcContactListPresenter m_ContactListPresenter;
-		private readonly IWtcActiveMeetingTogglePresenter m_TogglePresenter;
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly StringBuilder m_Builder;
 
 		public WtcStartMeetingPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
 			m_ContactListPresenter = nav.LazyLoadPresenter<IWtcContactListPresenter>();
-			m_TogglePresenter = nav.LazyLoadPresenter<IWtcActiveMeetingTogglePresenter>();
 			
 			m_Builder = new StringBuilder();
 			m_RefreshSection = new SafeCriticalSection();
@@ -45,7 +43,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				view.SetMeetNowButtonEnabled(!inConference);
 				view.SetJoinByIdButtonEnabled(!inConference);
 				
-				m_TogglePresenter.ShowView(IsViewVisible && inConference);
 				view.SetMeetingIdText(m_Builder.ToString());
 			}
 			finally

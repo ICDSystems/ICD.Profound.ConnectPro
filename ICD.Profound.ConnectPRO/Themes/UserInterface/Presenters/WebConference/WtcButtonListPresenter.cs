@@ -37,7 +37,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		private readonly Dictionary<ushort, IPresenter> m_NavPages;
 		private readonly SafeCriticalSection m_RefreshSection;
-		private readonly IWtcContactsTogglePresenter m_TogglePresenter;
 
 		private IPresenter m_Visible;
 
@@ -64,8 +63,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				m_NavPages.Add(kvp.Key, nav.LazyLoadPresenter(kvp.Value));
 
 			SubscribePages();
-
-			m_TogglePresenter = nav.LazyLoadPresenter<IWtcContactsTogglePresenter>();
 		}
 
 		/// <summary>
@@ -191,8 +188,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				foreach (IPresenter presenter in m_NavPages.Values)
 					presenter.ShowView(false);
 			}
-
-			m_TogglePresenter.ShowView(args.Data);
 		}
 
 		#endregion

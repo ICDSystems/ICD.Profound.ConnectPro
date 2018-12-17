@@ -120,8 +120,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IWtcSharePresenter), (nav, views, theme) => new WtcSharePresenter(nav, views, theme)},
 			{typeof(IWtcRecordingPresenter), (nav, views, theme) => new WtcRecordingPresenter(nav, views, theme)},
 			{typeof(IWtcCallOutPresenter), (nav, views, theme) => new WtcCallOutPresenter(nav, views, theme)},
-			{typeof(IWtcActiveMeetingTogglePresenter), (nav, views, theme) => new WtcActiveMeetingTogglePresenter(nav, views, theme)},
-			{typeof(IWtcContactsTogglePresenter), (nav, views, theme) => new WtcContactsTogglePresenter(nav, views, theme)},
 
 			// Video Conference Contacts
 			{typeof(IVtcReferencedContactsPresenter), (nav, views, theme) => new VtcReferencedContactsPresenter(nav, views, theme)},
