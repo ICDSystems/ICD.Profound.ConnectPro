@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference
 {
-	public interface IWtcMainPagePresenter : IWtcPresenter<IWtcMainPageView>
+	public interface IWtcStartMeetingPresenter : IWtcPresenter<IWtcStartMeetingView>
 	{
 	}
 }

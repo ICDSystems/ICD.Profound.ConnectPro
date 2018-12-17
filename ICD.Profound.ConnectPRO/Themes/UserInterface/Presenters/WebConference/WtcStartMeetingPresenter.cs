@@ -1,8 +1,10 @@
 using System;
+using System.Text;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Zoom.Controls;
 using ICD.Connect.UI.Mvp.Presenters;
@@ -14,23 +16,25 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 {
-	public sealed class WtcMainPagePresenter : AbstractWtcPresenter<IWtcMainPageView>, IWtcMainPagePresenter
+	public sealed class WtcStartMeetingPresenter : AbstractWtcPresenter<IWtcStartMeetingView>, IWtcStartMeetingPresenter
 	{
+		private const int MAX_LENGTH = 10;
+
 		private readonly IWtcContactListPresenter m_ContactListPresenter;
-		private readonly IWtcJoinByIdPresenter m_JoinByIdPresenter;
 		private readonly IWtcActiveMeetingTogglePresenter m_TogglePresenter;
 		private readonly SafeCriticalSection m_RefreshSection;
+		private readonly StringBuilder m_Builder;
 
-		public WtcMainPagePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		public WtcStartMeetingPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
 			m_ContactListPresenter = nav.LazyLoadPresenter<IWtcContactListPresenter>();
-			m_JoinByIdPresenter = nav.LazyLoadPresenter<IWtcJoinByIdPresenter>();
 			m_TogglePresenter = nav.LazyLoadPresenter<IWtcActiveMeetingTogglePresenter>();
-
+			
+			m_Builder = new StringBuilder();
 			m_RefreshSection = new SafeCriticalSection();
 		}
 
-		protected override void Refresh(IWtcMainPageView view)
+		protected override void Refresh(IWtcStartMeetingView view)
 		{
 			base.Refresh(view);
 
@@ -42,6 +46,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				view.SetJoinByIdButtonEnabled(!inConference);
 				
 				m_TogglePresenter.ShowView(IsViewVisible && inConference);
+				view.SetMeetingIdText(m_Builder.ToString());
 			}
 			finally
 			{
@@ -119,22 +124,28 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		#region View Callbacks
 
-		protected override void Subscribe(IWtcMainPageView view)
+		protected override void Subscribe(IWtcStartMeetingView view)
 		{
 			base.Subscribe(view);
 
 			view.OnMeetNowButtonPressed += ViewOnOnMeetNowButtonPressed;
-			view.OnContactsButtonPressed += ViewOnContactsButtonPressed;
 			view.OnJoinByIdButtonPressed += ViewOnJoinByIdButtonPressed;
+			view.OnTextEntered += ViewOnOnTextEntered;
+			view.OnBackButtonPressed += ViewOnOnBackButtonPressed;
+			view.OnClearButtonPressed += ViewOnOnClearButtonPressed;
+			view.OnKeypadButtonPressed += ViewOnOnKeypadButtonPressed;
 		}
 
-		protected override void Unsubscribe(IWtcMainPageView view)
+		protected override void Unsubscribe(IWtcStartMeetingView view)
 		{
 			base.Unsubscribe(view);
 
 			view.OnMeetNowButtonPressed -= ViewOnOnMeetNowButtonPressed;
-			view.OnContactsButtonPressed -= ViewOnContactsButtonPressed;
 			view.OnJoinByIdButtonPressed -= ViewOnJoinByIdButtonPressed;
+			view.OnTextEntered -= ViewOnOnTextEntered;
+			view.OnBackButtonPressed -= ViewOnOnBackButtonPressed;
+			view.OnClearButtonPressed -= ViewOnOnClearButtonPressed;
+			view.OnKeypadButtonPressed -= ViewOnOnKeypadButtonPressed;
 		}
 
 		private void ViewOnOnMeetNowButtonPressed(object sender, EventArgs eventArgs)
@@ -145,25 +156,48 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				zoomControl.StartPersonalMeeting();
 		}
 
-		private void ViewOnContactsButtonPressed(object sender, EventArgs eventArgs)
-		{
-			m_ContactListPresenter.ShowView(true);
-			m_JoinByIdPresenter.ShowView(false);
-		}
-
 		private void ViewOnJoinByIdButtonPressed(object sender, EventArgs eventArgs)
 		{
-			m_ContactListPresenter.ShowView(false);
-			m_JoinByIdPresenter.ShowView(true);
+			if (ActiveConferenceControl == null)
+				return;
+
+			ActiveConferenceControl.Dial(new ZoomDialContext { DialString = m_Builder.ToString() });
+			RefreshIfVisible();
 		}
 
 		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
 		{
 			base.ViewOnVisibilityChanged(sender, args);
 
-			m_ContactListPresenter.ShowView(args.Data);
-			m_JoinByIdPresenter.ShowView(false);
-			m_TogglePresenter.ShowView(args.Data && IsInConference);
+			m_Builder.Clear();
+			RefreshIfVisible();
+		}
+
+		private void ViewOnOnKeypadButtonPressed(object sender, CharEventArgs e)
+		{
+			if (m_Builder.Length > MAX_LENGTH)
+				return;
+
+			m_Builder.Append(e.Data);
+			RefreshIfVisible();
+		}
+
+		private void ViewOnOnClearButtonPressed(object sender, EventArgs e)
+		{
+			m_Builder.Clear();
+			RefreshIfVisible();
+		}
+
+		private void ViewOnOnBackButtonPressed(object sender, EventArgs e)
+		{
+			m_Builder.Remove(m_Builder.Length - 1, 1);
+			RefreshIfVisible();
+		}
+
+		private void ViewOnOnTextEntered(object sender, StringEventArgs e)
+		{
+			m_Builder.Clear();
+			m_Builder.Append(e.Data.Length > MAX_LENGTH ? e.Data.Substring(0, MAX_LENGTH) : e.Data);
 		}
 
 		#endregion

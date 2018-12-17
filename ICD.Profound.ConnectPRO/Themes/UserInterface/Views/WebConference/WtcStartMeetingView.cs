@@ -2,20 +2,23 @@
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.EventArguments;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 {
-	public sealed partial class WtcJoinByIdView : AbstractUiView, IWtcJoinByIdView
+	public sealed partial class WtcStartMeetingView : AbstractUiView, IWtcStartMeetingView
 	{
-		public event EventHandler OnJoinMyMeetingButtonPressed;
+		public event EventHandler OnMeetNowButtonPressed;
+		public event EventHandler OnJoinByIdButtonPressed;
 		public event EventHandler<CharEventArgs> OnKeypadButtonPressed;
 		public event EventHandler OnClearButtonPressed;
 		public event EventHandler OnBackButtonPressed;
 		public event EventHandler<StringEventArgs> OnTextEntered;
 
-		public WtcJoinByIdView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
+		public WtcStartMeetingView(ISigInputOutput panel, ConnectProTheme theme)
+			: base(panel, theme)
 		{
 		}
 
@@ -23,7 +26,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 		{
 			base.Dispose();
 
-			OnJoinMyMeetingButtonPressed = null;
+			OnMeetNowButtonPressed = null;
+			OnJoinByIdButtonPressed = null;
 			OnKeypadButtonPressed = null;
 			OnClearButtonPressed = null;
 			OnBackButtonPressed = null;
@@ -32,7 +36,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 
 		#region Methods
 
-		public void SetText(string text)
+		public void SetMeetNowButtonEnabled(bool enabled)
+		{
+			m_MeetNowButton.Enable(enabled);
+		}
+
+		public void SetJoinByIdButtonEnabled(bool enabled)
+		{
+			m_JoinByIdButton.Enable(enabled);
+		}
+
+		public void SetMeetingIdText(string text)
 		{
 			m_TextEntry.SetLabelText(text);
 		}
@@ -45,8 +59,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 		{
 			base.SubscribeControls();
 
+			m_MeetNowButton.OnPressed += MeetNowButtonOnOnPressed;
+			m_JoinByIdButton.OnPressed += JoinByIdButtonOnOnPressed;
 			m_Keypad.OnButtonPressed += KeypadOnOnButtonPressed;
-			m_JoinMyMeetingButton.OnPressed += JoinMyMeetingButtonOnOnPressed;
 			m_TextEntry.OnTextModified += TextEntryOnOnTextModified;
 		}
 
@@ -54,8 +69,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 		{
 			base.UnsubscribeControls();
 
+			m_MeetNowButton.OnPressed -= MeetNowButtonOnOnPressed;
+			m_JoinByIdButton.OnPressed -= JoinByIdButtonOnOnPressed;
 			m_Keypad.OnButtonPressed -= KeypadOnOnButtonPressed;
-			m_JoinMyMeetingButton.OnPressed -= JoinMyMeetingButtonOnOnPressed;
+			m_TextEntry.OnTextModified -= TextEntryOnOnTextModified;
+		}
+
+		private void JoinByIdButtonOnOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnJoinByIdButtonPressed.Raise(this);
+		}
+
+		private void MeetNowButtonOnOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnMeetNowButtonPressed.Raise(this);
 		}
 
 		private void KeypadOnOnButtonPressed(object sender, SimpleKeypadEventArgs args)
@@ -72,11 +99,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 					OnKeypadButtonPressed.Raise(this, new CharEventArgs(m_Keypad.GetButtonChar(args.Data)));
 					break;
 			}
-		}
-
-		private void JoinMyMeetingButtonOnOnPressed(object sender, EventArgs eventArgs)
-		{
-			OnJoinMyMeetingButtonPressed.Raise(this);
 		}
 
 		private void TextEntryOnOnTextModified(object sender, StringEventArgs args)

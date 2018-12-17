@@ -111,10 +111,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 
 			// Web Conference
 			{typeof(IWtcBasePresenter), (nav, views, theme) => new WtcBasePresenter(nav, views, theme)},
-			{typeof(IWtcMainPagePresenter), (nav, views, theme) => new WtcMainPagePresenter(nav, views, theme)},
+			{typeof(IWtcStartMeetingPresenter), (nav, views, theme) => new WtcStartMeetingPresenter(nav, views, theme)},
 			{typeof(IWtcContactListPresenter), (nav, views, theme) => new WtcContactListPresenter(nav, views, theme)},
 			{typeof(IWtcReferencedDirectoryItemPresenter), (nav, views, theme) => new WtcReferencedDirectoryItemPresenter(nav, views, theme)},
-			{typeof(IWtcJoinByIdPresenter), (nav, views, theme) => new WtcJoinByIdPresenter(nav, views, theme)},
 			{typeof(IWtcButtonListPresenter), (nav, views, theme) => new WtcButtonListPresenter(nav, views, theme)},
 			{typeof(IWtcActiveMeetingPresenter), (nav, views, theme) => new WtcActiveMeetingPresenter(nav, views, theme)},
 			{typeof(IWtcReferencedParticipantPresenter), (nav, views, theme) => new WtcReferencedParticipantPresenter(nav, views, theme)},

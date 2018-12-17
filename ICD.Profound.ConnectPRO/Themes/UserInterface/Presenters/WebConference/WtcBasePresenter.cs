@@ -25,7 +25,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 {
 	public sealed class WtcBasePresenter : AbstractPopupPresenter<IWtcBaseView>, IWtcBasePresenter
 	{
-		private readonly IWtcMainPagePresenter m_MainPagePresenter;
+		private readonly IWtcStartMeetingPresenter m_MainPagePresenter;
 		private readonly IWtcButtonListPresenter m_ButtonListPresenter;
 		private readonly ICameraControlPresenter m_CameraControlPresenter;
 		private readonly List<IWtcPresenter> m_WtcPresenters;
@@ -81,7 +81,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		public WtcBasePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
-			m_MainPagePresenter = nav.LazyLoadPresenter<IWtcMainPagePresenter>();
+			m_MainPagePresenter = nav.LazyLoadPresenter<IWtcStartMeetingPresenter>();
 			m_ButtonListPresenter = nav.LazyLoadPresenter<IWtcButtonListPresenter>();
 
 			m_CameraControlPresenter = nav.LazyLoadPresenter<ICameraControlPresenter>();
