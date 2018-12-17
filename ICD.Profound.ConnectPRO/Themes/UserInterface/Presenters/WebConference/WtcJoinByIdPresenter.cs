@@ -4,7 +4,6 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.DialContexts;
-using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -99,10 +98,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		private void ViewOnOnTextEntered(object sender, StringEventArgs e)
 		{
 			m_Builder.Clear();
-			if (e.Data.Length > MAX_LENGTH)
-				m_Builder.Append(e.Data.Substring(0, MAX_LENGTH));
-			else
-				m_Builder.Append(e.Data);
+			m_Builder.Append(e.Data.Length > MAX_LENGTH ? e.Data.Substring(0, MAX_LENGTH) : e.Data);
 		}
 
 		#endregion
