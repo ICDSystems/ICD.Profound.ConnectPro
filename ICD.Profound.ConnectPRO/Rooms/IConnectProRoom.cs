@@ -1,7 +1,7 @@
 ﻿using System;
 using ICD.Common.Properties;
 using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Audio.Controls;
+using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Calendaring.CalendarControl;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Partitioning.Rooms;

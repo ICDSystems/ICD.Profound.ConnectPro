@@ -1,6 +1,7 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Audio.Controls;
+using ICD.Connect.Audio.Controls.Mute;
+using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
