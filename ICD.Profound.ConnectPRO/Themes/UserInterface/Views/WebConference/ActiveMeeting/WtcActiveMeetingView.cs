@@ -30,16 +30,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 			return GetChildViews(factory, m_ParticipantList, m_ChildList, count);
 		}
 
-		public void SetKickParticipantButtonEnabled(bool enabled)
-		{
-			m_KickParticipantButton.Enable(enabled);
-		}
-
-		public void SetMuteParticipantButtonEnabled(bool enabled)
-		{
-			m_MuteParticipantButton.Enable(enabled);
-		}
-
 		public void SetEndMeetingButtonEnabled(bool enabled)
 		{
 			m_EndMeetingButton.Enable(enabled);
@@ -59,16 +49,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 		{
 			m_MeetingInfoButton.Enable(enabled);
 		}
-		
-		/// <summary>
-		/// Sets the state of the Show/Hide Camera button.
-		/// If true, "Unmute" is displayed. If false, "Mute" is displayed.
-		/// </summary>
-		/// <param name="show"></param>
-		public void SetMuteParticipantButtonState(bool muted)
-		{
-			m_MuteParticipantButton.SetLabelTextAtJoin(m_MuteParticipantButton.DigitalLabelJoins.First(), muted);
-		}
 
 		/// <summary>
 		/// Sets the state of the Show/Hide Camera button.
@@ -85,9 +65,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 		protected override void SubscribeControls()
 		{
 			base.SubscribeControls();
-
-			m_KickParticipantButton.OnPressed += KickParticipantButtonOnOnPressed;
-			m_MuteParticipantButton.OnPressed += MuteParticipantButtonOnOnPressed;
+			
 			m_EndMeetingButton.OnPressed += EndMeetingButtonOnOnPressed;
 			m_LeaveMeetingButton.OnPressed += LeaveMeetingButtonOnOnPressed;
 			m_ShowHideCameraButton.OnPressed += ShowHideCameraButtonOnOnPressed;
@@ -98,8 +76,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 		{
 			base.UnsubscribeControls();
 
-			m_KickParticipantButton.OnPressed -= KickParticipantButtonOnOnPressed;
-			m_MuteParticipantButton.OnPressed -= MuteParticipantButtonOnOnPressed;
 			m_EndMeetingButton.OnPressed -= EndMeetingButtonOnOnPressed;
 			m_LeaveMeetingButton.OnPressed -= LeaveMeetingButtonOnOnPressed;
 			m_ShowHideCameraButton.OnPressed -= ShowHideCameraButtonOnOnPressed;
@@ -114,16 +90,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 		private void EndMeetingButtonOnOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnEndMeetingButtonPressed.Raise(this);
-		}
-
-		private void MuteParticipantButtonOnOnPressed(object sender, EventArgs eventArgs)
-		{
-			OnMuteParticipantButtonPressed.Raise(this);
-		}
-
-		private void KickParticipantButtonOnOnPressed(object sender, EventArgs eventArgs)
-		{
-			OnKickParticipantButtonPressed.Raise(this);
 		}
 
 		private void ShowHideCameraButtonOnOnPressed(object sender, EventArgs e)

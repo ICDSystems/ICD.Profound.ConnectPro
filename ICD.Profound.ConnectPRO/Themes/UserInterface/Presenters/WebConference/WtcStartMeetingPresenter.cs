@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.DialContexts;
@@ -41,7 +42,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			{
 				bool inConference = IsInConference;
 				view.SetMeetNowButtonEnabled(!inConference);
-				view.SetJoinByIdButtonEnabled(!inConference);
+				view.SetJoinByIdButtonEnabled(!inConference && m_Builder.Length >= 9);
 				
 				view.SetMeetingIdText(m_Builder.ToString());
 			}

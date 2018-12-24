@@ -4,7 +4,7 @@ using ICD.Common.Utils.EventArguments;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference
 {
-	public interface IWtcButtonListView : IUiView
+	public interface IWtcLeftMenuView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses a button.
@@ -12,10 +12,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference
 		event EventHandler<UShortEventArgs> OnButtonPressed;
 
 		/// <summary>
-		/// Sets the labels for the buttons in the list.
+		/// Sets the label for a button in the list.
 		/// </summary>
 		/// <param name="labels"></param>
-		void SetButtonLabels(IEnumerable<string> labels);
+		void SetButtonLabel(ushort index, string label);
+
+		/// <summary>
+		/// Sets the icon for a button in the list
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="icon"></param>
+		void SetButtonIcon(ushort index, string icon);
 
 		/// <summary>
 		/// Sets the visibility of the button at the given index.
@@ -37,5 +44,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference
 		/// <param name="index"></param>
 		/// <param name="selected"></param>
 		void SetButtonSelected(ushort index, bool selected);
+
+		/// <summary>
+		/// Sets the number of source buttons.
+		/// </summary>
+		/// <param name="count"></param>
+		void SetButtonCount(ushort count);
 	}
 }

@@ -8,31 +8,44 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 {
-	public sealed partial class WtcButtonListView : AbstractUiView, IWtcButtonListView
+	public sealed partial class WtcLeftMenuView : AbstractUiView, IWtcLeftMenuView
 	{
+		private const ushort SUBPAGE_3 = 763;
+		private const ushort SUBPAGE_4 = 764;
+		private const ushort SUBPAGE_5 = 765;
+
+		private static ushort[] SUBPAGE_JOINS = {
+			SUBPAGE_3,
+			SUBPAGE_4,
+			SUBPAGE_5
+		};
+
 		public event EventHandler<UShortEventArgs> OnButtonPressed;
 
-		public WtcButtonListView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
+		private ushort m_ButtonCount;
+
+		public WtcLeftMenuView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
 		{
 		}
 
 		/// <summary>
-		/// Release resources.
+		/// Sets the label for a button in the list.
 		/// </summary>
-		public override void Dispose()
+		/// <param name="index"></param>
+		/// <param name="label"></param>
+		public void SetButtonLabel(ushort index, string label)
 		{
-			OnButtonPressed = null;
-
-			base.Dispose();
+			m_ButtonList.SetItemLabel(index, label);
 		}
 
 		/// <summary>
-		/// Sets the labels for the buttons in the list.
+		/// Sets the icon for a button in the list.
 		/// </summary>
-		/// <param name="labels"></param>
-		public void SetButtonLabels(IEnumerable<string> labels)
+		/// <param name="index"></param>
+		/// <param name="icon"></param>
+		public void SetButtonIcon(ushort index, string icon)
 		{
-			m_ButtonList.SetItemLabels(labels.ToArray());
+			m_ButtonList.SetItemIcon(index, icon);
 		}
 
 		/// <summary>
@@ -63,6 +76,34 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 		public void SetButtonSelected(ushort index, bool selected)
 		{
 			m_ButtonList.SetItemSelected(index, selected);
+		}
+
+		public void SetButtonCount(ushort count)
+		{
+			m_ButtonCount = count;
+			UpdateSubpageVisibility();
+			m_ButtonList.SetNumberOfItems(count);
+		}
+
+		public override void Show(bool visible)
+		{
+			base.Show(visible);
+
+			UpdateSubpageVisibility();
+		}
+
+		private void UpdateSubpageVisibility()
+		{
+			ushort visible;
+			if (m_ButtonCount <= 3)
+				visible = SUBPAGE_3;
+			else if (m_ButtonCount == 4)
+				visible = SUBPAGE_4;
+			else
+				visible = SUBPAGE_5;
+
+			foreach (var subpage in SUBPAGE_JOINS)
+				Panel.SendInputDigital(subpage, subpage == visible && IsVisible);
 		}
 
 		#region Control Callbacks

@@ -25,8 +25,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 {
 	public sealed class WtcBasePresenter : AbstractPopupPresenter<IWtcBaseView>, IWtcBasePresenter
 	{
-		private readonly IWtcStartMeetingPresenter m_MainPagePresenter;
-		private readonly IWtcButtonListPresenter m_ButtonListPresenter;
+		private readonly IWtcLeftMenuPresenter m_LeftMenuPresenter;
 		private readonly ICameraControlPresenter m_CameraControlPresenter;
 		private readonly List<IWtcPresenter> m_WtcPresenters;
 
@@ -66,9 +65,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 				if (m_IsInCall)
 					ShowView(true);
-
-				m_MainPagePresenter.ShowView(!value && IsViewVisible);
-				m_ButtonListPresenter.ShowView(value && IsViewVisible);
 			}
 		}
 
@@ -81,8 +77,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		public WtcBasePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
-			m_MainPagePresenter = nav.LazyLoadPresenter<IWtcStartMeetingPresenter>();
-			m_ButtonListPresenter = nav.LazyLoadPresenter<IWtcButtonListPresenter>();
+			m_LeftMenuPresenter = nav.LazyLoadPresenter<IWtcLeftMenuPresenter>();
 
 			m_CameraControlPresenter = nav.LazyLoadPresenter<ICameraControlPresenter>();
 			m_CameraControlPresenter.OnViewVisibilityChanged += CameraControlPresenterOnViewVisibilityChanged;
@@ -304,7 +299,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			if(cameraPresenter != null && cameraPresenter.IsViewVisible && IsViewVisible)
 			{
 				cameraPresenter.ShowView(false);
-				m_ButtonListPresenter.ShowView(true);
+				m_LeftMenuPresenter.ShowView(true);
 				return;
 			}
 
@@ -326,18 +321,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
 		{
 			base.ViewOnVisibilityChanged(sender, args);
-
-			m_ButtonListPresenter.ShowView(false);
-
+			
 			// View became visible
 			if (args.Data)
 			{
-				m_MainPagePresenter.ShowView(true);
+				m_LeftMenuPresenter.ShowView(true);
 			}
 			// View became hidden
 			else
 			{
-				m_MainPagePresenter.ShowView(false);
+				m_LeftMenuPresenter.ShowView(false);
 
 				if (ActiveConferenceControl != null)
 				{
@@ -358,7 +351,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		private void CameraControlPresenterOnViewVisibilityChanged(object sender, BoolEventArgs e)
 		{
 			if (!e.Data && IsViewVisible)
-				Navigation.NavigateTo<IWtcButtonListPresenter>();
+				m_LeftMenuPresenter.ShowView(true);
 		}
 
 		#endregion

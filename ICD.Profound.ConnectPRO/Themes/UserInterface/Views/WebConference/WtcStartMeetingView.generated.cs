@@ -35,7 +35,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 
 			m_JoinByIdButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 726,
+				DigitalPressJoin = 723,
 				DigitalEnableJoin = 749
 			};
 

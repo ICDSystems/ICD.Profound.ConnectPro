@@ -127,10 +127,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 
 			// Web Conference
 			{typeof(IWtcBaseView), (panel, theme) => new WtcBaseView(panel, theme)},
-			{typeof(IWtcButtonListView), (panel, theme) => new WtcButtonListView(panel, theme)},
+			{typeof(IWtcLeftMenuView), (panel, theme) => new WtcLeftMenuView(panel, theme)},
 			{typeof(IWtcStartMeetingView), (panel, theme) => new WtcStartMeetingView(panel, theme)},
 			{typeof(IWtcContactListView), (panel, theme) => new WtcContactListView(panel, theme)},
 			{typeof(IWtcActiveMeetingView), (panel, theme) => new WtcActiveMeetingView(panel, theme)},
+			{typeof(IWtcParticipantControlsView), (panel,theme) => new WtcParticipantControlsView(panel,theme)},
 			{typeof(IWtcRecordingView), (panel, theme) => new WtcRecordingView(panel, theme)},
 			{typeof(IWtcShareView), (panel, theme) => new WtcShareView(panel, theme)},
 			{typeof(IWtcCallOutView), (panel, theme) => new WtcCallOutView(panel, theme)},

@@ -21,6 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly WtcReferencedParticipantPresenterFactory m_PresenterFactory;
+		private readonly IWtcParticipantControlsPresenter m_ParticipantControls;
 
 		private IWtcReferencedParticipantPresenter m_SelectedParticipant;
 
@@ -28,6 +29,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		{
 			m_RefreshSection = new SafeCriticalSection();
 			m_PresenterFactory = new WtcReferencedParticipantPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
+			m_ParticipantControls = nav.LazyLoadPresenter<IWtcParticipantControlsPresenter>();
 		}
 
 		private IWtcReferencedParticipantPresenter SelectedParticipant
@@ -45,6 +47,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 				if (m_SelectedParticipant != null)
 					SubscribeSelected(m_SelectedParticipant);
+
+				m_ParticipantControls.Participant = m_SelectedParticipant == null ? null : m_SelectedParticipant.Participant;
+				RefreshIfVisible();
 			}
 		}
 
@@ -79,10 +84,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 				// only hosts can kick/mute people
 				bool kickMuteEnabled = SelectedParticipant != null && (zoomConference == null ? activeConference != null : zoomConference.AmIHost);
-				view.SetKickParticipantButtonEnabled(kickMuteEnabled);
-				view.SetMuteParticipantButtonEnabled(kickMuteEnabled);
-				view.SetMuteParticipantButtonState(SelectedParticipant != null &&
-				                                   SelectedParticipant.Participant.IsMuted);
+				m_ParticipantControls.ShowView(kickMuteEnabled);
 
 				// only hosts can end meeting for everyone
 				view.SetEndMeetingButtonEnabled(zoomConference != null && zoomConference.AmIHost);

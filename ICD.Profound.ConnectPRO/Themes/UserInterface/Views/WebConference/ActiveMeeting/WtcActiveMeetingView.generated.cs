@@ -13,8 +13,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 	{
 		private VtProSubpage m_Subpage;
 		private VtProSubpageReferenceList m_ParticipantList;
-		private VtProButton m_MuteParticipantButton;
-		private VtProButton m_KickParticipantButton;
 		private VtProButton m_ShowHideCameraButton;
 		private VtProButton m_LeaveMeetingButton;
 		private VtProButton m_EndMeetingButton;
@@ -26,19 +24,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 			m_Subpage = new VtProSubpage(panel, parent)
 			{
 				DigitalVisibilityJoin = 741
-			};
-
-			m_KickParticipantButton = new VtProButton(panel, m_Subpage)
-			{
-				DigitalPressJoin = 706,
-				DigitalEnableJoin = 750
-			};
-
-			m_MuteParticipantButton = new VtProButton(panel, m_Subpage)
-			{
-				DigitalPressJoin = 707,
-				DigitalEnableJoin = 751,
-				DigitalLabelJoins = { 755 }
 			};
 
 			m_ShowHideCameraButton = new VtProButton(panel, m_Subpage)
@@ -82,8 +67,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 		{
 			yield return m_Subpage;
 			yield return m_ParticipantList;
-			yield return m_KickParticipantButton;
-			yield return m_MuteParticipantButton;
 			yield return m_ShowHideCameraButton;
 			yield return m_EndMeetingButton;
 			yield return m_LeaveMeetingButton;

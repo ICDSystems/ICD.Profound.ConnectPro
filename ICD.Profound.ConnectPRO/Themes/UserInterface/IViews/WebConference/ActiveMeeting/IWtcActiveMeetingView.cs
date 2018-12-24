@@ -44,28 +44,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Acti
 		/// <returns></returns>
 		IEnumerable<IWtcReferencedParticipantView> GetChildComponentViews(IViewFactory factory, ushort count);
 
-		/// <summary>
-		/// Sets the enabled state of the Kick Participant button.
-		/// </summary>
-		/// <param name="enabled"></param>
-		void SetKickParticipantButtonEnabled(bool enabled);
-
-		/// <summary>
-		/// Sets the enabled state of the Mute Participant button.
-		/// </summary>
-		/// <param name="enabled"></param>
-		void SetMuteParticipantButtonEnabled(bool enabled);
-
 		void SetEndMeetingButtonEnabled(bool enabled);
 
 		void SetLeaveMeetingButtonEnabled(bool enabled);
 
 		void SetNoParticipantsLabelVisibility(bool visible);
 
-		void SetMeetingInfoButtonEnabled(bool enable);
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="enabled"></param>
+		void SetMeetingInfoButtonEnabled(bool enabled);
 
 		void SetShowHideCameraButtonState(bool cameraEnabled);
-
-		void SetMuteParticipantButtonState(bool muted);
 	}
 }
