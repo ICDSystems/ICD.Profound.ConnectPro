@@ -14,24 +14,24 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.Contacts
 {
-	public class WtcReferencedDirectoryItemPresenter : AbstractUiComponentPresenter<IWtcReferencedDirectoryItemView>, IWtcReferencedDirectoryItemPresenter
+	public class WtcReferencedContactPresenter : AbstractUiComponentPresenter<IWtcReferencedContactView>, IWtcReferencedContactPresenter
 	{
 		public event EventHandler OnPressed;
 
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private DirectoryItem m_DirectoryItem;
-		public DirectoryItem DirectoryItem
+		private IContact m_Contact;
+		public IContact Contact
 		{
-			get { return m_DirectoryItem; }
+			get { return m_Contact; }
 			set
 			{
-				if (m_DirectoryItem == value)
+				if (m_Contact == value)
 					return;
 
-				Unsubscribe(m_DirectoryItem);
-				m_DirectoryItem = value;
-				Subscribe(m_DirectoryItem);
+				Unsubscribe(m_Contact);
+				m_Contact = value;
+				Subscribe(m_Contact);
 
 				RefreshIfVisible();
 			}
@@ -39,7 +39,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		public bool Selected { get; set; }
 
-		public WtcReferencedDirectoryItemPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+		public WtcReferencedContactPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
@@ -52,33 +52,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			base.Dispose();
 		}
 
-		protected override void Refresh(IWtcReferencedDirectoryItemView view)
+		protected override void Refresh(IWtcReferencedContactView view)
 		{
 			base.Refresh(view);
 
 			m_RefreshSection.Enter();
 			try
 			{
-				if (DirectoryItem.ModelType == DirectoryItem.eModelType.Folder)
-				{
-					var folder = DirectoryItem.Model as IDirectoryFolder;
-					view.SetContactName(folder == null ? "Missing Folder Name" : folder.Name);
-					view.SetOnlineStateMode(eOnlineState.Offline);
-					view.SetAvatarImageVisibility(false);
-					view.SetAvatarImagePath(null);
-				}
-				else if (DirectoryItem.ModelType == DirectoryItem.eModelType.Contact)
-				{
-					var contact = DirectoryItem.Model as IContact;
-					view.SetContactName(contact == null ? "Missing Contact Name" : contact.Name);
+				view.SetContactName(Contact == null ? "Missing Contact Name" : Contact.Name);
 
-					var onlineContact = contact as IContactWithOnlineState;
-					view.SetOnlineStateMode(onlineContact == null ? eOnlineState.Offline : onlineContact.OnlineState);
+				var onlineContact = Contact as IContactWithOnlineState;
+				view.SetOnlineStateMode(onlineContact == null ? eOnlineState.Offline : onlineContact.OnlineState);
 
-					var zoomContact = contact as ZoomContact;
-					view.SetAvatarImageVisibility(zoomContact != null && !string.IsNullOrEmpty(zoomContact.AvatarUrl));
-					view.SetAvatarImagePath(zoomContact == null ? null : zoomContact.AvatarUrl);
-				}
+				var zoomContact = Contact as ZoomContact;
+				view.SetAvatarImageVisibility(zoomContact != null && !string.IsNullOrEmpty(zoomContact.AvatarUrl));
+				view.SetAvatarImagePath(zoomContact == null ? null : zoomContact.AvatarUrl);
 				view.SetButtonSelected(Selected);
 			}
 			finally
@@ -89,16 +77,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		#region Contact Callbacks 
 
-		private void Subscribe(DirectoryItem item)
+		private void Subscribe(IContact item)
 		{
-			var contact = item.Model as IContactWithOnlineState;
+			var contact = item as IContactWithOnlineState;
 			if (contact != null)
 				contact.OnOnlineStateChanged += ContactOnOnOnlineStateChanged;
 		}
 
-		private void Unsubscribe(DirectoryItem item)
+		private void Unsubscribe(IContact item)
 		{
-			var contact = item.Model as IContactWithOnlineState;
+			var contact = item as IContactWithOnlineState;
 			if (contact != null)
 				contact.OnOnlineStateChanged -= ContactOnOnOnlineStateChanged;
 		}
@@ -112,14 +100,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		#region View Callbacks
 
-		protected override void Subscribe(IWtcReferencedDirectoryItemView view)
+		protected override void Subscribe(IWtcReferencedContactView view)
 		{
 			base.Subscribe(view);
 
 			view.OnContactPressed += ViewOnOnContactPressed;
 		}
 
-		protected override void Unsubscribe(IWtcReferencedDirectoryItemView view)
+		protected override void Unsubscribe(IWtcReferencedContactView view)
 		{
 			base.Unsubscribe(view);
 

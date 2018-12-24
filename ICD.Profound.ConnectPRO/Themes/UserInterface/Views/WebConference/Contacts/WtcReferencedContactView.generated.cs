@@ -8,7 +8,7 @@ using ICD.Connect.UI.Controls.TextControls;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Contacts
 {
-	public partial class WtcReferencedDirectoryItemView
+	public partial class WtcReferencedContactView
 	{
 		private VtProSubpage m_Subpage;
 		private VtProButton m_ContactButton;

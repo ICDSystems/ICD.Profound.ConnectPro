@@ -34,6 +34,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Cont
 		/// <param name="factory"></param>
 		/// <param name="count"></param>
 		/// <returns></returns>
-		IEnumerable<IWtcReferencedDirectoryItemView> GetChildComponentViews(IViewFactory factory, ushort count);
+		IEnumerable<IWtcReferencedContactView> GetChildComponentViews(IViewFactory factory, ushort count);
 	}
 }

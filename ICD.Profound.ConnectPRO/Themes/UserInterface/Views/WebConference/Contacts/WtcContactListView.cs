@@ -12,12 +12,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 		public event EventHandler OnInviteParticipantButtonPressed;
 		public event EventHandler OnBackButtonPressed;
 
-		private readonly List<IWtcReferencedDirectoryItemView> m_ChildList;
+		private readonly List<IWtcReferencedContactView> m_ChildList;
 
 		public WtcContactListView(ISigInputOutput panel, ConnectProTheme theme) 
 			: base(panel, theme)
 		{
-			m_ChildList = new List<IWtcReferencedDirectoryItemView>();
+			m_ChildList = new List<IWtcReferencedContactView>();
 		}
 
 		public override void Dispose()
@@ -28,7 +28,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 			base.Dispose();
 		}
 
-		public IEnumerable<IWtcReferencedDirectoryItemView> GetChildComponentViews(IViewFactory factory, ushort count)
+		public IEnumerable<IWtcReferencedContactView> GetChildComponentViews(IViewFactory factory, ushort count)
 		{
 			return GetChildViews(factory, m_ContactList, m_ChildList, count);
 		}

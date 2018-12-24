@@ -3,7 +3,7 @@ using ICD.Connect.Conferencing.Contacts;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts
 {
-	public interface IWtcReferencedDirectoryItemView : IUiView
+	public interface IWtcReferencedContactView : IUiView
 	{
 		/// <summary>
 		/// Raised when the contact is pressed.

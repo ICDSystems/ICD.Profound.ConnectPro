@@ -7,7 +7,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Contacts
 {
-	public sealed partial class WtcReferencedDirectoryItemView : AbstractComponentView, IWtcReferencedDirectoryItemView
+	public sealed partial class WtcReferencedContactView : AbstractComponentView, IWtcReferencedContactView
 	{
 		public event EventHandler OnContactPressed;
 
@@ -15,7 +15,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 		private ushort MODE_AWAY = 1;
 		private ushort MODE_BUSY = 2;
 
-		public WtcReferencedDirectoryItemView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index)
+		public WtcReferencedContactView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index)
 			: base(panel, theme, parent, index)
 		{
 		}

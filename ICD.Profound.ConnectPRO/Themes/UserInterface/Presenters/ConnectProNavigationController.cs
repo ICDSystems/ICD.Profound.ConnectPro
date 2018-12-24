@@ -114,7 +114,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IWtcLeftMenuPresenter), (nav, views, theme) => new WtcLeftMenuPresenter(nav, views, theme)},
 			{typeof(IWtcStartMeetingPresenter), (nav, views, theme) => new WtcStartMeetingPresenter(nav, views, theme)},
 			{typeof(IWtcContactListPresenter), (nav, views, theme) => new WtcContactListPresenter(nav, views, theme)},
-			{typeof(IWtcReferencedDirectoryItemPresenter), (nav, views, theme) => new WtcReferencedDirectoryItemPresenter(nav, views, theme)},
+			{typeof(IWtcReferencedContactPresenter), (nav, views, theme) => new WtcReferencedContactPresenter(nav, views, theme)},
 			{typeof(IWtcActiveMeetingPresenter), (nav, views, theme) => new WtcActiveMeetingPresenter(nav, views, theme)},
 			{typeof(IWtcReferencedParticipantPresenter), (nav, views, theme) => new WtcReferencedParticipantPresenter(nav, views, theme)},
 			{typeof(IWtcParticipantControlsPresenter), (nav, views, theme) => new WtcParticipantControlsPresenter(nav, views, theme)},

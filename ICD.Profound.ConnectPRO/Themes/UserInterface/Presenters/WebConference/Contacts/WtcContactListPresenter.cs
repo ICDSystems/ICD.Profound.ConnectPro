@@ -19,16 +19,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 	public sealed class WtcContactListPresenter : AbstractWtcPresenter<IWtcContactListView>, IWtcContactListPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
-		private readonly WtcReferencedDirectoryItemPresenterFactory m_PresenterFactory;
+		private readonly WtcReferencedContactPresenterFactory m_PresenterFactory;
 		private readonly DirectoryControlBrowser m_DirectoryBrowser;
 		
-		private IWtcReferencedDirectoryItemPresenter m_SelectedDirectoryItem;
+		private IWtcReferencedContactPresenter m_SelectedContact;
 
 		public WtcContactListPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
-			m_PresenterFactory = new WtcReferencedDirectoryItemPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
+			m_PresenterFactory = new WtcReferencedContactPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
 			m_DirectoryBrowser = new DirectoryControlBrowser();
 
 			m_DirectoryBrowser.OnPathContentsChanged += DirectoryBrowserOnOnPathContentsChanged;
@@ -56,7 +56,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			{
 				view.SetBackButtonEnabled(!m_DirectoryBrowser.IsCurrentFolderRoot);
 
-				var contact = m_SelectedDirectoryItem == null ? null : m_SelectedDirectoryItem.DirectoryItem.Model as IContact;
+				var contact = m_SelectedContact == null ? null : m_SelectedContact.Contact;
 				var onlineContact = contact == null ? null : contact as IContactWithOnlineState;
 				var inviteEnabled = onlineContact == null
 					? contact != null
@@ -66,7 +66,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				var contacts = GetContacts();
 				foreach (var presenter in m_PresenterFactory.BuildChildren(contacts))
 				{
-					presenter.Selected = presenter == m_SelectedDirectoryItem;
+					presenter.Selected = presenter == m_SelectedContact;
 					presenter.ShowView(true);
 					presenter.Refresh();
 				}
@@ -79,66 +79,53 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		#region Private Methods
 
-		private IEnumerable<IWtcReferencedDirectoryItemView> ItemFactory(ushort count)
+		private IEnumerable<IWtcReferencedContactView> ItemFactory(ushort count)
 		{
 			return GetView().GetChildComponentViews(ViewFactory, count);
 		}
 
-		private IEnumerable<DirectoryItem> GetContacts()
+		private IEnumerable<IContact> GetContacts()
 		{
 			
 			if (m_DirectoryBrowser == null)
-				return Enumerable.Empty<DirectoryItem>();
+				return Enumerable.Empty<IContact>();
 
 			IDirectoryFolder current = m_DirectoryBrowser.GetCurrentFolder();
 			if (current == null)
-				return Enumerable.Empty<DirectoryItem>();
+				return Enumerable.Empty<IContact>();
 
-			return current
-				.GetFolders()
-				.Select(f => new DirectoryItem(f))
-				.Concat(current.GetContacts().Select(c => new DirectoryItem(c)))
-				.OrderBy(c => c.ModelType == DirectoryItem.eModelType.Contact)
-				.ThenBy(c =>
+			return current.GetContacts()
+				.OrderByDescending(c =>
 				{
-					if (c.ModelType == DirectoryItem.eModelType.Contact)
-						return (c.Model as IContact).Name;
-					if (c.ModelType == DirectoryItem.eModelType.Folder)
-						return (c.Model as IDirectoryFolder).Name;
-
-					// This should never happen
-					throw new InvalidOperationException();
-				});
+					var onlineContact = c as IContactWithOnlineState;
+					if (onlineContact == null)
+						return eOnlineState.Offline;
+					return onlineContact.OnlineState;
+				})
+				.ThenBy(c => c.Name);
 		}
 
 		#endregion
 
 		#region Contact Callbacks
 
-		private void Subscribe(IWtcReferencedDirectoryItemPresenter presenter)
+		private void Subscribe(IWtcReferencedContactPresenter presenter)
 		{
 			presenter.OnPressed += PresenterOnOnPressed;
 		}
 
-		private void Unsubscribe(IWtcReferencedDirectoryItemPresenter presenter)
+		private void Unsubscribe(IWtcReferencedContactPresenter presenter)
 		{
 			presenter.OnPressed -= PresenterOnOnPressed;
 		}
 
 		private void PresenterOnOnPressed(object sender, EventArgs eventArgs)
 		{
-			var presenter = sender as IWtcReferencedDirectoryItemPresenter;
+			var presenter = sender as IWtcReferencedContactPresenter;
 			if (presenter == null)
 				return;
 
-			if (m_SelectedDirectoryItem == presenter)
-				m_SelectedDirectoryItem = null;
-
-			else if (presenter.DirectoryItem.ModelType == DirectoryItem.eModelType.Folder)
-				m_DirectoryBrowser.EnterFolder(presenter.DirectoryItem.Model as IDirectoryFolder);
-
-			else if (presenter.DirectoryItem.ModelType == DirectoryItem.eModelType.Contact)
-				m_SelectedDirectoryItem = presenter;
+			m_SelectedContact = m_SelectedContact == presenter ? null : presenter;
 
 			RefreshIfVisible();
 		}
@@ -192,10 +179,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private void ViewOnOnInviteParticipantButtonPressed(object sender, EventArgs e)
 		{
-			if (ActiveConferenceControl == null || m_SelectedDirectoryItem == null || m_SelectedDirectoryItem.DirectoryItem.ModelType != DirectoryItem.eModelType.Contact)
+			if (ActiveConferenceControl == null || m_SelectedContact == null || m_SelectedContact.Contact == null)
 				return;
 
-			var contact = m_SelectedDirectoryItem.DirectoryItem.Model as IContact;
+			var contact = m_SelectedContact.Contact;
 			if (contact == null || !contact.GetDialContexts().Any())
 				return;
 
@@ -212,7 +199,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private void ViewOnOnBackButtonPressed(object sender, EventArgs e)
 		{
 			m_DirectoryBrowser.GoUp();
-			m_SelectedDirectoryItem = null;
+			m_SelectedContact = null;
 			RefreshIfVisible();
 		}
 
