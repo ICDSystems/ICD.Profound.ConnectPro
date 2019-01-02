@@ -1,5 +1,5 @@
 ﻿using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Audio.Controls;
+using ICD.Connect.Audio.Controls.Mute;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Popups;

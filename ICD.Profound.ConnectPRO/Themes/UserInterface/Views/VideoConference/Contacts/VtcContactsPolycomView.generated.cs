@@ -40,7 +40,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 
 			m_ContactList = new VtProSubpageReferenceList(901, panel as IPanelDevice, m_Subpage)
 			{
-				VisibilityDigitalJoin = 931,
+				DigitalVisibilityJoin = 931,
 
 				DigitalJoinIncrement = 3,
 				AnalogJoinIncrement = 0,
@@ -50,7 +50,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 
 			m_DPad = new VtProDPad(902, panel as IPanelDevice, m_Subpage)
 			{
-				VisibilityDigitalJoin = 930
+				DigitalVisibilityJoin = 930
 			};
 
 			m_NavigationButton = new VtProButton(panel, m_Subpage)
