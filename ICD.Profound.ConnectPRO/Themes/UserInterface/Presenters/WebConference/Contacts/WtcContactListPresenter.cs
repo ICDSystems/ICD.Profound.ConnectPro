@@ -10,6 +10,7 @@ using ICD.Connect.Conferencing.Directory.Tree;
 using ICD.Connect.Devices;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts;
@@ -19,16 +20,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 	public sealed class WtcContactListPresenter : AbstractWtcPresenter<IWtcContactListView>, IWtcContactListPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
-		private readonly WtcReferencedContactPresenterFactory m_PresenterFactory;
+		private readonly SafeCriticalSection m_ContactSection;
+		private readonly WtcReferencedContactPresenterFactory m_ContactFactory;
+		private readonly WtcReferencedSelectedContactPresenterFactory m_SelectedContactFactory;
 		private readonly DirectoryControlBrowser m_DirectoryBrowser;
-		
-		private IWtcReferencedContactPresenter m_SelectedContact;
+		private readonly List<IContact> m_SelectedContacts;
+
+		private string m_Filter;
 
 		public WtcContactListPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
-			m_PresenterFactory = new WtcReferencedContactPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
+			m_ContactSection = new SafeCriticalSection();
+			m_ContactFactory = new WtcReferencedContactPresenterFactory(nav, ContactItemFactory, Subscribe, Unsubscribe);
+			m_SelectedContactFactory = new WtcReferencedSelectedContactPresenterFactory(nav, SelectedContactItemFactory, Subscribe, Unsubscribe);
+			m_SelectedContacts = new List<IContact>();
 			m_DirectoryBrowser = new DirectoryControlBrowser();
 
 			m_DirectoryBrowser.OnPathContentsChanged += DirectoryBrowserOnOnPathContentsChanged;
@@ -42,7 +49,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		public override void Dispose()
 		{
 			m_DirectoryBrowser.Dispose();
-			m_PresenterFactory.Dispose();
+			m_ContactFactory.Dispose();
+			m_SelectedContactFactory.Dispose();
 
 			base.Dispose();
 		}
@@ -54,19 +62,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			m_RefreshSection.Enter();
 			try
 			{
-				view.SetBackButtonEnabled(!m_DirectoryBrowser.IsCurrentFolderRoot);
+				var contacts = GetContacts().ToList();
+				view.SetSearchButtonEnabled(true);
 
-				var contact = m_SelectedContact == null ? null : m_SelectedContact.Contact;
-				var onlineContact = contact == null ? null : contact as IContactWithOnlineState;
-				var inviteEnabled = onlineContact == null
-					? contact != null
-					: onlineContact.OnlineState != eOnlineState.Offline;
-				view.SetInviteParticipantButtonEnabled(inviteEnabled);
-
-				var contacts = GetContacts();
-				foreach (var presenter in m_PresenterFactory.BuildChildren(contacts))
+				var selectedContacts = GetSelectedContacts().ToList();
+				view.SetInviteParticipantButtonEnabled(selectedContacts.Any());
+				foreach (var presenter in m_ContactFactory.BuildChildren(contacts))
 				{
-					presenter.Selected = presenter == m_SelectedContact;
+					presenter.ShowView(true);
+					presenter.Refresh();
+				}
+
+				foreach (var presenter in m_SelectedContactFactory.BuildChildren(selectedContacts))
+				{
 					presenter.ShowView(true);
 					presenter.Refresh();
 				}
@@ -79,9 +87,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		#region Private Methods
 
-		private IEnumerable<IWtcReferencedContactView> ItemFactory(ushort count)
+		private IEnumerable<IWtcReferencedContactView> ContactItemFactory(ushort count)
 		{
-			return GetView().GetChildComponentViews(ViewFactory, count);
+			return GetView().GetContactViews(ViewFactory, count);
+		}
+
+		private IEnumerable<IWtcReferencedSelectedContactView> SelectedContactItemFactory(ushort count)
+		{
+			return GetView().GetSelectedContactViews(ViewFactory, count);
 		}
 
 		private IEnumerable<IContact> GetContacts()
@@ -95,14 +108,53 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				return Enumerable.Empty<IContact>();
 
 			return current.GetContacts()
-				.OrderByDescending(c =>
+				.Where(c => m_Filter.Split(' ').Any(f => c.Name.IndexOf(f, StringComparison.OrdinalIgnoreCase) >= 0))
+				.OrderBy(c =>
 				{
 					var onlineContact = c as IContactWithOnlineState;
 					if (onlineContact == null)
 						return eOnlineState.Offline;
+					if (onlineContact.OnlineState == eOnlineState.Unknown)
+						return eOnlineState.Offline;
 					return onlineContact.OnlineState;
 				})
 				.ThenBy(c => c.Name);
+		}
+
+		private IEnumerable<IContact> GetSelectedContacts()
+		{
+			return m_ContactSection.Execute(() => m_SelectedContacts.ToList());
+		}
+
+		private void AddContact(IContact contact)
+		{
+			m_ContactSection.Enter();
+			try
+			{
+				if (m_SelectedContacts.Contains(contact))
+					return;
+
+				m_SelectedContacts.Add(contact);
+			}
+			finally
+			{
+				m_ContactSection.Leave();
+			}
+		}
+
+		private void RemoveContact(IContact contact)
+		{
+			m_ContactSection.Enter();
+			try
+			{
+				if (!m_SelectedContacts.Contains(contact))
+					return;
+				m_SelectedContacts.Remove(contact);
+			}
+			finally
+			{
+				m_ContactSection.Leave();
+			}
 		}
 
 		#endregion
@@ -125,7 +177,32 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			if (presenter == null)
 				return;
 
-			m_SelectedContact = m_SelectedContact == presenter ? null : presenter;
+			AddContact(presenter.Contact);
+
+			RefreshIfVisible();
+		}
+
+		#endregion
+
+		#region Selected Contact Callbacks
+
+		private void Subscribe(IWtcReferencedSelectedContactPresenter presenter)
+		{
+			presenter.OnRemoveContact += PresenterOnRemoveContact;
+		}
+
+		private void Unsubscribe(IWtcReferencedSelectedContactPresenter presenter)
+		{
+			presenter.OnRemoveContact -= PresenterOnRemoveContact;
+		}
+
+		private void PresenterOnRemoveContact(object sender, EventArgs eventArgs)
+		{
+			var presenter = sender as IWtcReferencedSelectedContactPresenter;
+			if (presenter == null)
+				return;
+
+			RemoveContact(presenter.Contact);
 
 			RefreshIfVisible();
 		}
@@ -166,7 +243,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			base.Subscribe(view);
 
 			view.OnInviteParticipantButtonPressed += ViewOnOnInviteParticipantButtonPressed;
-			view.OnBackButtonPressed += ViewOnOnBackButtonPressed;
+			view.OnSearchButtonPressed += ViewOnOnSearchButtonPressed;
 		}
 
 		protected override void Unsubscribe(IWtcContactListView view)
@@ -174,32 +251,45 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			base.Unsubscribe(view);
 
 			view.OnInviteParticipantButtonPressed -= ViewOnOnInviteParticipantButtonPressed;
-			view.OnBackButtonPressed -= ViewOnOnBackButtonPressed;
+			view.OnSearchButtonPressed -= ViewOnOnSearchButtonPressed;
 		}
 
 		private void ViewOnOnInviteParticipantButtonPressed(object sender, EventArgs e)
 		{
-			if (ActiveConferenceControl == null || m_SelectedContact == null || m_SelectedContact.Contact == null)
+			if (ActiveConferenceControl == null)
 				return;
 
-			var contact = m_SelectedContact.Contact;
-			if (contact == null || !contact.GetDialContexts().Any())
+			var contacts = GetSelectedContacts().ToList();
+			if (!contacts.Any())
 				return;
 
-			var bestDialContext = contact.GetDialContexts()
-				.OrderByDescending(d => ActiveConferenceControl.CanDial(d)).FirstOrDefault();
-			if (bestDialContext == null ||
-			    ActiveConferenceControl.CanDial(bestDialContext) == eDialContextSupport.Unsupported)
-				return;
-			
-			ActiveConferenceControl.Dial(bestDialContext);
+			foreach (var contact in contacts)
+			{
+				if (contact == null || !contact.GetDialContexts().Any())
+					continue;
+
+				var bestDialContext = contact.GetDialContexts()
+					.OrderByDescending(d => ActiveConferenceControl.CanDial(d)).FirstOrDefault();
+				if (bestDialContext == null ||
+				    ActiveConferenceControl.CanDial(bestDialContext) == eDialContextSupport.Unsupported)
+					continue;
+
+				ActiveConferenceControl.Dial(bestDialContext);
+				RemoveContact(contact);
+			}
 
 			Navigation.LazyLoadPresenter<IGenericAlertPresenter>().Show("Invitation sent.", 1000);
+			RefreshIfVisible();
 		}
-		private void ViewOnOnBackButtonPressed(object sender, EventArgs e)
+
+		private void ViewOnOnSearchButtonPressed(object sender, EventArgs e)
 		{
-			m_DirectoryBrowser.GoUp();
-			m_SelectedContact = null;
+			Navigation.LazyLoadPresenter<IWtcKeyboardPresenter>().ShowView(FilterContacts);
+		}
+
+		private void FilterContacts(string filter)
+		{
+			m_Filter = filter;
 			RefreshIfVisible();
 		}
 

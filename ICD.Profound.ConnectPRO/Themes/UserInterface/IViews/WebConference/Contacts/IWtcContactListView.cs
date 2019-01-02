@@ -12,9 +12,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Cont
 		event EventHandler OnInviteParticipantButtonPressed;
 
 		/// <summary>
-		/// Raised when the Back button is pressed.
+		/// Raised when the Search button is pressed.
 		/// </summary>
-		event EventHandler OnBackButtonPressed;
+		event EventHandler OnSearchButtonPressed;
 
 		/// <summary>
 		/// Sets the enabled state of the Invite Participant button.
@@ -23,10 +23,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Cont
 		void SetInviteParticipantButtonEnabled(bool enabled);
 
 		/// <summary>
-		/// Sets the enabled state of the Back button.
+		/// Sets the enabled state of the Search button.
 		/// </summary>
 		/// <param name="enabled"></param>
-		void SetBackButtonEnabled(bool enabled);
+		void SetSearchButtonEnabled(bool enabled);
 
 		/// <summary>
 		/// Returns child views for list items.
@@ -34,6 +34,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Cont
 		/// <param name="factory"></param>
 		/// <param name="count"></param>
 		/// <returns></returns>
-		IEnumerable<IWtcReferencedContactView> GetChildComponentViews(IViewFactory factory, ushort count);
+		IEnumerable<IWtcReferencedContactView> GetContactViews(IViewFactory factory, ushort count);
+		
+		/// <summary>
+		/// Returns child views for list items.
+		/// </summary>
+		/// <param name="factory"></param>
+		/// <param name="count"></param>
+		/// <returns></returns>
+		IEnumerable<IWtcReferencedSelectedContactView> GetSelectedContactViews(IViewFactory factory, ushort count);
 	}
 }

@@ -68,6 +68,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 
 			// Web Conference
 			{typeof(IWtcReferencedContactView), (nav, views, theme, index) => new WtcReferencedContactView(nav, views, theme, index)},
+			{typeof(IWtcReferencedSelectedContactView), (nav, views, theme, index) => new WtcReferencedSelectedContactView(nav, views, theme, index)},
 			{typeof(IWtcReferencedParticipantView), (nav, views, theme, index) => new WtcReferencedParticipantView(nav, views, theme, index)},
 
 			// Common
@@ -135,6 +136,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(IWtcRecordingView), (panel, theme) => new WtcRecordingView(panel, theme)},
 			{typeof(IWtcShareView), (panel, theme) => new WtcShareView(panel, theme)},
 			{typeof(IWtcCallOutView), (panel, theme) => new WtcCallOutView(panel, theme)},
+			{typeof(IWtcKeyboardView), (panel, theme) => new WtcKeyboardView(panel, theme)}, 
 
 			// Audio Conference
 			{typeof(IAtcBaseView), (panel, theme) => new AtcBaseView(panel, theme)},

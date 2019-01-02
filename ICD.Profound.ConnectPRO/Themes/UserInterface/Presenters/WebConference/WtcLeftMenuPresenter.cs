@@ -20,7 +20,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 	public class WtcLeftMenuPresenter : AbstractWtcPresenter<IWtcLeftMenuView>, IWtcLeftMenuPresenter
 	{
 		private const ushort INDEX_MEETING = 0;
-		private const ushort INDEX_CONTACTS = 1;
+		public const ushort INDEX_CONTACTS = 1;
 		//private const ushort INDEX_CALL_OUT = 3;
 		private const ushort INDEX_SHARE = 2;
 		//private const ushort INDEX_RECORDING = 5;

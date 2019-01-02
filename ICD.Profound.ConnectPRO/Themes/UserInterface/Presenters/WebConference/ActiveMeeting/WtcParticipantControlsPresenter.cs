@@ -12,9 +12,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 {
 	public sealed class WtcParticipantControlsPresenter : AbstractWtcPresenter<IWtcParticipantControlsView>, IWtcParticipantControlsPresenter
 	{
-		public event EventHandler OnKickParticipantPressed;
-		public event EventHandler OnMuteParticipantPressed;
-
 		private const ushort INDEX_KICK = 0;
 		private const ushort INDEX_MUTE = 1;
 

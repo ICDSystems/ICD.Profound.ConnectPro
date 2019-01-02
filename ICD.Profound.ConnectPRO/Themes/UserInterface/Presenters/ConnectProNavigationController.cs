@@ -115,12 +115,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IWtcStartMeetingPresenter), (nav, views, theme) => new WtcStartMeetingPresenter(nav, views, theme)},
 			{typeof(IWtcContactListPresenter), (nav, views, theme) => new WtcContactListPresenter(nav, views, theme)},
 			{typeof(IWtcReferencedContactPresenter), (nav, views, theme) => new WtcReferencedContactPresenter(nav, views, theme)},
+			{typeof(IWtcReferencedSelectedContactPresenter), (nav, views, theme) => new WtcReferencedSelectedContactPresenter(nav, views, theme)},
 			{typeof(IWtcActiveMeetingPresenter), (nav, views, theme) => new WtcActiveMeetingPresenter(nav, views, theme)},
 			{typeof(IWtcReferencedParticipantPresenter), (nav, views, theme) => new WtcReferencedParticipantPresenter(nav, views, theme)},
 			{typeof(IWtcParticipantControlsPresenter), (nav, views, theme) => new WtcParticipantControlsPresenter(nav, views, theme)},
 			{typeof(IWtcSharePresenter), (nav, views, theme) => new WtcSharePresenter(nav, views, theme)},
 			{typeof(IWtcRecordingPresenter), (nav, views, theme) => new WtcRecordingPresenter(nav, views, theme)},
 			{typeof(IWtcCallOutPresenter), (nav, views, theme) => new WtcCallOutPresenter(nav, views, theme)},
+			{typeof(IWtcKeyboardPresenter), (nav, views, theme) => new WtcKeyboardPresenter(nav, views, theme)},
 
 			// Video Conference Contacts
 			{typeof(IVtcReferencedContactsPresenter), (nav, views, theme) => new VtcReferencedContactsPresenter(nav, views, theme)},

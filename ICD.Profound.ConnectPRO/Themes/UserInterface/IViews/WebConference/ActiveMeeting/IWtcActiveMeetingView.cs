@@ -7,16 +7,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Acti
 	public interface IWtcActiveMeetingView : IUiView
 	{
 		/// <summary>
-		/// Raised when the Kick Participant button is pressed.
-		/// </summary>
-		event EventHandler OnKickParticipantButtonPressed;
-
-		/// <summary>
-		/// Raised when the Mute Participant button is pressed.
-		/// </summary>
-		event EventHandler OnMuteParticipantButtonPressed;
-
-		/// <summary>
 		/// Raised when the Show/Hide Camera button is pressed.
 		/// </summary>
 		event EventHandler OnShowHideCameraButtonPressed;
@@ -34,7 +24,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Acti
 		/// <summary>
 		/// Raised when the Meeting Info button is pressed.
 		/// </summary>
-		event EventHandler OnMeetingInfoButtonPressed;
+		event EventHandler OnInviteButtonPressed;
 
 		/// <summary>
 		/// Returns child views for list items.
@@ -50,11 +40,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Acti
 
 		void SetNoParticipantsLabelVisibility(bool visible);
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="enabled"></param>
-		void SetMeetingInfoButtonEnabled(bool enabled);
+		void SetInviteButtonVisibility(bool visible);
+
+		void SetMeetingNumberLabelVisibility(bool enabled);
+
+		void SetMeetingNumberLabelText(string text);
 
 		void SetShowHideCameraButtonState(bool cameraEnabled);
 	}
