@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Contacts;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Directory;
@@ -26,7 +27,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private readonly DirectoryControlBrowser m_DirectoryBrowser;
 		private readonly List<IContact> m_SelectedContacts;
 
-		private string m_Filter;
+		private string m_Filter = "";
 
 		public WtcContactListPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
@@ -107,18 +108,64 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			if (current == null)
 				return Enumerable.Empty<IContact>();
 
+			if (string.IsNullOrEmpty(m_Filter))
+				return current.GetContacts()
+				              .OrderBy(c =>
+				                       {
+					                       var onlineContact = c as IContactWithOnlineState;
+					                       if (onlineContact == null || onlineContact.OnlineState == eOnlineState.Unknown)
+						                       return eOnlineState.Offline;
+					                       return onlineContact.OnlineState;
+				                       })
+				              .ThenBy(c => c.Name);
+
+			var nameScoringMethod = GetWeightedTokenSearchFunc(m_Filter);
 			return current.GetContacts()
-				.Where(c => m_Filter.Split(' ').Any(f => c.Name.IndexOf(f, StringComparison.OrdinalIgnoreCase) >= 0))
-				.OrderBy(c =>
-				{
-					var onlineContact = c as IContactWithOnlineState;
-					if (onlineContact == null)
-						return eOnlineState.Offline;
-					if (onlineContact.OnlineState == eOnlineState.Unknown)
-						return eOnlineState.Offline;
-					return onlineContact.OnlineState;
-				})
-				.ThenBy(c => c.Name);
+			              .GroupBy(c => nameScoringMethod(c.Name)) // group so we can filter low scores
+			              .Where(g => g.Key > 0) // filter out non-matches
+			              .OrderByDescending(g => g.Key)
+			              .SelectMany(g => g); // ungroup
+		}
+
+		private static Func<string, double> GetWeightedTokenSearchFunc(string searchString)
+		{
+			if (searchString == null)
+				throw new ArgumentNullException("searchString");
+
+			string[] tokens = searchString.Split();
+			return (name) => WeightedTokenSearch(name, searchString, tokens);
+		}
+
+		private static double WeightedTokenSearch(string name, string searchString, string[] searchTokens)
+		{
+			if (name == null)
+				throw new ArgumentNullException("name");
+
+			double score = 0;
+			// if full search string matches in name, tons of points
+			if (name.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0)
+				score += 2.0;
+
+			string[] nameTokens = name.Split();
+			foreach (var searchToken in searchTokens)
+			{
+				if (string.IsNullOrEmpty(searchToken))
+					continue;
+
+				int[] matches = nameTokens.Select(n => n.IndexOf(searchToken, StringComparison.OrdinalIgnoreCase)).ToArray();
+
+				// if search token found in any name tokens, lots of points
+				if (matches.Any(i => i != -1))
+					score += 1.0;
+
+				// if it matches the beginning of the name, decent points
+				if (matches[0] == 0)
+					score += 0.5;
+				// else if it matches the beginning of any name token, small points
+				else if (matches.Any(i => i == 0))
+					score += 0.25;
+			}
+			return score;
 		}
 
 		private IEnumerable<IContact> GetSelectedContacts()
