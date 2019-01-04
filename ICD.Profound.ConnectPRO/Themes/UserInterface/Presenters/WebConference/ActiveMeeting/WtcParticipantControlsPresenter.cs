@@ -15,16 +15,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private const ushort INDEX_KICK = 0;
 		private const ushort INDEX_MUTE = 1;
 
-		private static Dictionary<ushort, string> s_ButtonLabels = new Dictionary<ushort, string>
+		private static readonly Dictionary<ushort, string> s_ButtonLabels = new Dictionary<ushort, string>
 		{
-			{ INDEX_KICK, "Kick Participant" },
-			{ INDEX_MUTE, "Mute Participant" }
+			{INDEX_KICK, "Kick Participant"},
+			{INDEX_MUTE, "Mute Participant"}
 		};
 
-		private static Dictionary<ushort, string> s_ButtonIcons = new Dictionary<ushort, string>
+		private static readonly Dictionary<ushort, string> s_ButtonIcons = new Dictionary<ushort, string>
 		{
-			{ INDEX_KICK, "icon_exit_white" },
-			{ INDEX_MUTE, "icon_volumeMute_white" }
+			{INDEX_KICK, "icon_exit_white"},
+			{INDEX_MUTE, "icon_volumeMute_white"}
 		};
 
 		private readonly SafeCriticalSection m_RefreshSection;
@@ -63,7 +63,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			{
 				view.SetButtonIcon(INDEX_KICK, s_ButtonIcons[INDEX_KICK]);
 				view.SetButtonLabel(INDEX_KICK, s_ButtonLabels[INDEX_KICK]);
-				
+
 				view.SetButtonIcon(INDEX_MUTE, Participant.IsMuted ? "icon_volumeGeneric_white" : s_ButtonIcons[INDEX_MUTE]);
 				view.SetButtonLabel(INDEX_MUTE, Participant.IsMuted ? "Unmute Participant" : s_ButtonLabels[INDEX_MUTE]);
 			}
