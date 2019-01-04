@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
@@ -297,6 +297,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private void ViewOnOnInviteButtonPressed(object sender, EventArgs e)
 		{
 			Navigation.NavigateTo<IWtcContactListPresenter>();
+		}
+
+		protected override void ViewOnPreVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			base.ViewOnVisibilityChanged(sender, args);
+
+			SelectedParticipant = null;
+			if (!args.Data)
+				m_ParticipantControls.ShowView(false);
 		}
 
 		#endregion
