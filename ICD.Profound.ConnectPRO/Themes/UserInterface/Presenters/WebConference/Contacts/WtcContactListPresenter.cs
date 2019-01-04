@@ -152,7 +152,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				if (string.IsNullOrEmpty(searchToken))
 					continue;
 
-				int[] matches = nameTokens.Select(n => n.IndexOf(searchToken, StringComparison.OrdinalIgnoreCase)).ToArray();
+				string token = searchToken;
+				int[] matches = nameTokens.Select(n => n.IndexOf(token, StringComparison.OrdinalIgnoreCase)).ToArray();
 
 				// if search token found in any name tokens, lots of points
 				if (matches.Any(i => i != -1))
