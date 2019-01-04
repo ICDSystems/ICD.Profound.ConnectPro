@@ -73,7 +73,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 126
+				DigitalVisibilityJoin = 767
 			};
 
 			m_Key0Button = new VtProButton(panel, m_Subpage)
@@ -294,9 +294,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 
 			m_TextEntry = new VtProTextEntry(panel, m_Subpage)
 			{
-				SerialOutputJoin = 1030
+				SerialOutputJoin = 3033
 			};
-			m_TextEntry.SerialLabelJoins.Add(1030);
+			m_TextEntry.SerialLabelJoins.Add(3033);
 
 			m_BackspaceButton = new VtProButton(panel, m_Subpage)
 			{

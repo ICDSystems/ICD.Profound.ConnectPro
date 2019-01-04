@@ -209,7 +209,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			base.ViewOnVisibilityChanged(sender, args);
 
 			m_StringBuilder.Clear();
-			EnterCallback = null;
+			if (!args.Data)
+				EnterCallback = null;
 		}
 
 		/// <summary>
