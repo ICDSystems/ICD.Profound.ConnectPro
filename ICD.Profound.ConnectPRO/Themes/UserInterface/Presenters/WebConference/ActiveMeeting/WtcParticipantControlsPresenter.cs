@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
@@ -111,12 +111,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private void Subscribe(IWebParticipant participant)
 		{
-			participant.OnIsMutedChanged += ParticipantOnOnIsMutedChanged;
+			if (participant != null)
+				participant.OnIsMutedChanged += ParticipantOnOnIsMutedChanged;
 		}
 
 		private void Unsubscribe(IWebParticipant participant)
 		{
-			participant.OnIsMutedChanged -= ParticipantOnOnIsMutedChanged;
+			if (participant != null)
+				participant.OnIsMutedChanged -= ParticipantOnOnIsMutedChanged;
 		}
 
 		private void ParticipantOnOnIsMutedChanged(object sender, BoolEventArgs e)

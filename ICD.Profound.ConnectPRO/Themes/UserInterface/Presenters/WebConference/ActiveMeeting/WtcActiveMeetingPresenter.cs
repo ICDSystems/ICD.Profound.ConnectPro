@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
@@ -117,23 +117,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private void Subscribe(IWtcReferencedParticipantPresenter presenter)
 		{
-			presenter.OnPressed += PresenterOnOnPressed;
+			if (presenter != null)
+				presenter.OnPressed += PresenterOnOnPressed;
 		}
 
 		private void SubscribeSelected(IWtcReferencedParticipantPresenter presenter)
 		{
-			if (presenter.Participant != null)
+			if (presenter != null && presenter.Participant != null)
 				presenter.Participant.OnIsMutedChanged += ParticipantOnOnIsMutedChanged;
 		}
 
 		private void Unsubscribe(IWtcReferencedParticipantPresenter presenter)
 		{
-			presenter.OnPressed -= PresenterOnOnPressed;
+			if (presenter != null)
+				presenter.OnPressed -= PresenterOnOnPressed;
 		}
 
 		private void UnsubscribeSelected(IWtcReferencedParticipantPresenter presenter)
 		{
-			if (presenter.Participant != null)
+			if (presenter != null && presenter.Participant != null)
 				presenter.Participant.OnIsMutedChanged -= ParticipantOnOnIsMutedChanged;
 		}
 
