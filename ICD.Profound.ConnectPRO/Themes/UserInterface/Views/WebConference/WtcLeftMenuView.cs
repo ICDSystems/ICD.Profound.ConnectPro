@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
@@ -83,6 +81,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 			m_ButtonCount = count;
 			UpdateSubpageVisibility();
 			m_ButtonList.SetNumberOfItems(count);
+		}
+
+		public void SetActiveMeetingIndicatorMode(bool inMeeting)
+		{
+			m_ActiveMeetingIndicator.SetMode((ushort)(inMeeting ? 1 : 0));
 		}
 
 		public override void Show(bool visible)

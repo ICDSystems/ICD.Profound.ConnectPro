@@ -50,5 +50,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference
 		/// </summary>
 		/// <param name="count"></param>
 		void SetButtonCount(ushort count);
+
+		void SetActiveMeetingIndicatorMode(bool inMeeting);
 	}
 }

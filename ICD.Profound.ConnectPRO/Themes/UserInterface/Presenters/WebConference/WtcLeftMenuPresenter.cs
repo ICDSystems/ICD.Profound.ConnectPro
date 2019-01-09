@@ -101,13 +101,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			try
 			{
+				var activeMeetingPresenter = Navigation.LazyLoadPresenter<IWtcActiveMeetingPresenter>(); // for setting enabled state
+
+				view.SetActiveMeetingIndicatorMode(IsInMeeting);
+
 				foreach (KeyValuePair<ushort, IPresenter> kvp in m_NavPages)
 				{
 					view.SetButtonIcon(kvp.Key, s_ButtonIcons[kvp.Key]);
-					view.SetButtonLabel(kvp.Key, kvp.Key == INDEX_MEETING && IsInMeeting ? "Active Meeting" : s_ButtonLabels[kvp.Key]);
+					view.SetButtonLabel(kvp.Key, kvp.Key == INDEX_MEETING && IsInMeeting 
+						                             ? "Active Meeting" 
+						                             : s_ButtonLabels[kvp.Key]);
 					view.SetButtonVisible(kvp.Key, true);
 					view.SetButtonEnabled(kvp.Key, kvp.Key != INDEX_SHARE || IsInMeeting); // share disabled if not in meeting
-					view.SetButtonSelected(kvp.Key, kvp.Value.IsViewVisible);
+					view.SetButtonSelected(kvp.Key, kvp.Key == INDEX_MEETING && IsInMeeting
+						                                ? activeMeetingPresenter.IsViewVisible
+						                                : kvp.Value.IsViewVisible);
 				}
 
 				view.SetButtonCount((ushort)s_ButtonLabels.Count);
@@ -224,6 +232,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		{
 			foreach (IPresenter presenter in m_NavPages.Values)
 				presenter.OnViewVisibilityChanged += PresenterOnViewVisibilityChanged;
+			Navigation.LazyLoadPresenter<IWtcActiveMeetingPresenter>().OnViewVisibilityChanged += PresenterOnViewVisibilityChanged;
 		}
 
 		/// <summary>
@@ -233,6 +242,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		{
 			foreach (IPresenter presenter in m_NavPages.Values)
 				presenter.OnViewVisibilityChanged -= PresenterOnViewVisibilityChanged;
+			Navigation.LazyLoadPresenter<IWtcActiveMeetingPresenter>().OnViewVisibilityChanged -= PresenterOnViewVisibilityChanged;
 		}
 
 		/// <summary>
