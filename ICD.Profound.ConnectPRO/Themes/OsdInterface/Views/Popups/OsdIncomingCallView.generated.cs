@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ICD.Connect.Panels;
+using ICD.Connect.Panels.Devices;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Images;
@@ -15,6 +16,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Popups
 		private VtProSimpleLabel m_IncomingCallLabel;
 		private VtProImageObject m_Icon;
 		private VtProAdvancedButton m_Background;
+		private VtProSound m_Ringtone;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -48,6 +50,12 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Popups
 			{
 				AnalogModeJoin = 301
 			};
+
+			m_Ringtone = new VtProSound(panel as IPanelDevice)
+			{
+				JoinNumber = 13,
+				StopSoundJoin = 14
+			};
 		}
 
 		/// <summary>
@@ -59,6 +67,8 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Popups
 			yield return m_Subpage;
 			yield return m_SourceNameLabel;
 			yield return m_IncomingCallLabel;
+			yield return m_Icon;
+			yield return m_Background;
 		}
 	}
 }

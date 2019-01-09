@@ -73,12 +73,14 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups
 				view.SetIcon("call");
 				view.SetCallerInfo(string.Format("Incoming Call from {0}", info));
 				view.SetBackgroundMode(eOsdIncomingCallBackgroundMode.Ringing);
+				//view.PlayRingtone(true);
 			}
 			else if (IncomingCall.AnswerState == eCallAnswerState.Ignored)
 			{
 				view.SetIcon("hangup");
 				view.SetCallerInfo("Call Was Declined");
 				view.SetBackgroundMode(eOsdIncomingCallBackgroundMode.Rejected);
+				//view.PlayRingtone(false);
 			}
 		}
 
