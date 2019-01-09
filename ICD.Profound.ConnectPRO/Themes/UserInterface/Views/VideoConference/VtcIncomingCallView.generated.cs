@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ICD.Connect.Panels;
+using ICD.Connect.Panels.Devices;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Pages;
@@ -13,6 +14,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		private VtProButton m_AnswerButton;
 		private VtProButton m_IgnoreButton;
 		private VtProSimpleLabel m_CallerInfoLabel;
+		private VtProSound m_Ringtone;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -40,6 +42,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			m_CallerInfoLabel = new VtProSimpleLabel(panel, m_Subpage)
 			{
 				IndirectTextJoin = 600
+			};
+
+			m_Ringtone = new VtProSound(panel as IPanelDevice)
+			{
+				JoinNumber = 13,
+				StopSoundJoin = 14
 			};
 		}
 

@@ -77,6 +77,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				string info = GetCallerInfo(source);
 
 				view.SetCallerInfo(info);
+
+				view.PlayRingtone(source != null);
 			}
 			finally
 			{
@@ -130,7 +132,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Subscribe(room);
 
-			m_SubscribedVideoDialers = GetVideoDialers(room).ToList();
+			m_SubscribedVideoDialers = room == null
+				? Enumerable.Empty<IConferenceDeviceControl>().ToList()
+				: GetVideoDialers(room).ToList();
 
 			if (m_SubscribedVideoDialers == null)
 				return;
@@ -367,6 +371,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			OnCallAnswered.Raise(this, new GenericEventArgs<IConferenceDeviceControl>(control));
 
 			ShowView(false);
+		}
+
+		protected override void ViewOnPreVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			base.ViewOnPreVisibilityChanged(sender, args);
+
+			GetView().PlayRingtone(false);
 		}
 
 		#endregion

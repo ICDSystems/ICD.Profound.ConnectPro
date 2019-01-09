@@ -19,5 +19,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 		/// </summary>
 		/// <param name="number"></param>
 		void SetCallerInfo(string number);
+
+		void PlayRingtone(bool playing);
 	}
 }

@@ -132,7 +132,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		{
 			base.Subscribe(room);
 
-			m_SubscribedAudioDialers = GetAudioDialers(room).ToList();
+			m_SubscribedAudioDialers = room == null
+				                           ? Enumerable.Empty<IConferenceDeviceControl>().ToList()
+				                           : GetAudioDialers(room).ToList();
 			if (m_SubscribedAudioDialers == null)
 				return;
 

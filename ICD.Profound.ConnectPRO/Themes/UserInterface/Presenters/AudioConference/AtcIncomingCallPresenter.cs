@@ -79,6 +79,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 				string info = GetCallerInfo(source);
 
 				view.SetCallerInfo(info);
+				
+				view.PlayRingtone(source != null);
 			}
 			finally
 			{
@@ -132,7 +134,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		{
 			base.Subscribe(room);
 
-			m_SubscribedAudioDialers = GetAudioDialers(room).ToList();
+			m_SubscribedAudioDialers = room == null
+				                           ? Enumerable.Empty<IConferenceDeviceControl>().ToList()
+				                           : GetAudioDialers(room).ToList();
 			foreach (var dialer in m_SubscribedAudioDialers)
 			{
 				dialer.OnIncomingCallAdded += AudioDialerOnIncomingCallAdded;
