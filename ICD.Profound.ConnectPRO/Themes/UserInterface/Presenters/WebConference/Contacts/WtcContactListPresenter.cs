@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
+using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.Contacts;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Directory;
@@ -20,14 +21,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 {
 	public sealed class WtcContactListPresenter : AbstractWtcPresenter<IWtcContactListView>, IWtcContactListPresenter
 	{
+		private const long KEYBOARD_DEBOUNCE_TIME = 1000;
+
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly SafeCriticalSection m_ContactSection;
 		private readonly WtcReferencedContactPresenterFactory m_ContactFactory;
 		private readonly WtcReferencedSelectedContactPresenterFactory m_SelectedContactFactory;
 		private readonly DirectoryControlBrowser m_DirectoryBrowser;
 		private readonly List<IContact> m_SelectedContacts;
+		private readonly SafeTimer m_DebounceTimer;
 
 		private string m_Filter = "";
+		private string m_ConfirmedFilter = ""; //used to store filter when user hits enter so cancelling can return to old filter
 
 		public WtcContactListPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
@@ -40,6 +45,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			m_DirectoryBrowser = new DirectoryControlBrowser();
 
 			m_DirectoryBrowser.OnPathContentsChanged += DirectoryBrowserOnOnPathContentsChanged;
+
+			m_DebounceTimer = SafeTimer.Stopped(RefreshIfVisible);
 		}
 
 		private void DirectoryBrowserOnOnPathContentsChanged(object sender, EventArgs e)
@@ -332,12 +339,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private void ViewOnOnSearchButtonPressed(object sender, EventArgs e)
 		{
-			Navigation.LazyLoadPresenter<IWtcKeyboardPresenter>().ShowView(FilterContacts);
+			Navigation.LazyLoadPresenter<IWtcKeyboardPresenter>().ShowView(ConfirmFilter, CancelFilter, PreviewFilter);
 		}
 
-		private void FilterContacts(string filter)
+		private void ConfirmFilter(string filter)
 		{
+			m_ConfirmedFilter = filter;
 			m_Filter = filter;
+			RefreshIfVisible();
+		}
+
+		private void PreviewFilter(string filter)
+		{
+			m_DebounceTimer.Reset(KEYBOARD_DEBOUNCE_TIME);
+			m_Filter = filter;
+		}
+
+		private void CancelFilter(string filter)
+		{
+			m_Filter = m_ConfirmedFilter;
 			RefreshIfVisible();
 		}
 

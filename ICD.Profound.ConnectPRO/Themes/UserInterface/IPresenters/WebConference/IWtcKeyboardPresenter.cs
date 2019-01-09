@@ -9,6 +9,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference
 		/// Shows the view using the given callback for the Enter button.
 		/// </summary>
 		/// <param name="enterButtonCallback"></param>
-		void ShowView(Action<string> enterButtonCallback);
+		/// <param name="cancelButtonCallback"></param>
+		/// <param name="textChangeCallback"></param>
+		void ShowView(Action<string> enterButtonCallback, Action<string> cancelButtonCallback, Action<string> textChangeCallback);
 	}
 }

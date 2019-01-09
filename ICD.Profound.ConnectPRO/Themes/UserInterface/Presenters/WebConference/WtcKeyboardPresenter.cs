@@ -57,6 +57,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// Gets/sets the Enter callback.
 		/// </summary>
 		private Action<string> EnterCallback { get; set; }
+		
+		private Action<string> TextChangeCallback { get; set; }
+
+		private Action<string> CancelCallback { get; set; }
 
 		#endregion
 
@@ -84,6 +88,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		{
 			// Refresh synchronously to avoid interfering with user input.
 			RefreshIfVisible(false);
+
+			var callback = TextChangeCallback;
+			if (callback != null)
+				callback(m_StringBuilder.ToString());
 		}
 
 		/// <summary>
@@ -106,10 +114,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// Shows the view using the given callback for the dial button.
 		/// </summary>
 		/// <param name="enterButtonCallback"></param>
-		public void ShowView(Action<string> enterButtonCallback)
+		/// <param name="cancelButtonCallback"></param>
+		/// <param name="textChangeCallback"></param>
+		public void ShowView(Action<string> enterButtonCallback, Action<string> cancelButtonCallback, Action<string> textChangeCallback)
 		{
 			EnterCallback = enterButtonCallback;
-
+			CancelCallback = cancelButtonCallback;
+			TextChangeCallback = textChangeCallback;
+			
 			ShowView(true);
 		}
 
@@ -139,7 +151,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			view.OnShiftButtonPressed += ViewOnShiftButtonPressed;
 			view.OnSpaceButtonPressed += ViewOnSpaceButtonPressed;
 			view.OnKeyPressed += ViewOnKeyPressed;
-			view.OnCloseButtonPressed += ViewOnKeypadButtonPressed;
+			view.OnCloseButtonPressed += ViewOnCloseButtonPressed;
 		}
 
 		/// <summary>
@@ -157,7 +169,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			view.OnShiftButtonPressed -= ViewOnShiftButtonPressed;
 			view.OnSpaceButtonPressed -= ViewOnSpaceButtonPressed;
 			view.OnKeyPressed -= ViewOnKeyPressed;
-			view.OnCloseButtonPressed -= ViewOnKeypadButtonPressed;
+			view.OnCloseButtonPressed -= ViewOnCloseButtonPressed;
 		}
 
 		/// <summary>
@@ -210,7 +222,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			m_StringBuilder.Clear();
 			if (!args.Data)
+			{
 				EnterCallback = null;
+				CancelCallback = null;
+				TextChangeCallback = null;
+			}
 		}
 
 		/// <summary>
@@ -251,9 +267,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void ViewOnKeypadButtonPressed(object sender, EventArgs eventArgs)
+		private void ViewOnCloseButtonPressed(object sender, EventArgs eventArgs)
 		{
 			ShowView(false);
+
+			var callback = CancelCallback;
+			CancelCallback = null;
+			if (callback != null)
+				callback(m_StringBuilder.ToString());
 		}
 
 		/// <summary>
