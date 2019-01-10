@@ -7,7 +7,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Controls.Directory;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings;
-using ICD.Connect.Settings.Core;
+using ICD.Connect.Settings.Cores;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;

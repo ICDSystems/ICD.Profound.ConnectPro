@@ -1,15 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using ICD.Common.Utils.Extensions;
-using ICD.Connect.Audio.Shure;
-using ICD.Connect.Panels.Mock;
-using ICD.Connect.Panels.Server.Osd;
+﻿using System.Linq;
 using ICD.Connect.Partitioning;
-using ICD.Connect.Routing.RoutingGraphs;
-using ICD.Connect.Settings.Core;
-using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Tests.RoomTypes;
-using ICD.Profound.ConnectPRO.Themes;
 using ICD.Profound.ConnectPRO.Themes.MicrophoneInterface;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface;
 using ICD.Profound.ConnectPRO.Themes.UserInterface;

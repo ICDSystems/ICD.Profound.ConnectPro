@@ -28,7 +28,7 @@ using ICD.Connect.Displays.Devices;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Destinations;
-using ICD.Connect.Settings.Core;
+using ICD.Connect.Settings;
 using ICD.Profound.ConnectPRO.Routing;
 
 namespace ICD.Profound.ConnectPRO.Rooms
