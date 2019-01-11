@@ -1,5 +1,5 @@
 ﻿using ICD.Connect.Routing.Endpoints.Sources;
-using ICD.Connect.Settings.Core;
+using ICD.Connect.Settings;
 
 namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 {

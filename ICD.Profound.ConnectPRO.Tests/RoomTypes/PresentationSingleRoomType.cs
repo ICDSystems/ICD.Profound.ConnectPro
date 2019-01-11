@@ -15,7 +15,7 @@ using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Mock.Source;
 using ICD.Connect.Routing.Mock.Switcher;
 using ICD.Connect.Routing.RoutingGraphs;
-using ICD.Connect.Settings.Core;
+using ICD.Connect.Settings.Cores;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes;
