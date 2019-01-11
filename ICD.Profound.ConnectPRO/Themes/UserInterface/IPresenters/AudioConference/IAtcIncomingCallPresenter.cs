@@ -1,4 +1,6 @@
 ﻿using System;
+using ICD.Common.Utils.EventArguments;
+using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.AudioConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.AudioConference
@@ -8,6 +10,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.AudioConferen
 		/// <summary>
 		/// Raised when the user answers the call.
 		/// </summary>
-		event EventHandler OnCallAnswered;
+		event EventHandler<GenericEventArgs<IConferenceDeviceControl>>  OnCallAnswered;
 	}
 }

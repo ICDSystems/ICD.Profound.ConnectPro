@@ -50,6 +50,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference
 			m_CallerLabel.SetLabelTextAtJoin(m_CallerLabel.SerialLabelJoins.First(), number);
 		}
 
+		/// <summary>
+		/// Play or stop the incoming call ringtone.
+		/// </summary>
+		/// <param name="playing"></param>
+		public void PlayRingtone(bool playing)
+		{
+			if (playing)
+				m_Ringtone.Play(3300);
+			else
+				m_Ringtone.Stop();
+		}
+
 		#endregion
 
 		#region Control Callbacks

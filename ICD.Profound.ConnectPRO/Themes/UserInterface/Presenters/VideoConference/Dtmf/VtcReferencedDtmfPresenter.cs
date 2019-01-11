@@ -2,7 +2,7 @@
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
-using ICD.Connect.Conferencing.ConferenceSources;
+using ICD.Connect.Conferencing.Participants;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Dtmf;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -20,12 +20,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private IConferenceSource m_Source;
+		private ITraditionalParticipant m_Source;
 		private bool m_Selected;
 
 		#region Properties
 
-		public IConferenceSource Source
+		public ITraditionalParticipant Source
 		{
 			get { return m_Source; }
 			set
@@ -118,7 +118,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Subscribe to the source events.
 		/// </summary>
 		/// <param name="source"></param>
-		private void Subscribe(IConferenceSource source)
+		private void Subscribe(ITraditionalParticipant source)
 		{
 			if (source == null)
 				return;
@@ -131,7 +131,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Unsubscribe from the source events.
 		/// </summary>
 		/// <param name="source"></param>
-		private void Unsubscribe(IConferenceSource source)
+		private void Unsubscribe(ITraditionalParticipant source)
 		{
 			if (source == null)
 				return;

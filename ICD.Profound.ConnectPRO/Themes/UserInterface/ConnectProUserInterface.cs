@@ -38,6 +38,9 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.ActiveCalls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Dtmf;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.ActiveMeeting;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views;
@@ -120,12 +123,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			IVisibilityNode videoConferencingVisibility = new SingleVisibilityNode();
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcContactsNormalPresenter>());
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcContactsPolycomPresenter>());
-			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcCameraPresenter>());
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcSharePresenter>());
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcDtmfPresenter>());
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcActiveCallsPresenter>());
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcKeyboardPresenter>());
 			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcKeypadPresenter>());
+			
+			// Web Conference node
+			IVisibilityNode webConferencingVisibility = new SingleVisibilityNode();
+			webConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcCallOutPresenter>());
+			webConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcSharePresenter>());
+			webConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcContactListPresenter>());
+			webConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcRecordingPresenter>());
+			webConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcActiveMeetingPresenter>());
+			webConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcStartMeetingPresenter>());
 
 			// Audio Conference node
 			IVisibilityNode audioConferencingVisibility = new SingleVisibilityNode();
@@ -136,17 +147,27 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			meetingVisibility.AddNode(videoConferencingVisibility);
 			meetingVisibility.AddNode(audioConferencingVisibility);
+			meetingVisibility.AddNode(webConferencingVisibility);
 
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOptionPrivacyMutePresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOptionVolumePresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOptionCameraPresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcBasePresenter>());
+			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcBasePresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ICableTvPresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWebConferencingAlertPresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWebConferencingStepPresenter>());
 
 			m_RootVisibility.AddNode(meetingVisibility);
+
+			// Camera visibility
+			IVisibilityNode cameraVisibility = new SingleVisibilityNode();
+			cameraVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ICameraControlPresenter>());
+			cameraVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcLeftMenuPresenter>());
+			cameraVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcButtonListPresenter>());
+			cameraVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcContactsNormalPresenter>());
+			cameraVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcContactsPolycomPresenter>());
 
 			// Settings node
 			IVisibilityNode settingsVisibility = new SingleVisibilityNode();
@@ -270,10 +291,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				throw new ArgumentNullException("source");
 
 			IDeviceBase device = m_Room.Core.Originators.GetChild<IDeviceBase>(source.Device);
-			IDialingDeviceControl dialer = device.Controls.GetControl<IDialingDeviceControl>();
+			IConferenceDeviceControl dialer = device.Controls.GetControl<IConferenceDeviceControl>();
 
 			// Edge case - route the codec to both displays and open the context menu
-			if (dialer != null && dialer.Supports.HasFlag(eConferenceSourceType.Video))
+			if (dialer != null && dialer.Supports.HasFlag(eCallType.Video))
 			{
 				// Show the context menu before routing for UX
 				ShowSourceContextualMenu(source, false);
@@ -282,7 +303,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				m_Room.Routing.RouteVtc(sourceControl);
 			}
 			// Edge case - open the audio conferencing context menu
-			else if (dialer != null && dialer.Supports.HasFlag(eConferenceSourceType.Audio))
+			else if (dialer != null && dialer.Supports.HasFlag(eCallType.Audio))
 			{
 				// Show the context menu before routing for UX
 				ShowSourceContextualMenu(source, false);
@@ -492,14 +513,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			eControlOverride controlOverride = ConnectProRouting.GetControlOverride(source);
 			IDeviceControl control = ConnectProRouting.GetDeviceControl(source, controlOverride);
 
-			if (control is IDialingDeviceControl)
+			if (control is IConferenceDeviceControl)
 			{
-				IDialingDeviceControl dialer = control as IDialingDeviceControl;
+				ITraditionalConferenceDeviceControl dialer = control as ITraditionalConferenceDeviceControl;
 
-				if (dialer.Supports.HasFlag(eConferenceSourceType.Video))
-					m_NavigationController.NavigateTo<IVtcBasePresenter>();
-				else
-					m_NavigationController.NavigateTo<IAtcBasePresenter>();
+				if (dialer != null)
+				{
+					if (dialer.Supports.HasFlag(eCallType.Video))
+						m_NavigationController.NavigateTo<IVtcBasePresenter>();
+					else
+						m_NavigationController.NavigateTo<IAtcBasePresenter>();
+				}
+
+				IWebConferenceDeviceControl webControl = control as IWebConferenceDeviceControl;
+				if (webControl != null)
+					m_NavigationController.NavigateTo<IWtcBasePresenter>();
 
 				SetActiveSource(null);
 				return true;
@@ -878,12 +906,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			presenter.OnCallAnswered -= VtcIncomingCallPresenterOnCallAnswered;
 		}
 
-		private void VtcIncomingCallPresenterOnCallAnswered(object sender, EventArgs e)
+		private void VtcIncomingCallPresenterOnCallAnswered(object sender, GenericEventArgs<IConferenceDeviceControl> e)
 		{
 			if (m_Room == null)
 				return;
 
-			IDialingDeviceControl videoDialer = m_Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			IConferenceDeviceControl videoDialer = e.Data;
 			IDeviceBase device = videoDialer == null ? null : videoDialer.Parent;
 
 			if (device == null)
@@ -910,12 +938,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			presenter.OnCallAnswered -= AtcIncomingCallPresenterOnCallAnswered;
 		}
 
-		private void AtcIncomingCallPresenterOnCallAnswered(object sender, EventArgs e)
+		private void AtcIncomingCallPresenterOnCallAnswered(object sender, GenericEventArgs<IConferenceDeviceControl> e)
 		{
 			if (m_Room == null)
 				return;
 
-			IDialingDeviceControl audioDialer = m_Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Audio);
+			IConferenceDeviceControl audioDialer = e.Data;
 			IDeviceBase device = audioDialer == null ? null : audioDialer.Parent;
 
 			if (device == null)

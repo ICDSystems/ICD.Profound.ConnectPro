@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ICD.Connect.Panels;
+using ICD.Connect.Panels.Devices;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Pages;
@@ -10,10 +11,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference
 	public sealed partial class AtcIncomingCallView
 	{
 		private VtProSubpage m_Subpage;
-		private VtProButton m_CloseButton;
 		private VtProButton m_AnswerButton;
 		private VtProButton m_RejectButton;
 		private VtProFormattedText m_CallerLabel;
+		private VtProSound m_Ringtone;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -28,11 +29,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference
 				DigitalVisibilityJoin = 151
 			};
 
-			m_CloseButton = new VtProButton(panel, m_Subpage)
-			{
-				DigitalPressJoin = 602
-			};
-
 			m_AnswerButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 653
@@ -45,6 +41,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference
 
 			m_CallerLabel = new VtProFormattedText(panel, m_Subpage);
 			m_CallerLabel.SerialLabelJoins.Add(652);
+			
+			m_Ringtone = new VtProSound(panel as IPanelDevice)
+			{
+				JoinNumber = 13,
+				StopSoundJoin = 14
+			};
 		}
 
 		/// <summary>
@@ -54,7 +56,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference
 		protected override IEnumerable<IVtProControl> GetChildren()
 		{
 			yield return m_Subpage;
-			yield return m_CloseButton;
 			yield return m_AnswerButton;
 			yield return m_RejectButton;
 			yield return m_CallerLabel;

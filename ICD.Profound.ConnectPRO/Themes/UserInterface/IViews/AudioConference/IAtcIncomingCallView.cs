@@ -19,5 +19,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.AudioConference
 		/// </summary>
 		/// <param name="number"></param>
 		void SetCallerInfo(string number);
+		
+		/// <summary>
+		/// Play or stop the incoming call ringtone.
+		/// </summary>
+		/// <param name="playing"></param>
+		void PlayRingtone(bool playing);
 	}
 }

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Directory;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Devices;
+using ICD.Connect.Partitioning.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -55,12 +57,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <param name="eventArgs"></param>
 		private void ViewOnClearDirectoryButtonPressed(object sender, EventArgs eventArgs)
 		{
-			IConferenceManager manager = Room == null ? null : Room.ConferenceManager;
-			IDialingDeviceControl videoDialer = manager == null ? null : manager.GetDialingProvider(eConferenceSourceType.Video);
-			IDeviceBase parent = videoDialer == null ? null : videoDialer.Parent;
-			IDirectoryControl directoryControl = parent == null ? null : parent.Controls.GetControl<IDirectoryControl>();
+			
+			IEnumerable<IDirectoryControl> directoryControls = Room.GetControlsRecursive<IDirectoryControl>();
 
-			if (directoryControl != null)
+			foreach (var directoryControl in directoryControls)
 			{
 				directoryControl.Clear();
 				directoryControl.PopulateFolder(directoryControl.GetRoot());

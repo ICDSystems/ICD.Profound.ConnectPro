@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Conferencing.ConferenceSources;
+using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Participants;
+using ICD.Connect.Conferencing.Participants.EventHelpers;
+using ICD.Connect.Partitioning.Rooms;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Dtmf;
@@ -14,13 +17,13 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Dtmf;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Dtmf
 {
-	public sealed class VtcDtmfPresenter : AbstractUiPresenter<IVtcDtmfView>, IVtcDtmfPresenter
+	public sealed class VtcDtmfPresenter : AbstractVtcPresenter<IVtcDtmfView>, IVtcDtmfPresenter
 	{
 		private readonly VtcReferencedDtmfPresenterFactory m_Factory;
 		private readonly SafeCriticalSection m_RefreshSection;
+		private readonly TraditionalParticipantEventHelper m_ParticipantEventHelper;
 
-		private IConferenceSource m_Selected;
-		private IDialingDeviceControl m_VideoDialingControl;
+		private ITraditionalParticipant m_Selected;
 
 		/// <summary>
 		/// Constructor.
@@ -33,6 +36,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			m_RefreshSection = new SafeCriticalSection();
 			m_Factory = new VtcReferencedDtmfPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
+			m_ParticipantEventHelper = new TraditionalParticipantEventHelper(ParticipantOnChange);
 		}
 
 		/// <summary>
@@ -57,7 +61,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			try
 			{
-				IEnumerable<IConferenceSource> sources = GetSources();
+				IEnumerable<ITraditionalParticipant> sources = GetSources();
 				foreach (IVtcReferencedDtmfPresenter presenter in m_Factory.BuildChildren(sources))
 				{
 					presenter.Selected = presenter.Source == m_Selected;
@@ -74,11 +78,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Gets the online sources.
 		/// </summary>
 		/// <returns></returns>
-		private IEnumerable<IConferenceSource> GetSources()
+		private IEnumerable<ITraditionalParticipant> GetSources()
 		{
-			return m_VideoDialingControl == null
-					   ? Enumerable.Empty<IConferenceSource>()
-					   : m_VideoDialingControl.GetSources().Where(s => s.GetIsOnline());
+			var conference = GetActiveConference();
+			return conference == null
+					   ? Enumerable.Empty<ITraditionalParticipant>()
+					   : conference.GetParticipants().Where(s => s.GetIsOnline());
+		}
+
+		private ITraditionalConference GetActiveConference()
+		{
+			return ActiveConferenceControl == null
+				? null
+				: ActiveConferenceControl.GetActiveConference() as ITraditionalConference;
 		}
 
 		private IEnumerable<IVtcReferencedDtmfView> ItemFactory(ushort count)
@@ -90,7 +102,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Sets the given source as selected.
 		/// </summary>
 		/// <param name="source"></param>
-		public void SetSelected(IConferenceSource source)
+		private void SetSelected(ITraditionalParticipant source)
 		{
 			if (source == m_Selected)
 				return;
@@ -103,56 +115,93 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		#region Room Callbacks
 
 		/// <summary>
-		/// Subscribe to the room events.
+		/// Subscribe to the active conference control events.
 		/// </summary>
-		/// <param name="room"></param>
-		protected override void Subscribe(IConnectProRoom room)
+		/// <param name="control"></param>
+		protected override void Subscribe(ITraditionalConferenceDeviceControl control)
 		{
-			base.Subscribe(room);
+			base.Subscribe(control);
 
-			m_VideoDialingControl = room == null ? null : room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
-			if (m_VideoDialingControl == null)
+			if (control == null)
 				return;
 
-			m_VideoDialingControl.OnSourceAdded += VideoDialerOnSourceAdded;
-			m_VideoDialingControl.OnSourceRemoved += VideoDialerOnSourceRemoved;
-			m_VideoDialingControl.OnSourceChanged += VideoDialerOnSourceChanged;
+			control.OnConferenceAdded += VideoDialerOnConferenceAdded;
+			control.OnConferenceRemoved += VideoDialerOnConferenceRemoved;
+			
+			foreach (ITraditionalConference conference in control.GetConferences())
+				Subscribe(conference);
 		}
 
 		/// <summary>
-		/// Unsubscribe from the room events.
+		/// Unsubscribe from the active conference control events.
 		/// </summary>
-		/// <param name="room"></param>
-		protected override void Unsubscribe(IConnectProRoom room)
+		/// <param name="control"></param>
+		protected override void Unsubscribe(ITraditionalConferenceDeviceControl control)
 		{
-			base.Unsubscribe(room);
+			base.Unsubscribe(control);
 
-			if (m_VideoDialingControl != null)
-			{
-				m_VideoDialingControl.OnSourceAdded -= VideoDialerOnSourceAdded;
-				m_VideoDialingControl.OnSourceRemoved -= VideoDialerOnSourceRemoved;
-				m_VideoDialingControl.OnSourceChanged -= VideoDialerOnSourceChanged;
-			}
+			if (control == null)
+				return;
 
-			m_VideoDialingControl = null;
+			control.OnConferenceAdded -= VideoDialerOnConferenceAdded;
+			control.OnConferenceRemoved -= VideoDialerOnConferenceRemoved;
+
+			foreach (ITraditionalConference conference in control.GetConferences())
+				Unsubscribe(conference);
 		}
 
-		private void VideoDialerOnSourceRemoved(object sender, ConferenceSourceEventArgs e)
+		private void VideoDialerOnConferenceAdded(object sender, ConferenceEventArgs e)
 		{
+			Subscribe(e.Data as ITraditionalConference);
 			RefreshIfVisible();
 		}
 
-		private void VideoDialerOnSourceChanged(object sender, ConferenceSourceEventArgs e)
+		private void VideoDialerOnConferenceRemoved(object sender, ConferenceEventArgs e)
 		{
+			Unsubscribe(e.Data as ITraditionalConference);
 			RefreshIfVisible();
 		}
 
-		private void VideoDialerOnSourceAdded(object sender, ConferenceSourceEventArgs eventArgs)
+		#endregion
+
+		#region Conference Callbacks
+
+		private void Subscribe(ITraditionalConference conference)
 		{
-			RefreshIfVisible();
+			conference.OnParticipantAdded += ConferenceOnOnParticipantAdded;
+			conference.OnParticipantRemoved += ConferenceOnOnParticipantRemoved;
+
+			foreach (var participant in conference.GetParticipants())
+				m_ParticipantEventHelper.Subscribe(participant);
+		}
+
+		private void Unsubscribe(ITraditionalConference conference)
+		{
+			conference.OnParticipantAdded -= ConferenceOnOnParticipantAdded;
+			conference.OnParticipantRemoved -= ConferenceOnOnParticipantRemoved;
+
+			foreach (var participant in conference.GetParticipants())
+				m_ParticipantEventHelper.Unsubscribe(participant);
+		}
+
+		private void ConferenceOnOnParticipantAdded(object sender, ParticipantEventArgs e)
+		{
+			var participant = e.Data as ITraditionalParticipant;
+			m_ParticipantEventHelper.Subscribe(participant);
 
 			// Select the most recent source.
-			SetSelected(eventArgs.Data);
+			SetSelected(participant);
+		}
+
+		private void ConferenceOnOnParticipantRemoved(object sender, ParticipantEventArgs e)
+		{
+			var participant = e.Data as ITraditionalParticipant;
+			m_ParticipantEventHelper.Unsubscribe(participant);
+		}
+
+		private void ParticipantOnChange(ITraditionalParticipant p)
+		{
+			RefreshIfVisible();
 		}
 
 		#endregion
@@ -231,8 +280,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="eventArgs"></param>
 		private void ChildOnPressed(object sender, EventArgs eventArgs)
 		{
-			IVtcReferencedDtmfPresenter presenter = sender as IVtcReferencedDtmfPresenter;
-			IConferenceSource source = presenter == null ? null : presenter.Source;
+			var presenter = sender as IVtcReferencedDtmfPresenter;
+			ITraditionalParticipant source = presenter == null ? null : presenter.Source;
 			SetSelected(source);
 		}
 

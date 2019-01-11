@@ -74,9 +74,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		protected override void Dial()
 		{
-			IDialingDeviceControl dialer = Room == null ? null : Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			var dialer = ActiveConferenceControl;
 			if (dialer != null && m_Favorite != null)
-				dialer.Dial(m_Favorite.GetContactMethods().First().Number);
+				dialer.Dial(m_Favorite.GetDialContexts().First());
 		}
 
 		protected override void ViewOnFavoriteButtonPressed(object sender, EventArgs eventArgs)

@@ -33,5 +33,13 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Popups
 		{
 			m_Background.SetMode((ushort) mode);
 		}
+
+		public void PlayRingtone(bool playing)
+		{
+			if (playing)
+				m_Ringtone.Play(3300);
+			else
+				m_Ringtone.Stop();
+		}
 	}
 }

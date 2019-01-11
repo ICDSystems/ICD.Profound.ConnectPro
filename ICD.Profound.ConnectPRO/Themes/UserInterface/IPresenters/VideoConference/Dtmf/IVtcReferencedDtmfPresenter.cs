@@ -1,5 +1,5 @@
 ﻿using System;
-using ICD.Connect.Conferencing.ConferenceSources;
+using ICD.Connect.Conferencing.Participants;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Dtmf;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Dtmf
@@ -11,7 +11,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConferen
 		/// </summary>
 		event EventHandler OnPressed;
 
-		IConferenceSource Source { get; set; }
+		ITraditionalParticipant Source { get; set; }
 
 		bool Selected { get; set; }
 	}

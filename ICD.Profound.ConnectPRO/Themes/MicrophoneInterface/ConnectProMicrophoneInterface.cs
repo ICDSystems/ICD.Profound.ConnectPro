@@ -1,4 +1,5 @@
-﻿using ICD.Common.Properties;
+﻿using System.Linq;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Services;
@@ -90,7 +91,6 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 				return;
 
 			m_SubscribedConferenceManager.OnInCallChanged += ConferenceManagerOnInCallChanged;
-			m_SubscribedConferenceManager.OnRecentConferenceAdded += ConferenceManagerOnRecentConferenceAdded;
 			m_SubscribedConferenceManager.OnActiveConferenceStatusChanged += ConferenceManagerOnActiveConferenceStatusChanged;
 			m_SubscribedConferenceManager.OnPrivacyMuteStatusChange += ConferenceManagerOnPrivacyMuteStatusChange;
 		}
@@ -105,7 +105,6 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 				return;
 
 			m_SubscribedConferenceManager.OnInCallChanged -= ConferenceManagerOnInCallChanged;
-			m_SubscribedConferenceManager.OnRecentConferenceAdded -= ConferenceManagerOnRecentConferenceAdded;
 			m_SubscribedConferenceManager.OnActiveConferenceStatusChanged -= ConferenceManagerOnActiveConferenceStatusChanged;
 			m_SubscribedConferenceManager.OnPrivacyMuteStatusChange -= ConferenceManagerOnPrivacyMuteStatusChange;
 
@@ -118,16 +117,6 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
 		private void ConferenceManagerOnActiveConferenceStatusChanged(object sender, ConferenceStatusEventArgs args)
-		{
-			UpdateMicrophoneLeds();
-		}
-
-		/// <summary>
-		/// Called when a conference is added to the conference manager.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		private void ConferenceManagerOnRecentConferenceAdded(object sender, ConferenceEventArgs args)
 		{
 			UpdateMicrophoneLeds();
 		}
@@ -171,7 +160,7 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 				{
 					brightness = eLedBrightness.Default;
 
-					color = m_SubscribedConferenceManager.ActiveConference.Status == eConferenceStatus.OnHold
+					color = m_SubscribedConferenceManager.OnlineConferences.All(c => c.Status == eConferenceStatus.OnHold)
 								? eLedColor.Yellow
 								: m_SubscribedConferenceManager.PrivacyMuted
 									  ? eLedColor.Red

@@ -191,9 +191,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <param name="shutdown"></param>
 		public void EndMeeting(bool shutdown)
 		{
-			// Hangup
-			if (ConferenceManager != null && ConferenceManager.ActiveConference != null)
-				ConferenceManager.ActiveConference.Hangup();
+			EndAllConferences();
 
 			// Change meeting state before any routing for UX
 			IsInMeeting = false;
@@ -230,9 +228,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public void Sleep()
 		{
-			// Hangup
-			if (ConferenceManager != null && ConferenceManager.ActiveConference != null)
-				ConferenceManager.ActiveConference.Hangup();
+			EndAllConferences();
 
 			// Change meeting state before any routing for UX
 			IsInMeeting = false;
@@ -251,6 +247,10 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			           .ForEach(c => c.PowerOff());
 		}
 
+		#endregion
+
+		#region Private Methods
+
 		/// <summary>
 		/// Sets the mute state on the room volume point.
 		/// </summary>
@@ -260,6 +260,23 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			IVolumeMuteDeviceControl muteControl = GetVolumeControl() as IVolumeMuteDeviceControl;
 			if (muteControl != null)
 				muteControl.SetVolumeMute(mute);
+		}
+
+		private void EndAllConferences()
+		{
+			var activeConferences = ConferenceManager == null ? Enumerable.Empty<IConference>() : ConferenceManager.OnlineConferences;
+			// Hangup
+			foreach (var activeConference in activeConferences)
+			{
+				// TODO - Actually use polymorphism like a good developer
+				var traditional = activeConference as ITraditionalConference;
+				if (traditional != null)
+					traditional.Hangup();
+
+				var web = activeConference as IWebConference;
+				if (web != null)
+					web.LeaveConference();
+			}
 		}
 
 		#endregion
@@ -368,43 +385,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 				Log(eSeverity.Error, "failed to load Dialing Plan {0} - {1}", dialingPlanPath, e.Message);
 			}
 
-			// If there are no audio or video providers, search the available controls
-			if (m_DialingPlan.VideoEndpoint.DeviceId == 0 && m_DialingPlan.AudioEndpoint.DeviceId == 0)
-			{
-				IDialingDeviceControl[] dialers = this.GetControlsRecursive<IDialingDeviceControl>().ToArray();
-
-				DeviceControlInfo video = dialers.Where(d => d.Supports == eConferenceSourceType.Video)
-												 .Select(d => d.DeviceControlInfo)
-												 .FirstOrDefault();
-
-				DeviceControlInfo audio = dialers.Where(d => d.Supports == eConferenceSourceType.Audio)
-												 .Select(d => d.DeviceControlInfo)
-												 .FirstOrDefault(video);
-
-				m_DialingPlan = new DialingPlanInfo(m_DialingPlan.ConfigPath, video, audio);
-			}
-
-			// Setup the dialing providers
-			if (m_DialingPlan.VideoEndpoint.DeviceId != 0)
-				TryRegisterDialingProvider(m_DialingPlan.VideoEndpoint, eConferenceSourceType.Video, factory);
-
-			if (m_DialingPlan.AudioEndpoint.DeviceId != 0)
-				TryRegisterDialingProvider(m_DialingPlan.AudioEndpoint, eConferenceSourceType.Audio, factory);
-		}
-
-		private void TryRegisterDialingProvider(DeviceControlInfo info, eConferenceSourceType sourceType, IDeviceFactory factory)
-		{
-			try
-			{
-				IDeviceBase device = factory.GetOriginatorById<IDeviceBase>(info.DeviceId);
-				IDialingDeviceControl control = device.Controls.GetControl<IDialingDeviceControl>(info.ControlId);
-
-				m_ConferenceManager.RegisterDialingProvider(sourceType, control);
-			}
-			catch (Exception e)
-			{
-				Log(eSeverity.Error, "failed add {0} dialing provider - {1}", sourceType, e.Message);
-			}
+			foreach (var conferenceControl in this.GetControlsRecursive<IConferenceDeviceControl>())
+				m_ConferenceManager.RegisterDialingProvider(conferenceControl);
 		}
 
 		#endregion

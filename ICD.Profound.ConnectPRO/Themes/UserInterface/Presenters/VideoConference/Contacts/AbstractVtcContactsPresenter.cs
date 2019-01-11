@@ -5,6 +5,7 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Directory;
+using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.Directory;
 using ICD.Connect.Conferencing.Directory.Tree;
 using ICD.Connect.Conferencing.EventArguments;
@@ -19,7 +20,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contac
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Contacts
 {
-	public abstract class AbstractVtcContactsPresenter<TView> : AbstractUiPresenter<TView>, IVtcContactsPresenter<TView>
+	public abstract class AbstractVtcContactsPresenter<TView> : AbstractVtcPresenter<TView>, IVtcContactsPresenter<TView>
 		where TView : class, IVtcContactsView
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
@@ -54,7 +55,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		protected virtual bool HangupButtonEnabled
 		{
-			get { return m_SubscribedConferenceManager != null && m_SubscribedConferenceManager.ActiveConference != null; }
+			get { return ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConference() != null; }
 		}
 
 		protected virtual bool HideFavoriteIcons { get { return false; } }
@@ -114,6 +115,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 					presenter.Selected = presenter == m_Selected;
 					presenter.HideFavoriteIcon = HideFavoriteIcons;
 					presenter.ShowView(true);
+					presenter.ActiveConferenceControl = ActiveConferenceControl;
 				}
 
 				view.SetCallButtonEnabled(CallButtonEnabled);
@@ -206,13 +208,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				return;
 
 			m_SubscribedConferenceManager.OnInCallChanged += ConferenceManagerOnInCallChanged;
-			m_SubscribedConferenceManager.OnActiveSourceStatusChanged += ConferenceManagerOnActiveSourceStatusChanged;
 
-			IDialingDeviceControl dialer = m_SubscribedConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
-			IDeviceBase parent = dialer == null ? null : dialer.Parent;
-			IDirectoryControl directory = parent == null ? null : parent.Controls.GetControl<IDirectoryControl>();
 			
-			DirectoryBrowser.SetControl(directory);
 		}
 
 		/// <summary>
@@ -223,13 +220,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Unsubscribe(room);
 
-			DirectoryBrowser.SetControl(null);
-
 			if (m_SubscribedConferenceManager == null)
 				return;
 
 			m_SubscribedConferenceManager.OnInCallChanged -= ConferenceManagerOnInCallChanged;
-			m_SubscribedConferenceManager.OnActiveSourceStatusChanged -= ConferenceManagerOnActiveSourceStatusChanged;
 
 			m_SubscribedConferenceManager = null;
 		}
@@ -244,9 +238,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			RefreshIfVisible();
 		}
 
-		private void ConferenceManagerOnActiveSourceStatusChanged(object sender, ConferenceSourceStatusEventArgs args)
+		#endregion
+
+		#region Conference Control Callbacks
+
+		protected override void Subscribe(ITraditionalConferenceDeviceControl control)
 		{
-			RefreshIfVisible();
+			base.Subscribe(control);
+
+			IDeviceBase parent = control == null ? null : control.Parent;
+			IDirectoryControl directory = parent == null ? null : parent.Controls.GetControl<IDirectoryControl>();
+
+			DirectoryBrowser.SetControl(directory);
+		}
+
+		protected override void Unsubscribe(ITraditionalConferenceDeviceControl control)
+		{
+			base.Unsubscribe(control);
+
+			DirectoryBrowser.SetControl(null);
 		}
 
 		#endregion
@@ -303,9 +313,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="number"></param>
 		private void KeyboardDialCallback(string number)
 		{
-			IDialingDeviceControl control = Room == null ? null : Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+
+			var control = ActiveConferenceControl;
 			if (control != null)
-				control.Dial(number);
+				control.Dial(new SipDialContext { DialString = number, CallType = eCallType.Video });
 
 			ShowView(true);
 		}
@@ -446,14 +457,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			IVtcReferencedFolderPresenter folderPresenter = sender as IVtcReferencedFolderPresenter;
 
 			if (folderPresenter == null)
-			{
 				Selected = presenter;
-			}
-			else
-			{
-				if (DirectoryBrowser != null)
-					DirectoryBrowser.EnterFolder(folderPresenter.Folder);
-			}
+			else if (DirectoryBrowser != null)
+				DirectoryBrowser.EnterFolder(folderPresenter.Folder);
 		}
 
 		#endregion

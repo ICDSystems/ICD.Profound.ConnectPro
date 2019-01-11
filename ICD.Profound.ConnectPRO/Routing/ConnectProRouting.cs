@@ -243,7 +243,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (source == null)
 				throw new ArgumentNullException("source");
 
-			// This room takes precendence
+			// This room takes precedence
 			if (m_Room.Originators.ContainsRecursive(source.Id))
 				return m_Room;
 
@@ -636,16 +636,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 			}
 		}
 
-		/// <summary>
-		/// Routes the OSD if if is available.
-		/// </summary>
-		public void RouteOsdPostVtc()
-		{
-			OsdPanelDevice osd = m_Room.Core.Originators.GetChildren<OsdPanelDevice>().FirstOrDefault();
-			if (osd != null)
-				RouteOsd();
-		}
-
 		private void Route(IEnumerable<ConnectionPath> paths)
 		{
 			if (paths == null)
@@ -928,6 +918,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 					IDeviceControl dialer =
 						GetDeviceControl(device, eControlOverride.Vtc) ??
+						GetDeviceControl(device, eControlOverride.WebConference) ??
 						GetDeviceControl(device, eControlOverride.Atc);
 
 					if (dialer != null)
@@ -944,10 +935,10 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 				case eControlOverride.Atc:
 				case eControlOverride.Vtc:
-					return device.Controls.GetControls<IDialingDeviceControl>().FirstOrDefault();
+					return device.Controls.GetControls<ITraditionalConferenceDeviceControl>().FirstOrDefault();
 					
 				case eControlOverride.WebConference:
-					return null;
+					return device.Controls.GetControls<IWebConferenceDeviceControl>().FirstOrDefault();
 				
 				default:
 					throw new ArgumentOutOfRangeException("controlOverride");

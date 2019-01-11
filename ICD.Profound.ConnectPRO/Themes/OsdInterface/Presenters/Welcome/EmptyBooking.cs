@@ -1,6 +1,7 @@
 ﻿using System;
 using ICD.Connect.Calendaring.Booking;
 using System.Collections.Generic;
+using ICD.Connect.Conferencing.DialContexts;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 {
@@ -56,7 +57,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 			get { return false; }
 		}
 
-		public IEnumerable<IBookingNumber> GetBookingNumbers()
+		public IEnumerable<IDialContext> GetBookingNumbers()
 		{
 			yield break;
 		}

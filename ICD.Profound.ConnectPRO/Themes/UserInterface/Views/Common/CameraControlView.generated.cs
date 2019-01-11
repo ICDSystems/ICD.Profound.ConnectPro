@@ -9,9 +9,9 @@ using ICD.Connect.UI.Controls.Keypads;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Connect.UI.Controls.TextControls;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 {
-	public sealed partial class VtcCameraView
+	public sealed partial class CameraControlView
 	{
 		private const long PRESET_HOLD_MILLISECONDS = 1000;
 

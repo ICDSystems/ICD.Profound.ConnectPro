@@ -1,5 +1,5 @@
 ﻿using System;
-using ICD.Connect.Conferencing.ConferenceSources;
+﻿using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.ActiveCalls;
@@ -8,7 +8,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Active
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.ActiveCalls
 {
 	public sealed class VtcReferencedActiveCallsPresenterFactory :
-		AbstractUiListItemFactory<IConferenceSource, IVtcReferencedActiveCallsPresenter, IVtcReferencedActiveCallsView>
+		AbstractUiListItemFactory<ITraditionalParticipant, IVtcReferencedActiveCallsPresenter, IVtcReferencedActiveCallsView>
 	{
 		/// <summary>
 		/// Constructor.
@@ -31,11 +31,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="model"></param>
 		/// <param name="presenter"></param>
 		/// <param name="view"></param>
-		protected override void BindMvpTriad(IConferenceSource model, IVtcReferencedActiveCallsPresenter presenter,
+		protected override void BindMvpTriad(ITraditionalParticipant model, IVtcReferencedActiveCallsPresenter presenter,
 		                                     IVtcReferencedActiveCallsView view)
 		{
 			presenter.SetView(view);
-			presenter.ConferenceSource = model;
+			presenter.Participant = model;
 		}
 	}
 }

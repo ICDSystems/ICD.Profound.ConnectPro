@@ -1,6 +1,7 @@
-﻿using ICD.Connect.Conferencing.ConferenceSources;
-using ICD.Connect.Conferencing.Controls.Dialing;
+﻿using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Participants;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -9,9 +10,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 {
 	public sealed class VtcReferencedRecentPresenter : AbstractVtcReferencedContactsPresenterBase, IVtcReferencedRecentPresenter
 	{
-		private IConferenceSource m_Recent;
+		private ITraditionalParticipant m_Recent;
 
-		public IConferenceSource Recent
+		public ITraditionalParticipant Recent
 		{
 			get { return m_Recent; }
 			set
@@ -76,14 +77,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		protected override void SetModel(object model)
 		{
-			Recent = model as IConferenceSource;
+			Recent = model as ITraditionalParticipant;
 		}
 
 		protected override void Dial()
 		{
-			IDialingDeviceControl dialer = Room == null ? null : Room.ConferenceManager.GetDialingProvider(eConferenceSourceType.Video);
+			var dialer = ActiveConferenceControl;
 			if (dialer != null && m_Recent != null)
-				dialer.Dial(m_Recent.Number);
+				dialer.Dial(new SipDialContext { DialString = m_Recent.Number });
 		}
 	}
 }

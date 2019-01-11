@@ -9,6 +9,8 @@
 		void SetCallerInfo(string number);
 
 		void SetBackgroundMode(eOsdIncomingCallBackgroundMode number);
+
+		void PlayRingtone(bool playing);
 	}
 
 	public enum eOsdIncomingCallBackgroundMode

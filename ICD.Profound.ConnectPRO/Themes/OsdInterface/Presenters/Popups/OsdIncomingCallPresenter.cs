@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Timers;
-using ICD.Connect.Conferencing.ConferenceSources;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Participants;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Popups;
@@ -16,29 +17,29 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups
 		private const long REJECTED_LINGER_TIME_MS = 4 * 1000;
 		private readonly SafeTimer m_CallIgnoredTimer;
 
-		private IEnumerable<IDialingDeviceControl> m_DialingProviders;
+		private IEnumerable<IConferenceDeviceControl> m_DialingProviders;
 
-		private IConferenceSource m_Source;
+		private IIncomingCall m_IncomingCall;
 
-		private IConferenceSource Source
+		private IIncomingCall IncomingCall
 		{
-			get { return m_Source; }
+			get { return m_IncomingCall; }
 			set
 			{
-				if (m_Source == value)
+				if (m_IncomingCall == value)
 					return;
 
-				if (m_Source != null)
-					Unsubscribe(m_Source);
+				if (m_IncomingCall != null)
+					Unsubscribe(m_IncomingCall);
 
-				m_Source = value;
+				m_IncomingCall = value;
 
-				if (m_Source != null)
-					Subscribe(m_Source);
+				if (m_IncomingCall != null)
+					Subscribe(m_IncomingCall);
 
 				m_CallIgnoredTimer.Stop();
 
-				ShowView(Source != null);
+				ShowView(IncomingCall != null);
 
 				RefreshIfVisible();
 			}
@@ -63,21 +64,23 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups
 		{
 			base.Refresh(view);
 
-			if (Source == null)
+			if (IncomingCall == null)
 				return;
 
-			if (Source.GetIsRingingIncomingCall())
+			if (IncomingCall.GetIsRingingIncomingCall())
 			{
-				string info = Source.Name == null ? Source.Number : string.Format("{0} - {1}", Source.Name, Source.Number);
+				string info = IncomingCall.Name == null ? IncomingCall.Number : string.Format("{0} - {1}", IncomingCall.Name, IncomingCall.Number);
 				view.SetIcon("call");
 				view.SetCallerInfo(string.Format("Incoming Call from {0}", info));
 				view.SetBackgroundMode(eOsdIncomingCallBackgroundMode.Ringing);
+				//view.PlayRingtone(true);
 			}
-			else if (Source.AnswerState == eConferenceSourceAnswerState.Ignored)
+			else if (IncomingCall.AnswerState == eCallAnswerState.Ignored)
 			{
 				view.SetIcon("hangup");
 				view.SetCallerInfo("Call Was Declined");
 				view.SetBackgroundMode(eOsdIncomingCallBackgroundMode.Rejected);
+				//view.PlayRingtone(false);
 			}
 		}
 
@@ -99,8 +102,8 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups
 
 			foreach (var dialer in m_DialingProviders)
 			{
-				dialer.OnSourceAdded += DialerOnSourceAdded;
-				dialer.OnSourceChanged += DialerOnSourceChanged;
+				dialer.OnIncomingCallAdded += DialerOnIncomingCallAdded;
+				dialer.OnIncomingCallRemoved += DialerOnIncomingCallRemoved;
 			}
 		}
 
@@ -117,50 +120,51 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups
 
 			foreach (var dialer in m_DialingProviders)
 			{
-				dialer.OnSourceAdded -= DialerOnSourceAdded;
-				dialer.OnSourceChanged -= DialerOnSourceChanged;
+				dialer.OnIncomingCallAdded -= DialerOnIncomingCallAdded;
+				dialer.OnIncomingCallRemoved -= DialerOnIncomingCallRemoved;
 			}
 
 			m_DialingProviders = null;
 		}
 
-		private void DialerOnSourceAdded(object sender, ConferenceSourceEventArgs args)
+		private void DialerOnIncomingCallAdded(object sender, GenericEventArgs<IIncomingCall> args)
 		{
 			UpdateSource(args.Data);
 		}
 
-		private void DialerOnSourceChanged(object sender, ConferenceSourceEventArgs args)
+		private void DialerOnIncomingCallRemoved(object sender, GenericEventArgs<IIncomingCall> args)
 		{
-			UpdateSource(args.Data);
+			if (args.Data == IncomingCall)
+				RemoveSource();
 		}
 
-		private void UpdateSource(IConferenceSource source)
+		private void UpdateSource(IIncomingCall source)
 		{
 			if (source != null && source.GetIsRingingIncomingCall())
-				Source = source;
+				IncomingCall = source;
 		}
 
 		private void RemoveSource()
 		{
-			Source = null;
+			IncomingCall = null;
 		}
 
-		private void Subscribe(IConferenceSource source)
+		private void Subscribe(IIncomingCall source)
 		{
 			source.OnAnswerStateChanged += SourceOnAnswerStateChanged;
 		}
 
-		private void Unsubscribe(IConferenceSource source)
+		private void Unsubscribe(IIncomingCall source)
 		{
 			source.OnAnswerStateChanged -= SourceOnAnswerStateChanged;
 		}
 
-		private void SourceOnAnswerStateChanged(object sender, ConferenceSourceAnswerStateEventArgs e)
+		private void SourceOnAnswerStateChanged(object sender, IncomingCallAnswerStateEventArgs e)
 		{
-			if (Source.AnswerState == eConferenceSourceAnswerState.Answered ||
-			    Source.AnswerState == eConferenceSourceAnswerState.Autoanswered)
+			if (IncomingCall.AnswerState == eCallAnswerState.Answered ||
+			    IncomingCall.AnswerState == eCallAnswerState.Autoanswered)
 				RemoveSource();
-			else if (Source.AnswerState == eConferenceSourceAnswerState.Ignored)
+			else if (IncomingCall.AnswerState == eCallAnswerState.Ignored)
 				m_CallIgnoredTimer.Reset(REJECTED_LINGER_TIME_MS);
 
 			RefreshIfVisible();
