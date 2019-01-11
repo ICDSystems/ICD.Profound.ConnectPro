@@ -11,7 +11,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference
 	public sealed partial class AtcIncomingCallView
 	{
 		private VtProSubpage m_Subpage;
-		private VtProButton m_CloseButton;
 		private VtProButton m_AnswerButton;
 		private VtProButton m_RejectButton;
 		private VtProFormattedText m_CallerLabel;
@@ -28,11 +27,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference
 			m_Subpage = new VtProSubpage(panel, m_Subpage, index)
 			{
 				DigitalVisibilityJoin = 151
-			};
-
-			m_CloseButton = new VtProButton(panel, m_Subpage)
-			{
-				DigitalPressJoin = 602
 			};
 
 			m_AnswerButton = new VtProButton(panel, m_Subpage)
@@ -62,7 +56,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference
 		protected override IEnumerable<IVtProControl> GetChildren()
 		{
 			yield return m_Subpage;
-			yield return m_CloseButton;
 			yield return m_AnswerButton;
 			yield return m_RejectButton;
 			yield return m_CallerLabel;

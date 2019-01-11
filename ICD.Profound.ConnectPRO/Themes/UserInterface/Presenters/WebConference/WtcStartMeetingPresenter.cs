@@ -19,16 +19,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 {
 	public sealed class WtcStartMeetingPresenter : AbstractWtcPresenter<IWtcStartMeetingView>, IWtcStartMeetingPresenter
 	{
-		private const int MAX_LENGTH = 10;
-
-		private readonly IWtcContactListPresenter m_ContactListPresenter;
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly StringBuilder m_Builder;
 
 		public WtcStartMeetingPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
-			m_ContactListPresenter = nav.LazyLoadPresenter<IWtcContactListPresenter>();
-			
 			m_Builder = new StringBuilder();
 			m_RefreshSection = new SafeCriticalSection();
 		}
@@ -42,7 +37,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			{
 				bool inConference = IsInConference;
 				view.SetMeetNowButtonEnabled(!inConference);
-				view.SetJoinByIdButtonEnabled(!inConference && m_Builder.Length >= 9);
+				view.SetJoinByIdButtonEnabled(true);
 				
 				view.SetMeetingIdText(m_Builder.ToString());
 			}
@@ -173,9 +168,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		private void ViewOnOnKeypadButtonPressed(object sender, CharEventArgs e)
 		{
-			if (m_Builder.Length > MAX_LENGTH)
-				return;
-
 			m_Builder.Append(e.Data);
 			RefreshIfVisible();
 		}
@@ -195,7 +187,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		private void ViewOnOnTextEntered(object sender, StringEventArgs e)
 		{
 			m_Builder.Clear();
-			m_Builder.Append(e.Data.Length > MAX_LENGTH ? e.Data.Substring(0, MAX_LENGTH) : e.Data);
+			m_Builder.Append(e.Data);
 		}
 
 		#endregion

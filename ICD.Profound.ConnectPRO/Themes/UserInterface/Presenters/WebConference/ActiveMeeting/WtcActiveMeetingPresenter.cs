@@ -89,7 +89,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				view.SetMeetingNumberLabelVisibility(zoomConference != null);
 				view.SetMeetingNumberLabelText(zoomConference != null
 					? string.Format("Meeting #: {0}", zoomConference.Number)
-					: string.Empty); 
+					: string.Empty);
 
 				// only hosts can kick/mute people
 				bool kickMuteEnabled = SelectedParticipant != null && (zoomConference == null ? activeConference != null : zoomConference.AmIHost);

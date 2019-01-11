@@ -308,6 +308,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			{
 				foreach (IPresenter presenter in m_NavPages.Values)
 					presenter.ShowView(false);
+				Navigation.LazyLoadPresenter<IWtcActiveMeetingPresenter>().ShowView(false);
 			}
 		}
 
