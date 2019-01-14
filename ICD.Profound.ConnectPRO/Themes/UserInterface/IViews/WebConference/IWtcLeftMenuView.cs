@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using ICD.Common.Utils.EventArguments;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference
@@ -14,7 +13,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference
 		/// <summary>
 		/// Sets the label for a button in the list.
 		/// </summary>
-		/// <param name="labels"></param>
+		/// <param name="index"></param>
+		/// <param name="label"></param>
 		void SetButtonLabel(ushort index, string label);
 
 		/// <summary>

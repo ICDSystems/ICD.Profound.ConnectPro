@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Contacts;
-using ICD.Connect.Conferencing.Controls.Dialing;
-using ICD.Connect.Conferencing.Directory.Tree;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Zoom.Components.Directory;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;

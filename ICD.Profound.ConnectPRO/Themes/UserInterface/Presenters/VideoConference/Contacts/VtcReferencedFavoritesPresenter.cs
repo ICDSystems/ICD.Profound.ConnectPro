@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Linq;
-using ICD.Connect.Conferencing.Controls.Dialing;
-using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Favorites;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;

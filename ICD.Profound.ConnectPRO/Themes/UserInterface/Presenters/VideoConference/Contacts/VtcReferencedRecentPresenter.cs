@@ -1,6 +1,4 @@
-﻿using ICD.Connect.Conferencing.Controls.Dialing;
-using ICD.Connect.Conferencing.DialContexts;
-using ICD.Connect.Conferencing.EventArguments;
+﻿using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.Participants;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;

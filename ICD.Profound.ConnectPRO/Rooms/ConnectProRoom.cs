@@ -19,7 +19,6 @@ using ICD.Connect.Calendaring.CalendarControl;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
-using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Favorites.SqLite;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
@@ -330,7 +329,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			base.ApplySettingsFinal(settings, factory);
 
 			// Dialing plan
-			SetDialingPlan(settings.DialingPlan, factory);
+			SetDialingPlan(settings.DialingPlan);
 
 			// Favorites
 			string path = PathUtils.GetProgramConfigPath("favorites");
@@ -358,8 +357,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// Sets the dialing plan from the settings.
 		/// </summary>
 		/// <param name="planInfo"></param>
-		/// <param name="factory"></param>
-		private void SetDialingPlan(DialingPlanInfo planInfo, IDeviceFactory factory)
+		private void SetDialingPlan(DialingPlanInfo planInfo)
 		{
 			m_DialingPlan = planInfo;
 
