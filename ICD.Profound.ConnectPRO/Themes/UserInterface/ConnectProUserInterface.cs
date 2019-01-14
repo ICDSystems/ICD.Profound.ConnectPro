@@ -457,6 +457,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		}
 
 		/// <summary>
+		/// Clears the processing source for each display destination.
+		/// </summary>
+		private void ClearProcessingSources()
+		{
+			m_RoutingSection.Enter();
+
+			try
+			{
+				m_ProcessingSources.Clear();
+
+				UpdateSourceRoutedStates();
+			}
+			finally
+			{
+				m_RoutingSection.Leave();
+			}
+		}
+
+		/// <summary>
 		/// Sets the processing source for the single display destination.
 		/// </summary>
 		/// <param name="source"></param>
@@ -621,6 +640,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs boolEventArgs)
 		{
 			SetActiveSource(null);
+			ClearProcessingSources();
 
 			UpdateMeetingPresentersVisibility();
 		}
