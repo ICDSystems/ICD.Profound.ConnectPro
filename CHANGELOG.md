@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [8.0.0] - 2019-01-14
+### Added
+ - Added web conferencing support through Zoom
+
+### Changed
+ - Updating namespaces for port configuration features
+
 ## [7.2.2] - 2019-01-14
 ### Changed
  - Clearing processing sources when ending a meeting
