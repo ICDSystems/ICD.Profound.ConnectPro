@@ -17,8 +17,8 @@ using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Calendaring.CalendarControl;
 using ICD.Connect.Conferencing.ConferenceManagers;
+using ICD.Connect.Conferencing.ConferencePoints;
 using ICD.Connect.Conferencing.Conferences;
-using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Favorites.SqLite;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
@@ -45,7 +45,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		private readonly WakeSchedule m_WakeSchedule;
 
 		private bool m_IsInMeeting;
-		private DialingPlanInfo m_DialingPlan;
+		private string m_DialingPlan;
 
 		#region Properties
 
@@ -306,7 +306,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		{
 			base.ClearSettingsFinal();
 
-			m_DialingPlan = default(DialingPlanInfo);
+			m_DialingPlan = null;
 
 			m_ConferenceManager.ClearDialingProviders();
 			m_ConferenceManager.Favorites = null;
@@ -356,23 +356,21 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <summary>
 		/// Sets the dialing plan from the settings.
 		/// </summary>
-		/// <param name="planInfo"></param>
-		private void SetDialingPlan(DialingPlanInfo planInfo)
+		/// <param name="path"></param>
+		private void SetDialingPlan(string path)
 		{
-			m_DialingPlan = planInfo;
+			m_DialingPlan = path;
 
-			// TODO - Move loading from path into the DialingPlan.
-			string dialingPlanPath = string.IsNullOrEmpty(m_DialingPlan.ConfigPath)
-										 ? null
-										 : PathUtils.GetDefaultConfigPath("DialingPlans", m_DialingPlan.ConfigPath);
+			if (!string.IsNullOrEmpty(path))
+				path = PathUtils.GetDefaultConfigPath("DialingPlans", path);
 
 			try
 			{
-				if (string.IsNullOrEmpty(dialingPlanPath))
+				if (string.IsNullOrEmpty(path))
 					Log(eSeverity.Warning, "No Dialing Plan configured");
 				else
 				{
-					string xml = IcdFile.ReadToEnd(dialingPlanPath, new UTF8Encoding(false));
+					string xml = IcdFile.ReadToEnd(path, new UTF8Encoding(false));
 					xml = EncodingUtils.StripUtf8Bom(xml);
 
 					m_ConferenceManager.DialingPlan.LoadMatchersFromXml(xml);
@@ -380,11 +378,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			}
 			catch (Exception e)
 			{
-				Log(eSeverity.Error, "failed to load Dialing Plan {0} - {1}", dialingPlanPath, e.Message);
+				Log(eSeverity.Error, "failed to load Dialing Plan {0} - {1}", path, e.Message);
 			}
 
-			foreach (var conferenceControl in this.GetControlsRecursive<IConferenceDeviceControl>())
-				m_ConferenceManager.RegisterDialingProvider(conferenceControl);
+			foreach (IConferencePoint conferencePoint in Originators.GetInstancesRecursive<IConferencePoint>())
+				m_ConferenceManager.RegisterDialingProvider(conferencePoint);
 		}
 
 		#endregion
