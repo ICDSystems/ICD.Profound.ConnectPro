@@ -310,7 +310,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// Returns the ordered audio only destinations for the room.
 		/// </summary>
 		/// <returns></returns>
-		private IEnumerable<IDestination> GetAudioDestinations()
+		public IEnumerable<IDestination> GetAudioDestinations()
 		{
 			m_CacheSection.Enter();
 
