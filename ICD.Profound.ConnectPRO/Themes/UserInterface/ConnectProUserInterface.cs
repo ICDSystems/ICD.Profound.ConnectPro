@@ -815,10 +815,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 						processing.Source = null;
 					}
 
-					// If the active source is routed to all destinations we clear the active source
-					if (m_SelectedSource != null && m_ActiveVideo.All(kvp => kvp.Value.Contains(m_SelectedSource)))
-						SetSelectedSource(null);
-
 					UpdateSourceRoutedStates();
 				}
 
@@ -846,6 +842,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 					m_DisplaysActiveVideo.Clear();
 					m_DisplaysActiveVideo.AddRange(displaysRouting.Keys, k => new IcdHashSet<ISource>(displaysRouting[k]));
 				}
+
+				// If the active source is routed to all destinations we clear the active source
+				if (m_SelectedSource != null && m_DisplaysActiveVideo.All(kvp => kvp.Value.Contains(m_SelectedSource)))
+					SetSelectedSource(null);
 			}
 			finally
 			{
