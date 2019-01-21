@@ -22,7 +22,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private ISource m_ActiveSource;
+		private ISource m_SelectedSource;
 
 		private readonly MenuDisplaysPresenterDisplay m_Display1;
 		private readonly MenuDisplaysPresenterDisplay m_Display2;
@@ -30,20 +30,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		/// <summary>
 		/// Gets/sets the source that is actively selected for routing.
 		/// </summary>
-		public ISource ActiveSource
+		public ISource SelectedSource
 		{
-			get { return m_ActiveSource; }
+			get { return m_SelectedSource; }
 			set
 			{
-				if (value == m_ActiveSource)
+				if (value == m_SelectedSource)
 					return;
 
-				m_ActiveSource = value;
+				m_SelectedSource = value;
 
 				bool refresh = false;
 
-				refresh |= m_Display1.SetActiveSource(m_ActiveSource);
-				refresh |= m_Display2.SetActiveSource(m_ActiveSource);
+				refresh |= m_Display1.SetSelectedSource(m_SelectedSource);
+				refresh |= m_Display2.SetSelectedSource(m_SelectedSource);
 
 				if (refresh)
 					RefreshIfVisible();

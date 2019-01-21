@@ -71,7 +71,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		private IConnectProRoom m_Room;
 		private DefaultVisibilityNode m_RootVisibility;
-		private ISource m_ActiveSource;
+		private ISource m_SelectedSource;
 
 		#region Properties
 
@@ -103,7 +103,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_Panel = panel;
 			UpdatePanelOnlineJoin();
 
-			m_SourceSelectionTimeout = SafeTimer.Stopped(() => SetActiveSource(null));
+			m_SourceSelectionTimeout = SafeTimer.Stopped(() => SetSelectedSource(null));
 
 			IUiViewFactory viewFactory = new ConnectProUiViewFactory(panel, theme);
 			m_NavigationController = new ConnectProNavigationController(viewFactory, theme);
@@ -255,9 +255,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_RoutingSection.Enter();
 			try
 			{
-				if (source == m_ActiveSource)
+				if (source == m_SelectedSource)
 				{
-					SetActiveSource(null);
+					SetSelectedSource(null);
 					return;
 				}
 			}
@@ -305,7 +305,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			// Typical case - continue routing
 			else
 			{
-				SetActiveSource(source);
+				SetSelectedSource(source);
 				return;
 			}
 
@@ -336,7 +336,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				m_Room.Routing.RouteSingleDisplay(source);
 			}
 
-			SetActiveSource(null);
+			SetSelectedSource(null);
 		}
 
 		/// <summary>
@@ -353,7 +353,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				return;
 
 			// Store in local variable because route feedback will change the field
-			ISource activeSource = m_RoutingSection.Execute(() => m_ActiveSource);
+			ISource activeSource = m_RoutingSection.Execute(() => m_SelectedSource);
 
 			// If no source is selected for routing then we open the contextual menu for the current routed source
 			if (activeSource == null || activeSource == routedSource)
@@ -382,7 +382,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				routedSource = activeSource;
 
 				if (ShowSourceContextualMenu(routedSource, true))
-					SetActiveSource(null);
+					SetSelectedSource(null);
 			}
 		}
 
@@ -533,7 +533,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				else
 					m_NavigationController.NavigateTo<IAtcBasePresenter>();
 
-				SetActiveSource(null);
+				SetSelectedSource(null);
 				return true;
 			}
 
@@ -543,7 +543,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (control is ITvTunerControl)
 			{
 				m_NavigationController.NavigateTo<ICableTvPresenter>().Control = control as ITvTunerControl;
-				SetActiveSource(null);
+				SetSelectedSource(null);
 				return true;
 			}
 
@@ -551,7 +551,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			{
 				case eControlOverride.WebConference:
 					m_NavigationController.NavigateTo<IWebConferencingAlertPresenter>();
-					SetActiveSource(null);
+					SetSelectedSource(null);
 					return true;
 
 				default:
@@ -560,22 +560,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		}
 
 		/// <summary>
-		/// Sets the source that is currently active for routing to the displays.
+		/// Sets the source that is currently selected for routing to the displays.
 		/// </summary>
 		/// <param name="source"></param>
-		private void SetActiveSource(ISource source)
+		private void SetSelectedSource(ISource source)
 		{
 			m_RoutingSection.Enter();
 
 			try
 			{
-				if (source == m_ActiveSource)
+				if (source == m_SelectedSource)
 					return;
 
-				m_ActiveSource = source;
+				m_SelectedSource = source;
 
-				m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().ActiveSource = m_ActiveSource;
-				m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().ActiveSource = m_ActiveSource;
+				m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().SelectedSource = m_SelectedSource;
+				m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().SelectedSource = m_SelectedSource;
 
 				m_SourceSelectionTimeout.Reset(SOURCE_SELECTION_TIMEOUT);
 			}
@@ -624,7 +624,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="boolEventArgs"></param>
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs boolEventArgs)
 		{
-			SetActiveSource(null);
+			SetSelectedSource(null);
 			ClearProcessingSources();
 
 			UpdateMeetingPresentersVisibility();
@@ -766,8 +766,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 					}
 
 					// If the active source is routed to all destinations we clear the active source
-					if (m_ActiveSource != null && m_ActiveVideo.All(kvp => kvp.Value.Contains(m_ActiveSource)))
-						SetActiveSource(null);
+					if (m_SelectedSource != null && m_ActiveVideo.All(kvp => kvp.Value.Contains(m_SelectedSource)))
+						SetSelectedSource(null);
 
 					UpdateSourceRoutedStates();
 				}

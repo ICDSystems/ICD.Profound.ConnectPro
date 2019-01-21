@@ -16,7 +16,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displa
 		/// <summary>
 		/// Sets the source that is currently active for routing.
 		/// </summary>
-		ISource ActiveSource { get; set; }
+		ISource SelectedSource { get; set; }
 
 		void SetRouting(Dictionary<IDestination, IcdHashSet<ISource>> routing, IcdHashSet<ISource> activeAudio);
 	}
