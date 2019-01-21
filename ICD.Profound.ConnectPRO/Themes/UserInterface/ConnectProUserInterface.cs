@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
@@ -65,7 +66,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		// Keeps track of the processing state for each source.
 		private readonly Dictionary<ISource, eSourceState> m_SourceRoutedStates;
-		private readonly Dictionary<IDestination, ISource> m_ProcessingSources;
+		private readonly Dictionary<IDestination, ProcessingSourceInfo> m_ProcessingSources;
 
 		private readonly SafeCriticalSection m_RoutingSection;
 
@@ -96,7 +97,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_DisplaysActiveVideo = new Dictionary<IDestination, IcdHashSet<ISource>>();
 
 			m_SourceRoutedStates = new Dictionary<ISource, eSourceState>();
-			m_ProcessingSources = new Dictionary<IDestination, ISource>();
+			m_ProcessingSources = new Dictionary<IDestination, ProcessingSourceInfo>();
 
 			m_RoutingSection = new SafeCriticalSection();
 
@@ -430,8 +431,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 						continue;
 
 					// Are we in the middle of routing a new source to the display?
-					ISource processing = m_ProcessingSources.GetDefault(display);
-					if (processing != null)
+					ProcessingSourceInfo processing = m_ProcessingSources.GetDefault(display);
+					if (processing != null && processing.Source != null)
 						continue;
 
 					// The display has a source that is being listened to
@@ -456,6 +457,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			try
 			{
+				foreach (ProcessingSourceInfo processing in m_ProcessingSources.Values.Where(p => p != null))
+					processing.Dispose();
 				m_ProcessingSources.Clear();
 
 				UpdateSourceRoutedStates();
@@ -467,10 +470,43 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		}
 
 		/// <summary>
+		/// Clears the processing source for the display destination.
+		/// </summary>
+		private void ClearProcessingSource([NotNull] IDestination destination, [NotNull] ISource source)
+		{
+			if (destination == null)
+				throw new ArgumentNullException("destination");
+
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			m_RoutingSection.Enter();
+
+			try
+			{
+				ProcessingSourceInfo processing = m_ProcessingSources.GetDefault(destination);
+				if (processing == null)
+					return;
+
+				if (source != processing.Source)
+					return;
+
+				processing.Source = null;
+
+				UpdateSourceRoutedStates();
+				UpdateRouting(eConnectionType.Video);
+			}
+			finally
+			{
+				m_RoutingSection.Leave();
+			}
+		}
+
+		/// <summary>
 		/// Sets the processing source for the single display destination.
 		/// </summary>
 		/// <param name="source"></param>
-		private void SetProcessingSource(ISource source)
+		private void SetProcessingSource([NotNull] ISource source)
 		{
 			IDestination destination = m_Room == null ? null : m_Room.Routing.GetDisplayDestinations().FirstOrDefault();
 			if (destination == null)
@@ -484,17 +520,27 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// </summary>
 		/// <param name="destination"></param>
 		/// <param name="source"></param>
-		private void SetProcessingSource(IDestination destination, ISource source)
+		private void SetProcessingSource([NotNull] IDestination destination, [NotNull] ISource source)
 		{
 			if (destination == null)
 				throw new ArgumentNullException("destination");
+
+			if (source == null)
+				throw new ArgumentNullException("source");
 
 			m_RoutingSection.Enter();
 
 			try
 			{
+				ProcessingSourceInfo processing;
+				if (!m_ProcessingSources.TryGetValue(destination, out processing))
+				{
+					processing = new ProcessingSourceInfo(destination, ClearProcessingSource);
+					m_ProcessingSources.Add(destination, processing);
+				}
+
 				// No change
-				if (source == m_ProcessingSources.GetDefault(destination))
+				if (source == processing.Source)
 					return;
 
 				// Is the source already routed to the destination?
@@ -502,7 +548,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				if (m_ActiveVideo.TryGetValue(destination, out routed) && routed.Contains(source))
 					return;
 
-				m_ProcessingSources[destination] = source;
+				processing.ResetTimer();
+				processing.Source = source;
 
 				UpdateSourceRoutedStates();
 				UpdateRouting(eConnectionType.Video);
@@ -757,12 +804,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 					// Remove routed items from the processing sources collection
 					foreach (KeyValuePair<IDestination, IcdHashSet<ISource>> kvp in m_ActiveVideo)
 					{
-						ISource processing = m_ProcessingSources.GetDefault(kvp.Key);
+						ProcessingSourceInfo processing = m_ProcessingSources.GetDefault(kvp.Key);
 						if (processing == null)
 							continue;
 
-						if (kvp.Value.Contains(processing))
-							m_ProcessingSources.Remove(kvp.Key);
+						if (!kvp.Value.Contains(processing.Source))
+							continue;
+
+						processing.StopTimer();
+						processing.Source = null;
 					}
 
 					// If the active source is routed to all destinations we clear the active source
@@ -776,7 +826,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				Dictionary<IDestination, IcdHashSet<ISource>> displaysRouting =
 					routing.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-				foreach (KeyValuePair<IDestination, ISource> item in m_ProcessingSources)
+				foreach (KeyValuePair<IDestination, ProcessingSourceInfo> item in m_ProcessingSources.Where(kvp => kvp.Value != null))
 				{
 					IcdHashSet<ISource> sources;
 					if (!displaysRouting.TryGetValue(item.Key, out sources))
@@ -785,7 +835,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 						displaysRouting.Add(item.Key, sources);
 					}
 
-					sources.Add(item.Value);
+					if (item.Value.Source != null)
+						sources.Add(item.Value.Source);
 				}
 
 				if (!displaysRouting.DictionaryEqual(m_DisplaysActiveVideo, (a, b) => a.SetEquals(b)))
@@ -818,7 +869,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 								 .ToDictionary(s => s, s => eSourceState.Active);
 
 				// A source may be processing for another display, so we override
-				foreach (ISource source in m_ProcessingSources.Values.Where(s => s != null))
+				foreach (ISource source in m_ProcessingSources.Values.Where(p => p != null && p.Source != null).Select(s => s.Source))
 					routedSources[source] = eSourceState.Processing;
 
 				if (routedSources.DictionaryEqual(m_SourceRoutedStates))

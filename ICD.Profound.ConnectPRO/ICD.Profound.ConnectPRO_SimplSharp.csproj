@@ -311,6 +311,7 @@
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcKeyboardPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcKeypadPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcSharePresenter.cs" />
+    <Compile Include="Themes\UserInterface\ProcessingSourceInfo.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractComponentView.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractUiView.cs" />
     <Compile Include="Themes\UserInterface\Views\AudioConference\AtcBaseView.cs" />
