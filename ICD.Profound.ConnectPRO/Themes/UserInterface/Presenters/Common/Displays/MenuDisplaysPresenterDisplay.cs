@@ -21,7 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		private string m_Line2;
 		private bool m_AudioActive;
 		private ISource m_RoutedSource;
-		private ISource m_ActiveSource;
+		private ISource m_SelectedSource;
 		private IDestination m_Destination;
 		private bool m_RoomCombine;
 		private bool m_HasControl;
@@ -82,12 +82,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			return true;
 		}
 
-		public bool SetActiveSource(ISource activeSource)
+		public bool SetSelectedSource(ISource selectedSource)
 		{
-			if (activeSource == m_ActiveSource)
+			if (selectedSource == m_SelectedSource)
 				return false;
 
-			m_ActiveSource = activeSource;
+			m_SelectedSource = selectedSource;
 
 			// Update the color
 			UpdateColor();
@@ -149,7 +149,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private void UpdateColor()
 		{
-			m_Color = m_ActiveSource == null || m_ActiveSource == m_RoutedSource
+			m_Color = m_SelectedSource == null || m_SelectedSource == m_RoutedSource
 				          ? m_RoutedSource == null
 					            ? eDisplayColor.Grey
 					            : m_HasControl
@@ -180,7 +180,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 						? string.Empty
 						: m_Destination.GetName(m_RoomCombine) ?? string.Empty;
 
-				string text = m_ActiveSource == null || m_ActiveSource == m_RoutedSource
+				string text = m_SelectedSource == null || m_SelectedSource == m_RoutedSource
 					              ? destinationName
 					              : string.Format("PRESS TO SHOW SELECTION ON {0}", destinationName);
 				text = text.ToUpper();
@@ -213,7 +213,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private void UpdateShowSpeaker()
 		{
-			m_ShowSpeaker = (m_ActiveSource == null || m_ActiveSource == m_RoutedSource) &&
+			m_ShowSpeaker = (m_SelectedSource == null || m_SelectedSource == m_RoutedSource) &&
 			                m_RoutedSource != null &&
 			                m_RoutedSource.ConnectionType.HasFlag(eConnectionType.Audio);
 		}

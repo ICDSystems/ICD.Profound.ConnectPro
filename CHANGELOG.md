@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
  - Updating namespaces for port configuration features
 
+## [7.3.0] - 2019-01-21
+### Changed
+ - Immediately showing processing sources as routed to the displays in the UI
+ - ActiveSource renamed to SelectedSource for clarity
+
 ## [7.2.2] - 2019-01-14
 ### Changed
  - Clearing processing sources when ending a meeting
