@@ -805,7 +805,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 					foreach (KeyValuePair<IDestination, IcdHashSet<ISource>> kvp in m_ActiveVideo)
 					{
 						ProcessingSourceInfo processing = m_ProcessingSources.GetDefault(kvp.Key);
-						if (processing == null)
+						if (processing == null || processing.Source == null)
 							continue;
 
 						if (!kvp.Value.Contains(processing.Source))
