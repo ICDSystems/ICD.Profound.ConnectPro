@@ -18,7 +18,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 		{
 			m_Subpage = new VtProSubpage(panel, parent)
 			{
-				DigitalVisibilityJoin = ushort.MaxValue
+				DigitalVisibilityJoin = 15999
 			};
 
 			m_ButtonList = new VtProDynamicButtonList(703, panel as IPanelDevice, m_Subpage);
