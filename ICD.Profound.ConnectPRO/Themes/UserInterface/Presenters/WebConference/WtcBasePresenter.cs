@@ -1,8 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
+using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
@@ -28,6 +29,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		private readonly IWtcLeftMenuPresenter m_LeftMenuPresenter;
 		private readonly ICameraControlPresenter m_CameraControlPresenter;
 		private readonly List<IWtcPresenter> m_WtcPresenters;
+		private readonly SafeTimer m_ConnectingTimer;
 
 		private IPowerDeviceControl m_SubscribedPowerControl;
 		private IWebConferenceDeviceControl m_SubscribedConferenceControl;
@@ -83,6 +85,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			m_CameraControlPresenter.OnViewVisibilityChanged += CameraControlPresenterOnViewVisibilityChanged;
 
 			m_WtcPresenters = nav.LazyLoadPresenters<IWtcPresenter>().ToList();
+
+			m_ConnectingTimer =
+				SafeTimer.Stopped(() => Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView(false));
 		}
 
 		/// <summary>
@@ -279,8 +284,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			conference.OnStatusChanged -= ConferenceOnStatusChanged;
 		}
 
-		private void ConferenceOnStatusChanged(object sender, ConferenceStatusEventArgs conferenceStatusEventArgs)
+		private void ConferenceOnStatusChanged(object sender, ConferenceStatusEventArgs args)
 		{
+			var spinner = Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>();
+			if (args.Data == eConferenceStatus.Connecting)
+				spinner.ShowView("Connecting...");
+			else if (args.Data == eConferenceStatus.Connected)
+				m_ConnectingTimer.Reset(1000); // hide connecting page 1 second after connection complete
+			else
+				spinner.ShowView(false);
 			UpdateVisibility();
 		}
 

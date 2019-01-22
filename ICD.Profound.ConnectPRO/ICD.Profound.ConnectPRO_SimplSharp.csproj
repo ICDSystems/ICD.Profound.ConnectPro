@@ -161,6 +161,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\Sources\ISourceSelectPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IDisabledAlertPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IGenericAlertPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\IGenericLoadingSpinnerPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IHardButtonsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IConnectProNavigationController.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IUiPresenter.cs" />
@@ -228,6 +229,7 @@
     <Compile Include="Themes\UserInterface\IViews\Icons.cs" />
     <Compile Include="Themes\UserInterface\IViews\IDisabledAlertView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IGenericAlertView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\IGenericLoadingSpinnerView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IHardButtonsView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Popups\CableTv\IReferencedCableTvView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Popups\IAppleTvView.cs" />
@@ -309,6 +311,7 @@
     <Compile Include="Themes\UserInterface\Presenters\ConnectProNavigationController.cs" />
     <Compile Include="Themes\UserInterface\Presenters\DisabledAlertPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\GenericAlertPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\GenericLoadingSpinnerPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\HardButtonsPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\AbstractPopupPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\AppleTvPresenter.cs" />
@@ -408,10 +411,12 @@
     <Compile Include="Themes\UserInterface\Views\Common\VolumeView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\VolumeView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\ConnectProUiViewFactory.cs" />
+    <Compile Include="Themes\UserInterface\Views\GenericLoadingSpinnerView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\DisabledAlertView.cs" />
     <Compile Include="Themes\UserInterface\Views\DisabledAlertView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\GenericAlertView.cs" />
     <Compile Include="Themes\UserInterface\Views\GenericAlertView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\GenericLoadingSpinnerView.cs" />
     <Compile Include="Themes\UserInterface\Views\HardButtonsView.cs" />
     <Compile Include="Themes\UserInterface\Views\HardButtonsView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\AbstractPopupView.cs" />
