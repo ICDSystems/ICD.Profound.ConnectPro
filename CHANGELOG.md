@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Changed
  - Incremented information version to 1.2
+ - Fixed null reference in GenericAlertPresenter
 
 ## [8.0.0] - 2019-01-14
 ### Added
@@ -14,6 +15,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
  - Updating namespaces for port configuration features
+
+## [7.3.1] - 2019-01-21
+### Changed
+ - Hide speaker buttons if the room has no audio destinations
+
+## [7.3.0] - 2019-01-21
+### Changed
+ - Immediately showing processing sources as routed to the displays in the UI
+ - ActiveSource renamed to SelectedSource for clarity
 
 ## [7.2.2] - 2019-01-14
 ### Changed

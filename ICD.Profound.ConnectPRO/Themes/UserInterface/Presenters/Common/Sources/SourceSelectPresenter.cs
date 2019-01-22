@@ -25,7 +25,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private ISource[] m_Sources;
-		private ISource m_ActiveSource;
+		private ISource m_SelectedSource;
 		private ushort m_DisplayCount;
 
 		#region Properties
@@ -33,15 +33,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// <summary>
 		/// Gets/sets the source that is currently selected for routing.
 		/// </summary>
-		public ISource ActiveSource
+		public ISource SelectedSource
 		{
-			get { return m_ActiveSource; }
+			get { return m_SelectedSource; }
 			set
 			{
-				if (value == m_ActiveSource)
+				if (value == m_SelectedSource)
 					return;
 
-				m_ActiveSource = value;
+				m_SelectedSource = value;
 
 				RefreshIfVisible();
 			}
@@ -92,7 +92,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			{
 				foreach (IReferencedSourceSelectPresenter presenter in m_ChildrenFactory)
 				{
-					presenter.Selected = presenter.Source == m_ActiveSource;
+					presenter.Selected = presenter.Source == m_SelectedSource;
 					presenter.ShowView(true);
 
 					presenter.SourceState =

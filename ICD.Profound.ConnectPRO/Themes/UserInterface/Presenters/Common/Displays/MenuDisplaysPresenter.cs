@@ -22,28 +22,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private ISource m_ActiveSource;
-
 		private readonly MenuDisplaysPresenterDisplay m_Display1;
 		private readonly MenuDisplaysPresenterDisplay m_Display2;
+
+		private ISource m_SelectedSource;
+		private bool m_RoomHasAudio;
 
 		/// <summary>
 		/// Gets/sets the source that is actively selected for routing.
 		/// </summary>
-		public ISource ActiveSource
+		public ISource SelectedSource
 		{
-			get { return m_ActiveSource; }
+			get { return m_SelectedSource; }
 			set
 			{
-				if (value == m_ActiveSource)
+				if (value == m_SelectedSource)
 					return;
 
-				m_ActiveSource = value;
+				m_SelectedSource = value;
 
 				bool refresh = false;
 
-				refresh |= m_Display1.SetActiveSource(m_ActiveSource);
-				refresh |= m_Display2.SetActiveSource(m_ActiveSource);
+				refresh |= m_Display1.SetSelectedSource(m_SelectedSource);
+				refresh |= m_Display2.SetSelectedSource(m_SelectedSource);
 
 				if (refresh)
 					RefreshIfVisible();
@@ -96,6 +97,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			destinations.TryElementAt(1, out dest2);
 			m_Display2.SetDestination(dest2);
 
+			m_RoomHasAudio = room != null && room.Routing.GetAudioDestinations().Any();
+
 			base.SetRoom(room);
 		}
 
@@ -113,7 +116,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				view.SetDisplay1Line1Text(m_Display1.Line1);
 				view.SetDisplay1Line2Text(m_Display1.Line2);
 				view.SetDisplay1Icon(m_Display1.Icon);
-				view.ShowDisplay1SpeakerButton(m_Display1.ShowSpeaker);
+				view.ShowDisplay1SpeakerButton(m_Display1.ShowSpeaker && m_RoomHasAudio);
 				view.SetDisplay1SpeakerButtonActive(m_Display1.AudioActive);
 
 				// Display 2
@@ -122,7 +125,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				view.SetDisplay2Line1Text(m_Display2.Line1);
 				view.SetDisplay2Line2Text(m_Display2.Line2);
 				view.SetDisplay2Icon(m_Display2.Icon);
-				view.ShowDisplay2SpeakerButton(m_Display2.ShowSpeaker);
+				view.ShowDisplay2SpeakerButton(m_Display2.ShowSpeaker && m_RoomHasAudio);
 				view.SetDisplay2SpeakerButtonActive(m_Display2.AudioActive);
 			}
 			finally

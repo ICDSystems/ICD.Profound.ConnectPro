@@ -17,7 +17,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Source
 		/// <summary>
 		/// Gets/sets the source that is currently selected for routing.
 		/// </summary>
-		ISource ActiveSource { get; set; }
+		ISource SelectedSource { get; set; }
 
 		/// <summary>
 		/// Sets the sources that are currently routed to displays.

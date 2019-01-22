@@ -9,7 +9,6 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.EventArguments;
-using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Conferencing.Participants.EventHelpers;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing;

@@ -363,6 +363,7 @@
     <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcRecordingPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcSharePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcStartMeetingPresenter.cs" />
+    <Compile Include="Themes\UserInterface\ProcessingSourceInfo.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractComponentView.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractUiView.cs" />
     <Compile Include="Themes\UserInterface\Views\AudioConference\AtcBaseView.cs" />
