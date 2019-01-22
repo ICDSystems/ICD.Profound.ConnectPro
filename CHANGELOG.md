@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Changed
  - Incremented information version to 1.2
+ - Fixed null reference in GenericAlertPresenter
 
 ## [8.0.0] - 2019-01-14
 ### Added

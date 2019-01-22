@@ -17,7 +17,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 
 		private bool Timed { get; set; }
 
-		public GenericAlertPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		public GenericAlertPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
 			m_CloseTimer = SafeTimer.Stopped(() => ShowView(false));
@@ -62,7 +63,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		{
 			base.Subscribe(room);
 
+			if (room == null)
+				return;
+
 			room.OnIsInMeetingChanged += RoomOnOnIsInMeetingChanged;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Unsubscribe(IConnectProRoom room)
+		{
+			base.Unsubscribe(room);
+
+			if (room == null)
+				return;
+
+			room.OnIsInMeetingChanged -= RoomOnOnIsInMeetingChanged;
 		}
 
 		private void RoomOnOnIsInMeetingChanged(object sender, BoolEventArgs e)
@@ -98,11 +116,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		{
 			base.ViewOnVisibilityChanged(sender, args);
 
-			if (!args.Data)
-			{
-				m_CloseTimer.Stop();
-				Timed = false;
-			}
+			if (args.Data)
+				return;
+
+			m_CloseTimer.Stop();
+			Timed = false;
 		}
 
 		#endregion
