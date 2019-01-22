@@ -86,6 +86,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			{typeof(IDisabledAlertPresenter), (nav, views, theme) => new DisabledAlertPresenter(nav, views, theme)},
 			{typeof(IPasscodePresenter), (nav, views, theme) => new PasscodePresenter(nav, views, theme)},
 			{typeof(IGenericAlertPresenter), (nav, views, theme) => new GenericAlertPresenter(nav, views, theme)},
+			{typeof(IGenericLoadingSpinnerPresenter), (nav, views, theme) => new GenericLoadingSpinnerPresenter(nav, views, theme)}, 
 
 			// Settings
 			{typeof(ISettingsBasePresenter), (nav, views, theme) => new SettingsBasePresenter(nav, views, theme)},

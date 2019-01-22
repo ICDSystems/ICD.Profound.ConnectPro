@@ -605,8 +605,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				}
 
 				IWebConferenceDeviceControl webControl = control as IWebConferenceDeviceControl;
-				if (webControl != null)
-					m_NavigationController.NavigateTo<IWtcBasePresenter>();
+				if (webControl != null) {
+					var wtcPresenter = m_NavigationController.LazyLoadPresenter<IWtcBasePresenter>();
+					wtcPresenter.ActiveConferenceControl = webControl;
+					wtcPresenter.ShowView(true);
+				}
 
 				SetSelectedSource(null);
 				return true;

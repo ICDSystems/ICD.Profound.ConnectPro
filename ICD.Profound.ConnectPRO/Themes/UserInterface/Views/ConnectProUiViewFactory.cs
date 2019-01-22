@@ -105,6 +105,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{typeof(IDisabledAlertView), (panel, theme) => new DisabledAlertView(panel, theme)},
 			{typeof(IPasscodeView), (panel, theme) => new PasscodeView(panel, theme)},
 			{typeof(IGenericAlertView), (panel, theme) => new GenericAlertView(panel, theme)},
+			{typeof(IGenericLoadingSpinnerView), (panel, theme) => new GenericLoadingSpinnerView(panel, theme)}, 
 
 			// Settings
 			{typeof(ISettingsBaseView), (panel, theme) => new SettingsBaseView(panel, theme)},
