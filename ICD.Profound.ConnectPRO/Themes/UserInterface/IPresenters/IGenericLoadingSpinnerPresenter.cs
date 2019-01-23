@@ -1,5 +1,4 @@
-﻿using ICD.Common.Properties;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
+﻿using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters
 {
