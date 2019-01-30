@@ -7,7 +7,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConferen
 {
 	public interface IVtcBasePresenter : IPopupPresenter<IVtcBaseView>
 	{
-		ITraditionalConferenceDeviceControl ActiveConferenceControl { get; }
+		ITraditionalConferenceDeviceControl ActiveConferenceControl { get; set; }
 
 		event EventHandler OnActiveConferenceControlChanged;
 	}

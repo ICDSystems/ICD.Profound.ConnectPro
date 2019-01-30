@@ -599,9 +599,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				if (dialer != null)
 				{
 					if (dialer.Supports.HasFlag(eCallType.Video))
-						m_NavigationController.NavigateTo<IVtcBasePresenter>();
+					{
+						var vtcPresenter = m_NavigationController.LazyLoadPresenter<IVtcBasePresenter>();
+						vtcPresenter.ActiveConferenceControl = dialer;
+						vtcPresenter.ShowView(true);
+					}
 					else
-						m_NavigationController.NavigateTo<IAtcBasePresenter>();
+					{
+						var atcPresenter = m_NavigationController.LazyLoadPresenter<IAtcBasePresenter>();
+						atcPresenter.ActiveConferenceControl = dialer;
+						atcPresenter.ShowView(true);
+					}
 				}
 
 				IWebConferenceDeviceControl webControl = control as IWebConferenceDeviceControl;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils.EventArguments;
@@ -42,7 +42,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		public ITraditionalConferenceDeviceControl ActiveConferenceControl
 		{
 			get { return m_SubscribedConferenceControl; }
-			private set
+			set
 			{
 				if (value == m_SubscribedConferenceControl)
 					return;
@@ -249,6 +249,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			control.OnConferenceAdded += ControlOnOnConferenceAdded;
 			control.OnConferenceRemoved += ControlOnOnConferenceRemoved;
 
+			foreach (var conference in control.GetConferences())
+				Subscribe(conference);
+
 			m_SubscribedPowerControl = GetVtcPowerControl(m_SubscribedConferenceControl);
 			if (m_SubscribedPowerControl == null)
 				return;
@@ -261,7 +264,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (control == null)
 				return;
 
-			// TODO unsubscribe from conferences and stuff
+			foreach (var conference in control.GetConferences())
+				Unsubscribe(conference);
 
 			if (m_SubscribedPowerControl == null)
 				return;

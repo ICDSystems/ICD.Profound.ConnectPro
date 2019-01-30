@@ -119,7 +119,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			return room.Originators.GetInstancesRecursive<ISource>()
 				.Select(s => room.Core.Originators[s.Device] as IDevice)
 				.SelectMany(d => d == null ? Enumerable.Empty<IConferenceDeviceControl>() : d.Controls.GetControls<IConferenceDeviceControl>())
-				.Where(c => c.Supports == eCallType.Video);
+				.Where(c => c.Supports.HasFlag(eCallType.Video));
 		}
 
 		#region Room Callbacks
