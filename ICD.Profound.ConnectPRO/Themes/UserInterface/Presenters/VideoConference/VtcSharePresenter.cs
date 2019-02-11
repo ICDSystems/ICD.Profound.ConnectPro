@@ -71,7 +71,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_RoutedSources = new IcdHashSet<ISource>();
 			m_Sources = new ISource[0];
 			
-			m_ParticipantEventHelper = new TraditionalParticipantEventHelper((_) => UpdateVisibility());
+			m_ParticipantEventHelper = new TraditionalParticipantEventHelper(_ => UpdateVisibility());
 		}
 
 		/// <summary>

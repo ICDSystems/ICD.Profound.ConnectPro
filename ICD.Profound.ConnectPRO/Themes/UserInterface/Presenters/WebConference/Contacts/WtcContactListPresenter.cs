@@ -139,7 +139,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				throw new ArgumentNullException("searchString");
 
 			string[] tokens = searchString.Split();
-			return (name) => WeightedTokenSearch(name, searchString, tokens);
+			return name => WeightedTokenSearch(name, searchString, tokens);
 		}
 
 		private static double WeightedTokenSearch(string name, string searchString, string[] searchTokens)
