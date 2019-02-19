@@ -55,7 +55,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// </summary>
 		public override void Dispose()
 		{
-			UnsubscribeChildren();
 			m_ChildrenFactory.Dispose();
 
 			base.Dispose();
@@ -142,15 +141,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		private IEnumerable<IReferencedScheduleView> ItemFactory(ushort count)
 		{
 			return GetView().GetChildComponentViews(ViewFactory, count);
-		}
-
-		/// <summary>
-		/// Unsubscribes from all of the child presenters.
-		/// </summary>
-		private void UnsubscribeChildren()
-		{
-			foreach (IReferencedSchedulePresenter presenter in m_ChildrenFactory)
-				Unsubscribe(presenter);
 		}
 
 		#endregion
