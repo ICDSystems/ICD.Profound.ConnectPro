@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Incremented information version to 1.2
  - Fixed null reference in GenericAlertPresenter
  - Fixed VTC for conferencing refactor
+ - Refresh available bookings when current booking expires or next booking starts
 
 ## [8.0.0] - 2019-01-14
 ### Added
