@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews.Welcome;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Welcome
 {
+	[ViewBinding(typeof(IOsdWelcomeView))]
     public sealed partial class OsdWelcomeView : AbstractOsdView, IOsdWelcomeView
     {
         private readonly List<IReferencedScheduleView> m_ChildList;

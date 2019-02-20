@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Connect.UI.Controls.TextControls;
@@ -11,14 +12,6 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Welcome
 	    private VtProSubpage m_Subpage;
 		private VtProSimpleLabel m_TimeLabel;
 		private VtProSimpleLabel m_SubjectLabel;
-
-	    public ReferencedScheduleView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
-	    {
-	    }
-
-	    public ReferencedScheduleView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index) : base(panel, theme, parent, index)
-	    {
-	    }
 
 	    /// <summary>
 	    /// Instantiates the view controls.

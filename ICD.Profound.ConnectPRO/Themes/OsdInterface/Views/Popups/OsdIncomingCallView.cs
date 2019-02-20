@@ -1,8 +1,10 @@
 ﻿using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews.Popups;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Popups
 {
+	[ViewBinding(typeof(IOsdIncomingCallView))]
 	public sealed partial class OsdIncomingCallView : AbstractOsdView, IOsdIncomingCallView
 	{
 		/// <summary>
@@ -10,7 +12,8 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Popups
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public OsdIncomingCallView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
+		public OsdIncomingCallView(ISigInputOutput panel, ConnectProTheme theme)
+			: base(panel, theme)
 		{
 		}
 

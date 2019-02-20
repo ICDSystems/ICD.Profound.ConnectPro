@@ -1,8 +1,10 @@
 ﻿using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews.Sources;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Sources
 {
+	[ViewBinding(typeof(IOsdSourcesView))]
 	public sealed partial class OsdSourcesView : AbstractOsdView, IOsdSourcesView
 	{
 		public OsdSourcesView(ISigInputOutput panel, ConnectProTheme theme)

@@ -11,14 +11,6 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 		private VtProSubpage m_Subpage;
 		private VtProSimpleLabel m_RoomName;
 
-		public OsdHeaderView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
-		{
-		}
-
-		public OsdHeaderView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index) : base(panel, theme, parent, index)
-		{
-		}
-
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
 			m_Subpage = new VtProSubpage(panel, parent);
