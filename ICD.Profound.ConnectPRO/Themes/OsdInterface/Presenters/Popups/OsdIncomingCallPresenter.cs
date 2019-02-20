@@ -4,6 +4,7 @@ using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Participants;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Popups;
@@ -12,6 +13,7 @@ using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews.Popups;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups
 {
+	[PresenterBinding(typeof(IOsdIncomingCallPresenter))]
 	public sealed class OsdIncomingCallPresenter : AbstractOsdPresenter<IOsdIncomingCallView>, IOsdIncomingCallPresenter
 	{
 		private const long REJECTED_LINGER_TIME_MS = 4 * 1000;

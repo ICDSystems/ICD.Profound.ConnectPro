@@ -1,20 +1,11 @@
-﻿#if !SIMPLSHARP
-using System.Reflection;
-#endif
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
-using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Popups;
-using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Sources;
-using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Welcome;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups;
-using ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Sources;
-using ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 {
@@ -23,21 +14,6 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 	/// </summary>
 	public sealed class ConnectProOsdNavigationController : AbstractNavigationController, IOsdNavigationController
 	{
-		private delegate IOsdPresenter PresenterFactory(IOsdNavigationController nav, IOsdViewFactory views, ConnectProTheme theme);
-
-		private readonly Dictionary<Type, PresenterFactory> m_PresenterFactories = new Dictionary<Type, PresenterFactory>
-		{
-			{typeof(IOsdHeaderPresenter), (nav, views, theme) => new OsdHeaderPresenter(nav, views, theme)},
-			{typeof(IOsdWelcomePresenter), (nav, views, theme) => new OsdWelcomePresenter(nav, views, theme)},
-			{typeof(IOsdSourcesPresenter), (nav, views, theme) => new OsdSourcesPresenter(nav, views, theme)},
-			
-			{typeof(IOsdHelloPresenter), (nav, views, theme) => new OsdHelloPresenter(nav, views, theme)},
-			{typeof(IOsdIncomingCallPresenter), (nav, views, theme) => new OsdIncomingCallPresenter(nav, views, theme)},
-			{typeof(IOsdMutePresenter), (nav, views, theme) => new OsdMutePresenter(nav, views, theme)},
-
-            {typeof(IReferencedSchedulePresenter), (nav, views, theme) => new ReferencedSchedulePresenter(nav, views, theme)},
-		};
-
 		private readonly IOsdViewFactory m_ViewFactory;
 		private readonly ConnectProTheme m_Theme;
 		private readonly SafeCriticalSection m_SetRoomSection;
@@ -103,22 +79,11 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 		/// <returns></returns>
 		public override IPresenter GetNewPresenter(Type type)
 		{
-			if (!m_PresenterFactories.ContainsKey(type))
-			{
-				string message = string.Format("{0} does not contain factory for {1}", GetType().Name, type.Name);
-				throw new KeyNotFoundException(message);
-			}
-
-			PresenterFactory factory = m_PresenterFactories[type];
-			IOsdPresenter output = factory(this, m_ViewFactory, m_Theme);
-			output.SetRoom(m_Room);
-
-			if (!type
-#if !SIMPLSHARP
-				     .GetTypeInfo()
-#endif
-				     .IsInstanceOfType(output))
+			IOsdPresenter output = (IOsdPresenter)GetNewPresenter(type, this, m_ViewFactory, m_Theme);
+			if (!output.GetType().IsAssignableTo(type))
 				throw new InvalidCastException(string.Format("Presenter {0} is not of type {1}", output, type.Name));
+
+			output.SetRoom(m_Room);
 
 			return output;
 		}

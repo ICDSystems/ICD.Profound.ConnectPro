@@ -1,5 +1,6 @@
 ﻿using System;
 using ICD.Common.Utils;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Welcome;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews.Welcome;
 using ICD.Connect.Calendaring.Booking;
@@ -8,6 +9,7 @@ using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 {
+	[PresenterBinding(typeof(IReferencedSchedulePresenter))]
 	public sealed class ReferencedSchedulePresenter : AbstractOsdComponentPresenter<IReferencedScheduleView>, IReferencedSchedulePresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;

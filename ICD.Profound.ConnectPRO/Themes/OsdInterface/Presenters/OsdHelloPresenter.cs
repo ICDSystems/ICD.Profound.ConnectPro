@@ -6,12 +6,14 @@ using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.CalendarControl;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 {
+	[PresenterBinding(typeof(IOsdHelloPresenter))]
 	public sealed class OsdHelloPresenter : AbstractOsdPresenter<IOsdHelloView>, IOsdHelloPresenter
 	{
 		public event EventHandler<BoolEventArgs> OnMainPageViewChanged;

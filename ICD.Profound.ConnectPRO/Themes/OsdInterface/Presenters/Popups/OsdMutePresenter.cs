@@ -1,5 +1,6 @@
 ﻿using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Audio.Controls.Mute;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Popups;
@@ -8,6 +9,7 @@ using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews.Popups;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups
 {
+	[PresenterBinding(typeof(IOsdMutePresenter))]
 	public sealed class OsdMutePresenter : AbstractOsdPresenter<IOsdMuteView>, IOsdMutePresenter
 	{
 		private IVolumeMuteFeedbackDeviceControl m_SubscribedControl;
