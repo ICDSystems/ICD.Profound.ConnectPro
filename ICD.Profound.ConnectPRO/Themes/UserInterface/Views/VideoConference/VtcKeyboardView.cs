@@ -4,6 +4,7 @@ using System.Linq;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.EventArguments;
 using ICD.Connect.UI.Utils;
@@ -11,6 +12,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 {
+	[ViewBinding(typeof(IVtcKeyboardView))]
 	public sealed partial class VtcKeyboardView : AbstractVtcBaseKeyboardView, IVtcKeyboardView
 	{
 		/// <summary>

@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Views;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 {
+	[ViewBinding(typeof(IStartMeetingView))]
 	public sealed partial class StartMeetingView : AbstractUiView, IStartMeetingView
 	{
 		private const ushort DEFAULT_SUBPAGE_VISIBILITY = 90;

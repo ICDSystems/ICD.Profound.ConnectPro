@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Views;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.ActiveMeeting;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.ActiveMeeting
 {
+	[ViewBinding(typeof(IWtcActiveMeetingView))]
 	public sealed partial class WtcActiveMeetingView : AbstractUiView, IWtcActiveMeetingView
 	{
 		public event EventHandler OnShowHideCameraButtonPressed;
@@ -17,7 +19,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 
 		private readonly List<IWtcReferencedParticipantView> m_ChildList; 
 
-		public WtcActiveMeetingView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
+		public WtcActiveMeetingView(ISigInputOutput panel, ConnectProTheme theme)
+			: base(panel, theme)
 		{
 			m_ChildList = new List<IWtcReferencedParticipantView>();
 		}

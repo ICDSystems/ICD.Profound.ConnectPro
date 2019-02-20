@@ -2,11 +2,13 @@
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.EventArguments;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 {
+	[ViewBinding(typeof(IWtcCallOutView))]
 	public sealed partial class WtcCallOutView : AbstractUiView, IWtcCallOutView
 	{
 		public event EventHandler<StringEventArgs> OnTextEntered;
@@ -14,7 +16,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 		public event EventHandler OnHangupButtonPressed;
 		public event EventHandler<CharEventArgs> OnKeypadButtonPressed;
 
-		public WtcCallOutView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
+		public WtcCallOutView(ISigInputOutput panel, ConnectProTheme theme)
+			: base(panel, theme)
 		{
 		}
 

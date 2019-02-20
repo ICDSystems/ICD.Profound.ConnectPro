@@ -1,11 +1,13 @@
 ﻿using System;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 {
+	[ViewBinding(typeof(IVtcBaseView))]
 	public sealed partial class VtcBaseView : AbstractPopupView, IVtcBaseView
 	{
 		public override event EventHandler OnCloseButtonPressed;

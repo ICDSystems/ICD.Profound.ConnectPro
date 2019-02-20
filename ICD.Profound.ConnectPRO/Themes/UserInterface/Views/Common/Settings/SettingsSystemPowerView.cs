@@ -1,10 +1,12 @@
 ﻿using System;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 {
+	[ViewBinding(typeof(ISettingsSystemPowerView))]
 	public sealed partial class SettingsSystemPowerView : AbstractUiView, ISettingsSystemPowerView
 	{
 		public event EventHandler OnWeekdaysButtonPressed;

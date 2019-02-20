@@ -2,18 +2,20 @@
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Contacts;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Controls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Contacts
 {
+	[ViewBinding(typeof(IWtcReferencedContactView))]
 	public sealed partial class WtcReferencedContactView : AbstractComponentView, IWtcReferencedContactView
 	{
 		public event EventHandler OnContactPressed;
 
-		private ushort MODE_ONLINE = 0;
-		private ushort MODE_AWAY = 1;
-		private ushort MODE_BUSY = 2;
+		private const ushort MODE_ONLINE = 0;
+		private const ushort MODE_AWAY = 1;
+		private const ushort MODE_BUSY = 2;
 
 		public WtcReferencedContactView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index)
 			: base(panel, theme, parent, index)

@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.EventArguments;
 using ICD.Connect.UI.Mvp.Views;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contacts;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Contacts
 {
+	[ViewBinding(typeof(IVtcContactsPolycomView))]
 	public sealed partial class VtcContactsPolycomView : AbstractVtcContactsView, IVtcContactsPolycomView
 	{
 		/// <summary>

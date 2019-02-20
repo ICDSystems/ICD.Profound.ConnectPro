@@ -2,12 +2,14 @@
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.EventArguments;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 {
+	[ViewBinding(typeof(ICameraControlView))]
 	public sealed partial class CameraControlView : AbstractUiView, ICameraControlView
 	{
 		public event EventHandler OnCameraMoveUpButtonPressed;

@@ -1,11 +1,13 @@
 ﻿using System;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 {
+	[ViewBinding(typeof(IMenuDisplaysView))]
 	public sealed partial class MenuDisplaysView : AbstractUiView, IMenuDisplaysView
 	{
 		private const ushort MODE_WHITE = 0;

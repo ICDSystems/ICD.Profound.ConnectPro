@@ -4,6 +4,7 @@ using System.Linq;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.EventArguments;
 using ICD.Connect.UI.Utils;
@@ -11,6 +12,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 {
+	[ViewBinding(typeof(IWtcKeyboardView))]
 	public sealed partial class WtcKeyboardView : AbstractUiView, IWtcKeyboardView
 	{
 		public event EventHandler<KeyboardKeyEventArgs> OnKeyPressed;
@@ -24,7 +26,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 
 		private Dictionary<VtProButton, KeyboardKey> m_KeyMap;
 
-		public WtcKeyboardView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
+		public WtcKeyboardView(ISigInputOutput panel, ConnectProTheme theme)
+			: base(panel, theme)
 		{
 		}
 

@@ -1,16 +1,19 @@
 ﻿using System;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 {
+	[ViewBinding(typeof(IWtcRecordingView))]
 	public sealed partial class WtcRecordingView : AbstractUiView, IWtcRecordingView
 	{
 		public event EventHandler OnStartRecordingButtonPressed;
 		public event EventHandler OnStopRecordingButtonPressed;
 
-		public WtcRecordingView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
+		public WtcRecordingView(ISigInputOutput panel, ConnectProTheme theme)
+			: base(panel, theme)
 		{
 		}
 

@@ -3,11 +3,13 @@ using System.Linq;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.EventArguments;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 {
+	[ViewBinding(typeof(ISettingsPasscodeView))]
 	public sealed partial class SettingsPasscodeView : AbstractUiView, ISettingsPasscodeView
 	{
 		/// <summary>

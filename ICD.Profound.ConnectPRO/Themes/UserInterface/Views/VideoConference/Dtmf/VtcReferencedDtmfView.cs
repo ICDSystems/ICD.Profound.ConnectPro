@@ -1,11 +1,13 @@
 ﻿using System;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Controls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Dtmf;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Dtmf
 {
+	[ViewBinding(typeof(IVtcReferencedDtmfView))]
 	public sealed partial class VtcReferencedDtmfView : AbstractComponentView, IVtcReferencedDtmfView
 	{
 		public event EventHandler OnButtonPressed;

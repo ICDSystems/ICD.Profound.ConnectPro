@@ -1,11 +1,13 @@
 ﻿using System;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Controls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.ActiveMeeting;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.ActiveMeeting
 {
+	[ViewBinding(typeof(IWtcReferencedParticipantView))]
 	public sealed partial class WtcReferencedParticipantView : AbstractComponentView, IWtcReferencedParticipantView
 	{
 		public event EventHandler OnParticipantPressed;

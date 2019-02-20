@@ -2,16 +2,19 @@
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 {
+	[ViewBinding(typeof(IWtcShareView))]
 	public sealed partial class WtcShareView : AbstractUiView, IWtcShareView
 	{
 		public event EventHandler OnShareButtonPressed;
 		public event EventHandler<UShortEventArgs> OnSourceButtonPressed;
 
-		public WtcShareView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
+		public WtcShareView(ISigInputOutput panel, ConnectProTheme theme)
+			: base(panel, theme)
 		{
 		}
 

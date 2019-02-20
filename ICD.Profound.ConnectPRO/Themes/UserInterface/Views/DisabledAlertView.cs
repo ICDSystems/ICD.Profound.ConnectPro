@@ -1,10 +1,12 @@
 ﻿using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using System;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 {
+	[ViewBinding(typeof(IDisabledAlertView))]
 	public sealed partial class DisabledAlertView : AbstractUiView, IDisabledAlertView
 	{
 		public event EventHandler OnDismissButtonPressed;

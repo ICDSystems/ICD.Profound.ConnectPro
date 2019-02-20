@@ -2,17 +2,20 @@
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 {
+	[ViewBinding(typeof(IWtcLeftMenuView))]
 	public sealed partial class WtcLeftMenuView : AbstractUiView, IWtcLeftMenuView
 	{
 		private const ushort SUBPAGE_3 = 763;
 		private const ushort SUBPAGE_4 = 764;
 		private const ushort SUBPAGE_5 = 765;
 
-		private static ushort[] SUBPAGE_JOINS = {
+		private static readonly ushort[] s_SubpageJoins =
+		{
 			SUBPAGE_3,
 			SUBPAGE_4,
 			SUBPAGE_5
@@ -22,7 +25,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 
 		private ushort m_ButtonCount;
 
-		public WtcLeftMenuView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
+		public WtcLeftMenuView(ISigInputOutput panel, ConnectProTheme theme)
+			: base(panel, theme)
 		{
 		}
 
@@ -105,7 +109,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 			else
 				visible = SUBPAGE_5;
 
-			foreach (var subpage in SUBPAGE_JOINS)
+			foreach (var subpage in s_SubpageJoins)
 				Panel.SendInputDigital(subpage, subpage == visible && IsVisible);
 		}
 

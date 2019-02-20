@@ -1,8 +1,10 @@
 ﻿using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 {
+	[ViewBinding(typeof(IHeaderView))]
 	public sealed partial class HeaderView : AbstractUiView, IHeaderView
 	{
 		/// <summary>

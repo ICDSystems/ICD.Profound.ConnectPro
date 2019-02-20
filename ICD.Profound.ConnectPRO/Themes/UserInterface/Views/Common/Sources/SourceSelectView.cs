@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Views;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 {
+	[ViewBinding(typeof(ISourceSelectView))]
 	public sealed partial class SourceSelectView : AbstractUiView, ISourceSelectView
 	{
 		private const ushort SUBPAGE_DUAL_DISPLAYS = 112;

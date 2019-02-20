@@ -1,10 +1,12 @@
 ﻿using System;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 {
+	[ViewBinding(typeof(IAppleTvView))]
 	public sealed partial class AppleTvView : AbstractPopupView, IAppleTvView
 	{
 		public override event EventHandler OnCloseButtonPressed;

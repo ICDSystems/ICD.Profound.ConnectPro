@@ -1,11 +1,13 @@
 ﻿using System;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Controls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 {
+	[ViewBinding(typeof(IReferencedScheduleView))]
 	public sealed partial class ReferencedScheduleView : AbstractComponentView, IReferencedScheduleView
 	{
 		public event EventHandler OnButtonPressed;

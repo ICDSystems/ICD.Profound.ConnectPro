@@ -1,11 +1,13 @@
 ﻿using System;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Controls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.ActiveCalls;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.ActiveCalls
 {
+	[ViewBinding(typeof(IVtcReferencedActiveCallsView))]
 	public sealed partial class VtcReferencedActiveCallsView : AbstractComponentView, IVtcReferencedActiveCallsView
 	{
 		public event EventHandler OnHangupButtonPressed;

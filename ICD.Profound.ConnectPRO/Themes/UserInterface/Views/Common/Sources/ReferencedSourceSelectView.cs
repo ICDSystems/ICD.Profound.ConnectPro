@@ -1,12 +1,14 @@
 ﻿using System;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Controls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 {
+	[ViewBinding(typeof(IReferencedSourceSelectView))]
 	public sealed partial class ReferencedSourceSelectView : AbstractComponentView, IReferencedSourceSelectView
 	{
 		private const ushort MODE_GREY = 0;

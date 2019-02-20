@@ -4,11 +4,13 @@ using System.Linq;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 {
+	[ViewBinding(typeof(ISettingsBaseView))]
 	public sealed partial class SettingsBaseView : AbstractPopupView, ISettingsBaseView
 	{
 		/// <summary>

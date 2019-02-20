@@ -1,15 +1,18 @@
 ﻿using System;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 {
+	[ViewBinding(typeof(IGenericAlertView))]
 	public sealed partial class GenericAlertView : AbstractUiView, IGenericAlertView
 	{
 		public event EventHandler OnDismissButtonPressed;
 
-		public GenericAlertView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
+		public GenericAlertView(ISigInputOutput panel, ConnectProTheme theme)
+			: base(panel, theme)
 		{
 		}
 

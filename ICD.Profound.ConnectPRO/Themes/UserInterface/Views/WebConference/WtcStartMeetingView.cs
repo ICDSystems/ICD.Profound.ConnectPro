@@ -2,11 +2,13 @@
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.EventArguments;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 {
+	[ViewBinding(typeof(IWtcStartMeetingView))]
 	public sealed partial class WtcStartMeetingView : AbstractUiView, IWtcStartMeetingView
 	{
 		public event EventHandler OnMeetNowButtonPressed;

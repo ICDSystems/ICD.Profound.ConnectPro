@@ -1,10 +1,12 @@
 ﻿using System;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.WebConferencing;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups.WebConferencing
 {
+	[ViewBinding(typeof(IWebConferencingStepView))]
 	public sealed partial class WebConferencingStepView : AbstractUiView, IWebConferencingStepView
 	{
 		public event EventHandler OnCloseButtonPressed;

@@ -1,11 +1,13 @@
 ﻿using System;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Controls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.WebConferencing;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups.WebConferencing
 {
+	[ViewBinding(typeof(IReferencedWebConferencingAlertView))]
 	public sealed partial class ReferencedWebConferencingAlertView : AbstractComponentView, IReferencedWebConferencingAlertView
 	{
 		public event EventHandler OnButtonPressed;

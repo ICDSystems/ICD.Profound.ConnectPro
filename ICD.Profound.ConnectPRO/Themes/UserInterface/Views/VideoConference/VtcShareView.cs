@@ -2,10 +2,12 @@
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 {
+	[ViewBinding(typeof(IVtcShareView))]
 	public sealed partial class VtcShareView : AbstractUiView, IVtcShareView
 	{
 		public event EventHandler<UShortEventArgs> OnSourceButtonPressed;
