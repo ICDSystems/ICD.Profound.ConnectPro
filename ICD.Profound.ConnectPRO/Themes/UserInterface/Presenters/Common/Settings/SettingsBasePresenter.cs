@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using ICD.Common.Properties;
+using System.Linq;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
-using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Controls.Directory;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings;
@@ -21,45 +21,46 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 	[PresenterBinding(typeof(ISettingsBasePresenter))]
 	public sealed class SettingsBasePresenter : AbstractPopupPresenter<ISettingsBaseView>, ISettingsBasePresenter
 	{
-		private const ushort SYSTEM_POWER = 0;
+		private const ushort DIRECTORY = 0;
 		private const ushort PASSCODE_SETTINGS = 1;
-		private const ushort DIRECTORY = 2;
+		private const ushort ROOM_COMBINE = 2;
+		private const ushort SYSTEM_POWER = 3;
 
-		private static readonly Dictionary<ushort, string> s_ButtonLabels =
-			new Dictionary<ushort, string>
+		private static readonly IcdOrderedDictionary<ushort, string> s_ButtonLabels =
+			new IcdOrderedDictionary<ushort, string>
 			{
-				{SYSTEM_POWER, "System Power Preference"},
+				{DIRECTORY, "Directory"},
 				{PASSCODE_SETTINGS, "Passcode Settings"},
-				{DIRECTORY, "Directory"}
+				{ROOM_COMBINE, "Room Combine"},
+				{SYSTEM_POWER, "System Power Preference"},
 			};
 
-		private static readonly Dictionary<ushort, Type> s_NavTypes = new Dictionary<ushort, Type>
+		private static readonly Dictionary<ushort, Type> s_NavTypes =
+			new Dictionary<ushort, Type>
 			{
-				{SYSTEM_POWER, typeof(ISettingsSystemPowerPresenter)},
+				{DIRECTORY, typeof(ISettingsDirectoryPresenter)},
 				{PASSCODE_SETTINGS, typeof(ISettingsPasscodePresenter)},
-				{DIRECTORY, typeof(ISettingsDirectoryPresenter)}
+				{ROOM_COMBINE, typeof(ISettingsRoomCombinePresenter)},
+				{SYSTEM_POWER, typeof(ISettingsSystemPowerPresenter)},
 			};
 
 		private readonly Dictionary<ushort, IUiPresenter> m_NavPages;
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		/// <summary>
-		/// Gets the directory control.
-		/// </summary>
-		[CanBeNull]
-		public IDirectoryControl DirectoryControl { get; private set; }
+		private bool m_HasDirectoryControl;
+		private bool m_HasMultipleRooms;
 
-		private IUiPresenter m_Visible;
+		private IUiPresenter m_CurrentSettingsPage;
 
-		public IUiPresenter Visible
+		public IUiPresenter CurrentSettingsPage
 		{
-			get { return m_Visible; }
+			get { return m_CurrentSettingsPage; }
 			set
 			{
-				if (value == m_Visible)
+				if (value == m_CurrentSettingsPage)
 					return;
 
-				m_Visible = value;
+				m_CurrentSettingsPage = value;
 
 				RefreshIfVisible();
 			}
@@ -84,18 +85,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		}
 
 		/// <summary>
-		/// Sets the room for this presenter to represent.
-		/// </summary>
-		/// <param name="room"></param>
-		public override void SetRoom(IConnectProRoom room)
-		{
-			base.SetRoom(room);
-
-			DirectoryControl = room == null ? null : room.GetControlRecursive<IDirectoryControl>();
-			RefreshIfVisible();
-		}
-
-		/// <summary>
 		/// Release resources.
 		/// </summary>
 		public override void Dispose()
@@ -103,6 +92,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			base.Dispose();
 
 			UnsubscribePages();
+		}
+
+		/// <summary>
+		/// Sets the room for this presenter to represent.
+		/// </summary>
+		/// <param name="room"></param>
+		public override void SetRoom(IConnectProRoom room)
+		{
+			base.SetRoom(room);
+
+			m_HasDirectoryControl = room != null && room.GetControlRecursive<IDirectoryControl>() != null;
+			m_HasMultipleRooms = room != null && room.Core.Originators.GetChildren<IRoom>().Count() > 1;
+
+			RefreshIfVisible();
 		}
 
 		/// <summary>
@@ -117,17 +120,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			try
 			{
-				IEnumerable<string> labels = s_ButtonLabels.OrderValuesByKey();
-				view.SetButtonLabels(labels);
+				view.SetButtonLabels(s_ButtonLabels.Values);
 
 				foreach (KeyValuePair<ushort, IUiPresenter> kvp in m_NavPages)
 				{
+					bool showButton = ShouldShowButton(kvp.Key);
+
 					view.SetItemSelected(kvp.Key, kvp.Value.IsViewVisible);
-					bool showButton = true;
-					if (kvp.Key == DIRECTORY)
-					{
-						showButton = DirectoryControl != null;
-					}
 					view.SetButtonVisible(kvp.Key, showButton);
 				}
 			}
@@ -137,10 +136,38 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			}
 		}
 
-		private void ShowMenu(ushort index)
+		#region Private Methods
+
+		/// <summary>
+		/// Returns true if the button at the given index should be visible.
+		/// </summary>
+		/// <param name="buttonIndex"></param>
+		/// <returns></returns>
+		private bool ShouldShowButton(ushort buttonIndex)
 		{
-			m_NavPages[index].ShowView(true);
+			switch (buttonIndex)
+			{
+				case DIRECTORY:
+					return m_HasDirectoryControl;
+
+				case ROOM_COMBINE:
+					return m_HasMultipleRooms;
+
+				default:
+					return true;
+			}
 		}
+
+		/// <summary>
+		/// Sets the visibility of the settings page for the button at the given index.
+		/// </summary>
+		/// <param name="buttonIndex"></param>
+		private void ShowSettingsPage(ushort buttonIndex)
+		{
+			m_NavPages[buttonIndex].ShowView(true);
+		}
+
+		#endregion
 
 		#region Page Callbacks
 
@@ -170,9 +197,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		private void PresenterOnViewVisibilityChanged(object sender, BoolEventArgs boolEventArgs)
 		{
 			if (boolEventArgs.Data)
-				Visible = sender as IUiPresenter;
-			else if (Visible == sender)
-				Visible = null;
+				CurrentSettingsPage = sender as IUiPresenter;
+			else if (CurrentSettingsPage == sender)
+				CurrentSettingsPage = null;
 
 			RefreshIfVisible();
 		}
@@ -210,7 +237,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <param name="eventArgs"></param>
 		private void ViewOnListItemPressed(object sender, UShortEventArgs eventArgs)
 		{
-			ShowMenu(eventArgs.Data);
+			ShowSettingsPage(eventArgs.Data);
 		}
 
 		/// <summary>
@@ -224,7 +251,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			if (args.Data)
 			{
-				ShowMenu(SYSTEM_POWER);
+				ShowSettingsPage(SYSTEM_POWER);
 			}
 			else
 			{
