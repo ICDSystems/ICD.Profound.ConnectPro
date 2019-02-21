@@ -7,6 +7,7 @@ using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.Panels.Controls;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -15,6 +16,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 {
+	[PresenterBinding(typeof(IHardButtonsPresenter))]
 	public sealed class HardButtonsPresenter : AbstractUiPresenter<IHardButtonsView>, IHardButtonsPresenter
 	{
 		private const int ADDRESS_POWER = 1;

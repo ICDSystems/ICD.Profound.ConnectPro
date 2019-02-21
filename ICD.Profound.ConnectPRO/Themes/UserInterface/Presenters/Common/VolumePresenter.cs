@@ -7,6 +7,7 @@ using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -14,6 +15,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
+	[PresenterBinding(typeof(IVolumePresenter))]
 	public sealed class VolumePresenter : AbstractUiPresenter<IVolumeView>, IVolumePresenter
 	{
 		private const ushort HIDE_TIME = 20 * 1000;

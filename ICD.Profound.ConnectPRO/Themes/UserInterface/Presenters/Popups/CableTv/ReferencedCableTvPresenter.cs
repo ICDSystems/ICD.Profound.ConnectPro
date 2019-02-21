@@ -2,6 +2,7 @@
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.TvPresets;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.CableTv;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -9,6 +10,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.CableTv;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.CableTv
 {
+	[PresenterBinding(typeof(IReferencedCableTvPresenter))]
 	public sealed class ReferencedCableTvPresenter : AbstractUiComponentPresenter<IReferencedCableTvView>, IReferencedCableTvPresenter
 	{
 		public event EventHandler OnPressed;

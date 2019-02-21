@@ -12,6 +12,7 @@ using ICD.Connect.Conferencing.Zoom.Responses;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -23,6 +24,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 {
+	[PresenterBinding(typeof(IWtcBasePresenter))]
 	public sealed class WtcBasePresenter : AbstractPopupPresenter<IWtcBaseView>, IWtcBasePresenter
 	{
 		private readonly IWtcLeftMenuPresenter m_LeftMenuPresenter;

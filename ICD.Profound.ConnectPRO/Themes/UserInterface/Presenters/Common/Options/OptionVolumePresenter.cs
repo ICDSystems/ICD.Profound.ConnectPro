@@ -5,6 +5,7 @@ using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -15,6 +16,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 {
+	[PresenterBinding(typeof(IOptionVolumePresenter))]
 	public sealed class OptionVolumePresenter : AbstractOptionPresenter<IOptionVolumeView>, IOptionVolumePresenter
 	{
 		private readonly IVolumePresenter m_Menu;

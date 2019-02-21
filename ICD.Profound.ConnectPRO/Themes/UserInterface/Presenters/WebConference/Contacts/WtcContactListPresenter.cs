@@ -9,6 +9,7 @@ using ICD.Connect.Conferencing.Controls.Directory;
 using ICD.Connect.Conferencing.Directory;
 using ICD.Connect.Conferencing.Directory.Tree;
 using ICD.Connect.Devices;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
@@ -18,6 +19,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.Contacts
 {
+	[PresenterBinding(typeof(IWtcContactListPresenter))]
 	public sealed class WtcContactListPresenter : AbstractWtcPresenter<IWtcContactListView>, IWtcContactListPresenter
 	{
 		private const long KEYBOARD_DEBOUNCE_TIME = 1000;

@@ -1,6 +1,7 @@
 ﻿using System;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
@@ -9,6 +10,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
+	[PresenterBinding(typeof(IPasscodePresenter))]
 	public sealed class PasscodePresenter : AbstractUiPresenter<IPasscodeView>, IPasscodePresenter
 	{
 		private readonly KeypadStringBuilder m_StringBuilder;

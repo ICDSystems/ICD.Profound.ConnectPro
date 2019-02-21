@@ -3,6 +3,7 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Participants;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Dtmf;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -10,6 +11,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Dtmf;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Dtmf
 {
+	[PresenterBinding(typeof(IVtcReferencedDtmfPresenter))]
 	public sealed class VtcReferencedDtmfPresenter : AbstractUiComponentPresenter<IVtcReferencedDtmfView>,
 	                                                 IVtcReferencedDtmfPresenter
 	{

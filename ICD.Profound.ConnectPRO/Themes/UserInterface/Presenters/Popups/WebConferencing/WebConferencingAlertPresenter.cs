@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.WebConferencing;
@@ -11,6 +12,7 @@ using ICD.Profound.ConnectPRO.WebConferencing;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.WebConferencing
 {
+	[PresenterBinding(typeof(IWebConferencingAlertPresenter))]
 	public sealed class WebConferencingAlertPresenter : AbstractUiPresenter<IWebConferencingAlertView>, IWebConferencingAlertPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;

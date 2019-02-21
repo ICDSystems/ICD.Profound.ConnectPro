@@ -1,5 +1,6 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.EventArguments;
 using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -9,6 +10,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 {
+	[PresenterBinding(typeof(IWtcKeyboardPresenter))]
 	public sealed class WtcKeyboardPresenter : AbstractUiPresenter<IWtcKeyboardView>, IWtcKeyboardPresenter
 	{
 		private readonly KeypadStringBuilder m_StringBuilder;

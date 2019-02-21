@@ -3,6 +3,7 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -10,6 +11,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 {
+	[PresenterBinding(typeof(IReferencedSourceSelectPresenter))]
 	public sealed class ReferencedSourceSelectPresenter : AbstractUiComponentPresenter<IReferencedSourceSelectView>,
 	                                                      IReferencedSourceSelectPresenter
 	{

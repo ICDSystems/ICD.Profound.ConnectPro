@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.EventArguments;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -8,6 +9,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference
 {
+	[PresenterBinding(typeof(IVtcKeypadPresenter))]
 	public sealed class VtcKeypadPresenter : AbstractVtcBaseKeyboardPresenter<IVtcKeypadView>, IVtcKeypadPresenter
 	{
 		/// <summary>

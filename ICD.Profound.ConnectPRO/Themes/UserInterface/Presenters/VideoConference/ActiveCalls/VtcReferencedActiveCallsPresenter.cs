@@ -3,6 +3,7 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.Participants;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.ActiveCalls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -10,8 +11,9 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Active
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.ActiveCalls
 {
+	[PresenterBinding(typeof(IVtcReferencedActiveCallsPresenter))]
 	public sealed class VtcReferencedActiveCallsPresenter : AbstractUiComponentPresenter<IVtcReferencedActiveCallsView>,
-	                                                   IVtcReferencedActiveCallsPresenter
+	                                                        IVtcReferencedActiveCallsPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly SafeTimer m_RefreshTimer;
@@ -44,7 +46,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public VtcReferencedActiveCallsPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+		public VtcReferencedActiveCallsPresenter(IConnectProNavigationController nav, IUiViewFactory views,
+		                                         ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

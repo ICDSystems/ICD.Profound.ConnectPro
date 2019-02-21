@@ -1,11 +1,13 @@
 ﻿using System;
 using ICD.Connect.Conferencing.Directory.Tree;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Contacts
 {
+	[PresenterBinding(typeof(IVtcReferencedFolderPresenter))]
 	public sealed class VtcReferencedFolderPresenter : AbstractVtcReferencedContactsPresenterBase, IVtcReferencedFolderPresenter
 	{
 		private IDirectoryFolder m_Folder;

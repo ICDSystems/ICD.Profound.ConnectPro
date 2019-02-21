@@ -7,6 +7,7 @@ using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Directory.Tree;
 using ICD.Connect.Conferencing.Polycom.Devices.Codec;
 using ICD.Connect.Conferencing.Polycom.Devices.Codec.Components.Button;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
@@ -15,6 +16,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contac
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Contacts
 {
+	[PresenterBinding(typeof(IVtcContactsPolycomPresenter))]
 	public sealed class VtcContactsPolycomPresenter : AbstractVtcContactsPresenter<IVtcContactsPolycomView>, IVtcContactsPolycomPresenter
 	{
 		private enum ePolycomDirectoryMode

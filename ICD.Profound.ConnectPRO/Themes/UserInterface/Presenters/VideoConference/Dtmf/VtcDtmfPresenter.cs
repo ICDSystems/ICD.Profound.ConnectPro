@@ -8,6 +8,7 @@ using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Conferencing.Participants.EventHelpers;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Dtmf;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -15,6 +16,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Dtmf;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Dtmf
 {
+	[PresenterBinding(typeof(IVtcDtmfPresenter))]
 	public sealed class VtcDtmfPresenter : AbstractVtcPresenter<IVtcDtmfView>, IVtcDtmfPresenter
 	{
 		private readonly VtcReferencedDtmfPresenterFactory m_Factory;

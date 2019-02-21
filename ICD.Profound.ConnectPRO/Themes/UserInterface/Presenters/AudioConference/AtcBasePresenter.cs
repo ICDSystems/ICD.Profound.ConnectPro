@@ -11,6 +11,7 @@ using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Devices;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -21,6 +22,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConference
 {
+	[PresenterBinding(typeof(IAtcBasePresenter))]
 	public sealed class AtcBasePresenter : AbstractPopupPresenter<IAtcBaseView>, IAtcBasePresenter
 	{
 		private readonly KeypadStringBuilder m_Builder;

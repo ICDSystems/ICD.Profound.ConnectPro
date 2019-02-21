@@ -11,6 +11,7 @@ using ICD.Connect.Conferencing.Polycom.Devices.Codec.Controls;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -23,6 +24,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference
 {
+	[PresenterBinding(typeof(IVtcBasePresenter))]
 	public sealed class VtcBasePresenter : AbstractPopupPresenter<IVtcBaseView>, IVtcBasePresenter
 	{
 		public event EventHandler OnActiveConferenceControlChanged;

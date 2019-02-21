@@ -2,6 +2,7 @@
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
@@ -10,6 +11,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference
 {
+	[PresenterBinding(typeof(IVtcCallListTogglePresenter))]
 	public sealed class VtcCallListTogglePresenter : AbstractUiPresenter<IVtcCallListToggleView>, IVtcCallListTogglePresenter
 	{
 		/// <summary>

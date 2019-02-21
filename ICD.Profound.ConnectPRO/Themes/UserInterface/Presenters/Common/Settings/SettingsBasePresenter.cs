@@ -8,6 +8,7 @@ using ICD.Connect.Conferencing.Controls.Directory;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings;
 using ICD.Connect.Settings.Cores;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
@@ -17,6 +18,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings
 {
+	[PresenterBinding(typeof(ISettingsBasePresenter))]
 	public sealed class SettingsBasePresenter : AbstractPopupPresenter<ISettingsBaseView>, ISettingsBasePresenter
 	{
 		private const ushort SYSTEM_POWER = 0;

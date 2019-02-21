@@ -1,11 +1,13 @@
 ﻿using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.Participants;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Contacts
 {
+	[PresenterBinding(typeof(IVtcReferencedRecentPresenter))]
 	public sealed class VtcReferencedRecentPresenter : AbstractVtcReferencedContactsPresenterBase, IVtcReferencedRecentPresenter
 	{
 		private ITraditionalParticipant m_Recent;

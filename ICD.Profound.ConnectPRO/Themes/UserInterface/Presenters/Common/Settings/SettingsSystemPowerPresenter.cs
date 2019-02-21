@@ -1,6 +1,7 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Panels.Server.Osd;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
@@ -9,6 +10,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings
 {
+	[PresenterBinding(typeof(ISettingsSystemPowerPresenter))]
 	public sealed class SettingsSystemPowerPresenter : AbstractUiPresenter<ISettingsSystemPowerView>, ISettingsSystemPowerPresenter
 	{
 		private static readonly TimeSpan s_HourIncrement = TimeSpan.FromHours(1);

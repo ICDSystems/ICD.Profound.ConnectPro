@@ -2,12 +2,14 @@
 using ICD.Connect.Conferencing.Contacts;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Favorites;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Contacts
 {
+	[PresenterBinding(typeof(IVtcReferencedContactsPresenter))]
 	public sealed class VtcReferencedContactsPresenter : AbstractVtcReferencedContactsPresenterBase,
 	                                                     IVtcReferencedContactsPresenter
 	{

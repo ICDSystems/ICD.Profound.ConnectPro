@@ -1,6 +1,7 @@
 ﻿using System;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
@@ -9,6 +10,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings
 {
+	[PresenterBinding(typeof(ISettingsPasscodePresenter))]
 	public sealed class SettingsPasscodePresenter : AbstractUiPresenter<ISettingsPasscodeView>, ISettingsPasscodePresenter
 	{
 		private const string INSTRUCTION_NEW_PASSCODE = "Please type in new passcode to change";

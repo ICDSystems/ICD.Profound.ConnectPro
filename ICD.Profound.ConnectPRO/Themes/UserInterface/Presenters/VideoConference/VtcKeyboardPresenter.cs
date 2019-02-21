@@ -1,5 +1,6 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.EventArguments;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -9,6 +10,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference
 {
+	[PresenterBinding(typeof(IVtcKeyboardPresenter))]
 	public sealed class VtcKeyboardPresenter : AbstractVtcBaseKeyboardPresenter<IVtcKeyboardView>, IVtcKeyboardPresenter
 	{
 		private bool m_Shift;

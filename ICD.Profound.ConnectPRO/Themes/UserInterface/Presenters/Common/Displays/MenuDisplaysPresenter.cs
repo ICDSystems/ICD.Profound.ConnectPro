@@ -8,6 +8,7 @@ using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
@@ -16,6 +17,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Displays
 {
+	[PresenterBinding(typeof(IMenuDisplaysPresenter))]
 	public sealed class MenuDisplaysPresenter : AbstractUiPresenter<IMenuDisplaysView>, IMenuDisplaysPresenter
 	{
 		public event MenuDestinationPressedCallback OnDestinationPressed;

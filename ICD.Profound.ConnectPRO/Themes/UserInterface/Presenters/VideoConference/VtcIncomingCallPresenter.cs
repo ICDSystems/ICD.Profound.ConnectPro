@@ -10,6 +10,7 @@ using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Devices;
 using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
@@ -18,6 +19,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference
 {
+	[PresenterBinding(typeof(IVtcIncomingCallPresenter))]
 	public sealed class VtcIncomingCallPresenter : AbstractUiPresenter<IVtcIncomingCallView>, IVtcIncomingCallPresenter
 	{
 		/// <summary>

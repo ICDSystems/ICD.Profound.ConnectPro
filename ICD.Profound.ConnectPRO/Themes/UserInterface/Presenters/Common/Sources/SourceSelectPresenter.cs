@@ -4,6 +4,7 @@ using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -13,6 +14,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 {
+	[PresenterBinding(typeof(ISourceSelectPresenter))]
 	public sealed class SourceSelectPresenter : AbstractUiPresenter<ISourceSelectView>, ISourceSelectPresenter
 	{
 		/// <summary>

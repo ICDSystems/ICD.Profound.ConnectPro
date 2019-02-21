@@ -2,6 +2,7 @@
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.WebConferencing;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -10,6 +11,7 @@ using ICD.Profound.ConnectPRO.WebConferencing;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.WebConferencing
 {
+	[PresenterBinding(typeof(IWebConferencingStepPresenter))]
 	public sealed class WebConferencingStepPresenter : AbstractUiPresenter<IWebConferencingStepView>, IWebConferencingStepPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;

@@ -17,6 +17,7 @@ using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.Extensions;
 using ICD.Connect.Routing.RoutingGraphs;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -27,6 +28,7 @@ using ICD.Connect.Conferencing.Conferences;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 {
+	[PresenterBinding(typeof(IWtcSharePresenter))]
 	public sealed class WtcSharePresenter : AbstractWtcPresenter<IWtcShareView>, IWtcSharePresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;

@@ -13,6 +13,7 @@ using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Controls;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -23,6 +24,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
+	[PresenterBinding(typeof(IStartMeetingPresenter))]
 	public sealed class StartMeetingPresenter : AbstractUiPresenter<IStartMeetingView>, IStartMeetingPresenter
 	{
 		private const string NO_MEETING_LABEL_TEXT = "No Meetings Scheduled at this Time";

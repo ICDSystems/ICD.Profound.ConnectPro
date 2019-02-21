@@ -2,12 +2,14 @@
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Timers;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 {
+	[PresenterBinding(typeof(IGenericAlertPresenter))]
 	public sealed class GenericAlertPresenter : AbstractUiPresenter<IGenericAlertView>, IGenericAlertPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Participants;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.ActiveMeeting;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -9,6 +10,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.ActiveMe
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.ActiveMeeting
 {
+	[PresenterBinding(typeof(IWtcParticipantControlsPresenter))]
 	public sealed class WtcParticipantControlsPresenter : AbstractWtcPresenter<IWtcParticipantControlsView>, IWtcParticipantControlsPresenter
 	{
 		private const ushort INDEX_KICK = 0;

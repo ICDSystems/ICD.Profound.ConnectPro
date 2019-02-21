@@ -5,6 +5,7 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
@@ -15,7 +16,8 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 {
-	public class WtcLeftMenuPresenter : AbstractWtcPresenter<IWtcLeftMenuView>, IWtcLeftMenuPresenter
+	[PresenterBinding(typeof(IWtcLeftMenuPresenter))]
+	public sealed class WtcLeftMenuPresenter : AbstractWtcPresenter<IWtcLeftMenuView>, IWtcLeftMenuPresenter
 	{
 		private const ushort INDEX_MEETING = 0;
 		public const ushort INDEX_CONTACTS = 1;

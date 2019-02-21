@@ -3,6 +3,7 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -13,6 +14,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 {
+	[PresenterBinding(typeof(IOptionCameraPresenter))]
 	public sealed class OptionCameraPresenter : AbstractOptionPresenter<IOptionCameraView>, IOptionCameraPresenter
 	{
 		public event EventHandler OnCloseCameraPage;

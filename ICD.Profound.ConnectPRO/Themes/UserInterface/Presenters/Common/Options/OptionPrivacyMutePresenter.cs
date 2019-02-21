@@ -2,6 +2,7 @@
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Options;
@@ -10,6 +11,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 {
+	[PresenterBinding(typeof(IOptionPrivacyMutePresenter))]
 	public sealed class OptionPrivacyMutePresenter : AbstractOptionPresenter<IOptionPrivacyMuteView>,
 	                                                 IOptionPrivacyMutePresenter
 	{

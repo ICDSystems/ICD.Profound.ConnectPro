@@ -4,6 +4,7 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Conferencing.Zoom.Components.Call;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.ActiveMeeting;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -11,7 +12,8 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.ActiveMe
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.ActiveMeeting
 {
-	public class WtcReferencedParticipantPresenter : AbstractUiComponentPresenter<IWtcReferencedParticipantView>, IWtcReferencedParticipantPresenter
+	[PresenterBinding(typeof(IWtcReferencedParticipantPresenter))]
+	public sealed class WtcReferencedParticipantPresenter : AbstractUiComponentPresenter<IWtcReferencedParticipantView>, IWtcReferencedParticipantPresenter
 	{
 		public event EventHandler OnPressed;
 

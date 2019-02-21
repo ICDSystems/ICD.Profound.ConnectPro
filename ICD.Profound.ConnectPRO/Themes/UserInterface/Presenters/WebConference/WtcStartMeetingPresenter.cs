@@ -8,6 +8,7 @@ using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Zoom.Controls;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -15,6 +16,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 {
+	[PresenterBinding(typeof(IWtcStartMeetingPresenter))]
 	public sealed class WtcStartMeetingPresenter : AbstractWtcPresenter<IWtcStartMeetingView>, IWtcStartMeetingPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;

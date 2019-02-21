@@ -1,10 +1,12 @@
 ﻿using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Timers;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 {
+	[PresenterBinding(typeof(IDisabledAlertPresenter))]
 	public sealed class DisabledAlertPresenter : AbstractUiPresenter<IDisabledAlertView>, IDisabledAlertPresenter
 	{
 		private readonly SafeTimer m_HideTimer;

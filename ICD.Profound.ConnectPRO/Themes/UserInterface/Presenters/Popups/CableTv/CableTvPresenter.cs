@@ -5,6 +5,7 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Sources.TvTuner.Controls;
 using ICD.Connect.TvPresets;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.CableTv;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -12,6 +13,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.CableTv;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.CableTv
 {
+	[PresenterBinding(typeof(ICableTvPresenter))]
 	public sealed class CableTvPresenter : AbstractPopupPresenter<ICableTvView>, ICableTvPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;

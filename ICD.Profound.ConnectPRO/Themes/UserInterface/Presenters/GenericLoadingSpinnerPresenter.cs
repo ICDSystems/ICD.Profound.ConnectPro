@@ -1,9 +1,11 @@
 ﻿using ICD.Common.Utils;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 {
+	[PresenterBinding(typeof(IGenericLoadingSpinnerPresenter))]
 	public sealed class GenericLoadingSpinnerPresenter : AbstractUiPresenter<IGenericLoadingSpinnerView>, IGenericLoadingSpinnerPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;

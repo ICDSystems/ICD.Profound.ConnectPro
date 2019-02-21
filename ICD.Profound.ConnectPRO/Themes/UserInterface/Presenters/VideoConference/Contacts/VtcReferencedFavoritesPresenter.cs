@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using ICD.Connect.Conferencing.Favorites;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
@@ -8,6 +9,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.Contacts
 {
+	[PresenterBinding(typeof(IVtcReferencedFavoritesPresenter))]
 	public sealed class VtcReferencedFavoritesPresenter : AbstractVtcReferencedContactsPresenterBase,
 	                                                      IVtcReferencedFavoritesPresenter
 	{

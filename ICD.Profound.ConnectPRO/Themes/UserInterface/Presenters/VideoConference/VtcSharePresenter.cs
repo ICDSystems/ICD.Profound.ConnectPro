@@ -18,6 +18,7 @@ using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.Extensions;
 using ICD.Connect.Routing.RoutingGraphs;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -28,6 +29,7 @@ using ICD.Connect.Conferencing.Conferences;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference
 {
+	[PresenterBinding(typeof(IVtcSharePresenter))]
 	public sealed class VtcSharePresenter : AbstractVtcPresenter<IVtcShareView>, IVtcSharePresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;

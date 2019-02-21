@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -6,6 +7,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 {
+	[PresenterBinding(typeof(IAppleTvPresenter))]
 	public sealed class AppleTvPresenter : AbstractPopupPresenter<IAppleTvView>, IAppleTvPresenter
 	{
 		/// <summary>

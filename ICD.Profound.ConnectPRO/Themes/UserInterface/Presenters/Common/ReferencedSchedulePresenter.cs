@@ -8,6 +8,7 @@ using ICD.Connect.Calendaring;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -15,8 +16,9 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
+	[PresenterBinding(typeof(IReferencedSchedulePresenter))]
 	public sealed class ReferencedSchedulePresenter : AbstractUiComponentPresenter<IReferencedScheduleView>,
-														  IReferencedSchedulePresenter
+	                                                  IReferencedSchedulePresenter
 	{
 		/// <summary>
 		/// Raised when the user presses the presenter.
@@ -91,12 +93,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			try
 			{
 				view.SetBookingIcon(m_Icon);
-                view.SetStartTimeLabel(m_Booking.StartTime.ToShortTimeString());
-			    view.SetEndTimeLabel(m_Booking.EndTime.ToShortTimeString());
-			    view.SetSelected(m_Selected);
-			    view.SetPresenterNameLabel(m_Booking.OrganizerName);
+				view.SetStartTimeLabel(m_Booking.StartTime.ToShortTimeString());
+				view.SetEndTimeLabel(m_Booking.EndTime.ToShortTimeString());
+				view.SetSelected(m_Selected);
+				view.SetPresenterNameLabel(m_Booking.OrganizerName);
 
-			    view.SetBodyLabel(m_Booking.IsPrivate ? "Private Meeting" : m_Booking.MeetingName);
+				view.SetBodyLabel(m_Booking.IsPrivate ? "Private Meeting" : m_Booking.MeetingName);
 			}
 			finally
 			{

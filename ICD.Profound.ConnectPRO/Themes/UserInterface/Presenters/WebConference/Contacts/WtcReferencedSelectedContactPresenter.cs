@@ -3,6 +3,7 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Contacts;
 using ICD.Connect.Conferencing.Zoom.Components.Directory;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -10,7 +11,8 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.Contacts
 {
-	public class WtcReferencedSelectedContactPresenter : AbstractUiComponentPresenter<IWtcReferencedSelectedContactView>, IWtcReferencedSelectedContactPresenter
+	[PresenterBinding(typeof(IWtcReferencedSelectedContactPresenter))]
+	public sealed class WtcReferencedSelectedContactPresenter : AbstractUiComponentPresenter<IWtcReferencedSelectedContactView>, IWtcReferencedSelectedContactPresenter
 	{
 		public event EventHandler OnRemoveContact;
 

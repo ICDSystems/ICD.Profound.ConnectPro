@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
@@ -7,6 +8,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {
+	[PresenterBinding(typeof(IEndMeetingPresenter))]
 	public sealed class EndMeetingPresenter : AbstractUiPresenter<IEndMeetingView>, IEndMeetingPresenter
 	{
 		/// <summary>
