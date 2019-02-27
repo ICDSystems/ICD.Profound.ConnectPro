@@ -5,7 +5,6 @@ using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Images;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Connect.UI.Controls.TextControls;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 {

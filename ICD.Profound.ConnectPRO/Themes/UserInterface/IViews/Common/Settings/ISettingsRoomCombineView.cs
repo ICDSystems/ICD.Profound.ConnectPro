@@ -1,5 +1,5 @@
 ﻿using System;
-using ICD.Connect.Partitioning.Partitions;
+using ICD.Connect.Partitioning.Cells;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings
 {
@@ -9,7 +9,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings
 
 		event EventHandler OnSaveButtonPressed;
 
-		event EventHandler<PartitionDirectionEventArgs> OnWallButtonPressed; 
+		event EventHandler<CellDirectionEventArgs> OnWallButtonPressed; 
 
 		void SetClearAllButtonEnabled(bool enabled);
 
@@ -19,10 +19,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings
 
 		void SetCellLabel(int column, int row, string label);
 
-		void SetWallVisible(int column, int row, ePartitionDirection direction, bool visible);
+		void SetWallVisible(int column, int row, eCellDirection direction, bool visible);
 
-		void SetWallEnabled(int column, int row, ePartitionDirection direction, bool enabled);
+		void SetWallEnabled(int column, int row, eCellDirection direction, bool enabled);
 
-		void SetWallSelected(int column, int row, ePartitionDirection direction, bool selected);
+		void SetWallSelected(int column, int row, eCellDirection direction, bool selected);
+
+		void SetWallMode(int column, int row, eCellDirection direction, eWallButtonMode mode);
+	}
+
+	public enum eWallButtonMode : ushort
+	{
+		NoWall = 0,
+		PermanentWall = 1,
+		ClosedPartition = 2,
+		OpenPartition = 3,
+		UnsavedClosedPartition = 4,
+		UnsavedOpenPartition = 5
 	}
 }

@@ -11,8 +11,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 {
 	public sealed partial class SettingsRoomCombineView
 	{
-		private const int ROWS = 4;
-		private const int COLUMNS = 4;
+		public const int ROWS = 4;
+		public const int COLUMNS = 4;
 
 		private VtProSubpage m_Subpage;
 
@@ -21,7 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 
 		// From top-left to bottom-right
 		private VtProSimpleLabel[] m_CellLabels;
-		private BiDictionary<int, VtProButton> m_WallButtons;
+		private BiDictionary<int, VtProMultiModeButton> m_WallButtons;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -56,16 +56,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 			                         }).ToArray();
 
 			ushort currentJoin = 1016;
-			Dictionary<int, VtProButton> wallButtons =
+			ushort currentAnalogJoin = 1000;
+			Dictionary<int, VtProMultiModeButton> wallButtons =
 				Enumerable.Range(0, (COLUMNS * (ROWS + 1)) + (ROWS * (COLUMNS + 1)))
-				          .ToDictionary(i => i, i => new VtProButton(panel, m_Subpage)
+				          .ToDictionary(i => i, i => new VtProMultiModeButton(panel, m_Subpage)
 				          {
 					          DigitalPressJoin = currentJoin++,
 					          DigitalEnableJoin = currentJoin++,
-					          DigitalVisibilityJoin = currentJoin++
+					          DigitalVisibilityJoin = currentJoin++,
+							  AnalogModeJoin = currentAnalogJoin++
 				          });
 
-			m_WallButtons = new BiDictionary<int, VtProButton>(wallButtons);
+			m_WallButtons = new BiDictionary<int, VtProMultiModeButton>(wallButtons);
 		}
 
 		/// <summary>
@@ -81,7 +83,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 			foreach (VtProSimpleLabel label in m_CellLabels)
 				yield return label;
 
-			foreach (VtProButton button in m_WallButtons.Values)
+			foreach (VtProMultiModeButton button in m_WallButtons.Values)
 				yield return button;
 		}
 	}
