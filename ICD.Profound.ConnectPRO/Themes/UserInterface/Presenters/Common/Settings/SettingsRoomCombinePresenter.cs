@@ -257,6 +257,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			else
 			{
 				var controls = partition.GetPartitionControls()
+				                        .Where(c => c.Mode.HasFlag(ePartitionFeedback.Set))
 				                        .Select(info => Room.Core.GetControl(info.Control) as IPartitionDeviceControl)
 				                        .Where(c => c != null).ToList();
 
