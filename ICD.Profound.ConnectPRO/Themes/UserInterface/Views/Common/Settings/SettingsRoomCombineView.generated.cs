@@ -55,16 +55,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 										 IndirectTextJoin = (ushort)(1000 + i)
 			                         }).ToArray();
 
-			ushort currentJoin = 1016;
-			ushort currentAnalogJoin = 1000;
+			ushort startingDigitalJoin = 1016;
+			ushort startingAnalogJoin = 1000;
 			Dictionary<int, VtProMultiModeButton> wallButtons =
 				Enumerable.Range(0, (COLUMNS * (ROWS + 1)) + (ROWS * (COLUMNS + 1)))
 				          .ToDictionary(i => i, i => new VtProMultiModeButton(panel, m_Subpage)
 				          {
-					          DigitalPressJoin = currentJoin++,
-					          DigitalEnableJoin = currentJoin++,
-					          DigitalVisibilityJoin = currentJoin++,
-							  AnalogModeJoin = currentAnalogJoin++
+					          DigitalPressJoin = (ushort)(3 * i + startingDigitalJoin),
+					          DigitalEnableJoin = (ushort)(3 * i + startingDigitalJoin + 1),
+					          AnalogModeJoin = (ushort)(i + startingAnalogJoin)
 				          });
 
 			m_WallButtons = new BiDictionary<int, VtProMultiModeButton>(wallButtons);
