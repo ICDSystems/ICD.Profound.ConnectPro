@@ -19,9 +19,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings
 
 		void SetCellLabel(int column, int row, string label);
 
+		void SetCellSelected(int column, int row, bool selected);
+
+		void SetCellEnabled(int column, int row, bool enabled);
+
 		void SetWallEnabled(int column, int row, eCellDirection direction, bool enabled);
 
 		void SetWallSelected(int column, int row, eCellDirection direction, bool selected);
+
+		void SetWallVisible(int column, int row, eCellDirection direction, bool visible);
 
 		void SetWallMode(int column, int row, eCellDirection direction, eWallButtonMode mode);
 	}
@@ -30,9 +36,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings
 	{
 		NoWall = 0,
 		PermanentWall = 1,
-		ClosedPartition = 2,
-		OpenPartition = 3,
-		UnsavedClosedPartition = 4,
-		UnsavedOpenPartition = 5
+		UnsavedClosedPartition = 2,
+		ClosedPartition = 3,
+		UnsavedOpenPartition = 4,
+		OpenPartition = 5,
 	}
 }

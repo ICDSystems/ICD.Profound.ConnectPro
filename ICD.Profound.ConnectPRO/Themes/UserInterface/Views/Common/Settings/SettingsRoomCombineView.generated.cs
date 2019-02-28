@@ -21,7 +21,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 
 		// From top-left to bottom-right
 		private VtProSimpleLabel[] m_CellLabels;
-		private BiDictionary<int, VtProMultiModeButton> m_WallButtons;
+		private VtProButton[] m_CellButtons;
+		private BiDictionary<int, VtProAdvancedButton> m_WallButtons;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -49,24 +50,32 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 			};
 
 			m_CellLabels = Enumerable.Range(0, COLUMNS * ROWS)
-			                         .Select(i => new VtProSimpleLabel(panel, parent)
+			                         .Select(i => new VtProSimpleLabel(panel, m_Subpage)
 			                         {
 				                         DigitalVisibilityJoin = (ushort)(1000 + i),
-										 IndirectTextJoin = (ushort)(1000 + i)
+										 IndirectTextJoin = (ushort)(1000 + i),
 			                         }).ToArray();
+
+			m_CellButtons = Enumerable.Range(0, COLUMNS * ROWS)
+			                          .Select(i => new VtProButton(panel, m_Subpage)
+			                          {
+										  DigitalPressJoin = (ushort)(1136 + i),
+										  DigitalEnableJoin = (ushort)(1152 + i)
+			                          }).ToArray();
 
 			ushort startingDigitalJoin = 1016;
 			ushort startingAnalogJoin = 1000;
-			Dictionary<int, VtProMultiModeButton> wallButtons =
+			Dictionary<int, VtProAdvancedButton> wallButtons =
 				Enumerable.Range(0, (COLUMNS * (ROWS + 1)) + (ROWS * (COLUMNS + 1)))
-				          .ToDictionary(i => i, i => new VtProMultiModeButton(panel, m_Subpage)
+				          .ToDictionary(i => i, i => new VtProAdvancedButton(panel, m_Subpage)
 				          {
 					          DigitalPressJoin = (ushort)(3 * i + startingDigitalJoin),
 					          DigitalEnableJoin = (ushort)(3 * i + startingDigitalJoin + 1),
+							  DigitalVisibilityJoin = (ushort)(3 * i + startingDigitalJoin + 2),
 					          AnalogModeJoin = (ushort)(i + startingAnalogJoin)
 				          });
 
-			m_WallButtons = new BiDictionary<int, VtProMultiModeButton>(wallButtons);
+			m_WallButtons = new BiDictionary<int, VtProAdvancedButton>(wallButtons);
 		}
 
 		/// <summary>
@@ -82,7 +91,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 			foreach (VtProSimpleLabel label in m_CellLabels)
 				yield return label;
 
-			foreach (VtProMultiModeButton button in m_WallButtons.Values)
+			foreach (VtProButton button in m_CellButtons)
+				yield return button;
+
+			foreach (VtProAdvancedButton button in m_WallButtons.Values)
 				yield return button;
 		}
 	}

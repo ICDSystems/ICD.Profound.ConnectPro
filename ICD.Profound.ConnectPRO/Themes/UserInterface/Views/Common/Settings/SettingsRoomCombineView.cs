@@ -60,6 +60,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 			GetLabel(column, row).SetLabelText(label);
 		}
 
+		public void SetCellSelected(int column, int row, bool selected)
+		{
+			GetCellButton(column, row).SetSelected(selected);
+		}
+
+		public void SetCellEnabled(int column, int row, bool enabled)
+		{
+			GetCellButton(column, row).Enable(enabled);
+		}
+
 		public void SetWallEnabled(int column, int row, eCellDirection direction, bool enabled)
 		{
 			GetWallButton(column, row, direction).Enable(enabled);
@@ -68,6 +78,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 		public void SetWallSelected(int column, int row, eCellDirection direction, bool selected)
 		{
 			GetWallButton(column, row, direction).SetSelected(selected);
+		}
+
+		public void SetWallVisible(int column, int row, eCellDirection direction, bool visible)
+		{
+			GetWallButton(column, row, direction).Show(visible);
 		}
 
 		public void SetWallMode(int column, int row, eCellDirection direction, eWallButtonMode mode)
@@ -84,8 +99,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 			int index = column + row * COLUMNS;
 			return m_CellLabels[index];
 		}
+		
+		private VtProButton GetCellButton(int column, int row)
+		{
+			int index = column + row * COLUMNS;
+			return m_CellButtons[index];
+		}
 
-		private VtProMultiModeButton GetWallButton(int column, int row, eCellDirection direction)
+		private VtProAdvancedButton GetWallButton(int column, int row, eCellDirection direction)
 		{
 			// warning - wacky math
 			// switch things to be referencing the top and left walls (makes it a bit easier)
@@ -108,7 +129,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 			return m_WallButtons.GetValue(index);
 		}
 
-		private void CalculateColumnRowDirection(VtProMultiModeButton wallButton, out int column, out int row,
+		private void CalculateColumnRowDirection(VtProAdvancedButton wallButton, out int column, out int row,
 		                                         out eCellDirection direction)
 		{
 			// todo - you could return the cell/direction on either side
@@ -150,7 +171,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 			m_SaveButton.OnPressed += SaveButtonOnPressed;
 			m_ClearAllButton.OnPressed += ClearAllButtonOnPressed;
 
-			foreach (VtProMultiModeButton wall in m_WallButtons.Values)
+			foreach (VtProAdvancedButton wall in m_WallButtons.Values)
 				wall.OnPressed += WallOnPressed;
 		}
 
@@ -164,7 +185,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 			m_SaveButton.OnPressed -= SaveButtonOnPressed;
 			m_ClearAllButton.OnPressed -= ClearAllButtonOnPressed;
 
-			foreach (VtProMultiModeButton wall in m_WallButtons.Values)
+			foreach (VtProAdvancedButton wall in m_WallButtons.Values)
 				wall.OnPressed -= WallOnPressed;
 		}
 
@@ -180,7 +201,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 
 		private void WallOnPressed(object sender, EventArgs eventArgs)
 		{
-			VtProMultiModeButton wall = sender as VtProMultiModeButton;
+			VtProAdvancedButton wall = sender as VtProAdvancedButton;
 			if (wall == null)
 				return;
 

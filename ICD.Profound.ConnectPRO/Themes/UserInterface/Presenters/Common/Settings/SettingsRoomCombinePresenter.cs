@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
+using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Partitioning.Cells;
 using ICD.Connect.Partitioning.Controls;
 using ICD.Connect.Partitioning.PartitionManagers;
@@ -20,6 +22,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 	public sealed class SettingsRoomCombinePresenter : AbstractUiPresenter<ISettingsRoomCombineView>, ISettingsRoomCombinePresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
+		private readonly Dictionary<IPartition, bool> m_SelectedPartitionStates;
 
 		private IPartitionManager m_SubscribedPartitionManager;
 
@@ -33,6 +36,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
+			m_SelectedPartitionStates = new Dictionary<IPartition, bool>();
 		}
 
 		/// <summary>
@@ -58,43 +62,49 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 						view.SetCellVisible(column, row, room != null);
 						view.SetCellLabel(column, row, room == null ? null : room.Name);
+						view.SetCellSelected(column, row, room != null);
+						view.SetCellEnabled(column, row, room != null);
 						
 						bool topEnabled = GetWallEnabled(column, row, eCellDirection.Top);
 						bool topSelected = GetWallSelected(column, row, eCellDirection.Top);
-						eWallButtonMode topMode = GetWallMode(column, row, eCellDirection.Top);
+						eWallButtonMode? topMode = GetWallMode(column, row, eCellDirection.Top);
 						
-						view.SetWallEnabled(column, row, eCellDirection.Top, true);
-						view.SetWallSelected(column, row, eCellDirection.Top, true);
-						view.SetWallMode(column, row, eCellDirection.Top, topMode);
+						view.SetWallEnabled(column, row, eCellDirection.Top, topEnabled);
+						view.SetWallSelected(column, row, eCellDirection.Top, topSelected);
+						view.SetWallVisible(column, row, eCellDirection.Top, topMode != null);
+						view.SetWallMode(column, row, eCellDirection.Top, topMode ?? eWallButtonMode.NoWall);
 						
 						bool leftEnabled = GetWallEnabled(column, row, eCellDirection.Left);
 						bool leftSelected = GetWallSelected(column, row, eCellDirection.Left);
-						eWallButtonMode leftMode = GetWallMode(column, row, eCellDirection.Left);
+						eWallButtonMode? leftMode = GetWallMode(column, row, eCellDirection.Left);
 
-						view.SetWallEnabled(column, row, eCellDirection.Left, true);
-						view.SetWallSelected(column, row, eCellDirection.Left, false);
-						view.SetWallMode(column, row, eCellDirection.Left, leftMode);
+						view.SetWallEnabled(column, row, eCellDirection.Left, leftEnabled);
+						view.SetWallSelected(column, row, eCellDirection.Left, leftSelected);
+						view.SetWallVisible(column, row, eCellDirection.Left, leftMode != null);
+						view.SetWallMode(column, row, eCellDirection.Left, leftMode ?? eWallButtonMode.NoWall);
 
 						if (column == SettingsRoomCombineView.COLUMNS - 1)
 						{
 							bool rightEnabled = GetWallEnabled(column, row, eCellDirection.Right);
 							bool rightSelected = GetWallSelected(column, row, eCellDirection.Right);
-							eWallButtonMode rightMode = GetWallMode(column, row, eCellDirection.Right);
+							eWallButtonMode? rightMode = GetWallMode(column, row, eCellDirection.Right);
 							
-							view.SetWallEnabled(column, row, eCellDirection.Right, true);
-							view.SetWallSelected(column, row, eCellDirection.Right, false);
-							view.SetWallMode(column, row, eCellDirection.Right, rightMode);
+							view.SetWallEnabled(column, row, eCellDirection.Right, rightEnabled);
+							view.SetWallSelected(column, row, eCellDirection.Right, rightSelected);
+							view.SetWallVisible(column, row, eCellDirection.Right, rightMode != null);
+							view.SetWallMode(column, row, eCellDirection.Right, rightMode ?? eWallButtonMode.NoWall);
 						}
 
 						if (row == SettingsRoomCombineView.ROWS - 1)
 						{
 							bool bottomEnabled = GetWallEnabled(column, row, eCellDirection.Bottom);
 							bool bottomSelected = GetWallSelected(column, row, eCellDirection.Bottom);
-							eWallButtonMode bottomMode = GetWallMode(column, row, eCellDirection.Bottom);
+							eWallButtonMode? bottomMode = GetWallMode(column, row, eCellDirection.Bottom);
 							
-							view.SetWallEnabled(column, row, eCellDirection.Bottom, true);
-							view.SetWallSelected(column, row, eCellDirection.Bottom, false);
-							view.SetWallMode(column, row, eCellDirection.Bottom, bottomMode);
+							view.SetWallEnabled(column, row, eCellDirection.Bottom, bottomEnabled);
+							view.SetWallSelected(column, row, eCellDirection.Bottom, bottomSelected);
+							view.SetWallVisible(column, row, eCellDirection.Bottom, bottomMode != null);
+							view.SetWallMode(column, row, eCellDirection.Bottom, bottomMode ?? eWallButtonMode.NoWall);
 						}
 					}
 				}
@@ -110,34 +120,54 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 		private bool GetWallEnabled(int column, int row, eCellDirection direction)
 		{
-			return m_SubscribedPartitionManager.GetPartition(column, row, direction) != null;
+			return true;
 		}
 
 		private bool GetWallSelected(int column, int row, eCellDirection direction)
 		{
-			throw new NotImplementedException();
+			return false;
 		}
 
-		private eWallButtonMode GetWallMode(int column, int row, eCellDirection direction)
+		private eWallButtonMode? GetWallMode(int column, int row, eCellDirection direction)
 		{
 			if (m_SubscribedPartitionManager == null)
-				return eWallButtonMode.NoWall;
+				return null;
 
 			var cell = m_SubscribedPartitionManager.Cells.GetCell(column, row);
 			var neighboringCell = m_SubscribedPartitionManager.Cells.GetNeighboringCell(column, row, direction);
-
 			var room = cell != null ? cell.Room : null;
 			var neighboringRoom = neighboringCell != null ? neighboringCell.Room : null;
-			if ((room == null && neighboringRoom == null) || room == neighboringRoom)
+
+			// if both aren't rooms, then no wall
+			if (room == null && neighboringRoom == null)
 				return eWallButtonMode.NoWall;
+
+			// if same room, don't show wall
+			if (room == neighboringRoom)
+				return null;
+
+			// if room and no room, permanent wall
 			if (room == null || neighboringRoom == null)
 				return eWallButtonMode.PermanentWall;
 
 			var partition = m_SubscribedPartitionManager.GetPartition(column, row, direction);
+			// if there's no partition, permanent wall
+			if (partition == null)
+				return eWallButtonMode.PermanentWall;
+
+			// if user has manually selected a partition state, show that
+			if (m_SelectedPartitionStates.ContainsKey(partition))
+				return m_SelectedPartitionStates[partition] ? eWallButtonMode.UnsavedOpenPartition : eWallButtonMode.UnsavedClosedPartition;
+
 			var controls = partition.GetPartitionControls()
-			                        .Select(info => Room.GetControl(info) as IPartitionDeviceControl)
-			                        .Where(c => c != null);
-			return controls.All(c => c.IsOpen) ? eWallButtonMode.OpenPartition : eWallButtonMode.ClosedPartition;
+			                        .Select(info => Room.Core.GetControl(info) as IPartitionDeviceControl)
+			                        .Where(c => c != null).ToList();
+			// if there's no controls to get/set partition state, permanent wall
+			if (!controls.Any())
+				return eWallButtonMode.PermanentWall;
+
+			// show state of partition
+			return controls.Any(c => c.IsOpen) ? eWallButtonMode.OpenPartition : eWallButtonMode.ClosedPartition;
 		}
 
 		/// <summary>
@@ -214,9 +244,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		{
 		}
 
-		private void ViewOnWallButtonPressed(object sender, CellDirectionEventArgs eventArgs)
+		private void ViewOnWallButtonPressed(object sender, CellDirectionEventArgs args)
 		{
-			IcdConsole.PrintLine(eConsoleColor.Magenta, "Partition ({0}, {1}) {2} Pressed", eventArgs.Column, eventArgs.Row, eventArgs.Direction);
+			IcdConsole.PrintLine(eConsoleColor.Magenta, "Partition ({0}, {1}) {2} Pressed", args.Column, args.Row, args.Direction);
+			
+			var partition = m_SubscribedPartitionManager.GetPartition(args.Column, args.Row, args.Direction);
+			if (partition == null)
+				return;
+
+			if (m_SelectedPartitionStates.ContainsKey(partition))
+				m_SelectedPartitionStates.Remove(partition);
+			else
+			{
+				var controls = partition.GetPartitionControls()
+				                        .Select(info => Room.Core.GetControl(info) as IPartitionDeviceControl)
+				                        .Where(c => c != null).ToList();
+
+				if (!controls.Any())
+					return;
+
+				m_SelectedPartitionStates.Add(partition, !controls.Any(c => c.IsOpen));
+			}
+
+			RefreshIfVisible();
 		}
 
 		#endregion
