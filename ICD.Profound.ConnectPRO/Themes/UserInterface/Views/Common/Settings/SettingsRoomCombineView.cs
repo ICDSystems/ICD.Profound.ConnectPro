@@ -60,11 +60,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 			GetLabel(column, row).SetLabelText(label);
 		}
 
-		public void SetWallVisible(int column, int row, eCellDirection direction, bool visible)
-		{
-			GetWallButton(column, row, direction).Show(visible);
-		}
-
 		public void SetWallEnabled(int column, int row, eCellDirection direction, bool enabled)
 		{
 			GetWallButton(column, row, direction).Enable(enabled);

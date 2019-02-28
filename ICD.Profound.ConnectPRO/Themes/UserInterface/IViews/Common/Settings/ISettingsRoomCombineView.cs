@@ -19,8 +19,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings
 
 		void SetCellLabel(int column, int row, string label);
 
-		void SetWallVisible(int column, int row, eCellDirection direction, bool visible);
-
 		void SetWallEnabled(int column, int row, eCellDirection direction, bool enabled);
 
 		void SetWallSelected(int column, int row, eCellDirection direction, bool selected);
