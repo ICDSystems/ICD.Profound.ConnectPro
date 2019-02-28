@@ -160,7 +160,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				return m_SelectedPartitionStates[partition] ? eWallButtonMode.UnsavedOpenPartition : eWallButtonMode.UnsavedClosedPartition;
 
 			var controls = partition.GetPartitionControls()
-			                        .Select(info => Room.Core.GetControl(info) as IPartitionDeviceControl)
+			                        .Select(info => Room.Core.GetControl(info.Control) as IPartitionDeviceControl)
 			                        .Where(c => c != null).ToList();
 			// if there's no controls to get/set partition state, permanent wall
 			if (!controls.Any())
@@ -257,7 +257,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			else
 			{
 				var controls = partition.GetPartitionControls()
-				                        .Select(info => Room.Core.GetControl(info) as IPartitionDeviceControl)
+				                        .Select(info => Room.Core.GetControl(info.Control) as IPartitionDeviceControl)
 				                        .Where(c => c != null).ToList();
 
 				if (!controls.Any())
