@@ -7,7 +7,7 @@ namespace ICD.Profound.ConnectPRO.Tests.RoomTypes
 {
     public abstract class AbstractRoomType : IDisposable
     {
-	    public abstract ConnectProRoom Room { get; }
+	    public abstract IConnectProRoom Room { get; }
 
 		public abstract MockPanelDevice Panel { get; }
 

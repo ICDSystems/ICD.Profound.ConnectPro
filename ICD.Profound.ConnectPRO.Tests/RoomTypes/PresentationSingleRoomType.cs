@@ -1,10 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Xml;
-using System.Xml.Linq;
-using ICD.Common.Utils.Collections;
-using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services;
-using ICD.Common.Utils.Xml;
 using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Displays.Mock.Devices;
 using ICD.Connect.Panels.Mock;
@@ -17,6 +12,7 @@ using ICD.Connect.Routing.Mock.Switcher;
 using ICD.Connect.Routing.RoutingGraphs;
 using ICD.Connect.Settings.Cores;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.Rooms.Single;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes;
 
@@ -24,11 +20,11 @@ namespace ICD.Profound.ConnectPRO.Tests.RoomTypes
 {
 	public sealed class PresentationSingleRoomType : AbstractRoomType
 	{
-		private readonly ConnectProRoom m_room;
+		private readonly IConnectProRoom m_room;
 		private readonly MockPanelDevice m_panel;
 		private readonly ICore m_core;
 
-		public override ConnectProRoom Room { get { return m_room; } }
+		public override IConnectProRoom Room { get { return m_room; } }
 		public override MockPanelDevice Panel { get { return m_panel; } }
 		public override ICore Core { get { return m_core; } }
 
