@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
-using ICD.Common.Utils.IO;
-using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
-using ICD.Common.Utils.Services.Scheduler;
 using ICD.Connect.API.Commands;
 using ICD.Connect.API.Nodes;
 using ICD.Connect.Audio.Controls.Mute;
@@ -17,45 +13,30 @@ using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Calendaring.CalendarControl;
 using ICD.Connect.Conferencing.ConferenceManagers;
-using ICD.Connect.Conferencing.ConferencePoints;
 using ICD.Connect.Conferencing.Conferences;
-using ICD.Connect.Conferencing.Favorites.SqLite;
-using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Displays.Devices;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Destinations;
-using ICD.Connect.Settings;
 using ICD.Profound.ConnectPRO.Routing;
 
 namespace ICD.Profound.ConnectPRO.Rooms
 {
-	public sealed class ConnectProRoom : AbstractRoom<ConnectProRoomSettings>, IConnectProRoom
+	public abstract class AbstractConnectProRoom<TSettings> : AbstractRoom<TSettings>, IConnectProRoom
+		where TSettings : IConnectProRoomSettings, new()
 	{
 		/// <summary>
 		/// Raised when the room starts/stops a meeting.
 		/// </summary>
 		public event EventHandler<BoolEventArgs> OnIsInMeetingChanged;
 
-		private readonly IConferenceManager m_ConferenceManager;
 		private readonly ConnectProRouting m_Routing;
 
-		private readonly WakeSchedule m_WakeSchedule;
-
 		private bool m_IsInMeeting;
-		private string m_DialingPlan;
 
 		#region Properties
-
-		/// <summary>
-		/// Gets the scheduler service.
-		/// </summary>
-		private IActionSchedulerService SchedulerService
-		{
-			get { return ServiceProvider.TryGetService<IActionSchedulerService>(); }
-		}
 
 		/// <summary>
 		/// Gets/sets the current meeting status.
@@ -84,55 +65,46 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <summary>
 		/// Gets the conference manager.
 		/// </summary>
-		public IConferenceManager ConferenceManager { get { return m_ConferenceManager; } }
+		public abstract IConferenceManager ConferenceManager { get; }
 
 		/// <summary>
 		/// Gets the wake/sleep schedule.
 		/// </summary>
-		public WakeSchedule WakeSchedule { get { return m_WakeSchedule; } }
+		public abstract WakeSchedule WakeSchedule { get; }
 
 		/// <summary>
 		/// Gets/sets the passcode for the settings page.
 		/// </summary>
-		public string Passcode { get; set; }
+		public abstract string Passcode { get; set; }
 
 		/// <summary>
 		/// Gets/sets the ATC number for dialing into the room.
 		/// </summary>
-		public string AtcNumber { get; set; }
+		public abstract string AtcNumber { get; set; }
 
 		/// <summary>
-		/// Gets/sets the calendar control for the room.
+		/// Gets the CalendarControl for the room.
 		/// </summary>
-		public ICalendarControl CalendarControl { get; set; }
+		public abstract ICalendarControl CalendarControl { get; }
 
 		#endregion
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public ConnectProRoom()
+		protected AbstractConnectProRoom()
 		{
 			m_Routing = new ConnectProRouting(this);
-			m_ConferenceManager = new ConferenceManager();
-			m_WakeSchedule = new WakeSchedule();
-
-			Subscribe(m_WakeSchedule);
-
-			SchedulerService.Add(m_WakeSchedule);
 		}
 
 		/// <summary>
-		/// Release resources
+		/// Release resources.
 		/// </summary>
-		/// <param name="disposing"></param>
 		protected override void DisposeFinal(bool disposing)
 		{
+			OnIsInMeetingChanged = null;
+
 			base.DisposeFinal(disposing);
-
-			Unsubscribe(m_WakeSchedule);
-
-			SchedulerService.Remove(m_WakeSchedule);
 		}
 
 		#region Methods
@@ -242,8 +214,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			// Power off the panels
 			Originators.GetInstancesRecursive<IPanelDevice>()
-			           .SelectMany(panel => panel.Controls.GetControls<IPowerDeviceControl>())
-			           .ForEach(c => c.PowerOff());
+					   .SelectMany(panel => panel.Controls.GetControls<IPowerDeviceControl>())
+					   .ForEach(c => c.PowerOff());
 		}
 
 		#endregion
@@ -280,122 +252,15 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 		#endregion
 
-		#region Settings
-
-		/// <summary>
-		/// Override to apply properties to the settings instance.
-		/// </summary>
-		/// <param name="settings"></param>
-		protected override void CopySettingsFinal(ConnectProRoomSettings settings)
-		{
-			base.CopySettingsFinal(settings);
-
-			settings.DialingPlan = m_DialingPlan;
-			settings.Passcode = Passcode;
-
-			if (CalendarControl != null && CalendarControl.Parent != null)
-				settings.CalendarDevice = CalendarControl.Parent.Id;
-
-			settings.WakeSchedule.Copy(m_WakeSchedule);
-		}
-
-		/// <summary>
-		/// Override to clear the instance settings.
-		/// </summary>
-		protected override void ClearSettingsFinal()
-		{
-			base.ClearSettingsFinal();
-
-			m_DialingPlan = null;
-
-			m_ConferenceManager.ClearDialingProviders();
-			m_ConferenceManager.Favorites = null;
-			m_ConferenceManager.DialingPlan.ClearMatchers();
-
-			AtcNumber = null;
-			Passcode = null;
-			CalendarControl = null;
-
-			m_WakeSchedule.Clear();
-		}
-
-		/// <summary>
-		/// Override to apply settings to the instance.
-		/// </summary>
-		/// <param name="settings"></param>
-		/// <param name="factory"></param>
-		protected override void ApplySettingsFinal(ConnectProRoomSettings settings, IDeviceFactory factory)
-		{
-			base.ApplySettingsFinal(settings, factory);
-
-			// Dialing plan
-			SetDialingPlan(settings.DialingPlan);
-
-			// Favorites
-			string path = PathUtils.GetProgramConfigPath("favorites");
-			m_ConferenceManager.Favorites = new SqLiteFavorites(path);
-
-			// ATC Number
-			AtcNumber = settings.AtcNumber;
-
-			// Passcode
-			Passcode = settings.Passcode;
-
-			// Calendar Device
-			if (settings.CalendarDevice != null)
-			{
-				var calendarDevice = factory.GetOriginatorById<IDevice>(settings.CalendarDevice.Value);
-				if (calendarDevice != null)
-					CalendarControl = calendarDevice.Controls.GetControl<ICalendarControl>();
-			}
-
-			// Wake Schedule
-			m_WakeSchedule.Copy(settings.WakeSchedule);
-		}
-
-		/// <summary>
-		/// Sets the dialing plan from the settings.
-		/// </summary>
-		/// <param name="path"></param>
-		private void SetDialingPlan(string path)
-		{
-			m_DialingPlan = path;
-
-			if (!string.IsNullOrEmpty(path))
-				path = PathUtils.GetDefaultConfigPath("DialingPlans", path);
-
-			try
-			{
-				if (string.IsNullOrEmpty(path))
-					Log(eSeverity.Warning, "No Dialing Plan configured");
-				else
-				{
-					string xml = IcdFile.ReadToEnd(path, new UTF8Encoding(false));
-					xml = EncodingUtils.StripUtf8Bom(xml);
-
-					m_ConferenceManager.DialingPlan.LoadMatchersFromXml(xml);
-				}
-			}
-			catch (Exception e)
-			{
-				Log(eSeverity.Error, "failed to load Dialing Plan {0} - {1}", path, e.Message);
-			}
-
-			foreach (IConferencePoint conferencePoint in Originators.GetInstancesRecursive<IConferencePoint>())
-				m_ConferenceManager.RegisterDialingProvider(conferencePoint);
-		}
-
-		#endregion
-
 		#region WakeSchedule Callbacks
 
-		private void Subscribe(WakeSchedule schedule)
+		protected void Subscribe(WakeSchedule schedule)
 		{
 			schedule.OnWakeActionRequested += ScheduleOnWakeActionRequested;
 			schedule.OnSleepActionRequested += ScheduleOnSleepActionRequested;
 		}
 
-		private void Unsubscribe(WakeSchedule schedule)
+		protected void Unsubscribe(WakeSchedule schedule)
 		{
 			schedule.OnWakeActionRequested -= ScheduleOnWakeActionRequested;
 			schedule.OnSleepActionRequested -= ScheduleOnSleepActionRequested;
@@ -403,12 +268,18 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 		private void ScheduleOnSleepActionRequested(object sender, EventArgs eventArgs)
 		{
+			if (CombineState)
+				return;
+
 			Log(eSeverity.Informational, "Scheduled sleep occurring at {0}", IcdEnvironment.GetLocalTime().ToShortTimeString());
 			Sleep();
 		}
 
 		private void ScheduleOnWakeActionRequested(object sender, EventArgs eventArgs)
 		{
+			if (CombineState)
+				return;
+
 			Log(eSeverity.Informational, "Scheduled wake occurring at {0}", IcdEnvironment.GetLocalTime().ToShortTimeString());
 			Wake();
 		}
@@ -425,7 +296,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		{
 			base.BuildConsoleStatus(addRow);
 
-			addRow("Is In Meeting", IsInMeeting);
+			ConnectProRoomConsole.BuildConsoleStatus(this, addRow);
 		}
 
 		/// <summary>
@@ -437,10 +308,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			foreach (IConsoleCommand command in GetBaseConsoleCommands())
 				yield return command;
 
-			yield return new ConsoleCommand("Start Meeting", "Starts the meeting", () => StartMeeting());
-			yield return new ConsoleCommand("End Meeting", "Ends the meeting", () => EndMeeting(false));
-			yield return new ConsoleCommand("Wake", "Wakes the room", () => Wake());
-			yield return new ConsoleCommand("Sleep", "Puts the room to sleep", () => Sleep());
+			foreach (IConsoleCommand command in ConnectProRoomConsole.GetConsoleCommands(this))
+				yield return command;
 		}
 
 		/// <summary>
@@ -450,6 +319,28 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		private IEnumerable<IConsoleCommand> GetBaseConsoleCommands()
 		{
 			return base.GetConsoleCommands();
+		}
+
+		/// <summary>
+		/// Gets the child console nodes.
+		/// </summary>
+		/// <returns></returns>
+		public override IEnumerable<IConsoleNodeBase> GetConsoleNodes()
+		{
+			foreach (IConsoleNodeBase node in GetBaseConsoleNodes())
+				yield return node;
+
+			foreach (IConsoleNodeBase node in ConnectProRoomConsole.GetConsoleNodes(this))
+				yield return node;
+		}
+
+		/// <summary>
+		/// Workaround for "unverifiable code" warning.
+		/// </summary>
+		/// <returns></returns>
+		private IEnumerable<IConsoleNodeBase> GetBaseConsoleNodes()
+		{
+			return base.GetConsoleNodes();
 		}
 
 		#endregion

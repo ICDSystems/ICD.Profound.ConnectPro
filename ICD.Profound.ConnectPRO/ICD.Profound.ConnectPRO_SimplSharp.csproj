@@ -69,8 +69,14 @@
     <Compile Include="KrangPlugin.cs" />
     <None Include="ObfuscationSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rooms\ConnectProRoom.cs" />
-    <Compile Include="Rooms\ConnectProRoomSettings.cs" />
+    <Compile Include="Rooms\AbstractConnectProRoom.cs" />
+    <Compile Include="Rooms\AbstractConnectProRoomSettings.cs" />
+    <Compile Include="Rooms\Combine\ConnectProCombineRoom.cs" />
+    <Compile Include="Rooms\Combine\ConnectProCombineRoomSettings.cs" />
+    <Compile Include="Rooms\ConnectProRoomConsole.cs" />
+    <Compile Include="Rooms\IConnectProRoomSettings.cs" />
+    <Compile Include="Rooms\Single\ConnectProRoom.cs" />
+    <Compile Include="Rooms\Single\ConnectProRoomSettings.cs" />
     <Compile Include="Rooms\IConnectProRoom.cs" />
     <Compile Include="Rooms\WakeSchedule.cs" />
     <Compile Include="Routing\ConnectProRouting.cs" />

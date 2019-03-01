@@ -2,14 +2,13 @@
 using ICD.Common.Properties;
 using ICD.Common.Utils.Xml;
 using ICD.Connect.Devices;
-using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings.Attributes;
 using ICD.Connect.Settings.Attributes.SettingsProperties;
 
-namespace ICD.Profound.ConnectPRO.Rooms
+namespace ICD.Profound.ConnectPRO.Rooms.Single
 {
 	[KrangSettings("ConnectProRoom", typeof(ConnectProRoom))]
-	public sealed class ConnectProRoomSettings : AbstractRoomSettings
+	public sealed class ConnectProRoomSettings : AbstractConnectProRoomSettings
 	{
 		private const string ATC_NUMBER_ELEMENT = "AtcNumber";
 		private const string PASSCODE_ELEMENT = "Passcode";
