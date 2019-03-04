@@ -256,12 +256,18 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 		protected void Subscribe(WakeSchedule schedule)
 		{
+			if (schedule == null)
+				return;
+
 			schedule.OnWakeActionRequested += ScheduleOnWakeActionRequested;
 			schedule.OnSleepActionRequested += ScheduleOnSleepActionRequested;
 		}
 
 		protected void Unsubscribe(WakeSchedule schedule)
 		{
+			if (schedule == null)
+				return;
+
 			schedule.OnWakeActionRequested -= ScheduleOnWakeActionRequested;
 			schedule.OnSleepActionRequested -= ScheduleOnSleepActionRequested;
 		}
