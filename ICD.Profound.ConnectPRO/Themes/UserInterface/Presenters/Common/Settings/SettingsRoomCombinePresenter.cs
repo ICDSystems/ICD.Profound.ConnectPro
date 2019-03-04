@@ -11,6 +11,7 @@ using ICD.Connect.Partitioning.Partitions;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.Rooms.Combine;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -23,6 +24,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 	public sealed class SettingsRoomCombinePresenter : AbstractUiPresenter<ISettingsRoomCombineView>, ISettingsRoomCombinePresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
+		private readonly SafeCriticalSection m_PartitionSection;
 		private readonly Dictionary<IPartition, bool> m_SelectedPartitionStates;
 
 		private IPartitionManager m_SubscribedPartitionManager;
@@ -37,6 +39,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
+			m_PartitionSection = new SafeCriticalSection();
 			m_SelectedPartitionStates = new Dictionary<IPartition, bool>();
 		}
 
@@ -110,8 +113,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 					}
 				}
 
-				view.SetClearAllButtonEnabled(false);
-				view.SetSaveButtonEnabled(false);
+				view.SetClearAllButtonEnabled(m_SelectedPartitionStates.Count > 0);
+				view.SetSaveButtonEnabled(m_SelectedPartitionStates.Count > 0);
 			}
 			finally
 			{
@@ -157,8 +160,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				return eWallButtonMode.PermanentWall;
 
 			// if user has manually selected a partition state, show that
-			if (m_SelectedPartitionStates.ContainsKey(partition))
-				return m_SelectedPartitionStates[partition] ? eWallButtonMode.UnsavedOpenPartition : eWallButtonMode.UnsavedClosedPartition;
+			m_PartitionSection.Enter();
+			try
+			{
+				if (m_SelectedPartitionStates.ContainsKey(partition))
+					return m_SelectedPartitionStates[partition] ? eWallButtonMode.UnsavedOpenPartition : eWallButtonMode.UnsavedClosedPartition;
+			}
+			finally
+			{
+				m_PartitionSection.Leave();
+			}
 
 			var controls = partition.GetPartitionControls()
 			                        .Select(info => Room.Core.GetControl(info.Control) as IPartitionDeviceControl)
@@ -204,6 +215,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 		private void PartitionManagerOnPartitionOpenStateChange(IPartitionDeviceControl control, bool open)
 		{
+			var partitions = m_SubscribedPartitionManager.Partitions.GetPartitions(control).ToList();
+
+			m_PartitionSection.Enter();
+			try
+			{
+				foreach (var partition in partitions)
+				{
+					if (m_SelectedPartitionStates.ContainsKey(partition) && m_SelectedPartitionStates[partition] == control.IsOpen)
+						m_SelectedPartitionStates.Remove(partition);
+				}
+			}
+			finally
+			{
+				m_PartitionSection.Leave();
+			}
+
 			RefreshIfVisible();
 		}
 
@@ -239,10 +266,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 		private void ViewOnSaveButtonPressed(object sender, EventArgs eventArgs)
 		{
+			m_PartitionSection.Enter();
+			try
+			{
+				foreach (var kvp in m_SelectedPartitionStates.ToArray())
+					m_SubscribedPartitionManager.SetPartition<ConnectProCombineRoom>(kvp.Key, kvp.Value);
+
+				m_SelectedPartitionStates.Clear();
+			}
+			finally
+			{
+				m_PartitionSection.Leave();
+			}
+
+			RefreshIfVisible();
 		}
 
 		private void ViewOnClearAllButtonPressed(object sender, EventArgs eventArgs)
 		{
+			m_PartitionSection.Execute(() => m_SelectedPartitionStates.Clear());
+			RefreshIfVisible();
 		}
 
 		private void ViewOnWallButtonPressed(object sender, CellDirectionEventArgs args)
@@ -253,21 +296,28 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			if (partition == null)
 				return;
 
-			if (m_SelectedPartitionStates.ContainsKey(partition))
-				m_SelectedPartitionStates.Remove(partition);
-			else
+			m_PartitionSection.Enter();
+			try
 			{
-				var controls = partition.GetPartitionControls()
-				                        .Where(c => c.Mode.HasFlag(ePartitionFeedback.Set))
-				                        .Select(info => Room.Core.GetControl(info.Control) as IPartitionDeviceControl)
-				                        .Where(c => c != null).ToList();
+				if (m_SelectedPartitionStates.ContainsKey(partition))
+					m_SelectedPartitionStates.Remove(partition);
+				else
+				{
+					var controls = partition.GetPartitionControls()
+					                        .Where(c => c.Mode.HasFlag(ePartitionFeedback.Set))
+					                        .Select(info => Room.Core.GetControl(info.Control) as IPartitionDeviceControl)
+					                        .Where(c => c != null).ToList();
 
-				if (!controls.Any())
-					return;
+					if (!controls.Any())
+						return;
 
-				m_SelectedPartitionStates.Add(partition, !controls.Any(c => c.IsOpen));
+					m_SelectedPartitionStates.Add(partition, !controls.Any(c => c.IsOpen));
+				}
 			}
-
+			finally
+			{
+				m_PartitionSection.Leave();
+			}
 			RefreshIfVisible();
 		}
 
