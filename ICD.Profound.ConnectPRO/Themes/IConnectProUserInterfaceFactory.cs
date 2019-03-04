@@ -20,5 +20,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 		/// </summary>
 		/// <returns></returns>
 		IEnumerable<IUserInterface> GetUserInterfaces();
+
+		void ReassignUserInterfaces();
 	}
 }

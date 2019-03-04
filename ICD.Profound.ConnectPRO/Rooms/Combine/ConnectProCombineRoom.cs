@@ -62,6 +62,13 @@ namespace ICD.Profound.ConnectPRO.Rooms.Combine
 			Originators.OnChildrenChanged += OriginatorsOnChildrenChanged;
 		}
 
+		protected override void DisposeFinal(bool disposing)
+		{
+			Originators.OnChildrenChanged -= OriginatorsOnChildrenChanged;
+
+			base.DisposeFinal(disposing);
+		}
+
 		private void OriginatorsOnChildrenChanged(object sender, EventArgs e)
 		{
 			Unsubscribe(WakeSchedule);
@@ -69,6 +76,12 @@ namespace ICD.Profound.ConnectPRO.Rooms.Combine
 			m_MasterRoom = this.GetMasterRoom() as IConnectProRoom;
 
 			Subscribe(WakeSchedule);
+
+			if (m_MasterRoom == null)
+				return;
+
+			Name = m_MasterRoom.Name;
+			CombineName = m_MasterRoom.Name;
 		}
 	}
 }

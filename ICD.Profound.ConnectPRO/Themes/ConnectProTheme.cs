@@ -10,6 +10,7 @@ using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.API.Commands;
 using ICD.Connect.Partitioning.Controls;
+using ICD.Connect.Partitioning.Extensions;
 using ICD.Connect.Partitioning.PartitionManagers;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings;
@@ -96,6 +97,20 @@ namespace ICD.Profound.ConnectPRO.Themes
 			};
 
 			m_UiFactoriesSection = new SafeCriticalSection();
+			
+			Core.Originators.OnChildrenChanged += OriginatorsOnChildrenChanged;
+		}
+
+		protected override void DisposeFinal(bool disposing)
+		{
+			base.DisposeFinal(disposing);
+
+			Core.Originators.OnChildrenChanged -= OriginatorsOnChildrenChanged;
+		}
+		
+		private void OriginatorsOnChildrenChanged(object sender, EventArgs args)
+		{
+			ReassignRooms();
 		}
 
 		#region Public Methods
@@ -210,6 +225,23 @@ namespace ICD.Profound.ConnectPRO.Themes
 				m_UiFactoriesSection.Leave();
 			}
 		}
+		
+		/// <summary>
+		/// Reassigns rooms to the existing user interfaces.
+		/// </summary>
+		private void ReassignRooms()
+		{
+			m_UiFactoriesSection.Enter();
+
+			try
+			{
+				m_UiFactories.ForEach(f => f.ReassignUserInterfaces());
+			}
+			finally
+			{
+				m_UiFactoriesSection.Leave();
+			}
+		}
 
 		#endregion
 
@@ -259,14 +291,14 @@ namespace ICD.Profound.ConnectPRO.Themes
 			SetWebConferencingInstructionsFromPath(settings.WebConferencingInstructions);
 
 			Unsubscribe(m_SubscribedPartitionManager);
-			m_SubscribedPartitionManager = Core.Originators.GetChild<IPartitionManager>();
+			Core.TryGetPartitionManager(out m_SubscribedPartitionManager);
 			Subscribe(m_SubscribedPartitionManager);
 
 			base.ApplySettingsFinal(settings, factory);
 		}
 
 		#endregion
-
+		
 		#region Partitioning
 
 		private void Subscribe(IPartitionManager manager)

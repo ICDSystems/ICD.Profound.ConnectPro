@@ -102,6 +102,14 @@ namespace ICD.Profound.ConnectPRO.Themes
 		/// <summary>
 		/// Assigns the rooms to the existing user interfaces.
 		/// </summary>
+		public void ReassignUserInterfaces()
+		{
+			AssignUserInterfaces(GetRooms());
+		}
+
+		/// <summary>
+		/// Assigns the rooms to the existing user interfaces.
+		/// </summary>
 		public void AssignUserInterfaces(IEnumerable<IConnectProRoom> rooms)
 		{
 			m_UserInterfacesSection.Enter();
