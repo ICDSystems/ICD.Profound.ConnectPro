@@ -9,12 +9,15 @@ using ICD.Common.Utils.IO;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.API.Commands;
+using ICD.Connect.Partitioning.Controls;
+using ICD.Connect.Partitioning.PartitionManagers;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings;
 using ICD.Connect.Settings.Cores;
 using ICD.Connect.Themes;
 using ICD.Connect.TvPresets;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.Rooms.Combine;
 using ICD.Profound.ConnectPRO.Themes.MicrophoneInterface;
 using ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface;
@@ -36,6 +39,8 @@ namespace ICD.Profound.ConnectPRO.Themes
 		// Used with settings.
 		private string m_TvPresetsPath;
 		private string m_WebConferencingInstructionsPath;
+
+		private IPartitionManager m_SubscribedPartitionManager;
 
 		#region Properties
 
@@ -220,6 +225,9 @@ namespace ICD.Profound.ConnectPRO.Themes
 			Logo = LOGO_DEFAULT;
 			m_TvPresetsPath = null;
 			m_WebConferencingInstructionsPath = null;
+
+			Unsubscribe(m_SubscribedPartitionManager);
+			m_SubscribedPartitionManager = null;
 		}
 
 		/// <summary>
@@ -244,13 +252,42 @@ namespace ICD.Profound.ConnectPRO.Themes
 		{
 			// Ensure the rooms are loaded
 			factory.LoadOriginators<IRoom>();
-
+			
 			Logo = settings.Logo;
 
 			SetTvPresetsFromPath(settings.TvPresets);
 			SetWebConferencingInstructionsFromPath(settings.WebConferencingInstructions);
 
+			Unsubscribe(m_SubscribedPartitionManager);
+			m_SubscribedPartitionManager = Core.Originators.GetChild<IPartitionManager>();
+			Subscribe(m_SubscribedPartitionManager);
+
 			base.ApplySettingsFinal(settings, factory);
+		}
+
+		#endregion
+
+		#region Partitioning
+
+		private void Subscribe(IPartitionManager manager)
+		{
+			if (manager == null)
+				return;
+
+			manager.OnPartitionOpenStateChange += ManagerOnPartitionOpenStateChange;
+		}
+
+		private void Unsubscribe(IPartitionManager manager)
+		{
+			if (manager == null)
+				return;
+
+			manager.OnPartitionOpenStateChange -= ManagerOnPartitionOpenStateChange;
+		}
+
+		private void ManagerOnPartitionOpenStateChange(IPartitionDeviceControl control, bool open)
+		{
+			m_SubscribedPartitionManager.SetPartition<ConnectProCombineRoom>(control, open);
 		}
 
 		#endregion
