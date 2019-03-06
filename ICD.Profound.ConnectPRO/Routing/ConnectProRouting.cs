@@ -288,12 +288,11 @@ namespace ICD.Profound.ConnectPRO.Routing
 					IEnumerable<IDestination> displays =
 						m_Room.Originators
 						      .GetInstancesRecursive<IDestination>(d =>
-						                                           m_Room.Core.Originators.GetChild(d.Device)
-						                                           is IDisplay)
+							                                           m_Room.Core.Originators.GetChild(d.Device)
+								                                           is IDisplay)
 						      .Where(d => d.ConnectionType.HasFlag(eConnectionType.Video))
 						      .OrderBy(d => d.Order)
-						      .ThenBy(d => d.GetNameOrDeviceName(combine))
-						      .Take(2);
+						      .ThenBy(d => d.GetNameOrDeviceName(combine));
 
 					m_Displays.AddRange(displays);
 				}
@@ -397,6 +396,26 @@ namespace ICD.Profound.ConnectPRO.Routing
 		}
 
 		/// <summary>
+		/// Routes the source to the display and room audio.
+		/// </summary>
+		/// <param name="source"></param>
+		public void RouteAllDisplays(ISource source)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			IDestination[] destinations = GetDisplayDestinations().ToArray();
+			
+			foreach (var destination in destinations)
+				Route(source, destination, eConnectionType.Video);
+
+			if (source.ConnectionType.HasFlag(eConnectionType.Audio))
+				RouteAudio(source);
+			else
+				UnrouteAudio();
+		}
+
+		/// <summary>
 		/// Routes the source to the destination.
 		/// Routes to room audio if there is no other audio source currently routed.
 		/// Unroutes routed audio if associated video is unrouted.
@@ -441,7 +460,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			IDestination[] destinations = GetDisplayDestinations().ToArray();
 
-			Connection firstOutput = outputs.FirstOrDefault();
+			Connection firstOutput = outputs.LastOrDefault();
 			if (firstOutput == null)
 			{
 				m_Room.Logger.AddEntry(eSeverity.Error, "Failed to find {0} output connection for {1}",

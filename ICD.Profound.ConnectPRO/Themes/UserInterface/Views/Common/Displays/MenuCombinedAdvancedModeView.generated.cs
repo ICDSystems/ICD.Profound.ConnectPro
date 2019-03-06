@@ -25,7 +25,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 			m_DisplaysList = new VtProSubpageReferenceList(6, panel as IPanelDevice, m_Subpage)
 			{
 				DigitalJoinIncrement = 3,
-				SerialJoinIncrement = 4
+				SerialJoinIncrement = 4,
+				AnalogJoinIncrement = 1,
+				MaxSize = 7
 			};
 
 			m_SimpleModeButton = new VtProButton(panel, m_Subpage)

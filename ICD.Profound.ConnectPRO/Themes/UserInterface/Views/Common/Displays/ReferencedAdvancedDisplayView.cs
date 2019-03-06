@@ -1,16 +1,18 @@
 ﻿using System;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Controls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 {
+	[ViewBinding(typeof(IReferencedAdvancedDisplayView))]
 	public sealed partial class ReferencedAdvancedDisplayView : AbstractUiView, IReferencedAdvancedDisplayView
 	{
-		private const ushort MODE_WHITE = 0;
-		private const ushort MODE_GREY = 1;
+		private const ushort MODE_GREY = 0;
+		private const ushort MODE_WHITE = 1;
 		private const ushort MODE_YELLOW = 2;
 		private const ushort MODE_GREEN = 3;
 
@@ -25,11 +27,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		{
 			switch (color)
 			{
-				case eDisplayColor.White:
-					m_BackgroundButton.SetMode(MODE_WHITE);
-					break;
 				case eDisplayColor.Grey:
 					m_BackgroundButton.SetMode(MODE_GREY);
+					break;
+				case eDisplayColor.White:
+					m_BackgroundButton.SetMode(MODE_WHITE);
 					break;
 				case eDisplayColor.Yellow:
 					m_BackgroundButton.SetMode(MODE_YELLOW);

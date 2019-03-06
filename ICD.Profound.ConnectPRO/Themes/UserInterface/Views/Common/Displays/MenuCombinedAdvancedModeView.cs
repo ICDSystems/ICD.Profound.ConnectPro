@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Views;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 {
+	[ViewBinding(typeof(IMenuCombinedAdvancedModeView))]
 	public sealed partial class MenuCombinedAdvancedModeView : AbstractUiView, IMenuCombinedAdvancedModeView
 	{
 		public event EventHandler OnSimpleModeButtonPressed;

@@ -1,6 +1,7 @@
 ﻿using System;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -8,6 +9,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Displays
 {
+	[PresenterBinding(typeof(IReferencedAdvancedDisplayPresenter))]
 	public sealed class ReferencedAdvancedDisplayPresenter : AbstractUiComponentPresenter<IReferencedAdvancedDisplayView>, IReferencedAdvancedDisplayPresenter
 	{
 		public event EventHandler OnDisplayPressed;
@@ -29,7 +31,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			m_RefreshSection.Enter();
 			try
 			{
-				// todo ?
 				view.SetDisplayColor(Model.Color);
 				view.SetDisplayIcon(Model.Icon);
 				view.SetDisplaySourceText(Model.SourceName);

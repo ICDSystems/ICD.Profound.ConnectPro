@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Extensions;
+using ICD.Connect.Routing.Endpoints.Destinations;
+using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -9,15 +14,22 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Displays
 {
-	public sealed class MenuCombinedAdvancedModePresenter : AbstractUiPresenter<IMenuCombinedAdvancedModeView>, IMenuCombinedAdvancedModePresenter
+	[PresenterBinding(typeof(IMenuCombinedAdvancedModePresenter))]
+	public sealed class MenuCombinedAdvancedModePresenter : AbstractDisplaysPresenter<IMenuCombinedAdvancedModeView>, IMenuCombinedAdvancedModePresenter
 	{
+		public event EventHandler OnSimpleModePressed;
+
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly ReferencedAdvancedDisplayPresenterFactory m_PresenterFactory;
+		private readonly List<MenuDisplaysPresenterDisplay> m_Displays;
+
+		protected override List<MenuDisplaysPresenterDisplay> Displays { get { return m_Displays; } }
 
 		public MenuCombinedAdvancedModePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
 			m_PresenterFactory = new ReferencedAdvancedDisplayPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
+			m_Displays = new List<MenuDisplaysPresenterDisplay>();
 		}
 
 		protected override void Refresh(IMenuCombinedAdvancedModeView view)
@@ -27,8 +39,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			m_RefreshSection.Enter();
 			try
 			{
-				// todo 
-				m_PresenterFactory.BuildChildren(null);
+				foreach (var presenter in m_PresenterFactory.BuildChildren(Displays))
+				{
+					presenter.ShowView(true);
+				}
+
+				view.SetRouteSummaryButtonEnabled(true);
+				view.SetSimpleModeButtonEnabled(true);
 			}
 			finally
 			{
@@ -39,6 +56,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		private IEnumerable<IReferencedAdvancedDisplayView> ItemFactory(ushort count)
 		{
 			return GetView().GetChildComponentViews(ViewFactory, count);
+		}
+
+		public override void SetRoom(IConnectProRoom room)
+		{
+			int displayCount = room == null ? 0 : room.Routing.GetDisplayDestinations().Count();
+
+			// remake displays list
+			m_Displays.Clear();
+			m_Displays.AddRange(Enumerable.Range(0, displayCount).Select(i => new MenuDisplaysPresenterDisplay()));
+
+			base.SetRoom(room);
 		}
 
 		#region View Callbacks
@@ -61,12 +89,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private void ViewOnSimpleModeButtonPressed(object sender, EventArgs e)
 		{
-			Navigation.NavigateTo<IMenuCombinedSimpleModePresenter>();
+			OnSimpleModePressed.Raise(this);
 		}
 
 		private void ViewOnRouteSummaryButtonPressed(object sender, EventArgs e)
 		{
-			Navigation.NavigateTo<MenuRouteSummaryPresenter>();
+			Navigation.NavigateTo<IMenuRouteSummaryPresenter>();
 		}
 
 		#endregion
@@ -75,12 +103,32 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private void Subscribe(IReferencedAdvancedDisplayPresenter presenter)
 		{
-			throw new NotImplementedException();
+			presenter.OnDisplayPressed += PresenterOnDisplayPressed;
+			presenter.OnDisplaySpeakerPressed += PresenterOnDisplaySpeakerPressed;
 		}
 
 		private void Unsubscribe(IReferencedAdvancedDisplayPresenter presenter)
 		{
-			throw new NotImplementedException();
+			presenter.OnDisplayPressed -= PresenterOnDisplayPressed;
+			presenter.OnDisplaySpeakerPressed -= PresenterOnDisplaySpeakerPressed;
+		}
+
+		private void PresenterOnDisplayPressed(object sender, EventArgs e)
+		{
+			var presenter = sender as IReferencedAdvancedDisplayPresenter;
+			if (presenter == null || presenter.Model == null)
+				return;
+
+			DisplayButtonPressed(presenter.Model);
+		}
+		
+		private void PresenterOnDisplaySpeakerPressed(object sender, EventArgs e)
+		{
+			var presenter = sender as IReferencedAdvancedDisplayPresenter;
+			if (presenter == null || presenter.Model == null)
+				return;
+
+			DisplaySpeakerButtonPressed(presenter.Model);
 		}
 
 		#endregion

@@ -16,6 +16,7 @@ using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
+using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Controls;
 using ICD.Connect.Routing.Endpoints.Destinations;
@@ -76,6 +77,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private IConnectProRoom m_Room;
 		private DefaultVisibilityNode m_RootVisibility;
 		private ISource m_SelectedSource;
+		private bool m_CombinedAdvancedMode;
 
 		#region Properties
 
@@ -84,6 +86,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		public IConnectProRoom Room { get { return m_Room; } }
 
 		object IUserInterface.Target { get { return Panel; } }
+
+		public bool CombinedAdvancedMode
+		{
+			get { return m_CombinedAdvancedMode; } 
+			set 
+			{
+				if (m_CombinedAdvancedMode == value)
+					return;
+
+				m_CombinedAdvancedMode = value;
+				UpdateMeetingPresentersVisibility();
+			}
+		}
 
 		#endregion
 
@@ -131,6 +146,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		{
 			// Only allow one of the start/end buttons to be visible at any given time
 			m_RootVisibility = new DefaultVisibilityNode(m_NavigationController.LazyLoadPresenter<IStartMeetingPresenter>());
+
+			IVisibilityNode displaysVisibility = new SingleVisibilityNode();
+			displaysVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>());
+			displaysVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>());
+			displaysVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>());
+
+			m_RootVisibility.AddNode(displaysVisibility);
 
 			// Video Conference node
 			IVisibilityNode videoConferencingVisibility = new SingleVisibilityNode();
@@ -289,10 +311,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				m_RoutingSection.Leave();
 			}
 
-			if (m_Room.Routing.IsDualDisplayRoom)
-				HandleSelectedSourceDualDisplay(source);
+			if (m_Room.IsCombineRoom())
+			{
+				if (CombinedAdvancedMode)
+					HandleSelectedSourceCombinedAdvancedMode(source);
+				else
+					HandleSelectedSourceCombinedSimpleMode(source);
+			}
 			else
-				HandleSelectedSourceSingleDisplay(source);
+			{
+				if (m_Room.Routing.IsDualDisplayRoom)
+					HandleSelectedSourceDualDisplay(source);
+				else
+					HandleSelectedSourceSingleDisplay(source);
+			}
 		}
 
 		/// <summary>
@@ -360,6 +392,71 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			}
 
 			SetSelectedSource(null);
+		}
+
+		/// <summary>
+		/// In combined simple mode we route the source immediately.
+		/// </summary>
+		/// <param name="source"></param>
+		private void HandleSelectedSourceCombinedSimpleMode(ISource source)
+		{
+			
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			// Is the source already routed?     
+			if (m_RoutingSection.Execute(() => m_ActiveVideo.Any(kvp => kvp.Value.Contains(source))))
+			{
+				ShowSourceContextualMenu(source, false);
+			}
+			else
+			{
+				SetProcessingSource(source);
+
+				// Show the context menu before routing for UX
+				ShowSourceContextualMenu(source, false);
+
+				m_Room.Routing.RouteAllDisplays(source);
+			}
+
+			SetSelectedSource(null);
+		}
+
+		private void HandleSelectedSourceCombinedAdvancedMode(ISource source)
+		{
+			// todo, copied from dual display, make it unique to combined advanced mode?
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			IDeviceBase device = m_Room.Core.Originators.GetChild<IDeviceBase>(source.Device);
+			IConferenceDeviceControl dialer = device.Controls.GetControl<IConferenceDeviceControl>();
+
+			// Edge case - route the codec to both displays and open the context menu
+			if (dialer != null && dialer.Supports.HasFlag(eCallType.Video))
+			{
+				// Show the context menu before routing for UX
+				ShowSourceContextualMenu(source, false);
+
+				IRouteSourceControl sourceControl = m_Room.Core.GetControl<IRouteSourceControl>(source.Device, source.Control);
+				m_Room.Routing.RouteVtc(sourceControl);
+			}
+			// Edge case - open the audio conferencing context menu
+			else if (dialer != null && dialer.Supports.HasFlag(eCallType.Audio))
+			{
+				// Show the context menu before routing for UX
+				ShowSourceContextualMenu(source, false);
+
+				IRouteSourceControl sourceControl = m_Room.Core.GetControl<IRouteSourceControl>(source.Device, source.Control);
+				m_Room.Routing.RouteAtc(sourceControl);
+			}
+			// Typical case - continue routing
+			else
+			{
+				SetSelectedSource(source);
+				return;
+			}
+
+			m_SourceSelectionTimeout.Reset(SOURCE_SELECTION_TIMEOUT);
 		}
 
 		/// <summary>
@@ -663,6 +760,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 				m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().SelectedSource = m_SelectedSource;
 				m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().SelectedSource = m_SelectedSource;
+				m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>().SelectedSource = m_SelectedSource;
+				m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>().SelectedSource = m_SelectedSource;
 
 				m_SourceSelectionTimeout.Reset(SOURCE_SELECTION_TIMEOUT);
 			}
@@ -728,10 +827,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_NavigationController.LazyLoadPresenter<IStartMeetingPresenter>().ShowView(!isInMeeting);
 			m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>().ShowView(isInMeeting);
 
-			bool dualDisplays = m_Room != null && m_Room.Routing.IsDualDisplayRoom;
+			bool combinedRoom = m_Room != null && m_Room.IsCombineRoom();
+			bool dualDisplays = m_Room != null && !m_Room.IsCombineRoom() && m_Room.Routing.IsDualDisplayRoom;
+			bool combineAdvanced = m_Room != null && combinedRoom && CombinedAdvancedMode;
+			bool combineSimple = m_Room != null && combinedRoom && !CombinedAdvancedMode;
 
 			m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().ShowView(true);
 			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().ShowView(dualDisplays);
+			m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>().ShowView(combineAdvanced);
+			m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>().ShowView(combineSimple);
 		}
 
 		/// <summary>
@@ -774,8 +878,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 					videoChange = UpdateActiveVideo();
 
 				if (audioChange || videoChange)
+				{
 					m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>()
 					                      .SetRouting(m_DisplaysActiveVideo, m_ActiveAudio);
+					m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>()
+					                      .SetRouting(m_DisplaysActiveVideo, m_ActiveAudio);
+					m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>()
+					                      .SetRouting(m_DisplaysActiveVideo, m_ActiveAudio);
+				}
 			}
 			finally
 			{
@@ -940,6 +1050,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			Subscribe(m_NavigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>());
 			Subscribe(m_NavigationController.LazyLoadPresenter<IAtcIncomingCallPresenter>());
+
+			Subscribe(m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>());
+			Subscribe(m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>());
 		}
 
 		/// <summary>
@@ -952,6 +1065,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>());
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<IAtcIncomingCallPresenter>());
+
+			Unsubscribe(m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>());
+			Unsubscribe(m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>());
 		}
 
 		#region Source Select Callbacks
@@ -995,7 +1111,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="presenter"></param>
 		private void Subscribe(IMenuDisplaysPresenter presenter)
 		{
-			presenter.OnDestinationPressed += MenuDisplaysPresenterOnDestinationPressed;
+			presenter.OnDestinationPressed += DisplaysPresenterOnDestinationPressed;
 		}
 
 		/// <summary>
@@ -1004,7 +1120,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="presenter"></param>
 		private void Unsubscribe(IMenuDisplaysPresenter presenter)
 		{
-			presenter.OnDestinationPressed -= MenuDisplaysPresenterOnDestinationPressed;
+			presenter.OnDestinationPressed -= DisplaysPresenterOnDestinationPressed;
 		}
 
 		/// <summary>
@@ -1013,7 +1129,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="sender"></param>
 		/// <param name="routedSource"></param>
 		/// <param name="destination"></param>
-		private void MenuDisplaysPresenterOnDestinationPressed(object sender, ISource routedSource, IDestination destination)
+		private void DisplaysPresenterOnDestinationPressed(object sender, ISource routedSource, IDestination destination)
 		{
 			HandleSelectedDisplay(routedSource, destination);
 		}
@@ -1080,6 +1196,44 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				return;
 
 			HandleSelectedSource(source);
+		}
+
+		#endregion
+
+		#region Combined Display Presenters Callbacks
+
+		private void Subscribe(IMenuCombinedAdvancedModePresenter presenter)
+		{
+			presenter.OnSimpleModePressed += PresenterOnSimpleModePressed;
+			presenter.OnDestinationPressed += DisplaysPresenterOnDestinationPressed;
+		}
+
+		private void Unsubscribe(IMenuCombinedAdvancedModePresenter presenter)
+		{
+			presenter.OnSimpleModePressed -= PresenterOnSimpleModePressed;
+			presenter.OnDestinationPressed -= DisplaysPresenterOnDestinationPressed;
+		}
+		
+		private void Subscribe(IMenuCombinedSimpleModePresenter presenter)
+		{
+			presenter.OnAdvancedModePressed += PresenterOnAdvancedModePressed;
+			presenter.OnDestinationPressed += DisplaysPresenterOnDestinationPressed;
+		}
+
+		private void Unsubscribe(IMenuCombinedSimpleModePresenter presenter)
+		{
+			presenter.OnAdvancedModePressed -= PresenterOnAdvancedModePressed;
+			presenter.OnDestinationPressed -= DisplaysPresenterOnDestinationPressed;
+		}
+		
+		private void PresenterOnSimpleModePressed(object sender, EventArgs e)
+		{
+			CombinedAdvancedMode = false;
+		}
+
+		private void PresenterOnAdvancedModePressed(object sender, EventArgs e)
+		{
+			CombinedAdvancedMode = true;
 		}
 
 		#endregion

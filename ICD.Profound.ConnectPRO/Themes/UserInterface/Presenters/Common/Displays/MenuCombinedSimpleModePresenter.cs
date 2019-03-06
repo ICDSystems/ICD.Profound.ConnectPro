@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using ICD.Common.Utils;
-using ICD.Connect.UI.Mvp.Presenters;
+using ICD.Common.Utils.Extensions;
+using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
@@ -9,13 +11,23 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Displays
 {
-	public sealed class MenuCombinedSimpleModePresenter : AbstractUiPresenter<IMenuCombinedSimpleModeView>, IMenuCombinedSimpleModePresenter
+	[PresenterBinding(typeof(IMenuCombinedSimpleModePresenter))]
+	public sealed class MenuCombinedSimpleModePresenter : AbstractDisplaysPresenter<IMenuCombinedSimpleModeView>, IMenuCombinedSimpleModePresenter
 	{
+		public event EventHandler OnAdvancedModePressed;
+
 		private readonly SafeCriticalSection m_RefreshSection;
+		private readonly MenuDisplaysPresenterDisplay m_Display;
+
+		protected override List<MenuDisplaysPresenterDisplay> Displays
+		{
+			get { return m_Display.Yield().ToList(1); }
+		}
 
 		public MenuCombinedSimpleModePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
+			m_Display = new MenuDisplaysPresenterDisplay();
 		}
 
 		protected override void Refresh(IMenuCombinedSimpleModeView view)
@@ -28,21 +40,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				view.SetAdvancedModeEnabled(true);
 
 				// TODO
-				view.SetDisplayIcon(Icons.GetDisplayIcon("videoConferencing", eDisplayColor.Grey));
-				view.SetDisplayLine1Text("Line 1");
-				view.SetDisplayLine2Text("Line 2");
-				view.SetDisplaySourceText("Source");
-				view.SetDisplaySpeakerButtonActive(true);
+				view.SetDisplayIcon(m_Display.Icon);
+				view.SetDisplayLine1Text(m_Display.Line1);
+				view.SetDisplayLine2Text(m_Display.Line2);
+				view.SetDisplaySourceText(m_Display.SourceName);
+				view.SetDisplaySpeakerButtonActive(m_Display.ShowSpeaker);
 			}
 			finally
 			{
 				m_RefreshSection.Leave();
 			}
-		}
-
-		public override void SetRoom(IConnectProRoom room)
-		{
-			base.SetRoom(room);
 		}
 
 		#region View Callbacks
@@ -67,18 +74,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private void ViewOnAdvancedModeButtonPressed(object sender, EventArgs args)
 		{
-			Navigation.NavigateTo<IMenuCombinedAdvancedModePresenter>();
+			OnAdvancedModePressed.Raise(this);
 		}
 
 		private void ViewOnDisplayButtonPressed(object sender, EventArgs args)
 		{
-			// show control page if source has one
-			throw new NotImplementedException();
+			DisplayButtonPressed(m_Display);
 		}
 
 		private void ViewOnDisplaySpeakerButtonPressed(object sender, EventArgs args)
 		{
-			// should be green if any audio is routed at all
+			DisplaySpeakerButtonPressed(m_Display);
 		}
 
 		#endregion

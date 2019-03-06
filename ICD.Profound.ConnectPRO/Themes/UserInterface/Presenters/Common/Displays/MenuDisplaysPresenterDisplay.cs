@@ -26,6 +26,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		private bool m_RoomCombine;
 		private bool m_HasControl;
 		private bool m_ShowSpeaker;
+		private bool m_RoomHasAudio;
 		private string m_Icon;
 
 		#region Properties
@@ -37,7 +38,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		public string Icon { get { return m_Icon; } }
 
-		public bool ShowSpeaker { get { return m_ShowSpeaker; } }
+		public bool ShowSpeaker { get { return m_ShowSpeaker && m_RoomHasAudio; } }
 
 		public bool AudioActive { get { return m_AudioActive; } }
 
@@ -136,6 +137,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 			// Update the labels
 			UpdateLabels();
+
+			return true;
+		}
+
+		public bool SetRoomHasAudio(bool roomHasAudio)
+		{
+			if (roomHasAudio == m_RoomHasAudio)
+				return false;
+
+			m_RoomHasAudio = roomHasAudio;
+			UpdateShowSpeaker();
 
 			return true;
 		}
