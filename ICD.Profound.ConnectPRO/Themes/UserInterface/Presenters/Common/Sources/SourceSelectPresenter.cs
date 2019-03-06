@@ -134,7 +134,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			return room == null
 				       ? Enumerable.Empty<ISource>()
 					   : room.Routing
-				             .GetCoreSources()
+				             .GetSources()
 				             .Where(s =>
 				                    {
 					                    ConnectProSource source = s as ConnectProSource;

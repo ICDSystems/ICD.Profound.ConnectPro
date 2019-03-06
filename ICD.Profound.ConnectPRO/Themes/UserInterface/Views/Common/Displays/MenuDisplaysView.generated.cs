@@ -36,7 +36,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 112
+				DigitalVisibilityJoin = 114
 			};
 
 			m_Display1BackgroundButton = new VtProAdvancedButton(panel, m_Subpage)

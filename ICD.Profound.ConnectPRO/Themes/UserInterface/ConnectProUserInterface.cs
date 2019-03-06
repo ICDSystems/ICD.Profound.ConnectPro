@@ -828,7 +828,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>().ShowView(isInMeeting);
 
 			bool combinedRoom = m_Room != null && m_Room.IsCombineRoom();
-			bool dualDisplays = m_Room != null && !m_Room.IsCombineRoom() && m_Room.Routing.IsDualDisplayRoom;
+			bool dualDisplays = m_Room != null && !combinedRoom && m_Room.Routing.IsDualDisplayRoom;
 			bool combineAdvanced = m_Room != null && combinedRoom && CombinedAdvancedMode;
 			bool combineSimple = m_Room != null && combinedRoom && !CombinedAdvancedMode;
 

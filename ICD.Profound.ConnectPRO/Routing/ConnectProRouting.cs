@@ -233,6 +233,17 @@ namespace ICD.Profound.ConnectPRO.Routing
 		}
 
 		/// <summary>
+		/// Returns all of the sources available in the core.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<ISource> GetSources()
+		{
+			return m_Room.Originators
+			             .GetInstancesRecursive<ISource>()
+			             .OrderBy(s => s.Order);
+		}
+
+		/// <summary>
 		/// Gets the room for the given source.
 		/// </summary>
 		/// <param name="source"></param>
