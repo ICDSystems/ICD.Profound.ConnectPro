@@ -144,11 +144,13 @@
     <Compile Include="Themes\OsdInterface\Views\Welcome\ReferencedScheduleView.generated.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\AudioConference\IAtcBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\AudioConference\IAtcIncomingCallPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IMenuCombinedAdvancedModePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IMenuCombinedSimpleModePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IMenuDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IMenuRouteSummaryPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IReferencedAdvancedDisplayPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IReferencedRouteListItemPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\ICameraControlPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmLeaveCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmEndMeetingPresenter.cs" />
@@ -304,6 +306,7 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmEndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmLeaveCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmSplashPowerPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Displays\AbstractDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\MenuCombinedAdvancedModePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\MenuCombinedSimpleModePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\MenuDisplaysPresenter.cs" />
@@ -311,6 +314,8 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\MenuRouteSummaryPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\ReferencedAdvancedDisplayPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\ReferencedAdvancedDisplayPresenterFactory.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Displays\ReferencedRouteListItemPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Displays\ReferencedRouteListItemPresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\EndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\HeaderPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Options\AbstractOptionPresenter.cs" />
@@ -407,8 +412,12 @@
     <Compile Include="Themes\UserInterface\Views\Common\Displays\MenuCombinedSimpleModeView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\MenuDisplaysView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\MenuDisplaysView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Displays\MenuRouteSummaryView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Displays\MenuRouteSummaryView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\ReferencedAdvancedDisplayView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\ReferencedAdvancedDisplayView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Displays\ReferencedRouteListItemView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Displays\ReferencedRouteListItemView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\EndMeetingView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\EndMeetingView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\HeaderView.cs" />

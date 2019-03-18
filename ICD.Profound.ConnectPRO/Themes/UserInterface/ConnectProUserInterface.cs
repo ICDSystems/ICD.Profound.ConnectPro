@@ -96,6 +96,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 					return;
 
 				m_CombinedAdvancedMode = value;
+				SetSelectedSource(null);
 				UpdateMeetingPresentersVisibility();
 			}
 		}
@@ -400,7 +401,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="source"></param>
 		private void HandleSelectedSourceCombinedSimpleMode(ISource source)
 		{
-			
 			if (source == null)
 				throw new ArgumentNullException("source");
 
@@ -885,6 +885,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 					                      .SetRouting(m_DisplaysActiveVideo, m_ActiveAudio);
 					m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>()
 					                      .SetRouting(m_DisplaysActiveVideo, m_ActiveAudio);
+					m_NavigationController.LazyLoadPresenter<IMenuRouteSummaryPresenter>()
+					                      .SetRouting(m_DisplaysActiveVideo);
 				}
 			}
 			finally

@@ -26,6 +26,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays
 		void SetAdvancedModeEnabled(bool enabled);
 
 		/// <summary>
+		/// Sets the color for the button.
+		/// </summary>
+		/// <param name="color"></param>
+		void SetDisplayColor(eDisplayColor color);
+
+		/// <summary>
 		/// Sets the icon for the button.
 		/// </summary>
 		/// <param name="icon"></param>

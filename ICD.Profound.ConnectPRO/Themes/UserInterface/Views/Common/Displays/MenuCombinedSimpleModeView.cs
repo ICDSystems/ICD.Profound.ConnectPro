@@ -2,6 +2,7 @@
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
@@ -9,6 +10,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 	[ViewBinding(typeof(IMenuCombinedSimpleModeView))]
 	public sealed partial class MenuCombinedSimpleModeView : AbstractUiView, IMenuCombinedSimpleModeView
 	{
+		private const ushort MODE_GREY = 0;
+		private const ushort MODE_WHITE = 1;
+		private const ushort MODE_YELLOW = 2;
+		private const ushort MODE_GREEN = 3;
+
 		public event EventHandler OnAdvancedModeButtonPressed;
 		public event EventHandler OnDisplayButtonPressed;
 		public event EventHandler OnDisplaySpeakerButtonPressed;
@@ -20,6 +26,31 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		public void SetAdvancedModeEnabled(bool enabled)
 		{
 			m_AdvancedModeButton.Enable(enabled);
+		}
+
+		/// <summary>
+		/// Sets the color style of the entire view.
+		/// </summary>
+		/// <param name="color"></param>
+		public void SetDisplayColor(eDisplayColor color)
+		{
+			switch (color)
+			{
+				case eDisplayColor.White:
+					m_DisplayButton.SetMode(MODE_WHITE);
+					break;
+				case eDisplayColor.Grey:
+					m_DisplayButton.SetMode(MODE_GREY);
+					break;
+				case eDisplayColor.Yellow:
+					m_DisplayButton.SetMode(MODE_YELLOW);
+					break;
+				case eDisplayColor.Green:
+					m_DisplayButton.SetMode(MODE_GREEN);
+					break;
+				default:
+					throw new ArgumentOutOfRangeException("color");
+			}
 		}
 
 		public void SetDisplayIcon(string icon)

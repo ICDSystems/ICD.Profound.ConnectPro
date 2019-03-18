@@ -42,6 +42,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				foreach (var presenter in m_PresenterFactory.BuildChildren(Displays))
 				{
 					presenter.ShowView(true);
+					presenter.Refresh();
 				}
 
 				view.SetRouteSummaryButtonEnabled(true);

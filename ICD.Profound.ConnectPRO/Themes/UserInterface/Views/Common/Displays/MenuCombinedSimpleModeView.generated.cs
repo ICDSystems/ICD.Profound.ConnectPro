@@ -12,7 +12,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 	{
 		private VtProSubpage m_Subpage;
 		private VtProButton m_AdvancedModeButton;
-		private VtProButton m_DisplayButton;
+		private VtProAdvancedButton m_DisplayButton;
 		private VtProButton m_SpeakerButton;
 		private VtProDynamicIconObject m_DisplayIcon;
 		private VtProSimpleLabel m_SourceLabel;
@@ -38,9 +38,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 				DigitalEnableJoin = 695
 			};
 
-			m_DisplayButton = new VtProButton(panel, m_Subpage)
+			m_DisplayButton = new VtProAdvancedButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 311
+				DigitalPressJoin = 311,
+				AnalogModeJoin = 302
 			};
 
 			m_SpeakerButton = new VtProButton(panel, m_Subpage)
