@@ -2,6 +2,8 @@
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
+using ICD.Connect.Partitioning;
+using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.UI.Attributes;
@@ -45,9 +47,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		public void SetRouting(Dictionary<IDestination, IcdHashSet<ISource>> routing)
 		{
-			IEnumerable<RouteListItem> models = routing.SelectMany(d => d.Value.Select(s => new RouteListItem(null, d.Key, s)));
+			IEnumerable<RouteListItem> models = routing.SelectMany(d => d.Value.Select(s => GetListItem(d.Key, s)));
 			m_PresenterFactory.BuildChildren(models);
 			RefreshIfVisible();
+		}
+
+		private RouteListItem GetListItem(IDestination destination, ISource source)
+		{
+			IRoom room = Room.GetRoomsRecursive().FirstOrDefault(r => r.Originators.Contains(destination.Id));
+			return new RouteListItem(room, destination, source);
 		}
 
 		private IEnumerable<IReferencedRouteListItemView> ItemFactory(ushort count)
