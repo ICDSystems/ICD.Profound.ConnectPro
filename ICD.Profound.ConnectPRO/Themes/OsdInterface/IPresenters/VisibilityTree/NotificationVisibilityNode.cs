@@ -32,7 +32,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.VisibilityTree
 				m_HelloPresenter.ShowView(true);
 
 			// if main view deactivates, hide the HelloPresenter if a notification is showing
-			if (!args.Data && this.GetIsVisible())
+			if (!args.Data && IsVisible)
 				m_HelloPresenter.ShowView(false);
 		}
 
@@ -45,7 +45,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.VisibilityTree
 		{
 			base.PresenterOnVisibilityChanged(sender, args);
 			
-			if (!args.Data && !this.GetIsVisible())
+			if (!args.Data && !IsVisible)
 				m_HelloPresenter.ShowView(true);
 
 			if (args.Data)
@@ -65,7 +65,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.VisibilityTree
 		{
 			base.NodeOnChildVisibilityChanged(parent, presenter, visibility);
 
-			if (!visibility && !this.GetIsVisible())
+			if (!visibility && !IsVisible)
 				m_HelloPresenter.ShowView(true);
 
 			if (visibility)
