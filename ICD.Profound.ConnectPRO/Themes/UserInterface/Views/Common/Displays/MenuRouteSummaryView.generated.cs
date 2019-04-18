@@ -26,7 +26,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 			m_RouteList = new VtProSubpageReferenceList(20, panel as IPanelDevice, m_Subpage)
 			{
 				SerialJoinIncrement = 3,
-				MaxSize = 12
+				MaxSize = 200
 			};
 
 			m_CloseButton = new VtProButton(panel, m_Subpage)
