@@ -10,7 +10,6 @@ using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Devices;
-using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -98,16 +97,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 			{
 				m_RefreshSection.Leave();
 			}
-		}
-
-		/// <summary>
-		/// Gets the audio dialer to monitor for incoming calls.
-		/// </summary>
-		/// <returns></returns>
-		[CanBeNull]
-		private IEnumerable<IConferenceDeviceControl> GetAudioDialers(IConnectProRoom room)
-		{
-			return room.GetControlsRecursive<IConferenceDeviceControl>().Where(c => c.Supports == eCallType.Audio);
 		}
 
 		/// <summary>
