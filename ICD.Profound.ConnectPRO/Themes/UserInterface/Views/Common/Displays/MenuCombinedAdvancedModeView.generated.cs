@@ -27,7 +27,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 				DigitalJoinIncrement = 3,
 				SerialJoinIncrement = 4,
 				AnalogJoinIncrement = 1,
-				MaxSize = 7
+				MaxSize = 100
 			};
 
 			m_SimpleModeButton = new VtProButton(panel, m_Subpage)

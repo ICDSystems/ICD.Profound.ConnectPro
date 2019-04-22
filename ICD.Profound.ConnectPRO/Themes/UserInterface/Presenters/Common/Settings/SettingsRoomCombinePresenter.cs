@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Partitioning.Cells;
@@ -269,9 +270,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			m_PartitionSection.Enter();
 			try
 			{
-				foreach (var kvp in m_SelectedPartitionStates.ToArray())
-					m_SubscribedPartitionManager.SetPartition<ConnectProCombineRoom>(kvp.Key, kvp.Value);
-
+				IcdHashSet<IPartition> open = m_SelectedPartitionStates.Where(kvp => kvp.Value).Select(kvp => kvp.Key).ToIcdHashSet();
+				IcdHashSet<IPartition> closed = m_SelectedPartitionStates.Where(kvp => !kvp.Value).Select(kvp => kvp.Key).ToIcdHashSet();
+				m_SubscribedPartitionManager.CombineRooms(open, closed, () => new ConnectProCombineRoom());
 				m_SelectedPartitionStates.Clear();
 			}
 			finally
