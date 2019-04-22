@@ -114,6 +114,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 						.FirstOrDefault(s => s.GetIsActive());
 		}
 
+		[CanBeNull]
 		private IConference GetActiveConference()
 		{
 			return ActiveConferenceControl == null
@@ -156,13 +157,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 
 		private void RoutingOnAudioSourceChanged(object sender, EventArgs e)
 		{
-			ActiveConferenceControl = Room.Routing
-				.GetCachedActiveAudioSources()
-				.Select(s => Room.Core.Originators[s.Device] as IDevice)
-				.SelectMany(d => d == null 
-					? Enumerable.Empty<ITraditionalConferenceDeviceControl>() 
-					: d.Controls.GetControls<ITraditionalConferenceDeviceControl>())
-				.FirstOrDefault(c => c != null && c.Supports == eCallType.Audio);
+			ActiveConferenceControl =
+				Room == null
+					? null
+					: Room.Routing
+					      .GetCachedActiveAudioSources()
+					      .Select(s => Room.Core.Originators.GetChild<IDeviceBase>(s.Device))
+					      .SelectMany(d => d.Controls.GetControls<ITraditionalConferenceDeviceControl>())
+					      .FirstOrDefault(c => c != null && c.Supports == eCallType.Audio);
 		}
 
 		#endregion
@@ -284,7 +286,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 				return;
 
 			// DTMF
-			foreach (ITraditionalParticipant source in GetActiveConference().GetParticipants().Where(s => s.GetIsOnline()).OfType<ITraditionalParticipant>())
+			IConference conference = GetActiveConference();
+			IEnumerable<ITraditionalParticipant> participants =
+				conference == null
+					? Enumerable.Empty<ITraditionalParticipant>()
+					: conference.GetParticipants()
+					            .Where(s => s.GetIsOnline())
+					            .OfType<ITraditionalParticipant>();
+
+			foreach (ITraditionalParticipant source in participants)
 				source.SendDtmf(eventArgs.Data);
 
 			m_Builder.AppendCharacter(eventArgs.Data);
