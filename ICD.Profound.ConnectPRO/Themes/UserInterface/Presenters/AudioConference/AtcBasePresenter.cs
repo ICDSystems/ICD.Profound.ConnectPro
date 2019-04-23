@@ -10,7 +10,6 @@ using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Devices;
-using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -103,16 +102,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		}
 
 		/// <summary>
-		/// Gets the audio dialer to monitor for incoming calls.
-		/// </summary>
-		/// <returns></returns>
-		[CanBeNull]
-		private IEnumerable<IConferenceDeviceControl> GetAudioDialers(IConnectProRoom room)
-		{
-			return room.GetControlsRecursive<IConferenceDeviceControl>().Where(c => c.Supports == eCallType.Audio);
-		}
-
-		/// <summary>
 		/// Gets the active conference source.
 		/// </summary>
 		/// <returns></returns>
@@ -127,6 +116,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 						.FirstOrDefault(s => s.GetIsActive());
 		}
 
+		[CanBeNull]
 		private IConference GetActiveConference()
 		{
 			return ActiveConferenceControl == null
@@ -169,13 +159,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 
 		private void RoutingOnAudioSourceChanged(object sender, EventArgs e)
 		{
-			ActiveConferenceControl = Room.Routing
-				.GetCachedActiveAudioSources()
-				.Select(s => Room.Core.Originators[s.Device] as IDevice)
-				.SelectMany(d => d == null 
-					? Enumerable.Empty<ITraditionalConferenceDeviceControl>() 
-					: d.Controls.GetControls<ITraditionalConferenceDeviceControl>())
-				.FirstOrDefault(c => c != null && c.Supports == eCallType.Audio);
+			ActiveConferenceControl =
+				Room == null
+					? null
+					: Room.Routing
+					      .GetCachedActiveAudioSources()
+					      .Select(s => Room.Core.Originators.GetChild<IDeviceBase>(s.Device))
+					      .SelectMany(d => d.Controls.GetControls<ITraditionalConferenceDeviceControl>())
+					      .FirstOrDefault(c => c != null && c.Supports == eCallType.Audio);
 		}
 
 		#endregion
@@ -297,7 +288,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 				return;
 
 			// DTMF
-			foreach (ITraditionalParticipant source in GetActiveConference().GetParticipants().Where(s => s.GetIsOnline()).OfType<ITraditionalParticipant>())
+			IConference conference = GetActiveConference();
+			IEnumerable<ITraditionalParticipant> participants =
+				conference == null
+					? Enumerable.Empty<ITraditionalParticipant>()
+					: conference.GetParticipants()
+					            .Where(s => s.GetIsOnline())
+					            .OfType<ITraditionalParticipant>();
+
+			foreach (ITraditionalParticipant source in participants)
 				source.SendDtmf(eventArgs.Data);
 
 			m_Builder.AppendCharacter(eventArgs.Data);
