@@ -251,7 +251,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 
 		#endregion
 
-
 		#region View Callbacks
 
 		/// <summary>

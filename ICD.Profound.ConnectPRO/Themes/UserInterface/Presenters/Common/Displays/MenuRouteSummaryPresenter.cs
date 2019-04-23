@@ -2,7 +2,6 @@
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
-using ICD.Connect.Partitioning;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
