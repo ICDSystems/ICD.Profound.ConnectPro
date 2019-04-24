@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using ICD.Connect.Routing.Endpoints.Sources;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
+using ICD.Profound.ConnectPRO.Routing;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources
@@ -23,6 +23,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Source
 		/// Sets the sources that are currently routed to displays.
 		/// </summary>
 		/// <param name="routedSources"></param>
-		void SetRoutedSources(Dictionary<ISource, eSourceState> routedSources);
+		void SetRoutedSources(IDictionary<ISource, eSourceState> routedSources);
 	}
 }

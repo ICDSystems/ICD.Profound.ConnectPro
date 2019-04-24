@@ -6,6 +6,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.Routing;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
@@ -146,7 +147,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// Sets the sources that are currently routed to displays.
 		/// </summary>
 		/// <param name="routedSources"></param>
-		public void SetRoutedSources(Dictionary<ISource, eSourceState> routedSources)
+		public void SetRoutedSources(IDictionary<ISource, eSourceState> routedSources)
 		{
 			if (routedSources == null)
 				throw new ArgumentNullException("routedSources");

@@ -81,7 +81,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			base.SetRoom(room);
 		}
 
-		public void SetRouting(Dictionary<IDestination, IcdHashSet<ISource>> routing, IcdHashSet<ISource> activeAudio)
+		public void SetRouting(IDictionary<IDestination, IcdHashSet<ISource>> routing, IcdHashSet<ISource> activeAudio)
 		{
 			bool refresh = false;
 

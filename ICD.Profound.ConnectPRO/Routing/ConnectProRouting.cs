@@ -45,15 +45,28 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		public event EventHandler OnAudioSourceChanged;
 
+		/// <summary>
+		/// Raised when a source becomes routed for the first time or completely unrouted from all displays.
+		/// </summary>
+		public event EventHandler OnSourceRoutedChanged;
+
 		private readonly IConnectProRoom m_Room;
 		private readonly List<IDestination> m_Displays;
 		private readonly List<IDestination> m_AudioDestinations;
+		private readonly SafeCriticalSection m_CacheSection;
+
+		// Keeps track of the active routing states
 		private readonly Dictionary<IDestination, IcdHashSet<ISource>> m_VideoRoutingCache;
 		private readonly IcdHashSet<ISource> m_AudioRoutingCache;
-		private readonly SafeCriticalSection m_CacheSection;
+
+		// Keeps track of the processing state for each source.
+		private readonly Dictionary<ISource, eSourceState> m_SourceRoutedStates;
+		private readonly Dictionary<IDestination, ProcessingSourceInfo> m_ProcessingSources;
 
 		private IRoutingGraph m_SubscribedRoutingGraph;
 		private IPathFinder m_PathFinder;
+
+		#region Properties
 
 		/// <summary>
 		/// Gets the routing graph from the core.
@@ -67,6 +80,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		public bool IsDualDisplayRoom { get { return GetDisplayDestinations().Count() > 1; } }
 
+		#endregion
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -78,6 +93,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 			m_AudioDestinations = new List<IDestination>();
 			m_VideoRoutingCache = new Dictionary<IDestination, IcdHashSet<ISource>>();
 			m_AudioRoutingCache = new IcdHashSet<ISource>();
+			m_SourceRoutedStates = new Dictionary<ISource, eSourceState>();
+			m_ProcessingSources = new Dictionary<IDestination, ProcessingSourceInfo>();
 			m_CacheSection = new SafeCriticalSection();
 
 			Subscribe(room);
@@ -96,41 +113,24 @@ namespace ICD.Profound.ConnectPRO.Routing
 			Unsubscribe(m_SubscribedRoutingGraph);
 		}
 
+		#region Caching
+
 		private void UpdateRoutingCache(eConnectionType type)
 		{
-			bool videoChange = false;
-			bool audioChange = false;
+			// Build a map of video destination => source
+			if (type.HasFlag(eConnectionType.Video))
+				UpdateVideoRoutingCache();
 
-			m_CacheSection.Enter();
-
-			try
-			{
-				// Build a map of video destination => source
-				if (type.HasFlag(eConnectionType.Video))
-					videoChange = UpdateVideoRoutingCache();
-
-				// Get a list of sources going to audio destinations
-				if (type.HasFlag(eConnectionType.Audio))
-					audioChange = UpdateAudioRoutingCache();
-			}
-			finally
-			{
-				m_CacheSection.Leave();
-			}
-
-			if (videoChange)
-				OnDisplaySourceChanged.Raise(this);
-
-			if (audioChange)
-				OnAudioSourceChanged.Raise(this);
+			// Get a list of sources going to audio destinations
+			if (type.HasFlag(eConnectionType.Audio))
+				UpdateAudioRoutingCache();
 		}
 
 		/// <summary>
 		/// Updates the current audio routing cache to match the routed sources.
-		/// Returns true if there are any changes.
 		/// </summary>
 		/// <returns></returns>
-		private bool UpdateAudioRoutingCache()
+		private void UpdateAudioRoutingCache()
 		{
 			m_CacheSection.Enter();
 
@@ -138,25 +138,24 @@ namespace ICD.Profound.ConnectPRO.Routing
 			{
 				IcdHashSet<ISource> activeAudio = GetActiveAudioSources().ToIcdHashSet();
 				if (activeAudio.SetEquals(m_AudioRoutingCache))
-					return false;
+					return;
 
 				m_AudioRoutingCache.Clear();
 				m_AudioRoutingCache.AddRange(activeAudio);
-
-				return true;
 			}
 			finally
 			{
 				m_CacheSection.Leave();
 			}
+
+			OnAudioSourceChanged.Raise(this);
 		}
 
 		/// <summary>
 		/// Updates the current video routing cache to match the routed sources.
-		/// Returns true if there are any changes.
 		/// </summary>
 		/// <returns></returns>
-		private bool UpdateVideoRoutingCache()
+		private void UpdateVideoRoutingCache()
 		{
 			m_CacheSection.Enter();
 
@@ -167,7 +166,116 @@ namespace ICD.Profound.ConnectPRO.Routing
 					.ToDictionary(destination => destination,
 								  destination => GetActiveVideoSources(destination).ToIcdHashSet());
 
-				return UpdateVideoRoutingCache(routing);
+				bool change = false;
+				foreach (KeyValuePair<IDestination, IcdHashSet<ISource>> kvp in routing)
+				{
+					IcdHashSet<ISource> cache;
+					if (!m_VideoRoutingCache.TryGetValue(kvp.Key, out cache))
+					{
+						cache = new IcdHashSet<ISource>();
+						m_VideoRoutingCache.Add(kvp.Key, cache);
+					}
+
+					if (cache.SetEquals(kvp.Value))
+						continue;
+
+					change = true;
+
+					cache.Clear();
+					cache.AddRange(kvp.Value);
+				}
+
+				// No change, break early
+				if (!change)
+					return;
+
+				// Remove routed items from the processing sources collection
+				foreach (KeyValuePair<IDestination, IcdHashSet<ISource>> kvp in m_VideoRoutingCache)
+				{
+					ProcessingSourceInfo processing = m_ProcessingSources.GetDefault(kvp.Key);
+					if (processing == null || processing.Source == null)
+						continue;
+
+					if (!kvp.Value.Contains(processing.Source))
+						continue;
+
+					processing.StopTimer();
+					processing.Source = null;
+				}
+
+				UpdateSourceRoutedStates();
+
+				// Now update the "faked" routing states for UX
+				foreach (KeyValuePair<IDestination, ProcessingSourceInfo> item in m_ProcessingSources.Where(kvp => kvp.Value != null))
+				{
+					IcdHashSet<ISource> sources;
+					if (!m_VideoRoutingCache.TryGetValue(item.Key, out sources))
+					{
+						sources = new IcdHashSet<ISource>();
+						m_VideoRoutingCache.Add(item.Key, sources);
+					}
+
+					if (item.Value.Source != null)
+						sources.Add(item.Value.Source);
+				}
+			}
+			finally
+			{
+				m_CacheSection.Leave();
+			}
+
+			OnDisplaySourceChanged.Raise(this);
+		}
+
+		private void UpdateSourceRoutedStates()
+		{
+			m_CacheSection.Enter();
+
+			try
+			{
+				// Build a map of video sources to their routed state
+				Dictionary<ISource, eSourceState> routedSources =
+					m_VideoRoutingCache.Values
+					                   .SelectMany(v => v)
+					                   .Distinct()
+					                   .ToDictionary(s => s, s => eSourceState.Active);
+
+				// A source may be processing for another display, so we override
+				foreach (ISource source in m_ProcessingSources.Values.Where(p => p != null && p.Source != null).Select(s => s.Source))
+					routedSources[source] = eSourceState.Processing;
+
+				if (routedSources.DictionaryEqual(m_SourceRoutedStates))
+					return;
+
+				m_SourceRoutedStates.Clear();
+				m_SourceRoutedStates.AddRange(routedSources);
+			}
+			finally
+			{
+				m_CacheSection.Leave();
+			}
+
+			OnSourceRoutedChanged.Raise(this);
+		}
+
+		#endregion
+
+		#region Processing Sources
+
+		/// <summary>
+		/// Clears the processing source for each display destination.
+		/// </summary>
+		public void ClearProcessingSources()
+		{
+			m_CacheSection.Enter();
+
+			try
+			{
+				foreach (ProcessingSourceInfo processing in m_ProcessingSources.Values.Where(p => p != null))
+					processing.Dispose();
+				m_ProcessingSources.Clear();
+
+				UpdateSourceRoutedStates();
 			}
 			finally
 			{
@@ -176,47 +284,94 @@ namespace ICD.Profound.ConnectPRO.Routing
 		}
 
 		/// <summary>
-		/// Updates the current video routing cache to match the given dictionary.
-		/// Returns true if there are any changes.
+		/// Clears the processing source for the display destination.
 		/// </summary>
-		/// <param name="routing"></param>
-		/// <returns></returns>
-		private bool UpdateVideoRoutingCache(Dictionary<IDestination, IcdHashSet<ISource>> routing)
+		private void ClearProcessingSource([NotNull] IDestination destination, [NotNull] ISource source)
 		{
-			if (routing == null)
-				throw new ArgumentNullException("routing");
+			if (destination == null)
+				throw new ArgumentNullException("destination");
 
-			bool output = false;
+			if (source == null)
+				throw new ArgumentNullException("source");
 
 			m_CacheSection.Enter();
 
 			try
 			{
-				foreach (KeyValuePair<IDestination, IcdHashSet<ISource>> kvp in routing)
-				{
-					IcdHashSet<ISource> cache;
-					if (!m_VideoRoutingCache.TryGetValue(kvp.Key, out cache))
-					{
-						cache = new IcdHashSet<ISource>();
-						m_VideoRoutingCache[kvp.Key] = cache;
-					}
+				ProcessingSourceInfo processing = m_ProcessingSources.GetDefault(destination);
+				if (processing == null || source != processing.Source)
+					return;
 
-					if (cache.SetEquals(kvp.Value))
-						continue;
+				processing.Source = null;
 
-					output = true;
-
-					cache.Clear();
-					cache.AddRange(kvp.Value);
-				}
+				UpdateSourceRoutedStates();
+				UpdateRoutingCache(eConnectionType.Video);
 			}
 			finally
 			{
 				m_CacheSection.Leave();
 			}
-
-			return output;
 		}
+
+		/// <summary>
+		/// Sets the processing source for the single display destination.
+		/// </summary>
+		/// <param name="source"></param>
+		public void SetProcessingSource([NotNull] ISource source)
+		{
+			IDestination destination = m_Room == null ? null : m_Room.Routing.GetDisplayDestinations().FirstOrDefault();
+			if (destination == null)
+				return;
+
+			SetProcessingSource(destination, source);
+		}
+
+		/// <summary>
+		/// Sets the processing source for the given destination.
+		/// </summary>
+		/// <param name="destination"></param>
+		/// <param name="source"></param>
+		public void SetProcessingSource([NotNull] IDestination destination, [NotNull] ISource source)
+		{
+			if (destination == null)
+				throw new ArgumentNullException("destination");
+
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			m_CacheSection.Enter();
+
+			try
+			{
+				ProcessingSourceInfo processing;
+				if (!m_ProcessingSources.TryGetValue(destination, out processing))
+				{
+					processing = new ProcessingSourceInfo(destination, ClearProcessingSource);
+					m_ProcessingSources.Add(destination, processing);
+				}
+
+				// No change
+				if (source == processing.Source)
+					return;
+
+				// Is the source already routed to the destination?
+				IcdHashSet<ISource> routed;
+				if (m_VideoRoutingCache.TryGetValue(destination, out routed) && routed.Contains(source))
+					return;
+
+				processing.ResetTimer();
+				processing.Source = source;
+
+				UpdateSourceRoutedStates();
+				UpdateRoutingCache(eConnectionType.Video);
+			}
+			finally
+			{
+				m_CacheSection.Leave();
+			}
+		}
+
+		#endregion
 
 		#region Sources
 
@@ -266,6 +421,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			             .FirstOrDefault();
 		}
 
+		[NotNull]
 		public IEnumerable<KeyValuePair<IDestination, IcdHashSet<ISource>>> GetCachedActiveVideoSources()
 		{
 			return
@@ -273,9 +429,54 @@ namespace ICD.Profound.ConnectPRO.Routing
 				                       m_VideoRoutingCache.ToDictionary(kvp => kvp.Key, kvp => new IcdHashSet<ISource>(kvp.Value)));
 		}
 
+		[NotNull]
 		public IEnumerable<ISource> GetCachedActiveAudioSources()
 		{
 			return m_CacheSection.Execute(() => m_AudioRoutingCache.ToArray(m_AudioRoutingCache.Count));
+		}
+
+		/// <summary>
+		/// Returns true if the given source is routed to any of the room destinations for the given connection flag.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="flag"></param>
+		/// <returns></returns>
+		public bool GetIsRoutedCached(ISource source, eConnectionType flag)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			if (!EnumUtils.HasSingleFlag(flag))
+				throw new ArgumentException("Connection type must have a single flag", "flag");
+
+			m_CacheSection.Enter();
+
+			try
+			{
+				switch (flag)
+				{
+					case eConnectionType.Audio:
+						return m_AudioRoutingCache.Contains(source);
+					case eConnectionType.Video:
+						return m_VideoRoutingCache.Any(kvp => kvp.Value.Contains(source));
+
+					default:
+						throw new ArgumentOutOfRangeException("flag");
+				}
+			}
+			finally
+			{
+				m_CacheSection.Leave();
+			}
+		}
+
+		/// <summary>
+		/// Returns the routed state for each source.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<KeyValuePair<ISource, eSourceState>> GetSourceRoutedStates()
+		{
+			return m_CacheSection.Execute(() => m_SourceRoutedStates.ToArray(m_SourceRoutedStates.Count));
 		}
 
 		#endregion
@@ -433,8 +634,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		/// <param name="source"></param>
 		/// <param name="destination"></param>
-		/// <param name="overrideAudio">When true routes audio, otherwise only routes audio if there is no active audio source</param>
-		public void RouteDualDisplay(ISource source, IDestination destination, bool overrideAudio)
+		public void RouteDualDisplay(ISource source, IDestination destination)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
@@ -447,10 +647,75 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (!source.ConnectionType.HasFlag(eConnectionType.Audio))
 				return;
 
-			if (overrideAudio)
+			if (CanOverrideAudio(source, destination))
 				RouteAudio(source);
 			else
 				RouteAudioIfNoAudioRouted(source);
+		}
+
+		/// <summary>
+		/// Returns true if we can override active audio when routing the given source to the given destination.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
+		/// <returns></returns>
+		private bool CanOverrideAudio(ISource source, IDestination destination)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			if (destination == null)
+				throw new ArgumentNullException("destination");
+
+			if (m_Room == null)
+				return false;
+
+			m_CacheSection.Enter();
+
+			try
+			{
+				// Nothing is currently routed for audio
+				IcdHashSet<ISource> activeAudio = m_AudioRoutingCache.ToIcdHashSet();
+				if (activeAudio.Count == 0)
+					return false;
+
+				// If there are no sources routed to the display then there is nothing to override
+				IcdHashSet<ISource> activeVideo = m_VideoRoutingCache.GetDefault(destination);
+				if (activeVideo == null || activeVideo.Count == 0)
+					return false;
+
+				// No change
+				if (activeVideo.Contains(source))
+					return false;
+
+				// Old source is not current active audio
+				if (!activeAudio.Intersect(activeVideo).Any())
+					return false;
+
+				// Is there another source routed for audio going to another display?
+				foreach (KeyValuePair<IDestination, IcdHashSet<ISource>> kvp in m_VideoRoutingCache)
+				{
+					// Skip the display we are currently routing to
+					IDestination display = kvp.Key;
+					if (display == destination)
+						continue;
+
+					// Are we in the middle of routing a new source to the display?
+					ProcessingSourceInfo processing = m_ProcessingSources.GetDefault(display);
+					if (processing != null && processing.Source != null)
+						continue;
+
+					// The display has a source that is being listened to
+					if (kvp.Value.Intersect(activeAudio).Any())
+						return false;
+				}
+
+				return true;
+			}
+			finally
+			{
+				m_CacheSection.Leave();
+			}
 		}
 
 		/// <summary>

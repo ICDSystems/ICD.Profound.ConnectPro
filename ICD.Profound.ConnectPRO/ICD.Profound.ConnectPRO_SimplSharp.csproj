@@ -244,7 +244,7 @@
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\ISettingsPasscodeView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\ISettingsRoomCombineView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\ISettingsSystemPowerView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\eSourceState.cs" />
+    <Compile Include="Routing\eSourceState.cs" />
     <Compile Include="Themes\UserInterface\IViews\Icons.cs" />
     <Compile Include="Themes\UserInterface\IViews\IDisabledAlertView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IGenericAlertView.cs" />
@@ -391,7 +391,7 @@
     <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcRecordingPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcSharePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcStartMeetingPresenter.cs" />
-    <Compile Include="Themes\UserInterface\ProcessingSourceInfo.cs" />
+    <Compile Include="Routing\ProcessingSourceInfo.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractComponentView.cs" />
     <Compile Include="Themes\UserInterface\Views\AbstractUiView.cs" />
     <Compile Include="Themes\UserInterface\Views\AudioConference\AtcBaseView.cs" />
