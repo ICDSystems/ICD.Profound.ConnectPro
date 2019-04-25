@@ -1,13 +1,20 @@
-﻿using ICD.Common.Utils;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
+using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
+using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Connect.Settings.Originators;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Connect.UI.Mvp.VisibilityTree;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Conference;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Popups;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Sources;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.VisibilityTree;
@@ -95,6 +102,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 				return;
 
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
+			room.Routing.OnDisplaySourceChanged += RoutingOnDisplaySourceChanged;
 		}
 
 		/// <summary>
@@ -107,11 +115,30 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 				return;
 
 			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
+			room.Routing.OnDisplaySourceChanged -= RoutingOnDisplaySourceChanged;
 		}
 
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs eventArgs)
 		{
 			UpdateVisibility();
+		}
+		
+		private void RoutingOnDisplaySourceChanged(object sender, EventArgs e)
+		{
+			// TODO: change this to use the faked routing
+			IEnumerable<ISource> activeSources = Room.Routing.GetCachedActiveVideoSources().SelectMany(kvp => kvp.Value);
+
+			bool zoomRouted = false;
+			foreach (var source in activeSources)
+			{
+				IOriginator device;
+				if (Room.Core.Originators.TryGetChild(source.Device, out device) && device is ZoomRoom)
+				{
+					zoomRouted = true;
+					break;
+				}
+			}
+			m_NavigationController.LazyLoadPresenter<IOsdConferencePresenter>().ShowView(zoomRouted);
 		}
 
 		private void UpdateVisibility()

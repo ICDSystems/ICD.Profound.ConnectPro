@@ -24,6 +24,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 		/// <param name="mainPageView"></param>
 		public void SetMainPageView(bool mainPageView)
 		{
+			// TODO: hack, replace when we make OSD specific controls
 			m_Label.Enable(mainPageView);
 		}
 	}

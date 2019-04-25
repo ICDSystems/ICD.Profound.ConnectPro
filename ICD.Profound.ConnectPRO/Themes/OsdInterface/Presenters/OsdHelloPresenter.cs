@@ -7,8 +7,10 @@ using ICD.Common.Utils.Timers;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.CalendarControl;
 using ICD.Connect.UI.Attributes;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Conference;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
@@ -65,6 +67,8 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 
 				if (Room == null)
 					view.SetLabelText(string.Empty);
+				else if (Navigation.LazyLoadPresenter<IOsdConferencePresenter>().IsViewVisible)
+					view.SetLabelText("Your conference is about to begin.");
 				else if (nextBooking == null || nextBooking.StartTime - TimeSpan.FromMinutes(15) > now || Room.IsInMeeting)
 					view.SetLabelText("Welcome to your meeting.");
 				else

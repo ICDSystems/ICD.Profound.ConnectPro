@@ -2,6 +2,7 @@
 using ICD.Common.Properties;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Audio.Controls.Volume;
+using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.CalendarControl;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Partitioning.Rooms;
@@ -49,6 +50,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// Gets the CalendarControl for the room.
 		/// </summary>
 		ICalendarControl CalendarControl { get; }
+
+		/// <summary>
+		/// Gets the selected OBTP booking.
+		/// </summary>
+		IBooking CurrentBooking { get; }
 
 		#endregion
 
