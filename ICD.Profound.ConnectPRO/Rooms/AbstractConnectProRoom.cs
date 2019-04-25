@@ -11,15 +11,22 @@ using ICD.Connect.API.Nodes;
 using ICD.Connect.Audio.Controls.Mute;
 using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.VolumePoints;
+using ICD.Connect.Calendaring;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.CalendarControl;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
+using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.Devices;
+using ICD.Connect.Conferencing.DialContexts;
+using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Displays.Devices;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.Routing.Controls;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Profound.ConnectPRO.Routing;
 
@@ -144,6 +151,37 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		public void StartMeeting()
 		{
 			StartMeeting(true);
+		}
+
+		public void StartMeeting(IBooking booking)
+		{
+			StartMeeting(false);
+			CurrentBooking = booking;
+
+			IEnumerable<IConferenceDeviceControl> dialers = ConferenceManager.GetDialingProviders();
+			
+			// Build map of dialer to best number
+			IDialContext dialContext;
+			IConferenceDeviceControl preferredDialer = ConferencingBookingUtils.GetBestDialer(booking, dialers, out dialContext);
+			if (preferredDialer == null)
+				return;
+
+			// route device to displays and/or audio destination
+			IDeviceBase dialerDevice = preferredDialer.Parent;
+			IRouteSourceControl routeControl = dialerDevice.Controls.GetControl<IRouteSourceControl>();
+			if (dialerDevice is IVideoConferenceDevice)
+				Routing.RouteVtc(routeControl);
+			else if (preferredDialer.Supports == eCallType.Audio)
+				Routing.RouteAtc(routeControl);
+			else
+			{
+				var source = Routing.Sources.GetSources().FirstOrDefault(s => s.Device == dialerDevice.Id);
+				if (source != null)
+					Routing.RouteAllDisplays(source);
+			}
+
+			// dial booking
+			preferredDialer.Dial(dialContext);
 		}
 
 		/// <summary>

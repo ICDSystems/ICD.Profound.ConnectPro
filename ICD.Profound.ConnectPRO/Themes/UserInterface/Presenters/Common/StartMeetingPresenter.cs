@@ -312,43 +312,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="eventArgs"></param>
 		private void ViewOnStartMyMeetingButtonPressed(object sender, EventArgs eventArgs)
 		{
-			if (Room == null)
+			if (Room == null || m_SelectedBooking == null )
 				return;
 
-			if (!HasCalendarControl)
+			if (!HasCalendarControl || m_SelectedBooking.Booking == null)
 				Room.StartMeeting();
-
-			if (m_SelectedBooking == null)
-				return;
 
 			IBooking booking = m_SelectedBooking.Booking;
 			m_SelectedBooking = null;
 
-			Room.StartMeeting(false);
-
-			// check if booking exists
-			if (booking == null)
-				return;
-
-			// check if we have any dialers
-			IEnumerable<IConferenceDeviceControl> dialers = Room.GetControlsRecursive<IConferenceDeviceControl>();
-
-			// Build map of dialer to best number
-			IDialContext dialContext;
-			IConferenceDeviceControl preferredDialer = ConferencingBookingUtils.GetBestDialer(booking, dialers, out dialContext);
-			if (preferredDialer == null)
-				return;
-
-			// route device to displays and/or audio destination
-			var dialerDevice = preferredDialer.Parent;
-			var routeControl = dialerDevice.Controls.GetControl<IRouteSourceControl>();
-			if (dialerDevice is IVideoConferenceDevice)
-				Room.Routing.RouteVtc(routeControl);
-			else if (preferredDialer.Supports == eCallType.Audio)
-				Room.Routing.RouteAtc(routeControl);
-
-			// dial booking
-			preferredDialer.Dial(dialContext);
+			Room.StartMeeting(booking);
 		}
 
 		private void ViewOnStartNewMeetingButtonPressed(object sender, EventArgs eventArgs)

@@ -73,14 +73,21 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		void StartMeeting();
 
 		/// <summary>
+		/// Enters the meeting state with chosen OBTP booking.
+		/// </summary>
+		/// <param name="booking">Selected OBTP booking</param>
+		void StartMeeting(IBooking booking);
+
+		/// <summary>
 		/// Enters the meeting state.
 		/// </summary>
+		/// <param name="resetRouting">true to reset routing to default, false to leave as is</param>
 		void StartMeeting(bool resetRouting);
 
 		/// <summary>
 		/// Ends the meeting state. If shutdown is true fully powers down the room.
 		/// </summary>
-		/// <param name="shutdown"></param>
+		/// <param name="shutdown">true to fully power down room</param>
 		void EndMeeting(bool shutdown);
 
 		/// <summary>

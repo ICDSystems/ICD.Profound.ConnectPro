@@ -102,7 +102,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 				return;
 
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
-			room.Routing.OnDisplaySourceChanged += RoutingOnDisplaySourceChanged;
+			room.Routing.State.OnSourceRoutedChanged += RoutingOnDisplaySourceChanged;
 		}
 
 		/// <summary>
@@ -115,7 +115,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 				return;
 
 			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
-			room.Routing.OnDisplaySourceChanged -= RoutingOnDisplaySourceChanged;
+			room.Routing.State.OnSourceRoutedChanged -= RoutingOnDisplaySourceChanged;
 		}
 
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs eventArgs)
@@ -126,7 +126,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 		private void RoutingOnDisplaySourceChanged(object sender, EventArgs e)
 		{
 			// TODO: change this to use the faked routing
-			IEnumerable<ISource> activeSources = Room.Routing.GetCachedActiveVideoSources().SelectMany(kvp => kvp.Value);
+			IEnumerable<ISource> activeSources = Room.Routing.State.GetSourceRoutedStates().Select(kvp => kvp.Key).ToList();
 
 			bool zoomRouted = false;
 			foreach (var source in activeSources)
