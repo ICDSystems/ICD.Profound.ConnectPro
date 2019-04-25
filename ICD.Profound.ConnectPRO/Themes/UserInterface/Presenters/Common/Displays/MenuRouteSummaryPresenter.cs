@@ -44,7 +44,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			}
 		}
 
-		public void SetRouting(Dictionary<IDestination, IcdHashSet<ISource>> routing)
+		public void SetRouting(IDictionary<IDestination, IcdHashSet<ISource>> routing)
 		{
 			IEnumerable<RouteListItem> models = routing.SelectMany(d => d.Value.Select(s => GetListItem(d.Key, s)));
 			m_PresenterFactory.BuildChildren(models);

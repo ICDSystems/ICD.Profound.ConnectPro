@@ -3,7 +3,7 @@ using ICD.Common.Utils.Timers;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface
+namespace ICD.Profound.ConnectPRO.Routing
 {
 	public sealed class ProcessingSourceInfo : IDisposable
 	{

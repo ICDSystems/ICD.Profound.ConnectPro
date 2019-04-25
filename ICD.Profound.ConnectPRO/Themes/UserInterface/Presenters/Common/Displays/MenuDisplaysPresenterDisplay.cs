@@ -156,7 +156,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private void UpdateHasControl()
 		{
-			m_HasControl = m_RoutedSource != null && ConnectProRouting.CanControl(m_RoutedSource);
+			m_HasControl = m_RoutedSource != null && ConnectProRoutingSources.CanControl(m_RoutedSource);
 		}
 
 		private void UpdateColor()

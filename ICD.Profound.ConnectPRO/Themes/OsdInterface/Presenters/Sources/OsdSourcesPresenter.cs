@@ -55,6 +55,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Sources
 				return Enumerable.Empty<ISource>();
 
 			return Room.Routing
+			           .Sources
 			           .GetCoreSources()
 			           .Where(s =>
 			                  {

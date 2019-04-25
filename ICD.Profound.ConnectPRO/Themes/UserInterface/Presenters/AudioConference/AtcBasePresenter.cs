@@ -140,7 +140,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 			if (room == null)
 				return;
 
-			room.Routing.OnAudioSourceChanged += RoutingOnAudioSourceChanged;
+			room.Routing.State.OnAudioSourceChanged += RoutingOnAudioSourceChanged;
 		}
 
 		/// <summary>
@@ -154,7 +154,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 			if (room == null)
 				return;
 
-			room.Routing.OnAudioSourceChanged -= RoutingOnAudioSourceChanged;
+			room.Routing.State.OnAudioSourceChanged -= RoutingOnAudioSourceChanged;
 		}
 
 		private void RoutingOnAudioSourceChanged(object sender, EventArgs e)
@@ -163,6 +163,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 				Room == null
 					? null
 					: Room.Routing
+					      .State
 					      .GetCachedActiveAudioSources()
 					      .Select(s => Room.Core.Originators.GetChild<IDeviceBase>(s.Device))
 					      .SelectMany(d => d.Controls.GetControls<ITraditionalConferenceDeviceControl>())

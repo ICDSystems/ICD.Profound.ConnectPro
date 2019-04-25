@@ -4,6 +4,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.UI.Attributes;
+using ICD.Profound.ConnectPRO.Routing;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -37,7 +38,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 					return;
 
 				// Get the room that contains the source
-				IRoom room = Room == null || value == null ? null : Room.Routing.GetRoomForSource(value);
+				IRoom room = Room == null || value == null ? null : Room.Routing.Sources.GetRoomForSource(value);
 
 				if (m_Cache.SetSource(room, value))
 					RefreshIfVisible();

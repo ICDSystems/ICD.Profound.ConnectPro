@@ -92,7 +92,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 					ISource source = m_Sources[index];
 					ConnectProSource connectProSource = source as ConnectProSource;
 
-					IRoom room = Room == null || source == null ? null : Room.Routing.GetRoomForSource(source);
+					IRoom room = Room == null || source == null ? null : Room.Routing.Sources.GetRoomForSource(source);
 					bool combine = room != null && room.CombineState;
 
 					string icon =
@@ -140,12 +140,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				Room == null
 					? Enumerable.Empty<ISource>()
 					: Room.Routing
-						  .GetCoreSources()
-						  .Where(s =>
-						  {
-							  ConnectProSource source = s as ConnectProSource;
-							  return source != null && source.Share;
-						  });
+					      .Sources
+					      .GetCoreSources()
+					      .Where(s =>
+					             {
+						             ConnectProSource source = s as ConnectProSource;
+						             return source != null && source.Share;
+					             });
 		}
 
 		/// <summary>
@@ -166,7 +167,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				// Update the routed presentation source
 				IEnumerable<ISource> sources = Room == null
 					? Enumerable.Empty<ISource>()
-					: Room.Routing.GetVtcPresentationSources(m_SubscribedPresentationComponent);
+					: Room.Routing.Sources.GetVtcPresentationSources(m_SubscribedPresentationComponent);
 
 				m_RoutedSources.AddRange(sources);
 

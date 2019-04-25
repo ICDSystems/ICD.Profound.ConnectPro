@@ -166,7 +166,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			if (room == null)
 				return;
 
-			room.Routing.OnDisplaySourceChanged += RoutingOnOnDisplaySourceChanged;
+			room.Routing.State.OnDisplaySourceChanged += RoutingOnOnDisplaySourceChanged;
 		}
 
 		/// <summary>
@@ -178,18 +178,27 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			base.Unsubscribe(room);
 
 			ActiveConferenceControl = null;
+
+			if (room == null)
+				return;
+
+			room.Routing.State.OnDisplaySourceChanged -= RoutingOnOnDisplaySourceChanged;
 		}
 
 		private void RoutingOnOnDisplaySourceChanged(object sender, EventArgs eventArgs)
 		{
-			ActiveConferenceControl = Room.Routing
-				.GetCachedActiveVideoSources()
-				.SelectMany(kvp => kvp.Value)
-				.Select(s => Room.Core.Originators[s.Device] as IDevice)
-				.SelectMany(d => d == null
-					? Enumerable.Empty<IWebConferenceDeviceControl>()
-					: d.Controls.GetControls<IWebConferenceDeviceControl>())
-				.FirstOrDefault(c => c != null);
+			ActiveConferenceControl =
+				Room == null
+					? null
+					: Room.Routing
+					      .State
+					      .GetCachedActiveVideoSources()
+					      .SelectMany(kvp => kvp.Value)
+					      .Select(s => Room.Core.Originators[s.Device] as IDevice)
+					      .SelectMany(d => d == null
+						                       ? Enumerable.Empty<IWebConferenceDeviceControl>()
+						                       : d.Controls.GetControls<IWebConferenceDeviceControl>())
+					      .FirstOrDefault(c => c != null);
 		}
 
 		#endregion
