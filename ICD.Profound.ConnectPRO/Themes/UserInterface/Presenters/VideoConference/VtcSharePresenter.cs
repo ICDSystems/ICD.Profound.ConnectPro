@@ -95,7 +95,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 					ISource source = m_Sources[index];
 					ConnectProSource connectProSource = source as ConnectProSource;
 
-					IRoom room = Room == null || source == null ? null : Room.Routing.GetRoomForSource(source);
+					IRoom room = Room == null || source == null ? null : Room.Routing.Sources.GetRoomForSource(source);
 					bool combine = room != null && room.CombineState;
 
 					string icon =
@@ -143,6 +143,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				Room == null
 					? Enumerable.Empty<ISource>()
 					: Room.Routing
+					      .Sources
 					      .GetCoreSources()
 					      .Where(s =>
 					             {
@@ -169,7 +170,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				// Update the routed presentation source
 				IEnumerable<ISource> sources = Room == null
 					? Enumerable.Empty<ISource>()
-					: Room.Routing.GetVtcPresentationSources(m_SubscribedPresentationComponent);
+					: Room.Routing.Sources.GetVtcPresentationSources(m_SubscribedPresentationComponent);
 
 				m_RoutedSources.AddRange(sources);
 

@@ -21,7 +21,6 @@ using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Routing;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 {
@@ -290,7 +289,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		{
 			return room == null
 				       ? Enumerable.Empty<ISource>()
-				       : room.Routing.GetCoreSources();
+				       : room.Routing.Sources.GetCoreSources();
 		}
 
 		/// <summary>
@@ -299,7 +298,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// <param name="source"></param>
 		private void SetProcessingSource(ISource source)
 		{
-			IDestination destination = Room == null ? null : Room.Routing.GetDisplayDestinations().FirstOrDefault();
+			IDestination destination = Room == null ? null : Room.Routing.Destinations.GetDisplayDestinations().FirstOrDefault();
 			if (destination == null)
 				return;
 
@@ -374,6 +373,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 					(Room == null
 						 ? Enumerable.Empty<KeyValuePair<IDestination, IcdHashSet<ISource>>>()
 						 : Room.Routing
+						       .State
 						       .GetCachedActiveVideoSources())
 						.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
@@ -453,7 +453,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 				return;
 
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
-			room.Routing.OnDisplaySourceChanged += RoutingOnDisplaySourceChanged;
+			room.Routing.State.OnDisplaySourceChanged += RoutingOnDisplaySourceChanged;
 
 			m_VolumeControl = room.GetVolumeControl();
 			m_VolumeMuteFeedbackControl = m_VolumeControl as IVolumeMuteFeedbackDeviceControl;
@@ -474,7 +474,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 				return;
 
 			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
-			room.Routing.OnDisplaySourceChanged -= RoutingOnDisplaySourceChanged;
+			room.Routing.State.OnDisplaySourceChanged -= RoutingOnDisplaySourceChanged;
 
 			Unsubscribe(m_VolumeMuteFeedbackControl);
 			m_VolumeMuteFeedbackControl = null;

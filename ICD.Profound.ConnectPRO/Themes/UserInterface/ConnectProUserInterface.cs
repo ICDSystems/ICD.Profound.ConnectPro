@@ -302,7 +302,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			}
 			else
 			{
-				if (m_Room.Routing.IsDualDisplayRoom)
+				if (m_Room.Routing.Destinations.IsDualDisplayRoom)
 					HandleSelectedSourceDualDisplay(source);
 				else
 					HandleSelectedSourceSingleDisplay(source);
@@ -359,13 +359,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				throw new ArgumentNullException("source");
 
 			// Is the source already routed?     
-			if (m_Room.Routing.GetIsRoutedCached(source, eConnectionType.Video))
+			if (m_Room.Routing.State.GetIsRoutedCached(source, eConnectionType.Video))
 			{
 				ShowSourceContextualMenu(source, false);
 			}
 			else
 			{
-				m_Room.Routing.SetProcessingSource(source);
+				m_Room.Routing.State.SetProcessingSource(source);
 
 				// Show the context menu before routing for UX
 				ShowSourceContextualMenu(source, false);
@@ -386,13 +386,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				throw new ArgumentNullException("source");
 
 			// Is the source already routed?     
-			if (m_Room.Routing.GetIsRoutedCached(source, eConnectionType.Video))
+			if (m_Room.Routing.State.GetIsRoutedCached(source, eConnectionType.Video))
 			{
 				ShowSourceContextualMenu(source, false);
 			}
 			else
 			{
-				m_Room.Routing.SetProcessingSource(source);
+				m_Room.Routing.State.SetProcessingSource(source);
 
 				// Show the context menu before routing for UX
 				ShowSourceContextualMenu(source, false);
@@ -468,7 +468,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 				try
 				{
-					m_Room.Routing.SetProcessingSource(destination, activeSource);
+					m_Room.Routing.State.SetProcessingSource(destination, activeSource);
 				}
 				finally
 				{
@@ -590,9 +590,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				return;
 
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
-			room.Routing.OnDisplaySourceChanged += RoutingOnDisplaySourceChanged;
-			room.Routing.OnAudioSourceChanged += RoutingOnAudioSourceChanged;
-			room.Routing.OnSourceRoutedChanged += RoutingOnSourceRoutedChanged;
+
+			room.Routing.State.OnDisplaySourceChanged += RoutingOnDisplaySourceChanged;
+			room.Routing.State.OnAudioSourceChanged += RoutingOnAudioSourceChanged;
+			room.Routing.State.OnSourceRoutedChanged += RoutingOnSourceRoutedChanged;
 		}
 
 		/// <summary>
@@ -605,6 +606,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				return;
 
 			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
+
+			room.Routing.State.OnDisplaySourceChanged -= RoutingOnDisplaySourceChanged;
+			room.Routing.State.OnAudioSourceChanged -= RoutingOnAudioSourceChanged;
+			room.Routing.State.OnSourceRoutedChanged -= RoutingOnSourceRoutedChanged;
 		}
 
 		/// <summary>
@@ -617,7 +622,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			SetSelectedSource(null);
 
 			if (m_Room != null)
-				m_Room.Routing.ClearProcessingSources();
+				m_Room.Routing.State.ClearProcessingSources();
 
 			UpdateMeetingPresentersVisibility();
 		}
@@ -634,7 +639,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>().ShowView(isInMeeting);
 
 			bool combinedRoom = m_Room != null && m_Room.IsCombineRoom();
-			bool dualDisplays = m_Room != null && !combinedRoom && m_Room.Routing.IsDualDisplayRoom;
+			bool dualDisplays = m_Room != null && !combinedRoom && m_Room.Routing.Destinations.IsDualDisplayRoom;
 			bool combineAdvanced = m_Room != null && combinedRoom && CombinedAdvancedMode;
 			bool combineSimple = m_Room != null && combinedRoom && !CombinedAdvancedMode;
 
@@ -664,7 +669,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			Dictionary<ISource, eSourceState> routedSources =
 				m_Room == null
 					? new Dictionary<ISource, eSourceState>()
-					: m_Room.Routing.GetSourceRoutedStates().ToDictionary();
+					: m_Room.Routing.State.GetSourceRoutedStates().ToDictionary();
 
 			m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().SetRoutedSources(routedSources);
 		}
@@ -674,12 +679,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			IcdHashSet<ISource> activeAudio =
 				m_Room == null
 					? new IcdHashSet<ISource>()
-					: m_Room.Routing.GetCachedActiveAudioSources().ToIcdHashSet();
+					: m_Room.Routing.State.GetCachedActiveAudioSources().ToIcdHashSet();
 
 			Dictionary<IDestination, IcdHashSet<ISource>> activeVideo =
 				m_Room == null
 					? new Dictionary<IDestination, IcdHashSet<ISource>>()
-					: m_Room.Routing.GetCachedActiveVideoSources().ToDictionary();
+					: m_Room.Routing.State.GetCachedActiveVideoSources().ToDictionary();
 
 			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>()
 								  .SetRouting(activeVideo, activeAudio);

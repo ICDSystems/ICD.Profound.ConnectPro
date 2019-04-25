@@ -66,8 +66,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		public override void SetRoom(IConnectProRoom room)
 		{
 			bool combine = room != null && room.IsCombineRoom();
-			IDestination[] destinations = room == null ? new IDestination[0] : room.Routing.GetDisplayDestinations().ToArray();
-			bool roomHasAudio = room != null && room.Routing.GetAudioDestinations().Any();
+			IDestination[] destinations = room == null ? new IDestination[0] : room.Routing.Destinations.GetDisplayDestinations().ToArray();
+			bool roomHasAudio = room != null && room.Routing.Destinations.RoomHasAudio;
 			for (int i = 0; i < Displays.Count; i++)
 			{
 				var display = Displays[i];

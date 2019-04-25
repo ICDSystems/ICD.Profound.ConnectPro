@@ -205,7 +205,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			IsInMeeting = false;
 
 			// Power off displays
-			foreach (IDestination destination in Routing.GetDisplayDestinations())
+			foreach (IDestination destination in Routing.Destinations.GetDisplayDestinations())
 			{
 				IDisplay display = Core.Originators.GetChild(destination.Device) as IDisplay;
 				if (display != null)

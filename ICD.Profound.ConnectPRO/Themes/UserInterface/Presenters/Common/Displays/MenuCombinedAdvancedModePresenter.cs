@@ -60,7 +60,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		public override void SetRoom(IConnectProRoom room)
 		{
-			int displayCount = room == null ? 0 : room.Routing.GetDisplayDestinations().Count();
+			int displayCount = room == null ? 0 : room.Routing.Destinations.DisplayDestinationsCount;
 
 			// remake displays list
 			m_Displays.Clear();

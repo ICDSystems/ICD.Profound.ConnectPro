@@ -38,7 +38,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 					return;
 
 				// Get the room that contains the source
-				IRoom room = Room == null || value == null ? null : Room.Routing.GetRoomForSource(value);
+				IRoom room = Room == null || value == null ? null : Room.Routing.Sources.GetRoomForSource(value);
 
 				if (m_Cache.SetSource(room, value))
 					RefreshIfVisible();

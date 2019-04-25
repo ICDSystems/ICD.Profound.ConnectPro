@@ -125,7 +125,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			m_DisplayCount =
 					room == null
 						? (ushort)0
-						: (ushort)room.Routing.GetDisplayDestinations().Count();
+						: (ushort)room.Routing.Destinations.DisplayDestinationsCount;
 
 			base.SetRoom(room);
 		}
@@ -134,7 +134,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		{
 			return room == null
 				       ? Enumerable.Empty<ISource>()
-					   : room.Routing
+				       : room.Routing
+				             .Sources
 				             .GetSources()
 				             .Where(s =>
 				                    {
