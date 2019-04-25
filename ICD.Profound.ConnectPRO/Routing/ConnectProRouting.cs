@@ -1103,25 +1103,21 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 		private void UnrouteAllVideoExceptOsd()
 		{
-			Dictionary<IDestination, IcdHashSet<ISource>> activeVideoSources = new Dictionary<IDestination, IcdHashSet<ISource>>();
+			// Create a copy of the video routing cache, removing any OSD sources.
+			Dictionary<IDestination, IcdHashSet<ISource>> activeVideoSources;
 
 			m_CacheSection.Enter();
 
 			try
 			{
-				foreach (KeyValuePair<IDestination, IcdHashSet<ISource>> kvp in GetCachedActiveVideoSources())
-				{
-					IcdHashSet<ISource> sources = new IcdHashSet<ISource>();
-					activeVideoSources.Add(kvp.Key, sources);
-
-					foreach (ISource source in kvp.Value)
-					{
-						if (m_Room.Core.Originators.GetChild(source.Device) is OsdPanelDevice)
-							continue;
-
-						sources.Add(source);
-					}
-				}
+				activeVideoSources =
+					m_VideoRoutingCache.ToDictionary(kvp => kvp.Key,
+					                                 kvp =>
+					                                 kvp.Value
+					                                    .Where(source =>
+					                                           !(m_Room.Core.Originators.GetChild(source.Device) is
+					                                             OsdPanelDevice))
+					                                    .ToIcdHashSet());
 			}
 			finally
 			{
@@ -1136,30 +1132,16 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 		private void UnrouteAllAudioExceptOsd()
 		{
-			IcdHashSet<IDestination> audioDestinations = new IcdHashSet<IDestination>();
-			IcdHashSet<ISource> activeAudioSources = new IcdHashSet<ISource>();
-
-			m_CacheSection.Enter();
-
-			try
-			{
-				audioDestinations.AddRange(GetAudioDestinations());
-
-				foreach (ISource source in GetCachedActiveAudioSources())
-				{
-					if (m_Room.Core.Originators.GetChild(source.Device) is OsdPanelDevice)
-						continue;
-
-					activeAudioSources.Add(source);
-				}
-			}
-			finally
-			{
-				m_CacheSection.Leave();
-			}
+			// Create a copy of the audio routing cache, removing any OSD sources.
+			IcdHashSet<ISource> activeAudioSources =
+				m_CacheSection.Execute(() =>
+				                       m_AudioRoutingCache.Where(source => !(m_Room.Core.Originators.GetChild(source.Device) is
+				                                                             OsdPanelDevice))
+				                                          .ToIcdHashSet()
+					);
 
 			// Keep routing out of the critical section above
-			foreach (IDestination destination in audioDestinations)
+			foreach (IDestination destination in GetAudioDestinations())
 				foreach (ISource source in activeAudioSources)
 					RoutingGraph.Unroute(source, destination, eConnectionType.Audio, m_Room.Id);
 		}
