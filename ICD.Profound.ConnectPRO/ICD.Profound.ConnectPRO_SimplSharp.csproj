@@ -80,6 +80,7 @@
     <Compile Include="Rooms\IConnectProRoom.cs" />
     <Compile Include="Rooms\WakeSchedule.cs" />
     <Compile Include="Routing\ConnectProRouting.cs" />
+    <Compile Include="Routing\ConnectProRoutingSources.cs" />
     <Compile Include="Routing\Endpoints\Sources\ConnectProSource.cs" />
     <Compile Include="Routing\Endpoints\Sources\ConnectProSourceSettings.cs" />
     <Compile Include="Themes\AbstractConnectProUserInterfaceFactory.cs" />

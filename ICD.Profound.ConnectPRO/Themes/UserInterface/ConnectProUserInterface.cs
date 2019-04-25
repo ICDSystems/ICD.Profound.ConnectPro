@@ -492,8 +492,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (source == null)
 				return false;
 
-			eControlOverride controlOverride = ConnectProRouting.GetControlOverride(source);
-			IDeviceControl control = ConnectProRouting.GetDeviceControl(source, controlOverride);
+			eControlOverride controlOverride = ConnectProRoutingSources.GetControlOverride(source);
+			IDeviceControl control = ConnectProRoutingSources.GetDeviceControl(source, controlOverride);
 
 			if (control is IConferenceDeviceControl)
 			{
