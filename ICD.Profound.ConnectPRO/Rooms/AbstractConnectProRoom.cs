@@ -191,6 +191,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		public void StartMeeting(bool resetRouting)
 		{
 			// Change meeting state before any routing for UX
+			CurrentBooking = null;
 			IsInMeeting = true;
 
 			if (resetRouting)
@@ -209,6 +210,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			EndAllConferences();
 
 			// Change meeting state before any routing for UX
+			CurrentBooking = null;
 			IsInMeeting = false;
 
 			// Reset all routing
@@ -227,6 +229,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		public void Wake()
 		{
 			// Change meeting state before any routing for UX
+			CurrentBooking = null;
 			IsInMeeting = false;
 
 			// Reset all routing
@@ -246,6 +249,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			EndAllConferences();
 
 			// Change meeting state before any routing for UX
+			CurrentBooking = null;
 			IsInMeeting = false;
 
 			// Power off displays
