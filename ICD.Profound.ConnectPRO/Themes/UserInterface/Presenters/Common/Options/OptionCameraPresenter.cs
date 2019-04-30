@@ -17,9 +17,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 	[PresenterBinding(typeof(IOptionCameraPresenter))]
 	public sealed class OptionCameraPresenter : AbstractOptionPresenter<IOptionCameraView>, IOptionCameraPresenter
 	{
-		public event EventHandler OnCloseCameraPage;
-
 		private readonly ICameraControlPresenter m_Menu;
+
 		private IConferenceManager m_SubscribedConferenceManager;
 
 		/// <summary>
@@ -28,7 +27,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public OptionCameraPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		public OptionCameraPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+			: base(nav, views, theme)
 		{
 			m_Menu = Navigation.LazyLoadPresenter<ICameraControlPresenter>();
 			Subscribe(m_Menu);
