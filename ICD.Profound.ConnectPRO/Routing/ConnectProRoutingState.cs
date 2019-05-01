@@ -394,13 +394,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				bool change = false;
 				foreach (KeyValuePair<IDestination, IcdHashSet<ISource>> kvp in routing)
 				{
-					IcdHashSet<ISource> cache;
-					if (!m_VideoRoutingCache.TryGetValue(kvp.Key, out cache))
-					{
-						cache = new IcdHashSet<ISource>();
-						m_VideoRoutingCache.Add(kvp.Key, cache);
-					}
-
+					IcdHashSet<ISource> cache = m_VideoRoutingCache.GetOrAddNew(kvp.Key);
 					if (cache.SetEquals(kvp.Value))
 						continue;
 
@@ -433,15 +427,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 				// Now update the "faked" routing states for UX
 				foreach (KeyValuePair<IDestination, ProcessingSourceInfo> item in m_ProcessingSources.Where(kvp => kvp.Value != null))
 				{
-					IcdHashSet<ISource> sources;
-					if (!m_VideoRoutingCache.TryGetValue(item.Key, out sources))
-					{
-						sources = new IcdHashSet<ISource>();
-						m_VideoRoutingCache.Add(item.Key, sources);
-					}
-
 					if (item.Value.Source != null)
-						sources.Add(item.Value.Source);
+						m_VideoRoutingCache.GetOrAddNew(item.Key).Add(item.Value.Source);
 				}
 			}
 			finally

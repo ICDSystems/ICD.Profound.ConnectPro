@@ -19,6 +19,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 		private readonly ConnectProRouting m_Routing;
 		private readonly SafeCriticalSection m_CacheSection;
 
+		#region Properties
+
 		/// <summary>
 		/// Returns true if the room contains more than 1 display.
 		/// </summary>
@@ -33,6 +35,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// Gets the number of display destinations.
 		/// </summary>
 		public int DisplayDestinationsCount { get { return GetDisplayDestinations().Count(); } }
+
+		#endregion
 
 		/// <summary>
 		/// Constructor.
