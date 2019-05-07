@@ -4,6 +4,7 @@
 	{
 		Inactive,
 		Processing,
+		Masked,
 		Active
 	}
 }
