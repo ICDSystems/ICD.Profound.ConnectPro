@@ -389,8 +389,10 @@ namespace ICD.Profound.ConnectPRO.Routing
 				Dictionary<IDestination, IcdHashSet<ISource>> routing =
 					m_Routing.Destinations.GetDisplayDestinations()
 					         .ToDictionary(destination => destination,
-					                       destination => GetCachedActiveVideoSources(destination).ToIcdHashSet());
-
+					                       destination => m_Routing.RoutingGraph.RoutingCache
+					                                               .GetSourcesForDestination(destination, eConnectionType.Video)
+					                                               .ToIcdHashSet());
+				
 				bool change = false;
 				foreach (KeyValuePair<IDestination, IcdHashSet<ISource>> kvp in routing)
 				{
