@@ -263,7 +263,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 		private void EndAllConferences()
 		{
-			var activeConferences = ConferenceManager == null ? Enumerable.Empty<IConference>() : ConferenceManager.OnlineConferences;
+			var activeConferences = ConferenceManager == null ? Enumerable.Empty<IConference>() : ConferenceManager.OnlineConferences.ToList();
 			// Hangup
 			foreach (var activeConference in activeConferences)
 			{
