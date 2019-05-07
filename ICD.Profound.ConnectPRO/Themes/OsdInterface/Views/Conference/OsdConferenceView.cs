@@ -44,7 +44,12 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Conference
 			m_SourceIcon.SetIcon(icon);
 		}
 
-		public void SetSourceDescription(string description)
+		public void SetSourceNameText(string name)
+		{
+			m_SourceNameLabel.SetLabelText(name);
+		}
+
+		public void SetSourceDescriptionText(string description)
 		{
 			m_SourceDescriptionLabel.SetLabelText(description);
 		}

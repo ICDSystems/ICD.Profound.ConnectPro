@@ -18,6 +18,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Conference
 
 		// right panel
 		private VtProDynamicIconObject m_SourceIcon;
+		private VtProSimpleLabel m_SourceNameLabel;
 		private VtProSimpleLabel m_SourceDescriptionLabel;
 
 		// connecting banner
@@ -52,9 +53,14 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Conference
 				DynamicIconSerialJoin = 604
 			};
 
-			m_SourceDescriptionLabel = new VtProSimpleLabel(panel, m_Subpage)
+			m_SourceNameLabel = new VtProSimpleLabel(Panel, m_Subpage)
 			{
 				IndirectTextJoin = 605
+			};
+
+			m_SourceDescriptionLabel = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				IndirectTextJoin = 606
 			};
 
 			m_ConnectingBanner = new VtProImageObject(panel, m_Subpage)
@@ -70,6 +76,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Conference
 			yield return m_CurrentBookingNameLabel;
 			yield return m_CurrentBookingHostLabel;
 			yield return m_SourceIcon;
+			yield return m_SourceNameLabel;
 			yield return m_SourceDescriptionLabel;
 		}
 	}

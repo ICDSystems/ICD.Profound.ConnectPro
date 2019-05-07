@@ -5,7 +5,9 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
+using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Zoom;
+using ICD.Connect.Devices;
 using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Routing.Endpoints.Sources;
@@ -13,6 +15,7 @@ using ICD.Connect.Settings.Originators;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Connect.UI.Mvp.VisibilityTree;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.Routing;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Conference;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Popups;
@@ -83,6 +86,12 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 			m_DefaultNotification.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdIncomingCallPresenter>());
 			m_DefaultNotification.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdMutePresenter>());
 			
+			// show "welcome" when no other main page is visible
+			m_MainPageVisibility = new SingleVisibilityNode();
+			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdWelcomePresenter>());
+			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdSourcesPresenter>());
+			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdConferencePresenter>());
+
 			// these presenters are initially visible
 			m_NavigationController.NavigateTo<IOsdHelloPresenter>();
 			m_NavigationController.NavigateTo<IOsdHeaderPresenter>();
@@ -102,7 +111,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 				return;
 
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
-			room.Routing.State.OnSourceRoutedChanged += RoutingOnDisplaySourceChanged;
+			room.Routing.State.OnSourceRoutedChanged += RoutingStateOnSourceRoutedChanged;
 		}
 
 		/// <summary>
@@ -115,7 +124,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 				return;
 
 			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
-			room.Routing.State.OnSourceRoutedChanged -= RoutingOnDisplaySourceChanged;
+			room.Routing.State.OnSourceRoutedChanged -= RoutingStateOnSourceRoutedChanged;
 		}
 
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs eventArgs)
@@ -123,28 +132,38 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 			UpdateVisibility();
 		}
 		
-		private void RoutingOnDisplaySourceChanged(object sender, EventArgs e)
+		private void RoutingStateOnSourceRoutedChanged(object sender, EventArgs e)
 		{
-			// TODO: change this to use the faked routing
-			IEnumerable<ISource> activeSources = Room.Routing.State.GetSourceRoutedStates().Select(kvp => kvp.Key).ToList();
-
-			bool zoomRouted = false;
-			foreach (var source in activeSources)
-			{
-				IOriginator device;
-				if (Room.Core.Originators.TryGetChild(source.Device, out device) && device is ZoomRoom)
-				{
-					zoomRouted = true;
-					break;
-				}
-			}
-			m_NavigationController.LazyLoadPresenter<IOsdConferencePresenter>().ShowView(zoomRouted);
+			UpdateVisibility();
 		}
 
 		private void UpdateVisibility()
 		{
-			m_NavigationController.LazyLoadPresenter<IOsdWelcomePresenter>().ShowView(m_Room != null && !m_Room.IsInMeeting && m_Room.CalendarControl != null);
-			m_NavigationController.LazyLoadPresenter<IOsdSourcesPresenter>().ShowView(m_Room != null && m_Room.IsInMeeting);
+			if (Room == null)
+				return;
+
+			IEnumerable<ISource> activeSources = Room.Routing.State.GetSourceRoutedStates()
+			                                         .Where(kvp => kvp.Value == eSourceState.Active)
+			                                         .Select(kvp => kvp.Key).ToList();
+			bool zoomRouted = false;
+			foreach (var source in activeSources)
+			{
+				IOriginator child;
+				if (Room.Core.Originators.TryGetChild(source.Device, out child) && child is ZoomRoom)
+				{
+					zoomRouted = true;
+					var control = (child as IDevice).Controls.GetControl<IConferenceDeviceControl>();
+					m_NavigationController.LazyLoadPresenter<IOsdConferencePresenter>().ActiveConferenceControl = control;
+					break;
+				}
+			}
+
+			if (zoomRouted)
+				m_NavigationController.NavigateTo<IOsdConferencePresenter>();
+			else if (Room.IsInMeeting)
+				m_NavigationController.NavigateTo<IOsdSourcesPresenter>();
+			else if (Room.CalendarControl != null)
+				m_NavigationController.NavigateTo<IOsdWelcomePresenter>();
 		}
 
 		#endregion

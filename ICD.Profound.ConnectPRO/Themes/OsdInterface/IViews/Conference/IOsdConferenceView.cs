@@ -14,7 +14,9 @@
 
 		void SetSourceIcon(string icon);
 
-		void SetSourceDescription(string description);
+		void SetSourceNameText(string name);
+
+		void SetSourceDescriptionText(string description);
 
 		void SetConnectingBannerVisibility(bool visible);
 	}
