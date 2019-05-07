@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [8.1.1] - 2019-05-07
 ### Changed
  - Fixed null reference in ATC presenter
  - Fixed enumeration exception when ending meeting
