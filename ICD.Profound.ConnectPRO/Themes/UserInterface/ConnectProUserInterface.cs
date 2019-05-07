@@ -286,7 +286,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		#endregion
 
-		#region Private Methods
+		#region Source/Destination Selection
 
 		/// <summary>
 		/// Called to update the selection state of the given source.
@@ -392,7 +392,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				// Show the context menu before routing for UX
 				ShowSourceContextualMenu(source);
 
-				m_Room.Routing.RouteSingleDisplay(source);
+				m_Room.Routing.RouteAllDisplays(source);
 			}
 
 			SetSelectedSource(null);
@@ -404,62 +404,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="source"></param>
 		private void HandleSelectedSourceCombinedSimpleMode(ISource source)
 		{
-			if (source == null)
-				throw new ArgumentNullException("source");
-
-			// Is the source already routed?     
-			if (m_Room.Routing.State.GetIsRoutedCached(source, eConnectionType.Video))
-			{
-				ShowSourceContextualMenu(source);
-			}
-			else
-			{
-				m_Room.Routing.State.SetProcessingSource(source);
-
-				// Show the context menu before routing for UX
-				ShowSourceContextualMenu(source);
-
-				m_Room.Routing.RouteAllDisplays(source);
-			}
-
-			SetSelectedSource(null);
+			// Todo - Copied from single display, make it unique to combined simple mode?
+			HandleSelectedSourceSingleDisplay(source);
 		}
 
+		/// <summary>
+		/// In combined advanced mode we allow the user to select which display to route to.
+		/// </summary>
+		/// <param name="source"></param>
 		private void HandleSelectedSourceCombinedAdvancedMode(ISource source)
 		{
 			// Todo - Copied from dual display, make it unique to combined advanced mode?
-			if (source == null)
-				throw new ArgumentNullException("source");
-
-			IDeviceBase device = m_Room.Core.Originators.GetChild<IDeviceBase>(source.Device);
-			IConferenceDeviceControl dialer = device.Controls.GetControl<IConferenceDeviceControl>();
-
-			// Edge case - route the codec to both displays and open the context menu
-			if (dialer != null && dialer.Supports.HasFlag(eCallType.Video))
-			{
-				// Show the context menu before routing for UX
-				ShowSourceContextualMenu(source);
-
-				IRouteSourceControl sourceControl = m_Room.Core.GetControl<IRouteSourceControl>(source.Device, source.Control);
-				m_Room.Routing.RouteVtc(sourceControl);
-			}
-			// Edge case - open the audio conferencing context menu
-			else if (dialer != null && dialer.Supports.HasFlag(eCallType.Audio))
-			{
-				// Show the context menu before routing for UX
-				ShowSourceContextualMenu(source);
-
-				IRouteSourceControl sourceControl = m_Room.Core.GetControl<IRouteSourceControl>(source.Device, source.Control);
-				m_Room.Routing.RouteAtc(sourceControl);
-			}
-			// Typical case - continue routing
-			else
-			{
-				SetSelectedSource(source);
-				return;
-			}
-
-			m_SourceSelectionTimeout.Reset(SOURCE_SELECTION_TIMEOUT);
+			HandleSelectedSourceDualDisplay(source);
 		}
 
 		/// <summary>

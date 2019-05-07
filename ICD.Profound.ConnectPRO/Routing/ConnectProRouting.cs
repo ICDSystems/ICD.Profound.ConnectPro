@@ -119,8 +119,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 				throw new ArgumentNullException("source");
 
 			IDestination[] destinations = m_Destinations.GetDisplayDestinations().ToArray();
-			
-			foreach (var destination in destinations)
+
+			foreach (IDestination destination in destinations)
 				Route(source, destination, eConnectionType.Video);
 
 			if (source.ConnectionType.HasFlag(eConnectionType.Audio))
