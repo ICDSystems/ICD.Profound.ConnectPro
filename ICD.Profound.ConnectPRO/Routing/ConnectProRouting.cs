@@ -99,18 +99,12 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (source == null)
 				throw new ArgumentNullException("source");
 
-			IDestination destination = m_Destinations.GetDisplayDestinations().First();
-			
-			Route(source, destination, eConnectionType.Video);
-
-			if (source.ConnectionType.HasFlag(eConnectionType.Audio))
-				RouteAudio(source);
-			else
-				UnrouteAudio();
+			// Functionally the same thing if there is only one display
+			RouteAllDisplays(source);
 		}
 
 		/// <summary>
-		/// Routes the source to the display and room audio.
+		/// Routes the source to all displays and room audio.
 		/// </summary>
 		/// <param name="source"></param>
 		public void RouteAllDisplays(ISource source)
