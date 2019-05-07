@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
@@ -130,6 +131,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			if (Room != null)
 				Room.Routing.RouteOsd();
+		}
+
+		/// <summary>
+		/// Sets the device control for the presenter.
+		/// </summary>
+		/// <param name="control"></param>
+		public void SetControl(IDeviceControl control)
+		{
+			ActiveConferenceControl = control as ITraditionalConferenceDeviceControl;
+		}
+
+		/// <summary>
+		/// Returns true if the presenter is able to interact with the given device control.
+		/// </summary>
+		/// <param name="control"></param>
+		/// <returns></returns>
+		public bool SupportsControl(IDeviceControl control)
+		{
+			ITraditionalConferenceDeviceControl dialer = control as ITraditionalConferenceDeviceControl;
+			return dialer != null && dialer.Supports.HasFlag(eCallType.Video);
 		}
 
 		#region Private Methods

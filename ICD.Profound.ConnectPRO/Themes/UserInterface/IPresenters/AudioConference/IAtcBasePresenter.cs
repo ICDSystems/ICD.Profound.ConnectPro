@@ -4,7 +4,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.AudioConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.AudioConference
 {
-	public interface IAtcBasePresenter : IPopupPresenter<IAtcBaseView>
+	public interface IAtcBasePresenter : IPopupPresenter<IAtcBaseView>, IContextualControlPresenter
 	{
 		ITraditionalConferenceDeviceControl ActiveConferenceControl { get;set; }
 	}

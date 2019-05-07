@@ -5,7 +5,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference
 {
-	public interface IVtcBasePresenter : IPopupPresenter<IVtcBaseView>
+	public interface IVtcBasePresenter : IPopupPresenter<IVtcBaseView>, IContextualControlPresenter
 	{
 		ITraditionalConferenceDeviceControl ActiveConferenceControl { get; set; }
 

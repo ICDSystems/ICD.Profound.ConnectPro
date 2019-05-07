@@ -175,6 +175,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\ISettingsSystemPowerPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Sources\IReferencedSourceSelectPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Sources\ISourceSelectPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\IContextualControlPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IDisabledAlertPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IGenericAlertPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IGenericLoadingSpinnerPresenter.cs" />

@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.WebConferencing
 {
-	public interface IWebConferencingAlertPresenter : IUiPresenter<IWebConferencingAlertView>
+	public interface IWebConferencingAlertPresenter : IUiPresenter<IWebConferencingAlertView>, IContextualControlPresenter
 	{
 	}
 }
