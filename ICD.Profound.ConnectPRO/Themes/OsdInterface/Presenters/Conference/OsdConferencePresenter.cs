@@ -57,6 +57,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Conference
 					view.SetCurrentBookingPanelVisibility(true);
 					view.SetCurrentBookingNameText("Instant Meeting");
 					view.SetCurrentBookingTimeVisibility(false);
+					view.SetCurrentBookingTimeText(string.Empty); // TODO show "Now - ..." next meeting time or end of hour
 					view.SetCurrentBookingHostText("N/A");
 				}
 				else // obtp meeting
