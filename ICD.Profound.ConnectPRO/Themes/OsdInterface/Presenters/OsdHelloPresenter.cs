@@ -22,10 +22,11 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 
 		private const int DEFAULT_REFRESH_TIME = 15 * 60 * 1000;
 
-		private ICalendarControl m_CalendarControl;
 		private readonly SafeTimer m_RefreshTimer;
 		private readonly SafeCriticalSection m_RefreshSection;
+		private readonly IOsdConferencePresenter m_ConferencePresenter;
 
+		private ICalendarControl m_CalendarControl;
 		private bool m_MainPageView;
 		public bool MainPageView
 		{
@@ -43,6 +44,8 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 		{
 			m_RefreshTimer = new SafeTimer(Refresh, DEFAULT_REFRESH_TIME);
 			m_RefreshSection = new SafeCriticalSection();
+			m_ConferencePresenter = Navigation.LazyLoadPresenter<IOsdConferencePresenter>();
+			m_ConferencePresenter.OnViewVisibilityChanged += ConferencePresenterOnViewVisibilityChanged;
 		}
 
 		protected override void Refresh(IOsdHelloView view)
@@ -140,6 +143,15 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 		}
 
 		private void ControlOnBookingsChanged(object sender, EventArgs e)
+		{
+			RefreshIfVisible();
+		}
+
+		#endregion
+
+		#region Presenter Callbacks
+		
+		private void ConferencePresenterOnViewVisibilityChanged(object sender, BoolEventArgs e)
 		{
 			RefreshIfVisible();
 		}
