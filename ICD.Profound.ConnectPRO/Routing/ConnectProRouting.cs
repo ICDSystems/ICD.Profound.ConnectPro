@@ -153,14 +153,14 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// Routes the codec to all available displays.
 		/// </summary>
 		/// <param name="sourceControl"></param>
-		public void RouteVtc(IRouteSourceControl sourceControl)
+		public void RouteVtc(ISource source)
 		{
-			if (sourceControl == null)
-				throw new ArgumentNullException("sourceControl");
+			if (source == null)
+				throw new ArgumentNullException("source");
 
 			Connection[] outputs = RoutingGraph.Connections
-			                                   .GetOutputConnections(sourceControl.Parent.Id,
-			                                                         sourceControl.Id)
+			                                   .GetOutputConnections(source.Device,
+			                                                         source.Control)
 			                                   .Where(c => c.ConnectionType.HasFlag(eConnectionType.Video))
 			                                   .OrderBy(o => o.Source.Address)
 			                                   .ToArray();
@@ -171,7 +171,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (firstOutput == null)
 			{
 				m_Room.Logger.AddEntry(eSeverity.Error, "Failed to find {0} output connection for {1}",
-									   eConnectionType.Video, sourceControl);
+									   eConnectionType.Video, source);
 				return;
 			}
 
@@ -189,28 +189,25 @@ namespace ICD.Profound.ConnectPRO.Routing
 				Route(output.Source, destination, eConnectionType.Video);
 			}
 
-			RouteAtc(sourceControl);
+			RouteAtc(source);
 		}
 
 		/// <summary>
 		/// Routes the audio dialer to the audio destination.
 		/// </summary>
 		/// <param name="sourceControl"></param>
-		public void RouteAtc(IRouteSourceControl sourceControl)
+		public void RouteAtc(ISource source)
 		{
-			if (sourceControl == null)
-				throw new ArgumentNullException("sourceControl");
-
-			if (sourceControl == null)
-				throw new ArgumentNullException("sourceControl");
+			if (source == null)
+				throw new ArgumentNullException("source");
 
 			foreach (IDestination audioDestination in m_Destinations.GetAudioDestinations())
 			{
 				// Edge case - Often the DSP is also the ATC, in which case we don't need to do any routing
-				if (audioDestination.Device == sourceControl.Parent.Id)
+				if (audioDestination.Device == source.Device)
 					continue;
 
-				Route(sourceControl, audioDestination, eConnectionType.Audio);
+				Route(source, audioDestination, eConnectionType.Audio);
 			}
 		}
 
