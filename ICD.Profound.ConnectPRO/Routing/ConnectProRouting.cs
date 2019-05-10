@@ -353,24 +353,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 		#region Private Methods
 
-		private void Route(IRouteSourceControl source, IDestination destination, eConnectionType flag)
-		{
-			if (source == null)
-				throw new ArgumentNullException("source");
-
-			if (destination == null)
-				throw new ArgumentNullException("destination");
-
-			IEnumerable<ConnectionPath> paths =
-				PathBuilder.FindPaths()
-				           .From(source)
-				           .To(destination)
-				           .OfType(flag)
-				           .With(m_PathFinder);
-
-			Route(paths);
-		}
-
 		/// <summary>
 		/// Routes the source to the destination.
 		/// </summary>
