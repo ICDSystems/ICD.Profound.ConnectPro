@@ -348,18 +348,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			{
 				// Show the context menu before routing for UX
 				ShowSourceContextualMenu(source);
-
-				IRouteSourceControl sourceControl = m_Room.Core.GetControl<IRouteSourceControl>(source.Device, source.Control);
-				m_Room.Routing.RouteVtc(sourceControl);
+				m_Room.Routing.RouteVtc(source);
 			}
 			// Edge case - open the audio conferencing context menu
 			else if (dialer != null && dialer.Supports.HasFlag(eCallType.Audio))
 			{
 				// Show the context menu before routing for UX
 				ShowSourceContextualMenu(source);
-
-				IRouteSourceControl sourceControl = m_Room.Core.GetControl<IRouteSourceControl>(source.Device, source.Control);
-				m_Room.Routing.RouteAtc(sourceControl);
+				m_Room.Routing.RouteAtc(source);
 			}
 			// Typical case - continue routing
 			else
@@ -404,7 +400,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="source"></param>
 		private void HandleSelectedSourceCombinedSimpleMode(ISource source)
 		{
-			// Todo - Copied from single display, make it unique to combined simple mode?
+			// Same as single display, eventually might need to be unique to combined simple mode
 			HandleSelectedSourceSingleDisplay(source);
 		}
 
@@ -414,7 +410,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="source"></param>
 		private void HandleSelectedSourceCombinedAdvancedMode(ISource source)
 		{
-			// Todo - Copied from dual display, make it unique to combined advanced mode?
+			// Same as dual display, eventually might need to be unique to combined advanced mode
 			HandleSelectedSourceDualDisplay(source);
 		}
 

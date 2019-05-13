@@ -341,11 +341,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			// route device to displays and/or audio destination
 			var dialerDevice = preferredDialer.Parent;
-			var routeControl = dialerDevice.Controls.GetControl<IRouteSourceControl>();
+			var source = Room.Routing.Sources.GetSources().FirstOrDefault(s => s.Device == dialerDevice.Id) ??
+			             Room.Routing.Sources.GetCoreSources().FirstOrDefault(s => s.Device == dialerDevice.Id);
 			if (dialerDevice is IVideoConferenceDevice)
-				Room.Routing.RouteVtc(routeControl);
+				Room.Routing.RouteVtc(source);
 			else if (preferredDialer.Supports == eCallType.Audio)
-				Room.Routing.RouteAtc(routeControl);
+				Room.Routing.RouteAtc(source);
 
 			// dial booking
 			preferredDialer.Dial(dialContext);
