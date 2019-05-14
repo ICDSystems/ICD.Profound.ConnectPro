@@ -254,16 +254,16 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			{
 				writer.WriteStartElement(WEEKDAY_ELEMENT);
 				{
-					writer.WriteElementString(WAKE_ELEMENT, WeekdayWakeTime == null ? null : WeekdayWakeTime.ToString());
-					writer.WriteElementString(SLEEP_ELEMENT, WeekdaySleepTime == null ? null : WeekdaySleepTime.ToString());
+					writer.WriteElementString(WAKE_ELEMENT, IcdXmlConvert.ToString(WeekdayWakeTime));
+					writer.WriteElementString(SLEEP_ELEMENT, IcdXmlConvert.ToString(WeekdaySleepTime));
 					writer.WriteElementString(ENABLE_ELEMENT, IcdXmlConvert.ToString(WeekdayEnable));
 				}
 				writer.WriteEndElement();
 
 				writer.WriteStartElement(WEEKEND_ELEMENT);
 				{
-					writer.WriteElementString(WAKE_ELEMENT, WeekendWakeTime == null ? null : WeekendWakeTime.ToString());
-					writer.WriteElementString(SLEEP_ELEMENT, WeekendSleepTime == null ? null : WeekendSleepTime.ToString());
+					writer.WriteElementString(WAKE_ELEMENT, IcdXmlConvert.ToString(WeekendWakeTime));
+					writer.WriteElementString(SLEEP_ELEMENT, IcdXmlConvert.ToString(WeekendSleepTime));
 					writer.WriteElementString(ENABLE_ELEMENT, IcdXmlConvert.ToString(WeekendEnable));
 				}
 				writer.WriteEndElement();
