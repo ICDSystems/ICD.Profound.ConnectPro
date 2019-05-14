@@ -76,8 +76,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
-				string time = IcdEnvironment.GetLocalTime().ToString(ConnectProTheme.ThemeCulture.DateTimeFormat.ShortTimePattern);
-				view.SetTimeLabel(time);
+				view.SetTimeLabel(ConnectProDateFormatting.ShortTime);
 			}
 			finally
 			{

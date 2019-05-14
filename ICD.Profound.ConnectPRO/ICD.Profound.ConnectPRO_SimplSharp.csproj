@@ -83,6 +83,7 @@
     <Compile Include="Routing\Endpoints\Sources\ConnectProSource.cs" />
     <Compile Include="Routing\Endpoints\Sources\ConnectProSourceSettings.cs" />
     <Compile Include="Themes\AbstractConnectProUserInterfaceFactory.cs" />
+    <Compile Include="Themes\ConnectProDateFormatting.cs" />
     <Compile Include="Themes\IConnectProUserInterfaceFactory.cs" />
     <Compile Include="Themes\IUserInterface.cs" />
     <Compile Include="Themes\ConnectProTheme.cs" />

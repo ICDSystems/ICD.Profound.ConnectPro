@@ -124,11 +124,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
-				string date = IcdEnvironment.GetLocalTime().ToString(ConnectProTheme.ThemeCulture.DateTimeFormat.LongDatePattern);
-				string time = IcdEnvironment.GetLocalTime().ToString(ConnectProTheme.ThemeCulture.DateTimeFormat.ShortTimePattern);
-
 				// 14 May 2019 1:32p
-				string dateTime = string.Format("{0} {1}", date, time);
+				string dateTime = string.Format("{0} {1}", ConnectProDateFormatting.LongDate, ConnectProDateFormatting.ShortTime);
 
 				view.SetSplashTimeLabel(dateTime);
 			}

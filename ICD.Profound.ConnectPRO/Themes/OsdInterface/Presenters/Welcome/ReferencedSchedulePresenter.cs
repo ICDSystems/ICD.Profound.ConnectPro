@@ -56,7 +56,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 
         private static string FormatTime(DateTime time)
         {
-	        return time.ToString(ConnectProTheme.ThemeCulture.DateTimeFormat.ShortTimePattern);
+	        return ConnectProDateFormatting.GetShortTime(time);
         }
 	}
 }
