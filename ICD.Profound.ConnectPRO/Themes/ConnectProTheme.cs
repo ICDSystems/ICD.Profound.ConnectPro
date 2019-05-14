@@ -90,8 +90,11 @@ namespace ICD.Profound.ConnectPRO.Themes
 				if (s_ThemeCulture == null)
 				{
 					CultureInfo copy = (CultureInfo)IcdCultureInfo.CurrentCulture.Clone();
-					copy.DateTimeFormat.AMDesignator = "A";
-					copy.DateTimeFormat.PMDesignator = "P";
+
+					// Custom AM/PM
+					copy.DateTimeFormat = (DateTimeFormatInfo)copy.DateTimeFormat.Clone();
+					copy.DateTimeFormat.AMDesignator = "a";
+					copy.DateTimeFormat.PMDesignator = "p";
 
 					s_ThemeCulture = copy;
 				}

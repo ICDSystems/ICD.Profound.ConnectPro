@@ -31,7 +31,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly ReferencedSchedulePresenterFactory m_ChildrenFactory;
-		private readonly SafeTimer m_RefreshTimer;
+		private readonly SafeTimer m_BookingsRefreshTimer;
+		private readonly SafeTimer m_TimeRefreshTimer;
 
 		private IReferencedSchedulePresenter m_SelectedBooking;
 		private ICalendarControl m_CalendarControl;
@@ -52,7 +53,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			m_ChildrenFactory = new ReferencedSchedulePresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
 			m_Bookings = new List<IBooking>();
 
-			m_RefreshTimer = SafeTimer.Stopped(UpdateBookings);
+			m_BookingsRefreshTimer = SafeTimer.Stopped(UpdateBookings);
+			m_TimeRefreshTimer = new SafeTimer(RefreshTime, 1000, 1000);
 		}
 
 		/// <summary>
@@ -60,7 +62,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// </summary>
 		public override void Dispose()
 		{
-			m_RefreshTimer.Dispose();
+			m_BookingsRefreshTimer.Dispose();
+			m_TimeRefreshTimer.Dispose();
+
 			m_ChildrenFactory.Dispose();
 
 			base.Dispose();
@@ -97,6 +101,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				}
 
 				view.SetBookingsVisible(HasCalendarControl, m_Bookings.Count);
+
+				RefreshTime();
 			}
 			finally
 			{
@@ -104,6 +110,33 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			}
 		}
 
+		/// <summary>
+		/// Updates the time label on the splash page.
+		/// </summary>
+		private void RefreshTime()
+		{
+			IStartMeetingView view = GetView();
+			if (view == null)
+				return;
+
+			if (!m_RefreshSection.TryEnter())
+				return;
+
+			try
+			{
+				string date = IcdEnvironment.GetLocalTime().ToString(ConnectProTheme.ThemeCulture.DateTimeFormat.LongDatePattern);
+				string time = IcdEnvironment.GetLocalTime().ToString(ConnectProTheme.ThemeCulture.DateTimeFormat.ShortTimePattern);
+
+				// 14 May 2019 1:32p
+				string dateTime = string.Format("{0} {1}", date, time);
+
+				view.SetSplashTimeLabel(dateTime);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+		}
 
 		/// <summary>
 		/// Sets the room for this presenter to represent.
@@ -259,7 +292,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				long delta = (long)(nextRefresh - IcdEnvironment.GetLocalTime()).TotalMilliseconds + 1000;
 
 				if (delta > 0)
-					m_RefreshTimer.Reset(delta);
+					m_BookingsRefreshTimer.Reset(delta);
 			}
 
 			RefreshIfVisible();

@@ -87,6 +87,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		}
 
 		/// <summary>
+		/// Sets the time label on the splash screen.
+		/// </summary>
+		/// <param name="label"></param>
+		public void SetSplashTimeLabel(string label)
+		{
+			m_SplashTimeLabel.SetLabelText(label);
+		}
+
+		/// <summary>
 		/// Returns child views for list items.
 		/// </summary>
 		/// <param name="factory"></param>

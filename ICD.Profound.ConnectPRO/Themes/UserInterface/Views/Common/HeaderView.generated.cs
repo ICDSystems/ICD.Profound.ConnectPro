@@ -13,6 +13,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 	{
 		private VtProSubpage m_Subpage;
 		private VtProSimpleLabel m_RoomNameLabel;
+		private VtProSimpleLabel m_TimeLabel;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -28,6 +29,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			{
 				IndirectTextJoin = 10
 			};
+
+			m_TimeLabel = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				IndirectTextJoin = 9
+			};
 		}
 
 		/// <summary>
@@ -38,6 +44,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		{
 			yield return m_Subpage;
 			yield return m_RoomNameLabel;
+			yield return m_TimeLabel;
 		}
 	}
 }
