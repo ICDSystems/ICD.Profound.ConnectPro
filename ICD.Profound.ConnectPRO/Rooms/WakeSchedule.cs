@@ -281,14 +281,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <param name="xml"></param>
 		private void ParseWeekday(string xml)
 		{
-			string wakeXml;
-			if (XmlUtils.TryGetChildElementAsString(xml, WAKE_ELEMENT, out wakeXml))
-				WeekdayWakeTime = ParseTimeSpan(wakeXml);
-
-			string sleepXml;
-			if (XmlUtils.TryGetChildElementAsString(xml, SLEEP_ELEMENT, out sleepXml))
-				WeekdaySleepTime = ParseTimeSpan(sleepXml);
-
+			WeekdayWakeTime = XmlUtils.TryReadChildElementContentAsTimeSpan(xml, WAKE_ELEMENT);
+			WeekdaySleepTime = XmlUtils.TryReadChildElementContentAsTimeSpan(xml, SLEEP_ELEMENT);
 			WeekdayEnable = XmlUtils.TryReadChildElementContentAsBoolean(xml, ENABLE_ELEMENT) ?? false;
 		}
 
@@ -298,29 +292,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <param name="xml"></param>
 		private void ParseWeekend(string xml)
 		{
-			string wakeXml;
-			if (XmlUtils.TryGetChildElementAsString(xml, WAKE_ELEMENT, out wakeXml))
-				WeekendWakeTime = ParseTimeSpan(wakeXml);
-
-			string sleepXml;
-			if (XmlUtils.TryGetChildElementAsString(xml, SLEEP_ELEMENT, out sleepXml))
-				WeekendSleepTime = ParseTimeSpan(sleepXml);
-
+			WeekendWakeTime = XmlUtils.TryReadChildElementContentAsTimeSpan(xml, WAKE_ELEMENT);
+			WeekendSleepTime = XmlUtils.TryReadChildElementContentAsTimeSpan(xml, SLEEP_ELEMENT);
 			WeekendEnable = XmlUtils.TryReadChildElementContentAsBoolean(xml, ENABLE_ELEMENT) ?? false;
-		}
-
-		/// <summary>
-		/// Parses the xml content as a TimeSpan.
-		/// </summary>
-		/// <param name="xml"></param>
-		/// <returns></returns>
-		private static TimeSpan? ParseTimeSpan(string xml)
-		{
-			string content = XmlUtils.ReadElementContent(xml);
-			if (string.IsNullOrEmpty(content))
-				return null;
-
-			return TimeSpan.Parse(content);
 		}
 
 		private DateTime? GetSleepTimeForDay(DateTime day)
