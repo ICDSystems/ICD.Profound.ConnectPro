@@ -24,11 +24,14 @@ namespace ICD.Profound.ConnectPRO.Themes
 
 					// Custom AM/PM
 					copy.DateTimeFormat = (DateTimeFormatInfo)copy.DateTimeFormat.Clone();
-					copy.DateTimeFormat.AMDesignator = "a";
-					copy.DateTimeFormat.PMDesignator = "p";
+					if (copy.DateTimeFormat.AMDesignator == "AM" && copy.DateTimeFormat.PMDesignator == "PM")
+					{
+						copy.DateTimeFormat.AMDesignator = "a";
+						copy.DateTimeFormat.PMDesignator = "p";
 
-					// Janky, remove the space between minutes and AM/PM
-					copy.DateTimeFormat.ShortTimePattern = copy.DateTimeFormat.ShortTimePattern.Replace(" t", "t");
+						// Janky, remove the space between minutes and AM/PM
+						copy.DateTimeFormat.ShortTimePattern = copy.DateTimeFormat.ShortTimePattern.Replace(" t", "t");
+					}
 
 					s_ThemeCulture = copy;
 				}
