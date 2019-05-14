@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+ - DateTimes on the UI and CUE are formatted using the current culture info
+
 ## [8.1.1] - 2019-05-07
 ### Changed
  - Fixed null reference in ATC presenter
