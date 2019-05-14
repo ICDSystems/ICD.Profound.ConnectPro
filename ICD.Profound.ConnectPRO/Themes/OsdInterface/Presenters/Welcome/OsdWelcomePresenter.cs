@@ -164,9 +164,9 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 	        return GetView().GetChildComponentViews(ViewFactory as IOsdViewFactory, count);
 	    }
 
-        private string FormatTime(DateTime time)
+        private static string FormatTime(DateTime time)
         {
-            return time.ToString("h:mmt").ToLower();
+	        return time.ToString(ConnectProTheme.ThemeCulture.DateTimeFormat.ShortTimePattern);
         }
 
         #endregion

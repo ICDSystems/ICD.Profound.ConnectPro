@@ -93,8 +93,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			try
 			{
 				view.SetBookingIcon(m_Icon);
-				view.SetStartTimeLabel(m_Booking.StartTime.ToShortTimeString());
-				view.SetEndTimeLabel(m_Booking.EndTime.ToShortTimeString());
+				view.SetStartTimeLabel(m_Booking.StartTime.ToString(ConnectProTheme.ThemeCulture.DateTimeFormat.ShortTimePattern));
+				view.SetEndTimeLabel(m_Booking.EndTime.ToString(ConnectProTheme.ThemeCulture.DateTimeFormat.ShortTimePattern));
 				view.SetSelected(m_Selected);
 				view.SetPresenterNameLabel(m_Booking.OrganizerName);
 

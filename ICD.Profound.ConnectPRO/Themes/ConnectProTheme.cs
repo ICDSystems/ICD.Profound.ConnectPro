@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.Extensions;
+using ICD.Common.Utils.Globalization;
 using ICD.Common.Utils.IO;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
@@ -30,6 +32,8 @@ namespace ICD.Profound.ConnectPRO.Themes
 	public sealed class ConnectProTheme : AbstractTheme<ConnectProThemeSettings>
 	{
 		public const string LOGO_DEFAULT = "Logo.png";
+
+		private static CultureInfo s_ThemeCulture;
 
 		private readonly IcdHashSet<IConnectProUserInterfaceFactory> m_UiFactories;
 		private readonly SafeCriticalSection m_UiFactoriesSection;
@@ -75,6 +79,26 @@ namespace ICD.Profound.ConnectPRO.Themes
 		/// Gets the web conferencing instructions.
 		/// </summary>
 		public WebConferencingInstructions WebConferencingInstructions { get { return m_WebConferencingInstructions; } }
+
+		/// <summary>
+		/// Gets the custom culture for presenting data values to the end user in ConnectPro.
+		/// </summary>
+		public static CultureInfo ThemeCulture
+		{
+			get
+			{
+				if (s_ThemeCulture == null)
+				{
+					CultureInfo copy = (CultureInfo)IcdCultureInfo.CurrentCulture.Clone();
+					copy.DateTimeFormat.AMDesignator = "A";
+					copy.DateTimeFormat.PMDesignator = "P";
+
+					s_ThemeCulture = copy;
+				}
+
+				return s_ThemeCulture;
+			}
+		}
 
 		#endregion
 
