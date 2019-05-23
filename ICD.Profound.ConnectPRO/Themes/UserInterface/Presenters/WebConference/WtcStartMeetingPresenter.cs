@@ -178,6 +178,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		private void ViewOnOnBackButtonPressed(object sender, EventArgs e)
 		{
+			if (m_Builder.Length == 0)
+				return;
+
 			m_Builder.Remove(m_Builder.Length - 1, 1);
 			RefreshIfVisible();
 		}
