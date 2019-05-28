@@ -107,13 +107,13 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 		protected void SourcePressTest(TRoomType roomType, ISource source)
 		{
 			//Source Override
-			eControlOverride controlOverride = ConnectProRouting.GetControlOverride(source);
+			eControlOverride controlOverride = ConnectProRoutingSources.GetControlOverride(source);
 
 			//Source Index
-			uint sourceIndex = (uint)roomType.Room.Routing.GetCoreSources().ToList().IndexOf(source);
+			uint sourceIndex = (uint)roomType.Room.Routing.Sources.GetCoreSources().ToList().IndexOf(source);
 
 			// Get number of displays
-			var displayCount = roomType.Room.Routing.GetDisplayDestinations().Count();
+			var displayCount = roomType.Room.Routing.Destinations.GetDisplayDestinations().Count();
 
 			MockSmartObject sourcesSmartObject = roomType.Panel.SmartObjects[1] as MockSmartObject;
 
@@ -289,14 +289,14 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 		private void CheckActiveRoutes(TRoomType roomType, ISource source)
 		{
 			//Get Displays
-			var destinations = roomType.Room.Routing.GetDisplayDestinations();
+			var destinations = roomType.Room.Routing.Destinations.GetDisplayDestinations();
 
 			//Get active video routes
-			var routingVideo = roomType.Room.Routing.GetCachedActiveVideoSources()
+			var routingVideo = roomType.Room.Routing.State.GetCachedActiveVideoSources()
 				.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
 			//Check active audio sources
-			Assert.IsTrue(roomType.Room.Routing.GetCachedActiveAudioSources().Contains(source));
+			Assert.IsTrue(roomType.Room.Routing.State.GetCachedActiveAudioSources().Contains(source));
 
 			//Check video routes
 			foreach (var destination in destinations)
