@@ -9,6 +9,7 @@ using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.Devices;
+using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Panels.Server.Osd;
@@ -21,6 +22,7 @@ using ICD.Connect.Routing.Extensions;
 using ICD.Connect.Routing.PathFinding;
 using ICD.Connect.Routing.RoutingGraphs;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.Routing.Masking;
 
 namespace ICD.Profound.ConnectPRO.Routing
 {
@@ -158,26 +160,47 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (source == null)
 				throw new ArgumentNullException("source");
 
+			if (Room.Core.Originators.GetChild(source.Device) is ZoomRoom)
+			{
+				var mask = new ConferenceDeviceMaskedSourceInfo(source, Room);
+				RouteVtc(source, mask);
+			}
+			else
+			{
+				RouteVtc(source, null);
+			}
+		}
+
+		/// <summary>
+		/// Routes the codec to all available displays.
+		/// </summary>
+		/// <param name="sourceControl"></param>
+		public void RouteVtc(ISource source, IMaskedSourceInfo mask)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+			
 			Connection[] outputs = RoutingGraph.Connections
 			                                   .GetOutputConnections(source.Device,
 			                                                         source.Control)
 			                                   .Where(c => c.ConnectionType.HasFlag(eConnectionType.Video))
 			                                   .OrderBy(o => o.Source.Address)
 			                                   .ToArray();
-
+			
 			IDestination[] destinations = m_Destinations.GetDisplayDestinations().ToArray();
 
 			Connection firstOutput = outputs.LastOrDefault();
 			if (firstOutput == null)
 			{
 				m_Room.Logger.AddEntry(eSeverity.Error, "Failed to find {0} output connection for {1}",
-									   eConnectionType.Video, source);
+				                       eConnectionType.Video, source);
 				return;
 			}
 
 			for (int index = 0; index < destinations.Length; index++)
 			{
 				IDestination destination = destinations[index];
+				State.SetMaskedSource(destination, mask);
 
 				Connection output;
 				if (!outputs.TryElementAt(index, out output))
@@ -185,8 +208,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 				if (output == null)
 					break;
-
-				Route(output.Source, destination, eConnectionType.Video);
+				
+				if (mask == null || (!mask.MaskOverride ?? !mask.Mask))
+					Route(output.Source, destination, eConnectionType.Video);
 			}
 
 			RouteAtc(source);
@@ -229,6 +253,18 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		public void RouteOsd()
 		{
+			RouteOsd(null);
+		}
+
+		/// <summary>
+		/// Unroutes every destination that isn't currently showing the OSD.
+		/// 
+		/// Routes the OSD to the displays.
+		/// 
+		/// Powers off displays that have no OSD routed.
+		/// </summary>
+		public void RouteOsd(IMaskedSourceInfo mask)
+		{
 			// First unroute everything that isn't OSD
 			UnrouteAllExceptOsd();
 
@@ -254,7 +290,10 @@ namespace ICD.Profound.ConnectPRO.Routing
 				EndpointInfo sourceEndpoint = sourceControl.GetOutputEndpointInfo(1);
 
 				foreach (IDestination destination in m_Destinations.GetDisplayDestinations())
+				{
+					State.SetMaskedSource(destination, mask);
 					Route(sourceEndpoint, destination, eConnectionType.Video);
+				}
 			}
 		}
 
