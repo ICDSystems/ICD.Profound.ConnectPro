@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Properties;
@@ -11,6 +11,7 @@ using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.RoutingGraphs;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.Routing.Masking;
 
 namespace ICD.Profound.ConnectPRO.Routing
 {
@@ -38,6 +39,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		// Keeps track of the processing state for each source.
 		private readonly Dictionary<ISource, eSourceState> m_SourceRoutedStates;
 		private readonly Dictionary<IDestination, ProcessingSourceInfo> m_ProcessingSources;
+		private readonly Dictionary<IDestination, IMaskedSourceInfo> m_MaskedSources;
 
 		private readonly SafeCriticalSection m_CacheSection;
 
@@ -58,6 +60,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			m_AudioRoutingCache = new IcdHashSet<ISource>();
 			m_SourceRoutedStates = new Dictionary<ISource, eSourceState>();
 			m_ProcessingSources = new Dictionary<IDestination, ProcessingSourceInfo>();
+			m_MaskedSources = new Dictionary<IDestination, IMaskedSourceInfo>();
 
 			m_Routing = routing;
 			m_RoutingGraph = m_Routing.RoutingGraph;
@@ -338,6 +341,56 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 		#endregion
 
+		#region Masked Sources
+
+		public void SetMaskedSource(IDestination destination, IMaskedSourceInfo mask)
+		{
+			m_CacheSection.Enter();
+			try
+			{
+				IMaskedSourceInfo currentMask;
+				if (m_MaskedSources.TryGetValue(destination, out currentMask))
+				{
+					if (currentMask == mask)
+						return;
+
+					ClearMaskedSource(destination);
+				}
+
+				if (mask == null)
+					return;
+
+				m_MaskedSources[destination] = mask;
+				UpdateSourceRoutedStates();
+			}
+			finally
+			{
+				m_CacheSection.Leave();
+			}
+		}
+
+		private void ClearMaskedSource(IDestination destination)
+		{
+			m_CacheSection.Enter();
+			try
+			{
+				IMaskedSourceInfo maskToRemove;
+				if (!m_MaskedSources.TryGetValue(destination, out maskToRemove))
+					return;
+
+				m_MaskedSources.Remove(destination);
+				
+				maskToRemove.Dispose();
+				UpdateSourceRoutedStates();
+			}
+			finally
+			{
+				m_CacheSection.Leave();
+			}
+		}
+
+		#endregion
+
 		#region Caching
 
 		private void UpdateRoutingCache(eConnectionType type)
@@ -432,6 +485,11 @@ namespace ICD.Profound.ConnectPRO.Routing
 					if (item.Value.Source != null)
 						m_VideoRoutingCache.GetOrAddNew(item.Key).Add(item.Value.Source);
 				}
+				foreach (KeyValuePair<IDestination, IMaskedSourceInfo> item in m_MaskedSources.Where(kvp => kvp.Value != null))
+				{
+					if (item.Value.Source != null)
+						m_VideoRoutingCache.GetOrAddNew(item.Key).Add(item.Value.Source);
+				}
 			}
 			finally
 			{
@@ -457,6 +515,10 @@ namespace ICD.Profound.ConnectPRO.Routing
 				// A source may be processing for another display, so we override
 				foreach (ISource source in m_ProcessingSources.Values.Where(p => p != null && p.Source != null).Select(s => s.Source))
 					routedSources[source] = eSourceState.Processing;
+
+				foreach (ISource source in m_MaskedSources.Values.Where(m => m != null && m.Source != null).Select(m => m.Source))
+					if (!routedSources.ContainsKey(source) || routedSources[source] != eSourceState.Active)
+						routedSources[source] = eSourceState.Masked;
 
 				if (routedSources.DictionaryEqual(m_SourceRoutedStates))
 					return;
