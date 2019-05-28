@@ -111,6 +111,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			if (Room != null)
 				Room.Routing.RouteOsd();
 		}
+		
+		public void SetControl(IDeviceControl control)
+		{
+			ActiveConferenceControl = control as IWebConferenceDeviceControl;
+		}
+
+		public bool SupportsControl(IDeviceControl control)
+		{
+			return control is IWebConferenceDeviceControl;
+		}
 
 		#region Private Methods
 
