@@ -109,6 +109,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 				case eSourceState.Processing:
 					m_RoutedButton.SetMode(MODE_ROUTED_YELLOW);
 					break;
+				case eSourceState.Masked:
 				case eSourceState.Active:
 					m_RoutedButton.SetMode(MODE_ROUTED_GREEN);
 					break;
