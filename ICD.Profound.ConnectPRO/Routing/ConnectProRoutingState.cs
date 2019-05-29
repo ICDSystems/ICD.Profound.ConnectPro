@@ -379,9 +379,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 					return;
 
 				m_MaskedSources.Remove(destination);
-				
 				maskToRemove.Dispose();
-				UpdateSourceRoutedStates();
+				UpdateVideoRoutingCache();
 			}
 			finally
 			{
