@@ -123,10 +123,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			view.OnMeetNowButtonPressed += ViewOnOnMeetNowButtonPressed;
 			view.OnJoinByIdButtonPressed += ViewOnJoinByIdButtonPressed;
-			view.OnTextEntered += ViewOnOnTextEntered;
-			view.OnBackButtonPressed += ViewOnOnBackButtonPressed;
-			view.OnClearButtonPressed += ViewOnOnClearButtonPressed;
-			view.OnKeypadButtonPressed += ViewOnOnKeypadButtonPressed;
+			view.OnTextEntered += ViewOnTextEntered;
+			view.OnBackButtonPressed += ViewOnBackButtonPressed;
+			view.OnClearButtonPressed += ViewOnClearButtonPressed;
+			view.OnKeypadButtonPressed += ViewOnKeypadButtonPressed;
 		}
 
 		protected override void Unsubscribe(IWtcStartMeetingView view)
@@ -135,10 +135,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			view.OnMeetNowButtonPressed -= ViewOnOnMeetNowButtonPressed;
 			view.OnJoinByIdButtonPressed -= ViewOnJoinByIdButtonPressed;
-			view.OnTextEntered -= ViewOnOnTextEntered;
-			view.OnBackButtonPressed -= ViewOnOnBackButtonPressed;
-			view.OnClearButtonPressed -= ViewOnOnClearButtonPressed;
-			view.OnKeypadButtonPressed -= ViewOnOnKeypadButtonPressed;
+			view.OnTextEntered -= ViewOnTextEntered;
+			view.OnBackButtonPressed -= ViewOnBackButtonPressed;
+			view.OnClearButtonPressed -= ViewOnClearButtonPressed;
+			view.OnKeypadButtonPressed -= ViewOnKeypadButtonPressed;
 		}
 
 		private void ViewOnOnMeetNowButtonPressed(object sender, EventArgs eventArgs)
@@ -166,25 +166,28 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			RefreshIfVisible();
 		}
 
-		private void ViewOnOnKeypadButtonPressed(object sender, CharEventArgs e)
+		private void ViewOnKeypadButtonPressed(object sender, CharEventArgs e)
 		{
 			m_Builder.Append(e.Data);
 			RefreshIfVisible();
 		}
 
-		private void ViewOnOnClearButtonPressed(object sender, EventArgs e)
+		private void ViewOnClearButtonPressed(object sender, EventArgs e)
 		{
 			m_Builder.Clear();
 			RefreshIfVisible();
 		}
 
-		private void ViewOnOnBackButtonPressed(object sender, EventArgs e)
+		private void ViewOnBackButtonPressed(object sender, EventArgs e)
 		{
+			if (m_Builder.Length == 0)
+				return;
+
 			m_Builder.Remove(m_Builder.Length - 1, 1);
 			RefreshIfVisible();
 		}
 
-		private void ViewOnOnTextEntered(object sender, StringEventArgs e)
+		private void ViewOnTextEntered(object sender, StringEventArgs e)
 		{
 			m_Builder.Clear();
 			m_Builder.Append(e.Data);

@@ -59,6 +59,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 		void SetBookingsVisible(bool visible, int bookings);
 
 		/// <summary>
+		/// Sets the time label on the splash screen.
+		/// </summary>
+		/// <param name="label"></param>
+		void SetSplashTimeLabel(string label);
+
+		/// <summary>
 		/// Returns child views for list items.
 		/// </summary>
 		/// <param name="factory"></param>
