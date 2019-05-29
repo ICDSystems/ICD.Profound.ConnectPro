@@ -85,6 +85,10 @@
     <Compile Include="Routing\ConnectProRoutingState.cs" />
     <Compile Include="Routing\Endpoints\Sources\ConnectProSource.cs" />
     <Compile Include="Routing\Endpoints\Sources\ConnectProSourceSettings.cs" />
+    <Compile Include="Routing\Masking\AbstractMaskedSourceInfo.cs" />
+    <Compile Include="Routing\Masking\ConferenceDeviceMaskedSourceInfo.cs" />
+    <Compile Include="Routing\Masking\IMaskedSourceInfo.cs" />
+    <Compile Include="Routing\Masking\ThinMaskedSourceInfo.cs" />
     <Compile Include="Themes\AbstractConnectProUserInterfaceFactory.cs" />
     <Compile Include="Themes\IConnectProUserInterfaceFactory.cs" />
     <Compile Include="Themes\IUserInterface.cs" />
