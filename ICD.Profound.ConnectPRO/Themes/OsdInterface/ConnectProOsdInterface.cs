@@ -143,7 +143,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 				return;
 
 			IEnumerable<ISource> activeSources = Room.Routing.State.GetSourceRoutedStates()
-			                                         .Where(kvp => kvp.Value == eSourceState.Active)
+			                                         .Where(kvp => kvp.Value == eSourceState.Masked || kvp.Value == eSourceState.Active)
 			                                         .Select(kvp => kvp.Key).ToList();
 			bool zoomRouted = false;
 			foreach (var source in activeSources)
