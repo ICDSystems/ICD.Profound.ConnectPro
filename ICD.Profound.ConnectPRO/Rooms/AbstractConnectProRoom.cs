@@ -28,6 +28,7 @@ using ICD.Connect.Panels.Devices;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Controls;
 using ICD.Connect.Routing.Endpoints.Destinations;
+using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Routing;
 
 namespace ICD.Profound.ConnectPRO.Rooms
@@ -159,7 +160,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			CurrentBooking = booking;
 
 			IEnumerable<IConferenceDeviceControl> dialers = ConferenceManager.GetDialingProviders();
-			
+
 			// Build map of dialer to best number
 			IDialContext dialContext;
 			IConferenceDeviceControl preferredDialer = ConferencingBookingUtils.GetBestDialer(booking, dialers, out dialContext);
@@ -168,18 +169,17 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			// route device to displays and/or audio destination
 			IDeviceBase dialerDevice = preferredDialer.Parent;
-			IRouteSourceControl routeControl = dialerDevice.Controls.GetControl<IRouteSourceControl>();
-			if (dialerDevice is IVideoConferenceDevice)
-				Routing.RouteVtc(routeControl);
-			else if (preferredDialer.Supports == eCallType.Audio)
-				Routing.RouteAtc(routeControl);
-			else
-			{
-				var source = Routing.Sources.GetSources().FirstOrDefault(s => s.Device == dialerDevice.Id);
-				if (source != null)
-					Routing.RouteAllDisplays(source);
-			}
+			var source = Routing.Sources.GetSources().FirstOrDefault(s => s.Device == dialerDevice.Id) ??
+			             Routing.Sources.GetCoreSources().FirstOrDefault(s => s.Device == dialerDevice.Id);
+			if (source != null)
+				return; // if we can't route a source, don't dial into conference users won't know they're in
 
+			if (dialerDevice is IVideoConferenceDevice)
+				Routing.RouteVtc(source);
+			else if (preferredDialer.Supports == eCallType.Audio)
+				Routing.RouteAtc(source);
+			else
+				Routing.RouteAllDisplays(source);
 			// dial booking
 			preferredDialer.Dial(dialContext);
 		}
@@ -283,7 +283,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 		private void EndAllConferences()
 		{
-			var activeConferences = ConferenceManager == null ? Enumerable.Empty<IConference>() : ConferenceManager.OnlineConferences;
+			var activeConferences = ConferenceManager == null ? Enumerable.Empty<IConference>() : ConferenceManager.OnlineConferences.ToList();
 			// Hangup
 			foreach (var activeConference in activeConferences)
 			{

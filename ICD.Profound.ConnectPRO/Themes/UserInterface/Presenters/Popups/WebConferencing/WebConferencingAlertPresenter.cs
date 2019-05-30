@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
+using ICD.Connect.Devices.Controls;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -69,6 +70,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.WebConf
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		/// <summary>
+		/// Sets the device control for the presenter.
+		/// </summary>
+		/// <param name="control"></param>
+		public void SetControl(IDeviceControl control)
+		{
+		}
+
+		/// <summary>
+		/// Returns true if the presenter is able to interact with the given device control.
+		/// </summary>
+		/// <param name="control"></param>
+		/// <returns></returns>
+		public bool SupportsControl(IDeviceControl control)
+		{
+			return true;
 		}
 
 		/// <summary>

@@ -4,12 +4,14 @@ using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Devices;
+using ICD.Connect.Devices.Controls;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -55,6 +57,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 			m_RefreshSection = new SafeCriticalSection();
 
 			m_Builder.OnStringChanged += BuilderOnStringChanged;
+		}
+
+		/// <summary>
+		/// Sets the device control for the presenter.
+		/// </summary>
+		/// <param name="control"></param>
+		public void SetControl(IDeviceControl control)
+		{
+			ActiveConferenceControl = control as ITraditionalConferenceDeviceControl;
+		}
+
+		/// <summary>
+		/// Returns true if the presenter is able to interact with the given device control.
+		/// </summary>
+		/// <param name="control"></param>
+		/// <returns></returns>
+		public bool SupportsControl(IDeviceControl control)
+		{
+			ITraditionalConferenceDeviceControl dialer = control as ITraditionalConferenceDeviceControl;
+			return dialer != null && dialer.Supports.HasFlag(eCallType.Audio);
 		}
 
 		/// <summary>

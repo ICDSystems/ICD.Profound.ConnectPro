@@ -7,5 +7,11 @@
 		/// </summary>
 		/// <param name="name"></param>
 		void SetRoomName(string name);
+
+		/// <summary>
+		/// Sets the time label text.
+		/// </summary>
+		/// <param name="label"></param>
+		void SetTimeLabel(string label);
 	}
 }

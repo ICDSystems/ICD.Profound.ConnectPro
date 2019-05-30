@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
@@ -54,6 +55,27 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 	public sealed class ConnectProUserInterface : IUserInterface
 	{
 		private const long SOURCE_SELECTION_TIMEOUT = 8 * 1000;
+
+		private static readonly Dictionary<eControlOverride, Type> s_OverrideToPresenterType =
+			new Dictionary<eControlOverride, Type>
+			{
+				{eControlOverride.WebConference, typeof(IWebConferencingAlertPresenter)},
+				{eControlOverride.CableTv, typeof(ICableTvPresenter)},
+				{eControlOverride.Vtc, typeof(IVtcBasePresenter)},
+				{eControlOverride.Atc, typeof(IAtcBasePresenter)}
+			};
+
+		/// <summary>
+		/// Maps control types to potential context menu presenter types.
+		/// Checks each presenter type for compatibily and falls back to the next.
+		/// </summary>
+		private static readonly Dictionary<Type, List<Type>> s_ControlToPresenterType =
+			new Dictionary<Type, List<Type>>
+			{
+				{typeof(ITraditionalConferenceDeviceControl), new List<Type> {typeof(IVtcBasePresenter), typeof(IAtcBasePresenter)}},
+				{typeof(IWebConferenceDeviceControl), new List<Type> {typeof(IWtcBasePresenter)}},
+				{typeof(ITvTunerControl), new List<Type> {typeof(ICableTvPresenter)}}
+			};
 
 		private readonly IPanelDevice m_Panel;
 		private readonly IConnectProNavigationController m_NavigationController;
@@ -264,7 +286,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		#endregion
 
-		#region Private Methods
+		#region Source/Destination Selection
 
 		/// <summary>
 		/// Called to update the selection state of the given source.
@@ -325,19 +347,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (dialer != null && dialer.Supports.HasFlag(eCallType.Video))
 			{
 				// Show the context menu before routing for UX
-				ShowSourceContextualMenu(source, false);
-
-				IRouteSourceControl sourceControl = m_Room.Core.GetControl<IRouteSourceControl>(source.Device, source.Control);
-				m_Room.Routing.RouteVtc(sourceControl);
+				ShowSourceContextualMenu(source);
+				m_Room.Routing.RouteVtc(source);
 			}
 			// Edge case - open the audio conferencing context menu
 			else if (dialer != null && dialer.Supports.HasFlag(eCallType.Audio))
 			{
 				// Show the context menu before routing for UX
-				ShowSourceContextualMenu(source, false);
-
-				IRouteSourceControl sourceControl = m_Room.Core.GetControl<IRouteSourceControl>(source.Device, source.Control);
-				m_Room.Routing.RouteAtc(sourceControl);
+				ShowSourceContextualMenu(source);
+				m_Room.Routing.RouteAtc(source);
 			}
 			// Typical case - continue routing
 			else
@@ -361,16 +379,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			// Is the source already routed?     
 			if (m_Room.Routing.State.GetIsRoutedCached(source, eConnectionType.Video))
 			{
-				ShowSourceContextualMenu(source, false);
+				ShowSourceContextualMenu(source);
 			}
 			else
 			{
 				m_Room.Routing.State.SetProcessingSource(source);
 
 				// Show the context menu before routing for UX
-				ShowSourceContextualMenu(source, false);
+				ShowSourceContextualMenu(source);
 
-				m_Room.Routing.RouteSingleDisplay(source);
+				m_Room.Routing.RouteAllDisplays(source);
 			}
 
 			SetSelectedSource(null);
@@ -382,62 +400,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="source"></param>
 		private void HandleSelectedSourceCombinedSimpleMode(ISource source)
 		{
-			if (source == null)
-				throw new ArgumentNullException("source");
-
-			// Is the source already routed?     
-			if (m_Room.Routing.State.GetIsRoutedCached(source, eConnectionType.Video))
-			{
-				ShowSourceContextualMenu(source, false);
-			}
-			else
-			{
-				m_Room.Routing.State.SetProcessingSource(source);
-
-				// Show the context menu before routing for UX
-				ShowSourceContextualMenu(source, false);
-
-				m_Room.Routing.RouteAllDisplays(source);
-			}
-
-			SetSelectedSource(null);
+			// Same as single display, eventually might need to be unique to combined simple mode
+			HandleSelectedSourceSingleDisplay(source);
 		}
 
+		/// <summary>
+		/// In combined advanced mode we allow the user to select which display to route to.
+		/// </summary>
+		/// <param name="source"></param>
 		private void HandleSelectedSourceCombinedAdvancedMode(ISource source)
 		{
-			// Todo - Copied from dual display, make it unique to combined advanced mode?
-			if (source == null)
-				throw new ArgumentNullException("source");
-
-			IDeviceBase device = m_Room.Core.Originators.GetChild<IDeviceBase>(source.Device);
-			IConferenceDeviceControl dialer = device.Controls.GetControl<IConferenceDeviceControl>();
-
-			// Edge case - route the codec to both displays and open the context menu
-			if (dialer != null && dialer.Supports.HasFlag(eCallType.Video))
-			{
-				// Show the context menu before routing for UX
-				ShowSourceContextualMenu(source, false);
-
-				IRouteSourceControl sourceControl = m_Room.Core.GetControl<IRouteSourceControl>(source.Device, source.Control);
-				m_Room.Routing.RouteVtc(sourceControl);
-			}
-			// Edge case - open the audio conferencing context menu
-			else if (dialer != null && dialer.Supports.HasFlag(eCallType.Audio))
-			{
-				// Show the context menu before routing for UX
-				ShowSourceContextualMenu(source, false);
-
-				IRouteSourceControl sourceControl = m_Room.Core.GetControl<IRouteSourceControl>(source.Device, source.Control);
-				m_Room.Routing.RouteAtc(sourceControl);
-			}
-			// Typical case - continue routing
-			else
-			{
-				SetSelectedSource(source);
-				return;
-			}
-
-			m_SourceSelectionTimeout.Reset(SOURCE_SELECTION_TIMEOUT);
+			// Same as dual display, eventually might need to be unique to combined advanced mode
+			HandleSelectedSourceDualDisplay(source);
 		}
 
 		/// <summary>
@@ -459,7 +433,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			// If no source is selected for routing then we open the contextual menu for the current routed source
 			if (activeSource == null || activeSource == routedSource)
 			{
-				ShowSourceContextualMenu(routedSource, false);
+				ShowSourceContextualMenu(routedSource);
 			}
 			// If a source is currently selected then we route that source to the selected display
 			else if (activeSource != routedSource)
@@ -479,12 +453,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				
 				routedSource = activeSource;
 
-				if (ShowSourceContextualMenu(routedSource, true))
+				if (ShowSourceContextualMenu(routedSource))
 					SetSelectedSource(null);
 			}
 		}
 
-		private bool ShowSourceContextualMenu(ISource source, bool vtcOnly)
+		private bool ShowSourceContextualMenu(ISource source)
 		{
 			if (m_Room == null)
 				return false;
@@ -495,57 +469,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			eControlOverride controlOverride = ConnectProRoutingSources.GetControlOverride(source);
 			IDeviceControl control = ConnectProRoutingSources.GetDeviceControl(source, controlOverride);
 
-			if (control is IConferenceDeviceControl)
-			{
-				ITraditionalConferenceDeviceControl dialer = control as ITraditionalConferenceDeviceControl;
-
-				if (dialer != null)
-				{
-					if (dialer.Supports.HasFlag(eCallType.Video))
-					{
-						var vtcPresenter = m_NavigationController.LazyLoadPresenter<IVtcBasePresenter>();
-						vtcPresenter.ActiveConferenceControl = dialer;
-						vtcPresenter.ShowView(true);
-					}
-					else
-					{
-						var atcPresenter = m_NavigationController.LazyLoadPresenter<IAtcBasePresenter>();
-						atcPresenter.ActiveConferenceControl = dialer;
-						atcPresenter.ShowView(true);
-					}
-				}
-
-				IWebConferenceDeviceControl webControl = control as IWebConferenceDeviceControl;
-				if (webControl != null) {
-					var wtcPresenter = m_NavigationController.LazyLoadPresenter<IWtcBasePresenter>();
-					wtcPresenter.ActiveConferenceControl = webControl;
-					wtcPresenter.ShowView(true);
-				}
-
-				SetSelectedSource(null);
-				return true;
-			}
-
-			if (vtcOnly)
+			IContextualControlPresenter presenter = GetContextualMenu(control, controlOverride);
+			if (presenter == null)
 				return false;
 
-			if (control is ITvTunerControl)
-			{
-				m_NavigationController.NavigateTo<ICableTvPresenter>().Control = control as ITvTunerControl;
-				SetSelectedSource(null);
-				return true;
-			}
+			presenter.SetControl(control);
+			presenter.ShowView(true);
 
-			switch (controlOverride)
-			{
-				case eControlOverride.WebConference:
-					m_NavigationController.NavigateTo<IWebConferencingAlertPresenter>();
-					SetSelectedSource(null);
-					return true;
+			SetSelectedSource(null);
 
-				default:
-					return false;
-			}
+			return true;
 		}
 
 		/// <summary>
@@ -574,6 +507,41 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			{
 				m_RoutingSection.Leave();
 			}
+		}
+
+		[CanBeNull]
+		private IContextualControlPresenter GetContextualMenu(IDeviceControl control, eControlOverride controlOverride)
+		{
+			if (control == null)
+				return null;
+
+			if (controlOverride == eControlOverride.Default)
+				return GetContextualMenu(control);
+
+			Type presenterType;
+			if (!s_OverrideToPresenterType.TryGetValue(controlOverride, out presenterType))
+				throw new ArgumentOutOfRangeException("controlOverride");
+
+			IContextualControlPresenter presenter =
+				m_NavigationController.LazyLoadPresenter<IContextualControlPresenter>(presenterType);
+			if (presenter.SupportsControl(control))
+				return presenter;
+
+			if (m_Room != null)
+				m_Room.Logger.AddEntry(eSeverity.Error, "Unable to use {0} context menu with {1}", controlOverride, control);
+			return null;
+		}
+
+		[CanBeNull]
+		private IContextualControlPresenter GetContextualMenu(IDeviceControl control)
+		{
+			if (control == null)
+				return null;
+
+			return s_ControlToPresenterType.Where(kvp => control.GetType().IsAssignableTo(kvp.Key))
+			                               .SelectMany(kvp => kvp.Value)
+			                               .Select(v => m_NavigationController.LazyLoadPresenter<IContextualControlPresenter>(v))
+			                               .FirstOrDefault(v => v.SupportsControl(control));
 		}
 
 		#endregion

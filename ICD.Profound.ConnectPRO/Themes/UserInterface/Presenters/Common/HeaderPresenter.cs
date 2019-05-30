@@ -1,4 +1,5 @@
 ﻿using ICD.Common.Utils;
+using ICD.Common.Utils.Timers;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
@@ -11,6 +12,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 	public sealed class HeaderPresenter : AbstractUiPresenter<IHeaderView>, IHeaderPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
+		private readonly SafeTimer m_RefreshTimer;
 
 		/// <summary>
 		/// Constructor.
@@ -22,6 +24,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
+
+			// Refresh every second to update the time
+			m_RefreshTimer = new SafeTimer(RefreshTime, 1000, 1000);
+		}
+
+		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			m_RefreshTimer.Dispose();
+
+			base.Dispose();
 		}
 
 		/// <summary>
@@ -38,6 +53,30 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			{
 				string roomName = Room == null ? null : Room.Name;
 				view.SetRoomName(roomName);
+
+				RefreshTime();
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+		}
+
+		/// <summary>
+		/// Updates the time label on the header.
+		/// </summary>
+		private void RefreshTime()
+		{
+			IHeaderView view = GetView();
+			if (view == null)
+				return;
+
+			if (!m_RefreshSection.TryEnter())
+				return;
+
+			try
+			{
+				view.SetTimeLabel(ConnectProDateFormatting.ShortTime);
 			}
 			finally
 			{

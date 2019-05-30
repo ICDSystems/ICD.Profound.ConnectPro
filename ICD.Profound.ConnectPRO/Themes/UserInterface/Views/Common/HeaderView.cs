@@ -34,5 +34,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		{
 			m_RoomNameLabel.SetLabelText(name);
 		}
+
+		/// <summary>
+		/// Sets the time label text.
+		/// </summary>
+		/// <param name="label"></param>
+		public void SetTimeLabel(string label)
+		{
+			m_TimeLabel.SetLabelText(label);
+		}
 	}
 }

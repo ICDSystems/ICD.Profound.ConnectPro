@@ -20,6 +20,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		private VtProSubpageReferenceList m_ScheduleList;
 		private VtProButton m_NoMeetingsButton;
 		private VtProSimpleLabel m_NoMeetingsLabel;
+		private VtProSimpleLabel m_SplashTimeLabel;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -72,6 +73,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			{
 				IndirectTextJoin = 4
 			};
+
+			m_SplashTimeLabel = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				IndirectTextJoin = 8
+			};
 		}
 
 		/// <summary>
@@ -88,6 +94,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			yield return m_ScheduleList;
 			yield return m_NoMeetingsButton;
 			yield return m_NoMeetingsLabel;
-	}
+			yield return m_SplashTimeLabel;
+		}
 	}
 }

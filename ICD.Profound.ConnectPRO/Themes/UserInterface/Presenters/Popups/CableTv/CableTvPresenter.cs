@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Connect.Devices.Controls;
 using ICD.Connect.Sources.TvTuner.Controls;
 using ICD.Connect.TvPresets;
 using ICD.Connect.UI.Attributes;
@@ -75,6 +76,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.CableTv
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		/// <summary>
+		/// Sets the device control for the presenter.
+		/// </summary>
+		/// <param name="control"></param>
+		public void SetControl(IDeviceControl control)
+		{
+			Control = control as ITvTunerControl;
+		}
+
+		/// <summary>
+		/// Returns true if the presenter is able to interact with the given device control.
+		/// </summary>
+		/// <param name="control"></param>
+		/// <returns></returns>
+		public bool SupportsControl(IDeviceControl control)
+		{
+			return control is ITvTunerControl;
 		}
 
 		/// <summary>
