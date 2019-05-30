@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
@@ -163,7 +163,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (Room.Core.Originators.GetChild(source.Device) is ZoomRoom)
 			{
 				var mask = new ConferenceDeviceMaskedSourceInfo(source, Room);
-				RouteVtc(source, mask);
+				var destinations = Destinations.GetDisplayDestinations().ToList();
+				foreach (var destination in destinations)
+					State.SetMaskedSource(destination, mask);
 			}
 			else
 			{
@@ -209,7 +211,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				if (output == null)
 					break;
 				
-				if (mask == null || (!mask.MaskOverride ?? !mask.Mask))
+				if (mask == null || !(mask.MaskOverride.HasValue ? mask.MaskOverride.Value : mask.Mask))
 					Route(output.Source, destination, eConnectionType.Video);
 			}
 
