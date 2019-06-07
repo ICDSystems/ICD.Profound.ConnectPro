@@ -16,11 +16,13 @@ using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
+using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Controls;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Sources.TvTuner.Controls;
+using ICD.Connect.Themes.UserInterfaces;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Connect.UI.Mvp.VisibilityTree;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -48,7 +50,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 	/// <summary>
 	/// Holds the presenter/view hierarchy for a complete panel UI.
 	/// </summary>
-	public sealed class ConnectProUserInterface : IUserInterface
+	public sealed class ConnectProUserInterface : AbstractUserInterface
 	{
 		private const long SOURCE_SELECTION_TIMEOUT = 8 * 1000;
 
@@ -78,9 +80,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		public IPanelDevice Panel { get { return m_Panel; } }
 
-		public IConnectProRoom Room { get { return m_Room; } }
+		public override IRoom Room { get { return m_Room; } }
 
-		object IUserInterface.Target { get { return Panel; } }
+		public override object Target { get { return m_Panel; } }
 
 		#endregion
 
@@ -102,7 +104,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			m_RoutingSection = new SafeCriticalSection();
 
 			m_Panel = panel;
-			UpdatePanelOnlineJoin();
+			UpdatePanelOfflineJoin();
 
 			m_SourceSelectionTimeout = SafeTimer.Stopped(() => SetSelectedSource(null));
 
@@ -114,9 +116,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		}
 
 		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			UnsubscribePresenters();
+
+			SetRoom(null);
+
+			m_SourceSelectionTimeout.Dispose();
+			m_NavigationController.Dispose();
+		}
+
+		/// <summary>
 		/// Updates the "offline" visual state of the panel
 		/// </summary>
-		private void UpdatePanelOnlineJoin()
+		private void UpdatePanelOfflineJoin()
 		{
 			m_Panel.SendInputDigital(CommonJoins.DIGITAL_OFFLINE_JOIN, m_Room == null);
 		}
@@ -187,16 +202,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		#region Methods
 
 		/// <summary>
-		/// Release resources.
+		/// Updates the UI to represent the given room.
 		/// </summary>
-		public void Dispose()
+		/// <param name="room"></param>
+		public override void SetRoom(IRoom room)
 		{
-			UnsubscribePresenters();
-
-			SetRoom(null);
-
-			m_SourceSelectionTimeout.Dispose();
-			m_NavigationController.Dispose();
+			SetRoom(room as IConnectProRoom);
 		}
 
 		/// <summary>
@@ -222,18 +233,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			UpdateMeetingPresentersVisibility();
 			UpdateRouting(EnumUtils.GetFlagsAllValue<eConnectionType>());
 
-			UpdatePanelOnlineJoin();
+			UpdatePanelOfflineJoin();
 		}
 
 		/// <summary>
-		/// Gets the string representation for this instance.
+		/// Tells the UI that it should be considered ready to use.
+		/// For example updating the online join on a panel or starting a long-running process that should be delayed.
 		/// </summary>
-		/// <returns></returns>
-		public override string ToString()
+		public override void Activate()
 		{
-			ReprBuilder builder = new ReprBuilder(this);
-			builder.AppendProperty("Panel", m_Panel);
-			return builder.ToString();
 		}
 
 		#endregion

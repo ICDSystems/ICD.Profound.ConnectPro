@@ -7,11 +7,13 @@ using ICD.Connect.Audio.Shure;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.Themes.UserInterfaces;
 using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 {
-	public sealed class ConnectProMicrophoneInterface : IUserInterface
+	public sealed class ConnectProMicrophoneInterface : AbstractUserInterface
 	{
 		private bool m_IsDisposed;
 
@@ -20,13 +22,18 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private IConferenceManager m_SubscribedConferenceManager;
+		private IConnectProRoom m_Room;
+
+		#region Properties
 
 		[CanBeNull]
-		public IConnectProRoom Room { get; private set; }
+		public override IRoom Room { get { return m_Room; } }
 
 		public IShureMxaDevice Microphone { get { return m_Microphone; } }
 
-		object IUserInterface.Target { get { return Microphone; } }
+		public override object Target { get { return Microphone; } }
+
+		#endregion
 
 		/// <summary>
 		/// Constructor.
@@ -45,7 +52,7 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		/// <summary>
 		/// Release resources.
 		/// </summary>
-		public void Dispose()
+		public override void Dispose()
 		{
 			m_IsDisposed = true;
 
@@ -55,23 +62,41 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		}
 
 		/// <summary>
+		/// Updates the UI to represent the given room.
+		/// </summary>
+		/// <param name="room"></param>
+		public override void SetRoom(IRoom room)
+		{
+			SetRoom(room as IConnectProRoom);
+		}
+
+		/// <summary>
 		/// Sets the room for this interface.
 		/// </summary>
 		/// <param name="room"></param>
 		public void SetRoom(IConnectProRoom room)
 		{
-			if (room == Room)
+			if (room == m_Room)
 				return;
 
 			ServiceProvider.GetService<ILoggerService>()
 			               .AddEntry(eSeverity.Informational, "{0} setting room to {1}", this, room);
 
-			Unsubscribe(Room);
-			Room = room;
-			Subscribe(Room);
+			Unsubscribe(m_Room);
+			m_Room = room;
+			Subscribe(m_Room);
 
 			if (!m_IsDisposed)
 				UpdateMicrophoneLeds();
+		}
+
+		/// <summary>
+		/// Tells the UI that it should be considered ready to use.
+		/// For example updating the online join on a panel or starting a long-running process that should be delayed.
+		/// </summary>
+		public override void Activate()
+		{
+			UpdateMicrophoneLeds();
 		}
 
 		#region Room Callbacks
