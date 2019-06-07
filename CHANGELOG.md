@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [7.4.0] - 2019-06-07
+### Changed
+ - UI and UI Factory abstractions and interfaces moved into Themes project
+ - Panels and OSD only come online once the core and program have completed initializing
+
 ## [7.3.1] - 2019-01-21
 ### Changed
  - Hide speaker buttons if the room has no audio destinations
