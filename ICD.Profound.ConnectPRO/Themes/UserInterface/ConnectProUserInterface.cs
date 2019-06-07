@@ -75,6 +75,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private IConnectProRoom m_Room;
 		private DefaultVisibilityNode m_RootVisibility;
 		private ISource m_SelectedSource;
+		private bool m_UserInterfaceReady;
 
 		#region Properties
 
@@ -133,7 +134,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// </summary>
 		private void UpdatePanelOfflineJoin()
 		{
-			m_Panel.SendInputDigital(CommonJoins.DIGITAL_OFFLINE_JOIN, m_Room == null);
+			m_Panel.SendInputDigital(CommonJoins.DIGITAL_OFFLINE_JOIN, m_Room == null || !m_UserInterfaceReady);
 		}
 
 		/// <summary>
@@ -242,6 +243,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// </summary>
 		public override void Activate()
 		{
+			m_UserInterfaceReady = true;
+			UpdatePanelOfflineJoin();
 		}
 
 		#endregion
