@@ -6,6 +6,7 @@ using ICD.Connect.Panels.Mock;
 using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Routing.RoutingGraphs;
 using ICD.Connect.Settings.Cores;
+using ICD.Connect.Themes.UserInterfaceFactories;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Rooms.Single;
 using ICD.Profound.ConnectPRO.Themes;
@@ -17,12 +18,12 @@ namespace ICD.Profound.ConnectPRO.Tests.RoomTypes
 		private readonly IConnectProRoom m_room;
 		private readonly MockPanelDevice m_panel;
 		private readonly ICore m_core;
-		private readonly IcdHashSet<IConnectProUserInterfaceFactory> m_interfaces;
+		private readonly IcdHashSet<IUserInterfaceFactory> m_interfaces;
 
 		public override IConnectProRoom Room { get { return m_room; } }
 		public override MockPanelDevice Panel { get { return m_panel; } }
 		public override ICore Core { get { return m_core; } }
-		public IcdHashSet<IConnectProUserInterfaceFactory> Interfaces { get { return m_interfaces; } }
+		public IcdHashSet<IUserInterfaceFactory> Interfaces { get { return m_interfaces; } }
 
 		public IConnectProRoom ConnectProRoom1 { get; set; }
 		public IConnectProRoom ConnectProRoom2 { get; set; }

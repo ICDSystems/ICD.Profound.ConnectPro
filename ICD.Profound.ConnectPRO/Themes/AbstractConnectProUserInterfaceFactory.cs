@@ -5,11 +5,13 @@ using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.Themes.UserInterfaceFactories;
+using ICD.Connect.Themes.UserInterfaces;
 using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes
 {
-	public abstract class AbstractConnectProUserInterfaceFactory<TUserInterface> : IConnectProUserInterfaceFactory
+	public abstract class AbstractConnectProUserInterfaceFactory<TUserInterface> : AbstractUserInterfaceFactory
 		where TUserInterface : IUserInterface
 	{
 		private readonly ConnectProTheme m_Theme;
@@ -34,33 +36,12 @@ namespace ICD.Profound.ConnectPRO.Themes
 			m_UserInterfacesSection = new SafeCriticalSection();
 		}
 
-		#region Properties
-
-		/// <summary>
-		/// Gets the UI Factories.
-		/// </summary>
-		public IEnumerable<IUserInterface> GetUserInterfaces()
-		{
-			m_UserInterfacesSection.Enter();
-
-			try
-			{
-				return m_UserInterfaces.Cast<IUserInterface>().ToArray(m_UserInterfaces.Count);
-			}
-			finally
-			{
-				m_UserInterfacesSection.Leave();
-			}
-		}
-
-		#endregion
-
 		#region Methods
 
 		/// <summary>
 		/// Disposes the instantiated UIs.
 		/// </summary>
-		public void Clear()
+		public override void Clear()
 		{
 			m_UserInterfacesSection.Enter();
 
@@ -76,10 +57,18 @@ namespace ICD.Profound.ConnectPRO.Themes
 		}
 
 		/// <summary>
+		/// Gets the instantiated user interfaces.
+		/// </summary>
+		public override IEnumerable<IUserInterface> GetUserInterfaces()
+		{
+			return m_UserInterfacesSection.Execute(() => m_UserInterfaces.Cast<IUserInterface>().ToArray());
+		}
+
+		/// <summary>
 		/// Instantiates the user interfaces for the originators in the core.
 		/// </summary>
 		/// <returns></returns>
-		public void BuildUserInterfaces()
+		public override void BuildUserInterfaces()
 		{
 			m_UserInterfacesSection.Enter();
 
@@ -99,12 +88,17 @@ namespace ICD.Profound.ConnectPRO.Themes
 			AssignUserInterfaces(GetRooms());
 		}
 
+		public override void ReassignUserInterfaces()
+		{
+			AssignUserInterfaces(GetRooms());
+		}
+
 		/// <summary>
 		/// Assigns the rooms to the existing user interfaces.
 		/// </summary>
-		public void ReassignUserInterfaces()
+		public override void AssignUserInterfaces(IEnumerable<IRoom> rooms)
 		{
-			AssignUserInterfaces(GetRooms());
+			AssignUserInterfaces(rooms.OfType<IConnectProRoom>());
 		}
 
 		/// <summary>
@@ -143,6 +137,22 @@ namespace ICD.Profound.ConnectPRO.Themes
 				m_UserInterfacesSection.Leave();
 			}
 		}
+
+		public override void ActivateUserInterfaces()
+		{
+			m_UserInterfacesSection.Enter();
+
+			try
+			{
+				foreach (TUserInterface ui in m_UserInterfaces)
+					ui.Activate();
+			}
+			finally
+			{
+				m_UserInterfacesSection.Leave();
+			}
+		}
+
 
 		#endregion
 

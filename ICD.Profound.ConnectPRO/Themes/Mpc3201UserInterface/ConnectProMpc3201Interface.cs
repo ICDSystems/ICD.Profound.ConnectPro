@@ -16,15 +16,17 @@ using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.Misc.Keypads;
 using ICD.Connect.Panels.Crestron.Controls.TouchScreens;
+using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Connect.Themes.UserInterfaces;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Routing;
 
 namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 {
-	public sealed class ConnectProMpc3201Interface : IUserInterface
+	public sealed class ConnectProMpc3201Interface : AbstractUserInterface
 	{
 		private const float RAMP_PERCENTAGE = 3.0f / 100.0f;
 
@@ -49,28 +51,26 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		private readonly ConnectProTheme m_Theme;
 		private readonly SafeCriticalSection m_RefreshSection;
 
+		private readonly SafeTimer m_HoldTimer;
+
 		private bool m_IsDisposed;
 
 		private IVolumeDeviceControl m_VolumeControl;
 		private IVolumeMuteFeedbackDeviceControl m_VolumeMuteFeedbackControl;
 		private IPowerDeviceControl m_VolumePowerControl;
 		private ISource[] m_Sources;
-
-		private readonly SafeTimer m_HoldTimer;
+		private IConnectProRoom m_Room;
 
 		#region Properties
 
-		/// <summary>
-		/// Returns the room to an UI.
-		/// </summary>
-		public IConnectProRoom Room { get; private set; }
+		public override IRoom Room { get { return m_Room; } }
 
 		/// <summary>
 		/// Gets the touchscreen.
 		/// </summary>
 		public IMPC3x201TouchScreenControl TouchScreen { get { return m_Control; } }
 
-		object IUserInterface.Target { get { return TouchScreen; } }
+		public override object Target { get { return m_Control; } }
 
 		#endregion
 
@@ -111,7 +111,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// <summary>
 		/// Release resources.
 		/// </summary>
-		public void Dispose()
+		public override void Dispose()
 		{
 			m_IsDisposed = true;
 
@@ -124,17 +124,26 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// Updates the UI to represent the given room.
 		/// </summary>
 		/// <param name="room"></param>
+		public override void SetRoom(IRoom room)
+		{
+			SetRoom(room as IConnectProRoom);
+		}
+
+		/// <summary>
+		/// Updates the UI to represent the given room.
+		/// </summary>
+		/// <param name="room"></param>
 		public void SetRoom(IConnectProRoom room)
 		{
-			if (room == Room)
+			if (room == m_Room)
 				return;
 
 			ServiceProvider.GetService<ILoggerService>()
 			               .AddEntry(eSeverity.Informational, "{0} setting room to {1}", this, room);
 
-			Unsubscribe(Room);
-			Room = room;
-			Subscribe(Room);
+			Unsubscribe(m_Room);
+			m_Room = room;
+			Subscribe(m_Room);
 
 			m_Sources = GetSources(room).ToArray();
 
@@ -142,6 +151,14 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 
 			if (!m_IsDisposed)
 				Refresh();
+		}
+
+		/// <summary>
+		/// Tells the UI that it should be considered ready to use.
+		/// For example updating the online join on a panel or starting a long-running process that should be delayed.
+		/// </summary>
+		public override void Activate()
+		{
 		}
 
 		/// <summary>
@@ -167,8 +184,8 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 
 						bool active = enabled &&
 						              m_SourceRoutedStates.GetDefault(source) != eSourceState.Inactive &&
-						              Room != null &&
-						              Room.IsInMeeting;
+						              m_Room != null &&
+									  m_Room.IsInMeeting;
 
 						m_Control.SetNumericalButtonEnabled((uint)(index + 1), enabled);
 						m_Control.SetNumericalButtonSelected((uint)(index + 1), active);
@@ -209,7 +226,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 				m_Control.SetVolumeDownButtonEnabled(volumeEnabled);
 
 				// Power
-				bool inMeeting = Room != null && Room.IsInMeeting;
+				bool inMeeting = m_Room != null && m_Room.IsInMeeting;
 				m_Control.SetPowerButtonEnabled(true);
 				m_Control.SetPowerButtonSelected(!inMeeting);
 			}
@@ -221,8 +238,8 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 
 		public void TogglePower()
 		{
-			if (Room != null)
-				Room.EndMeeting(false);
+			if (m_Room != null)
+				m_Room.EndMeeting(false);
 		}
 
 		/// <summary>
@@ -298,7 +315,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// <param name="source"></param>
 		private void SetProcessingSource(ISource source)
 		{
-			IDestination destination = Room == null ? null : Room.Routing.Destinations.GetDisplayDestinations().FirstOrDefault();
+			IDestination destination = Room == null ? null : m_Room.Routing.Destinations.GetDisplayDestinations().FirstOrDefault();
 			if (destination == null)
 				return;
 
@@ -370,10 +387,9 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			try
 			{
 				Dictionary<IDestination, IcdHashSet<ISource>> routing =
-					(Room == null
+					(m_Room == null
 						 ? Enumerable.Empty<KeyValuePair<IDestination, IcdHashSet<ISource>>>()
-						 : Room.Routing
-						       .State
+						 : m_Room.Routing.State
 						       .GetCachedActiveVideoSources())
 						.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
@@ -539,8 +555,8 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 				return;
 
 			// Reset the routing for the room when proximity is detected
-			if (Room != null && !Room.IsInMeeting)
-				Room.Routing.RouteOsd();
+			if (m_Room != null && !m_Room.IsInMeeting)
+				m_Room.Routing.RouteOsd();
 		}
 
 		/// <summary>
@@ -613,14 +629,14 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			m_HoldTimer.Stop();
 
 			// Check IsInMeeting because it's possible we're releasing after holding
-			if (Room != null && Room.IsInMeeting)
-				Room.EndMeeting(false);
+			if (m_Room != null && m_Room.IsInMeeting)
+				m_Room.EndMeeting(false);
 		}
 
 		private void PowerButtonHeld()
 		{
-			if (Room != null)
-				Room.EndMeeting(true);
+			if (m_Room != null)
+				m_Room.EndMeeting(true);
 		}
 
 		private void HandleSourceButton(int index, bool pressed)
@@ -628,7 +644,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			if (!pressed)
 				return;
 
-			if (Room == null)
+			if (m_Room == null)
 				return;
 
 			ISource source;
@@ -636,13 +652,13 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 				return;
 
 			// Start the meeting if we are not currently in one
-			if (!Room.IsInMeeting)
-				Room.StartMeeting(false);
+			if (!m_Room.IsInMeeting)
+				m_Room.StartMeeting(false);
 
 			SetProcessingSource(source);
 
 			// Route the source to the display
-			Room.Routing.RouteSingleDisplay(source);
+			m_Room.Routing.RouteSingleDisplay(source);
 		}
 
 		#endregion

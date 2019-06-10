@@ -8,7 +8,6 @@ using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.IO;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
-using ICD.Connect.API.Commands;
 using ICD.Connect.Partitioning.Controls;
 using ICD.Connect.Partitioning.Extensions;
 using ICD.Connect.Partitioning.PartitionManagers;
@@ -16,8 +15,8 @@ using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings;
 using ICD.Connect.Settings.Cores;
 using ICD.Connect.Themes;
+using ICD.Connect.Themes.UserInterfaceFactories;
 using ICD.Connect.TvPresets;
-using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Rooms.Combine;
 using ICD.Profound.ConnectPRO.Themes.MicrophoneInterface;
 using ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface;
@@ -31,7 +30,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 	{
 		public const string LOGO_DEFAULT = "Logo.png";
 
-		private readonly IcdHashSet<IConnectProUserInterfaceFactory> m_UiFactories;
+		private readonly IcdHashSet<IUserInterfaceFactory> m_UiFactories;
 		private readonly SafeCriticalSection m_UiFactoriesSection;
 
 		private readonly XmlTvPresets m_TvPresets;
@@ -88,7 +87,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 			m_TvPresets = new XmlTvPresets();
 			m_WebConferencingInstructions = new WebConferencingInstructions();
 
-			m_UiFactories = new IcdHashSet<IConnectProUserInterfaceFactory>
+			m_UiFactories = new IcdHashSet<IUserInterfaceFactory>
 			{
 				new ConnectProUserInterfaceFactory(this),
 				new ConnectProMicrophoneInterfaceFactory(this),
@@ -113,12 +112,19 @@ namespace ICD.Profound.ConnectPRO.Themes
 			ReassignRooms();
 		}
 
+		protected override void ActivateUserInterfaces()
+		{
+			base.ActivateUserInterfaces();
+
+			m_UiFactories.ForEach(f => f.ActivateUserInterfaces());
+		}
+
 		#region Public Methods
 
 		/// <summary>
 		/// Gets the UI Factories.
 		/// </summary>
-		public IEnumerable<IConnectProUserInterfaceFactory> GetUiFactories()
+		public override IEnumerable<IUserInterfaceFactory> GetUiFactories()
 		{
 			m_UiFactoriesSection.Enter();
 
@@ -320,50 +326,6 @@ namespace ICD.Profound.ConnectPRO.Themes
 		private void ManagerOnPartitionOpenStateChange(IPartitionDeviceControl control, bool open)
 		{
 			m_SubscribedPartitionManager.SetPartition<ConnectProCombineRoom>(control, open);
-		}
-
-		#endregion
-
-		#region Console
-
-		/// <summary>
-		/// Gets the child console commands.
-		/// </summary>
-		/// <returns></returns>
-		public override IEnumerable<IConsoleCommand> GetConsoleCommands()
-		{
-			foreach (IConsoleCommand command in GetBaseConsoleCommands())
-				yield return command;
-
-			yield return new ConsoleCommand("PrintUIs", "Prints information about the current UIs", () => ConsolePrintUis());
-		}
-
-		/// <summary>
-		/// Workaround for "unverifiable code" warning.
-		/// </summary>
-		/// <returns></returns>
-		private IEnumerable<IConsoleCommand> GetBaseConsoleCommands()
-		{
-			return base.GetConsoleCommands();
-		}
-
-		private string ConsolePrintUis()
-		{
-			TableBuilder builder = new TableBuilder("Type", "Room", "Target");
-
-			foreach (IConnectProUserInterfaceFactory factory in GetUiFactories())
-			{
-				foreach (IUserInterface ui in factory.GetUserInterfaces())
-				{
-					Type type = ui.GetType();
-					IConnectProRoom room = ui.Room;
-					object target = ui.Target;
-
-					builder.AddRow(type, room, target);
-				}
-			}
-
-			return builder.ToString();
 		}
 
 		#endregion

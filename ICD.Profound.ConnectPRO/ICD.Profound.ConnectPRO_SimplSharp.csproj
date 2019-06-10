@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
@@ -91,8 +91,6 @@
     <Compile Include="Routing\Masking\ThinMaskedSourceInfo.cs" />
     <Compile Include="Themes\AbstractConnectProUserInterfaceFactory.cs" />
     <Compile Include="Themes\ConnectProDateFormatting.cs" />
-    <Compile Include="Themes\IConnectProUserInterfaceFactory.cs" />
-    <Compile Include="Themes\IUserInterface.cs" />
     <Compile Include="Themes\ConnectProTheme.cs" />
     <Compile Include="Themes\ConnectProThemeSettings.cs" />
     <Compile Include="Themes\MicrophoneInterface\ConnectProMicrophoneInterface.cs" />

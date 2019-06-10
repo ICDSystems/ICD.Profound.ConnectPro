@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
@@ -12,6 +11,8 @@ using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings.Originators;
+using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.Themes.UserInterfaces;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Connect.UI.Mvp.VisibilityTree;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -31,7 +32,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 	/// <summary>
 	/// Holds the presenter/view hierarchy for a complete panel UI.
 	/// </summary>
-	public sealed class ConnectProOsdInterface : IUserInterface
+	public sealed class ConnectProOsdInterface : AbstractUserInterface
 	{
 		private readonly IPanelDevice m_Panel;
 		private readonly IOsdNavigationController m_NavigationController;
@@ -41,14 +42,15 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 		private IVisibilityNode m_NotificationVisibility;
 
 		private IConnectProRoom m_Room;
+		private bool m_UserInterfaceReady;
 
 		#region Properties
 
 		public IPanelDevice Panel { get { return m_Panel; } }
 
-		public IConnectProRoom Room { get { return m_Room; } }
+		public override IRoom Room { get { return m_Room; } }
 
-		object IUserInterface.Target { get { return Panel; } }
+		public override object Target { get { return m_Panel; } }
 
 		#endregion
 
@@ -60,7 +62,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 		public ConnectProOsdInterface(IPanelDevice panel, ConnectProTheme theme)
 		{
 			m_Panel = panel;
-			UpdatePanelOnlineJoin();
+			UpdatePanelOfflineJoin();
 
 			IOsdViewFactory viewFactory = new ConnectProOsdViewFactory(panel, theme);
 			m_NavigationController = new ConnectProOsdNavigationController(viewFactory, theme);
@@ -69,11 +71,21 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 		}
 
 		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			SetRoom(null);
+
+			m_NavigationController.Dispose();
+		}
+
+		/// <summary>
 		/// Updates the "offline" visual state of the panel
 		/// </summary>
-		private void UpdatePanelOnlineJoin()
+		private void UpdatePanelOfflineJoin()
 		{
-			m_Panel.SendInputDigital(CommonJoins.DIGITAL_OFFLINE_JOIN, m_Room == null);
+			m_Panel.SendInputDigital(CommonJoins.DIGITAL_OFFLINE_JOIN, m_Room == null || !m_UserInterfaceReady);
 		}
 
 		/// <summary>
@@ -98,6 +110,56 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 			
 			UpdateVisibility();
 		}
+
+		#region Methods
+
+		/// <summary>
+		/// Updates the UI to represent the given room.
+		/// </summary>
+		/// <param name="room"></param>
+		public override void SetRoom(IRoom room)
+		{
+			SetRoom(room as IConnectProRoom);
+		}
+
+		/// <summary>
+		/// Updates the UI to represent the given room.
+		/// </summary>
+		/// <param name="room"></param>
+		public void SetRoom(IConnectProRoom room)
+		{
+			if (room == m_Room)
+				return;
+
+			ServiceProvider.GetService<ILoggerService>()
+			               .AddEntry(eSeverity.Informational, "{0} setting room to {1}", this, room);
+
+			Unsubscribe(m_Room);
+			m_Room = room;
+			Subscribe(m_Room);
+
+			m_NavigationController.SetRoom(room);
+
+			UpdatePanelOfflineJoin();
+			UpdateVisibility();
+		}
+		
+		private void RoutingStateOnSourceRoutedChanged(object sender, EventArgs e)
+		{
+			UpdateVisibility();
+		}
+
+		/// <summary>
+		/// Tells the UI that it should be considered ready to use.
+		/// For example updating the online join on a panel or starting a long-running process that should be delayed.
+		/// </summary>
+		public override void Activate()
+		{
+			m_UserInterfaceReady = true;
+			UpdatePanelOfflineJoin();
+		}
+
+		#endregion
 
 		#region Room Callbacks
 
@@ -131,20 +193,16 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 		{
 			UpdateVisibility();
 		}
-		
-		private void RoutingStateOnSourceRoutedChanged(object sender, EventArgs e)
-		{
-			UpdateVisibility();
-		}
 
 		private void UpdateVisibility()
 		{
+
 			if (Room == null)
 				return;
 
-			IEnumerable<ISource> activeSources = Room.Routing.State.GetSourceRoutedStates()
-			                                         .Where(kvp => kvp.Value == eSourceState.Masked || kvp.Value == eSourceState.Active)
-			                                         .Select(kvp => kvp.Key).ToList();
+			IEnumerable<ISource> activeSources = m_Room.Routing.State.GetSourceRoutedStates()
+													 .Where(kvp => kvp.Value == eSourceState.Masked || kvp.Value == eSourceState.Active)
+													 .Select(kvp => kvp.Key).ToList();
 			bool zoomRouted = false;
 			foreach (var source in activeSources)
 			{
@@ -160,57 +218,10 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 
 			if (zoomRouted)
 				m_NavigationController.NavigateTo<IOsdConferencePresenter>();
-			else if (Room.IsInMeeting)
+			else if (m_Room.IsInMeeting)
 				m_NavigationController.NavigateTo<IOsdSourcesPresenter>();
-			else if (Room.CalendarControl != null)
+			else if (m_Room.CalendarControl != null)
 				m_NavigationController.NavigateTo<IOsdWelcomePresenter>();
-		}
-
-		#endregion
-
-		#region Methods
-
-		/// <summary>
-		/// Release resources.
-		/// </summary>
-		public void Dispose()
-		{
-			SetRoom(null);
-
-			m_NavigationController.Dispose();
-		}
-
-		/// <summary>
-		/// Updates the UI to represent the given room.
-		/// </summary>
-		/// <param name="room"></param>
-		public void SetRoom(IConnectProRoom room)
-		{
-			if (room == m_Room)
-				return;
-
-			ServiceProvider.GetService<ILoggerService>()
-			               .AddEntry(eSeverity.Informational, "{0} setting room to {1}", this, room);
-
-			Unsubscribe(m_Room);
-			m_Room = room;
-			Subscribe(m_Room);
-
-			m_NavigationController.SetRoom(room);
-
-			UpdatePanelOnlineJoin();
-			UpdateVisibility();
-		}
-
-		/// <summary>
-		/// Gets the string representation for this instance.
-		/// </summary>
-		/// <returns></returns>
-		public override string ToString()
-		{
-			ReprBuilder builder = new ReprBuilder(this);
-			builder.AppendProperty("Panel", m_Panel);
-			return builder.ToString();
 		}
 
 		#endregion
