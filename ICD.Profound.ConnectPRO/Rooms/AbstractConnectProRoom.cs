@@ -171,7 +171,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			IDeviceBase dialerDevice = preferredDialer.Parent;
 			var source = Routing.Sources.GetSources().FirstOrDefault(s => s.Device == dialerDevice.Id) ??
 			             Routing.Sources.GetCoreSources().FirstOrDefault(s => s.Device == dialerDevice.Id);
-			if (source != null)
+			if (source == null)
 				return; // if we can't route a source, don't dial into conference users won't know they're in
 
 			if (dialerDevice is IVideoConferenceDevice)
