@@ -33,6 +33,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 		private readonly IPathFinder m_PathFinder;
 
+		private readonly MaskedSourceInfoFactory m_MaskFactory;
+
 		private readonly ConnectProRoutingSources m_Sources;
 		private readonly ConnectProRoutingDestinations m_Destinations;
 		private readonly ConnectProRoutingState m_State;
@@ -76,6 +78,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 			m_RoutingGraph = m_Room.Core.GetRoutingGraph();
 
 			m_PathFinder = new DefaultPathFinder(m_RoutingGraph, m_Room.Id);
+
+			m_MaskFactory = new MaskedSourceInfoFactory(Room);
 
 			m_Sources = new ConnectProRoutingSources(this);
 			m_Destinations = new ConnectProRoutingDestinations(this);
@@ -160,9 +164,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (source == null)
 				throw new ArgumentNullException("source");
 
-			if (Room.Core.Originators.GetChild(source.Device) is ZoomRoom)
+			var mask = m_MaskFactory.GetMaskedSourceInfo(source);
+			if (mask != null)
 			{
-				var mask = new ConferenceDeviceMaskedSourceInfo(source, Room);
 				var destinations = Destinations.GetDisplayDestinations().ToList();
 				foreach (var destination in destinations)
 					State.SetMaskedSource(destination, mask);
