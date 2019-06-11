@@ -88,6 +88,7 @@
     <Compile Include="Routing\Masking\AbstractMaskedSourceInfo.cs" />
     <Compile Include="Routing\Masking\ConferenceDeviceMaskedSourceInfo.cs" />
     <Compile Include="Routing\Masking\IMaskedSourceInfo.cs" />
+    <Compile Include="Routing\Masking\MaskedSourceInfoFactory.cs" />
     <Compile Include="Routing\Masking\ThinMaskedSourceInfo.cs" />
     <Compile Include="Themes\AbstractConnectProUserInterfaceFactory.cs" />
     <Compile Include="Themes\ConnectProDateFormatting.cs" />
