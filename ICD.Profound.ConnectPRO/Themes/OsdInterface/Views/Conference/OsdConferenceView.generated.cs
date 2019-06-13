@@ -24,6 +24,9 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Conference
 		// connecting banner
 		private VtProImageObject m_ConnectingBanner;
 
+		// disconnecting banner
+		private VtProImageObject m_DisconnectingBanner;
+
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
@@ -67,6 +70,11 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Conference
 			{
 				DigitalVisibilityJoin = 606
 			};
+
+			m_DisconnectingBanner = new VtProImageObject(panel, m_Subpage)
+			{
+				DigitalVisibilityJoin = 607
+			};
 		}
 
 		protected override IEnumerable<IVtProControl> GetChildren()
@@ -78,6 +86,8 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Conference
 			yield return m_SourceIcon;
 			yield return m_SourceNameLabel;
 			yield return m_SourceDescriptionLabel;
+			yield return m_ConnectingBanner;
+			yield return m_DisconnectingBanner;
 		}
 	}
 }

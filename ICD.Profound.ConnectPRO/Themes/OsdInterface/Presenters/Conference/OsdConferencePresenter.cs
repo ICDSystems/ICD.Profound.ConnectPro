@@ -80,8 +80,11 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Conference
 				view.SetSourceDescriptionText(source == null ? string.Empty : source.Description);
 
 				var conferences = ActiveConferenceControl.GetConferences().ToList();
-				var conferenceConnecting = conferences.Any(c => c.Status == eConferenceStatus.Connecting || c.Status == eConferenceStatus.Connected);
+				var conferenceConnecting = conferences.Any(c => c.Status == eConferenceStatus.Connecting);
 				view.SetConnectingBannerVisibility(conferenceConnecting);
+
+				var conferenceDisconnecting = conferences.Any(c => c.Status == eConferenceStatus.Disconnecting);
+				view.SetDisconnectingBannerVisibility(conferenceDisconnecting);
 			}
 			finally
 			{

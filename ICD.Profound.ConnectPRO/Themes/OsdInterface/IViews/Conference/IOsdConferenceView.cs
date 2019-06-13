@@ -19,5 +19,7 @@
 		void SetSourceDescriptionText(string description);
 
 		void SetConnectingBannerVisibility(bool visible);
+
+		void SetDisconnectingBannerVisibility(bool visible);
 	}
 }

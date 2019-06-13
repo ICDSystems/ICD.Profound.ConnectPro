@@ -58,5 +58,10 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views.Conference
 		{
 			m_ConnectingBanner.Show(visible);
 		}
+
+		public void SetDisconnectingBannerVisibility(bool visible)
+		{
+			m_DisconnectingBanner.Show(visible);
+		}
 	}
 }
