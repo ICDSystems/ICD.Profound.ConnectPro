@@ -71,6 +71,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			m_RefreshSection.Enter();
 			try
 			{
+				view.SetContactListLabelText(string.IsNullOrEmpty(m_Filter) ? "Contact List" : string.Format("Contact List - Filter: \"{0}\"", m_Filter));
 				var contacts = GetContacts().ToList();
 				view.SetSearchButtonEnabled(true);
 
