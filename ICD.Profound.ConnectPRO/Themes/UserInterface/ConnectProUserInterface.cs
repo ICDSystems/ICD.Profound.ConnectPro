@@ -543,9 +543,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		[CanBeNull]
 		private IContextualControlPresenter GetContextualMenu(IDeviceControl control, eControlOverride controlOverride)
 		{
-			if (control == null)
-				return null;
-
 			if (controlOverride == eControlOverride.Default)
 				return GetContextualMenu(control);
 
