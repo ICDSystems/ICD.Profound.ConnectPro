@@ -7,8 +7,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Added
  - Added CUE Conference page to show instead of routing the Zoom Room until the device is in a meeting
-
-### Added
  - DateTimes on the UI and CUE are formatted using the current culture info
 
 ## [8.1.1] - 2019-05-07
