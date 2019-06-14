@@ -29,6 +29,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Cont
 		void SetSearchButtonEnabled(bool enabled);
 
 		/// <summary>
+		/// Sets the text for the label above the contact list.
+		/// </summary>
+		/// <param name="text"></param>
+		void SetContactListLabelText(string text);
+
+		/// <summary>
 		/// Returns child views for list items.
 		/// </summary>
 		/// <param name="factory"></param>

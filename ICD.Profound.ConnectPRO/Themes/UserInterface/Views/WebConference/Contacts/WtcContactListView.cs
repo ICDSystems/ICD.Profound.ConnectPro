@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
+using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Mvp.Views;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts;
 
@@ -49,6 +50,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 		public void SetInviteParticipantButtonEnabled(bool enabled)
 		{
 			m_InviteParticipantButton.Enable(enabled);
+		}
+
+		public void SetContactListLabelText(string text)
+		{
+			m_ContactListLabel.SetLabelText(text);
 		}
 
 		#region Control Callbacks

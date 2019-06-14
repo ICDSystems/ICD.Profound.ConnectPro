@@ -5,6 +5,7 @@ using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.Pages;
+using ICD.Connect.UI.Controls.TextControls;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Contacts
 {
@@ -15,6 +16,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 		private VtProSubpageReferenceList m_SelectedContactList;
 		private VtProButton m_SearchButton;
 		private VtProButton m_InviteParticipantButton;
+		private VtProSimpleLabel m_ContactListLabel;
 		
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
@@ -50,6 +52,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
                 DigitalPressJoin = 721,
 				DigitalEnableJoin = 754
 			};
+
+			m_ContactListLabel = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				IndirectTextJoin = 702
+			};
 		}
 
 		protected override IEnumerable<IVtProControl> GetChildren()
@@ -59,6 +66,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 			yield return m_SelectedContactList;
 			yield return m_InviteParticipantButton;
 			yield return m_SearchButton;
+			yield return m_ContactListLabel;
 		}
 	}
 }
