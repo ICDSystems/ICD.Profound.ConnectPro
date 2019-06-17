@@ -618,7 +618,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			SetSelectedSource(null);
 
 			if (m_Room != null)
+			{
 				m_Room.Routing.State.ClearProcessingSources();
+				m_Room.Routing.State.ClearMaskedSources();
+			}
 
 			UpdateMeetingPresentersVisibility();
 		}

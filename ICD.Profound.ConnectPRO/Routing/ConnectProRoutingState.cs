@@ -362,6 +362,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 				m_MaskedSources[destination] = mask;
 				UpdateSourceRoutedStates();
+				UpdateVideoRoutingCache();
 			}
 			finally
 			{
@@ -380,7 +381,30 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 				m_MaskedSources.Remove(destination);
 				maskToRemove.Dispose();
+
+				UpdateSourceRoutedStates();
 				UpdateVideoRoutingCache();
+			}
+			finally
+			{
+				m_CacheSection.Leave();
+			}
+		}
+
+		/// <summary>
+		/// Clears the processing source for each display destination.
+		/// </summary>
+		public void ClearMaskedSources()
+		{
+			m_CacheSection.Enter();
+
+			try
+			{
+				foreach (IMaskedSourceInfo mask in m_MaskedSources.Values.Where(p => p != null))
+					mask.Dispose();
+				m_MaskedSources.Clear();
+
+				UpdateSourceRoutedStates();
 			}
 			finally
 			{
