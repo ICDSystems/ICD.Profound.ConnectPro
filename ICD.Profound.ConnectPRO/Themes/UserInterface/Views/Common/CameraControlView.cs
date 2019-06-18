@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
@@ -67,6 +69,33 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		public void SetPresetStoredLabelVisibility(bool visible)
 		{
 			m_PresetStoredLabel.Show(visible);
+		}
+
+		/// <summary>
+		/// Sets the camera selection list labels.
+		/// </summary>
+		/// <param name="labels"></param>
+		public void SetCameraLabels(IEnumerable<string> labels)
+		{
+			if (labels == null)
+				throw new ArgumentNullException("labels");
+
+			string[] labelsArray = labels.ToArray();
+
+			bool visible = labelsArray.Length > 1;
+
+			m_CameraList.SetItemLabels(labelsArray);
+			m_CameraList.Show(visible);
+		}
+
+		/// <summary>
+		/// Sets the selection state of the camera button at the given index.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="selected"></param>
+		public void SetCameraSelected(ushort index, bool selected)
+		{
+			m_CameraList.SetItemSelected(index, selected);
 		}
 
 		#region Control Callbacks

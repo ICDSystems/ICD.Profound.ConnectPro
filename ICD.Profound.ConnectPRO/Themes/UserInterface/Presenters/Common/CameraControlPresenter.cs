@@ -8,7 +8,10 @@ using ICD.Common.Utils.Timers;
 using ICD.Connect.Cameras;
 using ICD.Connect.Cameras.Controls;
 using ICD.Connect.Cameras.Devices;
+using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.Settings.Originators;
 using ICD.Connect.UI.Attributes;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -23,34 +26,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private readonly Dictionary<int, CameraPreset> m_CameraPresets;
+		private readonly List<ICameraDevice> m_Cameras;
 
+		private readonly Dictionary<int, CameraPreset> m_CameraPresets;
 		private readonly SafeTimer m_PresetStoredTimer;
 
 		[CanBeNull]
-		private ICameraDevice m_Camera;
+		private ICameraDevice m_SelectedCamera;
 
 		[CanBeNull]
 		private IPresetControl m_SubscribedPresetControl;
 
 		/// <summary>
-		/// Gets/sets the current camera control.
+		/// Gets the number of cameras.
 		/// </summary>
-		public ICameraDevice Camera
-		{
-			get { return m_Camera; }
-			set
-			{
-				if (value == m_Camera)
-					return;
-
-				Unsubscribe(m_Camera);
-				m_Camera = value;
-				Subscribe(m_Camera);
-
-				RefreshIfVisible();
-			}
-		}
+		public int CameraCount { get { return m_RefreshSection.Execute(() => m_Cameras.Count); } }
 
 		/// <summary>
 		/// Constructor.
@@ -62,6 +52,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
+			m_Cameras = new List<ICameraDevice>();
 			m_CameraPresets = new Dictionary<int, CameraPreset>();
 			m_PresetStoredTimer = SafeTimer.Stopped(() => ShowPresetStoredLabel(false));
 		}
@@ -77,6 +68,34 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		}
 
 		/// <summary>
+		/// Sets the room for this presenter to represent.
+		/// </summary>
+		/// <param name="room"></param>
+		public override void SetRoom(IConnectProRoom room)
+		{
+			base.SetRoom(room);
+
+			m_RefreshSection.Enter();
+
+			try
+			{
+				IEnumerable<ICameraDevice> cameras =
+					room == null
+						? Enumerable.Empty<ICameraDevice>()
+						: room.Originators.GetInstancesRecursive<ICameraDevice>();
+
+				m_Cameras.Clear();
+				m_Cameras.AddRange(cameras);
+
+				SetSelectedCamera(m_Cameras.FirstOrDefault());
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+		}
+
+		/// <summary>
 		/// Updates the view.
 		/// </summary>
 		/// <param name="view"></param>
@@ -88,7 +107,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
-				IPresetControl presetControl = m_Camera == null ? null : m_Camera.Controls.GetControl<IPresetControl>();
+				bool combine = Room != null && Room.IsCombineRoom();
+
+				// Cameras
+				IEnumerable<string> cameraLabels = m_Cameras.Select(c => c.GetName(combine));
+				view.SetCameraLabels(cameraLabels);
+
+				for (ushort index = 0; index < m_Cameras.Count; index++)
+					view.SetCameraSelected(index, m_SelectedCamera == m_Cameras[index]);
+
+				// Presets
+				IPresetControl presetControl =
+					m_SelectedCamera == null ? null : m_SelectedCamera.Controls.GetControl<IPresetControl>();
 
 				IEnumerable<CameraPreset> presets =
 					presetControl == null
@@ -122,6 +152,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			}
 		}
 
+		#region Private Methods
+
+		/// <summary>
+		/// Gets/sets the current camera control.
+		/// </summary>
+		private void SetSelectedCamera(ICameraDevice camera)
+		{
+			if (camera == m_SelectedCamera)
+				return;
+
+			Unsubscribe(m_SelectedCamera);
+			m_SelectedCamera = camera;
+			Subscribe(m_SelectedCamera);
+
+			RefreshIfVisible();
+		}
+
 		private void ShowPresetStoredLabel(bool visible)
 		{
 			ICameraControlView view = GetView();
@@ -133,23 +180,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 		private void Zoom(eCameraZoomAction action)
 		{
-			if (m_Camera == null)
+			if (m_SelectedCamera == null)
 				return;
 
-			IZoomControl zoom = m_Camera.Controls.GetControl<IZoomControl>();
+			IZoomControl zoom = m_SelectedCamera.Controls.GetControl<IZoomControl>();
 			if (zoom != null)
 				zoom.Zoom(action);
 		}
 
 		private void PanTilt(eCameraPanTiltAction action)
 		{
-			if (m_Camera == null)
+			if (m_SelectedCamera == null)
 				return;
 
-			IPanTiltControl panTilt = m_Camera.Controls.GetControl<IPanTiltControl>();
+			IPanTiltControl panTilt = m_SelectedCamera.Controls.GetControl<IPanTiltControl>();
 			if (panTilt != null)
 				panTilt.PanTilt(action);
 		}
+
+		#endregion
 
 		#region Camera Callbacks
 
@@ -266,10 +315,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 		private void ViewOnPresetButtonReleased(object sender, UShortEventArgs eventArgs)
 		{
-			if (m_Camera == null)
+			if (m_SelectedCamera == null)
 				return;
 
-			IPresetControl cameraControl = m_Camera.Controls.GetControl<IPresetControl>();
+			IPresetControl cameraControl = m_SelectedCamera.Controls.GetControl<IPresetControl>();
 			if (cameraControl == null)
 				return;
 
@@ -282,10 +331,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 		private void ViewOnPresetButtonHeld(object sender, UShortEventArgs eventArgs)
 		{
-			if (m_Camera == null)
+			if (m_SelectedCamera == null)
 				return;
 
-			IPresetControl cameraControl = m_Camera.Controls.GetControl<IPresetControl>();
+			IPresetControl cameraControl = m_SelectedCamera.Controls.GetControl<IPresetControl>();
 			if (cameraControl == null)
 				return;
 

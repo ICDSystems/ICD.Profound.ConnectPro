@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ICD.Common.Utils.EventArguments;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
@@ -66,5 +67,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 		/// </summary>
 		/// <param name="visible"></param>
 		void SetPresetStoredLabelVisibility(bool visible);
+
+		/// <summary>
+		/// Sets the camera selection list labels.
+		/// </summary>
+		/// <param name="labels"></param>
+		void SetCameraLabels(IEnumerable<string> labels);
+
+		/// <summary>
+		/// Sets the selection state of the camera button at the given index.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="selected"></param>
+		void SetCameraSelected(ushort index, bool selected);
 	}
 }

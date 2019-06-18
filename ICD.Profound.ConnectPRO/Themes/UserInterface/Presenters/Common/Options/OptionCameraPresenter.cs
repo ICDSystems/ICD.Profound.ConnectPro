@@ -1,6 +1,5 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.UI.Attributes;
@@ -53,15 +52,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 			return m_Menu.IsViewVisible;
 		}
 
-		/// <summary>
-		/// Gets the camera for the current room.
-		/// </summary>
-		/// <returns></returns>
-		private ICameraDevice GetCamera()
-		{
-			return Room == null ? null : Room.Originators.GetInstance<ICameraDevice>();
-		}
-
 		#region View Callbacks
 
 		/// <summary>
@@ -71,10 +61,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// <param name="eventArgs"></param>
 		protected override void ViewOnButtonPressed(object sender, EventArgs eventArgs)
 		{
-			ICameraDevice camera = GetCamera();
-
-			m_Menu.Camera = camera;
-			m_Menu.ShowView(!m_Menu.IsViewVisible && camera != null);
+			m_Menu.ShowView(!m_Menu.IsViewVisible && m_Menu.CameraCount > 0);
 		}
 
 		/// <summary>
@@ -157,7 +144,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 
 		private void SubscribedConferenceManagerOnInCallChanged(object sender, InCallEventArgs callEventArgs)
 		{
-			ShowView(callEventArgs.Data == eInCall.Video && GetCamera() != null);
+			ShowView(callEventArgs.Data == eInCall.Video && m_Menu.CameraCount > 0);
 		}
 
 		#endregion

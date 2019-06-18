@@ -1,13 +1,12 @@
-﻿using ICD.Connect.Cameras.Devices;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
+﻿using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common
 {
 	public interface ICameraControlPresenter : IUiPresenter<ICameraControlView>
 	{
 		/// <summary>
-		/// Gets/sets the current camera.
+		/// Gets the number of cameras.
 		/// </summary>
-		ICameraDevice Camera { get; set; }
+		int CameraCount { get; }
 	}
 }
