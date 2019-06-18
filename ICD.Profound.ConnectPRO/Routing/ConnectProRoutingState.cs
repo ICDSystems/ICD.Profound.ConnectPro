@@ -463,9 +463,11 @@ namespace ICD.Profound.ConnectPRO.Routing
 			try
 			{
 				Dictionary<IDestination, IcdHashSet<ISource>> routing =
-					m_Routing.Destinations.GetDisplayDestinations()
+					m_Routing.Destinations
+					         .GetDisplayDestinations()
 					         .ToDictionary(destination => destination,
-					                       destination => m_Routing.RoutingGraph.RoutingCache
+					                       destination => m_Routing.RoutingGraph
+					                                               .RoutingCache
 					                                               .GetSourcesForDestination(destination, eConnectionType.Video)
 					                                               .ToIcdHashSet());
 				
