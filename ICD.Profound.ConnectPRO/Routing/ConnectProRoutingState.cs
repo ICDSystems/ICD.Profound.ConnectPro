@@ -437,7 +437,14 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			try
 			{
-				IcdHashSet<ISource> activeAudio = GetCachedActiveAudioSources().ToIcdHashSet();
+				IcdHashSet<ISource> activeAudio =
+					m_Routing.Destinations
+					         .GetAudioDestinations()
+					         .SelectMany(d => m_Routing.RoutingGraph
+					                                   .RoutingCache
+					                                   .GetSourcesForDestination(d, eConnectionType.Audio))
+					         .ToIcdHashSet();
+
 				if (activeAudio.SetEquals(m_AudioRoutingCache))
 					return;
 
