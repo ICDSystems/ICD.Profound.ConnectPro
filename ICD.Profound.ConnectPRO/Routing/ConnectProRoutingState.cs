@@ -150,16 +150,23 @@ namespace ICD.Profound.ConnectPRO.Routing
 			try
 			{
 				var cache = m_VideoRoutingCache.ToDictionary(kvp => kvp.Key, kvp => new IcdHashSet<ISource>(kvp.Value));
+
 				foreach (var processingSource in m_ProcessingSources.ToList())
 				{
 					var destinationCache = cache.GetOrAddNew(processingSource.Key);
-					destinationCache.Add(processingSource.Value.Source);
+					
+					if (processingSource.Value.Source != null)
+						destinationCache.Add(processingSource.Value.Source);
 				}
+
 				foreach (var maskedSource in m_MaskedSources.ToList())
 				{
 					var destinationCache = cache.GetOrAddNew(maskedSource.Key);
-					destinationCache.Add(maskedSource.Value.Source);
+
+					if (maskedSource.Value.Source != null)
+						destinationCache.Add(maskedSource.Value.Source);
 				}
+
 				return cache;
 			}
 			finally
