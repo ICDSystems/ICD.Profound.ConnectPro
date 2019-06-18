@@ -39,9 +39,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 		event EventHandler OnCameraZoomOutButtonPressed;
 
 		/// <summary>
-		/// Raised when any camera button is released (i.e. stop the camera).
+		/// Raised when any camera PTZ button is released (i.e. stop the camera).
 		/// </summary>
-		event EventHandler OnCameraButtonReleased;
+		event EventHandler OnCameraPtzButtonReleased;
 
 		/// <summary>
 		/// Raised when a preset button is pressed.
@@ -52,6 +52,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 		/// Raised when a preset button is held.
 		/// </summary>
 		event EventHandler<UShortEventArgs> OnPresetButtonHeld;
+
+		/// <summary>
+		/// Raised when a camera button is pressed.
+		/// </summary>
+		event EventHandler<UShortEventArgs> OnCameraButtonPressed;
 
 		#endregion
 

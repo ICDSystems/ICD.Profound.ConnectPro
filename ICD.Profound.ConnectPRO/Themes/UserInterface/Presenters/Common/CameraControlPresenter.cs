@@ -4,6 +4,7 @@ using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Cameras;
 using ICD.Connect.Cameras.Controls;
@@ -247,7 +248,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			base.Subscribe(view);
 
-			view.OnCameraButtonReleased += ViewOnCameraButtonReleased;
+			view.OnCameraPtzButtonReleased += ViewOnCameraPtzButtonReleased;
 			view.OnCameraMoveDownButtonPressed += ViewOnCameraMoveDownButtonPressed;
 			view.OnCameraMoveLeftButtonPressed += ViewOnCameraMoveLeftButtonPressed;
 			view.OnCameraMoveRightButtonPressed += ViewOnCameraMoveRightButtonPressed;
@@ -256,6 +257,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			view.OnCameraZoomOutButtonPressed += ViewOnCameraZoomOutButtonPressed;
 			view.OnPresetButtonReleased += ViewOnPresetButtonReleased;
 			view.OnPresetButtonHeld += ViewOnPresetButtonHeld;
+			view.OnCameraButtonPressed += ViewOnCameraButtonPressed;
 		}
 
 		/// <summary>
@@ -266,7 +268,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			base.Unsubscribe(view);
 
-			view.OnCameraButtonReleased -= ViewOnCameraButtonReleased;
+			view.OnCameraPtzButtonReleased -= ViewOnCameraPtzButtonReleased;
 			view.OnCameraMoveDownButtonPressed -= ViewOnCameraMoveDownButtonPressed;
 			view.OnCameraMoveLeftButtonPressed -= ViewOnCameraMoveLeftButtonPressed;
 			view.OnCameraMoveRightButtonPressed -= ViewOnCameraMoveRightButtonPressed;
@@ -275,9 +277,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			view.OnCameraZoomOutButtonPressed -= ViewOnCameraZoomOutButtonPressed;
 			view.OnPresetButtonReleased -= ViewOnPresetButtonReleased;
 			view.OnPresetButtonHeld -= ViewOnPresetButtonHeld;
+			view.OnCameraButtonPressed -= ViewOnCameraButtonPressed;
 		}
 
-		private void ViewOnCameraButtonReleased(object sender, EventArgs eventArgs)
+		private void ViewOnCameraPtzButtonReleased(object sender, EventArgs eventArgs)
 		{
 			Zoom(eCameraZoomAction.Stop);
 			PanTilt(eCameraPanTiltAction.Stop);
@@ -343,6 +346,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			ShowPresetStoredLabel(true);
 			m_PresetStoredTimer.Reset(PRESET_STORED_VISIBILITY_MILLISECONDS);
+		}
+
+		private void ViewOnCameraButtonPressed(object sender, UShortEventArgs args)
+		{
+			m_RefreshSection.Enter();
+
+			try
+			{
+				ICameraDevice camera;
+				m_Cameras.TryElementAt(args.Data, out camera);
+
+				SetSelectedCamera(camera);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
 		}
 
 		/// <summary>

@@ -20,9 +20,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		public event EventHandler OnCameraMoveDownButtonPressed;
 		public event EventHandler OnCameraZoomInButtonPressed;
 		public event EventHandler OnCameraZoomOutButtonPressed;
-		public event EventHandler OnCameraButtonReleased;
+		public event EventHandler OnCameraPtzButtonReleased;
+
 		public event EventHandler<UShortEventArgs> OnPresetButtonReleased;
 		public event EventHandler<UShortEventArgs> OnPresetButtonHeld;
+		public event EventHandler<UShortEventArgs> OnCameraButtonPressed; 
 
 		/// <summary>
 		/// Constructor.
@@ -45,9 +47,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			OnCameraMoveDownButtonPressed = null;
 			OnCameraZoomInButtonPressed = null;
 			OnCameraZoomOutButtonPressed = null;
-			OnCameraButtonReleased = null;
+			OnCameraPtzButtonReleased = null;
 			OnPresetButtonReleased = null;
 			OnPresetButtonHeld = null;
+			OnCameraButtonPressed = null;
 
 			base.Dispose();
 		}
@@ -113,6 +116,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			m_ZoomInButton.OnReleased += ZoomInButtonOnReleased;
 			m_ZoomOutButton.OnPressed += ZoomOutButtonOnPressed;
 			m_ZoomOutButton.OnReleased += ZoomOutButtonOnReleased;
+			m_CameraList.OnButtonClicked += CameraListOnButtonClicked;
 
 			foreach (VtProButton button in m_PresetButtons.Values)
 			{
@@ -134,6 +138,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			m_ZoomInButton.OnReleased -= ZoomInButtonOnReleased;
 			m_ZoomOutButton.OnPressed -= ZoomOutButtonOnPressed;
 			m_ZoomOutButton.OnReleased -= ZoomOutButtonOnReleased;
+			m_CameraList.OnButtonClicked += CameraListOnButtonClicked;
 
 			foreach (VtProButton button in m_PresetButtons.Values)
 			{
@@ -144,7 +149,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 
 		private void ZoomOutButtonOnReleased(object sender, EventArgs eventArgs)
 		{
-			OnCameraButtonReleased.Raise(this);
+			OnCameraPtzButtonReleased.Raise(this);
 		}
 
 		private void ZoomOutButtonOnPressed(object sender, EventArgs eventArgs)
@@ -154,7 +159,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 
 		private void ZoomInButtonOnReleased(object sender, EventArgs eventArgs)
 		{
-			OnCameraButtonReleased.Raise(this);
+			OnCameraPtzButtonReleased.Raise(this);
 		}
 
 		private void ZoomInButtonOnPressed(object sender, EventArgs eventArgs)
@@ -164,7 +169,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 
 		private void DPadOnButtonReleased(object sender, DPadEventArgs eventArgs)
 		{
-			OnCameraButtonReleased.Raise(this);
+			OnCameraPtzButtonReleased.Raise(this);
 		}
 
 		private void DPadOnButtonPressed(object sender, DPadEventArgs eventArgs)
@@ -201,6 +206,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		{
 			ushort index = m_PresetButtons.GetKey(sender as VtProButton);
 			OnPresetButtonHeld.Raise(this, new UShortEventArgs(index));
+		}
+
+		/// <summary>
+		/// Called when the user presses a camera list button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void CameraListOnButtonClicked(object sender, UShortEventArgs args)
+		{
+			OnCameraButtonPressed.Raise(this, new UShortEventArgs(args.Data));
 		}
 
 		#endregion
