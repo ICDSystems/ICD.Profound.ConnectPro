@@ -236,7 +236,6 @@
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\IWtcStartMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IViews\AudioConference\IAtcBaseView.cs" />
     <Compile Include="Themes\UserInterface\IViews\AudioConference\IAtcIncomingCallView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\Cameras\ICamerasView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Colors.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Displays\IMenuCombinedAdvancedModeView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Displays\IMenuCombinedSimpleModeView.cs" />
