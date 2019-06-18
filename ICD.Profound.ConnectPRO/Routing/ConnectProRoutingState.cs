@@ -370,7 +370,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			}
 		}
 
-		private void ClearMaskedSource(IDestination destination)
+		public void ClearMaskedSource(IDestination destination)
 		{
 			m_CacheSection.Enter();
 			try

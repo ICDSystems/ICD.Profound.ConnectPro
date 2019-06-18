@@ -9,7 +9,6 @@ using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.Devices;
-using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Panels.Server.Osd;
@@ -118,6 +117,31 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (source == null)
 				throw new ArgumentNullException("source");
 
+			var mask = m_MaskFactory.GetMaskedSourceInfo(source);
+			if (mask != null)
+			{
+				var destinations = Destinations.GetDisplayDestinations().ToList();
+				foreach (var destination in destinations)
+					State.SetMaskedSource(destination, mask);
+			}
+			else
+			{
+				RouteAllDisplays(source, null);
+			}
+		}
+
+		/// <summary>
+		/// Routes the source to all displays and room audio.
+		/// </summary>
+		/// <param name="source"></param>
+		public void RouteAllDisplays(ISource source, IMaskedSourceInfo mask)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			if (mask == null)
+				State.ClearMaskedSources();
+
 			IDestination[] destinations = m_Destinations.GetDisplayDestinations().ToArray();
 
 			foreach (IDestination destination in destinations)
@@ -143,6 +167,31 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			if (destination == null)
 				throw new ArgumentNullException("destination");
+
+			var mask = m_MaskFactory.GetMaskedSourceInfo(source);
+			if (mask != null)
+				State.SetMaskedSource(destination, mask);
+			else
+				RouteDualDisplay(source, destination, null);
+		}
+
+		/// <summary>
+		/// Routes the source to the destination.
+		/// Routes to room audio if there is no other audio source currently routed.
+		/// Unroutes routed audio if associated video is unrouted.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
+		public void RouteDualDisplay(ISource source, IDestination destination, IMaskedSourceInfo mask)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			if (destination == null)
+				throw new ArgumentNullException("destination");
+
+			if (mask == null)
+				State.ClearMaskedSource(destination);
 
 			Route(source, destination, eConnectionType.Video);
 
@@ -185,7 +234,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
-			
+
+
 			Connection[] outputs = RoutingGraph.Connections
 			                                   .GetOutputConnections(source.Device,
 			                                                         source.Control)
@@ -206,7 +256,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 			for (int index = 0; index < destinations.Length; index++)
 			{
 				IDestination destination = destinations[index];
-				State.SetMaskedSource(destination, mask);
+
+				if (mask == null)
+					State.ClearMaskedSource(destination);
 
 				Connection output;
 				if (!outputs.TryElementAt(index, out output))
@@ -215,8 +267,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				if (output == null)
 					break;
 				
-				if (mask == null || !(mask.MaskOverride.HasValue ? mask.MaskOverride.Value : mask.Mask))
-					Route(output.Source, destination, eConnectionType.Video);
+				Route(output.Source, destination, eConnectionType.Video);
 			}
 
 			RouteAtc(source);
@@ -276,10 +327,15 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			OsdPanelDevice osd = m_Room.Core.Originators.GetChildren<OsdPanelDevice>().FirstOrDefault();
 
+			if (mask == null)
+				State.ClearMaskedSources();
+			
+			IDestination[] destinations = m_Destinations.GetDisplayDestinations().ToArray();
+
 			// Route the OSD or power off displays
 			if (osd == null)
 			{
-				foreach (IDestination destination in m_Destinations.GetDisplayDestinations())
+				foreach (IDestination destination in destinations)
 				{
 					IDeviceBase destinationDevice =
 						m_Room.Core.Originators.GetChild<IDeviceBase>(destination.Device);
@@ -295,9 +351,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 				IRouteSourceControl sourceControl = osd.Controls.GetControl<IRouteSourceControl>();
 				EndpointInfo sourceEndpoint = sourceControl.GetOutputEndpointInfo(1);
 
-				foreach (IDestination destination in m_Destinations.GetDisplayDestinations())
+				foreach (IDestination destination in destinations)
 				{
-					State.SetMaskedSource(destination, mask);
 					Route(sourceEndpoint, destination, eConnectionType.Video);
 				}
 			}
