@@ -207,7 +207,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <summary>
 		/// Routes the codec to all available displays.
 		/// </summary>
-		/// <param name="sourceControl"></param>
+		/// <param name="source"></param>
 		public void RouteVtc(ISource source)
 		{
 			if (source == null)
@@ -229,7 +229,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <summary>
 		/// Routes the codec to all available displays.
 		/// </summary>
-		/// <param name="sourceControl"></param>
+		/// <param name="source"></param>
+		/// <param name="mask"></param>
 		public void RouteVtc(ISource source, IMaskedSourceInfo mask)
 		{
 			if (source == null)
@@ -276,7 +277,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <summary>
 		/// Routes the audio dialer to the audio destination.
 		/// </summary>
-		/// <param name="sourceControl"></param>
+		/// <param name="source"></param>
 		public void RouteAtc(ISource source)
 		{
 			if (source == null)

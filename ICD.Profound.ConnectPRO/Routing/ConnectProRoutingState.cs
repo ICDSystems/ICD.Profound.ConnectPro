@@ -437,7 +437,14 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			try
 			{
-				IcdHashSet<ISource> activeAudio = GetCachedActiveAudioSources().ToIcdHashSet();
+				IcdHashSet<ISource> activeAudio =
+					m_Routing.Destinations
+					         .GetAudioDestinations()
+					         .SelectMany(d => m_Routing.RoutingGraph
+					                                   .RoutingCache
+					                                   .GetSourcesForDestination(d, eConnectionType.Audio))
+					         .ToIcdHashSet();
+
 				if (activeAudio.SetEquals(m_AudioRoutingCache))
 					return;
 
@@ -463,9 +470,11 @@ namespace ICD.Profound.ConnectPRO.Routing
 			try
 			{
 				Dictionary<IDestination, IcdHashSet<ISource>> routing =
-					m_Routing.Destinations.GetDisplayDestinations()
+					m_Routing.Destinations
+					         .GetDisplayDestinations()
 					         .ToDictionary(destination => destination,
-					                       destination => m_Routing.RoutingGraph.RoutingCache
+					                       destination => m_Routing.RoutingGraph
+					                                               .RoutingCache
 					                                               .GetSourcesForDestination(destination, eConnectionType.Video)
 					                                               .ToIcdHashSet());
 				
