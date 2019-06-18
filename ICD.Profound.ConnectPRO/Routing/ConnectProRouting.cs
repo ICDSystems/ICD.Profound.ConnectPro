@@ -596,7 +596,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		{
 			// Create a copy of the video routing cache, removing any OSD sources.
 			Dictionary<IDestination, IcdHashSet<ISource>> activeVideoSources =
-				m_State.GetCachedActiveVideoSources()
+				m_State.GetRealActiveVideoSources()
 				       .ToDictionary(kvp => kvp.Key,
 				                     kvp =>
 				                     kvp.Value

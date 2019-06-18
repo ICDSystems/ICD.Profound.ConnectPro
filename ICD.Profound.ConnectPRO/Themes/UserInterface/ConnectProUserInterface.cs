@@ -683,7 +683,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			Dictionary<IDestination, IcdHashSet<ISource>> activeVideo =
 				m_Room == null
 					? new Dictionary<IDestination, IcdHashSet<ISource>>()
-					: m_Room.Routing.State.GetCachedActiveVideoSources().ToDictionary();
+					: m_Room.Routing.State.GetFakeActiveVideoSources().ToDictionary();
 
 			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>()
 								  .SetRouting(activeVideo, activeAudio);
