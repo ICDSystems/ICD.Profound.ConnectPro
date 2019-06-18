@@ -102,23 +102,10 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			try
 			{
-				// Nothing is currently routed for audio
+				// Nothing is currently routed for audio so we can override
 				IcdHashSet<ISource> activeAudio = m_AudioRoutingCache.ToIcdHashSet();
 				if (activeAudio.Count == 0)
-					return false;
-
-				// If there are no sources routed to the display then there is nothing to override
-				IcdHashSet<ISource> activeVideo = m_VideoRoutingCache.GetDefault(destination);
-				if (activeVideo == null || activeVideo.Count == 0)
-					return false;
-
-				// No change
-				if (activeVideo.Contains(source))
-					return false;
-
-				// Old source is not current active audio
-				if (!activeAudio.Intersect(activeVideo).Any())
-					return false;
+					return true;
 
 				// Is there another source routed for audio going to another display?
 				foreach (KeyValuePair<IDestination, IcdHashSet<ISource>> kvp in m_VideoRoutingCache)
