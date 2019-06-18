@@ -405,6 +405,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				m_MaskedSources.Clear();
 
 				UpdateSourceRoutedStates();
+				UpdateVideoRoutingCache();
 			}
 			finally
 			{
