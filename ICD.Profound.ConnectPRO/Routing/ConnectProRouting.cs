@@ -326,7 +326,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			// First unroute everything that isn't OSD
 			UnrouteAllExceptOsd();
 
-			OsdPanelDevice osd = m_Room.Core.Originators.GetChildren<OsdPanelDevice>().FirstOrDefault();
+			OsdPanelDevice osd = m_Room.Originators.GetInstanceRecursive<OsdPanelDevice>();
 
 			if (mask == null)
 				State.ClearMaskedSources();
