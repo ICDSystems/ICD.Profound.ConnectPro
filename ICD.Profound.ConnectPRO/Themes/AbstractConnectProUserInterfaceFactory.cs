@@ -85,7 +85,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 				m_UserInterfacesSection.Leave();
 			}
 
-			AssignUserInterfaces(GetRooms());
+			ReassignUserInterfaces();
 		}
 
 		public override void ReassignUserInterfaces()
