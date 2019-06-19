@@ -28,6 +28,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		private readonly SafeTimer m_BookingsRefreshTimer;
 		private readonly SafeTimer m_TimeRefreshTimer;
 
+		[CanBeNull]
 		private IReferencedSchedulePresenter m_SelectedBooking;
 		private ICalendarControl m_CalendarControl;
 		private List<IBooking> m_Bookings;
@@ -336,11 +337,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="eventArgs"></param>
 		private void ViewOnStartMyMeetingButtonPressed(object sender, EventArgs eventArgs)
 		{
-			if (Room == null || m_SelectedBooking == null )
+			if (Room == null)
 				return;
 
-			if (!HasCalendarControl || m_SelectedBooking.Booking == null)
+			if (!HasCalendarControl || m_SelectedBooking == null || m_SelectedBooking.Booking == null)
+			{
 				Room.StartMeeting();
+				return;
+			}
 
 			IBooking booking = m_SelectedBooking.Booking;
 			m_SelectedBooking = null;
