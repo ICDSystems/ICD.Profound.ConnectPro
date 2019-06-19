@@ -138,10 +138,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			if (m_SubscribedPartitionManager == null)
 				return null;
 
-			var cell = m_SubscribedPartitionManager.Cells.GetCell(column, row);
-			var neighboringCell = m_SubscribedPartitionManager.Cells.GetNeighboringCell(column, row, direction);
-			var room = cell != null ? cell.Room : null;
-			var neighboringRoom = neighboringCell != null ? neighboringCell.Room : null;
+			ICell cell = m_SubscribedPartitionManager.Cells.GetCell(column, row);
+			ICell neighboringCell = m_SubscribedPartitionManager.Cells.GetNeighboringCell(column, row, direction);
+			IRoom room = cell == null ? null : cell.Room;
+			IRoom neighboringRoom = neighboringCell == null ? null : neighboringCell.Room;
 
 			// if both aren't rooms, then no wall
 			if (room == null && neighboringRoom == null)
@@ -172,9 +172,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				m_PartitionSection.Leave();
 			}
 
-			var controls = partition.GetPartitionControls()
-			                        .Select(info => Room.Core.GetControl(info.Control) as IPartitionDeviceControl)
-			                        .Where(c => c != null).ToList();
+			List<IPartitionDeviceControl> controls =
+				partition.GetPartitionControls()
+				         .Select(info => Room == null
+					                         ? null
+					                         : Room.Core.GetControl(info.Control) as IPartitionDeviceControl)
+				         .Where(c => c != null)
+				         .ToList();
+
 			// if there's no controls to get/set partition state, permanent wall
 			if (!controls.Any())
 				return eWallButtonMode.PermanentWall;

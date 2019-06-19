@@ -110,25 +110,31 @@ namespace ICD.Profound.ConnectPRO.Themes
 
 			try
 			{
-				IcdHashSet<TUserInterface> visited = new IcdHashSet<TUserInterface>();
-
 				foreach (IConnectProRoom room in rooms)
 				{
 					foreach (TUserInterface ui in m_UserInterfaces)
 					{
-						if (visited.Contains(ui))
-						{
-							m_Theme.Log(eSeverity.Warning,
-								"Unable to assign {0} to {1} - A different room is already assigned", room,
-								typeof(TUserInterface).Name);
+						if (ui.Room == room)
 							continue;
-						}
 
+						// Determine if the room contains the originator assigned to the UI
 						if (!RoomContainsOriginator(room, ui))
 							continue;
 
+						// The room assigned to the UI already contains the current room
+						if (ui.Room != null && ui.Room.ContainsRoom(room))
+							continue;
+
+						// Determine if the UI was already setup for a different room
+						if (ui.Room != null && !room.ContainsRoom(ui.Room))
+						{
+							m_Theme.Log(eSeverity.Warning,
+							            "Unable to assign {0} to {1} - A different room is already assigned", room,
+							            typeof(TUserInterface).Name);
+							continue;
+						}
+
 						ui.SetRoom(room);
-						visited.Add(ui);
 					}
 				}
 			}

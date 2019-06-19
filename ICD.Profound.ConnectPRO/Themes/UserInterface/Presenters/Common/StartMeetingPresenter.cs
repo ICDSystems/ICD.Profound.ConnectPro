@@ -1,18 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Timers;
-using ICD.Connect.Calendaring;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.CalendarControl;
-using ICD.Connect.Conferencing.Controls.Dialing;
-using ICD.Connect.Conferencing.Devices;
-using ICD.Connect.Conferencing.DialContexts;
-using ICD.Connect.Conferencing.EventArguments;
-using ICD.Connect.Partitioning.Rooms;
-using ICD.Connect.Routing.Controls;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -34,6 +28,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		private readonly SafeTimer m_BookingsRefreshTimer;
 		private readonly SafeTimer m_TimeRefreshTimer;
 
+		[CanBeNull]
 		private IReferencedSchedulePresenter m_SelectedBooking;
 		private ICalendarControl m_CalendarControl;
 		private List<IBooking> m_Bookings;
@@ -342,11 +337,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="eventArgs"></param>
 		private void ViewOnStartMyMeetingButtonPressed(object sender, EventArgs eventArgs)
 		{
-			if (Room == null || m_SelectedBooking == null )
+			if (Room == null)
 				return;
 
-			if (!HasCalendarControl || m_SelectedBooking.Booking == null)
+			if (!HasCalendarControl || m_SelectedBooking == null || m_SelectedBooking.Booking == null)
+			{
 				Room.StartMeeting();
+				return;
+			}
 
 			IBooking booking = m_SelectedBooking.Booking;
 			m_SelectedBooking = null;
