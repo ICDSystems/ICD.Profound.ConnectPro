@@ -138,10 +138,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			if (m_SubscribedPartitionManager == null)
 				return null;
 
-			var cell = m_SubscribedPartitionManager.Cells.GetCell(column, row);
-			var neighboringCell = m_SubscribedPartitionManager.Cells.GetNeighboringCell(column, row, direction);
-			var room = cell != null ? cell.Room : null;
-			var neighboringRoom = neighboringCell != null ? neighboringCell.Room : null;
+			ICell cell = m_SubscribedPartitionManager.Cells.GetCell(column, row);
+			ICell neighboringCell = m_SubscribedPartitionManager.Cells.GetNeighboringCell(column, row, direction);
+			IRoom room = cell == null ? null : cell.Room;
+			IRoom neighboringRoom = neighboringCell == null ? null : neighboringCell.Room;
 
 			// if both aren't rooms, then no wall
 			if (room == null && neighboringRoom == null)
