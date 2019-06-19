@@ -172,9 +172,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				m_PartitionSection.Leave();
 			}
 
-			var controls = partition.GetPartitionControls()
-			                        .Select(info => Room.Core.GetControl(info.Control) as IPartitionDeviceControl)
-			                        .Where(c => c != null).ToList();
+			List<IPartitionDeviceControl> controls =
+				partition.GetPartitionControls()
+				         .Select(info => Room == null
+					                         ? null
+					                         : Room.Core.GetControl(info.Control) as IPartitionDeviceControl)
+				         .Where(c => c != null)
+				         .ToList();
+
 			// if there's no controls to get/set partition state, permanent wall
 			if (!controls.Any())
 				return eWallButtonMode.PermanentWall;
