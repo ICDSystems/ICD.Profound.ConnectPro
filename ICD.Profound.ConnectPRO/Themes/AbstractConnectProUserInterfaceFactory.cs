@@ -159,7 +159,6 @@ namespace ICD.Profound.ConnectPRO.Themes
 			}
 		}
 
-
 		#endregion
 
 		#region Protected Methods
