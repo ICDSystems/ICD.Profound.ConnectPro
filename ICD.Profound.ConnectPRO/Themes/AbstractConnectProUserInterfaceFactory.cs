@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
@@ -98,6 +99,9 @@ namespace ICD.Profound.ConnectPRO.Themes
 		/// </summary>
 		public override void AssignUserInterfaces(IEnumerable<IRoom> rooms)
 		{
+			if (rooms == null)
+				throw new ArgumentNullException("rooms");
+
 			AssignUserInterfaces(rooms.OfType<IConnectProRoom>());
 		}
 
@@ -106,11 +110,16 @@ namespace ICD.Profound.ConnectPRO.Themes
 		/// </summary>
 		public void AssignUserInterfaces(IEnumerable<IConnectProRoom> rooms)
 		{
+			if (rooms == null)
+				throw new ArgumentNullException("rooms");
+
 			m_UserInterfacesSection.Enter();
 
 			try
 			{
-				foreach (IConnectProRoom room in rooms)
+				IcdHashSet<IConnectProRoom> roomsSet = rooms.ToIcdHashSet();
+
+				foreach (IConnectProRoom room in roomsSet)
 				{
 					foreach (TUserInterface ui in m_UserInterfaces)
 					{
@@ -121,17 +130,22 @@ namespace ICD.Profound.ConnectPRO.Themes
 						if (!RoomContainsOriginator(room, ui))
 							continue;
 
-						// The room assigned to the UI already contains the current room
-						if (ui.Room != null && ui.Room.ContainsRoom(room))
-							continue;
-
-						// Determine if the UI was already setup for a different room
-						if (ui.Room != null && !room.ContainsRoom(ui.Room))
+						// We can override any rooms that are not included in the set of rooms we are assigning
+						IConnectProRoom uiRoom = ui.Room as IConnectProRoom;
+						if (uiRoom != null && roomsSet.Contains(uiRoom))
 						{
-							m_Theme.Log(eSeverity.Warning,
-							            "Unable to assign {0} to {1} - A different room is already assigned", room,
-							            typeof(TUserInterface).Name);
-							continue;
+							// The room assigned to the UI already contains the current room
+							if (uiRoom.ContainsRoom(room))
+								continue;
+
+							// Determine if the UI was already setup for a different room
+							if (!room.ContainsRoom(uiRoom))
+							{
+								m_Theme.Log(eSeverity.Warning,
+								            "Unable to assign {0} to {1} - A different room is already assigned", room,
+								            typeof(TUserInterface).Name);
+								continue;
+							}
 						}
 
 						ui.SetRoom(room);
