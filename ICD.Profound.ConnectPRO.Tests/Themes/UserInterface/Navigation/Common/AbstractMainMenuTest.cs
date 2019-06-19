@@ -292,7 +292,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 			var destinations = roomType.Room.Routing.Destinations.GetDisplayDestinations();
 
 			//Get active video routes
-			var routingVideo = roomType.Room.Routing.State.GetCachedActiveVideoSources()
+			var routingVideo = roomType.Room.Routing.State.GetFakeActiveVideoSources()
 				.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
 			//Check active audio sources

@@ -390,7 +390,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 					(m_Room == null
 						 ? Enumerable.Empty<KeyValuePair<IDestination, IcdHashSet<ISource>>>()
 						 : m_Room.Routing.State
-						       .GetCachedActiveVideoSources())
+						       .GetFakeActiveVideoSources())
 						.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
 				if (routing.DictionaryEqual(m_ActiveVideo, (a, b) => a.SetEquals(b)))

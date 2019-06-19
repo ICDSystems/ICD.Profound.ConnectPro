@@ -221,56 +221,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		#endregion
 
-		#region Room Callbacks
-
-		/// <summary>
-		/// Subscribe to the room events.
-		/// </summary>
-		/// <param name="room"></param>
-		protected override void Subscribe(IConnectProRoom room)
-		{
-			base.Subscribe(room);
-
-			if (room == null)
-				return;
-
-			room.Routing.State.OnDisplaySourceChanged += RoutingOnOnDisplaySourceChanged;
-		}
-
-		/// <summary>
-		/// Unsubscribe from the room events.
-		/// </summary>
-		/// <param name="room"></param>
-		protected override void Unsubscribe(IConnectProRoom room)
-		{
-			base.Unsubscribe(room);
-
-			ActiveConferenceControl = null;
-
-			if (room == null)
-				return;
-
-			room.Routing.State.OnDisplaySourceChanged -= RoutingOnOnDisplaySourceChanged;
-		}
-
-		private void RoutingOnOnDisplaySourceChanged(object sender, EventArgs eventArgs)
-		{
-			ActiveConferenceControl =
-				Room == null
-					? null
-					: Room.Routing
-					      .State
-					      .GetCachedActiveVideoSources()
-					      .SelectMany(kvp => kvp.Value)
-					      .Select(s => Room.Core.Originators[s.Device] as IDevice)
-					      .SelectMany(d => d == null
-						                       ? Enumerable.Empty<ITraditionalConferenceDeviceControl>()
-						                       : d.Controls.GetControls<ITraditionalConferenceDeviceControl>())
-					      .FirstOrDefault(c => c != null);
-		}
-
-		#endregion
-
 		#region Conference Control Callbacks
 
 		private void Subscribe(ITraditionalConferenceDeviceControl control)
