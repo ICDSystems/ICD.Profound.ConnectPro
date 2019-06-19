@@ -274,7 +274,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			// First unroute everything that isn't OSD
 			UnrouteAllExceptOsd();
 
-			OsdPanelDevice osd = m_Room.Core.Originators.GetChildren<OsdPanelDevice>().FirstOrDefault();
+			OsdPanelDevice osd = m_Room.Originators.GetInstanceRecursive<OsdPanelDevice>();
 
 			// Route the OSD or power off displays
 			if (osd == null)
