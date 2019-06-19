@@ -365,6 +365,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 			{
 				m_CacheSection.Leave();
 			}
+
+			OnDisplaySourceChanged.Raise(this);
 		}
 
 		public void ClearMaskedSource(IDestination destination)
@@ -385,6 +387,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 			{
 				m_CacheSection.Leave();
 			}
+
+			OnDisplaySourceChanged.Raise(this);
 		}
 
 		/// <summary>
@@ -406,6 +410,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 			{
 				m_CacheSection.Leave();
 			}
+
+			OnDisplaySourceChanged.Raise(this);
 		}
 
 		#endregion
