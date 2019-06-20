@@ -5,6 +5,7 @@ using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
+using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.Devices;
@@ -362,6 +363,62 @@ namespace ICD.Profound.ConnectPRO.Routing
 					Route(sourceEndpoint, destination, eConnectionType.Video);
 				}
 			}
+		}
+
+		/// <summary>
+		/// Routes the given camera to the VTC route control and sets the active camera input.
+		/// </summary>
+		/// <param name="camera"></param>
+		/// <param name="routingControl"></param>
+		public void RouteVtcCamera(ICameraDevice camera, IVideoConferenceRouteControl routingControl)
+		{
+			if (camera == null)
+				throw new ArgumentNullException("camera");
+
+			if (routingControl == null)
+				throw new ArgumentException("routeControl");
+
+			IRouteSourceControl sourceControl = camera.Controls.GetControl<IRouteSourceControl>();
+			if (sourceControl == null)
+				throw new InvalidOperationException("Camera has no routing control");
+
+			// Get the content inputs
+			int[] inputs = routingControl.GetCodecInputs(eCodecInputType.Camera).ToArray();
+			if (inputs.Length == 0)
+			{
+				m_Room.Logger.AddEntry(eSeverity.Error,
+									   "Failed to route camera {0} - VTC has no inputs configured for camera.",
+									   camera);
+				return;
+			}
+
+			// Find the first input available
+			foreach (int input in inputs)
+			{
+				EndpointInfo endpoint = routingControl.GetInputEndpointInfo(input);
+
+				// Is there a path?
+				ConnectionPath path =
+					PathBuilder.FindPaths()
+							   .From(sourceControl)
+							   .To(endpoint)
+							   .OfType(eConnectionType.Video)
+							   .With(m_PathFinder)
+							   .FirstOrDefault();
+				if (path == null)
+					continue;
+
+				// Route the source video and audio to the codec
+				Route(path);
+
+				// Start the presentation
+				routingControl.SetCameraInput(input);
+				return;
+			}
+
+			m_Room.Logger.AddEntry(eSeverity.Error,
+								   "Failed to route camera {0} - Could not find a path to a VTC input configured for camera.",
+								   camera);
 		}
 
 		/// <summary>
