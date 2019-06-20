@@ -600,7 +600,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 				       .ToDictionary(kvp => kvp.Key,
 				                     kvp =>
 				                     kvp.Value
-				                        .Where(source => !(m_Room.Core.Originators.GetChild(source.Device) is OsdPanelDevice))
+				                        .Where(source => m_Room.Originators.ContainsRecursive(source.Device) &&
+				                                         !(m_Room.Core.Originators.GetChild(source.Device) is OsdPanelDevice))
 				                        .ToIcdHashSet());
 
 			// Keep routing out of the critical section above
@@ -614,8 +615,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 			// Create a copy of the audio routing cache, removing any OSD sources.
 			IcdHashSet<ISource> activeAudioSources =
 				m_State.GetCachedActiveAudioSources()
-				       .Where(source => !(m_Room.Core.Originators.GetChild(source.Device) is
-				                          OsdPanelDevice))
+				       .Where(source => m_Room.Originators.ContainsRecursive(source.Device) &&
+				                        !(m_Room.Core.Originators.GetChild(source.Device) is OsdPanelDevice))
 				       .ToIcdHashSet();
 
 			// Keep routing out of the critical section above
