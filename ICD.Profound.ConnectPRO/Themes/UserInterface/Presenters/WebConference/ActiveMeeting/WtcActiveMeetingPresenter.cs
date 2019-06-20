@@ -77,7 +77,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				view.SetNoParticipantsLabelVisibility(!participants.Any());
 				view.SetInviteButtonVisibility(!participants.Any());
 
-				foreach (var presenter in m_PresenterFactory.BuildChildren(participants))
+				var sortedParticipants = participants.OrderByDescending(p => p.IsHost).ThenByDescending(p => p.IsSelf).ThenBy(p => p.Name).ToList();
+				foreach (var presenter in m_PresenterFactory.BuildChildren(sortedParticipants))
 				{
 					presenter.Selected = presenter == SelectedParticipant;
 					presenter.ShowView(presenter.Participant != null);
@@ -92,7 +93,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 					: string.Empty);
 
 				// only hosts can kick/mute people
-				bool kickMuteEnabled = SelectedParticipant != null && (zoomConference == null ? activeConference != null : zoomConference.AmIHost);
+				bool isHost = zoomConference == null ? activeConference != null : zoomConference.AmIHost;
+				bool isNotSelf = SelectedParticipant != null && SelectedParticipant.Participant != null && !SelectedParticipant.Participant.IsSelf;
+				bool kickMuteEnabled = isHost && isNotSelf;
 				m_ParticipantControls.ShowView(kickMuteEnabled);
 
 				// only hosts can end meeting for everyone
@@ -220,7 +223,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			conference.OnStatusChanged -= ConferenceOnOnStatusChanged;
 		}
 
-		private void ConferenceOnOnParticipantRemoved(object sender, ParticipantEventArgs participantEventArgs)
+		private void ConferenceOnOnStatusChanged(object sender, ConferenceStatusEventArgs args)
 		{
 			RefreshIfVisible();
 		}
@@ -230,14 +233,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			RefreshIfVisible();
 		}
 
-		private void ConferenceOnOnStatusChanged(object sender, ConferenceStatusEventArgs args)
+		private void ConferenceOnOnParticipantRemoved(object sender, ParticipantEventArgs participantEventArgs)
 		{
 			RefreshIfVisible();
 		}
-
-		#endregion
-
-		#region Participant Callbacks
 
 		#endregion
 		
