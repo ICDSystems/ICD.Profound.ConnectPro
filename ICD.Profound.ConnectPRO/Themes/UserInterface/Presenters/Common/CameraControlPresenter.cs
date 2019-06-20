@@ -375,20 +375,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			base.ViewOnVisibilityChanged(sender, args);
 
 			ShowPresetStoredLabel(false);
-
-			// TODO remove if not needed after fixing
-			//if (args.Data)
-			//{
-			//	// Hide the conferencing subpages
-			//	Navigation.LazyLoadPresenter<IVtcContactsNormalPresenter>().ShowView(false);
-			//	Navigation.LazyLoadPresenter<IVtcContactsPolycomPresenter>().ShowView(false);
-			//	Navigation.LazyLoadPresenter<IVtcButtonListPresenter>().ShowView(false);
-			//}
-			//else
-			//{
-			//	// Show the conferencing subpages
-			//	Navigation.LazyLoadPresenter<IVtcButtonListPresenter>().ShowView(true);
-			//}
 		}
 
 		#endregion
