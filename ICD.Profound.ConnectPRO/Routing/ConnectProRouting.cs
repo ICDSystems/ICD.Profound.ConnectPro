@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services.Logging;
@@ -388,7 +387,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (inputs.Length == 0)
 			{
 				m_Room.Logger.AddEntry(eSeverity.Error,
-				                       "Failed to start presentation for {0} - Codec has no inputs configured for content.",
+				                       "Failed to start presentation for {0} - VTC has no inputs configured for content.",
 									   source);
 				return;
 			}
@@ -399,19 +398,18 @@ namespace ICD.Profound.ConnectPRO.Routing
 				EndpointInfo endpoint = routingControl.GetInputEndpointInfo(input);
 
 				// Is there a path?
-				bool hasPath =
+				ConnectionPath path =
 					PathBuilder.FindPaths()
 					           .From(source)
 							   .To(endpoint)
-							   .OfType(eConnectionType.Video)
+							   .OfType(source.ConnectionType)
 					           .With(m_PathFinder)
-					           .Any();
-				if (!hasPath)
-					return;
+					           .FirstOrDefault();
+				if (path == null)
+					continue;
 
 				// Route the source video and audio to the codec
-				Route(source, endpoint, eConnectionType.Video);
-				Route(source, endpoint, eConnectionType.Audio);
+				Route(path);
 
 				// Start the presentation
 				presentationControl.StartPresentation(input);
@@ -419,7 +417,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			}
 
 			m_Room.Logger.AddEntry(eSeverity.Error,
-			                       "Failed to start presentation for {0} - Could not find a path to a Codec input configured for content.",
+			                       "Failed to start presentation for {0} - Could not find a path to a VTC input configured for content.",
 			                       source);
 		}
 
@@ -601,29 +599,33 @@ namespace ICD.Profound.ConnectPRO.Routing
 				throw new ArgumentNullException("paths");
 
 			IList<ConnectionPath> pathsList = paths as IList<ConnectionPath> ?? paths.ToArray();
-
-			IcdStopwatch.Profile(() => RoutingGraph.RoutePaths(pathsList, m_Room.Id),
-			                     string.Format("Route - {0}", StringUtils.ArrayFormat(pathsList)));
-
 			foreach (ConnectionPath path in pathsList)
-			{
-				EndpointInfo destination = path.DestinationEndpoint;
-				IDeviceBase destinationDevice =
-					m_Room.Core.Originators.GetChild<IDeviceBase>(destination.Device);
+				Route(path);
+		}
 
-				// Power on the destination
-				IPowerDeviceControl powerControl = destinationDevice.Controls.GetControl<IPowerDeviceControl>();
-				if (powerControl != null && !powerControl.IsPowered)
-					powerControl.PowerOn();
+		private void Route(ConnectionPath path)
+		{
+			if (path == null)
+				throw new ArgumentNullException("path");
 
-				// Set the destination to the correct input
-				int input = destination.Address;
-				IRouteInputSelectControl inputSelectControl =
-					destinationDevice.Controls.GetControl<IRouteInputSelectControl>();
+			IcdStopwatch.Profile(() => RoutingGraph.RoutePath(path, m_Room.Id), string.Format("Route - {0}", path));
 
-				if (inputSelectControl != null)
-					inputSelectControl.SetActiveInput(input, path.ConnectionType);
-			}
+			EndpointInfo destination = path.DestinationEndpoint;
+			IDeviceBase destinationDevice =
+				m_Room.Core.Originators.GetChild<IDeviceBase>(destination.Device);
+
+			// Power on the destination
+			IPowerDeviceControl powerControl = destinationDevice.Controls.GetControl<IPowerDeviceControl>();
+			if (powerControl != null && !powerControl.IsPowered)
+				powerControl.PowerOn();
+
+			// Set the destination to the correct input
+			int input = destination.Address;
+			IRouteInputSelectControl inputSelectControl =
+				destinationDevice.Controls.GetControl<IRouteInputSelectControl>();
+
+			if (inputSelectControl != null)
+				inputSelectControl.SetActiveInput(input, path.ConnectionType);
 		}
 
 		/// <summary>
