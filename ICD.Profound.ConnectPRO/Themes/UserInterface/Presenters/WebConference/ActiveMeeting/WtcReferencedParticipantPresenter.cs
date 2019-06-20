@@ -62,14 +62,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			m_RefreshSection.Enter();
 			try
 			{
-				view.SetParticipantName(Participant.Name);
+				string tags;
+				if (Participant.IsHost && Participant.IsSelf)
+					tags = " (Self, Host)";
+				else if (Participant.IsHost)
+					tags = " (Host)";
+				else if (Participant.IsSelf)
+					tags = " (Self)";
+				else
+					tags = string.Empty;
+
+				view.SetParticipantName(Participant.Name + tags);
 				view.SetButtonSelected(Selected);
 				view.SetMuteIconVisibility(Participant.IsMuted);
 
 				var zoomParticipant = Participant as ZoomParticipant;
 				view.SetAvatarImageVisibility(zoomParticipant != null && !string.IsNullOrEmpty(zoomParticipant.AvatarUrl));
 				view.SetAvatarImagePath(zoomParticipant == null ? null : zoomParticipant.AvatarUrl);
-			}                                                                                                    
+			}
 			finally
 			{
 				m_RefreshSection.Leave();
