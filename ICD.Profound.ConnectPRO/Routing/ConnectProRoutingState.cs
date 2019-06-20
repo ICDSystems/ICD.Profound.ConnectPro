@@ -149,22 +149,23 @@ namespace ICD.Profound.ConnectPRO.Routing
 			m_CacheSection.Enter();
 			try
 			{
-				var cache = m_VideoRoutingCache.ToDictionary(kvp => kvp.Key, kvp => new IcdHashSet<ISource>(kvp.Value));
+				Dictionary<IDestination, IcdHashSet<ISource>> cache =
+					m_VideoRoutingCache.ToDictionary(kvp => kvp.Key, kvp => new IcdHashSet<ISource>(kvp.Value));
 
-				foreach (var processingSource in m_ProcessingSources.ToList())
+				foreach (KeyValuePair<IDestination, ProcessingSourceInfo> kvp in m_ProcessingSources.ToList())
 				{
-					var destinationCache = cache.GetOrAddNew(processingSource.Key);
+					IcdHashSet<ISource> destinationCache = cache.GetOrAddNew(kvp.Key);
 					
-					if (processingSource.Value.Source != null)
-						destinationCache.Add(processingSource.Value.Source);
+					if (kvp.Value.Source != null)
+						destinationCache.Add(kvp.Value.Source);
 				}
 
-				foreach (var maskedSource in m_MaskedSources.ToList())
+				foreach (KeyValuePair<IDestination, IMaskedSourceInfo> kvp in m_MaskedSources.ToList())
 				{
-					var destinationCache = cache.GetOrAddNew(maskedSource.Key);
+					IcdHashSet<ISource> destinationCache = cache.GetOrAddNew(kvp.Key);
 
-					if (maskedSource.Value.Source != null)
-						destinationCache.Add(maskedSource.Value.Source);
+					if (kvp.Value.Source != null)
+						destinationCache.Add(kvp.Value.Source);
 				}
 
 				return cache;
@@ -173,7 +174,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 			{
 				m_CacheSection.Leave();
 			}
-			
 		}
 
 		[NotNull]
