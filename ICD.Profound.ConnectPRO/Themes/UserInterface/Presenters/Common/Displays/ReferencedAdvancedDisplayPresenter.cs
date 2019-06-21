@@ -19,7 +19,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		public MenuDisplaysPresenterDisplay Model { get; set; }
 
-		public ReferencedAdvancedDisplayPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		public ReferencedAdvancedDisplayPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
 		}
@@ -62,12 +63,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			view.OnDisplaySpeakerButtonPressed -= ViewOnDisplaySpeakerButtonPressed;
 		}
 
-		private void ViewOnDisplayButtonPressed(object sender, System.EventArgs e)
+		private void ViewOnDisplayButtonPressed(object sender, EventArgs e)
 		{
 			OnDisplayPressed.Raise(this);
 		}
 
-		private void ViewOnDisplaySpeakerButtonPressed(object sender, System.EventArgs e)
+		private void ViewOnDisplaySpeakerButtonPressed(object sender, EventArgs e)
 		{
 			OnDisplaySpeakerPressed.Raise(this);
 		}
