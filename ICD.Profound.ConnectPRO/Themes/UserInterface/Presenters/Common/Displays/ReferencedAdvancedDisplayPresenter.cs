@@ -30,6 +30,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			base.Refresh(view);
 
 			m_RefreshSection.Enter();
+
 			try
 			{
 				view.SetDisplayColor(Model.Color);
@@ -38,6 +39,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				view.SetDisplayLine1Text(Model.Line1);
 				view.SetDisplayLine2Text(Model.Line2);
 				view.SetDisplaySpeakerButtonActive(Model.AudioActive);
+				view.ShowDisplaySpeakerButton(Model.ShowSpeaker);
 			}
 			finally
 			{
