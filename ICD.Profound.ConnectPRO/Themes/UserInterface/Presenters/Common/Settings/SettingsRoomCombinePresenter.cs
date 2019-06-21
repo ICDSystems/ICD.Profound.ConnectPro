@@ -171,20 +171,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				m_PartitionSection.Leave();
 			}
 
-			List<IPartitionDeviceControl> controls =
-				partition.GetPartitionControls()
-				         .Select(info => Room == null
-					                         ? null
-					                         : Room.Core.GetControl(info.Control) as IPartitionDeviceControl)
-				         .Where(c => c != null)
-				         .ToList();
-
-			// if there's no controls to get/set partition state, permanent wall
-			if (!controls.Any())
-				return eWallButtonMode.PermanentWall;
-
-			// show state of partition
-			return controls.Any(c => c.IsOpen) ? eWallButtonMode.OpenPartition : eWallButtonMode.ClosedPartition;
+			// Does the partition currently combine multiple rooms?
+			return m_SubscribedPartitionManager.CombinesRoom(partition) ? eWallButtonMode.OpenPartition : eWallButtonMode.ClosedPartition;
 		}
 
 		/// <summary>
@@ -295,34 +283,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 		private void ViewOnWallButtonPressed(object sender, CellDirectionEventArgs args)
 		{
-			IcdConsole.PrintLine(eConsoleColor.Magenta, "Partition ({0}, {1}) {2} Pressed", args.Column, args.Row, args.Direction);
-			
-			var partition = m_SubscribedPartitionManager.GetPartition(args.Column, args.Row, args.Direction);
+			if (Room == null)
+				return;
+
+			IPartition partition = m_SubscribedPartitionManager.GetPartition(args.Column, args.Row, args.Direction);
 			if (partition == null)
 				return;
 
 			m_PartitionSection.Enter();
+
 			try
 			{
+				// Clear the selection
 				if (m_SelectedPartitionStates.ContainsKey(partition))
 					m_SelectedPartitionStates.Remove(partition);
+				// We want to open the closed partition OR close the open partition
 				else
-				{
-					var controls = partition.GetPartitionControls()
-					                        .Where(c => c.Mode.HasFlag(ePartitionFeedback.Set))
-					                        .Select(info => Room.Core.GetControl(info.Control) as IPartitionDeviceControl)
-					                        .Where(c => c != null).ToList();
-
-					if (!controls.Any())
-						return;
-
-					m_SelectedPartitionStates.Add(partition, !controls.Any(c => c.IsOpen));
-				}
+					m_SelectedPartitionStates[partition] = !m_SubscribedPartitionManager.CombinesRoom(partition);
 			}
 			finally
 			{
 				m_PartitionSection.Leave();
 			}
+
 			RefreshIfVisible();
 		}
 
