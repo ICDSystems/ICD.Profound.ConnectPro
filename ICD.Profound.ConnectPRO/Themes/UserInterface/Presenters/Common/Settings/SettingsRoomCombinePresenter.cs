@@ -71,44 +71,44 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 						
 						bool topEnabled = GetWallEnabled(column, row, eCellDirection.Top);
 						bool topSelected = GetWallSelected(column, row, eCellDirection.Top);
-						eWallButtonMode? topMode = GetWallMode(column, row, eCellDirection.Top);
+						eWallButtonMode topMode = GetWallMode(column, row, eCellDirection.Top);
 						
 						view.SetWallEnabled(column, row, eCellDirection.Top, topEnabled);
 						view.SetWallSelected(column, row, eCellDirection.Top, topSelected);
-						view.SetWallVisible(column, row, eCellDirection.Top, topMode != null);
-						view.SetWallMode(column, row, eCellDirection.Top, topMode ?? eWallButtonMode.NoWall);
+						view.SetWallVisible(column, row, eCellDirection.Top, topMode != eWallButtonMode.NoWall);
+						view.SetWallMode(column, row, eCellDirection.Top, topMode);
 						
 						bool leftEnabled = GetWallEnabled(column, row, eCellDirection.Left);
 						bool leftSelected = GetWallSelected(column, row, eCellDirection.Left);
-						eWallButtonMode? leftMode = GetWallMode(column, row, eCellDirection.Left);
+						eWallButtonMode leftMode = GetWallMode(column, row, eCellDirection.Left);
 
 						view.SetWallEnabled(column, row, eCellDirection.Left, leftEnabled);
 						view.SetWallSelected(column, row, eCellDirection.Left, leftSelected);
-						view.SetWallVisible(column, row, eCellDirection.Left, leftMode != null);
-						view.SetWallMode(column, row, eCellDirection.Left, leftMode ?? eWallButtonMode.NoWall);
+						view.SetWallVisible(column, row, eCellDirection.Left, leftMode != eWallButtonMode.NoWall);
+						view.SetWallMode(column, row, eCellDirection.Left, leftMode);
 
 						if (column == SettingsRoomCombineView.COLUMNS - 1)
 						{
 							bool rightEnabled = GetWallEnabled(column, row, eCellDirection.Right);
 							bool rightSelected = GetWallSelected(column, row, eCellDirection.Right);
-							eWallButtonMode? rightMode = GetWallMode(column, row, eCellDirection.Right);
+							eWallButtonMode rightMode = GetWallMode(column, row, eCellDirection.Right);
 							
 							view.SetWallEnabled(column, row, eCellDirection.Right, rightEnabled);
 							view.SetWallSelected(column, row, eCellDirection.Right, rightSelected);
-							view.SetWallVisible(column, row, eCellDirection.Right, rightMode != null);
-							view.SetWallMode(column, row, eCellDirection.Right, rightMode ?? eWallButtonMode.NoWall);
+							view.SetWallVisible(column, row, eCellDirection.Right, rightMode != eWallButtonMode.NoWall);
+							view.SetWallMode(column, row, eCellDirection.Right, rightMode);
 						}
 
 						if (row == SettingsRoomCombineView.ROWS - 1)
 						{
 							bool bottomEnabled = GetWallEnabled(column, row, eCellDirection.Bottom);
 							bool bottomSelected = GetWallSelected(column, row, eCellDirection.Bottom);
-							eWallButtonMode? bottomMode = GetWallMode(column, row, eCellDirection.Bottom);
+							eWallButtonMode bottomMode = GetWallMode(column, row, eCellDirection.Bottom);
 							
 							view.SetWallEnabled(column, row, eCellDirection.Bottom, bottomEnabled);
 							view.SetWallSelected(column, row, eCellDirection.Bottom, bottomSelected);
-							view.SetWallVisible(column, row, eCellDirection.Bottom, bottomMode != null);
-							view.SetWallMode(column, row, eCellDirection.Bottom, bottomMode ?? eWallButtonMode.NoWall);
+							view.SetWallVisible(column, row, eCellDirection.Bottom, bottomMode != eWallButtonMode.NoWall);
+							view.SetWallMode(column, row, eCellDirection.Bottom, bottomMode);
 						}
 					}
 				}
