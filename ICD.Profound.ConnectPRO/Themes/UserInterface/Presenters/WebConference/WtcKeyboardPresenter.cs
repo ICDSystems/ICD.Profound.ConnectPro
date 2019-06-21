@@ -1,5 +1,6 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.EventArguments;
 using ICD.Connect.UI.Utils;
@@ -13,6 +14,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 	[PresenterBinding(typeof(IWtcKeyboardPresenter))]
 	public sealed class WtcKeyboardPresenter : AbstractUiPresenter<IWtcKeyboardView>, IWtcKeyboardPresenter
 	{
+		public event EventHandler<StringEventArgs> OnStringChanged;
+		public event EventHandler<StringEventArgs> OnEnterPressed;
+		public event EventHandler OnClosePressed;
+
 		private readonly KeypadStringBuilder m_StringBuilder;
 
 		private bool m_RefreshTextField;
@@ -55,15 +60,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			}
 		}
 
-		/// <summary>
-		/// Gets/sets the Enter callback.
-		/// </summary>
-		private Action<string> EnterCallback { get; set; }
-		
-		private Action<string> TextChangeCallback { get; set; }
-
-		private Action<string> CancelCallback { get; set; }
-
 		#endregion
 
 		/// <summary>
@@ -81,6 +77,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			m_RefreshTextField = true;
 		}
 
+		public override void Dispose()
+		{
+			base.Dispose();
+
+			m_StringBuilder.OnStringChanged -= StringBuilderOnStringChanged;
+
+			OnStringChanged = null;
+			OnClosePressed = null;
+			OnEnterPressed = null;
+		}
+
+		public void Show(string text)
+		{
+			m_StringBuilder.SetString(text);
+			ShowView(true);
+		}
+
 		/// <summary>
 		/// Called when the stringbuilder string changes.
 		/// </summary>
@@ -91,9 +104,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			// Refresh synchronously to avoid interfering with user input.
 			RefreshIfVisible(false);
 
-			var callback = TextChangeCallback;
-			if (callback != null)
-				callback(m_StringBuilder.ToString());
+			OnStringChanged.Raise(this, new StringEventArgs(m_StringBuilder.ToString()));
 		}
 
 		/// <summary>
@@ -110,21 +121,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			view.SelectCapsButton(Caps);
 			view.SelectShiftButton(Shift);
 			view.SetShift(Shift, Caps);
-		}
-
-		/// <summary>
-		/// Shows the view using the given callback for the dial button.
-		/// </summary>
-		/// <param name="enterButtonCallback"></param>
-		/// <param name="cancelButtonCallback"></param>
-		/// <param name="textChangeCallback"></param>
-		public void ShowView(Action<string> enterButtonCallback, Action<string> cancelButtonCallback, Action<string> textChangeCallback)
-		{
-			EnterCallback = enterButtonCallback;
-			CancelCallback = cancelButtonCallback;
-			TextChangeCallback = textChangeCallback;
-			
-			ShowView(true);
 		}
 
 		/// <summary>
@@ -194,13 +190,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		private void ViewOnEnterButtonPressed(object sender, EventArgs eventArgs)
 		{
 			string searchString = m_StringBuilder.ToString();
-			Action<string> callback = EnterCallback;
-
-			EnterCallback = null;
 			ShowView(false);
-
-			if (callback != null)
-				callback(searchString);
+			
+			OnEnterPressed.Raise(this, new StringEventArgs(searchString));
 		}
 
 		/// <summary>
@@ -221,14 +213,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
 		{
 			base.ViewOnVisibilityChanged(sender, args);
-
-			m_StringBuilder.Clear();
+			
 			if (!args.Data)
-			{
-				EnterCallback = null;
-				CancelCallback = null;
-				TextChangeCallback = null;
-			}
+				m_StringBuilder.Clear();
 		}
 
 		/// <summary>
@@ -273,10 +260,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		{
 			ShowView(false);
 
-			var callback = CancelCallback;
-			CancelCallback = null;
-			if (callback != null)
-				callback(m_StringBuilder.ToString());
+			OnClosePressed.Raise(this);
 		}
 
 		/// <summary>
