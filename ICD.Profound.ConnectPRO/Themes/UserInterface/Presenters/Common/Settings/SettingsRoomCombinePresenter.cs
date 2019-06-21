@@ -142,24 +142,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			IRoom room = cell == null ? null : cell.Room;
 			IRoom neighboringRoom = neighboringCell == null ? null : neighboringCell.Room;
 
-			// if both aren't rooms, then no wall
+			// If both aren't rooms, then no wall
 			if (room == null && neighboringRoom == null)
 				return eWallButtonMode.NoWall;
 
-			// if same room, don't show wall
+			// If same room, don't show wall
 			if (room == neighboringRoom)
-				return null;
+				return eWallButtonMode.NoWall;
 
-			// if room and no room, permanent wall
+			// If room and no room, permanent wall
 			if (room == null || neighboringRoom == null)
 				return eWallButtonMode.PermanentWall;
 
-			var partition = m_SubscribedPartitionManager.GetPartition(column, row, direction);
-			// if there's no partition, permanent wall
+			// If there's no partition, permanent wall
+			IPartition partition = m_SubscribedPartitionManager.GetPartition(column, row, direction);
 			if (partition == null)
 				return eWallButtonMode.PermanentWall;
 
-			// if user has manually selected a partition state, show that
+			// If user has manually selected a partition state, show that
 			m_PartitionSection.Enter();
 			try
 			{
