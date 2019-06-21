@@ -60,6 +60,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 				Log(eSeverity.Informational, "IsInMeeting changed to {0}", m_IsInMeeting);
 
+				HandleIsInMeetingChanged(m_IsInMeeting);
+
 				OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
 			}
 		}
@@ -262,6 +264,13 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			Originators.GetInstancesRecursive<IPanelDevice>()
 					   .SelectMany(panel => panel.Controls.GetControls<IPowerDeviceControl>())
 					   .ForEach(c => c.PowerOff());
+		}
+		/// <summary>
+		/// Called when the meeting state is changed
+		/// </summary>
+		/// <param name="isInMeeting"></param>
+		protected virtual void HandleIsInMeetingChanged(bool isInMeeting)
+		{
 		}
 
 		#endregion
