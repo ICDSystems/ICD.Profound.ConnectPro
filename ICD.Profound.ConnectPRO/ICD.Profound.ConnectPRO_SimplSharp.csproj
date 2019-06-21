@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
@@ -73,6 +73,7 @@
     <Compile Include="Rooms\AbstractConnectProRoomSettings.cs" />
     <Compile Include="Rooms\Combine\ConnectProCombineRoom.cs" />
     <Compile Include="Rooms\Combine\ConnectProCombineRoomSettings.cs" />
+    <Compile Include="Rooms\Combine\eCombineAdvancedMode.cs" />
     <Compile Include="Rooms\ConnectProRoomConsole.cs" />
     <Compile Include="Rooms\IConnectProRoomSettings.cs" />
     <Compile Include="Rooms\Single\ConnectProRoom.cs" />

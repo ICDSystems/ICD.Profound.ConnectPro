@@ -13,12 +13,10 @@ using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
-using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Connections;
-using ICD.Connect.Routing.Controls;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Sources.TvTuner.Controls;
@@ -26,6 +24,7 @@ using ICD.Connect.Themes.UserInterfaces;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Connect.UI.Mvp.VisibilityTree;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.Rooms.Combine;
 using ICD.Profound.ConnectPRO.Routing;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -87,7 +86,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private IConnectProRoom m_Room;
 		private DefaultVisibilityNode m_RootVisibility;
 		private ISource m_SelectedSource;
-		private bool m_CombinedAdvancedMode;
 		private bool m_UserInterfaceReady;
 
 		#region Properties
@@ -97,20 +95,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		public override IRoom Room { get { return m_Room; } }
 
 		public override object Target { get { return m_Panel; } }
-
-		public bool CombinedAdvancedMode
-		{
-			get { return m_CombinedAdvancedMode; } 
-			set 
-			{
-				if (m_CombinedAdvancedMode == value)
-					return;
-
-				m_CombinedAdvancedMode = value;
-				SetSelectedSource(null);
-				UpdateMeetingPresentersVisibility();
-			}
-		}
 
 		#endregion
 
@@ -325,19 +309,27 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				m_RoutingSection.Leave();
 			}
 
-			if (m_Room.IsCombineRoom())
-			{
-				if (CombinedAdvancedMode)
-					HandleSelectedSourceCombinedAdvancedMode(source);
-				else
-					HandleSelectedSourceCombinedSimpleMode(source);
-			}
-			else
+			ConnectProCombineRoom combineRoom = m_Room as ConnectProCombineRoom;
+			if (combineRoom == null)
 			{
 				if (m_Room.Routing.Destinations.IsDualDisplayRoom)
 					HandleSelectedSourceDualDisplay(source);
 				else
 					HandleSelectedSourceSingleDisplay(source);
+			}
+			else
+			{
+				switch (combineRoom.CombinedAdvancedMode)
+				{
+					case eCombineAdvancedMode.Simple:
+						HandleSelectedSourceCombinedSimpleMode(source);
+						break;
+					case eCombineAdvancedMode.Advanced:
+						HandleSelectedSourceCombinedAdvancedMode(source);
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
 			}
 		}
 
@@ -590,6 +582,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			room.Routing.State.OnDisplaySourceChanged += RoutingOnDisplaySourceChanged;
 			room.Routing.State.OnAudioSourceChanged += RoutingOnAudioSourceChanged;
 			room.Routing.State.OnSourceRoutedChanged += RoutingOnSourceRoutedChanged;
+
+			ConnectProCombineRoom combineRoom = room as ConnectProCombineRoom;
+			if (combineRoom == null)
+				return;
+
+			combineRoom.OnCombinedAdvancedModeChanged += CombineRoomOnCombinedAdvancedModeChanged;
 		}
 
 		/// <summary>
@@ -606,6 +604,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			room.Routing.State.OnDisplaySourceChanged -= RoutingOnDisplaySourceChanged;
 			room.Routing.State.OnAudioSourceChanged -= RoutingOnAudioSourceChanged;
 			room.Routing.State.OnSourceRoutedChanged -= RoutingOnSourceRoutedChanged;
+
+			ConnectProCombineRoom combineRoom = room as ConnectProCombineRoom;
+			if (combineRoom == null)
+				return;
+
+			combineRoom.OnCombinedAdvancedModeChanged -= CombineRoomOnCombinedAdvancedModeChanged;
 		}
 
 		/// <summary>
@@ -626,28 +630,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			UpdateMeetingPresentersVisibility();
 		}
 
-		/// <summary>
-		/// Sets the visibility of the subpages based on the meeting state.
-		/// </summary>
-		private void UpdateMeetingPresentersVisibility()
-		{
-			bool isInMeeting = m_Room != null && m_Room.IsInMeeting;
-
-			// Set the visibility of the meeting buttons
-			m_NavigationController.LazyLoadPresenter<IStartMeetingPresenter>().ShowView(!isInMeeting);
-			m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>().ShowView(isInMeeting);
-
-			bool combinedRoom = m_Room != null && m_Room.IsCombineRoom();
-			bool dualDisplays = m_Room != null && !combinedRoom && m_Room.Routing.Destinations.IsDualDisplayRoom;
-			bool combineAdvanced = m_Room != null && combinedRoom && CombinedAdvancedMode;
-			bool combineSimple = m_Room != null && combinedRoom && !CombinedAdvancedMode;
-
-			m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().ShowView(true);
-			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().ShowView(dualDisplays);
-			m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>().ShowView(combineAdvanced);
-			m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>().ShowView(combineSimple);
-		}
-
 		private void RoutingOnAudioSourceChanged(object sender, EventArgs eventArgs)
 		{
 			UpdateRouting();
@@ -661,6 +643,36 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private void RoutingOnSourceRoutedChanged(object sender, EventArgs eventArgs)
 		{
 			UpdateRoutedSources();
+		}
+
+		private void CombineRoomOnCombinedAdvancedModeChanged(object sender, CombineAdvancedModeEventArgs eventArgs)
+		{
+			SetSelectedSource(null);
+			UpdateMeetingPresentersVisibility();
+		}
+
+		/// <summary>
+		/// Sets the visibility of the subpages based on the meeting state.
+		/// </summary>
+		private void UpdateMeetingPresentersVisibility()
+		{
+			bool isInMeeting = m_Room != null && m_Room.IsInMeeting;
+
+			// Set the visibility of the meeting buttons
+			m_NavigationController.LazyLoadPresenter<IStartMeetingPresenter>().ShowView(!isInMeeting);
+			m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>().ShowView(isInMeeting);
+
+			ConnectProCombineRoom combineRoom = m_Room as ConnectProCombineRoom;
+
+			bool combinedRoom = combineRoom != null;
+			bool dualDisplays = m_Room != null && !combinedRoom && m_Room.Routing.Destinations.IsDualDisplayRoom;
+			bool combineAdvanced = combineRoom != null && combineRoom.CombinedAdvancedMode == eCombineAdvancedMode.Advanced;
+			bool combineSimple = combineRoom != null && combineRoom.CombinedAdvancedMode == eCombineAdvancedMode.Simple;
+
+			m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().ShowView(true);
+			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().ShowView(dualDisplays);
+			m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>().ShowView(combineAdvanced);
+			m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>().ShowView(combineSimple);
 		}
 
 		private void UpdateRoutedSources()
@@ -889,12 +901,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		
 		private void PresenterOnSimpleModePressed(object sender, EventArgs e)
 		{
-			CombinedAdvancedMode = false;
+			ConnectProCombineRoom combineRoom = m_Room as ConnectProCombineRoom;
+			if (combineRoom != null)
+				combineRoom.CombinedAdvancedMode = eCombineAdvancedMode.Simple;
 		}
 
 		private void PresenterOnAdvancedModePressed(object sender, EventArgs e)
 		{
-			CombinedAdvancedMode = true;
+			ConnectProCombineRoom combineRoom = m_Room as ConnectProCombineRoom;
+			if (combineRoom != null)
+				combineRoom.CombinedAdvancedMode = eCombineAdvancedMode.Advanced;
 		}
 
 		#endregion

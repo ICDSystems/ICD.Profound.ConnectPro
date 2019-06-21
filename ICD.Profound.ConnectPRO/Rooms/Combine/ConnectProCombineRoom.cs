@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Calendaring.CalendarControl;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Partitioning.Rooms;
@@ -7,7 +8,13 @@ namespace ICD.Profound.ConnectPRO.Rooms.Combine
 {
 	public sealed class ConnectProCombineRoom : AbstractConnectProRoom<ConnectProCombineRoomSettings>
 	{
+		/// <summary>
+		/// Raised when the combine advanced mode changes.
+		/// </summary>
+		public event EventHandler<CombineAdvancedModeEventArgs> OnCombinedAdvancedModeChanged;
+
 		private IConnectProRoom m_MasterRoom;
+		private eCombineAdvancedMode m_CombinedAdvancedMode;
 
 		#region Properties
 
@@ -52,25 +59,33 @@ namespace ICD.Profound.ConnectPRO.Rooms.Combine
 		/// </summary>
 		public override ICalendarControl CalendarControl { get { return m_MasterRoom == null ? null : m_MasterRoom.CalendarControl; } }
 
-		#endregion
-
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public ConnectProCombineRoom()
+		public eCombineAdvancedMode CombinedAdvancedMode
 		{
-			Originators.OnChildrenChanged += OriginatorsOnChildrenChanged;
+			get { return m_CombinedAdvancedMode; }
+			set
+			{
+				if (m_CombinedAdvancedMode == value)
+					return;
+
+				m_CombinedAdvancedMode = value;
+
+				OnCombinedAdvancedModeChanged.Raise(this, new CombineAdvancedModeEventArgs(m_CombinedAdvancedMode));
+			}
 		}
+
+		#endregion
 
 		protected override void DisposeFinal(bool disposing)
 		{
-			Originators.OnChildrenChanged -= OriginatorsOnChildrenChanged;
+			OnCombinedAdvancedModeChanged = null;
 
 			base.DisposeFinal(disposing);
 		}
 
-		private void OriginatorsOnChildrenChanged(object sender, EventArgs e)
+		protected override void OriginatorsOnChildrenChanged(object sender, EventArgs e)
 		{
+			base.OriginatorsOnChildrenChanged(sender, e);
+
 			Unsubscribe(WakeSchedule);
 
 			m_MasterRoom = this.GetMasterRoom() as IConnectProRoom;
