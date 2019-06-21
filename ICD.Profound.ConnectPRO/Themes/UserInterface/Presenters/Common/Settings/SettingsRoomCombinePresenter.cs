@@ -132,10 +132,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			return false;
 		}
 
-		private eWallButtonMode? GetWallMode(int column, int row, eCellDirection direction)
+		private eWallButtonMode GetWallMode(int column, int row, eCellDirection direction)
 		{
 			if (m_SubscribedPartitionManager == null)
-				return null;
+				return eWallButtonMode.NoWall;
 
 			ICell cell = m_SubscribedPartitionManager.Cells.GetCell(column, row);
 			ICell neighboringCell = m_SubscribedPartitionManager.Cells.GetNeighboringCell(column, row, direction);
