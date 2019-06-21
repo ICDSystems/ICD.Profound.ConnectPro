@@ -275,6 +275,17 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 		#endregion
 
+		/// <summary>
+		/// Called when the room combine state changes.
+		/// </summary>
+		protected override void HandleCombineState()
+		{
+			base.HandleCombineState();
+
+			// End the meeting whenever the combine state changes
+			EndMeeting(false);
+		}
+
 		#region Private Methods
 
 		/// <summary>
