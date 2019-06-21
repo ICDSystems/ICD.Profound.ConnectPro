@@ -73,6 +73,15 @@ namespace ICD.Profound.ConnectPRO.Rooms.Combine
 			}
 		}
 
+		/// <summary>
+		/// Sets combine mode to simple when the meeting state is changed
+		/// </summary>
+		/// <param name="isInMeeting"></param>
+		protected override void HandleIsInMeetingChanged(bool isInMeeting)
+		{
+			CombinedAdvancedMode = eCombineAdvancedMode.Simple;
+		}
+
 		#endregion
 
 		protected override void DisposeFinal(bool disposing)

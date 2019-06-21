@@ -26,9 +26,7 @@ using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Displays.Devices;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Partitioning.Rooms;
-using ICD.Connect.Routing.Controls;
 using ICD.Connect.Routing.Endpoints.Destinations;
-using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Routing;
 
 namespace ICD.Profound.ConnectPRO.Rooms
@@ -61,6 +59,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 				m_IsInMeeting = value;
 
 				Log(eSeverity.Informational, "IsInMeeting changed to {0}", m_IsInMeeting);
+
+				HandleIsInMeetingChanged(m_IsInMeeting);
 
 				OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
 			}
@@ -265,8 +265,26 @@ namespace ICD.Profound.ConnectPRO.Rooms
 					   .SelectMany(panel => panel.Controls.GetControls<IPowerDeviceControl>())
 					   .ForEach(c => c.PowerOff());
 		}
+		/// <summary>
+		/// Called when the meeting state is changed
+		/// </summary>
+		/// <param name="isInMeeting"></param>
+		protected virtual void HandleIsInMeetingChanged(bool isInMeeting)
+		{
+		}
 
 		#endregion
+
+		/// <summary>
+		/// Called when the room combine state changes.
+		/// </summary>
+		protected override void HandleCombineState()
+		{
+			base.HandleCombineState();
+
+			// End the meeting whenever the combine state changes
+			EndMeeting(false);
+		}
 
 		#region Private Methods
 
