@@ -5,10 +5,12 @@ using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
+using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Cameras;
 using ICD.Connect.Cameras.Controls;
 using ICD.Connect.Cameras.Devices;
+using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings.Originators;
 using ICD.Connect.UI.Attributes;
@@ -42,6 +44,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// Gets the number of cameras.
 		/// </summary>
 		public int CameraCount { get { return m_RefreshSection.Execute(() => m_Cameras.Count); } }
+
+		/// <summary>
+		/// Gets/sets the VTC routing control to route camera video to.
+		/// </summary>
+		public IVideoConferenceRouteControl VtcDestinationControl { get; set; }
 
 		/// <summary>
 		/// Constructor.
@@ -168,6 +175,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			Subscribe(m_SelectedCamera);
 
 			RefreshIfVisible();
+
+			if (Room == null || camera == null)
+				return;
+
+			if (VtcDestinationControl == null)
+				Room.Logger.AddEntry(eSeverity.Error, "Unable to route selected camera - No VTC destination assigned");
+			else
+				Room.Routing.RouteVtcCamera(camera, VtcDestinationControl);
 		}
 
 		private void ShowPresetStoredLabel(bool visible)
