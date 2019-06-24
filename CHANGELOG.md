@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - DateTimes on the UI and CUE are formatted using the current culture info
  - Zoom contact list filter indication
  - Added "Host" and "Self" tags to Zoom participants
+ - Added OSD UnRouting on Room Uncombine
  
 ### Changed
  - Significant overhaul of routing, better performance for systems with multiple panels

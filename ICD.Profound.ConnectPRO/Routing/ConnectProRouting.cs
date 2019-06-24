@@ -588,41 +588,33 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		private void UnrouteAllExceptOsd()
 		{
-			UnrouteAllVideoExceptOsd();
-			UnrouteAllAudioExceptOsd();
+			UnrouteAllExceptOsd(Destinations.GetDisplayDestinations(), eConnectionType.Video);
+			UnrouteAllExceptOsd(Destinations.GetAudioDestinations(), eConnectionType.Audio);
 		}
 
-		private void UnrouteAllVideoExceptOsd()
+		private void UnrouteAllExceptOsd(IEnumerable<IDestination> destinations, eConnectionType type)
 		{
-			// Create a copy of the video routing cache, removing any OSD sources.
-			Dictionary<IDestination, IcdHashSet<ISource>> activeVideoSources =
-				m_State.GetRealActiveVideoSources()
-				       .ToDictionary(kvp => kvp.Key,
-				                     kvp =>
-				                     kvp.Value
-				                        .Where(source => m_Room.Originators.ContainsRecursive(source.Device) &&
-				                                         !(m_Room.Core.Originators.GetChild(source.Device) is OsdPanelDevice))
-				                        .ToIcdHashSet());
+			Dictionary<EndpointInfo, IcdHashSet<EndpointInfo>> unrouteVideoEndpoints =
+				destinations.SelectMany(d => d.GetEndpoints())
+				            .ToDictionary(d => d,
+				                          d => RoutingGraph.RoutingCache
+				                                           .GetSourceEndpointsForDestinationEndpoint(d, type)
+				                                           .Where(s =>
+				                                                  {
+					                                                  // Don't unroute OSDs for this room
+					                                                  if (
+						                                                  m_Room.Core.Originators.GetChild(s.Device) is OsdPanelDevice &&
+						                                                  m_Room.Originators.ContainsRecursive(s.Device))
+						                                                  return false;
+					                                                  return true;
+				                                                  })
+				                                           .ToIcdHashSet());
 
-			// Keep routing out of the critical section above
-			foreach (KeyValuePair<IDestination, IcdHashSet<ISource>> pair in activeVideoSources)
-				foreach (ISource videoSource in pair.Value)
-					RoutingGraph.Unroute(videoSource, pair.Key, eConnectionType.Video, m_Room.Id);
-		}
-
-		private void UnrouteAllAudioExceptOsd()
-		{
-			// Create a copy of the audio routing cache, removing any OSD sources.
-			IcdHashSet<ISource> activeAudioSources =
-				m_State.GetCachedActiveAudioSources()
-				       .Where(source => m_Room.Originators.ContainsRecursive(source.Device) &&
-				                        !(m_Room.Core.Originators.GetChild(source.Device) is OsdPanelDevice))
-				       .ToIcdHashSet();
-
-			// Keep routing out of the critical section above
-			foreach (IDestination destination in m_Destinations.GetAudioDestinations())
-				foreach (ISource source in activeAudioSources)
-					RoutingGraph.Unroute(source, destination, eConnectionType.Audio, m_Room.Id);
+			foreach (KeyValuePair<EndpointInfo, IcdHashSet<EndpointInfo>> pair in unrouteVideoEndpoints)
+			{
+				foreach (EndpointInfo sourceEndpoint in pair.Value)
+					RoutingGraph.Unroute(sourceEndpoint, pair.Key, type, m_Room.Id);
+			}
 		}
 
 		#endregion
