@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using ICD.Common.Utils;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Zoom;
+using ICD.Connect.Conferencing.Zoom.Components.Call;
+using ICD.Connect.Conferencing.Zoom.Components.System;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
@@ -17,7 +22,13 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Conference
 	[PresenterBinding(typeof(IOsdConferencePresenter))]
 	public sealed class OsdConferencePresenter : AbstractOsdPresenter<IOsdConferenceView>, IOsdConferencePresenter
 	{
+		private const string MEETING_NUMBER_FORMAT = "<div class=\"conferenceInfoLabel\">Meeting Number: </div><div class=\"conferenceInfoField\"> {0}</div>";
+		private const string CALL_IN_FORMAT = "<span class=\"blueText\">{0}</span>";
+
 		private readonly SafeCriticalSection m_RefreshSection;
+
+		private CallInfo m_CachedCallInfo;
+
 
 		private IConferenceDeviceControl m_ActiveConferenceControl;
 		public IConferenceDeviceControl ActiveConferenceControl
@@ -48,9 +59,11 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Conference
 					return;
 
 				// left panel - meeting info
-				if (Room.CalendarControl == null) // hidden if no scheduler
+				// hidden if no scheduler
+				if (Room.CalendarControl == null)
 					view.SetCurrentBookingPanelVisibility(false);
-				else if (Room.CurrentBooking == null) // instant meeting
+				// instant meeting
+				else if (Room.CurrentBooking == null)
 				{
 					view.SetCurrentBookingPanelVisibility(true);
 					view.SetCurrentBookingNameText("Instant Meeting");
@@ -58,7 +71,8 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Conference
 					view.SetCurrentBookingTimeText(string.Empty); // TODO show "Now - ..." next meeting time or end of hour
 					view.SetCurrentBookingHostText("N/A");
 				}
-				else // obtp meeting
+				// OBTP meeting
+				else
 				{
 					view.SetCurrentBookingPanelVisibility(true);
 					view.SetCurrentBookingNameText(Room.CurrentBooking.MeetingName);
@@ -75,7 +89,51 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Conference
 				var sourceIcon = !(source is ConnectProSource) ? null : (source as ConnectProSource).Icon;
 				view.SetSourceIcon(sourceIcon);
 				view.SetSourceNameText(source == null ? "Unknown Source" : source.Name);
-				view.SetSourceDescriptionText(source == null ? string.Empty : source.Description);
+				if (ActiveConferenceControl.Parent is ZoomRoom) // zoom specific info
+				{
+					var builder = new StringBuilder();
+
+					builder.Append("<div class=\"conferenceInfo\">");
+					// meeting number
+					if (Room.CurrentBooking != null)
+					{
+						var booking = Room.CurrentBooking;
+						var dialContext = booking.GetBookingNumbers()
+												 .FirstOrDefault(b => b.Protocol == eDialProtocol.Zoom && !string.IsNullOrEmpty(b.DialString));
+						if (dialContext != null)
+							builder.Append(string.Format(MEETING_NUMBER_FORMAT, dialContext.DialString));
+
+					}
+					else
+					{
+						var zoomRoom = ActiveConferenceControl.Parent as ZoomRoom;
+						var systemComponent = zoomRoom.Components.GetComponent<SystemComponent>();
+						if (systemComponent != null && systemComponent.SystemInfo != null)
+						{
+							var info = systemComponent.SystemInfo;
+							builder.Append(string.Format(MEETING_NUMBER_FORMAT, info.MeetingNumber));
+						}
+					}
+					
+					// call in numbers
+					builder.Append("<div class=\"conferenceInfoLabel\">Call In Number: </div><div class=\"conferenceInfoField\">");
+					if (m_CachedCallInfo != null && !string.IsNullOrEmpty(m_CachedCallInfo.DialIn))
+					{
+						var callInNumbers = m_CachedCallInfo.DialIn
+						                                   .Split(';')
+						                                   .Select(s => string.Format(CALL_IN_FORMAT, s));
+						builder.Append(string.Join("<br/>", callInNumbers));
+					}
+					else
+					{
+						builder.Append("Join a meeting to<br />initialize call in numbers");
+					}
+					builder.Append("</div></div>");
+
+					view.SetSourceDescriptionText(builder.ToString());
+				}
+				else // use source description as backup
+					view.SetSourceDescriptionText(source == null ? string.Empty : source.Description);
 
 				var conferences = ActiveConferenceControl.GetConferences().ToList();
 				var conferenceConnecting = conferences.Any(c => c.Status == eConferenceStatus.Connecting);
@@ -168,6 +226,9 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Conference
 
 		private void ConferenceOnStatusChanged(object sender, ConferenceStatusEventArgs e)
 		{
+			var zoomConference = sender as CallComponent;
+			if (zoomConference != null && zoomConference.CallInfo != null)
+				m_CachedCallInfo = zoomConference.CallInfo;
 			RefreshIfVisible();
 		}
 
