@@ -12,9 +12,11 @@ using ICD.Connect.Devices.Controls;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Controls;
+using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings.Cores;
 using ICD.Connect.Sources.TvTuner.Controls;
+using ICD.Profound.ConnectPRO.Rooms.Combine;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 
 namespace ICD.Profound.ConnectPRO.Routing
@@ -59,6 +61,47 @@ namespace ICD.Profound.ConnectPRO.Routing
 			                .Originators
 			                .GetInstancesRecursive<ISource>()
 			                .OrderBy(s => s.Order);
+		}
+
+		/// <summary>
+		/// Returns all of the sources available in the room unless:
+		///		- The source is hidden
+		///		- The source is not an audio or video source
+		///		- The source is a video source and:
+		///			- In a room with a single display or combined simple mode the source can not be routed to all displays.
+		///			- In a room with multiple displays or combined advanced mode the source can not be routed to any destination.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<ISource> GetRoomSourcesForUi()
+		{
+			IDestination[] videoDestinations = m_Routing.Destinations.GetDisplayDestinations().ToArray();
+
+			return GetRoomSources().Where(s =>
+			{
+				// Hidden
+				if (s.Hide)
+					return false;
+
+				// Not audio or video
+				if (EnumUtils.GetFlagsIntersection(s.ConnectionType, eConnectionType.Audio | eConnectionType.Video) ==
+				    eConnectionType.None)
+					return false;
+
+				// Not a video source so we're done with the extra validation
+				if (!s.ConnectionType.HasFlag(eConnectionType.Video))
+					return true;
+
+				bool multipleDisplays = m_Routing.Destinations.IsMultiDisplayRoom;
+				
+				// If this is a combined room in simple mode treat it like a single display destination
+				ConnectProCombineRoom combineRoom = m_Routing.Room as ConnectProCombineRoom;
+				if (combineRoom != null && combineRoom.CombinedAdvancedMode == eCombineAdvancedMode.Simple)
+					multipleDisplays = false;
+
+				return multipleDisplays
+					? videoDestinations.Any(d => m_Routing.HasPath(s, d, eConnectionType.Video))
+					: videoDestinations.All(d => m_Routing.HasPath(s, d, eConnectionType.Video));
+			});
 		}
 
 		/// <summary>

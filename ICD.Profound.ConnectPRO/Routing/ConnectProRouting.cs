@@ -451,6 +451,29 @@ namespace ICD.Profound.ConnectPRO.Routing
 			presentationControl.StopPresentation();
 		}
 
+		/// <summary>
+		/// Returns true if there is a path from the source to the destination.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public bool HasPath(ISource source, IDestination destination, eConnectionType type)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			if (destination == null)
+				throw new ArgumentNullException("destination");
+
+			return PathBuilder.FindPaths()
+			                  .From(source)
+			                  .To(destination)
+			                  .OfType(type)
+			                  .With(m_PathFinder)
+			                  .Any();
+		}
+
 		#endregion
 
 		#region Private Methods

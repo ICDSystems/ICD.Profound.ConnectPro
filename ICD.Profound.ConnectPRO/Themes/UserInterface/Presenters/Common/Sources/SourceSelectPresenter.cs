@@ -6,6 +6,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.Rooms.Combine;
 using ICD.Profound.ConnectPRO.Routing;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -64,9 +65,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			m_RefreshSection = new SafeCriticalSection();
 			m_ChildrenFactory = new ReferencedSourceSelectPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
 
-			m_Sources = new ISource[0];
 			m_RoutedSources = new Dictionary<ISource, eSourceState>();
+
+			UpdateSources();
 		}
+
+		#region Methods
 
 		/// <summary>
 		/// Release resources.
@@ -75,7 +79,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		{
 			OnSourcePressed = null;
 
-			UnsubscribeChildren();
 			m_ChildrenFactory.Dispose();
 
 			base.Dispose();
@@ -119,29 +122,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// <param name="room"></param>
 		public override void SetRoom(IConnectProRoom room)
 		{
-			m_Sources = GetSources(room).ToArray();
-			m_ChildrenFactory.BuildChildren(m_Sources);
+			base.SetRoom(room);
+
+			UpdateSources();
 
 			m_DisplayCount =
 					room == null
 						? (ushort)0
 						: (ushort)room.Routing.Destinations.DisplayDestinationsCount;
-
-			base.SetRoom(room);
-		}
-
-		private static IEnumerable<ISource> GetSources(IConnectProRoom room)
-		{
-			return room == null
-				       ? Enumerable.Empty<ISource>()
-				       : room.Routing
-				             .Sources
-				             .GetSources()
-				             .Where(s =>
-				                    {
-					                    ConnectProSource source = s as ConnectProSource;
-					                    return source == null || !source.Hide;
-				                    });
 		}
 
 		/// <summary>
@@ -171,15 +159,31 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			RefreshIfVisible();
 		}
 
+		#endregion
+
 		#region Private Methods
 
 		/// <summary>
-		/// Unsubscribes from all of the child presenters.
+		/// Rebuilds the collection of sources.
 		/// </summary>
-		private void UnsubscribeChildren()
+		private void UpdateSources()
 		{
-			foreach (IReferencedSourceSelectPresenter presenter in m_ChildrenFactory)
-				Unsubscribe(presenter);
+			m_Sources = Room == null ? new ISource[0] : GetSources(Room).ToArray();
+			m_ChildrenFactory.BuildChildren(m_Sources);
+		}
+
+		/// <summary>
+		/// Gets the available sources for the room.
+		/// </summary>
+		/// <param name="room"></param>
+		/// <returns></returns>
+		private static IEnumerable<ISource> GetSources(IConnectProRoom room)
+		{
+			return room == null
+				? Enumerable.Empty<ISource>()
+				: room.Routing
+				      .Sources
+				      .GetRoomSourcesForUi();
 		}
 
 		/// <summary>
@@ -234,6 +238,46 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			SourcePressedCallback handler = OnSourcePressed;
 			if (handler != null)
 				handler(this, child.Source);
+		}
+
+		#endregion
+
+		#region Room Callbacks
+
+		/// <summary>
+		/// Subscribe to the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Subscribe(IConnectProRoom room)
+		{
+			base.Subscribe(room);
+
+			ConnectProCombineRoom combineRoom = room as ConnectProCombineRoom;
+			if (combineRoom != null)
+				combineRoom.OnCombinedAdvancedModeChanged += CombineRoomOnCombinedAdvancedModeChanged;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Unsubscribe(IConnectProRoom room)
+		{
+			base.Unsubscribe(room);
+
+			ConnectProCombineRoom combine = room as ConnectProCombineRoom;
+			if (combine != null)
+				combine.OnCombinedAdvancedModeChanged -= CombineRoomOnCombinedAdvancedModeChanged;
+		}
+
+		/// <summary>
+		/// Called when the combine advanced mode changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void CombineRoomOnCombinedAdvancedModeChanged(object sender, CombineAdvancedModeEventArgs eventArgs)
+		{
+			UpdateSources();
 		}
 
 		#endregion
