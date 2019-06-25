@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Presentation;
@@ -24,7 +25,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 	public sealed class ConnectProRoutingSources
 	{
 		private readonly ConnectProRouting m_Routing;
-		private readonly SafeCriticalSection m_CacheSection;
 
 		/// <summary>
 		/// Constructor.
@@ -33,7 +33,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 		public ConnectProRoutingSources(ConnectProRouting routing)
 		{
 			m_Routing = routing;
-			m_CacheSection = new SafeCriticalSection();
 		}
 
 		#region Sources
