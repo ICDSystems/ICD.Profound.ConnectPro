@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ICD.Profound.ConnectPRO.Routing.Masking
+﻿namespace ICD.Profound.ConnectPRO.Routing.Masking
 {
 	public delegate void ThinMaskedSourceInfoMaskCallback(ThinMaskedSourceInfo sender);
 	public delegate void ThinMaskedSourceInfoUnmaskCallback(ThinMaskedSourceInfo sender);

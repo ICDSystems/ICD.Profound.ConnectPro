@@ -134,6 +134,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// Routes the source to all displays and room audio.
 		/// </summary>
 		/// <param name="source"></param>
+		/// <param name="mask"></param>
 		public void RouteAllDisplays(ISource source, IMaskedSourceInfo mask)
 		{
 			if (source == null)
@@ -182,6 +183,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		/// <param name="source"></param>
 		/// <param name="destination"></param>
+		/// <param name="mask"></param>
 		public void RouteDualDisplay(ISource source, IDestination destination, IMaskedSourceInfo mask)
 		{
 			if (source == null)

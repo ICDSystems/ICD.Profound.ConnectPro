@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using ICD.Common.Utils;
-using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
@@ -12,7 +11,6 @@ using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Conference;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews.Conference;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Conference
 {
