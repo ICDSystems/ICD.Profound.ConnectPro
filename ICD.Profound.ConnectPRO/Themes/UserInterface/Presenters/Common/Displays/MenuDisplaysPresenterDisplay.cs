@@ -39,7 +39,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		public string Icon { get { return m_Icon; } }
 
-		public bool ShowSpeaker { get { return m_ShowSpeaker && m_RoomHasAudio; } }
+		public bool ShowSpeaker { get { return m_ShowSpeaker; } }
 
 		public bool AudioActive { get { return m_AudioActive; } }
 
@@ -156,6 +156,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		#endregion
 
+		#region Private Methods
+
 		private void UpdateHasControl()
 		{
 			m_HasControl = m_RoutedSource != null && ConnectProRoutingSources.CanControl(m_RoutedSource);
@@ -221,17 +223,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				               ? string.Empty
 				               : m_RoutedSource.GetNameOrDeviceName(m_RoomCombine);
 
-			string display1HexColor = Colors.DisplayColorToTextColor(m_Color);
-			m_SourceName = HtmlUtils.FormatColoredText(m_SourceName, display1HexColor);
-			m_Line1 = HtmlUtils.FormatColoredText(m_Line1, display1HexColor);
-			m_Line2 = HtmlUtils.FormatColoredText(m_Line2, display1HexColor);
+			string hexColor = Colors.DisplayColorToTextColor(m_Color);
+			m_SourceName = HtmlUtils.FormatColoredText(m_SourceName, hexColor);
+			m_Line1 = HtmlUtils.FormatColoredText(m_Line1, hexColor);
+			m_Line2 = HtmlUtils.FormatColoredText(m_Line2, hexColor);
 		}
 
 		private void UpdateShowSpeaker()
 		{
-			m_ShowSpeaker = (m_SelectedSource == null || m_SelectedSource == m_RoutedSource) &&
+			m_ShowSpeaker = m_RoomHasAudio &&
+			                (m_SelectedSource == null || m_SelectedSource == m_RoutedSource) &&
 			                m_RoutedSource != null &&
 			                m_RoutedSource.ConnectionType.HasFlag(eConnectionType.Audio);
 		}
+
+		#endregion
 	}
 }
