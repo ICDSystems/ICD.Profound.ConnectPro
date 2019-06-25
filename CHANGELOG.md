@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Zoom contact list will clear its filter when the page changes
  - Sort Zoom participants list (host first, self second, sort by name after)
  - Show current contact filter when opening keyboard to filter contacts
+ - Clear selected contacts when leaving zoom contacts page
 
 ## [8.1.1] - 2019-05-07
 ### Changed
