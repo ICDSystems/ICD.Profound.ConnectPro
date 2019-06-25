@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Sort Zoom participants list (host first, self second, sort by name after)
  - Show current contact filter when opening keyboard to filter contacts
  - Clear selected contacts when leaving zoom contacts page
+ - CUE conference page shows Zoom specific information
 
 ## [8.1.1] - 2019-05-07
 ### Changed
