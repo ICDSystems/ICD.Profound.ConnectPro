@@ -28,6 +28,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		private bool m_ShowSpeaker;
 		private bool m_RoomHasAudio;
 		private string m_Icon;
+		private bool m_CanRouteVideo;
 
 		#region Properties
 
@@ -83,12 +84,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			return true;
 		}
 
-		public bool SetSelectedSource(ISource selectedSource)
+		public bool SetSelectedSource(ISource selectedSource, bool canRouteVideo)
 		{
-			if (selectedSource == m_SelectedSource)
+			if (selectedSource == m_SelectedSource && canRouteVideo == m_CanRouteVideo)
 				return false;
 
 			m_SelectedSource = selectedSource;
+			m_CanRouteVideo = canRouteVideo;
 
 			// Update the color
 			UpdateColor();
@@ -167,7 +169,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 					            : m_HasControl
 						              ? eDisplayColor.Green
 						              : eDisplayColor.White
-				          : eDisplayColor.Yellow;
+				          : m_CanRouteVideo
+					            ? eDisplayColor.Yellow
+					            : eDisplayColor.Grey;
 		}
 
 		private void UpdateIcon()

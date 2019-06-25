@@ -512,9 +512,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				m_SelectedSource = source;
 
 				m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().SelectedSource = m_SelectedSource;
-				m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().SelectedSource = m_SelectedSource;
-				m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>().SelectedSource = m_SelectedSource;
-				m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>().SelectedSource = m_SelectedSource;
+				m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().SetSelectedSource(m_SelectedSource);
+				m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>().SetSelectedSource(m_SelectedSource);
+				m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>().SetSelectedSource(m_SelectedSource);
 
 				m_SourceSelectionTimeout.Reset(SOURCE_SELECTION_TIMEOUT);
 			}
