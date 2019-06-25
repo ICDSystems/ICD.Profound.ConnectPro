@@ -24,7 +24,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <summary>
 		/// Returns true if the room contains more than 1 display.
 		/// </summary>
-		public bool IsDualDisplayRoom { get { return DisplayDestinationsCount > 1; } }
+		public bool IsMultiDisplayRoom { get { return DisplayDestinationsCount > 1; } }
 
 		/// <summary>
 		/// Returns true if the room has an audio destination.

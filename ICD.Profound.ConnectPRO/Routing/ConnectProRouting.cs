@@ -238,7 +238,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (source == null)
 				throw new ArgumentNullException("source");
 
-
 			Connection[] outputs = RoutingGraph.Connections
 			                                   .GetOutputConnections(source.Device,
 			                                                         source.Control)
@@ -604,8 +603,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				                                           .Where(s =>
 				                                                  {
 					                                                  // Don't unroute OSDs for this room
-					                                                  if (
-						                                                  m_Room.Core.Originators.GetChild(s.Device) is OsdPanelDevice &&
+					                                                  if (m_Room.Core.Originators.GetChild(s.Device) is OsdPanelDevice &&
 						                                                  m_Room.Originators.ContainsRecursive(s.Device))
 						                                                  return false;
 					                                                  return true;

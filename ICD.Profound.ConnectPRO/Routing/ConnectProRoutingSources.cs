@@ -50,10 +50,10 @@ namespace ICD.Profound.ConnectPRO.Routing
 		}
 
 		/// <summary>
-		/// Returns all of the sources available in the core.
+		/// Returns all of the sources available in the room.
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<ISource> GetSources()
+		public IEnumerable<ISource> GetRoomSources()
 		{
 			return m_Routing.Room
 			                .Originators

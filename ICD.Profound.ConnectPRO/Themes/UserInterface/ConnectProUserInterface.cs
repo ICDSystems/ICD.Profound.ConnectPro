@@ -312,7 +312,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			ConnectProCombineRoom combineRoom = m_Room as ConnectProCombineRoom;
 			if (combineRoom == null)
 			{
-				if (m_Room.Routing.Destinations.IsDualDisplayRoom)
+				if (m_Room.Routing.Destinations.IsMultiDisplayRoom)
 					HandleSelectedSourceDualDisplay(source);
 				else
 					HandleSelectedSourceSingleDisplay(source);
@@ -657,7 +657,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			ConnectProCombineRoom combineRoom = m_Room as ConnectProCombineRoom;
 
 			bool combinedRoom = combineRoom != null;
-			bool dualDisplays = m_Room != null && !combinedRoom && m_Room.Routing.Destinations.IsDualDisplayRoom;
+			bool dualDisplays = m_Room != null && !combinedRoom && m_Room.Routing.Destinations.IsMultiDisplayRoom;
 			bool combineAdvanced = combineRoom != null && combineRoom.CombinedAdvancedMode == eCombineAdvancedMode.Advanced;
 			bool combineSimple = combineRoom != null && combineRoom.CombinedAdvancedMode == eCombineAdvancedMode.Simple;
 
