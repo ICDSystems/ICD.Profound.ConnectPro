@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
+using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Partitioning.Cells;
 using ICD.Connect.Partitioning.Controls;
@@ -11,6 +12,7 @@ using ICD.Connect.Partitioning.Partitions;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
+using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Rooms.Combine;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -26,6 +28,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly SafeCriticalSection m_PartitionSection;
+
+		/// <summary>
+		/// Tracks the current selection state for the walls. True is open, false is close.
+		/// </summary>
 		private readonly Dictionary<IPartition, bool> m_SelectedPartitionStates;
 
 		private IPartitionManager m_SubscribedPartitionManager;
@@ -319,12 +325,28 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			try
 			{
-				// Clear the selection
-				if (m_SelectedPartitionStates.ContainsKey(partition))
-					m_SelectedPartitionStates.Remove(partition);
-				// We want to open the closed partition OR close the open partition
-				else
+				// Don't let the user open/close partitions outside of the current space
+				IcdHashSet<IPartition> contiguousPartitions = GetContiguousPartitions().ToIcdHashSet();
+				if (!contiguousPartitions.Contains(partition))
+					return;
+
+				// Easy case - no selection to modify
+				if (!m_SelectedPartitionStates.ContainsKey(partition))
+				{
+					// We want to open the closed partition OR close the open partition
 					m_SelectedPartitionStates[partition] = !m_SubscribedPartitionManager.CombinesRoom(partition);
+				}
+				else
+				{
+					// Clear the selection - drop any orphaned partitions
+					m_SelectedPartitionStates.Remove(partition);
+
+					IcdHashSet<IPartition> newContiguousPartitions = GetContiguousPartitions().ToIcdHashSet();
+					IEnumerable<IPartition> clearSelection =
+						contiguousPartitions.Where(p => !newContiguousPartitions.Contains(p) &&
+						                                m_SelectedPartitionStates.ContainsKey(p));
+					m_SelectedPartitionStates.RemoveAll(clearSelection);
+				}
 			}
 			finally
 			{
@@ -332,6 +354,38 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			}
 
 			RefreshIfVisible();
+		}
+
+		/// <summary>
+		/// Get the current contiguous space based on open partitions and the selected open partitions.
+		/// </summary>
+		/// <returns></returns>
+		private IEnumerable<IPartition> GetContiguousPartitions()
+		{
+			if (Room == null)
+				return Enumerable.Empty<IPartition>();
+
+			return RecursionUtils.GetClique(Room.Core.Originators.GetChildren<IRoom>(), Room, GetAdjacentRooms)
+			                     .SelectMany(r => m_SubscribedPartitionManager.Partitions.GetRoomAdjacentPartitions(r))
+			                     .Distinct();
+		}
+
+		/// <summary>
+		/// Returns all of the rooms that are adjacent to the given room where the dividing partition is
+		/// open or selected to open.
+		/// </summary>
+		/// <param name="room"></param>
+		/// <returns></returns>
+		private IEnumerable<IRoom> GetAdjacentRooms(IRoom room)
+		{
+			return room.GetRoomsRecursive()
+			           .SelectMany(r => m_SubscribedPartitionManager.Partitions.GetRoomAdjacentPartitions(r))
+			           .Distinct()
+			           .Where(p => m_SubscribedPartitionManager.CombinesRoom(p) ||
+			                       m_SelectedPartitionStates.GetDefault(p))
+			           .SelectMany(p => p.GetRooms().Select(id => Room.Core.Originators.GetChild<IRoom>(id)))
+			           .Distinct()
+			           .Where(r => r != room);
 		}
 
 		#endregion
