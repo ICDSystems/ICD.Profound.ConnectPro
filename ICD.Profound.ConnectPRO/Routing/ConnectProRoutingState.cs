@@ -477,7 +477,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 					         .ToDictionary(destination => destination,
 					                       destination => m_Routing.RoutingGraph
 					                                               .RoutingCache
-					                                               .GetSourcesForDestination(destination, eConnectionType.Video)
+					                                               .GetSourcesForDestination(destination, eConnectionType.Video, false, true)
 					                                               .ToIcdHashSet());
 				
 				bool change = false;
