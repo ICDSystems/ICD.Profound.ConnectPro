@@ -257,6 +257,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			view.OnWallButtonPressed -= ViewOnWallButtonPressed;
 		}
 
+		protected override void ViewOnPreVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			// Clear the selection when the visibility changes
+			m_RefreshSection.Execute(() => m_SelectedPartitionStates.Clear());
+
+			base.ViewOnPreVisibilityChanged(sender, args);
+		}
+
 		private void ViewOnSaveButtonPressed(object sender, EventArgs eventArgs)
 		{
 			m_PartitionSection.Enter();
