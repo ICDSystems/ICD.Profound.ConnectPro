@@ -10,6 +10,7 @@ using ICD.Connect.Partitioning.PartitionManagers;
 using ICD.Connect.Partitioning.Partitions;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Attributes;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Rooms.Combine;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -268,16 +269,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		private void ViewOnSaveButtonPressed(object sender, EventArgs eventArgs)
 		{
 			m_PartitionSection.Enter();
+
 			try
 			{
 				IcdHashSet<IPartition> open = m_SelectedPartitionStates.Where(kvp => kvp.Value).Select(kvp => kvp.Key).ToIcdHashSet();
 				IcdHashSet<IPartition> closed = m_SelectedPartitionStates.Where(kvp => !kvp.Value).Select(kvp => kvp.Key).ToIcdHashSet();
+
+				Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView("Combining Rooms");
+
 				m_SubscribedPartitionManager.CombineRooms(open, closed, () => new ConnectProCombineRoom());
 				m_SelectedPartitionStates.Clear();
 			}
 			finally
 			{
 				m_PartitionSection.Leave();
+
+				Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView(false);
 			}
 
 			RefreshIfVisible();
