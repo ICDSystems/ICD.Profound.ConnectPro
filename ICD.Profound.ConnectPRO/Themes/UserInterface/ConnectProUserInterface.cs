@@ -453,6 +453,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			// If a source is currently selected then we route that source to the selected display
 			else if (activeSource != routedSource)
 			{
+				// Can the active source even be routed to this destination?
+				if (!m_Room.Routing.HasPath(activeSource, destination, eConnectionType.Video))
+					return;
+
 				m_RoutingSection.Enter();
 
 				try
