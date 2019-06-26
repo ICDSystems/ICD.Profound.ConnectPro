@@ -65,8 +65,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 							: m_SubscribedPartitionManager.Cells.GetCell(column, row);
 						IRoom room = cell == null ? null : cell.Room;
 
+						string roomLabel = room == null ? null : room.Name;
+						if (room != null && (room == Room || Room.ContainsRoom(room)))
+							roomLabel = HtmlUtils.FormatColoredText(roomLabel, Colors.COLOR_DARK_BLUE);
+
 						view.SetCellVisible(column, row, room != null);
-						view.SetCellLabel(column, row, room == null ? null : room.Name);
+						view.SetCellLabel(column, row, roomLabel);
 						view.SetCellSelected(column, row, room != null);
 						view.SetCellEnabled(column, row, room != null);
 						

@@ -19,6 +19,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews
 
 	public static class Colors
 	{
+		public const string COLOR_DARK_BLUE = "#2998B0";
 		public const string COLOR_WHITE = "#FFFFFF";
 		public const string COLOR_LIGHT_GREY = "#8B8B8B";
 		public const string COLOR_DARK_GREY = "#535353";
