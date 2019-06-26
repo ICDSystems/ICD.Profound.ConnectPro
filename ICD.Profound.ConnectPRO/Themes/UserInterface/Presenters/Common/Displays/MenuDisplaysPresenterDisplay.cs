@@ -200,7 +200,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 				string text = m_SelectedSource == null || m_SelectedSource == m_RoutedSource
 					              ? destinationName
-					              : string.Format("PRESS TO SHOW SELECTION ON {0}", destinationName);
+					              : m_CanRouteVideo
+						              ? string.Format("PRESS TO SHOW SELECTION ON {0}", destinationName)
+						              : string.Format("UNABLE TO SHOW SELECTION ON {0}", destinationName);
 				text = text.ToUpper();
 
 				if (text.Length <= MAX_LINE_WIDTH)
