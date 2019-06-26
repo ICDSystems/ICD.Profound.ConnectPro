@@ -330,22 +330,35 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				if (!contiguousPartitions.Contains(partition))
 					return;
 
-				// Easy case - no selection to modify
-				if (!m_SelectedPartitionStates.ContainsKey(partition))
+				if (m_SelectedPartitionStates.ContainsKey(partition))
 				{
-					// We want to open the closed partition OR close the open partition
-					m_SelectedPartitionStates[partition] = !m_SubscribedPartitionManager.CombinesRoom(partition);
+					// Clear the selection and update siblings to match the state
+					foreach (IPartition sibling in
+						m_SubscribedPartitionManager.Partitions.GetSiblingPartitions(partition))
+						m_SelectedPartitionStates.Remove(sibling);
 				}
 				else
 				{
-					// Clear the selection - drop any orphaned partitions
-					m_SelectedPartitionStates.Remove(partition);
+					// We want to open the closed partition OR close the open partition
+					bool open = !m_SubscribedPartitionManager.CombinesRoom(partition);
 
-					IcdHashSet<IPartition> newContiguousPartitions = GetContiguousPartitions().ToIcdHashSet();
-					IEnumerable<IPartition> clearSelection =
-						contiguousPartitions.Where(p => !newContiguousPartitions.Contains(p) &&
-						                                m_SelectedPartitionStates.ContainsKey(p));
-					m_SelectedPartitionStates.RemoveAll(clearSelection);
+					// Update siblings to match the state
+					foreach (IPartition sibling in
+						m_SubscribedPartitionManager.Partitions.GetSiblingPartitions(partition))
+						m_SelectedPartitionStates[sibling] = open;
+				}
+
+				// Select orphaned partitions for closing
+				IcdHashSet<IPartition> newContiguousPartitions = GetContiguousPartitions().ToIcdHashSet();
+				IEnumerable<IPartition> closeSelection =
+					contiguousPartitions.Where(p => !newContiguousPartitions.Contains(p));
+
+				foreach (IPartition close in closeSelection)
+				{
+					if (m_SubscribedPartitionManager.CombinesRoom(close))
+						m_SelectedPartitionStates[close] = false;
+					else
+						m_SelectedPartitionStates.Remove(close);
 				}
 			}
 			finally
@@ -364,8 +377,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		{
 			if (Room == null)
 				return Enumerable.Empty<IPartition>();
+			
+			IRoom start = Room.GetRoomsRecursive().FirstOrDefault(r => r.Originators.Contains(ViewFactory.Panel.Id));
+			if (start == null)
+				return Enumerable.Empty<IPartition>();
 
-			return RecursionUtils.GetClique(Room.Core.Originators.GetChildren<IRoom>(), Room, GetAdjacentRooms)
+			return RecursionUtils.GetClique(Room.Core.Originators.GetChildren<IRoom>(), start, GetAdjacentRooms)
 			                     .SelectMany(r => m_SubscribedPartitionManager.Partitions.GetRoomAdjacentPartitions(r))
 			                     .Distinct();
 		}
@@ -378,14 +395,28 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <returns></returns>
 		private IEnumerable<IRoom> GetAdjacentRooms(IRoom room)
 		{
-			return room.GetRoomsRecursive()
-			           .SelectMany(r => m_SubscribedPartitionManager.Partitions.GetRoomAdjacentPartitions(r))
-			           .Distinct()
-			           .Where(p => m_SubscribedPartitionManager.CombinesRoom(p) ||
-			                       m_SelectedPartitionStates.GetDefault(p))
-			           .SelectMany(p => p.GetRooms().Select(id => Room.Core.Originators.GetChild<IRoom>(id)))
-			           .Distinct()
-			           .Where(r => r != room);
+			if (room == null)
+				throw new ArgumentNullException("room");
+
+			IcdHashSet<IRoom> adjacent =
+
+			 m_SubscribedPartitionManager
+			       .Partitions
+			       .GetRoomAdjacentPartitions(room)
+			       .Where(p =>
+			              {
+				              bool selection;
+				              if (m_SelectedPartitionStates.TryGetValue(p, out selection))
+					              return selection;
+
+				              return m_SubscribedPartitionManager.CombinesRoom(p);
+			              })
+			       .SelectMany(p => p.GetRooms().Select(id => room.Core.Originators.GetChild<IRoom>(id)))
+			       .Distinct()
+			       .Where(r => r != room)
+			       .ToIcdHashSet();
+
+			return adjacent;
 		}
 
 		#endregion
