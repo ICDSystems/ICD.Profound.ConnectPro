@@ -123,12 +123,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		{
 			base.SetRoom(room);
 
-			UpdateSources();
-
 			m_DisplayCount =
-					room == null
-						? (ushort)0
-						: (ushort)room.Routing.Destinations.DisplayDestinationsCount;
+				room == null
+					? (ushort)0
+					: (ushort)room.Routing.Destinations.DisplayDestinationsCount;
+
+			UpdateSources();
 		}
 
 		/// <summary>
@@ -169,6 +169,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		{
 			m_Sources = Room == null ? new ISource[0] : GetSources(Room).ToArray();
 			m_ChildrenFactory.BuildChildren(m_Sources);
+
+			RefreshIfVisible();
 		}
 
 		/// <summary>
