@@ -120,8 +120,9 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Conference
 					if (m_CachedCallInfo != null && !string.IsNullOrEmpty(m_CachedCallInfo.DialIn))
 					{
 						var callInNumbers = m_CachedCallInfo.DialIn
-						                                   .Split(';')
-						                                   .Select(s => string.Format(CALL_IN_FORMAT, s));
+						                                    .Split(';')
+						                                    .Select(s => string.Format(CALL_IN_FORMAT, s))
+						                                    .ToArray();
 						builder.Append(string.Join("<br/>", callInNumbers));
 					}
 					else
