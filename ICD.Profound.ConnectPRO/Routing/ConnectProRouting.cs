@@ -478,9 +478,28 @@ namespace ICD.Profound.ConnectPRO.Routing
 			                  .HasPaths(m_PathFinder);
 		}
 
-		public bool HasPathToRoomAudio(ISource routedSource)
+		/// <summary>
+		/// Returns true if the given source has a path to any of the room audio destinations.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <returns></returns>
+		public bool HasPathToRoomAudio(ISource source)
 		{
-			return Destinations.GetAudioDestinations().Any(d => HasPath(routedSource, d, eConnectionType.Audio));
+			return Destinations.GetAudioDestinations().Any(d => HasPath(source, d, eConnectionType.Audio));
+		}
+
+		/// <summary>
+		/// Returns true if any sources can be routed to all display destinations.
+		/// </summary>
+		/// <returns></returns>
+		public bool SupportsSimpleMode()
+		{
+			return Sources
+			       .GetRoomSourcesForUi()
+			       .Any(s => Room.Routing
+			                     .Destinations
+			                     .GetDisplayDestinations()
+			                     .All(d => HasPath(s, d, eConnectionType.Video)));
 		}
 
 		#endregion
