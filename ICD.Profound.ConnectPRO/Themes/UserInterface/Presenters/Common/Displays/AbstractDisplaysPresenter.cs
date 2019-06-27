@@ -44,12 +44,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		{
 			bool combine = room != null && room.IsCombineRoom();
 			IDestination[] destinations = room == null ? new IDestination[0] : room.Routing.Destinations.GetDisplayDestinations().ToArray();
-			bool roomHasAudio = room != null && room.Routing.Destinations.RoomHasAudio;
+			
 			for (int i = 0; i < Displays.Count; i++)
 			{
-				var display = Displays[i];
+				MenuDisplaysPresenterDisplay display = Displays[i];
 				display.SetRoomCombine(combine);
-				display.SetRoomHasAudio(roomHasAudio);
 				IDestination dest;
 				destinations.TryElementAt(i, out dest);
 				display.SetDestination(dest);
@@ -62,10 +61,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		{
 			bool refresh = false;
 
-			foreach (var display in Displays.ToArray())
+			foreach (MenuDisplaysPresenterDisplay display in Displays.ToArray())
 			{
-				refresh |= display.SetRoutedSource(GetRoutedSource(display.Destination, routing));
-				refresh |= display.SetAudioActive(display.RoutedSource != null && activeAudio.Contains(display.RoutedSource));
+				ISource routedSource = GetRoutedSource(display.Destination, routing);
+				bool canRouteToRoomAudio = routedSource != null &&
+				                           display.Destination != null &&
+				                           Room != null &&
+				                           Room.Routing.HasPathToRoomAudio(routedSource);
+
+				refresh |= display.SetRoutedSource(routedSource, canRouteToRoomAudio);
+				refresh |= display.SetAudioActive(canRouteToRoomAudio && activeAudio.Contains(routedSource));
 			}
 
 			if (refresh)

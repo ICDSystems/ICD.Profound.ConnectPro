@@ -473,6 +473,11 @@ namespace ICD.Profound.ConnectPRO.Routing
 			                  .HasPaths(m_PathFinder);
 		}
 
+		public bool HasPathToRoomAudio(ISource routedSource)
+		{
+			return Destinations.GetAudioDestinations().Any(d => HasPath(routedSource, d, eConnectionType.Audio));
+		}
+
 		#endregion
 
 		#region Private Methods

@@ -26,7 +26,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		private bool m_RoomCombine;
 		private bool m_HasControl;
 		private bool m_ShowSpeaker;
-		private bool m_RoomHasAudio;
+		private bool m_CanRouteToRoomAudio;
 		private string m_Icon;
 		private bool m_CanRouteVideo;
 
@@ -59,12 +59,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		#region Methods
 
-		public bool SetRoutedSource(ISource routedSource)
+		public bool SetRoutedSource(ISource routedSource, bool canRouteToRoomAudio)
 		{
-			if (routedSource == m_RoutedSource)
+			if (routedSource == m_RoutedSource &&
+			    canRouteToRoomAudio == m_CanRouteToRoomAudio)
 				return false;
 
 			m_RoutedSource = routedSource;
+			m_CanRouteToRoomAudio = canRouteToRoomAudio;
 
 			// Update has control
 			UpdateHasControl();
@@ -139,17 +141,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 			// Update the labels
 			UpdateLabels();
-
-			return true;
-		}
-
-		public bool SetRoomHasAudio(bool roomHasAudio)
-		{
-			if (roomHasAudio == m_RoomHasAudio)
-				return false;
-
-			m_RoomHasAudio = roomHasAudio;
-			UpdateShowSpeaker();
 
 			return true;
 		}
@@ -233,7 +224,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private void UpdateShowSpeaker()
 		{
-			m_ShowSpeaker = m_RoomHasAudio &&
+			m_ShowSpeaker = m_CanRouteToRoomAudio &&
 			                (m_SelectedSource == null || m_SelectedSource == m_RoutedSource) &&
 			                m_RoutedSource != null &&
 			                m_RoutedSource.ConnectionType.HasFlag(eConnectionType.Audio);
