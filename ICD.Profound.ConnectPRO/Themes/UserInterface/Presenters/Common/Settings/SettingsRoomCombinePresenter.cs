@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
+using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Partitioning.Cells;
 using ICD.Connect.Partitioning.Controls;
@@ -10,6 +11,8 @@ using ICD.Connect.Partitioning.PartitionManagers;
 using ICD.Connect.Partitioning.Partitions;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Attributes;
+using ICD.Connect.UI.Mvp.Presenters;
+using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Rooms.Combine;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -25,6 +28,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly SafeCriticalSection m_PartitionSection;
+
+		/// <summary>
+		/// Tracks the current selection state for the walls. True is open, false is close.
+		/// </summary>
 		private readonly Dictionary<IPartition, bool> m_SelectedPartitionStates;
 
 		private IPartitionManager m_SubscribedPartitionManager;
@@ -64,8 +71,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 							: m_SubscribedPartitionManager.Cells.GetCell(column, row);
 						IRoom room = cell == null ? null : cell.Room;
 
+						string roomLabel = room == null ? null : room.Name;
+						if (room != null && (room == Room || Room.ContainsRoom(room)))
+							roomLabel = HtmlUtils.FormatColoredText(roomLabel, Colors.COLOR_DARK_BLUE);
+
 						view.SetCellVisible(column, row, room != null);
-						view.SetCellLabel(column, row, room == null ? null : room.Name);
+						view.SetCellLabel(column, row, roomLabel);
 						view.SetCellSelected(column, row, room != null);
 						view.SetCellEnabled(column, row, room != null);
 						
@@ -257,19 +268,33 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			view.OnWallButtonPressed -= ViewOnWallButtonPressed;
 		}
 
+		protected override void ViewOnPreVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			// Clear the selection when the visibility changes
+			m_RefreshSection.Execute(() => m_SelectedPartitionStates.Clear());
+
+			base.ViewOnPreVisibilityChanged(sender, args);
+		}
+
 		private void ViewOnSaveButtonPressed(object sender, EventArgs eventArgs)
 		{
 			m_PartitionSection.Enter();
+
 			try
 			{
 				IcdHashSet<IPartition> open = m_SelectedPartitionStates.Where(kvp => kvp.Value).Select(kvp => kvp.Key).ToIcdHashSet();
 				IcdHashSet<IPartition> closed = m_SelectedPartitionStates.Where(kvp => !kvp.Value).Select(kvp => kvp.Key).ToIcdHashSet();
+
+				Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView("Combining Rooms");
+
 				m_SubscribedPartitionManager.CombineRooms(open, closed, () => new ConnectProCombineRoom());
 				m_SelectedPartitionStates.Clear();
 			}
 			finally
 			{
 				m_PartitionSection.Leave();
+
+				Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView(false);
 			}
 
 			RefreshIfVisible();
@@ -294,12 +319,41 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			try
 			{
-				// Clear the selection
+				// Don't let the user open/close partitions outside of the current space
+				IcdHashSet<IPartition> contiguousPartitions = GetContiguousPartitions().ToIcdHashSet();
+				if (!contiguousPartitions.Contains(partition))
+					return;
+
 				if (m_SelectedPartitionStates.ContainsKey(partition))
-					m_SelectedPartitionStates.Remove(partition);
-				// We want to open the closed partition OR close the open partition
+				{
+					// Clear the selection and update siblings to match the state
+					foreach (IPartition sibling in
+						m_SubscribedPartitionManager.Partitions.GetSiblingPartitions(partition))
+						m_SelectedPartitionStates.Remove(sibling);
+				}
 				else
-					m_SelectedPartitionStates[partition] = !m_SubscribedPartitionManager.CombinesRoom(partition);
+				{
+					// We want to open the closed partition OR close the open partition
+					bool open = !m_SubscribedPartitionManager.CombinesRoom(partition);
+
+					// Update siblings to match the state
+					foreach (IPartition sibling in
+						m_SubscribedPartitionManager.Partitions.GetSiblingPartitions(partition))
+						m_SelectedPartitionStates[sibling] = open;
+				}
+
+				// Select orphaned partitions for closing
+				IcdHashSet<IPartition> newContiguousPartitions = GetContiguousPartitions().ToIcdHashSet();
+				IEnumerable<IPartition> closeSelection =
+					contiguousPartitions.Where(p => !newContiguousPartitions.Contains(p));
+
+				foreach (IPartition close in closeSelection)
+				{
+					if (m_SubscribedPartitionManager.CombinesRoom(close))
+						m_SelectedPartitionStates[close] = false;
+					else
+						m_SelectedPartitionStates.Remove(close);
+				}
 			}
 			finally
 			{
@@ -307,6 +361,56 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			}
 
 			RefreshIfVisible();
+		}
+
+		/// <summary>
+		/// Get the current contiguous space based on open partitions and the selected open partitions.
+		/// </summary>
+		/// <returns></returns>
+		private IEnumerable<IPartition> GetContiguousPartitions()
+		{
+			if (Room == null)
+				return Enumerable.Empty<IPartition>();
+			
+			IRoom start = Room.GetRoomsRecursive().FirstOrDefault(r => r.Originators.Contains(ViewFactory.Panel.Id));
+			if (start == null)
+				return Enumerable.Empty<IPartition>();
+
+			return RecursionUtils.GetClique(start, GetAdjacentRooms)
+			                     .SelectMany(r => m_SubscribedPartitionManager.Partitions.GetRoomAdjacentPartitions(r))
+			                     .Distinct();
+		}
+
+		/// <summary>
+		/// Returns all of the rooms that are adjacent to the given room where the dividing partition is
+		/// open or selected to open.
+		/// </summary>
+		/// <param name="room"></param>
+		/// <returns></returns>
+		private IEnumerable<IRoom> GetAdjacentRooms(IRoom room)
+		{
+			if (room == null)
+				throw new ArgumentNullException("room");
+
+			IcdHashSet<IRoom> adjacent =
+
+			 m_SubscribedPartitionManager
+			       .Partitions
+			       .GetRoomAdjacentPartitions(room)
+			       .Where(p =>
+			              {
+				              bool selection;
+				              if (m_SelectedPartitionStates.TryGetValue(p, out selection))
+					              return selection;
+
+				              return m_SubscribedPartitionManager.CombinesRoom(p);
+			              })
+			       .SelectMany(p => p.GetRooms().Select(id => room.Core.Originators.GetChild<IRoom>(id)))
+			       .Distinct()
+			       .Where(r => r != room)
+			       .ToIcdHashSet();
+
+			return adjacent;
 		}
 
 		#endregion
