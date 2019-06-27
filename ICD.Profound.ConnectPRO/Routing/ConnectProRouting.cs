@@ -294,6 +294,11 @@ namespace ICD.Profound.ConnectPRO.Routing
 			}
 		}
 
+		/// <summary>
+		/// Routes the given source for audio to all destinations with audio in the room.
+		/// Unroutes any audio destinations with no path to the source.
+		/// </summary>
+		/// <param name="source"></param>
 		public void RouteAudio(ISource source)
 		{
 			if (source == null)
@@ -537,7 +542,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 		}
 
 		/// <summary>
-		/// Routes audio from the source to the given destination.
+		/// Routes the given source for audio to all destinations with audio in the room.
+		/// Unroutes any audio destinations with no path to the source.
 		/// </summary>
 		/// <param name="source"></param>
 		/// <param name="destination"></param>
@@ -549,7 +555,12 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (destination == null)
 				throw new ArgumentNullException("destination");
 
-			Route(source, destination, eConnectionType.Audio);
+			bool hasPath = HasPath(source, destination, eConnectionType.Audio);
+
+			if (hasPath)
+				Route(source, destination, eConnectionType.Audio);
+			else
+				RoutingGraph.Unroute(destination, eConnectionType.Audio, m_Room.Id);
 		}
 
 		/// <summary>
