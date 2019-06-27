@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Zoom contact list filter indication
  - Added "Host" and "Self" tags to Zoom participants
  - Added OSD UnRouting on Room Uncombine
+ - Added loading spinner when combining rooms
+ - Added Dark Blue Room labels to reperesent the current combined space
  
 ### Changed
  - Significant overhaul of routing, better performance for systems with multiple panels
@@ -19,6 +21,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Show current contact filter when opening keyboard to filter contacts
  - Clear selected contacts when leaving zoom contacts page
  - CUE conference page shows Zoom specific information
+ - Can no longer open partitions that are not adjacent to the current space
+ - Can only select partitions that are adjacent to the current space, orphaned partitions are then selected to be closed
 
 ## [8.1.1] - 2019-05-07
 ### Changed
