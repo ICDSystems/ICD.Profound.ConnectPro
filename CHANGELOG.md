@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Added OSD UnRouting on Room Uncombine
  - Added loading spinner when combining rooms
  - Added Dark Blue Room labels to reperesent the current combined space
+ - Cull video sources if they can not be routed to any display in the room
+ - Displays enter grey mode when selected source can not be routed
+ - Unroute audio from audio destinations when routing audio that can not reach those destinations
  
 ### Changed
  - Significant overhaul of routing, better performance for systems with multiple panels
@@ -23,6 +26,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - CUE conference page shows Zoom specific information
  - Can no longer open partitions that are not adjacent to the current space
  - Can only select partitions that are adjacent to the current space, orphaned partitions are then selected to be closed
+ - Only show display speaker button if the routed source can be routed to at least 1 room audio source
+ - User's will be kept in advanced mode if no sources can be routed to all displays
 
 ## [8.1.1] - 2019-05-07
 ### Changed
