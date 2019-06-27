@@ -470,8 +470,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			                  .From(source)
 			                  .To(destination)
 			                  .OfType(type)
-			                  .With(m_PathFinder)
-			                  .Any();
+			                  .HasPaths(m_PathFinder);
 		}
 
 		#endregion
