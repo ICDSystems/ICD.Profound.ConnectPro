@@ -6,6 +6,8 @@ using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.CalendarControl;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Connect.Routing.EventArguments;
 using ICD.Profound.ConnectPRO.Routing;
 
 namespace ICD.Profound.ConnectPRO.Rooms
@@ -16,6 +18,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// Raised when the room starts/stops a meeting.
 		/// </summary>
 		event EventHandler<BoolEventArgs> OnIsInMeetingChanged;
+
+		/// <summary>
+		/// Raised when the source that is currently the primary focus of the room (i.e. VTC) changes.
+		/// </summary>
+		event EventHandler<SourceEventArgs> OnFocusSourceChanged;
 
 		#region Properties
 
@@ -55,6 +62,12 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// Gets the selected OBTP booking.
 		/// </summary>
 		IBooking CurrentBooking { get; }
+
+		/// <summary>
+		/// Gets/sets the source that is currently the primary focus of the room (i.e. VTC).
+		/// </summary>
+		[CanBeNull]
+		ISource FocusSource { get; set; }
 
 		#endregion
 

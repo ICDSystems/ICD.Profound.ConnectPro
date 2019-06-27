@@ -27,6 +27,8 @@ using ICD.Connect.Displays.Devices;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Destinations;
+using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Connect.Routing.EventArguments;
 using ICD.Profound.ConnectPRO.Routing;
 
 namespace ICD.Profound.ConnectPRO.Rooms
@@ -39,9 +41,15 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public event EventHandler<BoolEventArgs> OnIsInMeetingChanged;
 
+		/// <summary>
+		/// Raised when the source that is currently the primary focus of the room (i.e. VTC) changes.
+		/// </summary>
+		public event EventHandler<SourceEventArgs> OnFocusSourceChanged;
+
 		private readonly ConnectProRouting m_Routing;
 
 		private bool m_IsInMeeting;
+		private ISource m_FocusSource;
 
 		#region Properties
 
@@ -101,6 +109,23 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public IBooking CurrentBooking { get; set; }
 
+		/// <summary>
+		/// Gets/sets the source that is currently the primary focus of the room (i.e. VTC).
+		/// </summary>
+		public ISource FocusSource
+		{
+			get { return m_FocusSource; }
+			set
+			{
+				if (value == m_FocusSource)
+					return;
+
+				m_FocusSource = value;
+
+				OnFocusSourceChanged.Raise(this, new SourceEventArgs(m_FocusSource));
+			}
+		}
+
 		#endregion
 
 		/// <summary>
@@ -117,6 +142,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		protected override void DisposeFinal(bool disposing)
 		{
 			OnIsInMeetingChanged = null;
+			OnFocusSourceChanged = null;
 
 			base.DisposeFinal(disposing);
 		}
