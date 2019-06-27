@@ -26,8 +26,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		private bool m_RoomCombine;
 		private bool m_HasControl;
 		private bool m_ShowSpeaker;
-		private bool m_RoomHasAudio;
+		private bool m_CanRouteToRoomAudio;
 		private string m_Icon;
+		private bool m_CanRouteVideo;
 
 		#region Properties
 
@@ -38,7 +39,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		public string Icon { get { return m_Icon; } }
 
-		public bool ShowSpeaker { get { return m_ShowSpeaker && m_RoomHasAudio; } }
+		public bool ShowSpeaker { get { return m_ShowSpeaker; } }
 
 		public bool AudioActive { get { return m_AudioActive; } }
 
@@ -58,12 +59,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		#region Methods
 
-		public bool SetRoutedSource(ISource routedSource)
+		public bool SetRoutedSource(ISource routedSource, bool canRouteToRoomAudio)
 		{
-			if (routedSource == m_RoutedSource)
+			if (routedSource == m_RoutedSource &&
+			    canRouteToRoomAudio == m_CanRouteToRoomAudio)
 				return false;
 
 			m_RoutedSource = routedSource;
+			m_CanRouteToRoomAudio = canRouteToRoomAudio;
 
 			// Update has control
 			UpdateHasControl();
@@ -83,12 +86,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			return true;
 		}
 
-		public bool SetSelectedSource(ISource selectedSource)
+		public bool SetSelectedSource(ISource selectedSource, bool canRouteVideo)
 		{
-			if (selectedSource == m_SelectedSource)
+			if (selectedSource == m_SelectedSource && canRouteVideo == m_CanRouteVideo)
 				return false;
 
 			m_SelectedSource = selectedSource;
+			m_CanRouteVideo = canRouteVideo;
 
 			// Update the color
 			UpdateColor();
@@ -141,18 +145,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			return true;
 		}
 
-		public bool SetRoomHasAudio(bool roomHasAudio)
-		{
-			if (roomHasAudio == m_RoomHasAudio)
-				return false;
-
-			m_RoomHasAudio = roomHasAudio;
-			UpdateShowSpeaker();
-
-			return true;
-		}
-
 		#endregion
+
+		#region Private Methods
 
 		private void UpdateHasControl()
 		{
@@ -167,7 +162,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 					            : m_HasControl
 						              ? eDisplayColor.Green
 						              : eDisplayColor.White
-				          : eDisplayColor.Yellow;
+				          : m_CanRouteVideo
+					            ? eDisplayColor.Yellow
+					            : eDisplayColor.Grey;
 		}
 
 		private void UpdateIcon()
@@ -194,7 +191,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 				string text = m_SelectedSource == null || m_SelectedSource == m_RoutedSource
 					              ? destinationName
-					              : string.Format("PRESS TO SHOW SELECTION ON {0}", destinationName);
+					              : m_CanRouteVideo
+						              ? string.Format("PRESS TO SHOW SELECTION ON {0}", destinationName)
+						              : string.Format("UNABLE TO SHOW SELECTION ON {0}", destinationName);
 				text = text.ToUpper();
 
 				if (text.Length <= MAX_LINE_WIDTH)
@@ -217,17 +216,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				               ? string.Empty
 				               : m_RoutedSource.GetNameOrDeviceName(m_RoomCombine);
 
-			string display1HexColor = Colors.DisplayColorToTextColor(m_Color);
-			m_SourceName = HtmlUtils.FormatColoredText(m_SourceName, display1HexColor);
-			m_Line1 = HtmlUtils.FormatColoredText(m_Line1, display1HexColor);
-			m_Line2 = HtmlUtils.FormatColoredText(m_Line2, display1HexColor);
+			string hexColor = Colors.DisplayColorToTextColor(m_Color);
+			m_SourceName = HtmlUtils.FormatColoredText(m_SourceName, hexColor);
+			m_Line1 = HtmlUtils.FormatColoredText(m_Line1, hexColor);
+			m_Line2 = HtmlUtils.FormatColoredText(m_Line2, hexColor);
 		}
 
 		private void UpdateShowSpeaker()
 		{
-			m_ShowSpeaker = (m_SelectedSource == null || m_SelectedSource == m_RoutedSource) &&
+			m_ShowSpeaker = m_CanRouteToRoomAudio &&
+			                (m_SelectedSource == null || m_SelectedSource == m_RoutedSource) &&
 			                m_RoutedSource != null &&
 			                m_RoutedSource.ConnectionType.HasFlag(eConnectionType.Audio);
 		}
+
+		#endregion
 	}
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
+using ICD.Connect.Routing.Connections;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -36,16 +37,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			base.Refresh(view);
 
 			m_RefreshSection.Enter();
+
 			try
 			{
-				foreach (var presenter in m_PresenterFactory.BuildChildren(Displays))
+				foreach (IReferencedAdvancedDisplayPresenter presenter in m_PresenterFactory.BuildChildren(Displays))
 				{
 					presenter.ShowView(true);
 					presenter.Refresh();
 				}
 
+				bool simpleModeEnabled = Room != null && Room.Routing.SupportsSimpleMode();
+
 				view.SetRouteSummaryButtonEnabled(true);
-				view.SetSimpleModeButtonEnabled(true);
+				view.SetSimpleModeButtonEnabled(simpleModeEnabled);
 			}
 			finally
 			{

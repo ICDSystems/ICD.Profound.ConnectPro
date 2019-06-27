@@ -13,9 +13,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displa
 		event MenuDestinationPressedCallback OnDestinationPressed;
 
 		/// <summary>
-		/// Sets the source that is currently active for routing.
+		/// Sets the source that is actively selected for routing.
 		/// </summary>
-		ISource SelectedSource { get; set; }
+		void SetSelectedSource(ISource source);
 
 		void SetRouting(IDictionary<IDestination, IcdHashSet<ISource>> routing, IcdHashSet<ISource> activeAudio);
 	}

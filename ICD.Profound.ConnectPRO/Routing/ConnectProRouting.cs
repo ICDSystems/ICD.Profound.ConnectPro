@@ -238,7 +238,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (source == null)
 				throw new ArgumentNullException("source");
 
-
 			Connection[] outputs = RoutingGraph.Connections
 			                                   .GetOutputConnections(source.Device,
 			                                                         source.Control)
@@ -295,6 +294,11 @@ namespace ICD.Profound.ConnectPRO.Routing
 			}
 		}
 
+		/// <summary>
+		/// Routes the given source for audio to all destinations with audio in the room.
+		/// Unroutes any audio destinations with no path to the source.
+		/// </summary>
+		/// <param name="source"></param>
 		public void RouteAudio(ISource source)
 		{
 			if (source == null)
@@ -452,6 +456,52 @@ namespace ICD.Profound.ConnectPRO.Routing
 			presentationControl.StopPresentation();
 		}
 
+		/// <summary>
+		/// Returns true if there is a path from the source to the destination.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public bool HasPath(ISource source, IDestination destination, eConnectionType type)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			if (destination == null)
+				throw new ArgumentNullException("destination");
+
+			return PathBuilder.FindPaths()
+			                  .From(source)
+			                  .To(destination)
+			                  .OfType(type)
+			                  .HasPaths(m_PathFinder);
+		}
+
+		/// <summary>
+		/// Returns true if the given source has a path to any of the room audio destinations.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <returns></returns>
+		public bool HasPathToRoomAudio(ISource source)
+		{
+			return Destinations.GetAudioDestinations().Any(d => HasPath(source, d, eConnectionType.Audio));
+		}
+
+		/// <summary>
+		/// Returns true if any sources can be routed to all display destinations.
+		/// </summary>
+		/// <returns></returns>
+		public bool SupportsSimpleMode()
+		{
+			return Sources
+			       .GetRoomSourcesForUi()
+			       .Any(s => Room.Routing
+			                     .Destinations
+			                     .GetDisplayDestinations()
+			                     .All(d => HasPath(s, d, eConnectionType.Video)));
+		}
+
 		#endregion
 
 		#region Private Methods
@@ -511,7 +561,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 		}
 
 		/// <summary>
-		/// Routes audio from the source to the given destination.
+		/// Routes the given source for audio to all destinations with audio in the room.
+		/// Unroutes any audio destinations with no path to the source.
 		/// </summary>
 		/// <param name="source"></param>
 		/// <param name="destination"></param>
@@ -523,7 +574,12 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (destination == null)
 				throw new ArgumentNullException("destination");
 
-			Route(source, destination, eConnectionType.Audio);
+			bool hasPath = HasPath(source, destination, eConnectionType.Audio);
+
+			if (hasPath)
+				Route(source, destination, eConnectionType.Audio);
+			else
+				RoutingGraph.Unroute(destination, eConnectionType.Audio, m_Room.Id);
 		}
 
 		/// <summary>
@@ -604,8 +660,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				                                           .Where(s =>
 				                                                  {
 					                                                  // Don't unroute OSDs for this room
-					                                                  if (
-						                                                  m_Room.Core.Originators.GetChild(s.Device) is OsdPanelDevice &&
+					                                                  if (m_Room.Core.Originators.GetChild(s.Device) is OsdPanelDevice &&
 						                                                  m_Room.Originators.ContainsRecursive(s.Device))
 						                                                  return false;
 					                                                  return true;

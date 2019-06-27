@@ -24,7 +24,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <summary>
 		/// Returns true if the room contains more than 1 display.
 		/// </summary>
-		public bool IsDualDisplayRoom { get { return DisplayDestinationsCount > 1; } }
+		public bool IsMultiDisplayRoom { get { return DisplayDestinationsCount > 1; } }
 
 		/// <summary>
 		/// Returns true if the room has an audio destination.
@@ -68,13 +68,14 @@ namespace ICD.Profound.ConnectPRO.Routing
 					bool combine = m_Routing.Room.IsCombineRoom();
 
 					IEnumerable<IDestination> displays =
-						m_Routing.Room.Originators
-							  .GetInstancesRecursive<IDestination>(d =>
-																	   m_Routing.Room.Core.Originators.GetChild(d.Device)
-																		   is IDisplay)
-							  .Where(d => d.ConnectionType.HasFlag(eConnectionType.Video))
-							  .OrderBy(d => d.Order)
-							  .ThenBy(d => d.GetNameOrDeviceName(combine));
+						m_Routing.Room
+						         .Originators
+						         .GetInstancesRecursive<IDestination>()
+						         .Where(d => !d.Hide)
+						         .Where(d => d.ConnectionType.HasFlag(eConnectionType.Video))
+						         .Where(d => m_Routing.Room.Core.Originators.GetChild(d.Device) is IDisplay)
+						         .OrderBy(d => d.Order)
+						         .ThenBy(d => d.GetNameOrDeviceName(combine));
 
 					m_Displays.AddRange(displays);
 				}
@@ -102,10 +103,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 					bool combine = m_Routing.Room.IsCombineRoom();
 
 					IEnumerable<IDestination> audioDestinations =
-						m_Routing.Room.Originators
-							  .GetInstancesRecursive<IDestination>(d => d.ConnectionType.HasFlag(eConnectionType.Audio))
-							  .OrderBy(d => d.Order)
-							  .ThenBy(d => d.GetNameOrDeviceName(combine));
+						m_Routing.Room
+						         .Originators
+						         .GetInstancesRecursive<IDestination>()
+						         .Where(d => !d.Hide)
+						         .Where(d => d.ConnectionType.HasFlag(eConnectionType.Audio))
+						         .OrderBy(d => d.Order)
+						         .ThenBy(d => d.GetNameOrDeviceName(combine));
 
 					m_AudioDestinations.AddRange(audioDestinations);
 				}
