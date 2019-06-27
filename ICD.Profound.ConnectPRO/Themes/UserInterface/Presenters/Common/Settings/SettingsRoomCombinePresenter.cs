@@ -72,7 +72,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 						IRoom room = cell == null ? null : cell.Room;
 
 						string roomLabel = room == null ? null : room.Name;
-						if (room != null && (room == Room || Room.ContainsRoom(room)))
+						if (room != null && Room != null && (room == Room || Room.ContainsRoom(room)))
 							roomLabel = HtmlUtils.FormatColoredText(roomLabel, Colors.COLOR_DARK_BLUE);
 
 						view.SetCellVisible(column, row, room != null);
