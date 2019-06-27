@@ -376,7 +376,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			if (start == null)
 				return Enumerable.Empty<IPartition>();
 
-			return RecursionUtils.GetClique(Room.Core.Originators.GetChildren<IRoom>(), start, GetAdjacentRooms)
+			return RecursionUtils.GetClique(start, GetAdjacentRooms)
 			                     .SelectMany(r => m_SubscribedPartitionManager.Partitions.GetRoomAdjacentPartitions(r))
 			                     .Distinct();
 		}
