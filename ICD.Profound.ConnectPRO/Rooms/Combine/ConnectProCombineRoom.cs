@@ -79,7 +79,8 @@ namespace ICD.Profound.ConnectPRO.Rooms.Combine
 		/// <param name="isInMeeting"></param>
 		protected override void HandleIsInMeetingChanged(bool isInMeeting)
 		{
-			CombinedAdvancedMode = eCombineAdvancedMode.Simple;
+			if (Routing.SupportsSimpleMode())
+				CombinedAdvancedMode = eCombineAdvancedMode.Simple;
 		}
 
 		#endregion
@@ -106,6 +107,9 @@ namespace ICD.Profound.ConnectPRO.Rooms.Combine
 
 			Name = m_MasterRoom.Name;
 			CombineName = m_MasterRoom.Name;
+
+			if (!Routing.SupportsSimpleMode())
+				CombinedAdvancedMode = eCombineAdvancedMode.Advanced;
 		}
 	}
 }

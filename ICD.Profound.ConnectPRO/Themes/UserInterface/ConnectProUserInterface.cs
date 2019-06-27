@@ -312,7 +312,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			ConnectProCombineRoom combineRoom = m_Room as ConnectProCombineRoom;
 			if (combineRoom == null)
 			{
-				if (m_Room.Routing.Destinations.IsDualDisplayRoom)
+				if (m_Room.Routing.Destinations.IsMultiDisplayRoom)
 					HandleSelectedSourceDualDisplay(source);
 				else
 					HandleSelectedSourceSingleDisplay(source);
@@ -453,6 +453,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			// If a source is currently selected then we route that source to the selected display
 			else if (activeSource != routedSource)
 			{
+				// Can the active source even be routed to this destination?
+				if (!m_Room.Routing.HasPath(activeSource, destination, eConnectionType.Video))
+					return;
+
 				m_RoutingSection.Enter();
 
 				try
@@ -512,9 +516,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				m_SelectedSource = source;
 
 				m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().SelectedSource = m_SelectedSource;
-				m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().SelectedSource = m_SelectedSource;
-				m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>().SelectedSource = m_SelectedSource;
-				m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>().SelectedSource = m_SelectedSource;
+				m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().SetSelectedSource(m_SelectedSource);
+				m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>().SetSelectedSource(m_SelectedSource);
+				m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>().SetSelectedSource(m_SelectedSource);
 
 				m_SourceSelectionTimeout.Reset(SOURCE_SELECTION_TIMEOUT);
 			}
@@ -657,7 +661,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			ConnectProCombineRoom combineRoom = m_Room as ConnectProCombineRoom;
 
 			bool combinedRoom = combineRoom != null;
-			bool dualDisplays = m_Room != null && !combinedRoom && m_Room.Routing.Destinations.IsDualDisplayRoom;
+			bool dualDisplays = m_Room != null && !combinedRoom && m_Room.Routing.Destinations.IsMultiDisplayRoom;
 			bool combineAdvanced = combineRoom != null && combineRoom.CombinedAdvancedMode == eCombineAdvancedMode.Advanced;
 			bool combineSimple = combineRoom != null && combineRoom.CombinedAdvancedMode == eCombineAdvancedMode.Simple;
 
