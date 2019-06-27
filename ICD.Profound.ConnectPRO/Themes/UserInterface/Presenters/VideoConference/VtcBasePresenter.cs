@@ -383,6 +383,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 					if (active != null)
 						active.Hangup();
 				}
+
+				if (Room != null)
+					Room.FocusSource = null;
 			}
 
 			UpdateCodecAwakeState(true);
