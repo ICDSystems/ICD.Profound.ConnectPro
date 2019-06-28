@@ -12,6 +12,7 @@ using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Panels.Server.Osd;
+using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Controls;
 using ICD.Connect.Routing.Endpoints;
@@ -247,13 +248,17 @@ namespace ICD.Profound.ConnectPRO.Routing
 			
 			IDestination[] destinations = m_Destinations.GetDisplayDestinations().ToArray();
 
-			Connection firstOutput = outputs.LastOrDefault();
-			if (firstOutput == null)
+			Connection lastOutput = outputs.LastOrDefault();
+			if (lastOutput == null)
 			{
 				m_Room.Logger.AddEntry(eSeverity.Error, "Failed to find {0} output connection for {1}",
 				                       eConnectionType.Video, source);
 				return;
 			}
+			
+			IDeviceBase device = m_Room.Core.Originators.GetChild<IDeviceBase>(source.Device);
+			IPresentationControl presentationControl = device.Controls.GetControl<IPresentationControl>();
+			bool presenting = presentationControl == null ? false : presentationControl.PresentationActiveInput != null;
 
 			for (int index = 0; index < destinations.Length; index++)
 			{
@@ -263,9 +268,16 @@ namespace ICD.Profound.ConnectPRO.Routing
 					State.ClearMaskedSource(destination);
 
 				Connection output;
-				if (!outputs.TryElementAt(index, out output))
-					output = firstOutput;
-
+				if (m_Room.IsCombineRoom())
+				{
+					if (outputs.Length >= 2 && presenting)
+						output = outputs[1];
+					else
+						output = outputs[0];
+				}
+				else if (!outputs.TryElementAt(index, out output))
+					output = lastOutput;
+				
 				if (output == null)
 					break;
 				
