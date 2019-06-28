@@ -644,9 +644,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				return;
 			}
 
-			// TODO - Better define focus menus
-			m_NavigationController.LazyLoadPresenter<IVtcBasePresenter>().ShowView(false);
-			m_NavigationController.LazyLoadPresenter<IWtcBasePresenter>().ShowView(false);
+			foreach (Type controlPresenterType in s_OverrideToPresenterType.Values)
+				m_NavigationController.LazyLoadPresenter(controlPresenterType).ShowView(false);
 		}
 
 		private void RoutingOnAudioSourceChanged(object sender, EventArgs eventArgs)
