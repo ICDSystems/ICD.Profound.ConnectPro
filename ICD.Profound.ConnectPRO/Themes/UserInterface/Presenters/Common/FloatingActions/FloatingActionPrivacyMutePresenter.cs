@@ -5,15 +5,15 @@ using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Options;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.FloatingActions;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.FloatingActions;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.FloatingActions
 {
-	[PresenterBinding(typeof(IOptionPrivacyMutePresenter))]
-	public sealed class OptionPrivacyMutePresenter : AbstractOptionPresenter<IOptionPrivacyMuteView>,
-	                                                 IOptionPrivacyMutePresenter
+	[PresenterBinding(typeof(IFloatingActionPrivacyMutePresenter))]
+	public sealed class FloatingActionPrivacyMutePresenter : AbstractFloatingActionPresenter<IFloatingActionPrivacyMuteView>,
+	                                                 IFloatingActionPrivacyMutePresenter
 	{
 		private IConferenceManager m_SubscribedConferenceManager;
 
@@ -23,7 +23,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public OptionPrivacyMutePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+		public FloatingActionPrivacyMutePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 		}

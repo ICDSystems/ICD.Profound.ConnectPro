@@ -10,14 +10,14 @@ using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Options;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.FloatingActions;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.FloatingActions;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.FloatingActions
 {
-	[PresenterBinding(typeof(IOptionVolumePresenter))]
-	public sealed class OptionVolumePresenter : AbstractOptionPresenter<IOptionVolumeView>, IOptionVolumePresenter
+	[PresenterBinding(typeof(IFloatingActionVolumePresenter))]
+	public sealed class FloatingActionVolumePresenter : AbstractFloatingActionPresenter<IFloatingActionVolumeView>, IFloatingActionVolumePresenter
 	{
 		private readonly IVolumePresenter m_Menu;
 
@@ -31,7 +31,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public OptionVolumePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+		public FloatingActionVolumePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_Menu = Navigation.LazyLoadPresenter<IVolumePresenter>();
@@ -52,7 +52,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// Updates the view.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Refresh(IOptionVolumeView view)
+		protected override void Refresh(IFloatingActionVolumeView view)
 		{
 			base.Refresh(view);
 
