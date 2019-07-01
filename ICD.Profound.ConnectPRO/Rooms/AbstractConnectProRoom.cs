@@ -17,6 +17,7 @@ using ICD.Connect.Calendaring.CalendarControl;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
@@ -50,6 +51,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 		private bool m_IsInMeeting;
 		private ISource m_FocusSource;
+
+		private List<IPresentationControl> m_SubscribedPresentationControls;
 
 		#region Properties
 
@@ -302,8 +305,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		{
 		}
 
-		#endregion
-
 		/// <summary>
 		/// Called when the room combine state changes.
 		/// </summary>
@@ -314,6 +315,21 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			// End the meeting whenever the combine state changes
 			EndMeeting(false);
 		}
+
+		protected override void OriginatorsOnChildrenChanged(object sender, EventArgs args)
+		{
+			base.OriginatorsOnChildrenChanged(sender, args);
+
+			foreach (var presentationControl in m_SubscribedPresentationControls)
+				Unsubscribe(presentationControl);
+			
+			m_SubscribedPresentationControls = this.GetControlsRecursive<IPresentationControl>().ToList();
+
+			foreach (var presentationControl in m_SubscribedPresentationControls)
+				Subscribe(presentationControl);
+		}
+
+		#endregion
 
 		#region Private Methods
 
@@ -383,6 +399,37 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			Log(eSeverity.Informational, "Scheduled wake occurring at {0}", IcdEnvironment.GetLocalTime().ToShortTimeString());
 			Wake();
+		}
+
+		#endregion
+
+		#region Presentation Control Callbacks 
+
+		private void Subscribe(IPresentationControl presentationControl)
+		{
+			presentationControl.OnPresentationActiveInputChanged += PresentationControlOnPresentationActiveInputChanged;
+		}
+
+		private void Unsubscribe(IPresentationControl presentationControl)
+		{
+			presentationControl.OnPresentationActiveInputChanged -= PresentationControlOnPresentationActiveInputChanged;
+		}
+
+		private void PresentationControlOnPresentationActiveInputChanged(object sender, PresentationActiveInputApiEventArgs args)
+		{
+			if (!this.IsCombineRoom())
+				return;
+
+			var presentationControl = sender as IPresentationControl;
+			var conferenceControl = presentationControl == null ? null : presentationControl.Parent.Controls.GetControl<IConferenceDeviceControl>();
+			if (conferenceControl == null || conferenceControl.GetActiveConference() == null)
+				return;
+			
+			var conferenceSource = Originators.GetInstances<ISource>().FirstOrDefault(s => s.Device == presentationControl.Parent.Id);
+			if (conferenceSource == null)
+				return;
+			
+			Routing.RouteVtc(conferenceSource);
 		}
 
 		#endregion
