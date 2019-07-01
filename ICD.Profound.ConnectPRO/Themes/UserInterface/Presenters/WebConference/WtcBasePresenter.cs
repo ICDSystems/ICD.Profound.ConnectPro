@@ -6,6 +6,7 @@ using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Zoom.Controls;
 using ICD.Connect.Conferencing.Zoom.Responses;
@@ -156,8 +157,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		private void SetWtcPresenterConferenceControls(IWebConferenceDeviceControl value)
 		{
-			foreach (var presenter in m_WtcPresenters)
+			foreach (IWtcPresenter presenter in m_WtcPresenters)
 				presenter.ActiveConferenceControl = value;
+
+			m_CameraControlPresenter.VtcDestinationControl =
+				value == null
+					? null
+					: value.Parent.Controls.GetControl<IVideoConferenceRouteControl>();
 		}
 
 		#endregion

@@ -6,6 +6,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Conferencing.Polycom.Devices.Codec.Controls;
@@ -208,6 +209,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			foreach (IVtcPresenter presenter in m_VtcPresenters)
 				presenter.ActiveConferenceControl = value;
+
+			m_CameraControlPresenter.VtcDestinationControl =
+				value == null
+					? null
+					: value.Parent.Controls.GetControl<IVideoConferenceRouteControl>();
 		}
 
 		private void UpdateVisibility()
