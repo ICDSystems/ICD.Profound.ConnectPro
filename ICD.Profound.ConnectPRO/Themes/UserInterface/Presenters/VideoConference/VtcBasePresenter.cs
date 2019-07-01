@@ -41,6 +41,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private IPowerDeviceControl m_SubscribedPowerControl;
 		private ITraditionalConferenceDeviceControl m_SubscribedConferenceControl;
 
+		private bool m_IsInCall;
+
 		public ITraditionalConferenceDeviceControl ActiveConferenceControl
 		{
 			get { return m_SubscribedConferenceControl; }
@@ -56,8 +58,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				SetVtcPresentersActiveConferenceControl(value);
 			}
 		}
-
-		private bool m_IsInCall;
 
 		private bool IsInCall
 		{
@@ -206,7 +206,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void SetVtcPresentersActiveConferenceControl(ITraditionalConferenceDeviceControl value)
 		{
-			foreach (var presenter in m_VtcPresenters)
+			foreach (IVtcPresenter presenter in m_VtcPresenters)
 				presenter.ActiveConferenceControl = value;
 		}
 

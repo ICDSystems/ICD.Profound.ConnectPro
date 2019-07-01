@@ -34,6 +34,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		private IPowerDeviceControl m_SubscribedPowerControl;
 		private IWebConferenceDeviceControl m_SubscribedConferenceControl;
 
+		private bool m_IsInCall;
+
 		public IWebConferenceDeviceControl ActiveConferenceControl
 		{
 			get { return m_SubscribedConferenceControl; }
@@ -52,8 +54,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 					ShowView(false);
 			}
 		}
-
-		private bool m_IsInCall;
 
 		private bool IsInCall
 		{
@@ -177,7 +177,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			var zoomControl = control as ZoomRoomConferenceControl;
 			if(zoomControl != null)
-				zoomControl.OnCallError += ZoomControlOnOnCallError;
+				zoomControl.OnCallError += ZoomControlOnCallError;
 
 			UpdateVisibility();
 
@@ -201,7 +201,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			var zoomControl = control as ZoomRoomConferenceControl;
 			if(zoomControl != null)
-				zoomControl.OnCallError -= ZoomControlOnOnCallError;
+				zoomControl.OnCallError -= ZoomControlOnCallError;
 			
 			UpdateVisibility();
 
@@ -224,7 +224,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			UpdateVisibility();
 		}
 
-		private void ZoomControlOnOnCallError(object sender, GenericEventArgs<CallConnectError> e)
+		private void ZoomControlOnCallError(object sender, GenericEventArgs<CallConnectError> e)
 		{
 			Navigation.LazyLoadPresenter<IGenericAlertPresenter>().Show(e.Data.ErrorMessage);
 		}
@@ -277,10 +277,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		protected override void ViewOnCloseButtonPressed(object sender, EventArgs eventArgs)
 		{
 			// If the camera subpage is open close that instead
-			ICameraControlPresenter cameraPresenter = Navigation.LazyLoadPresenter<ICameraControlPresenter>();
-			if (cameraPresenter.IsViewVisible && IsViewVisible)
+			if (m_CameraControlPresenter.IsViewVisible && IsViewVisible)
 			{
-				cameraPresenter.ShowView(false);
+				m_CameraControlPresenter.ShowView(false);
 				m_LeftMenuPresenter.ShowView(true);
 				return;
 			}
