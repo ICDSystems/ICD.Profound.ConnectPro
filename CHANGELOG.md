@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Cull video sources if they can not be routed to any display in the room
  - Displays enter grey mode when selected source can not be routed
  - Unroute audio from audio destinations when routing audio that can not reach those destinations
+ - Added VTC Control mirroring
  
 ### Changed
  - Significant overhaul of routing, better performance for systems with multiple panels
