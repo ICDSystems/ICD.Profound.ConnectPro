@@ -19,6 +19,7 @@ using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Connect.Routing.EventArguments;
 using ICD.Connect.Sources.TvTuner.Controls;
 using ICD.Connect.Themes.UserInterfaces;
 using ICD.Connect.UI.Mvp.Presenters;
@@ -92,7 +93,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		public IPanelDevice Panel { get { return m_Panel; } }
 
-		public override IRoom Room { get { return m_Room; } }
+		public override IRoom Room { get { return ConnectProRoom; } }
+
+		public IConnectProRoom ConnectProRoom { get { return m_Room; } }
 
 		public override object Target { get { return m_Panel; } }
 
@@ -349,7 +352,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (dialer != null && dialer.Supports.HasFlag(eCallType.Video))
 			{
 				// Show the context menu before routing for UX
-				ShowSourceContextualMenu(source);
+				ConnectProRoom.FocusSource = source;
 				m_Room.Routing.RouteVtc(source);
 			}
 			// Edge case - open the audio conferencing context menu
@@ -388,7 +391,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (dialer != null && dialer.Supports.HasFlag(eCallType.Video))
 			{
 				// Show the context menu before routing for UX
-				ShowSourceContextualMenu(source);
+				ConnectProRoom.FocusSource = source;
 				m_Room.Routing.RouteVtc(source);
 			}
 			// Edge case - open the audio conferencing context menu
@@ -574,6 +577,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				return;
 
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
+			room.OnFocusSourceChanged += RoomOnFocusSourceChanged;
 
 			room.Routing.State.OnDisplaySourceChanged += RoutingOnDisplaySourceChanged;
 			room.Routing.State.OnAudioSourceChanged += RoutingOnAudioSourceChanged;
@@ -596,6 +600,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				return;
 
 			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
+			room.OnFocusSourceChanged -= RoomOnFocusSourceChanged;
 
 			room.Routing.State.OnDisplaySourceChanged -= RoutingOnDisplaySourceChanged;
 			room.Routing.State.OnAudioSourceChanged -= RoutingOnAudioSourceChanged;
@@ -624,6 +629,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			}
 
 			UpdateMeetingPresentersVisibility();
+		}
+
+		/// <summary>
+		/// Called the
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void RoomOnFocusSourceChanged(object sender, SourceEventArgs eventArgs)
+		{
+			if (eventArgs.Data != null)
+			{
+				ShowSourceContextualMenu(eventArgs.Data);
+				return;
+			}
+
+			foreach (Type controlPresenterType in s_OverrideToPresenterType.Values)
+				m_NavigationController.LazyLoadPresenter(controlPresenterType).ShowView(false);
 		}
 
 		private void RoutingOnAudioSourceChanged(object sender, EventArgs eventArgs)
