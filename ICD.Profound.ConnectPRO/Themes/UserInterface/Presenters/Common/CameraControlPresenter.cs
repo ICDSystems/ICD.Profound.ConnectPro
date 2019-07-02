@@ -37,6 +37,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		[CanBeNull]
 		private ICameraDevice m_SelectedCamera;
 
+		[CanBeNull] private IVideoConferenceRouteControl m_VtcDestinationControl;
+
 		[CanBeNull]
 		private IPresetControl m_SubscribedPresetControl;
 
@@ -44,11 +46,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// Gets the number of cameras.
 		/// </summary>
 		public int CameraCount { get { return m_RefreshSection.Execute(() => m_Cameras.Count); } }
-
-		/// <summary>
-		/// Gets/sets the VTC routing control to route camera video to.
-		/// </summary>
-		public IVideoConferenceRouteControl VtcDestinationControl { get; set; }
 
 		/// <summary>
 		/// Constructor.
