@@ -27,8 +27,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 	[PresenterBinding(typeof(IVtcBasePresenter))]
 	public sealed class VtcBasePresenter : AbstractPopupPresenter<IVtcBaseView>, IVtcBasePresenter
 	{
-		public event EventHandler OnActiveConferenceControlChanged;
-
 		private readonly IVtcCallListTogglePresenter m_CallListTogglePresenter;
 		private readonly IVtcContactsNormalPresenter m_ContactsNormalPresenter;
 		private readonly IVtcContactsPolycomPresenter m_ContactsPolycomPresenter;
@@ -383,6 +381,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 					if (active != null)
 						active.Hangup();
 				}
+
+				if (Room != null)
+					Room.FocusSource = null;
 			}
 
 			UpdateCodecAwakeState(true);
