@@ -6,6 +6,7 @@ using ICD.Connect.Panels.Devices;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Keypads;
+using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Connect.UI.Controls.TextControls;
 
@@ -25,6 +26,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		private VtProButton m_PresetButton4;
 		private VtProButton m_PresetButton5;
 		private VtProSimpleLabel m_PresetStoredLabel;
+		private VtProDynamicButtonList m_CameraList;
 
 		private BiDictionary<ushort, VtProButton> m_PresetButtons;
 
@@ -101,6 +103,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 				{3, m_PresetButton4},
 				{4, m_PresetButton5}
 			};
+
+			m_CameraList = new VtProDynamicButtonList(16, panel as IPanelDevice, m_Subpage)
+			{
+				MaxSize = 10,
+				DigitalVisibilityJoin = 637
+			};
 		}
 
 		/// <summary>
@@ -119,6 +127,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			yield return m_PresetButton4;
 			yield return m_PresetButton5;
 			yield return m_PresetStoredLabel;
+			yield return m_CameraList;
 		}
 	}
 }

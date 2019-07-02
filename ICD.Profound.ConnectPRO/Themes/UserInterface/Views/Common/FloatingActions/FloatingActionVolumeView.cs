@@ -2,12 +2,12 @@
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.FloatingActions;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.FloatingActions
 {
-	[ViewBinding(typeof(IOptionPrivacyMuteView))]
-	public sealed partial class OptionPrivacyMuteView : AbstractOptionView, IOptionPrivacyMuteView
+	[ViewBinding(typeof(IFloatingActionVolumeView))]
+	public sealed partial class FloatingActionVolumeView : AbstractFloatingActionView, IFloatingActionVolumeView
 	{
 		public override event EventHandler OnButtonPressed;
 
@@ -16,7 +16,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public OptionPrivacyMuteView(ISigInputOutput panel, ConnectProTheme theme)
+		public FloatingActionVolumeView(ISigInputOutput panel, ConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}
@@ -38,6 +38,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options
 		public override void SetActive(bool active)
 		{
 			m_Button.SetSelected(active);
+		}
+
+		/// <summary>
+		/// Sets the enabled state of the button.
+		/// </summary>
+		/// <param name="enabled"></param>
+		public void SetButtonEnabled(bool enabled)
+		{
+			m_Button.Enable(enabled);
 		}
 
 		#region Control Callbacks

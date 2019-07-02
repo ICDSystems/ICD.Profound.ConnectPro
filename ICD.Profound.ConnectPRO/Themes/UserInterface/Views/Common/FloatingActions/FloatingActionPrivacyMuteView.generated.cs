@@ -4,9 +4,9 @@ using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Pages;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.FloatingActions
 {
-	public sealed partial class OptionPrivacyMuteView
+	public sealed partial class FloatingActionPrivacyMuteView
 	{
 		private VtProSubpage m_Subpage;
 		private VtProButton m_Button;

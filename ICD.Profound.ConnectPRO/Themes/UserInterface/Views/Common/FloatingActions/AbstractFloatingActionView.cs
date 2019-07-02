@@ -1,10 +1,10 @@
 ﻿using System;
 using ICD.Connect.Panels;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.FloatingActions;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.FloatingActions
 {
-	public abstract class AbstractOptionView : AbstractUiView, IOptionView
+	public abstract class AbstractFloatingActionView : AbstractUiView, IFloatingActionView
 	{
 		public abstract event EventHandler OnButtonPressed;
 
@@ -13,7 +13,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Options
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		protected AbstractOptionView(ISigInputOutput panel, ConnectProTheme theme)
+		protected AbstractFloatingActionView(ISigInputOutput panel, ConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

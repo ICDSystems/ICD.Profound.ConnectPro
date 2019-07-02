@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ICD.Common.Utils.EventArguments;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
@@ -38,9 +39,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 		event EventHandler OnCameraZoomOutButtonPressed;
 
 		/// <summary>
-		/// Raised when any camera button is released (i.e. stop the camera).
+		/// Raised when any camera PTZ button is released (i.e. stop the camera).
 		/// </summary>
-		event EventHandler OnCameraButtonReleased;
+		event EventHandler OnCameraPtzButtonReleased;
 
 		/// <summary>
 		/// Raised when a preset button is pressed.
@@ -51,6 +52,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 		/// Raised when a preset button is held.
 		/// </summary>
 		event EventHandler<UShortEventArgs> OnPresetButtonHeld;
+
+		/// <summary>
+		/// Raised when a camera button is pressed.
+		/// </summary>
+		event EventHandler<UShortEventArgs> OnCameraButtonPressed;
 
 		#endregion
 
@@ -66,5 +72,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 		/// </summary>
 		/// <param name="visible"></param>
 		void SetPresetStoredLabelVisibility(bool visible);
+
+		/// <summary>
+		/// Sets the camera selection list labels.
+		/// </summary>
+		/// <param name="labels"></param>
+		void SetCameraLabels(IEnumerable<string> labels);
+
+		/// <summary>
+		/// Sets the selection state of the camera button at the given index.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="selected"></param>
+		void SetCameraSelected(ushort index, bool selected);
 	}
 }

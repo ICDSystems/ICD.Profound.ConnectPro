@@ -32,7 +32,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.AudioConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Options;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.FloatingActions;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.CableTv;
@@ -189,9 +189,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			meetingVisibility.AddNode(webConferencingVisibility);
 
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>());
-			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOptionPrivacyMutePresenter>());
-			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOptionVolumePresenter>());
-			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOptionCameraPresenter>());
+			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IFloatingActionPrivacyMutePresenter>());
+			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IFloatingActionVolumePresenter>());
+			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IFloatingActionCameraPresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcBasePresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcBasePresenter>());
 			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ICableTvPresenter>());
@@ -224,9 +224,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			// These presenters control their own visibility.
 			m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>();
 			m_NavigationController.LazyLoadPresenter<IStartMeetingPresenter>();
-			m_NavigationController.LazyLoadPresenter<IOptionPrivacyMutePresenter>();
-			m_NavigationController.LazyLoadPresenter<IOptionVolumePresenter>();
-			m_NavigationController.LazyLoadPresenter<IOptionCameraPresenter>();
+			m_NavigationController.LazyLoadPresenter<IFloatingActionPrivacyMutePresenter>();
+			m_NavigationController.LazyLoadPresenter<IFloatingActionVolumePresenter>();
+			m_NavigationController.LazyLoadPresenter<IFloatingActionCameraPresenter>();
 			m_NavigationController.LazyLoadPresenter<IVtcCallListTogglePresenter>();
 			m_NavigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>();
 			m_NavigationController.LazyLoadPresenter<IAtcIncomingCallPresenter>();

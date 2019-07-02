@@ -1,4 +1,4 @@
-﻿using ICD.Connect.Cameras.Devices;
+﻿using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common
@@ -6,8 +6,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common
 	public interface ICameraControlPresenter : IUiPresenter<ICameraControlView>
 	{
 		/// <summary>
-		/// Gets/sets the current camera.
+		/// Gets the number of cameras.
 		/// </summary>
-		ICameraDevice Camera { get; set; }
+		int CameraCount { get; }
+
+		/// <summary>
+		/// Sets the VTC routing control to route camera video to.
+		/// </summary>
+		/// <param name="value"></param>
+		void SetVtcDestinationControl(IVideoConferenceRouteControl value);
 	}
 }

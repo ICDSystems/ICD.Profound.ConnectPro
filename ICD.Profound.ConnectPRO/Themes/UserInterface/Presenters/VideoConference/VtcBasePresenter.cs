@@ -6,6 +6,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Conferencing.Polycom.Devices.Codec.Controls;
@@ -39,6 +40,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private IPowerDeviceControl m_SubscribedPowerControl;
 		private ITraditionalConferenceDeviceControl m_SubscribedConferenceControl;
 
+		private bool m_IsInCall;
+
 		public ITraditionalConferenceDeviceControl ActiveConferenceControl
 		{
 			get { return m_SubscribedConferenceControl; }
@@ -54,8 +57,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				SetVtcPresentersActiveConferenceControl(value);
 			}
 		}
-
-		private bool m_IsInCall;
 
 		private bool IsInCall
 		{
@@ -204,8 +205,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void SetVtcPresentersActiveConferenceControl(ITraditionalConferenceDeviceControl value)
 		{
-			foreach (var presenter in m_VtcPresenters)
+			foreach (IVtcPresenter presenter in m_VtcPresenters)
 				presenter.ActiveConferenceControl = value;
+
+			m_CameraControlPresenter.SetVtcDestinationControl(value == null
+				                                                  ? null
+				                                                  : value.Parent.Controls.GetControl<IVideoConferenceRouteControl>());
 		}
 
 		private void UpdateVisibility()

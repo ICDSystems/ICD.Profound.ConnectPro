@@ -6,6 +6,7 @@ using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Zoom.Controls;
 using ICD.Connect.Conferencing.Zoom.Responses;
@@ -34,6 +35,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		private IPowerDeviceControl m_SubscribedPowerControl;
 		private IWebConferenceDeviceControl m_SubscribedConferenceControl;
 
+		private bool m_IsInCall;
+
 		public IWebConferenceDeviceControl ActiveConferenceControl
 		{
 			get { return m_SubscribedConferenceControl; }
@@ -52,8 +55,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 					ShowView(false);
 			}
 		}
-
-		private bool m_IsInCall;
 
 		private bool IsInCall
 		{
@@ -156,8 +157,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		private void SetWtcPresenterConferenceControls(IWebConferenceDeviceControl value)
 		{
-			foreach (var presenter in m_WtcPresenters)
+			foreach (IWtcPresenter presenter in m_WtcPresenters)
 				presenter.ActiveConferenceControl = value;
+
+			m_CameraControlPresenter.SetVtcDestinationControl(value == null
+				                                                  ? null
+				                                                  : value.Parent.Controls.GetControl<IVideoConferenceRouteControl>());
 		}
 
 		#endregion
@@ -177,7 +182,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			var zoomControl = control as ZoomRoomConferenceControl;
 			if(zoomControl != null)
-				zoomControl.OnCallError += ZoomControlOnOnCallError;
+				zoomControl.OnCallError += ZoomControlOnCallError;
 
 			UpdateVisibility();
 
@@ -201,7 +206,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			var zoomControl = control as ZoomRoomConferenceControl;
 			if(zoomControl != null)
-				zoomControl.OnCallError -= ZoomControlOnOnCallError;
+				zoomControl.OnCallError -= ZoomControlOnCallError;
 			
 			UpdateVisibility();
 
@@ -224,7 +229,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			UpdateVisibility();
 		}
 
-		private void ZoomControlOnOnCallError(object sender, GenericEventArgs<CallConnectError> e)
+		private void ZoomControlOnCallError(object sender, GenericEventArgs<CallConnectError> e)
 		{
 			Navigation.LazyLoadPresenter<IGenericAlertPresenter>().Show(e.Data.ErrorMessage);
 		}
@@ -276,19 +281,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// <param name="eventArgs"></param>
 		protected override void ViewOnCloseButtonPressed(object sender, EventArgs eventArgs)
 		{
-			// if the camera subpage is open close that instead
-			var cameraPresenter = Navigation.LazyLoadPresenter<ICameraControlPresenter>();
-			if(cameraPresenter != null && cameraPresenter.IsViewVisible && IsViewVisible)
+			// If the camera subpage is open close that instead
+			if (m_CameraControlPresenter.IsViewVisible && IsViewVisible)
 			{
-				cameraPresenter.ShowView(false);
+				m_CameraControlPresenter.ShowView(false);
 				m_LeftMenuPresenter.ShowView(true);
 				return;
 			}
 
-			
 			// If the keyboard subpage is open close that instead
-			var keyboardPresenter = Navigation.LazyLoadPresenter<IWtcKeyboardPresenter>();
-			if (keyboardPresenter != null && keyboardPresenter.IsViewVisible)
+			IWtcKeyboardPresenter keyboardPresenter = Navigation.LazyLoadPresenter<IWtcKeyboardPresenter>();
+			if (keyboardPresenter.IsViewVisible)
 			{
 				keyboardPresenter.ShowView(false);
 				return;

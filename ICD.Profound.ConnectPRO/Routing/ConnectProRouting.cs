@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
+using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.Devices;
@@ -366,6 +366,62 @@ namespace ICD.Profound.ConnectPRO.Routing
 		}
 
 		/// <summary>
+		/// Routes the given camera to the VTC route control and sets the active camera input.
+		/// </summary>
+		/// <param name="camera"></param>
+		/// <param name="routingControl"></param>
+		public void RouteVtcCamera(ICameraDevice camera, IVideoConferenceRouteControl routingControl)
+		{
+			if (camera == null)
+				throw new ArgumentNullException("camera");
+
+			if (routingControl == null)
+				throw new ArgumentException("routeControl");
+
+			IRouteSourceControl sourceControl = camera.Controls.GetControl<IRouteSourceControl>();
+			if (sourceControl == null)
+				throw new InvalidOperationException("Camera has no routing control");
+
+			// Get the content inputs
+			int[] inputs = routingControl.GetCodecInputs(eCodecInputType.Camera).ToArray();
+			if (inputs.Length == 0)
+			{
+				m_Room.Logger.AddEntry(eSeverity.Error,
+									   "Failed to route camera {0} - VTC has no inputs configured for camera.",
+									   camera);
+				return;
+			}
+
+			// Find the first input available
+			foreach (int input in inputs)
+			{
+				EndpointInfo endpoint = routingControl.GetInputEndpointInfo(input);
+
+				// Is there a path?
+				ConnectionPath path =
+					PathBuilder.FindPaths()
+							   .From(sourceControl)
+							   .To(endpoint)
+							   .OfType(eConnectionType.Video)
+							   .With(m_PathFinder)
+							   .FirstOrDefault();
+				if (path == null)
+					continue;
+
+				// Route the source video and audio to the codec
+				Route(path);
+
+				// Start the presentation
+				routingControl.SetCameraInput(input);
+				return;
+			}
+
+			m_Room.Logger.AddEntry(eSeverity.Error,
+								   "Failed to route camera {0} - Could not find a path to a VTC input configured for camera.",
+								   camera);
+		}
+
+		/// <summary>
 		/// Routes the given source to the VTC and starts the presentation.
 		/// </summary>
 		/// <param name="source"></param>
@@ -388,7 +444,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (inputs.Length == 0)
 			{
 				m_Room.Logger.AddEntry(eSeverity.Error,
-				                       "Failed to start presentation for {0} - Codec has no inputs configured for content.",
+				                       "Failed to start presentation for {0} - VTC has no inputs configured for content.",
 									   source);
 				return;
 			}
@@ -399,19 +455,18 @@ namespace ICD.Profound.ConnectPRO.Routing
 				EndpointInfo endpoint = routingControl.GetInputEndpointInfo(input);
 
 				// Is there a path?
-				bool hasPath =
+				ConnectionPath path =
 					PathBuilder.FindPaths()
 					           .From(source)
 							   .To(endpoint)
-							   .OfType(eConnectionType.Video)
+							   .OfType(source.ConnectionType)
 					           .With(m_PathFinder)
-					           .Any();
-				if (!hasPath)
-					return;
+					           .FirstOrDefault();
+				if (path == null)
+					continue;
 
 				// Route the source video and audio to the codec
-				Route(source, endpoint, eConnectionType.Video);
-				Route(source, endpoint, eConnectionType.Audio);
+				Route(path);
 
 				// Start the presentation
 				presentationControl.StartPresentation(input);
@@ -419,7 +474,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			}
 
 			m_Room.Logger.AddEntry(eSeverity.Error,
-			                       "Failed to start presentation for {0} - Could not find a path to a Codec input configured for content.",
+			                       "Failed to start presentation for {0} - Could not find a path to a VTC input configured for content.",
 			                       source);
 		}
 
@@ -601,29 +656,33 @@ namespace ICD.Profound.ConnectPRO.Routing
 				throw new ArgumentNullException("paths");
 
 			IList<ConnectionPath> pathsList = paths as IList<ConnectionPath> ?? paths.ToArray();
-
-			IcdStopwatch.Profile(() => RoutingGraph.RoutePaths(pathsList, m_Room.Id),
-			                     string.Format("Route - {0}", StringUtils.ArrayFormat(pathsList)));
-
 			foreach (ConnectionPath path in pathsList)
-			{
-				EndpointInfo destination = path.DestinationEndpoint;
-				IDeviceBase destinationDevice =
-					m_Room.Core.Originators.GetChild<IDeviceBase>(destination.Device);
+				Route(path);
+		}
 
-				// Power on the destination
-				IPowerDeviceControl powerControl = destinationDevice.Controls.GetControl<IPowerDeviceControl>();
-				if (powerControl != null && !powerControl.IsPowered)
-					powerControl.PowerOn();
+		private void Route(ConnectionPath path)
+		{
+			if (path == null)
+				throw new ArgumentNullException("path");
 
-				// Set the destination to the correct input
-				int input = destination.Address;
-				IRouteInputSelectControl inputSelectControl =
-					destinationDevice.Controls.GetControl<IRouteInputSelectControl>();
+			IcdStopwatch.Profile(() => RoutingGraph.RoutePath(path, m_Room.Id), string.Format("Route - {0}", path));
 
-				if (inputSelectControl != null)
-					inputSelectControl.SetActiveInput(input, path.ConnectionType);
-			}
+			EndpointInfo destination = path.DestinationEndpoint;
+			IDeviceBase destinationDevice =
+				m_Room.Core.Originators.GetChild<IDeviceBase>(destination.Device);
+
+			// Power on the destination
+			IPowerDeviceControl powerControl = destinationDevice.Controls.GetControl<IPowerDeviceControl>();
+			if (powerControl != null && !powerControl.IsPowered)
+				powerControl.PowerOn();
+
+			// Set the destination to the correct input
+			int input = destination.Address;
+			IRouteInputSelectControl inputSelectControl =
+				destinationDevice.Controls.GetControl<IRouteInputSelectControl>();
+
+			if (inputSelectControl != null)
+				inputSelectControl.SetActiveInput(input, path.ConnectionType);
 		}
 
 		/// <summary>

@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.FloatingActions
 {
-	public interface IOptionView : IUiView
+	public interface IFloatingActionView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses the option button.

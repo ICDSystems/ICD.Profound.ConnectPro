@@ -1,14 +1,14 @@
 ﻿using System;
 using ICD.Common.Utils;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Options;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.FloatingActions;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Options;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.FloatingActions;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.FloatingActions
 {
-	public abstract class AbstractOptionPresenter<TView> : AbstractUiPresenter<TView>, IOptionPresenter<TView>
-		where TView : class, IOptionView
+	public abstract class AbstractFloatingActionPresenter<TView> : AbstractUiPresenter<TView>, IFloatingActionPresenter<TView>
+		where TView : class, IFloatingActionView
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 
@@ -18,7 +18,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Options
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		protected AbstractOptionPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+		protected AbstractFloatingActionPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
