@@ -258,7 +258,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			
 			IDeviceBase device = m_Room.Core.Originators.GetChild<IDeviceBase>(source.Device);
 			IPresentationControl presentationControl = device.Controls.GetControl<IPresentationControl>();
-			bool presenting = presentationControl == null ? false : presentationControl.PresentationActiveInput != null;
+			bool presenting = presentationControl != null && presentationControl.PresentationActive;
 
 			for (int index = 0; index < destinations.Length; index++)
 			{
