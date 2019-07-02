@@ -91,13 +91,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 				m_Cameras.Clear();
 				m_Cameras.AddRange(cameras);
-
-				SetSelectedCamera(m_Cameras.FirstOrDefault());
 			}
 			finally
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		/// <summary>
+		/// Sets the VTC routing control to route camera video to.
+		/// </summary>
+		/// <param name="value"></param>
+		public void SetVtcDestinationControl(IVideoConferenceRouteControl value)
+		{
+			if (value == m_VtcDestinationControl)
+				return;
+
+			m_VtcDestinationControl = value;
+
+			RouteSelectedCamera();
 		}
 
 		/// <summary>
@@ -173,13 +185,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			RefreshIfVisible();
 
-			if (Room == null || camera == null)
+			RouteSelectedCamera();
+		}
+
+		private void RouteSelectedCamera()
+		{
+			if (Room == null || m_SelectedCamera == null)
 				return;
 
-			if (VtcDestinationControl == null)
+			if (m_VtcDestinationControl == null)
 				Room.Logger.AddEntry(eSeverity.Error, "Unable to route selected camera - No VTC destination assigned");
 			else
-				Room.Routing.RouteVtcCamera(camera, VtcDestinationControl);
+				Room.Routing.RouteVtcCamera(m_SelectedCamera, m_VtcDestinationControl);
 		}
 
 		private void ShowPresetStoredLabel(bool visible)
@@ -387,6 +404,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			base.ViewOnVisibilityChanged(sender, args);
 
 			ShowPresetStoredLabel(false);
+
+			if (args.Data && m_SelectedCamera == null)
+			{
+				ICameraDevice defaultCamera = m_Cameras.FirstOrDefault();
+				if (defaultCamera != null)
+					SetSelectedCamera(defaultCamera);
+			}
 		}
 
 		#endregion
