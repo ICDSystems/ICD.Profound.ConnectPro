@@ -11,8 +11,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common
 		int CameraCount { get; }
 
 		/// <summary>
-		/// Gets/sets the VTC routing control to route camera video to.
+		/// Sets the VTC routing control to route camera video to.
 		/// </summary>
-		IVideoConferenceRouteControl VtcDestinationControl { get; set; }
+		/// <param name="value"></param>
+		void SetVtcDestinationControl(IVideoConferenceRouteControl value);
 	}
 }
