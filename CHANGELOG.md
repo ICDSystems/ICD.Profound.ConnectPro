@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Displays enter grey mode when selected source can not be routed
  - Unroute audio from audio destinations when routing audio that can not reach those destinations
  - Added camera list to the camera control presenter
+ - Added automatic generation of conference points for sources with conferencing controls that don't have conference points
  
 ### Changed
  - Significant overhaul of routing, better performance for systems with multiple panels
@@ -29,6 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Can only select partitions that are adjacent to the current space, orphaned partitions are then selected to be closed
  - Only show display speaker button if the routed source can be routed to at least 1 room audio source
  - User's will be kept in advanced mode if no sources can be routed to all displays
+ - The default camera to route video to is now selected on program start istead of on camera select view
 
 ## [8.1.1] - 2019-05-07
 ### Changed
