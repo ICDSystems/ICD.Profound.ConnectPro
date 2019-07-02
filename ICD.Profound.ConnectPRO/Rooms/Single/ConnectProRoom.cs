@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using ICD.Common.Utils;
 using ICD.Common.Utils.IO;
@@ -8,9 +9,13 @@ using ICD.Common.Utils.Services.Scheduler;
 using ICD.Connect.Calendaring.CalendarControl;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.ConferencePoints;
+using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Favorites.SqLite;
 using ICD.Connect.Devices;
+using ICD.Connect.Partitioning;
+using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings;
+using ICD.Connect.Settings.Utils;
 
 namespace ICD.Profound.ConnectPRO.Rooms.Single
 {
@@ -156,6 +161,51 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 
 			// Wake Schedule
 			m_WakeSchedule.Copy(settings.WakeSchedule);
+
+			// Generate conference points
+			GenerateConferencePoints(factory);
+		}
+
+		/// <summary>
+		/// We need to automatically generate conference points for sources with conferencing controls
+		/// that do not already have conference points.
+		/// 
+		/// TODO - This assumes each device has only one conference control
+		/// </summary>
+		/// <param name="factory"></param>
+		private void GenerateConferencePoints(IDeviceFactory factory)
+		{
+			foreach (ISource source in Originators.GetInstances<ISource>())
+			{
+				// Does the source have a conference control?
+				IDeviceBase device = Core.Originators.GetChild<IDeviceBase>(source.Device);
+				IConferenceDeviceControl control = device.Controls.GetControl<IConferenceDeviceControl>();
+				if (control == null)
+					continue;
+
+				// Does the control have a conference point?
+				if (Originators.GetInstances<IConferencePoint>().Any(c => c.DeviceId == device.Id))
+					continue;
+
+				int id = IdUtils.GetNewId(Core.Originators.GetChildrenIds().Concat(factory.GetOriginatorIds()),
+				                          IdUtils.GetSubsystemId(IdUtils.SUBSYSTEM_POINTS),
+				                          Id);
+				eCombineMode combineMode = Originators.GetCombineMode(source.Id);
+
+				ConferencePoint point = new ConferencePoint
+				{
+					Id = id,
+					Name = control.Name,
+					DeviceId = device.Id,
+					ControlId = control.Id,
+					Type = control.Supports
+				};
+
+				Core.Originators.AddChild(point);
+				Originators.Add(id, combineMode);
+
+				m_ConferenceManager.RegisterDialingProvider(point);
+			}
 		}
 
 		/// <summary>
