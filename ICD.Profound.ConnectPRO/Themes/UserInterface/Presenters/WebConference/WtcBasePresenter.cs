@@ -160,10 +160,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			foreach (IWtcPresenter presenter in m_WtcPresenters)
 				presenter.ActiveConferenceControl = value;
 
-			m_CameraControlPresenter.VtcDestinationControl =
-				value == null
-					? null
-					: value.Parent.Controls.GetControl<IVideoConferenceRouteControl>();
+			m_CameraControlPresenter.SetVtcDestinationControl(value == null
+				                                                  ? null
+				                                                  : value.Parent.Controls.GetControl<IVideoConferenceRouteControl>());
 		}
 
 		#endregion

@@ -210,10 +210,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			foreach (IVtcPresenter presenter in m_VtcPresenters)
 				presenter.ActiveConferenceControl = value;
 
-			m_CameraControlPresenter.VtcDestinationControl =
-				value == null
-					? null
-					: value.Parent.Controls.GetControl<IVideoConferenceRouteControl>();
+			m_CameraControlPresenter.SetVtcDestinationControl(value == null
+				                                                  ? null
+				                                                  : value.Parent.Controls.GetControl<IVideoConferenceRouteControl>());
 		}
 
 		private void UpdateVisibility()
