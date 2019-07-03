@@ -278,6 +278,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			CurrentBooking = null;
 			IsInMeeting = false;
 
+			// Reset all routing
+			Routing.RouteOsd();
+
 			// Power off displays
 			foreach (IDestination destination in Routing.Destinations.GetDisplayDestinations())
 			{
