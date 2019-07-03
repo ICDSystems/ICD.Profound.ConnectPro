@@ -427,15 +427,15 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 		private void Subscribe(IPresentationControl presentationControl)
 		{
-			presentationControl.OnPresentationActiveInputChanged += PresentationControlOnPresentationActiveInputChanged;
+			presentationControl.OnPresentationActiveChanged += PresentationControlOnPresentationActiveChanged;
 		}
 
 		private void Unsubscribe(IPresentationControl presentationControl)
 		{
-			presentationControl.OnPresentationActiveInputChanged -= PresentationControlOnPresentationActiveInputChanged;
+			presentationControl.OnPresentationActiveChanged -= PresentationControlOnPresentationActiveChanged;
 		}
 
-		private void PresentationControlOnPresentationActiveInputChanged(object sender, PresentationActiveInputApiEventArgs args)
+		private void PresentationControlOnPresentationActiveChanged(object sender, PresentationActiveApiEventArgs args)
 		{
 			if (!this.IsCombineRoom())
 				return;
@@ -445,7 +445,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			if (conferenceControl == null || conferenceControl.GetActiveConference() == null)
 				return;
 			
-			var conferenceSource = Originators.GetInstances<ISource>().FirstOrDefault(s => s.Device == presentationControl.Parent.Id);
+			var conferenceSource = Originators.GetInstancesRecursive<ISource>().FirstOrDefault(s => s.Device == presentationControl.Parent.Id);
 			if (conferenceSource == null)
 				return;
 			
