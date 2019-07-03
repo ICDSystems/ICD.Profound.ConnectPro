@@ -410,18 +410,18 @@ namespace ICD.Profound.ConnectPRO.Routing
 				EndpointInfo endpoint = routingControl.GetInputEndpointInfo(input);
 
 				// Is there a path?
-				ConnectionPath path =
+				bool hasPath =
 					PathBuilder.FindPaths()
-							   .From(sourceControl)
-							   .To(endpoint)
-							   .OfType(eConnectionType.Video)
-							   .With(m_PathFinder)
-							   .FirstOrDefault();
-				if (path == null)
+					           .From(sourceControl)
+					           .To(endpoint)
+					           .OfType(eConnectionType.Video)
+					           .HasPaths(m_PathFinder);
+				if (!hasPath)
 					continue;
 
 				// Route the source video and audio to the codec
-				Route(path);
+				Route(sourceControl, endpoint, eConnectionType.Video);
+				Route(sourceControl, endpoint, eConnectionType.Audio);
 
 				// Start the presentation
 				routingControl.SetCameraInput(input);
@@ -470,8 +470,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 				bool hasPath =
 					PathBuilder.FindPaths()
 					           .From(source)
-							   .To(endpoint)
-							   .OfType(source.ConnectionType)
+					           .To(endpoint)
+					           .OfType(source.ConnectionType)
 					           .HasPaths(m_PathFinder);
 				if (!hasPath)
 					continue;
@@ -620,6 +620,21 @@ namespace ICD.Profound.ConnectPRO.Routing
 			IEnumerable<ConnectionPath> paths =
 				PathBuilder.FindPaths()
 				           .From(source)
+				           .To(destinationEndpoint)
+				           .OfType(flag)
+				           .With(m_PathFinder);
+
+			Route(paths);
+		}
+
+		private void Route(IRouteSourceControl sourceControl, EndpointInfo destinationEndpoint, eConnectionType flag)
+		{
+			if (sourceControl == null)
+				throw new ArgumentNullException("sourceControl");
+
+			IEnumerable<ConnectionPath> paths =
+				PathBuilder.FindPaths()
+				           .From(sourceControl)
 				           .To(destinationEndpoint)
 				           .OfType(flag)
 				           .With(m_PathFinder);
