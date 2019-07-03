@@ -138,6 +138,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		protected AbstractConnectProRoom()
 		{
 			m_Routing = new ConnectProRouting(this);
+			m_SubscribedPresentationControls = new List<IPresentationControl>();
 		}
 
 		/// <summary>
