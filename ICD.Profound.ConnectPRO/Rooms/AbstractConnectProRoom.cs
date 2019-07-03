@@ -85,7 +85,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <summary>
 		/// Gets the conference manager.
 		/// </summary>
-		public abstract IConferenceManager ConferenceManager { get; }
+		[CanBeNull]
+		public IConferenceManager ConferenceManager { get; private set; }
 
 		/// <summary>
 		/// Gets the wake/sleep schedule.
@@ -188,7 +189,10 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			StartMeeting(false);
 			CurrentBooking = booking;
 
-			IEnumerable<IConferenceDeviceControl> dialers = ConferenceManager.GetDialingProviders();
+			IEnumerable<IConferenceDeviceControl> dialers =
+				ConferenceManager == null
+				? Enumerable.Empty<IConferenceDeviceControl>()
+				: ConferenceManager.GetDialingProviders();
 
 			// Build map of dialer to best number
 			IDialContext dialContext;
@@ -196,20 +200,20 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			if (preferredDialer == null)
 				return;
 
-			// route device to displays and/or audio destination
+			// Route device to displays and/or audio destination
 			IDeviceBase dialerDevice = preferredDialer.Parent;
-			var source = Routing.Sources.GetRoomSources().FirstOrDefault(s => s.Device == dialerDevice.Id) ??
-			             Routing.Sources.GetCoreSources().FirstOrDefault(s => s.Device == dialerDevice.Id);
+			ISource source = Routing.Sources.GetCoreSources().FirstOrDefault(s => s.Device == dialerDevice.Id);
 			if (source == null)
 				return; // if we can't route a source, don't dial into conference users won't know they're in
 
-			if (dialerDevice is IVideoConferenceDevice)
+			if (preferredDialer.Supports == eCallType.Video)
 				Routing.RouteVtc(source);
 			else if (preferredDialer.Supports == eCallType.Audio)
 				Routing.RouteAtc(source);
 			else
 				Routing.RouteAllDisplays(source);
-			// dial booking
+
+			// Dial booking
 			preferredDialer.Dial(dialContext);
 		}
 
@@ -320,6 +324,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		{
 			base.OriginatorsOnChildrenChanged(sender, args);
 
+			ConferenceManager = GetConferenceManager();
+
 			foreach (var presentationControl in m_SubscribedPresentationControls)
 				Unsubscribe(presentationControl);
 			
@@ -346,20 +352,33 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 		private void EndAllConferences()
 		{
-			var activeConferences = ConferenceManager == null ? Enumerable.Empty<IConference>() : ConferenceManager.OnlineConferences.ToList();
-			// Hangup
-			foreach (var activeConference in activeConferences)
-			{
-				// TODO - Actually use polymorphism like a good developer
-				var traditional = activeConference as ITraditionalConference;
-				if (traditional != null)
-					traditional.Hangup();
+			List<IConference> activeConferences = 
+				ConferenceManager == null 
+					? new List<IConference>() 
+					: ConferenceManager.OnlineConferences.ToList();
 
-				var web = activeConference as IWebConference;
-				if (web != null)
-					web.LeaveConference();
-			}
+			foreach (IConference activeConference in activeConferences)
+				EndConference(activeConference);
 		}
+
+		private void EndConference(IConference conference)
+		{
+			// TODO - Actually use polymorphism like a good developer
+			var traditional = conference as ITraditionalConference;
+			if (traditional != null)
+				traditional.Hangup();
+
+			var web = conference as IWebConference;
+			if (web != null)
+				web.LeaveConference();
+		}
+
+		/// <summary>
+		/// Gets the conference manager for this room.
+		/// </summary>
+		/// <returns></returns>
+		[NotNull]
+		protected abstract IConferenceManager GetConferenceManager();
 
 		#endregion
 
