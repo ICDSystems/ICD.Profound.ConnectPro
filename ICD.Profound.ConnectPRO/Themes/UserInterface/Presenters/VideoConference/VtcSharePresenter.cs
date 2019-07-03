@@ -26,6 +26,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
 using ICD.Connect.Conferencing.Conferences;
+using ICD.Connect.Conferencing.Controls.Routing;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference
 {
@@ -139,17 +140,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <returns></returns>
 		private IEnumerable<ISource> GetSources()
 		{
+			IVideoConferenceRouteControl routeControl = m_SubscribedPresentationComponent == null
+				? null
+				: m_SubscribedPresentationComponent.Parent.Controls.GetControl<IVideoConferenceRouteControl>();
+
 			return
-				Room == null
+				Room == null || routeControl == null
 					? Enumerable.Empty<ISource>()
 					: Room.Routing
 					      .Sources
-					      .GetCoreSources()
-					      .Where(s =>
-					             {
-						             ConnectProSource source = s as ConnectProSource;
-						             return source != null && source.Share;
-					             });
+					      .GetRoomSourcesForPresentation(routeControl);
 		}
 
 		/// <summary>

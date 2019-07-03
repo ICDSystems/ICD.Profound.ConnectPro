@@ -66,6 +66,11 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		public ConnectProRoutingState State { get { return m_State; } }
 
+		/// <summary>
+		/// Gets the pathfinder used for ConnectPro routing.
+		/// </summary>
+		public IPathFinder PathFinder { get { return m_PathFinder; } }
+
 		#endregion
 
 		/// <summary>
