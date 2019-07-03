@@ -131,7 +131,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.SetRoom(room);
 
+			UpdateSources();
+		}
+
+		private void UpdateSources()
+		{
 			m_Sources = GetSources().ToArray();
+			RefreshIfVisible();
 		}
 
 		/// <summary>
@@ -194,9 +200,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (room == null)
 				return;
 
-			if (room.Core.TryGetRoutingGraph(out m_SubscribedRoutingGraph))
+			if (room.Core.TryGetRoutingGraph(out m_SubscribedRoutingGraph) && m_SubscribedRoutingGraph != null)
 				m_SubscribedRoutingGraph.RoutingCache.OnEndpointRouteChanged += RoutingCacheOnEndpointRouteChanged;
-			
 		}
 
 		/// <summary>
@@ -211,8 +216,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				m_SubscribedRoutingGraph.RoutingCache.OnEndpointRouteChanged -= RoutingCacheOnEndpointRouteChanged;
 
 			m_SubscribedRoutingGraph = null;
-
-			
 		}
 
 		private void RoutingCacheOnEndpointRouteChanged(object sender, EndpointRouteChangedEventArgs eventArgs)
@@ -240,6 +243,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				return;
 
 			m_SubscribedPresentationComponent.OnPresentationActiveInputChanged += SubscribedPresentationControlOnPresentationActiveInputChanged;
+
+			UpdateSources();
 		}
 
 		protected override void Unsubscribe(ITraditionalConferenceDeviceControl control)
@@ -254,6 +259,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				m_SubscribedPresentationComponent.OnPresentationActiveInputChanged -= SubscribedPresentationControlOnPresentationActiveInputChanged;
 
 			m_SubscribedPresentationComponent = null;
+
+			UpdateSources();
 		}
 
 		private void SubscribedPresentationControlOnPresentationActiveInputChanged(object sender, EventArgs eventArgs)
