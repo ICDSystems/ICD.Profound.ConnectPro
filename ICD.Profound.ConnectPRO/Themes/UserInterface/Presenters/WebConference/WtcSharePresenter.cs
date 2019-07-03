@@ -128,7 +128,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		{
 			base.SetRoom(room);
 
+			UpdateSources();
+		}
+
+		private void UpdateSources()
+		{
 			m_Sources = GetSources().ToArray();
+			RefreshIfVisible();
 		}
 
 		/// <summary>
@@ -218,9 +224,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			if (room == null)
 				return;
 
-			if (room.Core.TryGetRoutingGraph(out m_SubscribedRoutingGraph))
+			if (room.Core.TryGetRoutingGraph(out m_SubscribedRoutingGraph) && m_SubscribedRoutingGraph != null)
 				m_SubscribedRoutingGraph.RoutingCache.OnEndpointRouteChanged += RoutingCacheOnEndpointRouteChanged;
-
 		}
 
 		/// <summary>
@@ -264,6 +269,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				return;
 
 			m_SubscribedPresentationComponent.OnPresentationActiveInputChanged += SubscribedPresentationControlOnPresentationActiveInputChanged;
+
+			UpdateSources();
 		}
 
 		protected override void Unsubscribe(IWebConferenceDeviceControl control)
@@ -278,6 +285,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				m_SubscribedPresentationComponent.OnPresentationActiveInputChanged -= SubscribedPresentationControlOnPresentationActiveInputChanged;
 
 			m_SubscribedPresentationComponent = null;
+
+			UpdateSources();
 		}
 
 		private void SubscribedPresentationControlOnPresentationActiveInputChanged(object sender, EventArgs eventArgs)
