@@ -24,5 +24,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources
 		/// </summary>
 		/// <param name="count"></param>
 		void SetDisplayCount(ushort count);
+
+		/// <summary>
+		/// Resets the views list of sources to its original state.
+		/// </summary>
+		void ResetSourceList();
 	}
 }

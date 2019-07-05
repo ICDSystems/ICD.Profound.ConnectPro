@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ICD.Common.Utils.Timers;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Views;
@@ -79,6 +80,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 			UpdateVisibility();
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		public void ResetSourceList()
+		{
+			//ushort startOfList = m_SourceList.StartAnalogJoin;
+			m_SourceList.ScrollToItem(6);
+
+			UpdateVisibility();
+		}
 		/// <summary>
 		/// SourceSelectView is actually controlling the visibility of 5 overlapped
 		/// subpages, so we toggle between which subpages are visible based on the
