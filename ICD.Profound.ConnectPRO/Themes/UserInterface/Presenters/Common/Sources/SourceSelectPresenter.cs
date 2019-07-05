@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
+using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.UI.Attributes;
@@ -12,6 +13,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 {
@@ -253,6 +255,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		{
 			base.Subscribe(room);
 
+			if(room != null)
+				room.OnIsInMeetingChanged += RoomSourcesOnIsInMeetingChanged;
+
 			ConnectProCombineRoom combineRoom = room as ConnectProCombineRoom;
 			if (combineRoom != null)
 				combineRoom.OnCombinedAdvancedModeChanged += CombineRoomOnCombinedAdvancedModeChanged;
@@ -266,9 +271,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		{
 			base.Unsubscribe(room);
 
+			if(room != null)
+				room.OnIsInMeetingChanged -= RoomSourcesOnIsInMeetingChanged;
+
 			ConnectProCombineRoom combine = room as ConnectProCombineRoom;
 			if (combine != null)
 				combine.OnCombinedAdvancedModeChanged -= CombineRoomOnCombinedAdvancedModeChanged;
+		}
+
+		private void RoomSourcesOnIsInMeetingChanged(object sender, BoolEventArgs eventArgs)
+		{
+			//ISource[] roomSources = GetSources(Room).OrderBy(s => s.Id).ToArray();
+
+			//SelectedSource = null;
+			//IEnumerable<IReferencedSourceSelectView> views = ItemFactory(m_DisplayCount);
+
+			ISourceSelectView view = GetView();
+			if (view != null)
+				view.ResetSourceList();
 		}
 
 		/// <summary>
