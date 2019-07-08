@@ -36,6 +36,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 			return factory.LazyLoadSrlViews(m_DisplaysList, m_ChildViews, count);
 		}
 
+		/// <summary>
+		/// Scrolls back to the first item in the list.
+		/// </summary>
+		public void ResetScrollPosition()
+		{
+			m_DisplaysList.ScrollToItem(0);
+		}
+
 		#region Control Callbacks
 
 		protected override void SubscribeControls()
