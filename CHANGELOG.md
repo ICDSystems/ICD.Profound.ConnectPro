@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - The default camera to route video to is now selected on program start istead of on camera select view
  - Resetting routing back to OSD when putting the room to sleep
  - Loading spinners now timeout if given a specified timeout parameter
+ - The source subpage reference list now scrolls back to the beginning when the meeting state changes
 
 ## [8.1.1] - 2019-05-07
 ### Changed
