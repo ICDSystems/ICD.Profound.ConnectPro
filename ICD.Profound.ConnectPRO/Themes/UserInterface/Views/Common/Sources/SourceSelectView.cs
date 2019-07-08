@@ -81,15 +81,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		}
 
 		/// <summary>
-		/// 
+		/// Scrolls back to thew first item in the list.
 		/// </summary>
-		public void ResetSourceList()
+		public void ResetScrollPosition()
 		{
-			//ushort startOfList = m_SourceList.StartAnalogJoin;
-			m_SourceList.ScrollToItem(6);
-
-			UpdateVisibility();
+			m_SourceList.ScrollToItem(0);
 		}
+
 		/// <summary>
 		/// SourceSelectView is actually controlling the visibility of 5 overlapped
 		/// subpages, so we toggle between which subpages are visible based on the

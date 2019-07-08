@@ -255,7 +255,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		{
 			base.Subscribe(room);
 
-			if(room != null)
+			if (room != null)
 				room.OnIsInMeetingChanged += RoomSourcesOnIsInMeetingChanged;
 
 			ConnectProCombineRoom combineRoom = room as ConnectProCombineRoom;
@@ -271,7 +271,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		{
 			base.Unsubscribe(room);
 
-			if(room != null)
+			if (room != null)
 				room.OnIsInMeetingChanged -= RoomSourcesOnIsInMeetingChanged;
 
 			ConnectProCombineRoom combine = room as ConnectProCombineRoom;
@@ -288,7 +288,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 
 			ISourceSelectView view = GetView();
 			if (view != null)
-				view.ResetSourceList();
+				view.ResetScrollPosition();
 		}
 
 		/// <summary>
