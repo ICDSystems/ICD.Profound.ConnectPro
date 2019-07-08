@@ -281,11 +281,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 
 		private void RoomSourcesOnIsInMeetingChanged(object sender, BoolEventArgs eventArgs)
 		{
-			//ISource[] roomSources = GetSources(Room).OrderBy(s => s.Id).ToArray();
-
-			//SelectedSource = null;
-			//IEnumerable<IReferencedSourceSelectView> views = ItemFactory(m_DisplayCount);
-
 			ISourceSelectView view = GetView();
 			if (view != null)
 				view.ResetScrollPosition();
