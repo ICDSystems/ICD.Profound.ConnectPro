@@ -26,7 +26,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources
 		void SetDisplayCount(ushort count);
 
 		/// <summary>
-		/// Scrolls back to thew first item in the list.
+		/// Scrolls back to the first item in the list.
 		/// </summary>
 		void ResetScrollPosition();
 	}

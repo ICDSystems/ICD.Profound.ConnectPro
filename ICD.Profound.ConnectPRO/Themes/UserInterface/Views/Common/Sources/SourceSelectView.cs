@@ -81,7 +81,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		}
 
 		/// <summary>
-		/// Scrolls back to thew first item in the list.
+		/// Scrolls back to the first item in the list.
 		/// </summary>
 		public void ResetScrollPosition()
 		{
