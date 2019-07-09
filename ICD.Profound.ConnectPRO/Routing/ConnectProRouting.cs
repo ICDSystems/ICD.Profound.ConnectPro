@@ -455,18 +455,18 @@ namespace ICD.Profound.ConnectPRO.Routing
 				EndpointInfo endpoint = routingControl.GetInputEndpointInfo(input);
 
 				// Is there a path?
-				ConnectionPath path =
+				bool hasPath =
 					PathBuilder.FindPaths()
 					           .From(source)
 							   .To(endpoint)
 							   .OfType(source.ConnectionType)
-					           .With(m_PathFinder)
-					           .FirstOrDefault();
-				if (path == null)
+					           .HasPaths(m_PathFinder);
+				if (!hasPath)
 					continue;
 
 				// Route the source video and audio to the codec
-				Route(path);
+				Route(source, endpoint, eConnectionType.Video);
+				Route(source, endpoint, eConnectionType.Audio);
 
 				// Start the presentation
 				presentationControl.StartPresentation(input);
