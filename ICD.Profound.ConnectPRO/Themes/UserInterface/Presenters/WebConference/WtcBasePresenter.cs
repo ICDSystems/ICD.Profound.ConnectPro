@@ -260,13 +260,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		private void ConferenceOnStatusChanged(object sender, ConferenceStatusEventArgs args)
 		{
-			var spinner = Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>();
+			IGenericLoadingSpinnerPresenter spinner = Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>();
+
 			if (args.Data == eConferenceStatus.Connecting)
-				spinner.ShowView("Connecting...");
+				spinner.ShowView("Connecting...", 30 * 1000);
 			else if (args.Data == eConferenceStatus.Connected)
 				m_ConnectingTimer.Reset(1000); // hide connecting page 1 second after connection complete
 			else
 				spinner.ShowView(false);
+
 			UpdateVisibility();
 		}
 
