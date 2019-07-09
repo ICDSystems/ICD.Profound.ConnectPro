@@ -12,22 +12,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 
 		private string LoadingText { get; set; }
 
-		public GenericLoadingSpinnerPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		public GenericLoadingSpinnerPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
 		}
 
 		protected override void Refresh(IGenericLoadingSpinnerView view)
 		{
-			m_RefreshSection.Enter();
-			try
-			{
-				view.SetText(LoadingText);
-			}
-			finally
-			{
-				m_RefreshSection.Leave();
-			}
+			m_RefreshSection.Execute(() => view.SetText(LoadingText));
 		}
 
 		public void ShowView(string text)
