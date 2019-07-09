@@ -6,6 +6,8 @@ using ICD.Common.Utils.Timers;
 using ICD.Connect.Calendaring;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.CalendarControl;
+using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
@@ -105,10 +107,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 		        IBooking currentBooking = upcomingBookingsAndAvailability.FirstOrDefault();
 		        if (currentBooking != null && !(currentBooking is EmptyBooking))
 		        {
-			        var firstNumber = currentBooking.GetBookingNumbers().FirstOrDefault();
-			        view.SetCurrentBookingIcon(GetBookingIcon(firstNumber == null
-				        ? eMeetingType.Presentation
-				        : firstNumber.Protocol.ToMeetingType()));
+			        view.SetCurrentBookingIcon(GetBookingIcon(currentBooking));
 
 			        view.SetCurrentBookingSubject(currentBooking.IsPrivate ? "Private Meeting" : currentBooking.MeetingName);
 		            view.SetCurrentBookingTime(string.Format("{0} - {1}",
@@ -142,10 +141,13 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 		    }
 		}
 
-	    private string GetBookingIcon(eMeetingType currentBookingType)
+	    private string GetBookingIcon(IBooking booking)
         {
-            switch (currentBookingType)
-            {
+			IEnumerable<IConferenceDeviceControl> dialers =
+				Room == null ? Enumerable.Empty<IConferenceDeviceControl>() : Room.GetControlsRecursive<IConferenceDeviceControl>();
+
+			switch (ConferencingBookingUtils.GetMeetingType(booking, dialers))
+			{
                 case eMeetingType.VideoConference:
                     return "videoConference";
                 case eMeetingType.AudioConference:
