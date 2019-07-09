@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - User's will be kept in advanced mode if no sources can be routed to all displays
  - The default camera to route video to is now selected on program start istead of on camera select view
  - Resetting routing back to OSD when putting the room to sleep
+ - Loading spinners now timeout if given a specified timeout parameter
 
 ## [8.1.1] - 2019-05-07
 ### Changed
