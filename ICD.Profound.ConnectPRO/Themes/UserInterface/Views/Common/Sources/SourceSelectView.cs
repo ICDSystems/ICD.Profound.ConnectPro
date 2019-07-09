@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ICD.Common.Utils.Timers;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Views;
@@ -77,6 +78,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 			m_DisplayCount = count;
 
 			UpdateVisibility();
+		}
+
+		/// <summary>
+		/// Scrolls back to the first item in the list.
+		/// </summary>
+		public void ResetScrollPosition()
+		{
+			m_SourceList.ScrollToItem(0);
 		}
 
 		/// <summary>

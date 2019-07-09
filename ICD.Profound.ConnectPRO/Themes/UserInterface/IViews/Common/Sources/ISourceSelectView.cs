@@ -24,5 +24,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources
 		/// </summary>
 		/// <param name="count"></param>
 		void SetDisplayCount(ushort count);
+
+		/// <summary>
+		/// Scrolls back to the first item in the list.
+		/// </summary>
+		void ResetScrollPosition();
 	}
 }

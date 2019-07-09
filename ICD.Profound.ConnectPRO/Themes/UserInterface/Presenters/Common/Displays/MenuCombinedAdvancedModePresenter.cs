@@ -7,6 +7,7 @@ using ICD.Connect.Routing.Connections;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.Rooms.Combine;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -133,6 +134,48 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				return;
 
 			DisplaySpeakerButtonPressed(presenter.Model);
+		}
+
+		#endregion
+
+		#region Room Callbacks
+
+		/// <summary>
+		/// Subscribe to the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Subscribe(IConnectProRoom room)
+		{
+			base.Subscribe(room);
+
+			ConnectProCombineRoom combineRoom = room as ConnectProCombineRoom;
+			if (combineRoom != null)
+				combineRoom.OnCombinedAdvancedModeChanged += CombineRoomOnCombinedAdvancedModeChanged;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Unsubscribe(IConnectProRoom room)
+		{
+			base.Unsubscribe(room);
+
+			ConnectProCombineRoom combine = room as ConnectProCombineRoom;
+			if (combine != null)
+				combine.OnCombinedAdvancedModeChanged -= CombineRoomOnCombinedAdvancedModeChanged;
+		}
+
+		/// <summary>
+		/// When the advanced mode is changed scroll the display list to the beginning
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void CombineRoomOnCombinedAdvancedModeChanged(object sender, CombineAdvancedModeEventArgs e)
+		{
+			IMenuCombinedAdvancedModeView view = GetView();
+			if (view != null)
+				view.ResetScrollPosition();
 		}
 
 		#endregion
