@@ -280,15 +280,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		{
 			m_PartitionSection.Enter();
 
+
 			try
 			{
-				IcdHashSet<IPartition> open = m_SelectedPartitionStates.Where(kvp => kvp.Value).Select(kvp => kvp.Key).ToIcdHashSet();
-				IcdHashSet<IPartition> closed = m_SelectedPartitionStates.Where(kvp => !kvp.Value).Select(kvp => kvp.Key).ToIcdHashSet();
+				IcdHashSet<IPartition> open = m_SelectedPartitionStates
+				                              .Where(kvp => kvp.Value).Select(kvp => kvp.Key).ToIcdHashSet();
+				IcdHashSet<IPartition> closed = m_SelectedPartitionStates
+				                                .Where(kvp => !kvp.Value).Select(kvp => kvp.Key).ToIcdHashSet();
 
 				Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView("Combining Rooms");
 
 				m_SubscribedPartitionManager.CombineRooms(open, closed, () => new ConnectProCombineRoom());
 				m_SelectedPartitionStates.Clear();
+			}
+			catch (Exception e)
+			{
+				Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().TimeOut("Failed to complete operation - " + e.Message);
 			}
 			finally
 			{
