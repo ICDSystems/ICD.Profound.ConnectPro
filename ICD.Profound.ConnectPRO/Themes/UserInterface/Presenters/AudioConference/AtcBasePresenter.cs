@@ -142,11 +142,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		private IConference GetActiveConference()
 		{
 			return ActiveConferenceControl == null
-				? null
-				: ActiveConferenceControl.GetConferences()
-					.FirstOrDefault(c => 
-						c.Status == eConferenceStatus.Connected && 
-						c.GetParticipants().Any(p => p.GetIsActive()));
+				       ? null
+				       : ActiveConferenceControl.GetActiveConference();
 		}
 
 		#region Room Callbacks
@@ -247,6 +244,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 
             conference.OnParticipantAdded += ConferenceOnParticipantAdded;
 			conference.OnParticipantRemoved += ConferenceOnParticipantRemoved;
+			conference.OnStatusChanged += ConferenceOnStatusChanged;
 		}
 
 		private void Unsubscribe(IConference conference)
@@ -256,6 +254,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 
 			conference.OnParticipantAdded -= ConferenceOnParticipantAdded;
 			conference.OnParticipantRemoved -= ConferenceOnParticipantRemoved;
+			conference.OnStatusChanged -= ConferenceOnStatusChanged;
 		}
 
 		private void ConferenceOnParticipantAdded(object sender, ParticipantEventArgs participantEventArgs)
@@ -269,6 +268,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 			if (GetActiveSource() == null)
 				m_Builder.Clear();
 
+			RefreshIfVisible();
+		}
+
+		private void ConferenceOnStatusChanged(object sender, ConferenceStatusEventArgs e)
+		{
 			RefreshIfVisible();
 		}
 
