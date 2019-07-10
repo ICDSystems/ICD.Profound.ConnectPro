@@ -8,8 +8,6 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Participants;
-using ICD.Connect.Devices;
-using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -37,7 +35,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		/// <summary>
 		/// Gets the number of incoming sources.
 		/// </summary>
-		private int SourceCount { get { return m_IncomingCallsSection.Execute(() => m_IncomingCalls.Count); } }
+		private int IncomingCallCount { get { return m_IncomingCallsSection.Execute(() => m_IncomingCalls.Count); } }
 
 		/// <summary>
 		/// Constructor.
@@ -115,13 +113,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		/// Gets the audio dialer to monitor for incoming calls.
 		/// </summary>
 		/// <returns></returns>
-		[CanBeNull]
 		private IEnumerable<IConferenceDeviceControl> GetAudioDialers(IConnectProRoom room)
 		{
-			return room.Originators.GetInstancesRecursive<ISource>()
-				.Select(s => room.Core.Originators[s.Device] as IDevice)
-				.SelectMany(d => d == null ? Enumerable.Empty<IConferenceDeviceControl>() : d.Controls.GetControls<IConferenceDeviceControl>())
-				.Where(c => c.Supports == eCallType.Audio);
+			return room.ConferenceManager.GetDialingProviders(eCallType.Audio);
 		}
 
 		#region Room Callbacks
@@ -137,6 +131,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 			m_SubscribedAudioDialers = room == null
 				                           ? Enumerable.Empty<IConferenceDeviceControl>().ToList()
 				                           : GetAudioDialers(room).ToList();
+
 			foreach (var dialer in m_SubscribedAudioDialers)
 			{
 				dialer.OnIncomingCallAdded += AudioDialerOnIncomingCallAdded;
@@ -160,56 +155,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 				dialer.OnIncomingCallAdded -= AudioDialerOnIncomingCallAdded;
 				dialer.OnIncomingCallRemoved -= AudioDialerOnIncomingCallRemoved;
 			}
-		}
 
-		/// <summary>
-		/// Adds the call to the collection.
-		/// </summary>
-		/// <param name="call"></param>
-		/// <param name="control"></param>
-		private void AddIncomingCall(IIncomingCall call, IConferenceDeviceControl control)
-		{
-			m_IncomingCallsSection.Enter();
-
-			try
-			{
-				if (m_IncomingCalls.ContainsKey(call))
-					return;
-
-				m_IncomingCalls.Add(call, control);
-				Subscribe(call);
-			}
-			finally
-			{
-				m_IncomingCallsSection.Leave();
-			}
-
-			ShowView(SourceCount > 0);
-			RefreshIfVisible(false);
-		}
-
-		/// <summary>
-		/// Removes the call from the collection.
-		/// </summary>
-		/// <param name="call"></param>
-		private void RemoveIncomingCall(IIncomingCall call)
-		{
-			m_IncomingCallsSection.Enter();
-			try
-			{
-				if (!m_IncomingCalls.ContainsKey(call))
-					return;
-
-				m_IncomingCalls.Remove(call);
-				Unsubscribe(call);
-			}
-			finally
-			{
-				m_IncomingCallsSection.Leave();
-			}
-
-			RefreshIfVisible();
-			ShowView(SourceCount > 0);
+			m_SubscribedAudioDialers = null;
 		}
 
 		/// <summary>
@@ -235,9 +182,59 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 			RemoveIncomingCall(call);
 		}
 
+		/// <summary>
+		/// Adds the call to the collection.
+		/// </summary>
+		/// <param name="call"></param>
+		/// <param name="control"></param>
+		private void AddIncomingCall(IIncomingCall call, IConferenceDeviceControl control)
+		{
+			m_IncomingCallsSection.Enter();
+
+			try
+			{
+				if (m_IncomingCalls.ContainsKey(call))
+					return;
+
+				m_IncomingCalls.Add(call, control);
+				Subscribe(call);
+			}
+			finally
+			{
+				m_IncomingCallsSection.Leave();
+			}
+
+			ShowView(IncomingCallCount > 0);
+			RefreshIfVisible();
+		}
+
+		/// <summary>
+		/// Removes the call from the collection.
+		/// </summary>
+		/// <param name="call"></param>
+		private void RemoveIncomingCall(IIncomingCall call)
+		{
+			m_IncomingCallsSection.Enter();
+			try
+			{
+				if (!m_IncomingCalls.ContainsKey(call))
+					return;
+
+				m_IncomingCalls.Remove(call);
+				Unsubscribe(call);
+			}
+			finally
+			{
+				m_IncomingCallsSection.Leave();
+			}
+
+			RefreshIfVisible();
+			ShowView(IncomingCallCount > 0);
+		}
+
 		#endregion
 
-		#region Source Callbacks
+		#region Incoming Call Callbacks
 
 		/// <summary>
 		/// Subscribe to the call events.
