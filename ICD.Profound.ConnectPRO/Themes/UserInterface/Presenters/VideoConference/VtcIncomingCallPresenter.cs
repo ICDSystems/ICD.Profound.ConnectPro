@@ -8,8 +8,6 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Participants;
-using ICD.Connect.Devices;
-using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -32,12 +30,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		[CanBeNull]
-		private IEnumerable<IConferenceDeviceControl> m_SubscribedVideoDialers;
+		private List<IConferenceDeviceControl> m_SubscribedVideoDialers;
 
 		/// <summary>
 		/// Gets the number of incoming sources.
 		/// </summary>
-		private int SourceCount { get { return m_IncomingCallsSection.Execute(() => m_IncomingCalls.Count); } }
+		private int IncomingCallCount { get { return m_IncomingCallsSection.Execute(() => m_IncomingCalls.Count); } }
 
 		/// <summary>
 		/// Constructor.
@@ -115,13 +113,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Gets the video dialer to monitor for incoming calls.
 		/// </summary>
 		/// <returns></returns>
-		[CanBeNull]
 		private static IEnumerable<IConferenceDeviceControl> GetVideoDialers(IConnectProRoom room)
 		{
-			return room.Originators.GetInstancesRecursive<ISource>()
-				.Select(s => room.Core.Originators[s.Device] as IDevice)
-				.SelectMany(d => d == null ? Enumerable.Empty<IConferenceDeviceControl>() : d.Controls.GetControls<IConferenceDeviceControl>())
-				.Where(c => c.Supports.HasFlag(eCallType.Video));
+			return room.ConferenceManager.GetDialingProviders(eCallType.Video);
 		}
 
 		#region Room Callbacks
@@ -135,11 +129,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			base.Subscribe(room);
 
 			m_SubscribedVideoDialers = room == null
-				? Enumerable.Empty<IConferenceDeviceControl>().ToList()
-				: GetVideoDialers(room).ToList();
+				                           ? Enumerable.Empty<IConferenceDeviceControl>().ToList()
+				                           : GetVideoDialers(room).ToList();
 
-			if (m_SubscribedVideoDialers == null)
-				return;
 			foreach (var dialer in m_SubscribedVideoDialers)
 			{
 				dialer.OnIncomingCallAdded += VideoDialerOnIncomingCallAdded;
@@ -158,7 +150,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (m_SubscribedVideoDialers == null)
 				return;
 
-			foreach(var dialer in m_SubscribedVideoDialers) {
+			foreach (var dialer in m_SubscribedVideoDialers)
+			{
 				dialer.OnIncomingCallAdded -= VideoDialerOnIncomingCallAdded;
 				dialer.OnIncomingCallRemoved -= VideoDialerOnIncomingCallRemoved;
 			}
@@ -211,8 +204,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				m_IncomingCallsSection.Leave();
 			}
 
-			ShowView(SourceCount > 0);
-			RefreshIfVisible(false);
+			ShowView(IncomingCallCount > 0);
+			RefreshIfVisible();
 		}
 
 		/// <summary>
@@ -236,12 +229,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			}
 
 			RefreshIfVisible();
-			ShowView(SourceCount > 0);
+			ShowView(IncomingCallCount > 0);
 		}
 
 		#endregion
 
-		#region Source Callbacks
+		#region Incoming Call Callbacks
 
 		/// <summary>
 		/// Subscribe to the call events.
