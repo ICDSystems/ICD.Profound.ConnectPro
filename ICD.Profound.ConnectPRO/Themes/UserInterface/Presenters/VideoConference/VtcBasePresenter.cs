@@ -217,8 +217,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			IsInCall =
 				m_SubscribedConferenceControl != null &&
-				m_SubscribedConferenceControl.GetConferences().Any(c => c.Status == eConferenceStatus.Connected && c.GetParticipants()
-					                                                        .Any(s => s.GetIsOnline() || s.GetIsActive()));
+				m_SubscribedConferenceControl.GetActiveConference() != null;
 		}
 
 		#endregion

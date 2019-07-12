@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - The display subpage reference list now scrolls back to the beginning when the combined advanced mode state changes
  - Better booking icon method for CUE
  - Refresh ATC view when conference state changes
+ - VTC view is updated when there is an active conference
 
 ## [8.1.1] - 2019-05-07
 ### Changed
