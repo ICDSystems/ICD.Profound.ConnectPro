@@ -5,7 +5,7 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Calendaring.Booking;
-using ICD.Connect.Calendaring.CalendarControl;
+using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;

@@ -1,6 +1,6 @@
 ﻿using System;
 using ICD.Common.Utils.Extensions;
-using ICD.Connect.Calendaring.CalendarControl;
+using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Partitioning.Rooms;
 
