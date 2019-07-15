@@ -19,11 +19,6 @@ namespace ICD.Profound.ConnectPRO.Rooms.Combine
 		#region Properties
 
 		/// <summary>
-		/// Gets the conference manager.
-		/// </summary>
-		public override IConferenceManager ConferenceManager { get { return m_MasterRoom == null ? null : m_MasterRoom.ConferenceManager; } }
-
-		/// <summary>
 		/// Gets the wake/sleep schedule.
 		/// </summary>
 		public override WakeSchedule WakeSchedule { get { return m_MasterRoom == null ? null : m_MasterRoom.WakeSchedule; } }
@@ -94,11 +89,21 @@ namespace ICD.Profound.ConnectPRO.Rooms.Combine
 
 		protected override void OriginatorsOnChildrenChanged(object sender, EventArgs e)
 		{
-			base.OriginatorsOnChildrenChanged(sender, e);
+			// Call this before calling the base method
+			SetMasterRoom(this.GetMasterRoom() as IConnectProRoom);
 
+			base.OriginatorsOnChildrenChanged(sender, e);
+		}
+
+		/// <summary>
+		/// Performance - We keep a local record of the master room to avoid lookups.
+		/// </summary>
+		/// <param name="masterRoom"></param>
+		private void SetMasterRoom(IConnectProRoom masterRoom)
+		{
 			Unsubscribe(WakeSchedule);
 
-			m_MasterRoom = this.GetMasterRoom() as IConnectProRoom;
+			m_MasterRoom = masterRoom;
 
 			Subscribe(WakeSchedule);
 
@@ -110,6 +115,14 @@ namespace ICD.Profound.ConnectPRO.Rooms.Combine
 
 			if (!Routing.SupportsSimpleMode())
 				CombinedAdvancedMode = eCombineAdvancedMode.Advanced;
+		}
+
+		/// <summary>
+		/// Gets the conference manager.
+		/// </summary>
+		protected override IConferenceManager GetConferenceManager()
+		{
+			return m_MasterRoom == null ? null : m_MasterRoom.ConferenceManager;
 		}
 	}
 }

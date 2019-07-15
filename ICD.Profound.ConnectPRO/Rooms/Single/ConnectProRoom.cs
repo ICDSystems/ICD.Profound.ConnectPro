@@ -38,11 +38,6 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 		}
 
 		/// <summary>
-		/// Gets the conference manager.
-		/// </summary>
-		public override IConferenceManager ConferenceManager { get { return m_ConferenceManager; } }
-
-		/// <summary>
 		/// Gets the wake/sleep schedule.
 		/// </summary>
 		public override WakeSchedule WakeSchedule { get { return m_WakeSchedule; } }
@@ -88,6 +83,14 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 			Unsubscribe(m_WakeSchedule);
 
 			SchedulerService.Remove(m_WakeSchedule);
+		}
+
+		/// <summary>
+		/// Gets the conference manager.
+		/// </summary>
+		protected override IConferenceManager GetConferenceManager()
+		{
+			return m_ConferenceManager;
 		}
 
 		#region Settings

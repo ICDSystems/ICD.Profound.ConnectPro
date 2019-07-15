@@ -8,13 +8,16 @@ using ICD.Common.Utils.Services;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.Controls.Routing;
+using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Controls;
+using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Connect.Routing.PathFinding;
 using ICD.Connect.Settings.Cores;
 using ICD.Connect.Sources.TvTuner.Controls;
 using ICD.Profound.ConnectPRO.Rooms.Combine;
@@ -100,6 +103,57 @@ namespace ICD.Profound.ConnectPRO.Routing
 				return multipleDisplays
 					? videoDestinations.Any(d => m_Routing.HasPath(s, d, eConnectionType.Video))
 					: videoDestinations.All(d => m_Routing.HasPath(s, d, eConnectionType.Video));
+			});
+		}
+
+		/// <summary>
+		/// Returns all of the sources available in the room that are tagged for sharing and can be
+		/// routed to the given VTC routing control.
+		/// </summary>
+		/// <param name="routeControl"></param>
+		/// <returns></returns>
+		public IEnumerable<ISource> GetRoomSourcesForPresentation(IVideoConferenceRouteControl routeControl)
+		{
+			if (routeControl == null)
+				throw new ArgumentNullException("routeControl");
+
+			// Get the content inputs
+			int[] inputs = routeControl.GetCodecInputs(eCodecInputType.Content).ToArray();
+			if (inputs.Length == 0)
+				return Enumerable.Empty<ISource>();
+
+			return GetRoomSources().Where(s =>
+			{
+				// Hidden
+				if (s.Hide)
+					return false;
+
+				// Not video
+				if (!s.ConnectionType.HasFlag(eConnectionType.Video))
+					return false;
+
+				// Not sharable
+				ConnectProSource cpSource = s as ConnectProSource;
+				if (cpSource != null && !cpSource.Share)
+					return false;
+
+				// Can it be routed to a content input on the route control?
+				foreach (int input in inputs)
+				{
+					EndpointInfo endpoint = routeControl.GetInputEndpointInfo(input);
+
+					// Is there a path?
+					bool hasPath =
+						PathBuilder.FindPaths()
+						           .From(s)
+						           .To(endpoint)
+						           .OfType(eConnectionType.Video)
+						           .HasPaths(m_Routing.PathFinder);
+					if (hasPath)
+						return true;
+				}
+
+				return false;
 			});
 		}
 

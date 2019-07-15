@@ -12,6 +12,7 @@ using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Panels.Server.Osd;
+using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Controls;
 using ICD.Connect.Routing.Endpoints;
@@ -64,6 +65,11 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// Gets the routing state for the current room.
 		/// </summary>
 		public ConnectProRoutingState State { get { return m_State; } }
+
+		/// <summary>
+		/// Gets the pathfinder used for ConnectPro routing.
+		/// </summary>
+		public IPathFinder PathFinder { get { return m_PathFinder; } }
 
 		#endregion
 
@@ -247,13 +253,17 @@ namespace ICD.Profound.ConnectPRO.Routing
 			
 			IDestination[] destinations = m_Destinations.GetDisplayDestinations().ToArray();
 
-			Connection firstOutput = outputs.LastOrDefault();
-			if (firstOutput == null)
+			Connection lastOutput = outputs.LastOrDefault();
+			if (lastOutput == null)
 			{
 				m_Room.Logger.AddEntry(eSeverity.Error, "Failed to find {0} output connection for {1}",
 				                       eConnectionType.Video, source);
 				return;
 			}
+			
+			IDeviceBase device = m_Room.Core.Originators.GetChild<IDeviceBase>(source.Device);
+			IPresentationControl presentationControl = device.Controls.GetControl<IPresentationControl>();
+			bool presenting = presentationControl != null && presentationControl.PresentationActive;
 
 			for (int index = 0; index < destinations.Length; index++)
 			{
@@ -263,9 +273,16 @@ namespace ICD.Profound.ConnectPRO.Routing
 					State.ClearMaskedSource(destination);
 
 				Connection output;
-				if (!outputs.TryElementAt(index, out output))
-					output = firstOutput;
-
+				if (m_Room.IsCombineRoom())
+				{
+					if (outputs.Length >= 2 && presenting)
+						output = outputs[1];
+					else
+						output = outputs[0];
+				}
+				else if (!outputs.TryElementAt(index, out output))
+					output = lastOutput;
+				
 				if (output == null)
 					break;
 				
@@ -398,18 +415,18 @@ namespace ICD.Profound.ConnectPRO.Routing
 				EndpointInfo endpoint = routingControl.GetInputEndpointInfo(input);
 
 				// Is there a path?
-				ConnectionPath path =
+				bool hasPath =
 					PathBuilder.FindPaths()
-							   .From(sourceControl)
-							   .To(endpoint)
-							   .OfType(eConnectionType.Video)
-							   .With(m_PathFinder)
-							   .FirstOrDefault();
-				if (path == null)
+					           .From(sourceControl)
+					           .To(endpoint)
+					           .OfType(eConnectionType.Video)
+					           .HasPaths(m_PathFinder);
+				if (!hasPath)
 					continue;
 
 				// Route the source video and audio to the codec
-				Route(path);
+				Route(sourceControl, endpoint, eConnectionType.Video);
+				Route(sourceControl, endpoint, eConnectionType.Audio);
 
 				// Start the presentation
 				routingControl.SetCameraInput(input);
@@ -458,8 +475,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 				bool hasPath =
 					PathBuilder.FindPaths()
 					           .From(source)
-							   .To(endpoint)
-							   .OfType(source.ConnectionType)
+					           .To(endpoint)
+					           .OfType(source.ConnectionType)
 					           .HasPaths(m_PathFinder);
 				if (!hasPath)
 					continue;
@@ -608,6 +625,21 @@ namespace ICD.Profound.ConnectPRO.Routing
 			IEnumerable<ConnectionPath> paths =
 				PathBuilder.FindPaths()
 				           .From(source)
+				           .To(destinationEndpoint)
+				           .OfType(flag)
+				           .With(m_PathFinder);
+
+			Route(paths);
+		}
+
+		private void Route(IRouteSourceControl sourceControl, EndpointInfo destinationEndpoint, eConnectionType flag)
+		{
+			if (sourceControl == null)
+				throw new ArgumentNullException("sourceControl");
+
+			IEnumerable<ConnectionPath> paths =
+				PathBuilder.FindPaths()
+				           .From(sourceControl)
 				           .To(destinationEndpoint)
 				           .OfType(flag)
 				           .With(m_PathFinder);

@@ -1,8 +1,10 @@
 ﻿using System.Linq;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Devices;
+using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Rooms;
 
@@ -11,6 +13,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Masking
 	public sealed class ConferenceDeviceMaskedSourceInfo : AbstractMaskedSourceInfo
 	{
 		private IConferenceDeviceControl m_ConferenceControl;
+		private IPresentationControl m_PresentationControl;
 		private IConnectProRoom m_Room;
 
 		#region Properties
@@ -77,6 +80,11 @@ namespace ICD.Profound.ConnectPRO.Routing.Masking
 
 			var device = Room.Core.Originators.GetChild(Source.Device) as IDevice;
 			ConferenceControl = device == null ? null : device.Controls.GetControl<IConferenceDeviceControl>();
+
+			Unsubscribe(m_PresentationControl);
+			m_PresentationControl = device == null ? null : device.Controls.GetControl<IPresentationControl>();
+			Subscribe(m_PresentationControl);
+
 			UpdateMask();
 		}
 
@@ -104,7 +112,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Masking
 
 		#endregion
 
-		#region Control Callbacks
+		#region Conference Control Callbacks
 
 		private void Subscribe(IConferenceDeviceControl control)
 		{
@@ -138,6 +146,35 @@ namespace ICD.Profound.ConnectPRO.Routing.Masking
 		private void ControlOnConferenceRemoved(object sender, ConferenceEventArgs e)
 		{
 			Unsubscribe(e.Data);
+		}
+
+		#endregion
+
+		#region Presentation Control Callbacks
+
+		private void Subscribe(IPresentationControl control)
+		{
+			if (control == null)
+				return;
+
+			control.OnPresentationActiveChanged += ControlOnPresentationActiveChanged;
+		}
+
+		private void Unsubscribe(IPresentationControl control)
+		{
+			if (control == null)
+				return;
+
+			control.OnPresentationActiveChanged -= ControlOnPresentationActiveChanged;
+		}
+
+		private void ControlOnPresentationActiveChanged(object sender, PresentationActiveApiEventArgs args)
+		{
+			if (Room == null || ConferenceControl == null)
+				return;
+
+			if (Room.IsCombineRoom() && ConferenceControl.GetActiveConference() != null)
+				Room.Routing.RouteVtc(Source, this);
 		}
 
 		#endregion
