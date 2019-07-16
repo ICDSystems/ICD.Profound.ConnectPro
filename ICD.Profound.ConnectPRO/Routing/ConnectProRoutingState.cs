@@ -400,8 +400,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			try
 			{
-				foreach (IMaskedSourceInfo mask in m_MaskedSources.Values.Where(p => p != null))
+				IMaskedSourceInfo[] clear = m_MaskedSources.Values.Where(p => p != null).ToArray();
+				if (clear.Length == 0)
+					return;
+
+				foreach (IMaskedSourceInfo mask in clear)
 					mask.Dispose();
+
 				m_MaskedSources.Clear();
 
 				UpdateSourceRoutedStates();
