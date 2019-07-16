@@ -16,6 +16,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 			base.Refresh(view);
 
 			view.SetRoomName(Room == null ? string.Empty : Room.Name);
+			view.SetTimeLabel(ConnectProDateFormatting.ShortTime);
 		}
 	}
 }

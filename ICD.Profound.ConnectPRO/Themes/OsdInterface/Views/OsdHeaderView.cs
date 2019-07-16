@@ -16,5 +16,10 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 		{
 			m_RoomName.SetLabelText(name);
 		}
+
+		public void SetTimeLabel(string time)
+		{
+			m_TimeLabel.SetLabelText(time);
+		}
 	}
 }

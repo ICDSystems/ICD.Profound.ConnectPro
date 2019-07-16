@@ -3,5 +3,7 @@
 	public interface IOsdHeaderView : IOsdView
 	{
 		void SetRoomName(string name);
+
+		void SetTimeLabel(string time);
 	}
 }
