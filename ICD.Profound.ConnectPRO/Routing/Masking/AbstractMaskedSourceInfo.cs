@@ -5,7 +5,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Masking
 	public abstract class AbstractMaskedSourceInfo : IMaskedSourceInfo
 	{
 		private ISource m_Source;
-		private bool m_Mask;
+		private bool? m_Mask;
 		private bool? m_MaskOverride;
 
 		#region Properties
@@ -25,7 +25,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Masking
 
 		public bool Mask 
 		{ 
-			get { return m_Mask; }
+			get { return !m_Mask.HasValue || m_Mask.Value; }
 			protected set
 			{
 				if (m_Mask == value)
