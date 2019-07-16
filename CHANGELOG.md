@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Better booking icon method for CUE
  - Refresh ATC view when conference state changes
  - VTC view is updated when there is an active conference
+ - Changed the time in CUE header to localized string
 
 ## [8.1.1] - 2019-05-07
 ### Changed
