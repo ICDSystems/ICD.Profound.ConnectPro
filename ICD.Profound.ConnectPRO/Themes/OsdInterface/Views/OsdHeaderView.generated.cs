@@ -10,6 +10,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 	{
 		private VtProSubpage m_Subpage;
 		private VtProSimpleLabel m_RoomName;
+		private VtProSimpleLabel m_TimeLabel;
 
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
@@ -19,12 +20,18 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Views
 			{
 				IndirectTextJoin = 10
 			};
+
+			m_TimeLabel = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				IndirectTextJoin = 9
+			};
 		}
 
 		protected override IEnumerable<IVtProControl> GetChildren()
 		{
 			yield return m_Subpage;
 			yield return m_RoomName;
+			yield return m_TimeLabel;
 		}
 	}
 }
