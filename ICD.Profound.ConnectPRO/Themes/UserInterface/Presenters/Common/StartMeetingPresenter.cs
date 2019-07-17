@@ -266,7 +266,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 					m_CalendarControl == null
 						? new List<IBooking>()
 						: m_CalendarControl.GetBookings()
-						                   .Where(b => b.EndTime > IcdEnvironment.GetLocalTime())
+						                   .Where(b => b.EndTime > IcdEnvironment.GetLocalTime() &&
+						                               b.StartTime < IcdEnvironment.GetLocalTime().AddDays(1))
 						                   .ToList();
 
 				first = m_Bookings.FirstOrDefault();

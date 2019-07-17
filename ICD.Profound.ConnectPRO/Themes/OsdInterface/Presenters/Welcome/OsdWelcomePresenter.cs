@@ -55,9 +55,13 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 					return;
 
 		        DateTime now = IcdEnvironment.GetLocalTime();
+				DateTime tomorrow = now.AddDays(1);
 
-		        List<IBooking> bookings = m_CalendarControl.GetBookings().Where(b => b.EndTime > now)
-		                    .OrderBy(b => b.StartTime).ToList();
+				List<IBooking> bookings =
+					m_CalendarControl.GetBookings()
+					                 .Where(b => b.EndTime > now && b.StartTime < tomorrow)
+					                 .OrderBy(b => b.StartTime)
+					                 .ToList();
 
 		        string roomName = Room == null ? string.Empty : Room.Name;
 
