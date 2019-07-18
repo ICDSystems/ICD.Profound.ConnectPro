@@ -155,6 +155,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			displaysVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>());
 			displaysVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>());
 			displaysVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IMenu2DisplaysPresenter>());
+			displaysVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IMenu3PlusDisplaysPresenter>());
 
 			m_RootVisibility.AddNode(displaysVisibility);
 
@@ -316,7 +317,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (combineRoom == null)
 			{
 				if (m_Room.Routing.Destinations.IsMultiDisplayRoom)
-					HandleSelectedSourceDualDisplay(source);
+					HandleSelectedSourceMultiDisplay(source);
 				else
 					HandleSelectedSourceSingleDisplay(source);
 			}
@@ -340,7 +341,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// In dual display mode we allow the user to select which display to route to.
 		/// </summary>
 		/// <param name="source"></param>
-		private void HandleSelectedSourceDualDisplay(ISource source)
+		private void HandleSelectedSourceMultiDisplay(ISource source)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
@@ -429,7 +430,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private void HandleSelectedSourceCombinedAdvancedMode(ISource source)
 		{
 			// Same as dual display, eventually might need to be unique to combined advanced mode
-			HandleSelectedSourceDualDisplay(source);
+			HandleSelectedSourceMultiDisplay(source);
 		}
 
 		/// <summary>
@@ -520,6 +521,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 				m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().SelectedSource = m_SelectedSource;
 				m_NavigationController.LazyLoadPresenter<IMenu2DisplaysPresenter>().SetSelectedSource(m_SelectedSource);
+				m_NavigationController.LazyLoadPresenter<IMenu3PlusDisplaysPresenter>().SetSelectedSource(m_SelectedSource);
 				m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>().SetSelectedSource(m_SelectedSource);
 				m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>().SetSelectedSource(m_SelectedSource);
 
@@ -561,6 +563,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			                               .SelectMany(kvp => kvp.Value)
 			                               .Select(v => m_NavigationController.LazyLoadPresenter<IContextualControlPresenter>(v))
 			                               .FirstOrDefault(v => v.SupportsControl(control));
+		}
+		
+		/// <summary>
+		/// Called when the user presses a destination in the presenter.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="routedSource"></param>
+		/// <param name="destination"></param>
+		private void DisplaysPresenterOnDestinationPressed(object sender, ISource routedSource, IDestination destination)
+		{
+			HandleSelectedDisplay(routedSource, destination);
 		}
 
 		#endregion
@@ -683,12 +696,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			ConnectProCombineRoom combineRoom = m_Room as ConnectProCombineRoom;
 
 			bool combinedRoom = combineRoom != null;
-			bool dualDisplays = m_Room != null && !combinedRoom && m_Room.Routing.Destinations.IsMultiDisplayRoom;
+			bool dualDisplays = m_Room != null && !combinedRoom && m_Room.Routing.Destinations.DisplayDestinationsCount == 2;
+			bool manyDisplays = m_Room != null && !combinedRoom && m_Room.Routing.Destinations.DisplayDestinationsCount > 2;
 			bool combineAdvanced = combineRoom != null && combineRoom.CombinedAdvancedMode == eCombineAdvancedMode.Advanced;
 			bool combineSimple = combineRoom != null && combineRoom.CombinedAdvancedMode == eCombineAdvancedMode.Simple;
 
 			m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().ShowView(true);
 			m_NavigationController.LazyLoadPresenter<IMenu2DisplaysPresenter>().ShowView(dualDisplays);
+			m_NavigationController.LazyLoadPresenter<IMenu3PlusDisplaysPresenter>().ShowView(manyDisplays);
 			m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>().ShowView(combineAdvanced);
 			m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>().ShowView(combineSimple);
 		}
@@ -717,6 +732,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			m_NavigationController.LazyLoadPresenter<IMenu2DisplaysPresenter>()
 								  .SetRouting(activeVideo, activeAudio);
+			m_NavigationController.LazyLoadPresenter<IMenu3PlusDisplaysPresenter>()
+								  .SetRouting(activeVideo, activeAudio);
 			m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>()
 								  .SetRouting(activeVideo, activeAudio);
 			m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>()
@@ -738,6 +755,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		{
 			Subscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>());
 			Subscribe(m_NavigationController.LazyLoadPresenter<IMenu2DisplaysPresenter>());
+			Subscribe(m_NavigationController.LazyLoadPresenter<IMenu3PlusDisplaysPresenter>());
 
 			Subscribe(m_NavigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>());
 			Subscribe(m_NavigationController.LazyLoadPresenter<IAtcIncomingCallPresenter>());
@@ -753,6 +771,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		{
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>());
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<IMenu2DisplaysPresenter>());
+			Unsubscribe(m_NavigationController.LazyLoadPresenter<IMenu3PlusDisplaysPresenter>());
 
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>());
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<IAtcIncomingCallPresenter>());
@@ -794,7 +813,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		#endregion
 
-		#region Menu Displays Callbacks
+		#region Menu 2 Displays Callbacks
 
 		/// <summary>
 		/// Subscribe to the presenter events.
@@ -814,15 +833,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			presenter.OnDestinationPressed -= DisplaysPresenterOnDestinationPressed;
 		}
 
+		#endregion
+
+		#region Menu 3+ Displays Callbacks
+
 		/// <summary>
-		/// Called when the user presses a destination in the presenter.
+		/// Subscribe to the presenter events.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="routedSource"></param>
-		/// <param name="destination"></param>
-		private void DisplaysPresenterOnDestinationPressed(object sender, ISource routedSource, IDestination destination)
+		/// <param name="presenter"></param>
+		private void Subscribe(IMenu3PlusDisplaysPresenter presenter)
 		{
-			HandleSelectedDisplay(routedSource, destination);
+			presenter.OnDestinationPressed += DisplaysPresenterOnDestinationPressed;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the presenter events.
+		/// </summary>
+		/// <param name="presenter"></param>
+		private void Unsubscribe(IMenu3PlusDisplaysPresenter presenter)
+		{
+			presenter.OnDestinationPressed -= DisplaysPresenterOnDestinationPressed;
 		}
 
 		#endregion
