@@ -77,6 +77,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 		public IEnumerable<ISource> GetRoomSourcesForUi()
 		{
 			IDestination[] videoDestinations = m_Routing.Destinations.GetDisplayDestinations().ToArray();
+			
+			bool multipleDisplays = m_Routing.Destinations.IsMultiDisplayRoom;
+				
+			// If this is a combined room in simple mode treat it like a single display destination
+			ConnectProCombineRoom combineRoom = m_Routing.Room as ConnectProCombineRoom;
+			if (combineRoom != null && combineRoom.CombinedAdvancedMode == eCombineAdvancedMode.Simple)
+				multipleDisplays = false;
 
 			return GetRoomSources().Where(s =>
 			{
@@ -92,13 +99,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 				// Not a video source so we're done with the extra validation
 				if (!s.ConnectionType.HasFlag(eConnectionType.Video))
 					return true;
-
-				bool multipleDisplays = m_Routing.Destinations.IsMultiDisplayRoom;
-				
-				// If this is a combined room in simple mode treat it like a single display destination
-				ConnectProCombineRoom combineRoom = m_Routing.Room as ConnectProCombineRoom;
-				if (combineRoom != null && combineRoom.CombinedAdvancedMode == eCombineAdvancedMode.Simple)
-					multipleDisplays = false;
 
 				return multipleDisplays
 					? videoDestinations.Any(d => m_Routing.HasPath(s, d, eConnectionType.Video))
