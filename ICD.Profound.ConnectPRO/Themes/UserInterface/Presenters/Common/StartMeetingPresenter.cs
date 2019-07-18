@@ -23,10 +23,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 	{
 		private const string NO_MEETING_LABEL_TEXT = "No Meetings Scheduled at this Time";
 
+		private const long BOOKING_SELECTION_TIMEOUT = 8 * 1000;
+
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly ReferencedSchedulePresenterFactory m_ChildrenFactory;
 		private readonly SafeTimer m_BookingsRefreshTimer;
 		private readonly SafeTimer m_TimeRefreshTimer;
+		private readonly SafeTimer m_BookingSelectionTimeout;
 
 		[CanBeNull]
 		private IReferencedSchedulePresenter m_SelectedBooking;
@@ -50,6 +53,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			m_BookingsRefreshTimer = SafeTimer.Stopped(UpdateBookings);
 			m_TimeRefreshTimer = new SafeTimer(RefreshTime, 1000, 1000);
+			m_BookingSelectionTimeout = SafeTimer.Stopped(BookingSelectionTimeout);
 		}
 
 		/// <summary>
@@ -59,6 +63,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			m_BookingsRefreshTimer.Dispose();
 			m_TimeRefreshTimer.Dispose();
+			m_BookingSelectionTimeout.Dispose();
 
 			m_ChildrenFactory.Dispose();
 
@@ -150,6 +155,86 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			RefreshIfVisible();
 		}
 
+		#region Private Methods
+
+		private IEnumerable<IReferencedScheduleView> ItemFactory(ushort count)
+		{
+			return GetView().GetChildComponentViews(ViewFactory, count);
+		}
+
+		private void UpdateBookings()
+		{
+			IBooking first;
+
+			m_RefreshSection.Enter();
+
+			try
+			{
+				m_Bookings =
+					m_CalendarControl == null
+						? new List<IBooking>()
+						: m_CalendarControl.GetBookings()
+						                   .Where(b => b.EndTime > IcdEnvironment.GetLocalTime() &&
+						                               b.StartTime < IcdEnvironment.GetLocalTime().AddDays(1))
+						                   .ToList();
+
+				first = m_Bookings.FirstOrDefault();
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+
+			// Refresh when the next meeting starts or the current meeting ends.
+			if (first != null)
+			{
+				bool started = first.StartTime <= IcdEnvironment.GetLocalTime();
+				DateTime nextRefresh = started ? first.EndTime : first.StartTime;
+				long delta = (long)(nextRefresh - IcdEnvironment.GetLocalTime()).TotalMilliseconds + 1000;
+
+				if (delta > 0)
+					m_BookingsRefreshTimer.Reset(delta);
+			}
+
+			RefreshIfVisible();
+		}
+
+		private void SetSelectedBooking(IReferencedSchedulePresenter presenter)
+		{
+			m_RefreshSection.Enter();
+
+			try
+			{
+				if (presenter == m_SelectedBooking)
+					return;
+
+				if (m_SelectedBooking != null)
+					m_SelectedBooking.SetSelected(false);
+
+				m_SelectedBooking = presenter;
+
+				if (m_SelectedBooking != null)
+					m_SelectedBooking.SetSelected(true);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+
+			RefreshIfVisible();
+
+			m_BookingSelectionTimeout.Reset(BOOKING_SELECTION_TIMEOUT);
+		}
+
+		private void BookingSelectionTimeout()
+		{
+			SetSelectedBooking(null);
+		}
+
+		#endregion
+
+		#region Calendar Callbacks
+
 		private void Subscribe(ICalendarControl calendarControl)
 		{
 			if (calendarControl == null)
@@ -166,11 +251,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			calendarControl.OnBookingsChanged -= CalendarControlOnBookingsChanged;
 		}
 
-		#region Private Methods
-
-		private IEnumerable<IReferencedScheduleView> ItemFactory(ushort count)
+		private void CalendarControlOnBookingsChanged(object sender, EventArgs eventArgs)
 		{
-			return GetView().GetChildComponentViews(ViewFactory, count);
+			UpdateBookings();
 		}
 
 		#endregion
@@ -222,73 +305,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			{
 				m_RefreshSection.Leave();
 			}
-		}
-
-		private void SetSelectedBooking(IReferencedSchedulePresenter presenter)
-		{
-			m_RefreshSection.Enter();
-
-			try
-			{
-				if (presenter == m_SelectedBooking)
-					return;
-
-				if (m_SelectedBooking != null)
-					m_SelectedBooking.SetSelected(false);
-
-				m_SelectedBooking = presenter;
-
-				if (m_SelectedBooking != null)
-					m_SelectedBooking.SetSelected(true);
-			}
-			finally
-			{
-				m_RefreshSection.Leave();
-			}
-
-			RefreshIfVisible();
-		}
-
-		private void CalendarControlOnBookingsChanged(object sender, EventArgs eventArgs)
-		{
-			UpdateBookings();
-		}
-
-		private void UpdateBookings()
-		{
-			IBooking first;
-
-			m_RefreshSection.Enter();
-
-			try
-			{
-				m_Bookings =
-					m_CalendarControl == null
-						? new List<IBooking>()
-						: m_CalendarControl.GetBookings()
-						                   .Where(b => b.EndTime > IcdEnvironment.GetLocalTime() &&
-						                               b.StartTime < IcdEnvironment.GetLocalTime().AddDays(1))
-						                   .ToList();
-
-				first = m_Bookings.FirstOrDefault();
-			}
-			finally
-			{
-				m_RefreshSection.Leave();
-			}
-
-			// Refresh when the next meeting starts or the current meeting ends.
-			if (first != null)
-			{
-				bool started = first.StartTime <= IcdEnvironment.GetLocalTime();
-				DateTime nextRefresh = started ? first.EndTime : first.StartTime;
-				long delta = (long)(nextRefresh - IcdEnvironment.GetLocalTime()).TotalMilliseconds + 1000;
-
-				if (delta > 0)
-					m_BookingsRefreshTimer.Reset(delta);
-			}
-
-			RefreshIfVisible();
 		}
 
 		#endregion
