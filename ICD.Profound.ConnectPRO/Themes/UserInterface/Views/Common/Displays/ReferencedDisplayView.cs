@@ -8,8 +8,8 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 {
-	[ViewBinding(typeof(IReferencedAdvancedDisplayView))]
-	public sealed partial class ReferencedAdvancedDisplayView : AbstractUiView, IReferencedAdvancedDisplayView
+	[ViewBinding(typeof(IReferencedDisplayView))]
+	public sealed partial class ReferencedDisplayView : AbstractUiView, IReferencedDisplayView
 	{
 		private const ushort MODE_GREY = 0;
 		private const ushort MODE_WHITE = 1;
@@ -19,7 +19,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		public event EventHandler OnDisplayButtonPressed;
 		public event EventHandler OnDisplaySpeakerButtonPressed;
 
-		public ReferencedAdvancedDisplayView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index) : base(panel, theme, parent, index)
+		public ReferencedDisplayView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index) : base(panel, theme, parent, index)
 		{
 		}
 

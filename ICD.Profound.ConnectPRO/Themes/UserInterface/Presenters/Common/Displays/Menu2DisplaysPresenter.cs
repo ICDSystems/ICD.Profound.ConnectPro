@@ -10,8 +10,8 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Displays
 {
-	[PresenterBinding(typeof(IMenuDisplaysPresenter))]
-	public sealed class MenuDisplaysPresenter : AbstractDisplaysPresenter<IMenuDisplaysView>, IMenuDisplaysPresenter
+	[PresenterBinding(typeof(IMenu2DisplaysPresenter))]
+	public sealed class Menu2DisplaysPresenter : AbstractDisplaysPresenter<IMenu2DisplaysView>, IMenu2DisplaysPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly List<MenuDisplaysPresenterDisplay> m_Displays;
@@ -27,14 +27,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public MenuDisplaysPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+		public Menu2DisplaysPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
 			m_Displays = Enumerable.Range(0, 2).Select(i => new MenuDisplaysPresenterDisplay()).ToList();
 		}
 
-		protected override void Refresh(IMenuDisplaysView view)
+		protected override void Refresh(IMenu2DisplaysView view)
 		{
 			base.Refresh(view);
 
@@ -72,7 +72,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		/// Subscribe to the view events.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Subscribe(IMenuDisplaysView view)
+		protected override void Subscribe(IMenu2DisplaysView view)
 		{
 			base.Subscribe(view);
 
@@ -86,7 +86,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		/// Unsubscribe from the view events.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Unsubscribe(IMenuDisplaysView view)
+		protected override void Unsubscribe(IMenu2DisplaysView view)
 		{
 			base.Unsubscribe(view);
 

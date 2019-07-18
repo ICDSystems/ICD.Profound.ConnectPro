@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays
 {
-	public interface IMenuDisplaysPresenter : IUiPresenter<IMenuDisplaysView>, IDisplaysPresenter
+	public interface IMenu2DisplaysPresenter : IUiPresenter<IMenu2DisplaysView>, IDisplaysPresenter
 	{
 	}
 }

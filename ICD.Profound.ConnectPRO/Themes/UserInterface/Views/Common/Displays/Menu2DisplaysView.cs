@@ -7,8 +7,8 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 {
-	[ViewBinding(typeof(IMenuDisplaysView))]
-	public sealed partial class MenuDisplaysView : AbstractUiView, IMenuDisplaysView
+	[ViewBinding(typeof(IMenu2DisplaysView))]
+	public sealed partial class Menu2DisplaysView : AbstractUiView, IMenu2DisplaysView
 	{
 		private const ushort MODE_WHITE = 0;
 		private const ushort MODE_GREY = 1;
@@ -20,7 +20,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public MenuDisplaysView(ISigInputOutput panel, ConnectProTheme theme)
+		public Menu2DisplaysView(ISigInputOutput panel, ConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

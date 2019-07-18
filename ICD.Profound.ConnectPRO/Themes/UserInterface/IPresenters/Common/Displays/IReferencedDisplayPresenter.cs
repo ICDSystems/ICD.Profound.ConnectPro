@@ -4,7 +4,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Displays;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays
 {
-	public interface IReferencedAdvancedDisplayPresenter : IUiPresenter<IReferencedAdvancedDisplayView>
+	public interface IReferencedDisplayPresenter : IUiPresenter<IReferencedDisplayView>
 	{
 		event EventHandler OnDisplayPressed;
 		event EventHandler OnDisplaySpeakerPressed;

@@ -34,7 +34,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays
 		/// <param name="factory"></param>
 		/// <param name="count"></param>
 		/// <returns></returns>
-		IEnumerable<IReferencedAdvancedDisplayView> GetChildComponentViews(IViewFactory factory, ushort count);
+		IEnumerable<IReferencedDisplayView> GetChildComponentViews(IViewFactory factory, ushort count);
 
 		/// <summary>
 		/// Scrolls back to the first item in the list.

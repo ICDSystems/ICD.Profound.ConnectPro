@@ -8,7 +8,7 @@ using ICD.Connect.UI.Controls.TextControls;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 {
-	public sealed partial class MenuDisplaysView
+	public sealed partial class Menu2DisplaysView
 	{
 		private VtProSubpage m_Subpage;
 

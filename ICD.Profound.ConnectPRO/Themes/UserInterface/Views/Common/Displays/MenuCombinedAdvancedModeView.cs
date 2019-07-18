@@ -14,11 +14,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		public event EventHandler OnSimpleModeButtonPressed;
 		public event EventHandler OnRouteSummaryButtonPressed;
 
-		private readonly List<IReferencedAdvancedDisplayView> m_ChildViews;
+		private readonly List<IReferencedDisplayView> m_ChildViews;
 
 		public MenuCombinedAdvancedModeView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
 		{
-			m_ChildViews = new List<IReferencedAdvancedDisplayView>();
+			m_ChildViews = new List<IReferencedDisplayView>();
 		}
 
 		public void SetSimpleModeButtonEnabled(bool enabled)
@@ -31,7 +31,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 			m_RouteSummaryButton.Enable(enabled);
 		}
 
-		public IEnumerable<IReferencedAdvancedDisplayView> GetChildComponentViews(IViewFactory factory, ushort count)
+		public IEnumerable<IReferencedDisplayView> GetChildComponentViews(IViewFactory factory, ushort count)
 		{
 			return factory.LazyLoadSrlViews(m_DisplaysList, m_ChildViews, count);
 		}

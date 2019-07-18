@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays
 {
-	public interface IMenuDisplaysView : IUiView
+	public interface IMenu2DisplaysView : IUiView
 	{
 		#region Display 1
 

@@ -21,7 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		public event EventHandler OnSimpleModePressed;
 
 		private readonly SafeCriticalSection m_RefreshSection;
-		private readonly ReferencedAdvancedDisplayPresenterFactory m_PresenterFactory;
+		private readonly ReferencedDisplayPresenterFactory m_PresenterFactory;
 		private readonly List<MenuDisplaysPresenterDisplay> m_Displays;
 
 		protected override List<MenuDisplaysPresenterDisplay> Displays { get { return m_Displays; } }
@@ -29,7 +29,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		public MenuCombinedAdvancedModePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
-			m_PresenterFactory = new ReferencedAdvancedDisplayPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
+			m_PresenterFactory = new ReferencedDisplayPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
 			m_Displays = new List<MenuDisplaysPresenterDisplay>();
 		}
 
@@ -41,7 +41,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 			try
 			{
-				foreach (IReferencedAdvancedDisplayPresenter presenter in m_PresenterFactory.BuildChildren(Displays))
+				foreach (IReferencedDisplayPresenter presenter in m_PresenterFactory.BuildChildren(Displays))
 				{
 					presenter.ShowView(true);
 					presenter.Refresh();
@@ -58,7 +58,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			}
 		}
 
-		private IEnumerable<IReferencedAdvancedDisplayView> ItemFactory(ushort count)
+		private IEnumerable<IReferencedDisplayView> ItemFactory(ushort count)
 		{
 			return GetView().GetChildComponentViews(ViewFactory, count);
 		}
@@ -106,13 +106,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		#region Child Callbacks
 
-		private void Subscribe(IReferencedAdvancedDisplayPresenter presenter)
+		private void Subscribe(IReferencedDisplayPresenter presenter)
 		{
 			presenter.OnDisplayPressed += PresenterOnDisplayPressed;
 			presenter.OnDisplaySpeakerPressed += PresenterOnDisplaySpeakerPressed;
 		}
 
-		private void Unsubscribe(IReferencedAdvancedDisplayPresenter presenter)
+		private void Unsubscribe(IReferencedDisplayPresenter presenter)
 		{
 			presenter.OnDisplayPressed -= PresenterOnDisplayPressed;
 			presenter.OnDisplaySpeakerPressed -= PresenterOnDisplaySpeakerPressed;
@@ -120,7 +120,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private void PresenterOnDisplayPressed(object sender, EventArgs e)
 		{
-			var presenter = sender as IReferencedAdvancedDisplayPresenter;
+			var presenter = sender as IReferencedDisplayPresenter;
 			if (presenter == null || presenter.Model == null)
 				return;
 
@@ -129,7 +129,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		
 		private void PresenterOnDisplaySpeakerPressed(object sender, EventArgs e)
 		{
-			var presenter = sender as IReferencedAdvancedDisplayPresenter;
+			var presenter = sender as IReferencedDisplayPresenter;
 			if (presenter == null || presenter.Model == null)
 				return;
 

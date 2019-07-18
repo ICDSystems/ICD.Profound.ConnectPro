@@ -154,7 +154,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			IVisibilityNode displaysVisibility = new SingleVisibilityNode();
 			displaysVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>());
 			displaysVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>());
-			displaysVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>());
+			displaysVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IMenu2DisplaysPresenter>());
 
 			m_RootVisibility.AddNode(displaysVisibility);
 
@@ -519,7 +519,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				m_SelectedSource = source;
 
 				m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().SelectedSource = m_SelectedSource;
-				m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().SetSelectedSource(m_SelectedSource);
+				m_NavigationController.LazyLoadPresenter<IMenu2DisplaysPresenter>().SetSelectedSource(m_SelectedSource);
 				m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>().SetSelectedSource(m_SelectedSource);
 				m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>().SetSelectedSource(m_SelectedSource);
 
@@ -688,7 +688,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			bool combineSimple = combineRoom != null && combineRoom.CombinedAdvancedMode == eCombineAdvancedMode.Simple;
 
 			m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>().ShowView(true);
-			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>().ShowView(dualDisplays);
+			m_NavigationController.LazyLoadPresenter<IMenu2DisplaysPresenter>().ShowView(dualDisplays);
 			m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>().ShowView(combineAdvanced);
 			m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>().ShowView(combineSimple);
 		}
@@ -715,7 +715,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 					? new Dictionary<IDestination, IcdHashSet<ISource>>()
 					: m_Room.Routing.State.GetFakeActiveVideoSources().ToDictionary();
 
-			m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>()
+			m_NavigationController.LazyLoadPresenter<IMenu2DisplaysPresenter>()
 								  .SetRouting(activeVideo, activeAudio);
 			m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>()
 								  .SetRouting(activeVideo, activeAudio);
@@ -737,7 +737,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private void SubscribePresenters()
 		{
 			Subscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>());
-			Subscribe(m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>());
+			Subscribe(m_NavigationController.LazyLoadPresenter<IMenu2DisplaysPresenter>());
 
 			Subscribe(m_NavigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>());
 			Subscribe(m_NavigationController.LazyLoadPresenter<IAtcIncomingCallPresenter>());
@@ -752,7 +752,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private void UnsubscribePresenters()
 		{
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>());
-			Unsubscribe(m_NavigationController.LazyLoadPresenter<IMenuDisplaysPresenter>());
+			Unsubscribe(m_NavigationController.LazyLoadPresenter<IMenu2DisplaysPresenter>());
 
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>());
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<IAtcIncomingCallPresenter>());
@@ -800,7 +800,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// Subscribe to the presenter events.
 		/// </summary>
 		/// <param name="presenter"></param>
-		private void Subscribe(IMenuDisplaysPresenter presenter)
+		private void Subscribe(IMenu2DisplaysPresenter presenter)
 		{
 			presenter.OnDestinationPressed += DisplaysPresenterOnDestinationPressed;
 		}
@@ -809,7 +809,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// Unsubscribe from the presenter events.
 		/// </summary>
 		/// <param name="presenter"></param>
-		private void Unsubscribe(IMenuDisplaysPresenter presenter)
+		private void Unsubscribe(IMenu2DisplaysPresenter presenter)
 		{
 			presenter.OnDestinationPressed -= DisplaysPresenterOnDestinationPressed;
 		}

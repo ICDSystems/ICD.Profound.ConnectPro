@@ -9,8 +9,8 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Displays
 {
-	[PresenterBinding(typeof(IReferencedAdvancedDisplayPresenter))]
-	public sealed class ReferencedAdvancedDisplayPresenter : AbstractUiComponentPresenter<IReferencedAdvancedDisplayView>, IReferencedAdvancedDisplayPresenter
+	[PresenterBinding(typeof(IReferencedDisplayPresenter))]
+	public sealed class ReferencedDisplayPresenter : AbstractUiComponentPresenter<IReferencedDisplayView>, IReferencedDisplayPresenter
 	{
 		public event EventHandler OnDisplayPressed;
 		public event EventHandler OnDisplaySpeakerPressed;
@@ -19,13 +19,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		public MenuDisplaysPresenterDisplay Model { get; set; }
 
-		public ReferencedAdvancedDisplayPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+		public ReferencedDisplayPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
 		}
 
-		protected override void Refresh(IReferencedAdvancedDisplayView view)
+		protected override void Refresh(IReferencedDisplayView view)
 		{
 			base.Refresh(view);
 
@@ -49,7 +49,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		#region View Callbacks
 
-		protected override void Subscribe(IReferencedAdvancedDisplayView view)
+		protected override void Subscribe(IReferencedDisplayView view)
 		{
 			base.Subscribe(view);
 
@@ -57,7 +57,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			view.OnDisplaySpeakerButtonPressed += ViewOnDisplaySpeakerButtonPressed;
 		}
 
-		protected override void Unsubscribe(IReferencedAdvancedDisplayView view)
+		protected override void Unsubscribe(IReferencedDisplayView view)
 		{
 			base.Subscribe(view);
 
