@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Added VTC Control mirroring
  - Added camera list to the camera control presenter
  - Added automatic generation of conference points for sources with conferencing controls that don't have conference points
+ - Added page on UI for 3+ displays in a room not in combine mode
  
 ### Changed
  - Significant overhaul of routing, better performance for systems with multiple panels
