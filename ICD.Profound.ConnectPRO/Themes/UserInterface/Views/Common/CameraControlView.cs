@@ -101,6 +101,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			m_CameraList.SetItemSelected(index, selected);
 		}
 
+		/// <summary>
+		/// Sets the selected state of a tab button.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="selected"></param>
+		public void SetTabSelected(ushort index, bool selected)
+		{
+			m_Tabs.SetItemSelected(index, selected);
+		}
+
 		#region Control Callbacks
 
 		/// <summary>
