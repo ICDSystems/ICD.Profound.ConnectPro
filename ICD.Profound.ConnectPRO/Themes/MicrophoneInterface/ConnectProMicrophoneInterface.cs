@@ -19,7 +19,7 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		private bool m_IsDisposed;
 
 		private readonly ConnectProTheme m_Theme;
-		private readonly IShureMxaDevice m_Microphone;
+		private readonly IShureMicDevice m_Microphone;
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private IConferenceManager m_SubscribedConferenceManager;
@@ -30,7 +30,7 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		[CanBeNull]
 		public override IRoom Room { get { return m_Room; } }
 
-		public IShureMxaDevice Microphone { get { return m_Microphone; } }
+		public IShureMicDevice Microphone { get { return m_Microphone; } }
 
 		public override object Target { get { return Microphone; } }
 
@@ -41,7 +41,7 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		/// </summary>
 		/// <param name="microphone"></param>
 		/// <param name="theme"></param>
-		public ConnectProMicrophoneInterface(IShureMxaDevice microphone, ConnectProTheme theme)
+		public ConnectProMicrophoneInterface(IShureMicDevice microphone, ConnectProTheme theme)
 		{
 			m_Microphone = microphone;
 			Subscribe(m_Microphone);
@@ -175,7 +175,7 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		private void UpdateMicrophoneLeds()
 		{
 			eLedBrightness brightness = eLedBrightness.Disabled;
-			eLedColor color = eLedColor.White;
+			eLedColor color = eLedColor.Yellow;
 
 			m_RefreshSection.Enter();
 
@@ -192,7 +192,7 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 									  : eLedColor.Green;
 				}
 
-				m_Microphone.SetLedColor(color, brightness);
+				m_Microphone.SetLedStatus(color, brightness);
 			}
 			finally
 			{
@@ -208,7 +208,7 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		/// Subscribe to the microphone events.
 		/// </summary>
 		/// <param name="microphone"></param>
-		private void Subscribe(IShureMxaDevice microphone)
+		private void Subscribe(IShureMicDevice microphone)
 		{
 			microphone.OnMuteButtonStatusChanged += MicrophoneOnMuteButtonStatusChanged;
 		}
@@ -217,7 +217,7 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		/// Unsubscribe from the microphone events.
 		/// </summary>
 		/// <param name="microphone"></param>
-		private void Unsubscribe(IShureMxaDevice microphone)
+		private void Unsubscribe(IShureMicDevice microphone)
 		{
 			microphone.OnMuteButtonStatusChanged -= MicrophoneOnMuteButtonStatusChanged;
 		}
