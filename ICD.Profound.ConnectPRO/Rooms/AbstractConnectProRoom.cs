@@ -207,6 +207,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			if (source == null)
 				return; // if we can't route a source, don't dial into conference users won't know they're in
 
+			FocusSource = source;
+
 			if (preferredDialer.Supports == eCallType.Video)
 				Routing.RouteVtc(source);
 			else if (preferredDialer.Supports == eCallType.Audio)
