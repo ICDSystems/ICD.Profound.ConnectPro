@@ -217,10 +217,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 			m_IncomingCallsSection.Enter();
 			try
 			{
-				if (!m_IncomingCalls.ContainsKey(call))
+				if (!m_IncomingCalls.Remove(call))
 					return;
 
-				m_IncomingCalls.Remove(call);
 				Unsubscribe(call);
 			}
 			finally
@@ -228,7 +227,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 				m_IncomingCallsSection.Leave();
 			}
 
-			RefreshIfVisible();
+			Refresh();
 			ShowView(IncomingCallCount > 0);
 		}
 

@@ -23,7 +23,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <summary>
 		/// Raised when the user answers the incoming call.
 		/// </summary>
-		public event EventHandler<GenericEventArgs<IConferenceDeviceControl>>  OnCallAnswered;
+		public event EventHandler<GenericEventArgs<IConferenceDeviceControl>> OnCallAnswered;
 
 		private readonly Dictionary<IIncomingCall, IConferenceDeviceControl> m_IncomingCalls;
 		private readonly SafeCriticalSection m_IncomingCallsSection;
@@ -217,10 +217,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_IncomingCallsSection.Enter();
 			try
 			{
-				if (!m_IncomingCalls.ContainsKey(call))
+				if (!m_IncomingCalls.Remove(call))
 					return;
 
-				m_IncomingCalls.Remove(call);
 				Unsubscribe(call);
 			}
 			finally
@@ -228,7 +227,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				m_IncomingCallsSection.Leave();
 			}
 
-			RefreshIfVisible();
+			Refresh();
 			ShowView(IncomingCallCount > 0);
 		}
 
