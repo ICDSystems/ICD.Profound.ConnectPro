@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [7.5.0] - 2019-07-26
+### Added
+ - Supporting Shure MXWAPT devices
+
 ## [7.4.0] - 2019-06-07
 ### Changed
  - UI and UI Factory abstractions and interfaces moved into Themes project
