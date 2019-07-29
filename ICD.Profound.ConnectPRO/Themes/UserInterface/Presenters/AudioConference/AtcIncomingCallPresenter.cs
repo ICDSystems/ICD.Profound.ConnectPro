@@ -115,7 +115,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		/// <returns></returns>
 		private IEnumerable<IConferenceDeviceControl> GetAudioDialers(IConnectProRoom room)
 		{
-			return room.ConferenceManager.GetDialingProviders(eCallType.Audio);
+			return room.ConferenceManager
+			           .GetDialingProviders(eCallType.Audio)
+			           .Except(room.ConferenceManager.GetDialingProviders(eCallType.Video));
 		}
 
 		#region Room Callbacks
