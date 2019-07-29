@@ -209,9 +209,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			FocusSource = source;
 
-			if (preferredDialer.Supports == eCallType.Video)
+			if (preferredDialer.Supports.HasFlag(eCallType.Video))
 				Routing.RouteVtc(source);
-			else if (preferredDialer.Supports == eCallType.Audio)
+			else if (preferredDialer.Supports.HasFlag(eCallType.Audio))
 				Routing.RouteAtc(source);
 			else
 				Routing.RouteAllDisplays(source);
