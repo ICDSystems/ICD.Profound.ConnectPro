@@ -23,7 +23,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 
 			m_Tabs = new VtProTabButton(8, panel as IPanelDevice, m_Subpage);
 
-			m_CameraList = new VtProDynamicButtonList(17, panel as IPanelDevice, m_Subpage);
+			m_CameraList = new VtProDynamicButtonList(17, panel as IPanelDevice, m_Subpage)
+			{
+				MaxSize = 10
+			};
 		}
 		
 		protected override IEnumerable<IVtProControl> GetChildren()

@@ -37,10 +37,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 
 			string[] labelsArray = labels.ToArray();
 
-			bool visible = labelsArray.Length > 1;
-
 			m_CameraList.SetItemLabels(labelsArray);
-			m_CameraList.Show(visible);
 		}
 
 		/// <summary>
@@ -65,6 +62,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			base.SubscribeControls();
 
 			m_Tabs.OnButtonPressed += TabsOnButtonPressed;
+			m_CameraList.OnButtonClicked += CameraListOnButtonClicked;
 		}
 
 		protected override void UnsubscribeControls()
@@ -72,11 +70,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			base.UnsubscribeControls();
 
 			m_Tabs.OnButtonPressed -= TabsOnButtonPressed;
+			m_CameraList.OnButtonClicked -= CameraListOnButtonClicked;
 		}
 
 		private void TabsOnButtonPressed(object sender, UShortEventArgs e)
 		{
 			OnTabButtonPressed.Raise(this, new UShortEventArgs(e.Data));
+		}
+
+		private void CameraListOnButtonClicked(object sender, UShortEventArgs e)
+		{
+			OnCameraButtonPressed(this, new UShortEventArgs(e.Data));
 		}
 
 		#endregion

@@ -5,15 +5,14 @@ using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
-using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Cameras;
 using ICD.Connect.Cameras.Controls;
 using ICD.Connect.Cameras.Devices;
-using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings.Originators;
 using ICD.Connect.UI.Attributes;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
@@ -26,6 +25,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 	public sealed class CameraControlPresenter : AbstractUiPresenter<ICameraControlView>, ICameraControlPresenter
 	{
 		private const long PRESET_STORED_VISIBILITY_MILLISECONDS = 1000;
+		private const ushort CONTROL_TAB_INDEX = 1;
 
 		private readonly SafeCriticalSection m_RefreshSection;
 
@@ -36,8 +36,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 		[CanBeNull]
 		private ICameraDevice m_SelectedCamera;
-
-		[CanBeNull] private IVideoConferenceRouteControl m_VtcDestinationControl;
 
 		[CanBeNull]
 		private IPresetControl m_SubscribedPresetControl;
@@ -96,20 +94,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			{
 				m_RefreshSection.Leave();
 			}
-		}
-
-		/// <summary>
-		/// Sets the VTC routing control to route camera video to.
-		/// </summary>
-		/// <param name="value"></param>
-		public void SetVtcDestinationControl(IVideoConferenceRouteControl value)
-		{
-			if (value == m_VtcDestinationControl)
-				return;
-
-			m_VtcDestinationControl = value;
-
-			RouteSelectedCamera();
 		}
 
 		/// <summary>
@@ -184,19 +168,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			Subscribe(m_SelectedCamera);
 
 			RefreshIfVisible();
-
-			RouteSelectedCamera();
-		}
-
-		private void RouteSelectedCamera()
-		{
-			if (Room == null || m_SelectedCamera == null)
-				return;
-
-			if (m_VtcDestinationControl == null)
-				Room.Logger.AddEntry(eSeverity.Error, "Unable to route selected camera - No VTC destination assigned");
-			else
-				Room.Routing.RouteVtcCamera(m_SelectedCamera, m_VtcDestinationControl);
 		}
 
 		private void ShowPresetStoredLabel(bool visible)
@@ -287,6 +258,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			view.OnPresetButtonReleased += ViewOnPresetButtonReleased;
 			view.OnPresetButtonHeld += ViewOnPresetButtonHeld;
 			view.OnCameraButtonPressed += ViewOnCameraButtonPressed;
+			view.OnTabButtonPressed += ViewOnTabButtonPressed;
 		}
 
 		/// <summary>
@@ -307,6 +279,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			view.OnPresetButtonReleased -= ViewOnPresetButtonReleased;
 			view.OnPresetButtonHeld -= ViewOnPresetButtonHeld;
 			view.OnCameraButtonPressed -= ViewOnCameraButtonPressed;
+			view.OnTabButtonPressed -= ViewOnTabButtonPressed;
 		}
 
 		private void ViewOnCameraPtzButtonReleased(object sender, EventArgs eventArgs)
@@ -392,6 +365,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		private void ViewOnTabButtonPressed(object sender, UShortEventArgs args)
+		{
+			if (args.Data != CONTROL_TAB_INDEX)
+				Navigation.NavigateTo<ICameraActivePresenter>();
 		}
 
 		/// <summary>

@@ -29,6 +29,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 	{
 		private readonly IWtcLeftMenuPresenter m_LeftMenuPresenter;
 		private readonly ICameraControlPresenter m_CameraControlPresenter;
+		private readonly ICameraActivePresenter m_CameraActivePresenter;
 		private readonly List<IWtcPresenter> m_WtcPresenters;
 		private readonly SafeTimer m_ConnectingTimer;
 
@@ -83,7 +84,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			m_LeftMenuPresenter = nav.LazyLoadPresenter<IWtcLeftMenuPresenter>();
 
 			m_CameraControlPresenter = nav.LazyLoadPresenter<ICameraControlPresenter>();
-			m_CameraControlPresenter.OnViewVisibilityChanged += CameraControlPresenterOnViewVisibilityChanged;
+			m_CameraControlPresenter.OnViewVisibilityChanged += CameraPresenterOnViewVisibilityChanged;
+
+			m_CameraActivePresenter = nav.LazyLoadPresenter<ICameraActivePresenter>();
+			m_CameraActivePresenter.OnViewVisibilityChanged += CameraPresenterOnViewVisibilityChanged;
 
 			m_WtcPresenters = nav.LazyLoadPresenters<IWtcPresenter>().ToList();
 
@@ -160,7 +164,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			foreach (IWtcPresenter presenter in m_WtcPresenters)
 				presenter.ActiveConferenceControl = value;
 
-			m_CameraControlPresenter.SetVtcDestinationControl(value == null
+			m_CameraActivePresenter.SetVtcDestinationControl(value == null
 				                                                  ? null
 				                                                  : value.Parent.Controls.GetControl<IVideoConferenceRouteControl>());
 		}
@@ -347,9 +351,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		#region Subpage Callbacks
 		
-		private void CameraControlPresenterOnViewVisibilityChanged(object sender, BoolEventArgs e)
+		private void CameraPresenterOnViewVisibilityChanged(object sender, BoolEventArgs e)
 		{
-			if (!e.Data && IsViewVisible)
+			if (!m_CameraActivePresenter.IsViewVisible && !m_CameraControlPresenter.IsViewVisible && IsViewVisible)
 				m_LeftMenuPresenter.ShowView(true);
 		}
 
