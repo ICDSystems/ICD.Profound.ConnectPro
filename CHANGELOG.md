@@ -41,6 +41,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Refresh ATC view when conference state changes
  - VTC view is updated when there is an active conference
  - Changed the time in CUE header to localized string
+ - Route Summary Menu now sorts by room then by destination
+ - The source selection timeout timer is now reset upon routing a source to a destination
 
 ## [8.1.1] - 2019-05-07
 ### Changed
