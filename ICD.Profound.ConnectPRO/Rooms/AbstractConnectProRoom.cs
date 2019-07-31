@@ -238,6 +238,15 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		}
 
 		/// <summary>
+		/// Ends the meeting state. If it is currently sleep time fully powers down the room.
+		/// </summary>
+		public void EndMeeting()
+		{
+			bool shutdown = WakeSchedule.IsSleepTime;
+			EndMeeting(shutdown);
+		}
+
+		/// <summary>
 		/// Ends the meeting state. If shutdown is true fully powers down the room.
 		/// </summary>
 		/// <param name="shutdown"></param>
