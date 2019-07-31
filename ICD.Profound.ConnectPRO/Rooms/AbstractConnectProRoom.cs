@@ -6,6 +6,7 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services.Logging;
+using ICD.Common.Utils.Timers;
 using ICD.Connect.API.Commands;
 using ICD.Connect.API.Nodes;
 using ICD.Connect.Audio.Controls.Mute;
@@ -46,6 +47,12 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// Raised when the source that is currently the primary focus of the room (i.e. VTC) changes.
 		/// </summary>
 		public event EventHandler<SourceEventArgs> OnFocusSourceChanged;
+
+		/// <summary>
+		/// Automatically end the meeting after this many milliseconds without any sources being routed
+		/// </summary>
+		private const int MEETING_TIMEOUT = 1000 * 60 * 10;
+		private readonly SafeTimer m_MeetingTimeoutTimer;
 
 		private readonly ConnectProRouting m_Routing;
 
@@ -126,6 +133,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 				m_FocusSource = value;
 
+				UpdateMeetingTimeoutTimer();
+
 				OnFocusSourceChanged.Raise(this, new SourceEventArgs(m_FocusSource));
 			}
 		}
@@ -139,6 +148,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		{
 			m_Routing = new ConnectProRouting(this);
 			m_SubscribedPresentationControls = new List<IPresentationControl>();
+			m_MeetingTimeoutTimer = SafeTimer.Stopped(MeetingTimeout);
+
+			Subscribe(m_Routing);
 		}
 
 		/// <summary>
@@ -150,6 +162,10 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			OnFocusSourceChanged = null;
 
 			base.DisposeFinal(disposing);
+
+			m_MeetingTimeoutTimer.Dispose();
+
+			Unsubscribe(m_Routing);
 		}
 
 		#region Methods
@@ -336,7 +352,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		{
 			base.OriginatorsOnChildrenChanged(sender, args);
 
-			ConferenceManager = GetConferenceManager();
+			IConferenceManager conferenceManager = GetConferenceManager();
+			SetConferenceManager(conferenceManager);
 
 			foreach (var presentationControl in m_SubscribedPresentationControls)
 				Unsubscribe(presentationControl);
@@ -392,6 +409,99 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		[NotNull]
 		protected abstract IConferenceManager GetConferenceManager();
 
+		/// <summary>
+		/// Stops/resets the delayed sleep timer based on the current meeting state.
+		/// </summary>
+		private void UpdateMeetingTimeoutTimer()
+		{
+			if (IsInActiveMeeting())
+				m_MeetingTimeoutTimer.Stop();
+			else
+				m_MeetingTimeoutTimer.Reset(MEETING_TIMEOUT);
+		}
+
+		/// <summary>
+		/// Returns true if a source is actively routed to a display or we are in a conference.
+		/// </summary>
+		/// <returns></returns>
+		private bool IsInActiveMeeting()
+		{
+			//If there is an active focus source return true.
+			if (FocusSource != null)
+				return true;
+
+			//If there is an active conference return true.
+			if (ConferenceManager != null && ConferenceManager.IsInCall != eInCall.None)
+				return true;
+
+			//Returns True if there is any real active video sources, otherwise returns false.
+			return Routing.State.GetRealActiveVideoSources().Any(kvp => kvp.Value.Count > 0);
+		}
+
+		private void MeetingTimeout()
+		{
+			if (CombineState)
+				return;
+
+			Log(eSeverity.Informational, "Meeting timeout occurring at {0}", IcdEnvironment.GetLocalTime().ToShortTimeString());
+
+			EndMeeting();
+		}
+
+		#endregion
+
+		#region Routing Callbacks
+
+		private void Subscribe(ConnectProRouting routing)
+		{
+			routing.State.OnSourceRoutedChanged += StateOnSourceRoutedChanged;
+		}
+
+		private void Unsubscribe(ConnectProRouting routing)
+		{
+			routing.State.OnSourceRoutedChanged -= StateOnSourceRoutedChanged;
+		}
+
+		private void StateOnSourceRoutedChanged(object sender, EventArgs e)
+		{
+			UpdateMeetingTimeoutTimer();
+		}
+
+		#endregion
+
+		#region Conference Manager Callbacks 
+
+		private void SetConferenceManager(IConferenceManager conferenceManager)
+		{
+			if (conferenceManager == ConferenceManager)
+				return;
+
+			Unsubscribe(ConferenceManager);
+			ConferenceManager = conferenceManager;
+			Subscribe(ConferenceManager);
+		}
+
+		private void Subscribe(IConferenceManager conferenceManager)
+		{
+			if (conferenceManager == null)
+				return;
+
+			conferenceManager.OnInCallChanged += ConferenceManagerOnInCallChanged;
+		}
+
+		private void Unsubscribe(IConferenceManager conferenceManager)
+		{
+			if (conferenceManager == null)
+				return;
+
+			conferenceManager.OnInCallChanged -= ConferenceManagerOnInCallChanged;
+		}
+
+		private void ConferenceManagerOnInCallChanged(object sender, InCallEventArgs eventArgs)
+		{
+			UpdateMeetingTimeoutTimer();
+		}
+
 		#endregion
 
 		#region WakeSchedule Callbacks
@@ -419,6 +529,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			if (CombineState)
 				return;
 
+			if (IsInActiveMeeting())
+				return;
+
 			Log(eSeverity.Informational, "Scheduled sleep occurring at {0}", IcdEnvironment.GetLocalTime().ToShortTimeString());
 			Sleep();
 		}
@@ -426,6 +539,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		private void ScheduleOnWakeActionRequested(object sender, EventArgs eventArgs)
 		{
 			if (CombineState)
+				return;
+
+			if (IsInActiveMeeting())
 				return;
 
 			Log(eSeverity.Informational, "Scheduled wake occurring at {0}", IcdEnvironment.GetLocalTime().ToShortTimeString());
