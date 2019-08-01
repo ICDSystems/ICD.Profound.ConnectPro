@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
@@ -78,16 +78,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			base.SetRoom(room);
 
-			m_RefreshSection.Enter();
-
-			try
-			{
-				CacheCameraList();
-			}
-			finally
-			{
-				m_RefreshSection.Leave();
-			}
+			CacheCameraList();
+            RefreshIfVisible();
 		}
 
 		/// <summary>
@@ -109,6 +101,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			RouteSelectedCamera();
 
 			CacheCameraList();
+            RefreshIfVisible();
 		}
 
 		private void CacheCameraList()
@@ -122,6 +115,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 				m_ZoomCameras.Clear();
 				m_ZoomCameras.AddRange(cameras);
+				m_SelectedZoomCamera = cameraComponent == null ? null : cameraComponent.ActiveCamera;
 			}
 			else 
 			{
@@ -291,7 +285,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			base.ViewOnVisibilityChanged(sender, args);
 			
-			if (args.Data && m_SelectedCamera == null)
+            if (!args.Data)
+                return;
+
+            if (ZoomMode && m_SelectedZoomCamera == null)
+            {
+                CameraInfo defaultCamera = m_ZoomCameras.FirstOrDefault();
+                if (defaultCamera != null)
+                    SetSelectedCamera(defaultCamera);
+            }
+			else if (!ZoomMode && m_SelectedCamera == null)
 			{
 				ICameraDevice defaultCamera = m_Cameras.FirstOrDefault();
 				if (defaultCamera != null)
@@ -309,19 +312,30 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				return;
 
 			cameraComponent.OnCamerasUpdated += CameraComponentOnCamerasUpdated;
+			cameraComponent.OnActiveCameraUpdated += CameraComponentOnActiveCameraUpdated;
 		}
 
 		private void Unsubscribe(CameraComponent cameraComponent)
 		{
 			if (cameraComponent == null)
 				return;
-
+			
 			cameraComponent.OnCamerasUpdated -= CameraComponentOnCamerasUpdated;
+			cameraComponent.OnActiveCameraUpdated -= CameraComponentOnActiveCameraUpdated;
 		}
 
 		private void CameraComponentOnCamerasUpdated(object sender, System.EventArgs e)
 		{
 			CacheCameraList();
+			RefreshIfVisible();
+		}
+
+		private void CameraComponentOnActiveCameraUpdated(object sender, System.EventArgs e)
+		{
+			if (m_SubscribedCameraComponent == null)
+				return;
+
+			m_SelectedZoomCamera = m_SubscribedCameraComponent.ActiveCamera;
 			RefreshIfVisible();
 		}
 
