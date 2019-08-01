@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
@@ -44,7 +44,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <summary>
 		/// Gets the number of cameras.
 		/// </summary>
-		public int CameraCount { get { return m_RefreshSection.Execute(() => m_Cameras.Count); } }
+		public int CameraCount { get { return m_RefreshSection.Execute(() => ZoomMode ? m_ZoomCameras.Count : m_Cameras.Count); } }
 
 		public bool ZoomMode { get { return m_VtcDestinationControl != null && m_VtcDestinationControl.Parent is ZoomRoom; } }
 

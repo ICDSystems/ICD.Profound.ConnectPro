@@ -330,6 +330,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				return;
 			}
 
+            // If the camera subpage is open close that instead
+			if (m_CameraActivePresenter.IsViewVisible && IsViewVisible)
+			{
+				m_CameraActivePresenter.ShowView(false);
+				m_ButtonListPresenter.ShowView(true);
+				return;
+			}
+
 			// If the keyboard subpage is open close that instead
 			if (m_KeyboardPresenter != null && m_KeyboardPresenter.IsViewVisible)
 			{

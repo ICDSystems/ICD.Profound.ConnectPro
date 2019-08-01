@@ -295,6 +295,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				return;
 			}
 
+            // If the camera subpage is open close that instead
+			if (m_CameraActivePresenter.IsViewVisible && IsViewVisible)
+			{
+				m_CameraActivePresenter.ShowView(false);
+				m_LeftMenuPresenter.ShowView(true);
+				return;
+			}
+
 			// If the keyboard subpage is open close that instead
 			IWtcKeyboardPresenter keyboardPresenter = Navigation.LazyLoadPresenter<IWtcKeyboardPresenter>();
 			if (keyboardPresenter.IsViewVisible)
