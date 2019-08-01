@@ -733,16 +733,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 					? new Dictionary<IDestination, IcdHashSet<ISource>>()
 					: m_Room.Routing.State.GetFakeActiveVideoSources().ToDictionary();
 
-			m_NavigationController.LazyLoadPresenter<IMenu2DisplaysPresenter>()
-								  .SetRouting(activeVideo, activeAudio);
-			m_NavigationController.LazyLoadPresenter<IMenu3PlusDisplaysPresenter>()
-								  .SetRouting(activeVideo, activeAudio);
-			m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>()
-								  .SetRouting(activeVideo, activeAudio);
-			m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>()
-								  .SetRouting(activeVideo, activeAudio);
-			m_NavigationController.LazyLoadPresenter<IMenuRouteSummaryPresenter>()
-								  .SetRouting(activeVideo);
+			ConnectProCombineRoom combineRoom = m_Room as ConnectProCombineRoom;
+
+			if (combineRoom == null)
+			{
+				m_NavigationController.LazyLoadPresenter<IMenu2DisplaysPresenter>()
+				                      .SetRouting(activeVideo, activeAudio);
+				m_NavigationController.LazyLoadPresenter<IMenu3PlusDisplaysPresenter>()
+				                      .SetRouting(activeVideo, activeAudio);
+			}
+			else
+			{
+				m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>()
+				                      .SetRouting(activeVideo, activeAudio);
+				m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>()
+				                      .SetRouting(activeVideo, activeAudio);
+				m_NavigationController.LazyLoadPresenter<IMenuRouteSummaryPresenter>()
+				                      .SetRouting(activeVideo);
+			}
 
 			// If the active source is routed to all destinations we clear the active source
 			if (m_SelectedSource != null && activeVideo.All(kvp => kvp.Value.Contains(m_SelectedSource)))
