@@ -144,28 +144,60 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			}
 		}
 
+		/// <summary>
+		/// Returns true if the system should be awake at the current time.
+		/// </summary>
+		public bool IsWakeTime
+		{
+			get
+			{
+				DateTime now = IcdEnvironment.GetLocalTime();
+				DateTime? wakeTime = GetWakeTimeForDay(now.Date);
+				DateTime? sleepTime = GetSleepTimeForDay(now.Date);
+
+				if (sleepTime == null || wakeTime == null)
+					return wakeTime != null && now >= wakeTime;
+
+				DateTime? time = now.PreviousLatestTime(true, sleepTime.Value, wakeTime.Value);
+				if (time == null)
+					return false;
+
+				return time == wakeTime.Value;
+			}
+		}
+
+		/// <summary>
+		/// Returns true if the system should be asleep at the current time.
+		/// </summary>
+		public bool IsSleepTime
+		{
+			get
+			{
+				DateTime now = IcdEnvironment.GetLocalTime();
+				DateTime? wakeTime = GetWakeTimeForDay(now.Date);
+				DateTime? sleepTime = GetSleepTimeForDay(now.Date);
+
+				if (sleepTime == null || wakeTime == null)
+					return sleepTime != null && now >= sleepTime;
+
+				DateTime? time = now.PreviousLatestTime(true, sleepTime.Value, wakeTime.Value);
+				if (time == null)
+					return false;
+
+				return time == sleepTime.Value;
+			}
+		}
+
 		#endregion
 
 		#region Methods
 
 		public override void RunFinal()
 		{
-			var now = IcdEnvironment.GetLocalTime();
-			var wakeTime = GetWakeTimeForDay(now.Date);
-			var sleepTime = GetSleepTimeForDay(now.Date);
-
-			if (sleepTime != null && wakeTime != null)
-			{
-				var time = now.PreviousLatestTime(true, sleepTime.Value, wakeTime.Value);
-				if (time != null && time == sleepTime.Value)
-					Sleep();
-				else if (time != null && time == wakeTime.Value)
-					Wake();
-			}
-			else if (wakeTime != null && now >= wakeTime)
-				Wake();
-			else if (sleepTime != null && now >= sleepTime)
+			if (IsSleepTime)
 				Sleep();
+			else if (IsWakeTime)
+				Wake();
 		}
 
 		public override DateTime? GetNextRunTime()

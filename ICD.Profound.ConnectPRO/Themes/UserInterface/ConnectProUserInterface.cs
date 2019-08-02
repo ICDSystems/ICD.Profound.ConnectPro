@@ -360,6 +360,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			else if (dialer != null && dialer.Supports.HasFlag(eCallType.Audio))
 			{
 				// Show the context menu before routing for UX
+				ConnectProRoom.FocusSource = source;
 				ShowSourceContextualMenu(source);
 				m_Room.Routing.RouteAtc(source);
 			}
@@ -399,6 +400,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			else if (dialer != null && dialer.Supports.HasFlag(eCallType.Audio))
 			{
 				// Show the context menu before routing for UX
+				ConnectProRoom.FocusSource = source;
 				ShowSourceContextualMenu(source);
 				m_Room.Routing.RouteAtc(source);
 			}
