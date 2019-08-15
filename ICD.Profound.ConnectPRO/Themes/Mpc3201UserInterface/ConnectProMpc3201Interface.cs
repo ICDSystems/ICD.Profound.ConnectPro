@@ -699,8 +699,8 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// Called when the mute state changes.
 		/// </summary>
 		/// <param name="sender"></param>
-		/// <param name="boolEventArgs"></param>
-		private void VolumeMuteControlOnMuteStateChanged(object sender, BoolEventArgs boolEventArgs)
+		/// <param name="eventArgs"></param>
+		private void VolumeMuteControlOnMuteStateChanged(object sender, MuteDeviceMuteStateChangedApiEventArgs eventArgs)
 		{
 			Refresh();
 		}

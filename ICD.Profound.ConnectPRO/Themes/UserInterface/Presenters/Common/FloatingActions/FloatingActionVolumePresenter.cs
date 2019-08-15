@@ -2,6 +2,7 @@
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Audio.Controls.Mute;
 using ICD.Connect.Audio.Controls.Volume;
+using ICD.Connect.Audio.EventArguments;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
@@ -189,7 +190,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 				room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
 		}
 
-		private void SubscribedPowerControlOnIsPoweredChanged(object sender, PowerDeviceControlPowerStateApiEventArgs powerDeviceControlPowerStateApiEventArgs)
+		private void SubscribedPowerControlOnIsPoweredChanged(object sender, PowerDeviceControlPowerStateApiEventArgs eventArgs)
 		{
 			RefreshIfVisible();
 		}
@@ -204,7 +205,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			ShowView(eventArgs.Data && m_SubscribedVolumeControl != null);
 		}
 
-		private void SubscribedMuteFeedbackControlOnMuteStateChanged(object sender, BoolEventArgs boolEventArgs)
+		private void SubscribedMuteFeedbackControlOnMuteStateChanged(object sender, MuteDeviceMuteStateChangedApiEventArgs eventArgs)
 		{
 			RefreshIfVisible();
 		}

@@ -4,6 +4,7 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Audio.Controls.Mute;
 using ICD.Connect.Audio.Controls.Volume;
+using ICD.Connect.Audio.EventArguments;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
@@ -363,7 +364,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		private void DeviceOnMuteStateChanged(object sender, BoolEventArgs args)
+		private void DeviceOnMuteStateChanged(object sender, MuteDeviceMuteStateChangedApiEventArgs args)
 		{
 			RefreshIfVisible();
 		}
