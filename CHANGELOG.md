@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [9.0.0] - 2019-08-15
 ### Added
  - Added CUE Conference page to show instead of routing the Zoom Room until the device is in a meeting
  - DateTimes on the UI and CUE are formatted using the current culture info
