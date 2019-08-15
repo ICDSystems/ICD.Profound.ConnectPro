@@ -165,6 +165,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IMenuRouteSummaryPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IReferencedDisplayPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IReferencedRouteListItemPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\ICameraActivePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\ICameraControlPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmLeaveCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmEndMeetingPresenter.cs" />
@@ -245,6 +246,7 @@
     <Compile Include="Themes\UserInterface\IViews\Common\Displays\IMenuRouteSummaryView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Displays\IReferencedDisplayView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Displays\IReferencedRouteListItemView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\ICameraActiveView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\ICameraControlView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmLeaveCallView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmEndMeetingView.cs" />
@@ -317,6 +319,7 @@
     <Compile Include="Themes\UserInterface\Presenters\AbstractUiPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AudioConference\AtcBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AudioConference\AtcIncomingCallPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\CameraActivePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\CameraControlPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmEndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmLeaveCallPresenter.cs" />
@@ -414,6 +417,8 @@
     <Compile Include="Themes\UserInterface\Views\AudioConference\AtcBaseView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\AudioConference\AtcIncomingCallView.cs" />
     <Compile Include="Themes\UserInterface\Views\AudioConference\AtcIncomingCallView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\CameraActiveView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\CameraActiveView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\CameraControlView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\CameraControlView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmEndMeetingView.cs" />
