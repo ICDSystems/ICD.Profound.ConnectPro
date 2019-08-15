@@ -41,7 +41,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 130
+				DigitalVisibilityJoin = 137
 			};
 
 			m_DPad = new VtProDPad(620, panel as IPanelDevice, m_Subpage);
