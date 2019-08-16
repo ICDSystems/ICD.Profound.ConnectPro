@@ -146,6 +146,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 					view.SetPresetButtonLabel(index, name);
 				}
+
+				var activePresenter = Navigation.LazyLoadPresenter<ICameraActivePresenter>();
+				view.SetTabVisibility(activePresenter.CameraCount > 1);
 			}
 			finally
 			{

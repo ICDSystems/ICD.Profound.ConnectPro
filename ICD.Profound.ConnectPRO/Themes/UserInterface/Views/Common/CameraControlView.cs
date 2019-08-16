@@ -109,6 +109,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			m_Tabs.SetItemSelected(index, selected);
 		}
 
+		/// <summary>
+		/// Sets the visibility of the tab button
+		/// </summary>
+		/// <param name="visible"></param>
+		public void SetTabVisibility(bool visible)
+		{
+			m_Tabs.Show(visible);
+		}
+
 		#region Control Callbacks
 
 		/// <summary>

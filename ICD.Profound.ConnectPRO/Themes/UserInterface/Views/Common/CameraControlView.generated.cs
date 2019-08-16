@@ -110,7 +110,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 				MaxSize = 10
 			};
 
-			m_Tabs = new VtProTabButton(9, panel as IPanelDevice, m_Subpage);
+			m_Tabs = new VtProTabButton(9, panel as IPanelDevice, m_Subpage)
+			{
+				DigitalVisibilityJoin = 638
+			};
 		}
 
 		/// <summary>

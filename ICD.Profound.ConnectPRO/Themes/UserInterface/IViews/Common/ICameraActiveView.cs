@@ -39,5 +39,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 		/// <param name="index"></param>
 		/// <param name="selected"></param>
 		void SetTabSelected(ushort index, bool selected);
+
+		/// <summary>
+		/// Sets the visibility of the tab button
+		/// </summary>
+		/// <param name="visible"></param>
+		void SetTabVisibility(bool visible);
 	}
 }

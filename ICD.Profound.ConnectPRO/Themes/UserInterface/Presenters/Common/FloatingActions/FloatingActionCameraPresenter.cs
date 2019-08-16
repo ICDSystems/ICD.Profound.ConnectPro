@@ -73,7 +73,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
             }
             else if (m_CameraControl.CameraCount > 0)
                 m_CameraControl.ShowView(true);
-            else if (m_CameraActive.CameraCount > 0)
+            else if (m_CameraActive.CameraCount > 1)
                 m_CameraActive.ShowView(true);
 		}
 
@@ -178,7 +178,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 
 		private void SubscribedConferenceManagerOnInCallChanged(object sender, InCallEventArgs callEventArgs)
 		{
-			ShowView(callEventArgs.Data == eInCall.Video && (m_CameraControl.CameraCount > 0 || m_CameraActive.CameraCount > 0));
+			ShowView(callEventArgs.Data == eInCall.Video && (m_CameraControl.CameraCount > 0 || m_CameraActive.CameraCount > 1));
 		}
 
 		#endregion

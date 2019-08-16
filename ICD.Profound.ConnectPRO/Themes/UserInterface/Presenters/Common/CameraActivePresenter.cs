@@ -152,6 +152,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				else
 					for (ushort index = 0; index < m_Cameras.Count; index++)
 						view.SetCameraSelected(index, m_SelectedCamera == m_Cameras[index]);
+
+				var controlPresenter = Navigation.LazyLoadPresenter<ICameraControlPresenter>();
+				view.SetTabVisibility(controlPresenter.CameraCount > 0);
 			}
 			finally
 			{
