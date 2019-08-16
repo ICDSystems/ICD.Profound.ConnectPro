@@ -107,6 +107,9 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 			// these presenters are initially visible
 			m_NavigationController.NavigateTo<IOsdHelloPresenter>();
 			m_NavigationController.NavigateTo<IOsdHeaderPresenter>();
+
+			// always visible
+			m_NavigationController.LazyLoadPresenter<IOsdBackgroundPresenter>();
 			
 			UpdateVisibility();
 		}
