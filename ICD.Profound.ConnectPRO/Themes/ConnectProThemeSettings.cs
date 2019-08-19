@@ -11,6 +11,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 		private const string LOGO_ELEMENT = "Logo";
 		private const string TVPRESETS_ELEMENT = "TvPresets";
 		private const string WEB_CONFERENCING_INSTRUCTIONS_ELEMENT = "WebConferencing";
+		private const string CUE_BACKGROUND_ELEMENT = "CueBackground";
 
 		public string Logo { get; set; }
 
@@ -19,6 +20,8 @@ namespace ICD.Profound.ConnectPRO.Themes
 
 		[PathSettingsProperty("WebConferencing", ".xml")]
 		public string WebConferencingInstructions { get; set; }
+
+		public eCueBackgroundMode CueBackground { get; set; }
 
 		/// <summary>
 		/// Constructor.
@@ -39,6 +42,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 			writer.WriteElementString(LOGO_ELEMENT, Logo);
 			writer.WriteElementString(TVPRESETS_ELEMENT, TvPresets);
 			writer.WriteElementString(WEB_CONFERENCING_INSTRUCTIONS_ELEMENT, WebConferencingInstructions);
+			writer.WriteElementString(CUE_BACKGROUND_ELEMENT, IcdXmlConvert.ToString(CueBackground));
 		}
 
 		/// <summary>
@@ -52,6 +56,22 @@ namespace ICD.Profound.ConnectPRO.Themes
 			Logo = XmlUtils.TryReadChildElementContentAsString(xml, LOGO_ELEMENT) ?? ConnectProTheme.LOGO_DEFAULT;
 			TvPresets = XmlUtils.TryReadChildElementContentAsString(xml, TVPRESETS_ELEMENT);
 			WebConferencingInstructions = XmlUtils.TryReadChildElementContentAsString(xml, WEB_CONFERENCING_INSTRUCTIONS_ELEMENT);
+			CueBackground = XmlUtils.TryReadChildElementContentAsEnum<eCueBackgroundMode>(xml, CUE_BACKGROUND_ELEMENT, true) ?? eCueBackgroundMode.Neutral;
 		}
+	}
+
+	/// <summary>
+	/// Describes which mode the CUE background should use.
+	/// </summary>
+	public enum eCueBackgroundMode : ushort
+	{
+		/// <summary>
+		/// Default mode, neutral/business-friendly CUE background, never changes
+		/// </summary>
+		Neutral = 0,
+		/// <summary>
+		/// New background each month, themed for month (US themes)
+		/// </summary>
+		Monthly = 1,
 	}
 }
