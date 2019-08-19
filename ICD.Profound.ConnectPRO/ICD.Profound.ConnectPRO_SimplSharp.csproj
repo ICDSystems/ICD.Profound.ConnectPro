@@ -102,6 +102,7 @@
     <Compile Include="Themes\OsdInterface\ConnectProOsdInterface.cs" />
     <Compile Include="Themes\OsdInterface\ConnectProOsdInterfaceFactory.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\Conference\IOsdConferencePresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\IOsdBackgroundPresenter.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\IOsdHelloPresenter.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\IOsdHeaderPresenter.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\IOsdNavigationController.cs" />
@@ -113,6 +114,7 @@
     <Compile Include="Themes\OsdInterface\IPresenters\Welcome\IOsdWelcomePresenter.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\Welcome\IReferencedSchedulePresenter.cs" />
     <Compile Include="Themes\OsdInterface\IViews\Conference\IOsdConferenceView.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\IOsdBackgroundView.cs" />
     <Compile Include="Themes\OsdInterface\IViews\IOsdHelloView.cs" />
     <Compile Include="Themes\OsdInterface\IViews\IOsdHeaderView.cs" />
     <Compile Include="Themes\OsdInterface\IViews\IOsdView.cs" />
@@ -127,6 +129,7 @@
     <Compile Include="Themes\OsdInterface\Presenters\AbstractOsdPresenter.cs" />
     <Compile Include="Themes\OsdInterface\Presenters\Conference\OsdConferencePresenter.cs" />
     <Compile Include="Themes\OsdInterface\Presenters\ConnectProOsdNavigationController.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\OsdBackgroundPresenter.cs" />
     <Compile Include="Themes\OsdInterface\Presenters\OsdHelloPresenter.cs" />
     <Compile Include="Themes\OsdInterface\Presenters\OsdHeaderPresenter.cs" />
     <Compile Include="Themes\OsdInterface\Presenters\Popups\OsdIncomingCallPresenter.cs" />
@@ -140,6 +143,8 @@
     <Compile Include="Themes\OsdInterface\Views\Conference\OsdConferenceView.cs" />
     <Compile Include="Themes\OsdInterface\Views\Conference\OsdConferenceView.generated.cs" />
     <Compile Include="Themes\OsdInterface\Views\ConnectProOsdViewFactory.cs" />
+    <Compile Include="Themes\OsdInterface\Views\OsdBackgroundView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\OsdBackgroundView.generated.cs" />
     <Compile Include="Themes\OsdInterface\Views\OsdHelloView.cs" />
     <Compile Include="Themes\OsdInterface\Views\OsdHelloView.generated.cs" />
     <Compile Include="Themes\OsdInterface\Views\OsdHeaderView.cs" />
