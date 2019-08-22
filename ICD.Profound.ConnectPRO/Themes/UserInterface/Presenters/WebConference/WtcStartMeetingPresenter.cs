@@ -22,6 +22,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly StringBuilder m_Builder;
 
+		private bool IsInConference
+		{
+			get { return ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConference() != null; }
+		}
+
 		public WtcStartMeetingPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
 			m_Builder = new StringBuilder();
@@ -45,11 +50,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			{
 				m_RefreshSection.Leave();
 			}
-		}
-
-		private bool IsInConference
-		{
-			get { return ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConference() != null; }
 		}
 
 		#region Control Callbacks

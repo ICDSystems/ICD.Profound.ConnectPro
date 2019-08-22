@@ -244,15 +244,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private void Subscribe(IWtcReferencedContactPresenter presenter)
 		{
-			presenter.OnPressed += PresenterOnOnPressed;
+			presenter.OnPressed += PresenterOnPressed;
 		}
 
 		private void Unsubscribe(IWtcReferencedContactPresenter presenter)
 		{
-			presenter.OnPressed -= PresenterOnOnPressed;
+			presenter.OnPressed -= PresenterOnPressed;
 		}
 
-		private void PresenterOnOnPressed(object sender, EventArgs eventArgs)
+		private void PresenterOnPressed(object sender, EventArgs eventArgs)
 		{
 			var presenter = sender as IWtcReferencedContactPresenter;
 			if (presenter == null)
