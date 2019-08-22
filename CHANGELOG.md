@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+ - Only updating relevant displays presenters halves routing feedback time
+
 ## [9.0.0] - 2019-08-15
 ### Added
  - Added CUE Conference page to show instead of routing the Zoom Room until the device is in a meeting

@@ -685,6 +685,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		{
 			SetSelectedSource(null);
 			UpdateMeetingPresentersVisibility();
+
+			UpdateRouting();
 		}
 
 		/// <summary>
@@ -738,25 +740,54 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			ConnectProCombineRoom combineRoom = m_Room as ConnectProCombineRoom;
 
 			if (combineRoom == null)
-			{
-				m_NavigationController.LazyLoadPresenter<IMenu2DisplaysPresenter>()
-				                      .SetRouting(activeVideo, activeAudio);
-				m_NavigationController.LazyLoadPresenter<IMenu3PlusDisplaysPresenter>()
-				                      .SetRouting(activeVideo, activeAudio);
-			}
+				UpdateDisplaysRouting(activeVideo, activeAudio);
 			else
-			{
-				m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>()
-				                      .SetRouting(activeVideo, activeAudio);
-				m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>()
-				                      .SetRouting(activeVideo, activeAudio);
-				m_NavigationController.LazyLoadPresenter<IMenuRouteSummaryPresenter>()
-				                      .SetRouting(activeVideo);
-			}
+				UpdateCombinedDisplaysRouting(activeVideo, activeAudio);
 
 			// If the active source is routed to all destinations we clear the active source
 			if (m_SelectedSource != null && activeVideo.All(kvp => kvp.Value.Contains(m_SelectedSource)))
 				SetSelectedSource(null);
+		}
+
+		private void UpdateDisplaysRouting(IDictionary<IDestination, IcdHashSet<ISource>> activeVideo,
+		                                   IcdHashSet<ISource> activeAudio)
+		{
+			int displayCount = m_Room == null ? 0 : m_Room.Routing.Destinations.DisplayDestinationsCount;
+			if (displayCount <= 1)
+				return;
+
+			if (displayCount >= 3)
+				m_NavigationController.LazyLoadPresenter<IMenu3PlusDisplaysPresenter>()
+				                      .SetRouting(activeVideo, activeAudio);
+			else
+				m_NavigationController.LazyLoadPresenter<IMenu2DisplaysPresenter>()
+				                      .SetRouting(activeVideo, activeAudio);
+		}
+
+		private void UpdateCombinedDisplaysRouting(IDictionary<IDestination, IcdHashSet<ISource>> activeVideo,
+		                                           IcdHashSet<ISource> activeAudio)
+		{
+			ConnectProCombineRoom combineRoom = m_Room as ConnectProCombineRoom;
+			if (combineRoom == null)
+				return;
+
+			switch (combineRoom.CombinedAdvancedMode)
+			{
+				case eCombineAdvancedMode.Simple:
+					m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>()
+					                      .SetRouting(activeVideo, activeAudio);
+					break;
+
+				case eCombineAdvancedMode.Advanced:
+					m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>()
+					                      .SetRouting(activeVideo, activeAudio);
+					m_NavigationController.LazyLoadPresenter<IMenuRouteSummaryPresenter>()
+					                      .SetRouting(activeVideo);
+					break;
+
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
 		}
 
 		#endregion
