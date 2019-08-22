@@ -158,21 +158,6 @@ namespace ICD.Profound.ConnectPRO.Themes
 			}
 		}
 
-		public override void ActivateUserInterfaces()
-		{
-			m_UserInterfacesSection.Enter();
-
-			try
-			{
-				foreach (TUserInterface ui in m_UserInterfaces)
-					ui.Activate();
-			}
-			finally
-			{
-				m_UserInterfacesSection.Leave();
-			}
-		}
-
 		#endregion
 
 		#region Protected Methods

@@ -112,13 +112,6 @@ namespace ICD.Profound.ConnectPRO.Themes
 			ReassignRooms();
 		}
 
-		protected override void ActivateUserInterfaces()
-		{
-			base.ActivateUserInterfaces();
-
-			m_UiFactories.ForEach(f => f.ActivateUserInterfaces());
-		}
-
 		#region Public Methods
 
 		/// <summary>
