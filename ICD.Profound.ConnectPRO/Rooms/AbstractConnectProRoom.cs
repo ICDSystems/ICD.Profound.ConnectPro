@@ -426,15 +426,15 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <returns></returns>
 		private bool IsInActiveMeeting()
 		{
-			//If there is an active focus source return true.
+			// If the user is currently on a control subpage assume that the room is being used
 			if (FocusSource != null)
 				return true;
 
-			//If there is an active conference return true.
+			// If there is an active conference the room is being used.
 			if (ConferenceManager != null && ConferenceManager.IsInCall != eInCall.None)
 				return true;
 
-			//Returns True if there is any real active video sources, otherwise returns false.
+			// If at least one video destination has a routed source the room is being used.
 			return Routing.State.GetRealActiveVideoSources().Any(kvp => kvp.Value.Count > 0);
 		}
 
