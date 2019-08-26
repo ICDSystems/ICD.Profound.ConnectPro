@@ -37,6 +37,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		private IWebConferenceDeviceControl m_SubscribedConferenceControl;
 
 		private bool m_IsInCall;
+		private bool m_AboutToShowActiveCamera;
+		private bool m_AboutToShowControlCamera;
 
 		public IWebConferenceDeviceControl ActiveConferenceControl
 		{
@@ -84,10 +86,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			m_LeftMenuPresenter = nav.LazyLoadPresenter<IWtcLeftMenuPresenter>();
 
 			m_CameraControlPresenter = nav.LazyLoadPresenter<ICameraControlPresenter>();
-			m_CameraControlPresenter.OnViewVisibilityChanged += CameraPresenterOnViewVisibilityChanged;
+			Subscribe(m_CameraControlPresenter);
 
 			m_CameraActivePresenter = nav.LazyLoadPresenter<ICameraActivePresenter>();
-			m_CameraActivePresenter.OnViewVisibilityChanged += CameraPresenterOnViewVisibilityChanged;
+			Subscribe(m_CameraActivePresenter);
 
 			m_WtcPresenters = nav.LazyLoadPresenters<IWtcPresenter>().ToList();
 
@@ -111,6 +113,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			}
 
 			ActiveConferenceControl = null;
+
+			Unsubscribe(m_CameraControlPresenter);
+			Unsubscribe(m_CameraActivePresenter);
 
 			if (Room != null)
 				Room.Routing.RouteOsd();
@@ -358,10 +363,54 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		#endregion
 
 		#region Subpage Callbacks
-		
+
+		private void Subscribe(ICameraControlPresenter cameraControl)
+		{
+			cameraControl.OnViewPreVisibilityChanged += CameraPresenterOnViewPreVisibilityChanged;
+			cameraControl.OnViewVisibilityChanged += CameraPresenterOnViewVisibilityChanged;
+		}
+
+		private void Unsubscribe(ICameraControlPresenter cameraControl)
+		{
+			cameraControl.OnViewPreVisibilityChanged -= CameraPresenterOnViewPreVisibilityChanged;
+			cameraControl.OnViewVisibilityChanged -= CameraPresenterOnViewVisibilityChanged;
+		}
+
+		private void Subscribe(ICameraActivePresenter cameraActive)
+		{
+			cameraActive.OnViewPreVisibilityChanged += CameraPresenterOnViewPreVisibilityChanged;
+			cameraActive.OnViewVisibilityChanged += CameraPresenterOnViewVisibilityChanged;
+		}
+
+		private void Unsubscribe(ICameraActivePresenter cameraActive)
+		{
+			cameraActive.OnViewPreVisibilityChanged -= CameraPresenterOnViewPreVisibilityChanged;
+			cameraActive.OnViewVisibilityChanged -= CameraPresenterOnViewVisibilityChanged;
+		}
+
+		/// <summary>
+		/// Checking if the view is about to change to the camera active or camera control view.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void CameraPresenterOnViewPreVisibilityChanged(object sender, BoolEventArgs e)
+		{
+			if (sender is ICameraActivePresenter)
+				m_AboutToShowActiveCamera = e.Data;
+			else if (sender is ICameraControlPresenter)
+				m_AboutToShowControlCamera = e.Data;
+		}
+
+		/// <summary>
+		/// If the view is about to change the the camera active or camera control view, don't show the left menu view.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void CameraPresenterOnViewVisibilityChanged(object sender, BoolEventArgs e)
 		{
-			if (!m_CameraActivePresenter.IsViewVisible && !m_CameraControlPresenter.IsViewVisible && IsViewVisible)
+			bool aboutToShow = m_AboutToShowActiveCamera || m_AboutToShowControlCamera;
+
+			if (!aboutToShow && !m_CameraActivePresenter.IsViewVisible && !m_CameraControlPresenter.IsViewVisible && IsViewVisible)
 				m_LeftMenuPresenter.ShowView(true);
 		}
 
