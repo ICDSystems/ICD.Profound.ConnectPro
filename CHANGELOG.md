@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+ - CUE background mode controlled by ConnectPRO with CueBackground config element on ConnectProTheme
+
+## [9.0.0] - 2019-08-15
+### Added
  - Added CUE Conference page to show instead of routing the Zoom Room until the device is in a meeting
  - DateTimes on the UI and CUE are formatted using the current culture info
  - Zoom contact list filter indication
@@ -20,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Added camera list to the camera control presenter
  - Added automatic generation of conference points for sources with conferencing controls that don't have conference points
  - Added page on UI for 3+ displays in a room not in combine mode
+ - Added Meeting Timeouts, if the room is inactive (i.e. no sources routed, no active conferences, no focus sources) for 10 minutes the meeting is ended.
  
 ### Changed
  - Significant overhaul of routing, better performance for systems with multiple panels
@@ -41,6 +46,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Refresh ATC view when conference state changes
  - VTC view is updated when there is an active conference
  - Changed the time in CUE header to localized string
+ - Route Summary Menu now sorts by room then by destination
+ - The source selection timeout timer is now reset upon routing a source to a destination
+ - When the end meeting button is pressed and the system is supposed to be asleep, fully powers down the room
+ - The Wake Schedule Sleep Time will no longer end active conferences or local presentations
 
 ## [8.1.1] - 2019-05-07
 ### Changed

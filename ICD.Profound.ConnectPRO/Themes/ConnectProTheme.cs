@@ -28,6 +28,8 @@ namespace ICD.Profound.ConnectPRO.Themes
 {
 	public sealed class ConnectProTheme : AbstractTheme<ConnectProThemeSettings>
 	{
+		public event EventHandler OnCueBackgroundChanged;
+
 		public const string LOGO_DEFAULT = "Logo.png";
 
 		private readonly IcdHashSet<IUserInterfaceFactory> m_UiFactories;
@@ -39,6 +41,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 		// Used with settings.
 		private string m_TvPresetsPath;
 		private string m_WebConferencingInstructionsPath;
+		private eCueBackgroundMode m_CueBackground;
 
 		private IPartitionManager m_SubscribedPartitionManager;
 
@@ -74,6 +77,19 @@ namespace ICD.Profound.ConnectPRO.Themes
 		/// Gets the web conferencing instructions.
 		/// </summary>
 		public WebConferencingInstructions WebConferencingInstructions { get { return m_WebConferencingInstructions; } }
+
+		public eCueBackgroundMode CueBackground
+		{
+			get { return m_CueBackground; }
+			private set
+			{
+				if (m_CueBackground == value)
+					return;
+
+				m_CueBackground = value;
+				OnCueBackgroundChanged.Raise(this);
+			}
+		}
 
 		#endregion
 
@@ -263,6 +279,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 			Logo = LOGO_DEFAULT;
 			m_TvPresetsPath = null;
 			m_WebConferencingInstructionsPath = null;
+			CueBackground = default(eCueBackgroundMode);
 
 			Unsubscribe(m_SubscribedPartitionManager);
 			m_SubscribedPartitionManager = null;
@@ -279,6 +296,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 			settings.Logo = Logo;
 			settings.TvPresets = m_TvPresetsPath;
 			settings.WebConferencingInstructions = m_WebConferencingInstructionsPath;
+			settings.CueBackground = CueBackground;
 		}
 
 		/// <summary>
@@ -292,6 +310,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 			factory.LoadOriginators<IRoom>();
 			
 			Logo = settings.Logo;
+			CueBackground = settings.CueBackground;
 
 			SetTvPresetsFromPath(settings.TvPresets);
 			SetWebConferencingInstructionsFromPath(settings.WebConferencingInstructions);

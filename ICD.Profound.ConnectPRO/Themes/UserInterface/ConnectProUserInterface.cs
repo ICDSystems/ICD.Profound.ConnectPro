@@ -361,6 +361,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			else if (dialer != null && dialer.Supports.HasFlag(eCallType.Audio))
 			{
 				// Show the context menu before routing for UX
+				ConnectProRoom.FocusSource = source;
 				ShowSourceContextualMenu(source);
 				m_Room.Routing.RouteAtc(source);
 			}
@@ -400,6 +401,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			else if (dialer != null && dialer.Supports.HasFlag(eCallType.Audio))
 			{
 				// Show the context menu before routing for UX
+				ConnectProRoom.FocusSource = source;
 				ShowSourceContextualMenu(source);
 				m_Room.Routing.RouteAtc(source);
 			}
@@ -448,38 +450,41 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				return;
 
 			// Store in local variable because route feedback will change the field
-			ISource activeSource = m_RoutingSection.Execute(() => m_SelectedSource);
+			ISource selectedSource = m_RoutingSection.Execute(() => m_SelectedSource);
 
 			// If no source is selected for routing then we open the contextual menu for the current routed source
-			if (activeSource == null || activeSource == routedSource)
+			if (selectedSource == null || selectedSource == routedSource)
 			{
 				ShowSourceContextualMenu(routedSource);
+				return;
 			}
+
 			// If a source is currently selected then we route that source to the selected display
-			else if (activeSource != routedSource)
+
+			// Can the active source even be routed to this destination?
+			if (!m_Room.Routing.HasPath(selectedSource, destination, eConnectionType.Video))
+				return;
+
+			// Reset the selection timeout
+			m_SourceSelectionTimeout.Reset(SOURCE_SELECTION_TIMEOUT);
+
+			m_RoutingSection.Enter();
+
+			try
 			{
-				// Can the active source even be routed to this destination?
-				if (!m_Room.Routing.HasPath(activeSource, destination, eConnectionType.Video))
-					return;
-
-				m_RoutingSection.Enter();
-
-				try
-				{
-					m_Room.Routing.State.SetProcessingSource(destination, activeSource);
-				}
-				finally
-				{
-					m_RoutingSection.Leave();
-				}
-
-				m_Room.Routing.RouteDualDisplay(activeSource, destination);
-				
-				routedSource = activeSource;
-
-				if (ShowSourceContextualMenu(routedSource))
-					SetSelectedSource(null);
+				m_Room.Routing.State.SetProcessingSource(destination, selectedSource);
 			}
+			finally
+			{
+				m_RoutingSection.Leave();
+			}
+
+			m_Room.Routing.RouteDualDisplay(selectedSource, destination);
+				
+			routedSource = selectedSource;
+
+			if (ShowSourceContextualMenu(routedSource))
+				SetSelectedSource(null);
 		}
 
 		private bool ShowSourceContextualMenu(ISource source)
@@ -731,16 +736,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 					? new Dictionary<IDestination, IcdHashSet<ISource>>()
 					: m_Room.Routing.State.GetFakeActiveVideoSources().ToDictionary();
 
-			m_NavigationController.LazyLoadPresenter<IMenu2DisplaysPresenter>()
-								  .SetRouting(activeVideo, activeAudio);
-			m_NavigationController.LazyLoadPresenter<IMenu3PlusDisplaysPresenter>()
-								  .SetRouting(activeVideo, activeAudio);
-			m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>()
-								  .SetRouting(activeVideo, activeAudio);
-			m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>()
-								  .SetRouting(activeVideo, activeAudio);
-			m_NavigationController.LazyLoadPresenter<IMenuRouteSummaryPresenter>()
-								  .SetRouting(activeVideo);
+			ConnectProCombineRoom combineRoom = m_Room as ConnectProCombineRoom;
+
+			if (combineRoom == null)
+			{
+				m_NavigationController.LazyLoadPresenter<IMenu2DisplaysPresenter>()
+				                      .SetRouting(activeVideo, activeAudio);
+				m_NavigationController.LazyLoadPresenter<IMenu3PlusDisplaysPresenter>()
+				                      .SetRouting(activeVideo, activeAudio);
+			}
+			else
+			{
+				m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>()
+				                      .SetRouting(activeVideo, activeAudio);
+				m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>()
+				                      .SetRouting(activeVideo, activeAudio);
+				m_NavigationController.LazyLoadPresenter<IMenuRouteSummaryPresenter>()
+				                      .SetRouting(activeVideo);
+			}
 
 			// If the active source is routed to all destinations we clear the active source
 			if (m_SelectedSource != null && activeVideo.All(kvp => kvp.Value.Contains(m_SelectedSource)))

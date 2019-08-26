@@ -292,6 +292,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 			view.OnDialButtonPressed += ViewOnDialButtonPressed;
 			view.OnHangupButtonPressed += ViewOnHangupButtonPressed;
 			view.OnKeypadButtonPressed += ViewOnKeypadButtonPressed;
+			view.OnVisibilityChanged += ViewOnVisibilityChanged;
 		}
 
 		/// <summary>
@@ -306,6 +307,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 			view.OnDialButtonPressed -= ViewOnDialButtonPressed;
 			view.OnHangupButtonPressed -= ViewOnHangupButtonPressed;
 			view.OnKeypadButtonPressed -= ViewOnKeypadButtonPressed;
+			view.OnVisibilityChanged -= ViewOnVisibilityChanged;
 		}
 
 		private void ViewOnKeypadButtonPressed(object sender, CharEventArgs eventArgs)
@@ -357,6 +359,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		private void ViewOnClearButtonPressed(object sender, EventArgs eventArgs)
 		{
 			m_Builder.Clear();
+		}
+
+		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs eventArgs)
+		{
+			base.ViewOnVisibilityChanged(sender, eventArgs);
+
+			if (eventArgs.Data)
+				return;
+
+			if (Room != null)
+				Room.FocusSource = null;
 		}
 
 		#endregion

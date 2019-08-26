@@ -104,6 +104,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		void EndMeeting(bool shutdown);
 
 		/// <summary>
+		/// Ends the meeting state. If it is currently sleep time fully powers down the room.
+		/// </summary>
+		void EndMeeting();
+
+		/// <summary>
 		/// Wakes up the room.
 		/// </summary>
 		void Wake();
