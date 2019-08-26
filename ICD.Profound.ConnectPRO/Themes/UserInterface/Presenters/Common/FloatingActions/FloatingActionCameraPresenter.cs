@@ -98,7 +98,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		#region Navigation Callbacks
 
 		/// <summary>
-		/// Subscribe to the menu events.
+		/// Subscribe to the camera control menu events.
 		/// </summary>
 		/// <param name="menu"></param>
 		private void Subscribe(ICameraControlPresenter menu)
@@ -107,7 +107,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		}
 
 		/// <summary>
-		/// Unsubscribe from the menu events.
+		/// Unsubscribe from the camera control menu events.
 		/// </summary>
 		/// <param name="menu"></param>
 		private void Unsubscribe(ICameraControlPresenter menu)
@@ -116,7 +116,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		}
         
         /// <summary>
-		/// Subscribe to the menu events.
+		/// Subscribe to the camera active menu events.
 		/// </summary>
 		/// <param name="menu"></param>
 		private void Subscribe(ICameraActivePresenter menu)
@@ -125,7 +125,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		}
 
 		/// <summary>
-		/// Unsubscribe from the menu events.
+		/// Unsubscribe from the camera active menu events.
 		/// </summary>
 		/// <param name="menu"></param>
 		private void Unsubscribe(ICameraActivePresenter menu)
