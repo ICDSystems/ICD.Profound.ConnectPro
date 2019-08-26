@@ -97,6 +97,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				SafeTimer.Stopped(() => Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView(false));
 		}
 
+		public override void Dispose()
+		{
+			base.Dispose();
+
+			Unsubscribe(m_CameraControlPresenter);
+			Unsubscribe(m_CameraActivePresenter);
+		}
+
 		/// <summary>
 		/// Closes the popup.
 		/// </summary>
@@ -113,9 +121,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			}
 
 			ActiveConferenceControl = null;
-
-			Unsubscribe(m_CameraControlPresenter);
-			Unsubscribe(m_CameraActivePresenter);
 
 			if (Room != null)
 				Room.Routing.RouteOsd();
@@ -366,39 +371,46 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		private void Subscribe(ICameraControlPresenter cameraControl)
 		{
-			cameraControl.OnViewPreVisibilityChanged += CameraPresenterOnViewPreVisibilityChanged;
+			cameraControl.OnViewPreVisibilityChanged += CameraControlPresenterOnViewPreVisibilityChanged;
 			cameraControl.OnViewVisibilityChanged += CameraPresenterOnViewVisibilityChanged;
 		}
 
 		private void Unsubscribe(ICameraControlPresenter cameraControl)
 		{
-			cameraControl.OnViewPreVisibilityChanged -= CameraPresenterOnViewPreVisibilityChanged;
+			cameraControl.OnViewPreVisibilityChanged -= CameraControlPresenterOnViewPreVisibilityChanged;
 			cameraControl.OnViewVisibilityChanged -= CameraPresenterOnViewVisibilityChanged;
 		}
 
 		private void Subscribe(ICameraActivePresenter cameraActive)
 		{
-			cameraActive.OnViewPreVisibilityChanged += CameraPresenterOnViewPreVisibilityChanged;
+			cameraActive.OnViewPreVisibilityChanged += CameraActivePresenterOnViewPreVisibilityChanged;
 			cameraActive.OnViewVisibilityChanged += CameraPresenterOnViewVisibilityChanged;
 		}
 
 		private void Unsubscribe(ICameraActivePresenter cameraActive)
 		{
-			cameraActive.OnViewPreVisibilityChanged -= CameraPresenterOnViewPreVisibilityChanged;
+			cameraActive.OnViewPreVisibilityChanged -= CameraActivePresenterOnViewPreVisibilityChanged;
 			cameraActive.OnViewVisibilityChanged -= CameraPresenterOnViewVisibilityChanged;
 		}
 
 		/// <summary>
-		/// Checking if the view is about to change to the camera active or camera control view.
+		/// Checking if the view is about to change to the camera control view.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private void CameraPresenterOnViewPreVisibilityChanged(object sender, BoolEventArgs e)
+		private void CameraControlPresenterOnViewPreVisibilityChanged(object sender, BoolEventArgs e)
 		{
-			if (sender is ICameraActivePresenter)
-				m_AboutToShowActiveCamera = e.Data;
-			else if (sender is ICameraControlPresenter)
-				m_AboutToShowControlCamera = e.Data;
+			m_AboutToShowControlCamera = e.Data;
+		}
+
+		/// <summary>
+		/// Checking if the view is about to change to the camera active view.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void CameraActivePresenterOnViewPreVisibilityChanged(object sender, BoolEventArgs e)
+		{
+			m_AboutToShowActiveCamera = e.Data;
 		}
 
 		/// <summary>
