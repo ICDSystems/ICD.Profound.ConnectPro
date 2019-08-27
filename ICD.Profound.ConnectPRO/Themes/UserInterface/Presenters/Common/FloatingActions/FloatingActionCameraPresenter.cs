@@ -16,7 +16,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 	[PresenterBinding(typeof(IFloatingActionCameraPresenter))]
 	public sealed class FloatingActionCameraPresenter : AbstractFloatingActionPresenter<IFloatingActionCameraView>, IFloatingActionCameraPresenter
 	{
-		private readonly ICameraControlPresenter m_Menu;
+		private readonly ICameraControlPresenter m_CameraControl;
+        private readonly ICameraActivePresenter m_CameraActive;
 
 		private IConferenceManager m_SubscribedConferenceManager;
 
@@ -29,8 +30,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		public FloatingActionCameraPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
-			m_Menu = Navigation.LazyLoadPresenter<ICameraControlPresenter>();
-			Subscribe(m_Menu);
+			m_CameraControl = Navigation.LazyLoadPresenter<ICameraControlPresenter>();
+			Subscribe(m_CameraControl);
+
+            m_CameraActive = Navigation.LazyLoadPresenter<ICameraActivePresenter>();
+            Subscribe(m_CameraActive);
 		}
 
 		/// <summary>
@@ -40,7 +44,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		{
 			base.Dispose();
 
-			Unsubscribe(m_Menu);
+			Unsubscribe(m_CameraControl);
+            Unsubscribe(m_CameraActive);
 		}
 
 		/// <summary>
@@ -49,7 +54,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// <returns></returns>
 		protected override bool GetActive()
 		{
-			return m_Menu.IsViewVisible;
+			return m_CameraControl.IsViewVisible || m_CameraActive.IsViewVisible;
 		}
 
 		#region View Callbacks
@@ -61,7 +66,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// <param name="eventArgs"></param>
 		protected override void ViewOnButtonPressed(object sender, EventArgs eventArgs)
 		{
-			m_Menu.ShowView(!m_Menu.IsViewVisible && m_Menu.CameraCount > 0);
+            if (m_CameraControl.IsViewVisible || m_CameraActive.IsViewVisible)
+            {
+			    m_CameraControl.ShowView(false);
+                m_CameraActive.ShowView(false);
+            }
+            else if (m_CameraControl.CameraCount > 0)
+                m_CameraControl.ShowView(true);
+            else if (m_CameraActive.CameraCount > 1)
+                m_CameraActive.ShowView(true);
 		}
 
 		/// <summary>
@@ -74,7 +87,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			base.ViewOnVisibilityChanged(sender, args);
 
 			if (!args.Data)
-				m_Menu.ShowView(false);
+            {
+				m_CameraControl.ShowView(false);
+                m_CameraActive.ShowView(false);
+            }
 		}
 
 		#endregion
@@ -82,7 +98,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		#region Navigation Callbacks
 
 		/// <summary>
-		/// Subscribe to the menu events.
+		/// Subscribe to the camera control menu events.
 		/// </summary>
 		/// <param name="menu"></param>
 		private void Subscribe(ICameraControlPresenter menu)
@@ -91,10 +107,28 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		}
 
 		/// <summary>
-		/// Unsubscribe from the menu events.
+		/// Unsubscribe from the camera control menu events.
 		/// </summary>
 		/// <param name="menu"></param>
 		private void Unsubscribe(ICameraControlPresenter menu)
+		{
+			menu.OnViewVisibilityChanged -= MenuOnViewVisibilityChanged;
+		}
+        
+        /// <summary>
+		/// Subscribe to the camera active menu events.
+		/// </summary>
+		/// <param name="menu"></param>
+		private void Subscribe(ICameraActivePresenter menu)
+		{
+			menu.OnViewVisibilityChanged += MenuOnViewVisibilityChanged;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the camera active menu events.
+		/// </summary>
+		/// <param name="menu"></param>
+		private void Unsubscribe(ICameraActivePresenter menu)
 		{
 			menu.OnViewVisibilityChanged -= MenuOnViewVisibilityChanged;
 		}
@@ -144,7 +178,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 
 		private void SubscribedConferenceManagerOnInCallChanged(object sender, InCallEventArgs callEventArgs)
 		{
-			ShowView(callEventArgs.Data == eInCall.Video && m_Menu.CameraCount > 0);
+			ShowView(callEventArgs.Data == eInCall.Video && (m_CameraControl.CameraCount > 0 || m_CameraActive.CameraCount > 1));
 		}
 
 		#endregion

@@ -204,6 +204,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			// Camera visibility
 			IVisibilityNode cameraVisibility = new SingleVisibilityNode();
 			cameraVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ICameraControlPresenter>());
+			cameraVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ICameraActivePresenter>());
 			cameraVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcLeftMenuPresenter>());
 			cameraVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcButtonListPresenter>());
 			cameraVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcContactsNormalPresenter>());

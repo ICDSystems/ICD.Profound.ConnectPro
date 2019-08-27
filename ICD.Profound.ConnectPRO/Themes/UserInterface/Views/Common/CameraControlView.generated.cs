@@ -27,6 +27,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		private VtProButton m_PresetButton5;
 		private VtProSimpleLabel m_PresetStoredLabel;
 		private VtProDynamicButtonList m_CameraList;
+		private VtProTabButton m_Tabs;
 
 		private BiDictionary<ushort, VtProButton> m_PresetButtons;
 
@@ -40,7 +41,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 130
+				DigitalVisibilityJoin = 137
 			};
 
 			m_DPad = new VtProDPad(620, panel as IPanelDevice, m_Subpage);
@@ -106,8 +107,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 
 			m_CameraList = new VtProDynamicButtonList(16, panel as IPanelDevice, m_Subpage)
 			{
-				MaxSize = 10,
-				DigitalVisibilityJoin = 637
+				MaxSize = 10
+			};
+
+			m_Tabs = new VtProTabButton(9, panel as IPanelDevice, m_Subpage)
+			{
+				DigitalVisibilityJoin = 638
 			};
 		}
 
@@ -128,6 +133,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			yield return m_PresetButton5;
 			yield return m_PresetStoredLabel;
 			yield return m_CameraList;
+			yield return m_Tabs;
 		}
 	}
 }
