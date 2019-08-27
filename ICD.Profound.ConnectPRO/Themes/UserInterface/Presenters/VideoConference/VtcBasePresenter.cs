@@ -8,7 +8,6 @@ using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.EventArguments;
-using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Conferencing.Polycom.Devices.Codec.Controls;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
@@ -33,6 +32,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private readonly IVtcContactsPolycomPresenter m_ContactsPolycomPresenter;
 		private readonly IVtcButtonListPresenter m_ButtonListPresenter;
 		private readonly ICameraControlPresenter m_CameraControlPresenter;
+		private readonly ICameraActivePresenter m_CameraActivePresenter;
 		private readonly IVtcKeyboardPresenter m_KeyboardPresenter;
 		private readonly IVtcKeypadPresenter m_KeypadPresenter;
 		private readonly List<IVtcPresenter> m_VtcPresenters;
@@ -100,7 +100,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_ContactsPolycomPresenter.OnViewVisibilityChanged += ContactsPolycomPresenterOnViewVisibilityChanged;
 
 			m_CameraControlPresenter = nav.LazyLoadPresenter<ICameraControlPresenter>();
-			m_CameraControlPresenter.OnViewVisibilityChanged += CameraControlPresenterOnOnViewVisibilityChanged;
+			m_CameraControlPresenter.OnViewVisibilityChanged += CameraPresenterOnOnViewVisibilityChanged;
+
+			m_CameraActivePresenter = nav.LazyLoadPresenter<ICameraActivePresenter>();
+			m_CameraActivePresenter.OnViewVisibilityChanged += CameraPresenterOnOnViewVisibilityChanged;
 
 			m_KeyboardPresenter = nav.LazyLoadPresenter<IVtcKeyboardPresenter>();
 			m_KeypadPresenter = nav.LazyLoadPresenter<IVtcKeypadPresenter>();
@@ -208,7 +211,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			foreach (IVtcPresenter presenter in m_VtcPresenters)
 				presenter.ActiveConferenceControl = value;
 
-			m_CameraControlPresenter.SetVtcDestinationControl(value == null
+			m_CameraActivePresenter.SetVtcDestinationControl(value == null
 				                                                  ? null
 				                                                  : value.Parent.Controls.GetControl<IVideoConferenceRouteControl>());
 		}
@@ -327,6 +330,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				return;
 			}
 
+            // If the camera subpage is open close that instead
+			if (m_CameraActivePresenter.IsViewVisible && IsViewVisible)
+			{
+				m_CameraActivePresenter.ShowView(false);
+				m_ButtonListPresenter.ShowView(true);
+				return;
+			}
+
 			// If the keyboard subpage is open close that instead
 			if (m_KeyboardPresenter != null && m_KeyboardPresenter.IsViewVisible)
 			{
@@ -397,9 +408,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		#region Subpage Callbacks
 
-		private void CameraControlPresenterOnOnViewVisibilityChanged(object sender, BoolEventArgs e)
+		private void CameraPresenterOnOnViewVisibilityChanged(object sender, BoolEventArgs e)
 		{
-			if (!e.Data && IsViewVisible)
+			if (!m_CameraActivePresenter.IsViewVisible && !m_CameraControlPresenter.IsViewVisible && IsViewVisible)
 				Navigation.NavigateTo<IVtcButtonListPresenter>();
 		}
 

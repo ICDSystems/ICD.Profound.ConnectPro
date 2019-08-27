@@ -24,7 +24,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 
 		public event EventHandler<UShortEventArgs> OnPresetButtonReleased;
 		public event EventHandler<UShortEventArgs> OnPresetButtonHeld;
-		public event EventHandler<UShortEventArgs> OnCameraButtonPressed; 
+		public event EventHandler<UShortEventArgs> OnCameraButtonPressed;
+		public event EventHandler<UShortEventArgs> OnTabButtonPressed; 
 
 		/// <summary>
 		/// Constructor.
@@ -85,10 +86,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 
 			string[] labelsArray = labels.ToArray();
 
-			bool visible = labelsArray.Length > 1;
-
 			m_CameraList.SetItemLabels(labelsArray);
-			m_CameraList.Show(visible);
 		}
 
 		/// <summary>
@@ -99,6 +97,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		public void SetCameraSelected(ushort index, bool selected)
 		{
 			m_CameraList.SetItemSelected(index, selected);
+		}
+
+		/// <summary>
+		/// Sets the selected state of a tab button.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="selected"></param>
+		public void SetTabSelected(ushort index, bool selected)
+		{
+			m_Tabs.SetItemSelected(index, selected);
+		}
+
+		/// <summary>
+		/// Sets the visibility of the tab button
+		/// </summary>
+		/// <param name="visible"></param>
+		public void SetTabVisibility(bool visible)
+		{
+			m_Tabs.Show(visible);
 		}
 
 		#region Control Callbacks
@@ -117,6 +134,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			m_ZoomOutButton.OnPressed += ZoomOutButtonOnPressed;
 			m_ZoomOutButton.OnReleased += ZoomOutButtonOnReleased;
 			m_CameraList.OnButtonClicked += CameraListOnButtonClicked;
+			m_Tabs.OnButtonPressed += TabsOnButtonPressed;
 
 			foreach (VtProButton button in m_PresetButtons.Values)
 			{
@@ -138,7 +156,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			m_ZoomInButton.OnReleased -= ZoomInButtonOnReleased;
 			m_ZoomOutButton.OnPressed -= ZoomOutButtonOnPressed;
 			m_ZoomOutButton.OnReleased -= ZoomOutButtonOnReleased;
-			m_CameraList.OnButtonClicked += CameraListOnButtonClicked;
+			m_CameraList.OnButtonClicked -= CameraListOnButtonClicked;
+			m_Tabs.OnButtonPressed -= TabsOnButtonPressed;
 
 			foreach (VtProButton button in m_PresetButtons.Values)
 			{
@@ -216,6 +235,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		private void CameraListOnButtonClicked(object sender, UShortEventArgs args)
 		{
 			OnCameraButtonPressed.Raise(this, new UShortEventArgs(args.Data));
+		}
+
+		private void TabsOnButtonPressed(object sender, UShortEventArgs args)
+		{
+			OnTabButtonPressed.Raise(this, new UShortEventArgs(args.Data));
 		}
 
 		#endregion

@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Added
  - CUE background mode controlled by ConnectPRO with CueBackground config element on ConnectProTheme
+ - Multiple camera support in Zoom and other wtc/vtc.
+ - Added camera active and camera control presenters.
+ - Added camera active selection and camera control subpage views.
 
 ## [9.0.0] - 2019-08-15
 ### Added
