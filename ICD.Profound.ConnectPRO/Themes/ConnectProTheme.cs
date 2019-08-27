@@ -8,6 +8,8 @@ using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.IO;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
+using ICD.Connect.API.Commands;
+using ICD.Connect.API.Nodes;
 using ICD.Connect.Partitioning.Controls;
 using ICD.Connect.Partitioning.Extensions;
 using ICD.Connect.Partitioning.PartitionManagers;
@@ -87,6 +89,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 					return;
 
 				m_CueBackground = value;
+
 				OnCueBackgroundChanged.Raise(this);
 			}
 		}
@@ -345,6 +348,52 @@ namespace ICD.Profound.ConnectPRO.Themes
 		private void ManagerOnPartitionOpenStateChange(IPartitionDeviceControl control, bool open)
 		{
 			m_SubscribedPartitionManager.SetPartition<ConnectProCombineRoom>(control, open);
+		}
+
+		#endregion
+
+		#region Console
+
+		/// <summary>
+		/// Calls the delegate for each console status item.
+		/// </summary>
+		/// <param name="addRow"></param>
+		public override void BuildConsoleStatus(AddStatusRowDelegate addRow)
+		{
+			base.BuildConsoleStatus(addRow);
+
+			addRow("Cue Background", CueBackground);
+		}
+
+		/// <summary>
+		/// Gets the child console commands.
+		/// </summary>
+		/// <returns></returns>
+		public override IEnumerable<IConsoleCommand> GetConsoleCommands()
+		{
+			foreach (IConsoleCommand command in GetBaseConsoleCommands())
+				yield return command;
+
+			string cueBackgroundHelp = string.Format("SetCueBackground <{0}>",
+			                                         StringUtils.ArrayFormat(EnumUtils.GetValues<eCueBackgroundMode>()));
+
+			yield return new GenericConsoleCommand<eCueBackgroundMode>("SetCueBackground", cueBackgroundHelp,
+			                                                           m => ConsoleSetCueBackground(m));
+		}
+
+		private string ConsoleSetCueBackground(eCueBackgroundMode cueBackgroundMode)
+		{
+			CueBackground = cueBackgroundMode;
+			return string.Format("Cue Background set to {0}", CueBackground);
+		}
+
+		/// <summary>
+		/// Workaround for "unverifiable code" warning.
+		/// </summary>
+		/// <returns></returns>
+		private IEnumerable<IConsoleCommand> GetBaseConsoleCommands()
+		{
+			return base.GetConsoleCommands();
 		}
 
 		#endregion
