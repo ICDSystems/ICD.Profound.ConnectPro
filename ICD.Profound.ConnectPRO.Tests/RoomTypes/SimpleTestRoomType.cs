@@ -1,9 +1,9 @@
-﻿using ICD.Common.Utils.Collections;
-using ICD.Common.Utils.Extensions;
+﻿using System.Collections.Generic;
 using ICD.Common.Utils.Services;
 using ICD.Connect.Audio.Shure;
 using ICD.Connect.Panels.Mock;
 using ICD.Connect.Panels.Server.Osd;
+using ICD.Connect.Partitioning.PartitionManagers;
 using ICD.Connect.Routing.RoutingGraphs;
 using ICD.Connect.Settings.Cores;
 using ICD.Connect.Themes.UserInterfaceFactories;
@@ -14,15 +14,13 @@ namespace ICD.Profound.ConnectPRO.Tests.RoomTypes
 {
 	public sealed class SimpleTestRoomType : AbstractRoomType
 	{
-		private readonly ConnectProRoom m_room;
-		private readonly MockPanelDevice m_panel;
-		private readonly ICore m_core;
-		private readonly IcdHashSet<IUserInterfaceFactory> m_interfaces;
+		private readonly IConnectProRoom m_Room;
+		private readonly MockPanelDevice m_Panel;
+		private readonly ICore m_Core;
 
-		public override ConnectProRoom Room { get { return m_room; } }
-		public override MockPanelDevice Panel { get { return m_panel; } }
-		public override ICore Core { get { return m_core; } }
-		public IcdHashSet<IUserInterfaceFactory> Interfaces { get { return m_interfaces; } }
+		public override IConnectProRoom Room { get { return m_Room; } }
+		public override MockPanelDevice Panel { get { return m_Panel; } }
+		public override ICore Core { get { return m_Core; } }
 
 		public ConnectProRoom ConnectProRoom1 { get; set; }
 		public ConnectProRoom ConnectProRoom2 { get; set; }
@@ -33,13 +31,17 @@ namespace ICD.Profound.ConnectPRO.Tests.RoomTypes
 
 		public SimpleTestRoomType()
 		{
-			m_core = new Core {Id = 100};
+			m_Core = new Core {Id = 100};
 
-			//instantiating RoutingGraph and adding to core
+			// Instantiating RoutingGraph and adding to core
 			var routingGraph = new RoutingGraph {Id = 200};
-			m_core.Originators.AddChild(routingGraph);
+			m_Core.Originators.AddChild(routingGraph);
 
-			//instantiating rooms and devices
+			// Instantiating PartitionManager and adding to core
+			var partitionManager = new PartitionManager { Id = 201 };
+			m_Core.Originators.AddChild(partitionManager);
+
+			// Instantiating rooms and devices
 			ConnectProTheme = new ConnectProTheme { Id = 300 };
 			ConnectProRoom1 = new ConnectProRoom { Id = 400 };
 			ConnectProRoom2 = new ConnectProRoom { Id = 500 };
@@ -47,25 +49,29 @@ namespace ICD.Profound.ConnectPRO.Tests.RoomTypes
 			MicrophoneDevice = new ShureMxa910Device { Id = 700 };
 			OsdDevice = new OsdPanelDevice { Id = 800 };
 
-			//Adding rooms and devices to core Originators
-			m_core.Originators.AddChild(ConnectProRoom1);
-			m_core.Originators.AddChild(ConnectProRoom2);
-			m_core.Originators.AddChild(MockPanelDevice);
-			m_core.Originators.AddChild(ConnectProTheme);
-			m_core.Originators.AddChild(MicrophoneDevice);
-			m_core.Originators.AddChild(OsdDevice);
+			// Adding rooms and devices to core Originators
+			m_Core.Originators.AddChild(ConnectProRoom1);
+			m_Core.Originators.AddChild(ConnectProRoom2);
+			m_Core.Originators.AddChild(MockPanelDevice);
+			m_Core.Originators.AddChild(ConnectProTheme);
+			m_Core.Originators.AddChild(MicrophoneDevice);
+			m_Core.Originators.AddChild(OsdDevice);
 
-			//Building User Interfaces for empty rooms
+			// Building User Interfaces for empty rooms
 			ConnectProTheme.BuildUserInterfaces();
-
-			m_interfaces = ConnectProTheme.GetUiFactories().ToIcdHashSet();
 		}
 
 		public override void Dispose()
 		{
-			ServiceProvider.RemoveService(m_core);
-			var core = m_core as Core;
+			var core = m_Core as Core;
 			core?.Dispose();
+
+			ServiceProvider.RemoveService(m_Core);
+		}
+
+		public IEnumerable<IUserInterfaceFactory> GetInterfaces()
+		{
+			return ConnectProTheme.GetUiFactories();
 		}
 	}
 }

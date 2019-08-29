@@ -35,20 +35,20 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 
 				Assert.IsTrue(roomType.Room.IsInMeeting);
 
-				//Check floating volume button visible
+				// Check floating volume button visible
 				Assert.IsTrue(NavigationHelpers.CheckVisibilty(40, roomType.Panel));
 
-				//Click floating volume button
+				// Click floating volume button
 				NavigationHelpers.PressButton(45, roomType.Panel);
 
-				//Check volume page is visible
+				// Check volume page is visible
 				Assert.IsTrue(NavigationHelpers.CheckVisibilty(11, roomType.Panel));
 
-				//Get volume point
+				// Get volume point
 				IVolumePoint volumePoint = roomType.Room.Originators.GetInstance<IVolumePoint>();
 				Assert.NotNull(volumePoint);
 
-				//Get volume control
+				// Get volume control
 				DisplayVolumeDeviceControl volumeControl =
 					roomType.Room
 						.Core
@@ -57,26 +57,26 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 						.Controls
 						.GetControl<DisplayVolumeDeviceControl>(volumePoint.ControlId);
 
-				//Check that volume is at zero
+				// Check that volume is at zero
 				Assert.AreEqual(0, volumeControl.VolumeLevel);
 
-				//vol up
+				// vol up
 				NavigationHelpers.PressButton(523, roomType.Panel);
-				Assert.AreEqual(655, roomType.Panel.UShortInput[500].GetUShortValue());
+				Assert.AreEqual((int)(65535 * 0.01 * volumeControl.VolumeLevel), roomType.Panel.UShortInput[500].GetUShortValue(), 655);
 
-				//vol up
+				// vol up
 				NavigationHelpers.PressButton(523, roomType.Panel, 0, true, 2000);
 				Assert.AreEqual((int)(65535 * 0.01 * volumeControl.VolumeLevel), roomType.Panel.UShortInput[500].GetUShortValue(), 655);
 
-				//vol down
+				// vol down
 				NavigationHelpers.PressButton(522, roomType.Panel, 0, true, 2000);
 				Assert.AreEqual((int)(65535 * 0.01 * volumeControl.VolumeLevel), roomType.Panel.UShortInput[500].GetUShortValue(), 655);
 
-				//vol down
+				// vol down
 				NavigationHelpers.PressButton(522, roomType.Panel);
-				Assert.AreEqual(0, roomType.Panel.UShortInput[500].GetUShortValue(), 655);
+				Assert.AreEqual((int)(65535 * 0.01 * volumeControl.VolumeLevel), roomType.Panel.UShortInput[500].GetUShortValue(), 655);
 
-				//mute
+				// mute
 				NavigationHelpers.PressButton(524, roomType.Panel);
 				Assert.IsTrue(volumeControl.VolumeIsMuted);
 				NavigationHelpers.PressButton(524, roomType.Panel);
