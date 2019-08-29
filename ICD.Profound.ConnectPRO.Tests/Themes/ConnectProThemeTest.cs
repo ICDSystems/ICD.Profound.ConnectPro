@@ -20,9 +20,9 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes
 	    {
 		    using (var simpleTestRoomType = new SimpleTestRoomType())
 		    {
-			    var connectProUserInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(0);
-			    var connectProMicrophoneInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(1);
-			    var connectProOsdInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(2);
+			    var connectProUserInterfaceFactory = simpleTestRoomType.GetInterfaces().ElementAt(0);
+			    var connectProMicrophoneInterfaceFactory = simpleTestRoomType.GetInterfaces().ElementAt(1);
+			    var connectProOsdInterfaceFactory = simpleTestRoomType.GetInterfaces().ElementAt(2);
 
 			    Assert.NotNull(connectProUserInterfaceFactory);
 			    Assert.NotNull(connectProMicrophoneInterfaceFactory);
@@ -54,9 +54,9 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes
 				//Building User Interfaces for rooms
 			    simpleTestRoomType.ConnectProTheme.BuildUserInterfaces();
 
-			    var connectProUserInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(0);
-			    var connectProMicrophoneInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(1);
-			    var connectProOsdInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(2);
+			    var connectProUserInterfaceFactory = simpleTestRoomType.GetInterfaces().ElementAt(0);
+			    var connectProMicrophoneInterfaceFactory = simpleTestRoomType.GetInterfaces().ElementAt(1);
+			    var connectProOsdInterfaceFactory = simpleTestRoomType.GetInterfaces().ElementAt(2);
 
 			    Assert.NotNull(connectProUserInterfaceFactory);
 			    Assert.NotNull(connectProMicrophoneInterfaceFactory);
@@ -93,9 +93,9 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes
 				//Building User Interfaces for rooms
 			    simpleTestRoomType.ConnectProTheme.BuildUserInterfaces();
 
-			    var connectProUserInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(0);
-			    var connectProMicrophoneInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(1);
-			    var connectProOsdInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(2);
+			    var connectProUserInterfaceFactory = simpleTestRoomType.GetInterfaces().ElementAt(0);
+			    var connectProMicrophoneInterfaceFactory = simpleTestRoomType.GetInterfaces().ElementAt(1);
+			    var connectProOsdInterfaceFactory = simpleTestRoomType.GetInterfaces().ElementAt(2);
 
 			    Assert.NotNull(connectProUserInterfaceFactory);
 			    Assert.NotNull(connectProMicrophoneInterfaceFactory);
