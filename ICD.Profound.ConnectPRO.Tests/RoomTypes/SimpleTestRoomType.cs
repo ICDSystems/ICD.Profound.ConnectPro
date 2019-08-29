@@ -4,6 +4,7 @@ using ICD.Common.Utils.Services;
 using ICD.Connect.Audio.Shure;
 using ICD.Connect.Panels.Mock;
 using ICD.Connect.Panels.Server.Osd;
+using ICD.Connect.Partitioning.PartitionManagers;
 using ICD.Connect.Routing.RoutingGraphs;
 using ICD.Connect.Settings.Core;
 using ICD.Connect.Themes.UserInterfaceFactories;
@@ -19,7 +20,7 @@ namespace ICD.Profound.ConnectPRO.Tests.RoomTypes
 		private readonly ICore m_core;
 		private readonly IcdHashSet<IUserInterfaceFactory> m_interfaces;
 
-		public override ConnectProRoom Room { get { return m_room; } }
+		public override IConnectProRoom Room { get { return m_room; } }
 		public override MockPanelDevice Panel { get { return m_panel; } }
 		public override ICore Core { get { return m_core; } }
 		public IcdHashSet<IUserInterfaceFactory> Interfaces { get { return m_interfaces; } }
@@ -35,11 +36,15 @@ namespace ICD.Profound.ConnectPRO.Tests.RoomTypes
 		{
 			m_core = new Core {Id = 100};
 
-			//instantiating RoutingGraph and adding to core
+			// Instantiating RoutingGraph and adding to core
 			var routingGraph = new RoutingGraph {Id = 200};
 			m_core.Originators.AddChild(routingGraph);
 
-			//instantiating rooms and devices
+			// Instantiating PartitionManager and adding to core
+			var partitionManager = new PartitionManager { Id = 201 };
+			m_core.Originators.AddChild(partitionManager);
+
+			// Instantiating rooms and devices
 			ConnectProTheme = new ConnectProTheme { Id = 300 };
 			ConnectProRoom1 = new ConnectProRoom { Id = 400 };
 			ConnectProRoom2 = new ConnectProRoom { Id = 500 };
@@ -47,7 +52,7 @@ namespace ICD.Profound.ConnectPRO.Tests.RoomTypes
 			MicrophoneDevice = new ShureMxa910Device { Id = 700 };
 			OsdDevice = new OsdPanelDevice { Id = 800 };
 
-			//Adding rooms and devices to core Originators
+			// Adding rooms and devices to core Originators
 			m_core.Originators.AddChild(ConnectProRoom1);
 			m_core.Originators.AddChild(ConnectProRoom2);
 			m_core.Originators.AddChild(MockPanelDevice);
@@ -55,7 +60,7 @@ namespace ICD.Profound.ConnectPRO.Tests.RoomTypes
 			m_core.Originators.AddChild(MicrophoneDevice);
 			m_core.Originators.AddChild(OsdDevice);
 
-			//Building User Interfaces for empty rooms
+			// Building User Interfaces for empty rooms
 			ConnectProTheme.BuildUserInterfaces();
 
 			m_interfaces = ConnectProTheme.GetUiFactories().ToIcdHashSet();
@@ -63,9 +68,10 @@ namespace ICD.Profound.ConnectPRO.Tests.RoomTypes
 
 		public override void Dispose()
 		{
-			ServiceProvider.RemoveService(m_core);
 			var core = m_core as Core;
 			core?.Dispose();
+
+			ServiceProvider.RemoveService(m_core);
 		}
 	}
 }
