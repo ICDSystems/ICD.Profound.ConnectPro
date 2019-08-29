@@ -1,15 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using ICD.Common.Utils.Extensions;
-using ICD.Connect.Audio.Shure;
-using ICD.Connect.Panels.Mock;
-using ICD.Connect.Panels.Server.Osd;
+﻿using System.Linq;
 using ICD.Connect.Partitioning;
-using ICD.Connect.Routing.RoutingGraphs;
-using ICD.Connect.Settings.Core;
-using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Tests.RoomTypes;
-using ICD.Profound.ConnectPRO.Themes;
 using ICD.Profound.ConnectPRO.Themes.MicrophoneInterface;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface;
 using ICD.Profound.ConnectPRO.Themes.UserInterface;
@@ -29,9 +20,9 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes
 	    {
 		    using (var simpleTestRoomType = new SimpleTestRoomType())
 		    {
-			    var connectProUserInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(0);
-			    var connectProMicrophoneInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(1);
-			    var connectProOsdInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(2);
+			    var connectProUserInterfaceFactory = simpleTestRoomType.GetInterfaces().ElementAt(0);
+			    var connectProMicrophoneInterfaceFactory = simpleTestRoomType.GetInterfaces().ElementAt(1);
+			    var connectProOsdInterfaceFactory = simpleTestRoomType.GetInterfaces().ElementAt(2);
 
 			    Assert.NotNull(connectProUserInterfaceFactory);
 			    Assert.NotNull(connectProMicrophoneInterfaceFactory);
@@ -63,9 +54,9 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes
 				//Building User Interfaces for rooms
 			    simpleTestRoomType.ConnectProTheme.BuildUserInterfaces();
 
-			    var connectProUserInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(0);
-			    var connectProMicrophoneInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(1);
-			    var connectProOsdInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(2);
+			    var connectProUserInterfaceFactory = simpleTestRoomType.GetInterfaces().ElementAt(0);
+			    var connectProMicrophoneInterfaceFactory = simpleTestRoomType.GetInterfaces().ElementAt(1);
+			    var connectProOsdInterfaceFactory = simpleTestRoomType.GetInterfaces().ElementAt(2);
 
 			    Assert.NotNull(connectProUserInterfaceFactory);
 			    Assert.NotNull(connectProMicrophoneInterfaceFactory);
@@ -102,9 +93,9 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes
 				//Building User Interfaces for rooms
 			    simpleTestRoomType.ConnectProTheme.BuildUserInterfaces();
 
-			    var connectProUserInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(0);
-			    var connectProMicrophoneInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(1);
-			    var connectProOsdInterfaceFactory = simpleTestRoomType.Interfaces.ElementAt(2);
+			    var connectProUserInterfaceFactory = simpleTestRoomType.GetInterfaces().ElementAt(0);
+			    var connectProMicrophoneInterfaceFactory = simpleTestRoomType.GetInterfaces().ElementAt(1);
+			    var connectProOsdInterfaceFactory = simpleTestRoomType.GetInterfaces().ElementAt(2);
 
 			    Assert.NotNull(connectProUserInterfaceFactory);
 			    Assert.NotNull(connectProMicrophoneInterfaceFactory);
