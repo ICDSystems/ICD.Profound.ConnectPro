@@ -13,6 +13,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings
 		event EventHandler<UShortEventArgs> OnListItemPressed;
 
 		/// <summary>
+		/// Raised when the user presses the back button.
+		/// </summary>
+		event EventHandler OnBackButtonPressed;
+
+		/// <summary>
 		/// Sets the selected state for the button at the given index.
 		/// </summary>
 		/// <param name="index"></param>
@@ -20,10 +25,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings
 		void SetItemSelected(ushort index, bool selected);
 
 		/// <summary>
-		/// Sets the labels for the buttons in the list.
+		/// Sets the labels and icons for the buttons in the list.
 		/// </summary>
-		/// <param name="labels"></param>
-		void SetButtonLabels(IEnumerable<string> labels);
+		/// <param name="labelsAndIcons"></param>
+		void SetButtonLabels(IEnumerable<KeyValuePair<string, string>> labelsAndIcons);
 
 		/// <summary>
 		/// Sets the visibility of the button at the given index.
@@ -31,5 +36,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings
 		/// <param name="index"></param>
 		/// <param name="visible"></param>
 		void SetButtonVisible(ushort index, bool visible);
+
+		/// <summary>
+		/// Sets the visibility of the back button.
+		/// </summary>
+		/// <param name="visible"></param>
+		void SetBackButtonVisible(bool visible);
+
+		/// <summary>
+		/// Sets the text for the title label.
+		/// </summary>
+		/// <param name="title"></param>
+		void SetTitle(string title);
 	}
 }

@@ -12,6 +12,9 @@ using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Administrative;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Conferencing;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.RoomCombine;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups;
@@ -120,7 +123,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			try
 			{
-				view.SetButtonLabels(s_ButtonLabels.Values);
+				view.SetButtonLabels(s_ButtonLabels.Values.Select(l => new KeyValuePair<string, string>(l, string.Empty)));
 
 				foreach (KeyValuePair<ushort, IUiPresenter> kvp in m_NavPages)
 				{
