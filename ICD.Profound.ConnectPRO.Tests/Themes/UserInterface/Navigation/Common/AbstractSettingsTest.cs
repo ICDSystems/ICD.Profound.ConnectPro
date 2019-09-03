@@ -7,54 +7,52 @@ using System.Linq;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Displays.Devices;
-using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Routing.Endpoints.Destinations;
 
 namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 {
-    public abstract class AbstractSettingsTest<TRoomType> : AbstractNavigationTest<TRoomType>
+	public abstract class AbstractSettingsTest<TRoomType> : AbstractNavigationTest<TRoomType>
 		where TRoomType : AbstractRoomType
 	{
-
 		#region Methods
 
-		public void OpenSettings(TRoomType roomType)
-	    {
-		    // Simulate "open setting" button press
-		    NavigationHelpers.PressButton(115, roomType.Panel);
-		    Assert.IsTrue(NavigationHelpers.CheckVisibilty(135, roomType.Panel));
+		private void OpenSettings(TRoomType roomType)
+		{
+			// Simulate "open setting" button press
+			NavigationHelpers.PressButton(115, roomType.Panel);
+			Assert.IsTrue(NavigationHelpers.CheckVisibilty(135, roomType.Panel));
 		}
 
-		public void CloseSettings(TRoomType roomType)
+		private void CloseSettings(TRoomType roomType)
 		{
 			// Simulate "close setting" button press
 			NavigationHelpers.PressButton(160, roomType.Panel);
 			Assert.IsFalse(NavigationHelpers.CheckVisibilty(141, roomType.Panel));
 		}
 
-		public void EnterPasscode(TRoomType roomType)
-	    {
-		    // Simulate "enter passcode" button press
-		    var keypad = roomType.Panel.SmartObjects[651] as MockSmartObject;
+		private void EnterPasscode(TRoomType roomType)
+		{
+			// Simulate "enter passcode" button press
+			var keypad = roomType.Panel.SmartObjects[651] as MockSmartObject;
 
-		    Assert.IsNotNull(keypad);
+			Assert.IsNotNull(keypad);
 
-		    NavigationHelpers.PressButton(1, keypad, 651);
-		    NavigationHelpers.PressButton(1, keypad, 651);
-		    NavigationHelpers.PressButton(1, keypad, 651);
-		    NavigationHelpers.PressButton(1, keypad, 651);
-		    NavigationHelpers.PressButton(12, keypad, 651);
+			NavigationHelpers.PressButton(1, keypad, 651);
+			NavigationHelpers.PressButton(1, keypad, 651);
+			NavigationHelpers.PressButton(1, keypad, 651);
+			NavigationHelpers.PressButton(1, keypad, 651);
+			NavigationHelpers.PressButton(12, keypad, 651);
 
-		    Assert.IsTrue(NavigationHelpers.CheckVisibilty(135, roomType.Panel));
-		    Assert.IsFalse(NavigationHelpers.CheckVisibilty(141, roomType.Panel));
-		    Assert.IsFalse(NavigationHelpers.CheckVisibilty(142, roomType.Panel));
+			Assert.IsTrue(NavigationHelpers.CheckVisibilty(135, roomType.Panel));
+			Assert.IsFalse(NavigationHelpers.CheckVisibilty(141, roomType.Panel));
+			Assert.IsFalse(NavigationHelpers.CheckVisibilty(142, roomType.Panel));
 
 			NavigationHelpers.PressButton(10, keypad, 651);
-		    NavigationHelpers.PressButton(10, keypad, 651);
-		    NavigationHelpers.PressButton(10, keypad, 651);
-		    NavigationHelpers.PressButton(10, keypad, 651);
-		    NavigationHelpers.PressButton(12, keypad, 651);
+			NavigationHelpers.PressButton(10, keypad, 651);
+			NavigationHelpers.PressButton(10, keypad, 651);
+			NavigationHelpers.PressButton(10, keypad, 651);
+			NavigationHelpers.PressButton(12, keypad, 651);
 
 			// Settings base is visible
 			Assert.IsTrue(NavigationHelpers.CheckVisibilty(141, roomType.Panel));
@@ -63,7 +61,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 			Assert.IsTrue(NavigationHelpers.CheckVisibilty(142, roomType.Panel));
 		}
 
-		public void EnterNewPasscode(TRoomType roomType)
+		private void EnterNewPasscode(TRoomType roomType)
 		{
 			// Passcode Settings is visible
 			Assert.IsTrue(NavigationHelpers.CheckVisibilty(143, roomType.Panel));
@@ -86,7 +84,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 			Assert.IsTrue(NavigationHelpers.CheckVisibilty(143, roomType.Panel));
 		}
 
-		public void SelectPasscodeSettings(TRoomType roomType)
+		private void SelectPasscodeSettings(TRoomType roomType)
 		{
 			NavigationHelpers.PressListButton(1, 652, 2, roomType.Panel);
 
@@ -104,7 +102,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 			Assert.IsTrue(NavigationHelpers.CheckVisibilty(144, roomType.Panel));
 		}
 
-		public void SelectSystemPowerPreference(TRoomType roomType)
+		private void SelectSystemPowerPreference(TRoomType roomType)
 		{
 			NavigationHelpers.PressListButton(1, 652, 1, roomType.Panel);
 
@@ -113,7 +111,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 			Assert.IsTrue(NavigationHelpers.CheckVisibilty(142, roomType.Panel));
 		}
 
-		public void SelectWeekdays(TRoomType roomType)
+		private void SelectWeekdays(TRoomType roomType)
 		{
 			// Passcode Settings is visible
 			Assert.IsTrue(NavigationHelpers.CheckVisibilty(142, roomType.Panel));
@@ -124,7 +122,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 			Assert.IsTrue(NavigationHelpers.CheckVisibilty(800, roomType.Panel));
 		}
 
-		public void SelectWeekends(TRoomType roomType)
+		private void SelectWeekends(TRoomType roomType)
 		{
 			// Passcode Settings is visible
 			Assert.IsTrue(NavigationHelpers.CheckVisibilty(142, roomType.Panel));
@@ -135,7 +133,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 			Assert.IsTrue(NavigationHelpers.CheckVisibilty(801, roomType.Panel));
 		}
 
-		public void EnableSystemPowerSettings(TRoomType roomType, bool weekdays, bool enable = true)
+		private void EnableSystemPowerSettings(TRoomType roomType, bool weekdays, bool enable = true)
 		{
 			Assert.IsTrue(NavigationHelpers.CheckVisibilty(142, roomType.Panel));
 
@@ -150,10 +148,11 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 
 			CloseSettings(roomType);
 
-			Assert.AreEqual(enable, weekdays ? roomType.Room.WakeSchedule.WeekdayEnable : roomType.Room.WakeSchedule.WeekendEnable);
+			Assert.AreEqual(enable,
+			                weekdays ? roomType.Room.WakeSchedule.WeekdayEnable : roomType.Room.WakeSchedule.WeekendEnable);
 		}
 
-		public void PowerSystemPowerSettings(TRoomType roomType, bool powerOn)
+		private void PowerSystemPowerSettings(TRoomType roomType, bool powerOn)
 		{
 			Assert.IsTrue(NavigationHelpers.CheckVisibilty(142, roomType.Panel));
 
@@ -163,7 +162,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 					display.PowerOn();
 			}
 
-			NavigationHelpers.PressButton((uint) (powerOn ? 812 : 813), roomType.Panel);
+			NavigationHelpers.PressButton((uint)(powerOn ? 812 : 813), roomType.Panel);
 
 			// Check Power for displays (wake)
 			if (!powerOn)
@@ -177,17 +176,19 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 
 			// Check Power for the panels
 			roomType.Room.Originators.GetInstancesRecursive<IPanelDevice>()
-				.SelectMany(panel => panel.Controls.GetControls<IPowerDeviceControl>())
-				.ForEach(c => Assert.AreEqual(powerOn, c.IsPowered));
+			        .SelectMany(panel => panel.Controls.GetControls<IPowerDeviceControl>())
+			        .ForEach(c => Assert.AreEqual(powerOn, c.IsPowered));
 
 			CloseSettings(roomType);
 		}
 
-		public void IncrementPowerOnTime(TRoomType roomType, bool weekdays, bool hour = true)
+		private void IncrementPowerOnTime(TRoomType roomType, bool weekdays, bool hour = true)
 		{
 			Assert.IsTrue(NavigationHelpers.CheckVisibilty(142, roomType.Panel));
 
-			TimeSpan currentWakeTime = (weekdays ? roomType.Room.WakeSchedule.WeekdayWakeTime : roomType.Room.WakeSchedule.WeekendWakeTime) ?? new TimeSpan(7, 0, 0);
+			TimeSpan currentWakeTime =
+				(weekdays ? roomType.Room.WakeSchedule.WeekdayWakeTime : roomType.Room.WakeSchedule.WeekendWakeTime) ??
+				new TimeSpan(7, 0, 0);
 			TimeSpan? expectedWakeTime = null;
 
 			if (hour)
@@ -202,16 +203,19 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 			}
 
 			CloseSettings(roomType);
-			var updatedWakeTime = (weekdays ? roomType.Room.WakeSchedule.WeekdayWakeTime : roomType.Room.WakeSchedule.WeekendWakeTime);
+			var updatedWakeTime =
+				(weekdays ? roomType.Room.WakeSchedule.WeekdayWakeTime : roomType.Room.WakeSchedule.WeekendWakeTime);
 
 			Assert.AreEqual(expectedWakeTime, updatedWakeTime);
 		}
 
-		public void DecrementPowerOnTime(TRoomType roomType, bool weekdays, bool hour = true)
+		private void DecrementPowerOnTime(TRoomType roomType, bool weekdays, bool hour = true)
 		{
 			Assert.IsTrue(NavigationHelpers.CheckVisibilty(142, roomType.Panel));
 
-			TimeSpan currentWakeTime = (weekdays ? roomType.Room.WakeSchedule.WeekdayWakeTime : roomType.Room.WakeSchedule.WeekendWakeTime) ?? new TimeSpan(7, 0, 0);
+			TimeSpan currentWakeTime =
+				(weekdays ? roomType.Room.WakeSchedule.WeekdayWakeTime : roomType.Room.WakeSchedule.WeekendWakeTime) ??
+				new TimeSpan(7, 0, 0);
 			TimeSpan? expectedWakeTime = null;
 
 			if (hour)
@@ -226,16 +230,19 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 			}
 
 			CloseSettings(roomType);
-			var updatedWakeTime = (weekdays ? roomType.Room.WakeSchedule.WeekdayWakeTime : roomType.Room.WakeSchedule.WeekendWakeTime);
+			var updatedWakeTime =
+				(weekdays ? roomType.Room.WakeSchedule.WeekdayWakeTime : roomType.Room.WakeSchedule.WeekendWakeTime);
 
 			Assert.AreEqual(expectedWakeTime, updatedWakeTime);
 		}
 
-		public void IncrementPowerOffTime(TRoomType roomType, bool weekdays, bool hour = true)
+		private void IncrementPowerOffTime(TRoomType roomType, bool weekdays, bool hour = true)
 		{
 			Assert.IsTrue(NavigationHelpers.CheckVisibilty(142, roomType.Panel));
 
-			TimeSpan currentSleepTime = (weekdays ? roomType.Room.WakeSchedule.WeekdaySleepTime : roomType.Room.WakeSchedule.WeekendSleepTime) ?? new TimeSpan(19, 0, 0);
+			TimeSpan currentSleepTime =
+				(weekdays ? roomType.Room.WakeSchedule.WeekdaySleepTime : roomType.Room.WakeSchedule.WeekendSleepTime) ??
+				new TimeSpan(19, 0, 0);
 			TimeSpan? expectedSleepTime = null;
 
 			if (hour)
@@ -250,16 +257,19 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 			}
 
 			CloseSettings(roomType);
-			var updatedSleepTime = (weekdays ? roomType.Room.WakeSchedule.WeekdaySleepTime : roomType.Room.WakeSchedule.WeekendSleepTime);
+			var updatedSleepTime =
+				(weekdays ? roomType.Room.WakeSchedule.WeekdaySleepTime : roomType.Room.WakeSchedule.WeekendSleepTime);
 
 			Assert.AreEqual(expectedSleepTime, updatedSleepTime);
 		}
 
-		public void DecrementPowerOffTime(TRoomType roomType, bool weekdays, bool hour = true)
+		private void DecrementPowerOffTime(TRoomType roomType, bool weekdays, bool hour = true)
 		{
 			Assert.IsTrue(NavigationHelpers.CheckVisibilty(142, roomType.Panel));
 
-			TimeSpan currentSleepTime = (weekdays ? roomType.Room.WakeSchedule.WeekdaySleepTime : roomType.Room.WakeSchedule.WeekendSleepTime) ?? new TimeSpan(19, 0, 0);
+			TimeSpan currentSleepTime =
+				(weekdays ? roomType.Room.WakeSchedule.WeekdaySleepTime : roomType.Room.WakeSchedule.WeekendSleepTime) ??
+				new TimeSpan(19, 0, 0);
 			TimeSpan? expectedSleepTime = null;
 
 			if (hour)
@@ -274,7 +284,8 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 			}
 
 			CloseSettings(roomType);
-			var updatedSleepTime = (weekdays ? roomType.Room.WakeSchedule.WeekdaySleepTime : roomType.Room.WakeSchedule.WeekendSleepTime);
+			var updatedSleepTime =
+				(weekdays ? roomType.Room.WakeSchedule.WeekdaySleepTime : roomType.Room.WakeSchedule.WeekendSleepTime);
 
 			Assert.AreEqual(expectedSleepTime, updatedSleepTime);
 		}
@@ -284,32 +295,32 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 		#region Tests
 
 		[Test]
-	    public void CurrentPasscodeTest()
-	    {
-		    using (TRoomType roomType = InstantiateRoomType())
-		    {
-			    Assert.IsFalse(NavigationHelpers.CheckVisibilty(135, roomType.Panel));
+		public void CurrentPasscodeTest()
+		{
+			using (TRoomType roomType = InstantiateRoomType())
+			{
+				Assert.IsFalse(NavigationHelpers.CheckVisibilty(135, roomType.Panel));
 
 				OpenSettings(roomType);
 				EnterPasscode(roomType);
 			}
 		}
 
-	    [Test]
-	    public void ChangePasscodeTest()
-	    {
-		    using (TRoomType roomType = InstantiateRoomType())
-		    {
-			    Assert.IsFalse(NavigationHelpers.CheckVisibilty(135, roomType.Panel));
+		[Test]
+		public void ChangePasscodeTest()
+		{
+			using (TRoomType roomType = InstantiateRoomType())
+			{
+				Assert.IsFalse(NavigationHelpers.CheckVisibilty(135, roomType.Panel));
 
 				OpenSettings(roomType);
-			    EnterPasscode(roomType);
-			    SelectPasscodeSettings(roomType);
+				EnterPasscode(roomType);
+				SelectPasscodeSettings(roomType);
 				EnterNewPasscode(roomType);
-			    EnterNewPasscode(roomType);
+				EnterNewPasscode(roomType);
 				Assert.IsTrue(roomType.Room.Passcode == "5555");
 			}
-	    }
+		}
 
 		[Test]
 		public void SystemPowerPreferencesTests()
@@ -397,6 +408,5 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 		}
 
 		#endregion
-
 	}
 }

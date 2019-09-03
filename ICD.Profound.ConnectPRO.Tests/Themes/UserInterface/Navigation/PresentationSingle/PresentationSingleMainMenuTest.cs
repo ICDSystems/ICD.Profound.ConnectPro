@@ -1,6 +1,4 @@
 ﻿using System.Linq;
-using ICD.Connect.Displays.Devices;
-using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common;
 using ICD.Profound.ConnectPRO.Tests.RoomTypes;
 using ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Helpers;
@@ -9,12 +7,12 @@ using NUnit.Framework;
 namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.PresentationSingle
 {
 	[TestFixture]
-    class PresentationSingleMainMenuTest : AbstractMainMenuTest<PresentationSingleRoomType>
-    {
-	    protected override PresentationSingleRoomType InstantiateRoomType()
-	    {
-		    return new PresentationSingleRoomType();
-	    }
+	public sealed class PresentationSingleMainMenuTest : AbstractMainMenuTest<PresentationSingleRoomType>
+	{
+		protected override PresentationSingleRoomType InstantiateRoomType()
+		{
+			return new PresentationSingleRoomType();
+		}
 
 		[Test]
 		public void VisibleSourcesTest()
@@ -58,7 +56,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Presenta
 				{
 					Assert.IsFalse(NavigationHelpers.CheckVisibilty(1, roomType.Panel));
 				}
-				
+
 				Assert.IsTrue(NavigationHelpers.CheckVisibilty(subpage, roomType.Panel));
 
 				// Ensure sources are visible in the list
