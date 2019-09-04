@@ -171,7 +171,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		private void ViewOnKeypadButtonPressed(object sender, CharEventArgs eventArgs)
 		{
 			m_ShowError = false;
-			m_StringBuilder.AppendCharacter(eventArgs.Data);
+
+			if (m_StringBuilder.ToString().Length < 4)
+				m_StringBuilder.AppendCharacter(eventArgs.Data);
 		}
 
 		/// <summary>

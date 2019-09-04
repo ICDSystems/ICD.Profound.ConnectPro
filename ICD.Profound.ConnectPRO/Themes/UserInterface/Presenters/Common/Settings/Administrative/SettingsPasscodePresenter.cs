@@ -156,7 +156,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 		private void ViewOnKeypadButtonPressed(object sender, CharEventArgs charEventArgs)
 		{
-			m_StringBuilder.AppendCharacter(charEventArgs.Data);
+			if (m_StringBuilder.ToString().Length < 4)
+				m_StringBuilder.AppendCharacter(charEventArgs.Data);
 		}
 
 		private void ViewOnEnterButtonPressed(object sender, EventArgs eventArgs)
