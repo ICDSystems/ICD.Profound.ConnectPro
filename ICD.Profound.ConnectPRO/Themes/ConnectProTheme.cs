@@ -83,7 +83,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 		public eCueBackgroundMode CueBackground
 		{
 			get { return m_CueBackground; }
-			private set
+			set
 			{
 				if (m_CueBackground == value)
 					return;
