@@ -186,6 +186,10 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\FloatingActions\IFloatingActionPrivacyMutePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\FloatingActions\IFloatingActionVolumePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\Administrative\ISettingsClockPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\CUE\ISettingsCueBackgroundPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\CUE\Modes\ISettingsCueBackgroundModePresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\CUE\Modes\ISettingsCueBackgroundSeasonalPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\CUE\Modes\ISettingsCueBackgroundStaticPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\ISettingsBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\Conferencing\ISettingsDirectoryPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\Administrative\ISettingsPinPresenter.cs" />
@@ -357,6 +361,10 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\ReferencedSchedulePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ReferencedSchedulePresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\Administrative\SettingsClockPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Settings\CUE\Modes\AbstractSettingsCueBackgroundModePresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Settings\CUE\Modes\SettingsCueBackgroundSeasonalPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Settings\CUE\Modes\SettingsCueBackgroundStaticPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Settings\CUE\SettingsCueBackgroundPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\SettingsBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\Conferencing\SettingsDirectoryPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\Administrative\SettingsPinPresenter.cs" />
@@ -684,10 +692,6 @@
       <Project>{89BF27D5-374B-4863-AD92-D217924D6D8F}</Project>
       <Name>ICD.Connect.UI_SimplSharp</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Themes\UserInterface\IPresenters\Common\Settings\CUE\" />
-    <Folder Include="Themes\UserInterface\Presenters\Common\Settings\CUE\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
   <PropertyGroup>
