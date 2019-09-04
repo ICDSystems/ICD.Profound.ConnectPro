@@ -10,8 +10,8 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Admini
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings.Administrative
 {
-	[PresenterBinding(typeof(ISettingsPasscodePresenter))]
-	public sealed class SettingsPasscodePresenter : AbstractUiPresenter<ISettingsPinView>, ISettingsPasscodePresenter
+	[PresenterBinding(typeof(ISettingsPinPresenter))]
+	public sealed class SettingsPinPresenter : AbstractUiPresenter<ISettingsPinView>, ISettingsPinPresenter
 	{
 		private const string INSTRUCTION_NEW_PASSCODE = "Please type in new passcode to change";
 		private const string INSTRUCTION_CONFIRM_PASSCODE = "Please confirm new passcode";
@@ -74,7 +74,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public SettingsPasscodePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+		public SettingsPinPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_StringBuilder = new KeypadStringBuilder();

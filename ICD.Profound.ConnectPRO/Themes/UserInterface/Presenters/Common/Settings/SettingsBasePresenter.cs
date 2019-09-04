@@ -42,9 +42,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			new Dictionary<ushort, Type>
 			{
 				{DIRECTORY, typeof(ISettingsDirectoryPresenter)},
-				{PASSCODE_SETTINGS, typeof(ISettingsPasscodePresenter)},
+				{PASSCODE_SETTINGS, typeof(ISettingsPinPresenter)},
 				{ROOM_COMBINE, typeof(ISettingsRoomCombinePresenter)},
-				{SYSTEM_POWER, typeof(ISettingsSystemPowerPresenter)},
+				{SYSTEM_POWER, typeof(ISettingsPowerPresenter)},
 			};
 
 		private readonly Dictionary<ushort, IUiPresenter> m_NavPages;

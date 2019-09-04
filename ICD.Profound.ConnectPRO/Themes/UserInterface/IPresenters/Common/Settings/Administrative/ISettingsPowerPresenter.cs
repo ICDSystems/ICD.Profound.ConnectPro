@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Administrative
 {
-	public interface ISettingsSystemPowerPresenter : IUiPresenter<ISettingsPowerView>
+	public interface ISettingsPowerPresenter : IUiPresenter<ISettingsPowerView>
 	{
 	}
 }

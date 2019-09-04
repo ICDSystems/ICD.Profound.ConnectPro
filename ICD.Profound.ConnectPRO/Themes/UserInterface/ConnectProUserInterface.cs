@@ -215,8 +215,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			// Settings node
 			IVisibilityNode settingsVisibility = new SingleVisibilityNode();
-			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsPasscodePresenter>());
-			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsSystemPowerPresenter>());
+			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsPinPresenter>());
+			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsPowerPresenter>());
 			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsDirectoryPresenter>());
 			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsRoomCombinePresenter>());
 

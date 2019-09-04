@@ -9,8 +9,8 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Admini
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings.Administrative
 {
-	[PresenterBinding(typeof(ISettingsSystemPowerPresenter))]
-	public sealed class SettingsSystemPowerPresenter : AbstractUiPresenter<ISettingsPowerView>, ISettingsSystemPowerPresenter
+	[PresenterBinding(typeof(ISettingsPowerPresenter))]
+	public sealed class SettingsPowerPresenter : AbstractUiPresenter<ISettingsPowerView>, ISettingsPowerPresenter
 	{
 		private static readonly TimeSpan s_HourIncrement = TimeSpan.FromHours(1);
 		private static readonly TimeSpan s_MinuteIncrement = TimeSpan.FromMinutes(1);
@@ -44,7 +44,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public SettingsSystemPowerPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+		public SettingsPowerPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_WeekendEnable = false;
