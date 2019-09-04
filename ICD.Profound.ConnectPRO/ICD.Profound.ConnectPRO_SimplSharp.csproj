@@ -185,6 +185,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\FloatingActions\IFloatingActionPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\FloatingActions\IFloatingActionPrivacyMutePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\FloatingActions\IFloatingActionVolumePresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\Administrative\ISettingsClockPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\ISettingsBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\Conferencing\ISettingsDirectoryPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\Administrative\ISettingsPinPresenter.cs" />
@@ -355,6 +356,7 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\PasscodePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ReferencedSchedulePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ReferencedSchedulePresenterFactory.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Settings\Administrative\SettingsClockPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\SettingsBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\Conferencing\SettingsDirectoryPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\Administrative\SettingsPinPresenter.cs" />

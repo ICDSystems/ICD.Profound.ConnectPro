@@ -33,7 +33,6 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.AudioConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.FloatingActions;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Administrative;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Conferencing;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.RoomCombine;
@@ -215,6 +214,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			// Settings node
 			IVisibilityNode settingsVisibility = new SingleVisibilityNode();
+			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsClockPresenter>());
 			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsPinPresenter>());
 			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsPowerPresenter>());
 			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsDirectoryPresenter>());
