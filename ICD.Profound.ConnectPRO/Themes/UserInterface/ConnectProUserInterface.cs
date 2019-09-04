@@ -23,7 +23,6 @@ using ICD.Connect.Routing.EventArguments;
 using ICD.Connect.Sources.TvTuner.Controls;
 using ICD.Connect.Themes.UserInterfaces;
 using ICD.Connect.UI.Mvp.Presenters;
-using ICD.Connect.UI.Mvp.VisibilityTree;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Rooms.Combine;
 using ICD.Profound.ConnectPRO.Routing;
@@ -32,20 +31,11 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.AudioConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.FloatingActions;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Administrative;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Conferencing;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.RoomCombine;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.CableTv;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.WebConferencing;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.ActiveCalls;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Dtmf;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.ActiveMeeting;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views;
@@ -80,6 +70,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				{typeof(ITvTunerControl), new List<Type> {typeof(ICableTvPresenter)}}
 			};
 
+		private readonly ConnectProVisibilityTree m_VisibilityTree;
 		private readonly IPanelDevice m_Panel;
 		private readonly IConnectProNavigationController m_NavigationController;
 		private readonly SafeTimer m_SourceSelectionTimeout;
@@ -87,7 +78,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private readonly SafeCriticalSection m_RoutingSection;
 
 		private IConnectProRoom m_Room;
-		private DefaultVisibilityNode m_RootVisibility;
 		private ISource m_SelectedSource;
 		private bool m_UserInterfaceReady;
 
@@ -120,7 +110,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			IUiViewFactory viewFactory = new ConnectProUiViewFactory(panel, theme);
 			m_NavigationController = new ConnectProNavigationController(viewFactory, theme);
 
-			BuildVisibilityTree();
+			m_VisibilityTree = new ConnectProVisibilityTree(m_NavigationController);
+
 			SubscribePresenters();
 		}
 
@@ -143,98 +134,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private void UpdatePanelOfflineJoin()
 		{
 			m_Panel.SendInputDigital(CommonJoins.DIGITAL_OFFLINE_JOIN, m_Room == null || !m_UserInterfaceReady);
-		}
-
-		/// <summary>
-		/// Builds the rules for view visibility, e.g. prevent certain items from being visible at the same time.
-		/// </summary>
-		private void BuildVisibilityTree()
-		{
-			// Only allow one of the start/end buttons to be visible at any given time
-			m_RootVisibility = new DefaultVisibilityNode(m_NavigationController.LazyLoadPresenter<IStartMeetingPresenter>());
-
-			IVisibilityNode displaysVisibility = new SingleVisibilityNode();
-			displaysVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>());
-			displaysVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>());
-			displaysVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IMenu2DisplaysPresenter>());
-			displaysVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IMenu3PlusDisplaysPresenter>());
-
-			m_RootVisibility.AddNode(displaysVisibility);
-
-			// Video Conference node
-			IVisibilityNode videoConferencingVisibility = new SingleVisibilityNode();
-			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcContactsNormalPresenter>());
-			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcContactsPolycomPresenter>());
-			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcSharePresenter>());
-			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcDtmfPresenter>());
-			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcActiveCallsPresenter>());
-			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcKeyboardPresenter>());
-			videoConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcKeypadPresenter>());
-			
-			// Web Conference node
-			IVisibilityNode webConferencingVisibility = new SingleVisibilityNode();
-			webConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcCallOutPresenter>());
-			webConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcSharePresenter>());
-			webConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcContactListPresenter>());
-			webConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcRecordingPresenter>());
-			webConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcActiveMeetingPresenter>());
-			webConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcStartMeetingPresenter>());
-
-			// Audio Conference node
-			IVisibilityNode audioConferencingVisibility = new SingleVisibilityNode();
-			audioConferencingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IAtcBasePresenter>());
-
-			// Meeting node
-			IVisibilityNode meetingVisibility = new VisibilityNode();
-
-			meetingVisibility.AddNode(videoConferencingVisibility);
-			meetingVisibility.AddNode(audioConferencingVisibility);
-			meetingVisibility.AddNode(webConferencingVisibility);
-
-			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>());
-			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IFloatingActionPrivacyMutePresenter>());
-			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IFloatingActionVolumePresenter>());
-			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IFloatingActionCameraPresenter>());
-			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcBasePresenter>());
-			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcBasePresenter>());
-			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ICableTvPresenter>());
-			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWebConferencingAlertPresenter>());
-			meetingVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWebConferencingStepPresenter>());
-
-			m_RootVisibility.AddNode(meetingVisibility);
-
-			// Camera visibility
-			IVisibilityNode cameraVisibility = new SingleVisibilityNode();
-			cameraVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ICameraControlPresenter>());
-			cameraVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ICameraActivePresenter>());
-			cameraVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IWtcLeftMenuPresenter>());
-			cameraVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcButtonListPresenter>());
-			cameraVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcContactsNormalPresenter>());
-			cameraVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IVtcContactsPolycomPresenter>());
-
-			// Settings node
-			IVisibilityNode settingsVisibility = new SingleVisibilityNode();
-			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsClockPresenter>());
-			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsPinPresenter>());
-			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsPowerPresenter>());
-			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsDirectoryPresenter>());
-			settingsVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISettingsRoomCombinePresenter>());
-
-			m_RootVisibility.AddNode(settingsVisibility);
-
-			// These presenters are initially visible.
-			m_NavigationController.NavigateTo<IHeaderPresenter>();
-			m_NavigationController.NavigateTo<IHardButtonsPresenter>();
-
-			// These presenters control their own visibility.
-			m_NavigationController.LazyLoadPresenter<IEndMeetingPresenter>();
-			m_NavigationController.LazyLoadPresenter<IStartMeetingPresenter>();
-			m_NavigationController.LazyLoadPresenter<IFloatingActionPrivacyMutePresenter>();
-			m_NavigationController.LazyLoadPresenter<IFloatingActionVolumePresenter>();
-			m_NavigationController.LazyLoadPresenter<IFloatingActionCameraPresenter>();
-			m_NavigationController.LazyLoadPresenter<IVtcCallListTogglePresenter>();
-			m_NavigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>();
-			m_NavigationController.LazyLoadPresenter<IAtcIncomingCallPresenter>();
 		}
 
 		#region Methods

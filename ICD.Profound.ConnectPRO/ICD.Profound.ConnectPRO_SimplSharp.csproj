@@ -160,6 +160,7 @@
     <Compile Include="Themes\OsdInterface\Views\Welcome\OsdWelcomeView.generated.cs" />
     <Compile Include="Themes\OsdInterface\Views\Welcome\ReferencedScheduleView.cs" />
     <Compile Include="Themes\OsdInterface\Views\Welcome\ReferencedScheduleView.generated.cs" />
+    <Compile Include="Themes\UserInterface\ConnectProVisibilityTree.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\AudioConference\IAtcBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\AudioConference\IAtcIncomingCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IDisplaysPresenter.cs" />
