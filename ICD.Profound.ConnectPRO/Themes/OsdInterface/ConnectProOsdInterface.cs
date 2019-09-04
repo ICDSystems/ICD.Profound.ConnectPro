@@ -225,6 +225,13 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface
 				m_NavigationController.NavigateTo<IOsdSourcesPresenter>();
 			else if (m_Room.CalendarControl != null)
 				m_NavigationController.NavigateTo<IOsdWelcomePresenter>();
+			else
+			{
+				m_MainPageVisibility.Hide();
+
+				m_NavigationController.NavigateTo<IOsdHelloPresenter>();
+				m_NavigationController.NavigateTo<IOsdHeaderPresenter>();
+			}
 		}
 
 		#endregion
