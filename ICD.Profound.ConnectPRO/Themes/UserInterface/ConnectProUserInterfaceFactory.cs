@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Connect.Panels.Devices;
+using ICD.Connect.Panels.Server;
 using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -41,7 +42,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			return room.Originators
 			           .GetInstancesRecursive<IPanelDevice>()
-			           .Where(o => !(o is OsdPanelDevice))
+			           .Where(o => !(o is OsdPanelDevice) && !(o is ITouchDisplayDevice))
 			           .Select(o => CreateUserInterface(o));
 		}
 
