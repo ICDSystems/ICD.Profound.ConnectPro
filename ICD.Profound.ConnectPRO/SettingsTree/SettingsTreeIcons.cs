@@ -41,7 +41,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 		/// <returns></returns>
 		public static string GetIcon(string icon, eColor color)
 		{
-			return icon + s_ColorToSuffix[color];
+			return string.Format("{0}_{1}", icon, s_ColorToSuffix[color]);
 		}
 	}
 }
