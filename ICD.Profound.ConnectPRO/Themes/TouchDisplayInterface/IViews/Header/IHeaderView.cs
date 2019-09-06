@@ -1,6 +1,6 @@
 ﻿namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Header
 {
-	public interface ITouchDisplayHeaderView : ITouchDisplayView
+	public interface IHeaderView : ITouchDisplayView
 	{
 		void SetRoomName(string name);
 

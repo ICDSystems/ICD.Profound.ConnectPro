@@ -8,8 +8,8 @@ using System;
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Background
 {
-	[PresenterBinding(typeof(ITouchDisplayBackgroundPresenter))]
-	public sealed class BackgroundPresenter : AbstractTouchDisplayPresenter<ITouchDisplayBackgroundView>, ITouchDisplayBackgroundPresenter
+	[PresenterBinding(typeof(IBackgroundPresenter))]
+	public sealed class BackgroundPresenter : AbstractTouchDisplayPresenter<IBackgroundView>, IBackgroundPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 
@@ -27,7 +27,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Backgr
 			Unsubscribe(Theme);
 		}
 
-		protected override void Refresh(ITouchDisplayBackgroundView view)
+		protected override void Refresh(IBackgroundView view)
 		{
 			base.Refresh(view);
 			

@@ -8,8 +8,8 @@ using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Header;
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 {
-	[PresenterBinding(typeof(ITouchDisplayHeaderPresenter))]
-	public sealed class TouchDisplayHeaderPresenter : AbstractTouchDisplayPresenter<ITouchDisplayHeaderView>, ITouchDisplayHeaderPresenter
+	[PresenterBinding(typeof(IHeaderPresenter))]
+	public sealed class HeaderPresenter : AbstractTouchDisplayPresenter<IHeaderView>, IHeaderPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly SafeTimer m_RefreshTimer;
@@ -20,7 +20,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public TouchDisplayHeaderPresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views, ConnectProTheme theme)
+		public HeaderPresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
@@ -43,7 +43,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 		/// Updates the view.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Refresh(ITouchDisplayHeaderView view)
+		protected override void Refresh(IHeaderView view)
 		{
 			base.Refresh(view);
 
@@ -67,7 +67,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 		/// </summary>
 		private void RefreshTime()
 		{
-			ITouchDisplayHeaderView view = GetView();
+			IHeaderView view = GetView();
 			if (view == null)
 				return;
 

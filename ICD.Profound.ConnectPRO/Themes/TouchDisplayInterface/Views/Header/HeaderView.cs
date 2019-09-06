@@ -4,10 +4,10 @@ using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Header;
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 {
-	[ViewBinding(typeof(ITouchDisplayHeaderView))]
-	public sealed partial class TouchDisplayHeaderView : AbstractTouchDisplayView, ITouchDisplayHeaderView
+	[ViewBinding(typeof(IHeaderView))]
+	public sealed partial class HeaderView : AbstractTouchDisplayView, IHeaderView
 	{
-		public TouchDisplayHeaderView(ISigInputOutput panel, ConnectProTheme theme)
+		public HeaderView(ISigInputOutput panel, ConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

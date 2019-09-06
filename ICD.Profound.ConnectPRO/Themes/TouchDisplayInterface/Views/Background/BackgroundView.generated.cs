@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Background
 {
-	public partial class TouchDisplayBackgroundView
+	public partial class BackgroundView
 	{
 		private VtProSubpage m_Subpage;
 		private VtProAdvancedButton m_Background;
