@@ -5,8 +5,6 @@ using ICD.Common.Utils.Timers;
 using ICD.Connect.Audio.Controls.Mute;
 using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.EventArguments;
-using ICD.Connect.Devices;
-using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -26,7 +24,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private IVolumeDeviceControl m_VolumeControl;
-		private IPowerDeviceControl m_PowerControl;
 
 		/// <summary>
 		/// Gets/sets the volume device.
@@ -93,7 +90,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 				view.SetMuted(muted);
 				view.SetVolumePercentage(volume);
-				view.SetControlsEnabled(m_PowerControl == null || m_PowerControl.IsPowered);
+				view.SetControlsEnabled(m_VolumeControl == null || m_VolumeControl.ControlAvaliable);
 			}
 			finally
 			{
@@ -305,6 +302,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (control == null)
 				return;
 
+			control.OnControlAvaliableChanged += ControlOnControlAvaliableChanged;
+
 			IVolumeMuteFeedbackDeviceControl controlMute = control as IVolumeMuteFeedbackDeviceControl;
 			if (controlMute != null)
 				controlMute.OnMuteStateChanged += DeviceOnMuteStateChanged;
@@ -312,11 +311,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			IVolumePositionDeviceControl controlPosition = control as IVolumePositionDeviceControl;
 			if (controlPosition != null)
 				controlPosition.OnVolumeChanged += DeviceOnVolumeChanged;
+		}
 
-			IDeviceBase parent = control.Parent;
-			m_PowerControl = parent == null ? null : parent.Controls.GetControl<IPowerDeviceControl>();
-			if (m_PowerControl != null)
-				m_PowerControl.OnIsPoweredChanged += PowerControlOnIsPoweredChanged;
+		private void ControlOnControlAvaliableChanged(object sender, DeviceControlAvaliableApiEventArgs e)
+		{
+			RefreshIfVisible();
 		}
 
 		/// <summary>
@@ -328,6 +327,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (control == null)
 				return;
 
+			control.OnControlAvaliableChanged -= ControlOnControlAvaliableChanged;
+
 			IVolumeMuteFeedbackDeviceControl controlMute = control as IVolumeMuteFeedbackDeviceControl;
 			if (controlMute != null)
 				controlMute.OnMuteStateChanged -= DeviceOnMuteStateChanged;
@@ -338,15 +339,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				controlPosition.VolumeRampStop();
 				controlPosition.OnVolumeChanged -= DeviceOnVolumeChanged;
 			}
-
-			if (m_PowerControl != null)
-				m_PowerControl.OnIsPoweredChanged -= PowerControlOnIsPoweredChanged;
-			m_PowerControl = null;
-		}
-
-		private void PowerControlOnIsPoweredChanged(object sender, PowerDeviceControlPowerStateApiEventArgs powerDeviceControlPowerStateApiEventArgs)
-		{
-			RefreshIfVisible();
 		}
 
 		/// <summary>

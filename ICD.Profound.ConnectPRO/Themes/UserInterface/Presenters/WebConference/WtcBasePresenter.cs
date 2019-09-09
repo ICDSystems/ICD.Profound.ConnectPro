@@ -153,7 +153,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				return;
 
 			bool visible = IsViewVisible;
-			if (visible == m_SubscribedPowerControl.IsPowered)
+			if (visible == (m_SubscribedPowerControl.PowerState == ePowerState.PowerOn))
 				return;
 
 			if (visible)
@@ -204,7 +204,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			if (m_SubscribedPowerControl == null)
 				return;
 
-			m_SubscribedPowerControl.OnIsPoweredChanged += SubscribedPowerControlOnIsPoweredChanged;
+			m_SubscribedPowerControl.OnPowerStateChanged += SubscribedPowerControlOnPowerStateChanged;
 		}
 
 		private void Unsubscribe(IWebConferenceDeviceControl control)
@@ -227,7 +227,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			if (m_SubscribedPowerControl == null)
 				return;
 
-			m_SubscribedPowerControl.OnIsPoweredChanged -= SubscribedPowerControlOnIsPoweredChanged;
+			m_SubscribedPowerControl.OnPowerStateChanged -= SubscribedPowerControlOnPowerStateChanged;
 			m_SubscribedPowerControl = null;
 		}
 
@@ -253,7 +253,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void SubscribedPowerControlOnIsPoweredChanged(object sender, PowerDeviceControlPowerStateApiEventArgs eventArgs)
+		private void SubscribedPowerControlOnPowerStateChanged(object sender, PowerDeviceControlPowerStateApiEventArgs eventArgs)
 		{
 			UpdateCodecAwakeState(false);
 		}

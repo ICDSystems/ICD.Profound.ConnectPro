@@ -143,14 +143,14 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 				foreach (IDestination destination in roomType.Room.Routing.Destinations.GetDisplayDestinations())
 				{
 					if (roomType.Core.Originators.GetChild(destination.Device) is IDisplay display)
-						Assert.AreEqual(false, display.IsPowered);
+						Assert.AreEqual(ePowerState.PowerOff, display.PowerState);
 				}
 			}
 
 			// Check Power for the panels
 			roomType.Room.Originators.GetInstancesRecursive<IPanelDevice>()
 			        .SelectMany(panel => panel.Controls.GetControls<IPowerDeviceControl>())
-			        .ForEach(c => Assert.AreEqual(powerOn, c.IsPowered));
+			        .ForEach(c => Assert.AreEqual(powerOn, (c.PowerState == ePowerState.PowerOn)));
 
 			CloseSettings(roomType);
 		}

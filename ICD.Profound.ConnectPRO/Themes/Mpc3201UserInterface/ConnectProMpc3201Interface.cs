@@ -11,8 +11,6 @@ using ICD.Common.Utils.Timers;
 using ICD.Connect.Audio.Controls.Mute;
 using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.EventArguments;
-using ICD.Connect.Devices;
-using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.Misc.Keypads;
 using ICD.Connect.Panels.Crestron.Controls.TouchScreens;
@@ -57,7 +55,6 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 
 		private IVolumeDeviceControl m_VolumeControl;
 		private IVolumeMuteFeedbackDeviceControl m_VolumeMuteFeedbackControl;
-		private IPowerDeviceControl m_VolumePowerControl;
 		private ISource[] m_Sources;
 		private IConnectProRoom m_Room;
 
@@ -197,7 +194,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 				}
 
 				// Volume power
-				bool volumeOff = m_VolumePowerControl != null && !m_VolumePowerControl.IsPowered;
+				bool volumeOff = m_VolumeControl != null && !m_VolumeControl.ControlAvaliable;
 
 				// Volume
 				bool volumeEnabled = !volumeOff && m_VolumeControl is IVolumeRampDeviceControl;
@@ -474,10 +471,6 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			m_VolumeControl = room.GetVolumeControl();
 			m_VolumeMuteFeedbackControl = m_VolumeControl as IVolumeMuteFeedbackDeviceControl;
 			Subscribe(m_VolumeControl);
-
-			IDeviceBase volumeParent = m_VolumeControl == null ? null : m_VolumeControl.Parent;
-			m_VolumePowerControl = volumeParent == null ? null : volumeParent.Controls.GetControl<IPowerDeviceControl>();
-			Subscribe(m_VolumePowerControl);
 		}
 
 		/// <summary>
@@ -495,9 +488,6 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			Unsubscribe(m_VolumeMuteFeedbackControl);
 			m_VolumeMuteFeedbackControl = null;
 			m_VolumeControl = null;
-
-			Unsubscribe(m_VolumePowerControl);
-			m_VolumePowerControl = null;
 		}
 
 		/// <summary>
@@ -671,6 +661,8 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// <param name="volumeControl"></param>
 		private void Subscribe(IVolumeDeviceControl volumeControl)
 		{
+			volumeControl.OnControlAvaliableChanged += VolumeControl_OnControlAvaliableChanged;
+
 			IVolumePositionDeviceControl volumePositionControl = volumeControl as IVolumePositionDeviceControl;
 			if (volumePositionControl != null)
 				volumePositionControl.OnVolumeChanged += VolumeLevelControlOnVolumeChanged;
@@ -686,6 +678,8 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// <param name="volumeControl"></param>
 		private void Unsubscribe(IVolumeDeviceControl volumeControl)
 		{
+			volumeControl.OnControlAvaliableChanged -= VolumeControl_OnControlAvaliableChanged;
+
 			IVolumePositionDeviceControl volumePositionControl = volumeControl as IVolumePositionDeviceControl;
 			if (volumePositionControl != null)
 				volumePositionControl.OnVolumeChanged -= VolumeLevelControlOnVolumeChanged;
@@ -715,40 +709,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			Refresh();
 		}
 
-		#endregion
-
-		#region Volume Power Control Callbacks
-
-		/// <summary>
-		/// Subscribe to the volume power control events.
-		/// </summary>
-		/// <param name="volumePowerControl"></param>
-		private void Subscribe(IPowerDeviceControl volumePowerControl)
-		{
-			if (volumePowerControl == null)
-				return;
-
-			volumePowerControl.OnIsPoweredChanged += VolumePowerControlOnIsPoweredChanged;
-		}
-
-		/// <summary>
-		/// Unsubscribe from the volume power control events.
-		/// </summary>
-		/// <param name="volumePowerControl"></param>
-		private void Unsubscribe(IPowerDeviceControl volumePowerControl)
-		{
-			if (volumePowerControl == null)
-				return;
-
-			volumePowerControl.OnIsPoweredChanged -= VolumePowerControlOnIsPoweredChanged;
-		}
-
-		/// <summary>
-		/// Called when the volume device power state changes.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="powerDeviceControlPowerStateApiEventArgs"></param>
-		private void VolumePowerControlOnIsPoweredChanged(object sender, PowerDeviceControlPowerStateApiEventArgs powerDeviceControlPowerStateApiEventArgs)
+		private void VolumeControl_OnControlAvaliableChanged(object sender, DeviceControlAvaliableApiEventArgs e)
 		{
 			Refresh();
 		}

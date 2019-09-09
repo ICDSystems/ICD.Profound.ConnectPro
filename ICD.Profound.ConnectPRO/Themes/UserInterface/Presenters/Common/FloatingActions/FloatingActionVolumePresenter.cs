@@ -3,8 +3,6 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Audio.Controls.Mute;
 using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.EventArguments;
-using ICD.Connect.Devices;
-using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
@@ -24,7 +22,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 
 		private IVolumeDeviceControl m_SubscribedVolumeControl;
 		private IVolumeMuteFeedbackDeviceControl m_SubscribedMuteFeedbackControl;
-		private IPowerDeviceControl m_SubscribedPowerControl;
 
 		/// <summary>
 		/// Constructor.
@@ -57,7 +54,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		{
 			base.Refresh(view);
 
-			view.SetButtonEnabled(m_SubscribedPowerControl == null || m_SubscribedPowerControl.IsPowered);
+			view.SetButtonEnabled(m_SubscribedVolumeControl == null || m_SubscribedVolumeControl.ControlAvaliable);
 		}
 
 		/// <summary>
@@ -155,17 +152,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 				return;
 
 			m_SubscribedVolumeControl = GetVolumeControl(room);
+			if (m_SubscribedVolumeControl != null)
+				m_SubscribedVolumeControl.OnControlAvaliableChanged += SubscribedVolumeControlOnControlAvaliableChanged;
 
 			m_SubscribedMuteFeedbackControl = GetMuteFeedbackControl(room);
 			if (m_SubscribedMuteFeedbackControl != null)
 				m_SubscribedMuteFeedbackControl.OnMuteStateChanged += SubscribedMuteFeedbackControlOnMuteStateChanged;
 
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
-
-			IDeviceBase parent = m_SubscribedVolumeControl == null ? null : m_SubscribedVolumeControl.Parent;
-			m_SubscribedPowerControl = parent == null ? null : parent.Controls.GetControl<IPowerDeviceControl>();
-			if (m_SubscribedPowerControl != null)
-				m_SubscribedPowerControl.OnIsPoweredChanged += SubscribedPowerControlOnIsPoweredChanged;
 		}
 
 		/// <summary>
@@ -176,21 +170,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		{
 			base.Unsubscribe(room);
 
+			if (m_SubscribedVolumeControl != null)
+				m_SubscribedVolumeControl.OnControlAvaliableChanged -= SubscribedVolumeControlOnControlAvaliableChanged;
 			m_SubscribedVolumeControl = null;
 
 			if (m_SubscribedMuteFeedbackControl != null)
 				m_SubscribedMuteFeedbackControl.OnMuteStateChanged -= SubscribedMuteFeedbackControlOnMuteStateChanged;
 			m_SubscribedMuteFeedbackControl = null;
 
-			if (m_SubscribedPowerControl != null)
-				m_SubscribedPowerControl.OnIsPoweredChanged -= SubscribedPowerControlOnIsPoweredChanged;
-			m_SubscribedPowerControl = null;
-
 			if (room != null)
 				room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
 		}
 
-		private void SubscribedPowerControlOnIsPoweredChanged(object sender, PowerDeviceControlPowerStateApiEventArgs eventArgs)
+		private void SubscribedVolumeControlOnControlAvaliableChanged(object sender, DeviceControlAvaliableApiEventArgs e)
 		{
 			RefreshIfVisible();
 		}

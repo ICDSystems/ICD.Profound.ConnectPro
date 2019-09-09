@@ -3,8 +3,6 @@ using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Audio.Controls.Volume;
-using ICD.Connect.Devices;
-using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.Panels.Controls;
 using ICD.Connect.UI.Attributes;
@@ -28,7 +26,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private IVolumePresenter m_CachedVolumePresenter;
-		private IPowerDeviceControl m_PowerControl;
 		private readonly IHardButtonBacklightControl m_ButtonsControl;
 		private IVolumeDeviceControl m_VolumeControl;
 
@@ -73,7 +70,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 					return;
 
 				bool isInMeeting = Room != null && Room.IsInMeeting;
-				bool hasVolumeControl = m_VolumeControl != null && (m_PowerControl == null || m_PowerControl.IsPowered);
+				bool hasVolumeControl = m_VolumeControl != null && m_VolumeControl.ControlAvaliable;
 
 				m_ButtonsControl.SetBacklightEnabled(ADDRESS_POWER, isInMeeting);
 				m_ButtonsControl.SetBacklightEnabled(ADDRESS_HOME, isInMeeting);
@@ -221,15 +218,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			if (m_VolumeControl == null)
 				return;
 
-			IDeviceBase parent = m_VolumeControl.Parent;
-			if (parent == null)
-				return;
-
-			m_PowerControl = parent.Controls.GetControl<IPowerDeviceControl>();
-			if (m_PowerControl == null)
-				return;
-
-			m_PowerControl.OnIsPoweredChanged += PowerControlOnIsPoweredChanged;
+			m_VolumeControl.OnControlAvaliableChanged += VolumeControlOnControlAvaliableChanged;
 		}
 
 		/// <summary>
@@ -245,11 +234,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 
 			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
 
+			if (m_VolumeControl != null)
+				m_VolumeControl.OnControlAvaliableChanged -= VolumeControlOnControlAvaliableChanged;
 			m_VolumeControl = null;
-
-			if (m_PowerControl != null)
-				m_PowerControl.OnIsPoweredChanged -= PowerControlOnIsPoweredChanged;
-			m_PowerControl = null;
 		}
 
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs boolEventArgs)
@@ -257,7 +244,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			RefreshIfVisible();
 		}
 
-		private void PowerControlOnIsPoweredChanged(object sender, PowerDeviceControlPowerStateApiEventArgs args)
+		private void VolumeControlOnControlAvaliableChanged(object sender, DeviceControlAvaliableApiEventArgs e)
 		{
 			RefreshIfVisible();
 		}

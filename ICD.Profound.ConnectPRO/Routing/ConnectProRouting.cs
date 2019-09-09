@@ -705,7 +705,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			// Power on the destination
 			IPowerDeviceControl powerControl = destinationDevice.Controls.GetControl<IPowerDeviceControl>();
-			if (powerControl != null && !powerControl.IsPowered)
+			if (powerControl != null && (powerControl.PowerState != ePowerState.PowerOn && powerControl.PowerState != ePowerState.Warming))
 				powerControl.PowerOn();
 
 			// Set the destination to the correct input
