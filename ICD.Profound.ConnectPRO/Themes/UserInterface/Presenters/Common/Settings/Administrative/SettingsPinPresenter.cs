@@ -3,6 +3,7 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Utils;
+using ICD.Profound.ConnectPRO.SettingsTree.Administrative;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Administrative;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -11,7 +12,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Admini
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings.Administrative
 {
 	[PresenterBinding(typeof(ISettingsPinPresenter))]
-	public sealed class SettingsPinPresenter : AbstractUiPresenter<ISettingsPinView>, ISettingsPinPresenter
+	public sealed class SettingsPinPresenter : AbstractSettingsNodeBasePresenter<ISettingsPinView, PinSettingsLeaf>, ISettingsPinPresenter
 	{
 		private const string INSTRUCTION_NEW_PASSCODE = "Please type in new passcode to change";
 		private const string INSTRUCTION_CONFIRM_PASSCODE = "Please confirm new passcode";
@@ -187,8 +188,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				return;
 			}
 
-			if (Room != null)
-				Room.Passcode = current;
+			if (Node != null)
+				Node.SetPin(current);
 
 			State = ePasscodeState.Success;
 		}

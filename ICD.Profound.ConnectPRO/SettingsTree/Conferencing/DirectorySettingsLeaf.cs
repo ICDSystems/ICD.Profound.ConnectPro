@@ -24,12 +24,15 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Conferencing
 		}
 
 		/// <summary>
-		/// Clears the directory caches.
+		/// Clears and repopulates the directories.
 		/// </summary>
-		public void Clear()
+		public void Refresh()
 		{
 			foreach (IDirectoryControl control in Room.GetControlsRecursive<IDirectoryControl>())
+			{
 				control.Clear();
+				control.PopulateFolder(control.GetRoot());
+			}
 		}
 	}
 }

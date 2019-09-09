@@ -214,6 +214,8 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\ISettingsBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\Conferencing\ISettingsDirectoryPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\Administrative\ISettingsPinPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\ISettingsNodeBasePresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\ISettingsPromptPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\RoomCombine\ISettingsRoomCombinePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\Administrative\ISettingsPowerPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Sources\IReferencedSourceSelectPresenter.cs" />
@@ -381,6 +383,7 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\PasscodePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ReferencedSchedulePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ReferencedSchedulePresenterFactory.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Settings\AbstractSettingsNodeBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\Administrative\SettingsClockPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\CUE\Modes\AbstractSettingsCueBackgroundModePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\CUE\Modes\SettingsCueBackgroundSeasonalPresenter.cs" />
@@ -391,6 +394,7 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\Administrative\SettingsPinPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\RoomCombine\SettingsRoomCombinePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\Administrative\SettingsPowerPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Settings\SettingsPromptPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\ReferencedSourceSelectPresenterCache.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\SourceSelectPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\ReferencedSourceSelectPresenter.cs" />

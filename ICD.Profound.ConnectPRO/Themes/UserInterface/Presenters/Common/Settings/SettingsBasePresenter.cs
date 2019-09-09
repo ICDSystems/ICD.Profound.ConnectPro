@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
-using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Conferencing.Controls.Directory;
-using ICD.Connect.Partitioning.Rooms;
-using ICD.Connect.Settings;
-using ICD.Connect.Settings.Cores;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.UI.Attributes;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.SettingsTree;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Administrative;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Conferencing;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.RoomCombine;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups;
@@ -24,50 +20,45 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 	[PresenterBinding(typeof(ISettingsBasePresenter))]
 	public sealed class SettingsBasePresenter : AbstractPopupPresenter<ISettingsBaseView>, ISettingsBasePresenter
 	{
-		private const ushort DIRECTORY = 0;
-		private const ushort PASSCODE_SETTINGS = 1;
-		private const ushort ROOM_COMBINE = 2;
-		private const ushort SYSTEM_POWER = 3;
-
-		private static readonly IcdOrderedDictionary<ushort, string> s_ButtonLabels =
-			new IcdOrderedDictionary<ushort, string>
-			{
-				{DIRECTORY, "Directory"},
-				{PASSCODE_SETTINGS, "Passcode Settings"},
-				{ROOM_COMBINE, "Room Combine"},
-				{SYSTEM_POWER, "System Power Preference"},
-			};
-
-		private static readonly Dictionary<ushort, Type> s_NavTypes =
-			new Dictionary<ushort, Type>
-			{
-				{DIRECTORY, typeof(ISettingsDirectoryPresenter)},
-				{PASSCODE_SETTINGS, typeof(ISettingsPinPresenter)},
-				{ROOM_COMBINE, typeof(ISettingsRoomCombinePresenter)},
-				{SYSTEM_POWER, typeof(ISettingsPowerPresenter)},
-			};
-
-		private readonly Dictionary<ushort, IUiPresenter> m_NavPages;
+		private readonly List<ISettingsNodeBase> m_MenuPath;
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private bool m_HasDirectoryControl;
-		private bool m_HasMultipleRooms;
+		[CanBeNull]
+		private RootSettingsNode m_SettingsRoot;
 
-		private IUiPresenter m_CurrentSettingsPage;
+		private ISettingsNodeBasePresenter m_CurrentPresenter;
 
-		public IUiPresenter CurrentSettingsPage
+		#region Properties
+
+		/// <summary>
+		/// Gets the current settings node item.
+		/// </summary>
+		[CanBeNull]
+		private ISettingsNodeBase CurrentNode
 		{
-			get { return m_CurrentSettingsPage; }
-			set
+			get
 			{
-				if (value == m_CurrentSettingsPage)
-					return;
-
-				m_CurrentSettingsPage = value;
-
-				RefreshIfVisible();
+				return m_MenuPath.Count == 0
+					       ? null
+					       : m_MenuPath[m_MenuPath.Count - 1];
 			}
 		}
+
+		/// <summary>
+		/// Gets the parent settings node item.
+		/// </summary>
+		[CanBeNull]
+		private ISettingsNode ParentNode
+		{
+			get
+			{
+				return m_MenuPath.Count <= 1
+					       ? null
+					       : m_MenuPath[m_MenuPath.Count - 2] as ISettingsNode;
+			}
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Constructor.
@@ -78,13 +69,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		public SettingsBasePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
+			m_MenuPath = new List<ISettingsNodeBase>();
 			m_RefreshSection = new SafeCriticalSection();
-
-			m_NavPages = new Dictionary<ushort, IUiPresenter>();
-			foreach (KeyValuePair<ushort, Type> kvp in s_NavTypes)
-				m_NavPages.Add(kvp.Key, nav.LazyLoadPresenter(kvp.Value) as IUiPresenter);
-
-			SubscribePages();
 		}
 
 		/// <summary>
@@ -94,8 +80,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		{
 			base.Dispose();
 
-			UnsubscribePages();
+			if (m_SettingsRoot != null)
+				m_SettingsRoot.Dispose();
 		}
+
+		#region Methods
 
 		/// <summary>
 		/// Sets the room for this presenter to represent.
@@ -105,8 +94,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		{
 			base.SetRoom(room);
 
-			m_HasDirectoryControl = room != null && room.GetControlRecursive<IDirectoryControl>() != null;
-			m_HasMultipleRooms = room != null && room.Core.Originators.GetChildren<IRoom>().Count() > 1;
+			m_RefreshSection.Enter();
+
+			try
+			{
+				if (m_SettingsRoot != null)
+					m_SettingsRoot.Dispose();
+
+				m_SettingsRoot = room == null ? null : new RootSettingsNode(room);
+
+				m_MenuPath.Clear();
+				HideCurrentPresenter();
+
+				if (m_SettingsRoot != null)
+					NavigateTo(m_SettingsRoot);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
 
 			RefreshIfVisible();
 		}
@@ -123,15 +129,27 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			try
 			{
-				view.SetButtonLabels(s_ButtonLabels.Values.Select(l => new KeyValuePair<string, string>(l, string.Empty)));
+				// Show the back button
+				view.SetBackButtonVisible(ParentNode != null);
 
-				foreach (KeyValuePair<ushort, IUiPresenter> kvp in m_NavPages)
-				{
-					bool showButton = ShouldShowButton(kvp.Key);
+				// Set the title
+				ISettingsNode currentOrParentNode = CurrentNode as ISettingsNode ?? ParentNode;
+				string title = currentOrParentNode == null ? null : currentOrParentNode.Name;
+				view.SetTitle(title);
 
-					view.SetItemSelected(kvp.Key, kvp.Value.IsViewVisible);
-					view.SetButtonVisible(kvp.Key, showButton);
-				}
+				// Populate the buttons
+				ISettingsNodeBase[] children = new ISettingsNodeBase[0];
+
+				if (CurrentNode is ISettingsLeaf)
+					children = new[] {CurrentNode};
+				else if (CurrentNode is ISettingsNode)
+					children = (CurrentNode as ISettingsNode).GetChildren().ToArray();
+
+				IEnumerable<KeyValuePair<string, string>> namesAndIcons = children.Select(c => GetNameAndIcon(c));
+
+				view.SetButtonLabels(namesAndIcons);
+				for (ushort index = 0; index < children.Length; index ++)
+					view.SetButtonVisible(index, children[index].Visible);
 			}
 			finally
 			{
@@ -139,72 +157,139 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			}
 		}
 
+		#endregion
+
 		#region Private Methods
 
-		/// <summary>
-		/// Returns true if the button at the given index should be visible.
-		/// </summary>
-		/// <param name="buttonIndex"></param>
-		/// <returns></returns>
-		private bool ShouldShowButton(ushort buttonIndex)
+		private static KeyValuePair<string, string> GetNameAndIcon(ISettingsNodeBase node)
 		{
-			switch (buttonIndex)
+			string name = node.Name;
+			string icon = SettingsTreeIcons.GetIcon(node.Icon, SettingsTreeIcons.eColor.Gray);
+
+			return new KeyValuePair<string, string>(name, icon);
+		}
+
+		private void HideCurrentPresenter()
+		{
+			m_RefreshSection.Enter();
+
+			try
 			{
-				case DIRECTORY:
-					return m_HasDirectoryControl;
+				if (m_CurrentPresenter != null)
+				{
+					m_CurrentPresenter.ShowView(false);
+					m_CurrentPresenter.Node = null;
+				}
 
-				case ROOM_COMBINE:
-					return m_HasMultipleRooms;
-
-				default:
-					return true;
+				m_CurrentPresenter = null;
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
 			}
 		}
 
-		/// <summary>
-		/// Sets the visibility of the settings page for the button at the given index.
-		/// </summary>
-		/// <param name="buttonIndex"></param>
-		private void ShowSettingsPage(ushort buttonIndex)
+		private void ShowPresenterForCurrentNode()
 		{
-			m_NavPages[buttonIndex].ShowView(true);
+			m_RefreshSection.Enter();
+
+			try
+			{
+				HideCurrentPresenter();
+
+				if (CurrentNode == null)
+					return;
+
+				m_CurrentPresenter = GetPresenterForNode(CurrentNode);
+
+				m_CurrentPresenter.Node = CurrentNode;
+				m_CurrentPresenter.ShowView(true);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
 		}
 
-		#endregion
-
-		#region Page Callbacks
-
-		/// <summary>
-		/// Subscribe to the child page events.
-		/// </summary>
-		private void SubscribePages()
+		private void NavigateTo(ISettingsNodeBase node)
 		{
-			foreach (IUiPresenter presenter in m_NavPages.Values)
-				presenter.OnViewVisibilityChanged += PresenterOnViewVisibilityChanged;
-		}
+			if (node == null)
+				throw new ArgumentNullException("node");
 
-		/// <summary>
-		/// Unsubscribe from the child page events.
-		/// </summary>
-		private void UnsubscribePages()
-		{
-			foreach (IUiPresenter presenter in m_NavPages.Values)
-				presenter.OnViewVisibilityChanged -= PresenterOnViewVisibilityChanged;
-		}
+			m_RefreshSection.Enter();
 
-		/// <summary>
-		/// Called when a child page visibility changes.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="boolEventArgs"></param>
-		private void PresenterOnViewVisibilityChanged(object sender, BoolEventArgs boolEventArgs)
-		{
-			if (boolEventArgs.Data)
-				CurrentSettingsPage = sender as IUiPresenter;
-			else if (CurrentSettingsPage == sender)
-				CurrentSettingsPage = null;
+			try
+			{
+				m_MenuPath.Add(node);
+
+				// Keep navigating while node only has one child
+				ISettingsNode parent = node as ISettingsNode;
+				ISettingsNodeBase[] children = parent == null ? null : parent.GetChildren().Where(c => c.Visible).ToArray();
+
+				if (children != null && children.Length == 1)
+				{
+					NavigateTo(children[0]);
+					return;
+				}
+
+				ShowPresenterForCurrentNode();
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
 
 			RefreshIfVisible();
+		}
+
+		private void Back()
+		{
+			m_RefreshSection.Enter();
+
+			try
+			{
+				if (m_MenuPath.Count <= 1)
+					return;
+
+				m_MenuPath.RemoveAt(m_MenuPath.Count - 1);
+
+				// Keep going back if there is only one child
+				ISettingsNode newParent = CurrentNode as ISettingsNode;
+				if (newParent != null && m_MenuPath.Count > 1 && newParent.GetChildren().Count(c => c.Visible) <= 1)
+				{
+					Back();
+					return;
+				}
+
+				ShowPresenterForCurrentNode();
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+
+			RefreshIfVisible();
+		}
+
+		private ISettingsNodeBasePresenter GetPresenterForNode(ISettingsNodeBase node)
+		{
+			if (node == null)
+				throw new ArgumentNullException("node");
+
+			Type type = node.GetType();
+
+			// Lazy - Optimize?
+			return Navigation.LazyLoadPresenters<ISettingsNodeBasePresenter>().First(p => type.IsAssignableTo(p.NodeType));
+		}
+
+		private void SaveDirtySettings()
+		{
+			if (m_SettingsRoot == null || !m_SettingsRoot.Dirty)
+				return;
+
+			Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView("Saving Settings", 60 * 1000);
+			m_SettingsRoot.SaveDirtySettings();
+			Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView(false);
 		}
 
 		#endregion
@@ -220,6 +305,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			base.Subscribe(view);
 
 			view.OnListItemPressed += ViewOnListItemPressed;
+			view.OnBackButtonPressed += ViewOnBackButtonPressed;
 		}
 
 		/// <summary>
@@ -231,6 +317,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			base.Unsubscribe(view);
 
 			view.OnListItemPressed -= ViewOnListItemPressed;
+			view.OnBackButtonPressed -= ViewOnBackButtonPressed;
+		}
+
+		/// <summary>
+		/// Called when the user presses the back button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ViewOnBackButtonPressed(object sender, EventArgs eventArgs)
+		{
+			Back();
 		}
 
 		/// <summary>
@@ -240,7 +337,43 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <param name="eventArgs"></param>
 		private void ViewOnListItemPressed(object sender, UShortEventArgs eventArgs)
 		{
-			ShowSettingsPage(eventArgs.Data);
+			m_RefreshSection.Enter();
+
+			try
+			{
+				ISettingsNode node = CurrentNode as ISettingsNode;
+				if (node == null)
+					return;
+
+				ISettingsNodeBase child;
+				if (!node.GetChildren().TryElementAt(eventArgs.Data, out child))
+					return;
+
+				NavigateTo(child);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+
+			RefreshIfVisible();
+		}
+
+		/// <summary>
+		/// Called when the view visibility is about to change.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		protected override void ViewOnPreVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			base.ViewOnPreVisibilityChanged(sender, args);
+
+			if (!args.Data)
+				HideCurrentPresenter();
+
+			// Return to the root but don't show it
+			if (m_MenuPath.Count > 1)
+				m_MenuPath.RemoveRange(1, m_MenuPath.Count - 1);
 		}
 
 		/// <summary>
@@ -253,18 +386,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			base.ViewOnVisibilityChanged(sender, args);
 
 			if (args.Data)
-			{
-				ShowSettingsPage(SYSTEM_POWER);
-			}
+				ShowPresenterForCurrentNode();
 			else
-			{
-				foreach (IUiPresenter presenter in m_NavPages.Values)
-					presenter.ShowView(false);
-
-				ICoreSettings settings = Room == null ? null : Room.Core.CopySettings();
-				if (settings != null)
-					FileOperations.SaveSettings(settings, true);
-			}
+				SaveDirtySettings();
 		}
 
 		#endregion

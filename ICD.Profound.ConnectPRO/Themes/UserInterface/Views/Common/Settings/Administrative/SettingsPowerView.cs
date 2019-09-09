@@ -56,13 +56,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 
 		#region Methods
 
-		public void SetWeekdaysButtonSelected(bool selected)
+		public void SetWeekdaysButtonSelected()
 		{
 			m_DaysButtons.SetItemSelected(INDEX_WEEKENDS, false);
 			m_DaysButtons.SetItemSelected(INDEX_WEEKDAYS, true);
 		}
 
-		public void SetWeekendsButtonSelected(bool selected)
+		public void SetWeekendsButtonSelected()
 		{
 			m_DaysButtons.SetItemSelected(INDEX_WEEKDAYS, false);
 			m_DaysButtons.SetItemSelected(INDEX_WEEKENDS, true);

@@ -65,7 +65,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 
 		public void SetMinute(int minute)
 		{
-			m_HourLabel.SetLabelText(minute.ToString("00"));
+			m_MinuteLabel.SetLabelText(minute.ToString("00"));
 		}
 
 		#endregion

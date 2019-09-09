@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using ICD.Connect.Conferencing.Controls.Directory;
-using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Attributes;
+using ICD.Profound.ConnectPRO.SettingsTree.Conferencing;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Conferencing;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -11,7 +9,8 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Confer
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings.Conferencing
 {
 	[PresenterBinding(typeof(ISettingsDirectoryPresenter))]
-	public sealed class SettingsDirectoryPresenter : AbstractUiPresenter<ISettingsDirectoryView>, ISettingsDirectoryPresenter
+	public sealed class SettingsDirectoryPresenter :
+		AbstractSettingsNodeBasePresenter<ISettingsDirectoryView, DirectorySettingsLeaf>, ISettingsDirectoryPresenter
 	{
 		/// <summary>
 		/// Constructor.
@@ -55,14 +54,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <param name="eventArgs"></param>
 		private void ViewOnClearDirectoryButtonPressed(object sender, EventArgs eventArgs)
 		{
-			
-			IEnumerable<IDirectoryControl> directoryControls = Room.GetControlsRecursive<IDirectoryControl>();
-
-			foreach (var directoryControl in directoryControls)
-			{
-				directoryControl.Clear();
-				directoryControl.PopulateFolder(directoryControl.GetRoot());
-			}
+			if (Node != null)
+				Node.Refresh();
 		}
 
 		#endregion

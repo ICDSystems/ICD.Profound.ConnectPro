@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using ICD.Connect.Settings;
+using ICD.Connect.Settings.Cores;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.SettingsTree.Administrative;
 using ICD.Profound.ConnectPRO.SettingsTree.Conferencing;
@@ -29,6 +31,20 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 			yield return new ConferencingSettingsNode(Room);
 			yield return new CueSettingsNode(Room);
 			yield return new RoomCombineSettingsNode(Room);
+		}
+
+		/// <summary>
+		/// If there are any dirty nodes the core is saved back to disk and the nodes are marked as clean.
+		/// </summary>
+		public void SaveDirtySettings()
+		{
+			if (!Dirty)
+				return;
+
+			ICoreSettings settings = Room.Core.CopySettings();
+			FileOperations.SaveSettings(settings, true);
+
+			SetDirty(false);
 		}
 	}
 }

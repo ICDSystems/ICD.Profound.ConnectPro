@@ -1,7 +1,9 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.SettingsTree.Administrative;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Administrative;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -10,11 +12,8 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Admini
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings.Administrative
 {
 	[PresenterBinding(typeof(ISettingsPowerPresenter))]
-	public sealed class SettingsPowerPresenter : AbstractUiPresenter<ISettingsPowerView>, ISettingsPowerPresenter
+	public sealed class SettingsPowerPresenter : AbstractSettingsNodeBasePresenter<ISettingsPowerView, PowerSettingsLeaf>, ISettingsPowerPresenter
 	{
-		private static readonly TimeSpan s_HourIncrement = TimeSpan.FromHours(1);
-		private static readonly TimeSpan s_MinuteIncrement = TimeSpan.FromMinutes(1);
-
 		private TimeSpan m_WeekdayWakeTime;
 		private TimeSpan m_WeekendWakeTime;
 		private TimeSpan m_WeekdaySleepTime;
@@ -57,14 +56,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			m_WeekendSleepTime = new TimeSpan(19, 0, 0);
 		}
 
-		public override void SetRoom(IConnectProRoom room)
+		/// <summary>
+		/// Called when the wrapped node changes.
+		/// </summary>
+		/// <param name="node"></param>
+		protected override void NodeChanged(PowerSettingsLeaf node)
 		{
-			base.SetRoom(room);
+			base.NodeChanged(node);
 
-			if (Room == null)
+			if (node == null)
 				return;
 
-			WakeSchedule schedule = Room.WakeSchedule;
+			WakeSchedule schedule = node.WakeSchedule;
 
 			m_WeekdayEnable = schedule.WeekdayEnable;
 			m_WeekendEnable = schedule.WeekendEnable;
@@ -84,17 +87,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		{
 			base.ViewOnVisibilityChanged(sender, args);
 
-			if (!args.Data && Room != null)
-			{
-				var schedule = Room.WakeSchedule;
-				schedule.WeekdayEnable = m_WeekdayEnable;
-				schedule.WeekendEnable = m_WeekendEnable;
+			// Save when the view is hidden
+			if (args.Data || Node == null)
+				return;
 
-				schedule.WeekdayWakeTime = m_WeekdayWakeTime;
-				schedule.WeekdaySleepTime = m_WeekdaySleepTime;
-				schedule.WeekendWakeTime = m_WeekendWakeTime;
-				schedule.WeekendSleepTime = m_WeekendSleepTime;
-			}
+			WakeSchedule schedule = Node.WakeSchedule;
+			schedule.WeekdayEnable = m_WeekdayEnable;
+			schedule.WeekendEnable = m_WeekendEnable;
+
+			schedule.WeekdayWakeTime = m_WeekdayWakeTime;
+			schedule.WeekdaySleepTime = m_WeekdaySleepTime;
+			schedule.WeekendWakeTime = m_WeekendWakeTime;
+			schedule.WeekendSleepTime = m_WeekendSleepTime;
+
+			Node.SetDirty(true);
 		}
 
 		/// <summary>
@@ -105,11 +111,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		{
 			base.Refresh(view);
 
-			view.SetWeekdaysButtonSelected(!Weekend);
-			view.SetWeekendsButtonSelected(Weekend);
-
 			if (Weekend)
 			{
+				view.SetWeekendsButtonSelected();
+
 				view.SetSleepHour((ushort) m_WeekendSleepTime.Hours);
 				view.SetSleepMinute((ushort) m_WeekendSleepTime.Minutes);
 			
@@ -120,6 +125,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			}
 			else
 			{
+				view.SetWeekdaysButtonSelected();
+
 				view.SetSleepHour((ushort) m_WeekdaySleepTime.Hours);
 				view.SetSleepMinute((ushort) m_WeekdaySleepTime.Minutes);
 
@@ -130,22 +137,42 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			}
 		}
 
-		private void OffsetWakeTime(TimeSpan offset)
+		private void IncrementWakeHours(int hours)
 		{
 			if (Weekend)
-				m_WeekendWakeTime += offset;
+				m_WeekendWakeTime = m_WeekendWakeTime.AddHoursAndWrap(hours);
 			else
-				m_WeekdayWakeTime += offset;
+				m_WeekdayWakeTime = m_WeekdayWakeTime.AddHoursAndWrap(hours);
 
 			Refresh();
 		}
 
-		private void OffsetSleepTime(TimeSpan offset)
+		private void IncrementWakeMinutes(int minutes)
 		{
 			if (Weekend)
-				m_WeekendSleepTime += offset;
+				m_WeekendWakeTime = m_WeekendWakeTime.AddMinutesAndWrap(minutes);
 			else
-				m_WeekdaySleepTime += offset;
+				m_WeekdayWakeTime = m_WeekdayWakeTime.AddMinutesAndWrap(minutes);
+
+			Refresh();
+		}
+
+		private void IncrementSleepHours(int hours)
+		{
+			if (Weekend)
+				m_WeekendSleepTime = m_WeekendSleepTime.AddHoursAndWrap(hours);
+			else
+				m_WeekdaySleepTime = m_WeekdaySleepTime.AddHoursAndWrap(hours);
+
+			Refresh();
+		}
+
+		private void IncrementSleepMinutes(int minutes)
+		{
+			if (Weekend)
+				m_WeekendSleepTime = m_WeekendSleepTime.AddMinutesAndWrap(minutes);
+			else
+				m_WeekdaySleepTime = m_WeekdaySleepTime.AddMinutesAndWrap(minutes);
 
 			Refresh();
 		}
@@ -222,42 +249,42 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 		private void ViewOnWakeHourIncrementButtonPressed(object sender, EventArgs eventArgs)
 		{
-			OffsetWakeTime(s_HourIncrement);
+			IncrementWakeHours(1);
 		}
 
 		private void ViewOnWakeHourDecrementButtonPressed(object sender, EventArgs eventArgs)
 		{
-			OffsetWakeTime(-s_HourIncrement);
+			IncrementWakeHours(-1);
 		}
 
 		private void ViewOnWakeMinuteIncrementButtonPressed(object sender, EventArgs eventArgs)
 		{
-			OffsetWakeTime(s_MinuteIncrement);
+			IncrementWakeMinutes(1);
 		}
 
 		private void ViewOnWakeMinuteDecrementButtonPressed(object sender, EventArgs eventArgs)
 		{
-			OffsetWakeTime(-s_MinuteIncrement);
+			IncrementWakeMinutes(-1);
 		}
 
 		private void ViewOnSleepHourIncrementButtonPressed(object sender, EventArgs eventArgs)
 		{
-			OffsetSleepTime(s_HourIncrement);
+			IncrementSleepHours(1);
 		}
 
 		private void ViewOnSleepHourDecrementButtonPressed(object sender, EventArgs eventArgs)
 		{
-			OffsetSleepTime(-s_HourIncrement);
+			IncrementSleepHours(-1);
 		}
 
 		private void ViewOnSleepMinuteIncrementButtonPressed(object sender, EventArgs eventArgs)
 		{
-			OffsetSleepTime(s_MinuteIncrement);
+			IncrementSleepMinutes(1);
 		}
 
 		private void ViewOnSleepMinuteDecrementButtonPressed(object sender, EventArgs eventArgs)
 		{
-			OffsetSleepTime(-s_MinuteIncrement);
+			IncrementSleepMinutes(-1);
 		}
 
 		private void ViewOnEnableTogglePressed(object sender, EventArgs eventArgs)

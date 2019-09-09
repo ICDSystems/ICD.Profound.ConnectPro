@@ -30,6 +30,9 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 											 now.Millisecond);
 
 			IcdEnvironment.SetLocalTime(dateTime);
+
+			// Doesn't get saved back to settings, but improves UX ("oh look it saved my changes!")
+			SetDirty(true);
 		}
 	}
 }

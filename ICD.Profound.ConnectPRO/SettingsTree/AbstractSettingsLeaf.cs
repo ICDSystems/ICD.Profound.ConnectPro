@@ -24,7 +24,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 		/// Sets the dirty state for this leaf.
 		/// </summary>
 		/// <param name="dirty"></param>
-		public void SetDirty(bool dirty)
+		public override void SetDirty(bool dirty)
 		{
 			m_Dirty = dirty;
 		}

@@ -55,5 +55,11 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 		public virtual void Dispose()
 		{
 		}
+
+		/// <summary>
+		/// Sets the dirty state.
+		/// </summary>
+		/// <param name="dirty"></param>
+		public abstract void SetDirty(bool dirty);
 	}
 }

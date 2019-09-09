@@ -15,6 +15,7 @@ using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Rooms.Combine;
+using ICD.Profound.ConnectPRO.SettingsTree.RoomCombine;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.RoomCombine;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -24,7 +25,8 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.RoomCom
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings.RoomCombine
 {
 	[PresenterBinding(typeof(ISettingsRoomCombinePresenter))]
-	public sealed class SettingsRoomCombinePresenter : AbstractUiPresenter<ISettingsRoomCombineView>, ISettingsRoomCombinePresenter
+	public sealed class SettingsRoomCombinePresenter :
+		AbstractSettingsNodeBasePresenter<ISettingsRoomCombineView, GridSettingsLeaf>, ISettingsRoomCombinePresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly SafeCriticalSection m_PartitionSection;
@@ -67,8 +69,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 					for (int column = 0; column < SettingsRoomCombineView.COLUMNS; column++)
 					{
 						ICell cell = m_SubscribedPartitionManager == null
-							? null
-							: m_SubscribedPartitionManager.Cells.GetCell(column, row);
+							             ? null
+							             : m_SubscribedPartitionManager.Cells.GetCell(column, row);
 						IRoom room = cell == null ? null : cell.Room;
 
 						string roomLabel = room == null ? null : room.Name;
@@ -79,16 +81,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 						view.SetCellLabel(column, row, roomLabel);
 						view.SetCellSelected(column, row, room != null);
 						view.SetCellEnabled(column, row, room != null);
-						
+
 						bool topEnabled = GetWallEnabled(column, row, eCellDirection.Top);
 						bool topSelected = GetWallSelected(column, row, eCellDirection.Top);
 						eWallButtonMode topMode = GetWallMode(column, row, eCellDirection.Top);
-						
+
 						view.SetWallEnabled(column, row, eCellDirection.Top, topEnabled);
 						view.SetWallSelected(column, row, eCellDirection.Top, topSelected);
 						view.SetWallVisible(column, row, eCellDirection.Top, topMode != eWallButtonMode.NoWall);
 						view.SetWallMode(column, row, eCellDirection.Top, topMode);
-						
+
 						bool leftEnabled = GetWallEnabled(column, row, eCellDirection.Left);
 						bool leftSelected = GetWallSelected(column, row, eCellDirection.Left);
 						eWallButtonMode leftMode = GetWallMode(column, row, eCellDirection.Left);
@@ -103,7 +105,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 							bool rightEnabled = GetWallEnabled(column, row, eCellDirection.Right);
 							bool rightSelected = GetWallSelected(column, row, eCellDirection.Right);
 							eWallButtonMode rightMode = GetWallMode(column, row, eCellDirection.Right);
-							
+
 							view.SetWallEnabled(column, row, eCellDirection.Right, rightEnabled);
 							view.SetWallSelected(column, row, eCellDirection.Right, rightSelected);
 							view.SetWallVisible(column, row, eCellDirection.Right, rightMode != eWallButtonMode.NoWall);
@@ -115,7 +117,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 							bool bottomEnabled = GetWallEnabled(column, row, eCellDirection.Bottom);
 							bool bottomSelected = GetWallSelected(column, row, eCellDirection.Bottom);
 							eWallButtonMode bottomMode = GetWallMode(column, row, eCellDirection.Bottom);
-							
+
 							view.SetWallEnabled(column, row, eCellDirection.Bottom, bottomEnabled);
 							view.SetWallSelected(column, row, eCellDirection.Bottom, bottomSelected);
 							view.SetWallVisible(column, row, eCellDirection.Bottom, bottomMode != eWallButtonMode.NoWall);
@@ -175,7 +177,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			try
 			{
 				if (m_SelectedPartitionStates.ContainsKey(partition))
-					return m_SelectedPartitionStates[partition] ? eWallButtonMode.UnsavedOpenPartition : eWallButtonMode.UnsavedClosedPartition;
+					return m_SelectedPartitionStates[partition]
+						       ? eWallButtonMode.UnsavedOpenPartition
+						       : eWallButtonMode.UnsavedClosedPartition;
 			}
 			finally
 			{
@@ -183,7 +187,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			}
 
 			// Does the partition currently combine multiple rooms?
-			return m_SubscribedPartitionManager.CombinesRoom(partition) ? eWallButtonMode.OpenPartition : eWallButtonMode.ClosedPartition;
+			return m_SubscribedPartitionManager.CombinesRoom(partition)
+				       ? eWallButtonMode.OpenPartition
+				       : eWallButtonMode.ClosedPartition;
 		}
 
 		/// <summary>
@@ -284,9 +290,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			try
 			{
 				IcdHashSet<IPartition> open = m_SelectedPartitionStates
-				                              .Where(kvp => kvp.Value).Select(kvp => kvp.Key).ToIcdHashSet();
+					.Where(kvp => kvp.Value).Select(kvp => kvp.Key).ToIcdHashSet();
 				IcdHashSet<IPartition> closed = m_SelectedPartitionStates
-				                                .Where(kvp => !kvp.Value).Select(kvp => kvp.Key).ToIcdHashSet();
+					.Where(kvp => !kvp.Value).Select(kvp => kvp.Key).ToIcdHashSet();
 
 				Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView("Combining Rooms");
 
@@ -295,7 +301,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			}
 			catch (Exception e)
 			{
-				Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().TimeOut("Failed to complete operation - " + e.Message);
+				Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>()
+				          .TimeOut("Failed to complete operation - " + e.Message);
 			}
 			finally
 			{
@@ -378,7 +385,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		{
 			if (Room == null)
 				return Enumerable.Empty<IPartition>();
-			
+
 			IRoom start = Room.GetRoomsRecursive().FirstOrDefault(r => r.Originators.Contains(ViewFactory.Panel.Id));
 			if (start == null)
 				return Enumerable.Empty<IPartition>();
@@ -401,21 +408,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			IcdHashSet<IRoom> adjacent =
 
-			 m_SubscribedPartitionManager
-			       .Partitions
-			       .GetRoomAdjacentPartitions(room)
-			       .Where(p =>
-			              {
-				              bool selection;
-				              if (m_SelectedPartitionStates.TryGetValue(p, out selection))
-					              return selection;
+				m_SubscribedPartitionManager
+					.Partitions
+					.GetRoomAdjacentPartitions(room)
+					.Where(p =>
+					       {
+						       bool selection;
+						       if (m_SelectedPartitionStates.TryGetValue(p, out selection))
+							       return selection;
 
-				              return m_SubscribedPartitionManager.CombinesRoom(p);
-			              })
-			       .SelectMany(p => p.GetRooms().Select(id => room.Core.Originators.GetChild<IRoom>(id)))
-			       .Distinct()
-			       .Where(r => r != room)
-			       .ToIcdHashSet();
+						       return m_SubscribedPartitionManager.CombinesRoom(p);
+					       })
+					.SelectMany(p => p.GetRooms().Select(id => room.Core.Originators.GetChild<IRoom>(id)))
+					.Distinct()
+					.Where(r => r != room)
+					.ToIcdHashSet();
 
 			return adjacent;
 		}

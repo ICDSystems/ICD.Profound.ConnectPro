@@ -41,5 +41,15 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 		/// </summary>
 		/// <returns></returns>
 		public abstract IEnumerable<ISettingsNodeBase> GetChildren();
+
+		/// <summary>
+		/// Sets the dirty state for all child nodes.
+		/// </summary>
+		/// <param name="dirty"></param>
+		public override void SetDirty(bool dirty)
+		{
+			foreach (ISettingsNodeBase child in GetChildren())
+				child.SetDirty(dirty);
+		}
 	}
 }

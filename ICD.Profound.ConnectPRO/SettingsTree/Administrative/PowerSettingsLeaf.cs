@@ -5,6 +5,11 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 	public sealed class PowerSettingsLeaf : AbstractSettingsLeaf
 	{
 		/// <summary>
+		/// Gets the wake schedule.
+		/// </summary>
+		public WakeSchedule WakeSchedule { get { return Room.WakeSchedule; } }
+
+		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="room"></param>

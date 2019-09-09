@@ -19,8 +19,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Ad
 
 		event EventHandler OnEnableTogglePressed;
 
-		void SetWeekdaysButtonSelected(bool selected);
-		void SetWeekendsButtonSelected(bool selected);
+		void SetWeekdaysButtonSelected();
+		void SetWeekendsButtonSelected();
 
 		void SetEnableToggleSelected(bool selected);
 

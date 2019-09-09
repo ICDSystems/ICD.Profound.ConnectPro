@@ -29,5 +29,11 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 		/// Returns true if the system has changed and needs to be saved.
 		/// </summary>
 		bool Dirty { get; }
+
+		/// <summary>
+		/// Sets the dirty state.
+		/// </summary>
+		/// <param name="dirty"></param>
+		void SetDirty(bool dirty);
 	}
 }

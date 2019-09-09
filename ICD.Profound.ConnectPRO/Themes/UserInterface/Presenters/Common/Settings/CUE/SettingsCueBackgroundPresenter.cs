@@ -4,6 +4,7 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.UI.Attributes;
+using ICD.Profound.ConnectPRO.SettingsTree.CUE;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.CUE;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.CUE.Modes;
@@ -13,7 +14,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.CUE;
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings.CUE
 {
 	[PresenterBinding(typeof(ISettingsCueBackgroundPresenter))]
-	public sealed class SettingsCueBackgroundPresenter : AbstractUiPresenter<ISettingsCueBackgroundView>,
+	public sealed class SettingsCueBackgroundPresenter : AbstractSettingsNodeBasePresenter<ISettingsCueBackgroundView, BackgroundSettingsLeaf>,
 	                                                     ISettingsCueBackgroundPresenter
 	{
 		private const ushort INDEX_STATIC = 0;
@@ -49,9 +50,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			m_RefreshSection = new SafeCriticalSection();
 
 			Subscribe(theme);
-
-			ushort activeIndex = s_IndexToBackgroundMode.GetKey(theme.CueBackground);
-			NavigateTo(activeIndex);
 		}
 
 		/// <summary>
@@ -92,26 +90,37 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 		private bool GetEnabledState()
 		{
-			return s_IndexToBackgroundMode.GetValue(m_Index) == Theme.CueBackground;
+			if (Node == null)
+				return false;
+
+			return s_IndexToBackgroundMode.GetValue(m_Index) == Node.BackgroundMode;
 		}
 
 		private void ToggleEnabled()
 		{
+			if (Node == null)
+				return;
+
 			bool enabled = GetEnabledState();
 
-			// Enable is easy
-			if (!enabled)
+			eCueBackgroundMode mode;
+			
+			if (enabled)
 			{
-				Theme.CueBackground = s_IndexToBackgroundMode.GetValue(m_Index);
-				return;
+				// Disable reverts to neutral mode UNLESS we're already on neutral mode,
+				// in which case we go to seasonal mode
+				mode =
+					m_Index == INDEX_STATIC
+						? eCueBackgroundMode.Monthly
+						: eCueBackgroundMode.Neutral;
+			}
+			else
+			{
+				// Enable is easy
+				mode = s_IndexToBackgroundMode.GetValue(m_Index);
 			}
 
-			// Disable reverts to neutral mode UNLESS we're already on neutral mode,
-			// in which case we go to seasonal mode
-			Theme.CueBackground =
-				m_Index == INDEX_STATIC
-					? eCueBackgroundMode.Monthly
-					: eCueBackgroundMode.Neutral;
+			Node.SetBackground(mode);
 		}
 
 		private void NavigateTo(ushort index)
@@ -123,7 +132,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				Navigation.LazyLoadPresenter(type).ShowView(false);
 
 			// Show the new subpage
-			Navigation.LazyLoadPresenter(s_IndexToPresenterType.GetValue(m_Index));
+			Navigation.LazyLoadPresenter(s_IndexToPresenterType.GetValue(m_Index)).ShowView(true);
 
 			RefreshIfVisible();
 		}

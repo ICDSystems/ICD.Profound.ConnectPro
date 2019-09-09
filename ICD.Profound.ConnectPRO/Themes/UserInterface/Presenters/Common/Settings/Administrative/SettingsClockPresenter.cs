@@ -4,6 +4,7 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Globalization;
 using ICD.Connect.UI.Attributes;
+using ICD.Profound.ConnectPRO.SettingsTree.Administrative;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Administrative;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -12,7 +13,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Admini
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings.Administrative
 {
 	[PresenterBinding(typeof(ISettingsClockPresenter))]
-	public sealed class SettingsClockPresenter : AbstractUiPresenter<ISettingsClockView>, ISettingsClockPresenter
+	public sealed class SettingsClockPresenter : AbstractSettingsNodeBasePresenter<ISettingsClockView, ClockSettingsLeaf>, ISettingsClockPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 
@@ -62,6 +63,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		private void AddMinutesAndWrap(int minutes)
+		{
+			m_Time = m_Time.AddMinutesAndWrap(minutes);
+
+			RefreshIfVisible();
+		}
+
+		private void AddHoursAndWrap(int hours)
+		{
+			m_Time =
+				m_24HourMode
+					? m_Time.AddHoursAndWrap(hours)
+					: m_Time.AddHoursAndWrap12Hour(hours);
+
+			RefreshIfVisible();
 		}
 
 		#region View Callbacks
@@ -115,38 +133,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			// When the view is about to be hidden we set the current date
 			else
 			{
-				// Keep precision
-				DateTime now = IcdEnvironment.GetLocalTime();
-				DateTime dateTime = new DateTime(now.Year, now.Month, now.Day,
-				                                 m_Time.Hours, m_Time.Minutes, m_Time.Seconds,
-				                                 now.Millisecond);
-
-				IcdEnvironment.SetLocalTime(dateTime);
+				if (Node != null)
+					Node.SetClockTime(m_Time);
 			}
 		}
 
 		private void ViewOnMinuteUpButtonPressed(object sender, EventArgs eventArgs)
 		{
-			m_Time += new TimeSpan(0, 1, 0);
-			RefreshIfVisible();
+			AddMinutesAndWrap(1);
 		}
 
 		private void ViewOnMinuteDownButtonPressed(object sender, EventArgs eventArgs)
 		{
-			m_Time += new TimeSpan(0, -1, 0);
-			RefreshIfVisible();
+			AddMinutesAndWrap(-1);
 		}
 
 		private void ViewOnHourUpButtonPressed(object sender, EventArgs eventArgs)
 		{
-			m_Time += new TimeSpan(1, 0, 0);
-			RefreshIfVisible();
+			AddHoursAndWrap(1);
 		}
 
 		private void ViewOnHourDownButtonPressed(object sender, EventArgs eventArgs)
 		{
-			m_Time += new TimeSpan(-1, 0, 0);
-			RefreshIfVisible();
+			AddHoursAndWrap(-1);
 		}
 
 		private void ViewOnAmPmTogglePressed(object sender, EventArgs eventArgs)
@@ -158,6 +167,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		private void ViewOn24HourTogglePressed(object sender, EventArgs eventArgs)
 		{
 			m_24HourMode = !m_24HourMode;
+
+			// Set PM mode if hour is greater than 12 
+			if (!m_24HourMode && m_Time > new TimeSpan(12, 0, 0))
+				m_AmMode = false;
+
+			// Clear PM mode for 24 hour mode
+			if (m_24HourMode)
+				m_AmMode = true;
+
 			RefreshIfVisible();
 		}
 
