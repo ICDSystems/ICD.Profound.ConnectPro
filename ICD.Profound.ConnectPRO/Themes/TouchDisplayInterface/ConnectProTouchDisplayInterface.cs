@@ -13,10 +13,13 @@ using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings.Originators;
 using ICD.Connect.Themes.UserInterfaces;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Connect.UI.Mvp.VisibilityTree;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Routing;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Background;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Header;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views;
@@ -97,10 +100,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 
 			//// these presenters are initially visible
 			//m_NavigationController.NavigateTo<IOsdHelloPresenter>();
-			//m_NavigationController.NavigateTo<IOsdHeaderPresenter>();
 
-			//// always visible
-			//m_NavigationController.LazyLoadPresenter<IOsdBackgroundPresenter>();
+			// always visible
+            m_NavigationController.NavigateTo<IHeaderPresenter>();
+			m_NavigationController.LazyLoadPresenter<IBackgroundPresenter>();
 			
 			UpdateVisibility();
 		}

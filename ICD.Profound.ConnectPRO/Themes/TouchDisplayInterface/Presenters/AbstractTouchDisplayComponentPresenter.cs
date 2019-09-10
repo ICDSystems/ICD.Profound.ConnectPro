@@ -16,10 +16,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 		/// <summary>
 		/// Returns true if this presenter is part of a collection of components.
 		/// </summary>
-		public override bool IsComponent
-		{
-			get { return true; }
-		}
+		public override bool IsComponent { get { return true; } }
 
 		/// <summary>
 		/// Constructor.

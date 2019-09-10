@@ -15,6 +15,7 @@ using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters.Welcome;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews.Welcome;
+using ICD.Profound.ConnectPRO.Themes.Shared.Models;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 {

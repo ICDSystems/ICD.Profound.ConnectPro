@@ -3,7 +3,7 @@ using ICD.Connect.Calendaring.Booking;
 using System.Collections.Generic;
 using ICD.Connect.Conferencing.DialContexts;
 
-namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
+namespace ICD.Profound.ConnectPRO.Themes.Shared.Models
 {
 	public class EmptyBooking : IBooking
 	{
