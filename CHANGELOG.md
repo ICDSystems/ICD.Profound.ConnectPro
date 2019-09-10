@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+ - Updated IPowerDeviceControls consumers to use PowerState
+ - Updated Volume Controls to use ControlAvaliable instead of power state
+
 
 ### Added
  - Added settings page for changing clock time and 12/24 hour mode
