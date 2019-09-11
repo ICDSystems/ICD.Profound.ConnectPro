@@ -140,16 +140,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				// Populate the buttons
 				ISettingsNodeBase[] children = new ISettingsNodeBase[0];
 
-				if (CurrentNode is ISettingsLeaf)
-					children = new[] {CurrentNode};
+				if (CurrentNode is ISettingsLeaf && ParentNode != null)
+					children = ParentNode.GetChildren().ToArray();
 				else if (CurrentNode is ISettingsNode)
 					children = (CurrentNode as ISettingsNode).GetChildren().ToArray();
 
 				IEnumerable<KeyValuePair<string, string>> namesAndIcons = children.Select(c => GetNameAndIcon(c));
 
 				view.SetButtonLabels(namesAndIcons);
-				for (ushort index = 0; index < children.Length; index ++)
+				for (ushort index = 0; index < children.Length; index++)
+				{
 					view.SetButtonVisible(index, children[index].Visible);
+					view.SetButtonSelected(index, children[index] == CurrentNode);
+				}
 			}
 			finally
 			{
@@ -220,6 +223,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			try
 			{
+				// Prevents flicker when selecting the current node
+				if (node == CurrentNode)
+					return;
+
+				// Remove any leaves from the list
+				while (m_MenuPath.LastOrDefault() is ISettingsLeaf)
+					m_MenuPath.RemoveAt(m_MenuPath.Count - 1);
+
+				// Append the new node to the list
 				m_MenuPath.Add(node);
 
 				// Keep navigating while node only has one child
@@ -250,6 +262,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			{
 				if (m_MenuPath.Count <= 1)
 					return;
+
+				// We want to back out of the current leaf AND the parent node
+				if (CurrentNode is ISettingsLeaf)
+					m_MenuPath.RemoveAt(m_MenuPath.Count - 1);
 
 				m_MenuPath.RemoveAt(m_MenuPath.Count - 1);
 
@@ -341,7 +357,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			try
 			{
-				ISettingsNode node = CurrentNode as ISettingsNode;
+				ISettingsNode node = CurrentNode as ISettingsNode ?? ParentNode;
 				if (node == null)
 					return;
 

@@ -87,6 +87,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 		}
 
 		/// <summary>
+		/// Sets the selection state of the button at the given index.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="selected"></param>
+		public void SetButtonSelected(ushort index, bool selected)
+		{
+			m_ItemList.SetItemSelected(index, selected);
+		}
+
+		/// <summary>
 		/// Sets the visibility of the back button.
 		/// </summary>
 		/// <param name="visible"></param>

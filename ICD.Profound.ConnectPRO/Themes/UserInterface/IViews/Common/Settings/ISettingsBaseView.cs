@@ -38,6 +38,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings
 		void SetButtonVisible(ushort index, bool visible);
 
 		/// <summary>
+		/// Sets the selection state of the button at the given index.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="selected"></param>
+		void SetButtonSelected(ushort index, bool selected);
+
+		/// <summary>
 		/// Sets the visibility of the back button.
 		/// </summary>
 		/// <param name="visible"></param>
