@@ -304,7 +304,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="eventArgs"></param>
 		protected virtual void ViewOnManualDialButtonPressed(object sender, EventArgs eventArgs)
 		{
-			Navigation.LazyLoadPresenter<IVtcKeyboardPresenter>().ShowView(KeyboardDialCallback);
+			Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>()
+			          .ShowView("Please enter number", null, KeyboardDialCallback, null, null);
 		}
 
 		/// <summary>
