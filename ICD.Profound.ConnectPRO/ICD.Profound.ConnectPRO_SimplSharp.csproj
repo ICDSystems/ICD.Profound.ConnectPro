@@ -408,6 +408,7 @@
     <Compile Include="Themes\UserInterface\Presenters\ConnectProNavigationController.cs" />
     <Compile Include="Themes\UserInterface\Presenters\DisabledAlertPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\GenericAlertPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\GenericKeyboardPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\GenericLoadingSpinnerPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\HardButtonsPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\AbstractPopupPresenter.cs" />
@@ -536,6 +537,8 @@
     <Compile Include="Themes\UserInterface\Views\Common\VolumeView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\VolumeView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\ConnectProUiViewFactory.cs" />
+    <Compile Include="Themes\UserInterface\Views\GenericKeyboardView.cs" />
+    <Compile Include="Themes\UserInterface\Views\GenericKeyboardView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\GenericLoadingSpinnerView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\DisabledAlertView.cs" />
     <Compile Include="Themes\UserInterface\Views\DisabledAlertView.generated.cs" />
