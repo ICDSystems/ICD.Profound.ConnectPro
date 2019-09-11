@@ -225,6 +225,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\IContextualControlPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IDisabledAlertPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IGenericAlertPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\IGenericKeyboardPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IGenericLoadingSpinnerPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IHardButtonsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IConnectProNavigationController.cs" />
@@ -306,6 +307,7 @@
     <Compile Include="Themes\UserInterface\IViews\Icons.cs" />
     <Compile Include="Themes\UserInterface\IViews\IDisabledAlertView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IGenericAlertView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\IGenericKeyboardView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IGenericLoadingSpinnerView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IHardButtonsView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Popups\CableTv\IReferencedCableTvView.cs" />
