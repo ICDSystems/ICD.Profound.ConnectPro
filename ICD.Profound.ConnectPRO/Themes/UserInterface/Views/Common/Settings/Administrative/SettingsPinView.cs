@@ -70,10 +70,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 			for (ushort index = 0; index < 4; index++)
 			{
 				char item;
-				if (!label.TryElementAt(index, out item))
-					item = '0';
 
-				m_PasscodeLabel.SetItemLabel(index, item.ToString());
+				if (label.TryElementAt(index, out item))
+				{
+					m_PasscodeLabel.SetItemSelected(index, true);
+					m_PasscodeLabel.SetItemLabel(index, item.ToString());
+				}
+				else
+				{
+					m_PasscodeLabel.SetItemSelected(index, false);
+					m_PasscodeLabel.SetItemLabel(index, "0");
+				}
 			}
 		}
 
