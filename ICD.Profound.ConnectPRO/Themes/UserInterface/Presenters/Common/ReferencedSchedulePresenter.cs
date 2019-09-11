@@ -63,6 +63,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
+
+			theme.DateFormatting.OnFormatChanged += DateFormattingOnFormatChanged;
 		}
 
 		/// <summary>
@@ -74,6 +76,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			base.Dispose();
 		}
+
+		#region Methods
 
 		public void SetSelected(bool selected)
 		{
@@ -93,8 +97,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			try
 			{
 				view.SetBookingIcon(m_Icon);
-				view.SetStartTimeLabel(ConnectProDateFormatting.GetShortTime(m_Booking.StartTime));
-				view.SetEndTimeLabel(ConnectProDateFormatting.GetShortTime(m_Booking.EndTime));
+				view.SetStartTimeLabel(GetShortTime(m_Booking.StartTime));
+				view.SetEndTimeLabel(GetShortTime(m_Booking.EndTime));
 				view.SetSelected(m_Selected);
 				view.SetPresenterNameLabel(m_Booking.OrganizerName);
 
@@ -104,6 +108,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		#endregion
+
+		#region Private Methods
+
+		private string GetShortTime(DateTime time)
+		{
+			return Theme.DateFormatting.GetShortTime(time);
 		}
 
 		private string GetIconForBooking(IBooking booking)
@@ -126,6 +139,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 					throw new ArgumentOutOfRangeException();
 			}
 		}
+
+		#endregion
+
+		#region Theme Callbacks
+
+		private void DateFormattingOnFormatChanged(object sender, EventArgs eventArgs)
+		{
+			RefreshIfVisible();
+		}
+
+		#endregion
 
 		#region View Callbacks
 

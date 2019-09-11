@@ -13,7 +13,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Ad
 		event EventHandler OnMinuteDownButtonPressed;
 
 		void Set24HourMode(bool selected);
-		void SetAmMode(bool am);
+		void SetAm(bool am);
 		void SetHour(int hour);
 		void SetMinute(int minute);
 	}

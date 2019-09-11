@@ -52,7 +52,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 			m_24HourButton.SetSelected(selected);
 		}
 
-		public void SetAmMode(bool am)
+		public void SetAm(bool am)
 		{
 			m_AmPmButton.SetSelected(!am);
 			m_BackgroundImage.SetMode(am ? MODE_AM : MODE_PM);

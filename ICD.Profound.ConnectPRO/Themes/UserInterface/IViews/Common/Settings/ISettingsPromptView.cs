@@ -5,8 +5,8 @@
 		/// <summary>
 		/// Sets the path to the illustration graphic.
 		/// </summary>
-		/// <param name="path"></param>
-		void SetImagePath(string path);
+		/// <param name="image"></param>
+		void SetImage(string image);
 
 		/// <summary>
 		/// Sets the text for the help label.

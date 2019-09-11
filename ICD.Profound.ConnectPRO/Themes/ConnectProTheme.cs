@@ -40,6 +40,8 @@ namespace ICD.Profound.ConnectPRO.Themes
 		private readonly XmlTvPresets m_TvPresets;
 		private readonly WebConferencingInstructions m_WebConferencingInstructions;
 
+		private readonly ConnectProDateFormatting m_DateFormatting;
+
 		// Used with settings.
 		private string m_TvPresetsPath;
 		private string m_WebConferencingInstructionsPath;
@@ -80,6 +82,9 @@ namespace ICD.Profound.ConnectPRO.Themes
 		/// </summary>
 		public WebConferencingInstructions WebConferencingInstructions { get { return m_WebConferencingInstructions; } }
 
+		/// <summary>
+		/// Gets/sets the CUE background mode.
+		/// </summary>
 		public eCueBackgroundMode CueBackground
 		{
 			get { return m_CueBackground; }
@@ -94,6 +99,11 @@ namespace ICD.Profound.ConnectPRO.Themes
 			}
 		}
 
+		/// <summary>
+		/// Gets the date formatting rules.
+		/// </summary>
+		public ConnectProDateFormatting DateFormatting { get { return m_DateFormatting; } }
+
 		#endregion
 
 		/// <summary>
@@ -105,6 +115,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 
 			m_TvPresets = new XmlTvPresets();
 			m_WebConferencingInstructions = new WebConferencingInstructions();
+			m_DateFormatting = new ConnectProDateFormatting(this);
 
 			m_UiFactories = new IcdHashSet<IUserInterfaceFactory>
 			{

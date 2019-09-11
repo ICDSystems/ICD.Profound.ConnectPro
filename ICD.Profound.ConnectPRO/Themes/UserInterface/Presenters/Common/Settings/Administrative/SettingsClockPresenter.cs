@@ -2,7 +2,6 @@
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
-using ICD.Common.Utils.Globalization;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.SettingsTree.Administrative;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -17,8 +16,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private bool m_24HourMode;
-		private bool m_AmMode;
+		private bool m_Am;
 		private TimeSpan m_Time;
 
 		/// <summary>
@@ -31,9 +29,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
-
-			m_24HourMode = IcdCultureInfo.CurrentCulture.Uses24HourFormat();
-			m_AmMode = true;
 		}
 
 		/// <summary>
@@ -49,13 +44,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			try
 			{
 				int hour = m_Time.Hours;
-				if (!m_24HourMode)
+				bool is24HourMode = Node != null && Node.Is24HourMode;
+				bool am = is24HourMode ? hour < 12 : m_Am;
+				
+				if (!is24HourMode)
 					hour = DateTimeUtils.To12Hour(hour);
 
 				int minute = m_Time.Minutes;
 
-				view.Set24HourMode(m_24HourMode);
-				view.SetAmMode(m_AmMode);
+				view.Set24HourMode(is24HourMode);
+				view.SetAm(am);
 				view.SetHour(hour);
 				view.SetMinute(minute);
 			}
@@ -65,22 +63,83 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			}
 		}
 
+		/// <summary>
+		/// Called when the wrapped node changes.
+		/// </summary>
+		/// <param name="node"></param>
+		protected override void NodeChanged(ClockSettingsLeaf node)
+		{
+			base.NodeChanged(node);
+
+			m_Time = Node == null ? default(TimeSpan) : Node.ClockTime;
+		}
+
+		#region Private Methods
+
 		private void AddMinutesAndWrap(int minutes)
 		{
+			if (Node == null)
+				return;
+
 			m_Time = m_Time.AddMinutesAndWrap(minutes);
+
+			Node.SetClockTime(m_Time);
 
 			RefreshIfVisible();
 		}
 
 		private void AddHoursAndWrap(int hours)
 		{
+			if (Node == null)
+				return;
+
 			m_Time =
-				m_24HourMode
+				Node.Is24HourMode
 					? m_Time.AddHoursAndWrap(hours)
 					: m_Time.AddHoursAndWrap12Hour(hours);
 
+			Node.SetClockTime(m_Time);
+
 			RefreshIfVisible();
 		}
+
+		private void Set24HourMode(bool hours24Mode)
+		{
+			if (Node == null)
+				return;
+
+			if (hours24Mode == Node.Is24HourMode)
+				return;
+
+			Node.Set24HourMode(hours24Mode);
+
+			SetAmMode(m_Time < TimeSpan.FromHours(12));
+
+			RefreshIfVisible();
+		}
+
+		private void SetAmMode(bool amMode)
+		{
+			if (amMode == m_Am)
+				return;
+
+			m_Am = amMode;
+
+			// Fix the time back into AM/PM
+			if (!Node.Is24HourMode)
+			{
+				if (m_Am && m_Time.Hours >= 12)
+					m_Time -= TimeSpan.FromHours(12);
+				else if (!m_Am && m_Time.Hours < 12)
+					m_Time += TimeSpan.FromHours(12);
+			}
+
+			Node.SetClockTime(m_Time);
+
+			RefreshIfVisible();
+		}
+
+		#endregion
 
 		#region View Callbacks
 
@@ -127,15 +186,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			// When the view is about to be shown we update the current date
 			if (args.Data)
-			{
 				m_Time = IcdEnvironment.GetLocalTime().TimeOfDay;
-			}
-			// When the view is about to be hidden we set the current date
-			else
-			{
-				if (Node != null)
-					Node.SetClockTime(m_Time);
-			}
 		}
 
 		private void ViewOnMinuteUpButtonPressed(object sender, EventArgs eventArgs)
@@ -160,23 +211,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 		private void ViewOnAmPmTogglePressed(object sender, EventArgs eventArgs)
 		{
-			m_AmMode = !m_AmMode;
-			RefreshIfVisible();
+			SetAmMode(!m_Am);
 		}
 
 		private void ViewOn24HourTogglePressed(object sender, EventArgs eventArgs)
 		{
-			m_24HourMode = !m_24HourMode;
-
-			// Set PM mode if hour is greater than 12 
-			if (!m_24HourMode && m_Time > new TimeSpan(12, 0, 0))
-				m_AmMode = false;
-
-			// Clear PM mode for 24 hour mode
-			if (m_24HourMode)
-				m_AmMode = true;
-
-			RefreshIfVisible();
+			if (Node != null)
+				Set24HourMode(!Node.Is24HourMode);
 		}
 
 		#endregion

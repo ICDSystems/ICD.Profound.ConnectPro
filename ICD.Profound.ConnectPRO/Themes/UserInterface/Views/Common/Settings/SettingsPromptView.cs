@@ -18,12 +18,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 		}
 
 		/// <summary>
-		/// Sets the path to the illustration graphic.
+		/// Sets the illustration graphic.
 		/// </summary>
-		/// <param name="path"></param>
-		public void SetImagePath(string path)
+		/// <param name="image"></param>
+		public void SetImage(string image)
 		{
-			m_Image.SetImageUrl(path);
+			m_Image.SetIcon(image);
 		}
 
 		/// <summary>

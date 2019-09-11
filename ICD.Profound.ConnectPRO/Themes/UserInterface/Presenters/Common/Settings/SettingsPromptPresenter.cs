@@ -42,7 +42,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				string image = Node == null ? null : Node.Image;
 
 				view.SetHelpText(help);
-				view.SetImagePath(image);
+				view.SetImage(image);
 			}
 			finally
 			{

@@ -41,6 +41,8 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 		    m_ChildrenFactory = new ReferencedSchedulePresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
 
 		    m_RefreshTimer = new SafeTimer(RefreshIfVisible, DEFAULT_REFRESH_TIME);
+
+			theme.DateFormatting.OnFormatChanged += DateFormattingOnFormatChanged;
 		}
 
 		protected override void Refresh(IOsdWelcomeView view)
@@ -170,12 +172,21 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 	        return GetView().GetChildComponentViews(ViewFactory as IOsdViewFactory, count);
 	    }
 
-        private static string FormatTime(DateTime time)
+        private string FormatTime(DateTime time)
         {
-	        return ConnectProDateFormatting.GetShortTime(time);
+	        return Theme.DateFormatting.GetShortTime(time);
         }
 
         #endregion
+
+		#region Theme Callbacks
+
+		private void DateFormattingOnFormatChanged(object sender, EventArgs eventArgs)
+		{
+			Refresh();
+		}
+
+		#endregion
 
 		#region Room Callbacks
 

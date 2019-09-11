@@ -23,6 +23,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		{
 		}
 
+		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
+		protected override void Refresh(ISettingsDirectoryView view)
+		{
+			base.Refresh(view);
+
+			view.SetHelpText("Refresh video conferencing directory");
+		}
+
 		#region View Callbacks
 
 		/// <summary>

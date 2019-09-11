@@ -1,4 +1,5 @@
-﻿using ICD.Common.Utils;
+﻿using System;
+using ICD.Common.Utils;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -76,7 +77,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
-				view.SetTimeLabel(ConnectProDateFormatting.ShortTime);
+				view.SetTimeLabel(Theme.DateFormatting.ShortTime);
 			}
 			finally
 			{

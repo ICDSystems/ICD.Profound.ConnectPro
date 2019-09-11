@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using ICD.Profound.ConnectPRO.SettingsTree;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
@@ -10,7 +9,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 	public abstract class AbstractSettingsNodeBasePresenter<TView, TNode> : AbstractUiPresenter<TView>,
 	                                                                        ISettingsNodeBasePresenter<TView, TNode>
 		where TView : class, IUiView
-		where TNode : ISettingsNodeBase
+		where TNode : class, ISettingsNodeBase
 	{
 		private TNode m_Node;
 
@@ -29,10 +28,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			get { return m_Node; }
 			set
 			{
-				if (EqualityComparer<TNode>.Default.Equals(value, m_Node))
+				if (value == m_Node)
 					return;
 
+				Unsubscribe(m_Node);
 				m_Node = value;
+				Subscribe(m_Node);
 
 				NodeChanged(m_Node);
 
@@ -59,11 +60,63 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		}
 
 		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			base.Dispose();
+
+			Node = null;
+		}
+
+		/// <summary>
 		/// Called when the wrapped node changes.
 		/// </summary>
 		/// <param name="node"></param>
 		protected virtual void NodeChanged(TNode node)
 		{
 		}
+
+		#region Node Callbacks
+
+		/// <summary>
+		/// Subscribe to the node events.
+		/// </summary>
+		/// <param name="node"></param>
+		private void Subscribe(TNode node)
+		{
+			if (node == null)
+				return;
+
+			ISettingsLeaf leaf = node as ISettingsLeaf;
+			if (leaf != null)
+				leaf.OnSettingsChanged += LeafOnSettingsChanged;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the node events.
+		/// </summary>
+		/// <param name="node"></param>
+		private void Unsubscribe(TNode node)
+		{
+			if (node == null)
+				return;
+
+			ISettingsLeaf leaf = node as ISettingsLeaf;
+			if (leaf != null)
+				leaf.OnSettingsChanged -= LeafOnSettingsChanged;
+		}
+
+		/// <summary>
+		/// Called when the leaf settings change.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void LeafOnSettingsChanged(object sender, EventArgs eventArgs)
+		{
+			RefreshIfVisible();
+		}
+
+		#endregion
 	}
 }

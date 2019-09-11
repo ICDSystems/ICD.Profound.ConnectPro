@@ -10,7 +10,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 	public sealed partial class SettingsPromptView
 	{
 		private VtProSubpage m_Subpage;
-		private VtProImageObject m_Image;
+		private VtProDynamicIconObject m_Image;
 		private VtProSimpleLabel m_HelpLabel;
 
 		/// <summary>
@@ -26,9 +26,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 				DigitalVisibilityJoin = 147
 			};
 
-			m_Image = new VtProImageObject(panel, m_Subpage)
+			m_Image = new VtProDynamicIconObject(panel, m_Subpage)
 			{
-				SerialGraphicsJoin = 402
+				DynamicIconSerialJoin = 402
 			};
 
 			m_HelpLabel = new VtProSimpleLabel(panel, m_Subpage)

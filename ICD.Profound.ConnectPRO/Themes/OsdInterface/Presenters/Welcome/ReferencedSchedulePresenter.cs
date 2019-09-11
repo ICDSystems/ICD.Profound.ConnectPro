@@ -24,6 +24,8 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 			: base(nav, views, theme)
 	    {
             m_RefreshSection = new SafeCriticalSection();
+
+			theme.DateFormatting.OnFormatChanged += DateFormattingOnFormatChanged;
 	    }
 
 		protected override void  Refresh(IReferencedScheduleView view)
@@ -54,9 +56,14 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 		    }
 		}
 
-        private static string FormatTime(DateTime time)
+		private void DateFormattingOnFormatChanged(object sender, EventArgs eventArgs)
+		{
+			RefreshIfVisible();
+		}
+
+		private string FormatTime(DateTime time)
         {
-	        return ConnectProDateFormatting.GetShortTime(time);
+	        return Theme.DateFormatting.GetShortTime(time);
         }
 	}
 }
