@@ -6,9 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+ - Added settings page for changing clock time and 12/24 hour mode
+
 ### Changed
  - Only updating relevant displays presenters halves routing feedback time
  - CUE Pages will now properly be hidden in rooms without a scheduler
+ - Complete overhaul of settings pages
 
 ## [9.1.0] - 2019-08-27
 ### Added
