@@ -246,7 +246,6 @@
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Dtmf\IVtcReferencedDtmfPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\ActiveCalls\IVtcActiveCallsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\ActiveCalls\IVtcReferencedActiveCallsPresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcBaseKeyboardPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcButtonListPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcCallListTogglePresenter.cs" />
@@ -254,8 +253,6 @@
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Dtmf\IVtcDtmfPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcIncomingCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\Contacts\IVtcReferencedContactsPresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcKeyboardPresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcKeypadPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\VideoConference\IVtcSharePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\ActiveMeeting\IWtcActiveMeetingPresenter.cs" />
@@ -266,7 +263,6 @@
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\Contacts\IWtcReferencedSelectedContactPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\IWtcBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\IWtcCallOutPresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\WebConference\IWtcKeyboardPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\IWtcLeftMenuPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\IWtcPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\IWtcRecordingPresenter.cs" />
@@ -330,7 +326,6 @@
     <Compile Include="Themes\UserInterface\IViews\Popups\WebConferencing\IWebConferencingStepView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\Contacts\IVtcContactsPolycomView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\Contacts\IVtcContactsView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcBaseKeyboardView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcBaseView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcButtonListView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcCallListToggleView.cs" />
@@ -341,8 +336,6 @@
     <Compile Include="Themes\UserInterface\IViews\VideoConference\Contacts\IVtcReferencedContactsView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\Dtmf\IVtcReferencedDtmfView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\ActiveCalls\IVtcReferencedActiveCallsView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcKeyboardView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcKeypadView.cs" />
     <Compile Include="Themes\UserInterface\IViews\VideoConference\IVtcShareView.cs" />
     <Compile Include="Themes\UserInterface\IViews\WebConference\ActiveMeeting\IWtcActiveMeetingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\WebConference\ActiveMeeting\IWtcParticipantControlsView.cs" />
@@ -352,7 +345,6 @@
     <Compile Include="Themes\UserInterface\IViews\WebConference\Contacts\IWtcReferencedSelectedContactView.cs" />
     <Compile Include="Themes\UserInterface\IViews\WebConference\IWtcBaseView.cs" />
     <Compile Include="Themes\UserInterface\IViews\WebConference\IWtcCallOutView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\WebConference\IWtcKeyboardView.cs" />
     <Compile Include="Themes\UserInterface\IViews\WebConference\IWtcLeftMenuView.cs" />
     <Compile Include="Themes\UserInterface\IViews\WebConference\IWtcRecordingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\WebConference\IWtcShareView.cs" />
@@ -420,7 +412,6 @@
     <Compile Include="Themes\UserInterface\Presenters\Popups\WebConferencing\ReferencedWebConferencingAlertPresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\WebConferencing\WebConferencingAlertPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\WebConferencing\WebConferencingStepPresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\VideoConference\AbstractVtcBaseKeyboardPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\AbstractVtcPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\AbstractVtcContactsPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\AbstractVtcReferencedContactsPresenterBase.cs" />
@@ -441,8 +432,6 @@
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcCallListTogglePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Dtmf\VtcDtmfPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcIncomingCallPresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcKeyboardPresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcKeypadPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\VtcSharePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\AbstractWtcPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\ActiveMeeting\WtcActiveMeetingPresenter.cs" />
@@ -456,7 +445,6 @@
     <Compile Include="Themes\UserInterface\Presenters\WebConference\Contacts\WtcReferencedSelectedContactPresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcCallOutPresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcKeyboardPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcLeftMenuPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcRecordingPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcSharePresenter.cs" />
@@ -560,7 +548,6 @@
     <Compile Include="Themes\UserInterface\Views\Popups\WebConferencing\WebConferencingAlertView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\WebConferencing\WebConferencingStepView.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\WebConferencing\WebConferencingStepView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\VideoConference\AbstractVtcBaseKeyboardView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\Contacts\AbstractVtcContactsView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\Contacts\VtcContactsPolycomView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\Contacts\VtcContactsPolycomView.generated.cs" />
@@ -584,10 +571,6 @@
     <Compile Include="Themes\UserInterface\Views\VideoConference\Contacts\VtcReferencedContactsView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\ActiveCalls\VtcReferencedActiveCallsView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\ActiveCalls\VtcReferencedActiveCallsView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcKeyboardView.cs" />
-    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcKeyboardView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcKeypadView.cs" />
-    <Compile Include="Themes\UserInterface\Views\VideoConference\VtcKeypadView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcShareView.cs" />
     <Compile Include="Themes\UserInterface\Views\VideoConference\VtcShareView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\WebConference\ActiveMeeting\WtcActiveMeetingView.cs" />
@@ -596,8 +579,6 @@
     <Compile Include="Themes\UserInterface\Views\WebConference\ActiveMeeting\WtcParticipantControlsView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\WebConference\ActiveMeeting\WtcReferencedParticipantView.cs" />
     <Compile Include="Themes\UserInterface\Views\WebConference\ActiveMeeting\WtcReferencedParticipantView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\WebConference\WtcKeyboardView.cs" />
-    <Compile Include="Themes\UserInterface\Views\WebConference\WtcKeyboardView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\WebConference\Contacts\WtcContactListView.cs" />
     <Compile Include="Themes\UserInterface\Views\WebConference\Contacts\WtcContactListView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\WebConference\Contacts\WtcReferencedContactView.cs" />
