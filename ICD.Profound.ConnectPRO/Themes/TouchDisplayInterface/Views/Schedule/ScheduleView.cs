@@ -6,16 +6,16 @@ using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Schedule;
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Schedule
 {
-	[ViewBinding(typeof(IScheduleView))]
+    [ViewBinding(typeof(IScheduleView))]
     public sealed partial class ScheduleView : AbstractTouchDisplayView, IScheduleView
     {
         private readonly List<IReferencedBookingView> m_ChildList;
 
-		public ScheduleView(ISigInputOutput panel, ConnectProTheme theme)
-			: base(panel, theme)
-		{
-		    m_ChildList = new List<IReferencedBookingView>();
-		}
+        public ScheduleView(ISigInputOutput panel, ConnectProTheme theme)
+            : base(panel, theme)
+        {
+            m_ChildList = new List<IReferencedBookingView>();
+        }
 
         public void SetAvailabilityText(string text)
         {
@@ -38,12 +38,13 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Schedule
         }
 
         /// <summary>
-        /// Returns child views for list items.
+        ///     Returns child views for list items.
         /// </summary>
         /// <param name="factory"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public IEnumerable<IReferencedBookingView> GetChildComponentViews(ITouchDisplayViewFactory factory, ushort count)
+        public IEnumerable<IReferencedBookingView> GetChildComponentViews(ITouchDisplayViewFactory factory,
+            ushort count)
         {
             return GetChildViews(factory, m_ScheduleList, m_ChildList, count);
         }

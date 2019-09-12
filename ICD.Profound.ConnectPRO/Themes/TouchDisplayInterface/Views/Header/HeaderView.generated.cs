@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
+using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.TextControls;
 using ICD.Connect.UI.Controls.Pages;
 
@@ -11,6 +12,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 		private VtProSubpage m_Subpage;
 		private VtProSimpleLabel m_RoomName;
 		private VtProSimpleLabel m_TimeLabel;
+        private VtProAdvancedButton m_StartEndMeetingButton;
 
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
@@ -25,6 +27,13 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 			{
 				IndirectTextJoin = 9
 			};
+
+            m_StartEndMeetingButton = new VtProAdvancedButton(panel, m_Subpage)
+            {
+                AnalogModeJoin = 11,
+                DigitalPressJoin = 11,
+                IndirectTextJoin = 11
+            };
 		}
 
 		protected override IEnumerable<IVtProControl> GetChildren()
@@ -32,6 +41,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 			yield return m_Subpage;
 			yield return m_RoomName;
 			yield return m_TimeLabel;
-		}
+            yield return m_StartEndMeetingButton;
+        }
 	}
 }

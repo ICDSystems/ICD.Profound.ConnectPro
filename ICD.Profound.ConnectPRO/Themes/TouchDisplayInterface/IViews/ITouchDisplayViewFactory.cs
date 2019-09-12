@@ -2,8 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews
 {
-	public interface ITouchDisplayViewFactory : IViewFactory
-	{
-		
-	}
+    public interface ITouchDisplayViewFactory : IViewFactory
+    {
+    }
 }

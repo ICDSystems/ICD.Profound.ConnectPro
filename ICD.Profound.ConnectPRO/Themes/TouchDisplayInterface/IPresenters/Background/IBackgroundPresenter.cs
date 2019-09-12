@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Background
 {
-	public interface IBackgroundPresenter : ITouchDisplayPresenter<IBackgroundView>
-	{
-	}
+    public interface IBackgroundPresenter : ITouchDisplayPresenter<IBackgroundView>
+    {
+    }
 }

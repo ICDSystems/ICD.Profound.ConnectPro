@@ -26,201 +26,199 @@ using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views;
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 {
-	public sealed class ConnectProTouchDisplayInterface : AbstractUserInterface
-	{
-		private readonly IPanelDevice m_Panel;
-		private readonly ITouchDisplayNavigationController m_NavigationController;
+    public sealed class ConnectProTouchDisplayInterface : AbstractUserInterface
+    {
+        private readonly ITouchDisplayNavigationController m_NavigationController;
 
-		private IVisibilityNode m_DefaultNotification;
-		private IVisibilityNode m_MainPageVisibility;
-		private IVisibilityNode m_NotificationVisibility;
+        private IVisibilityNode m_DefaultNotification;
+        private IVisibilityNode m_MainPageVisibility;
+        private IVisibilityNode m_NotificationVisibility;
 
-		private IConnectProRoom m_Room;
-		private bool m_UserInterfaceReady;
+        private IConnectProRoom m_Room;
+        private bool m_UserInterfaceReady;
 
-		#region Properties
+        /// <summary>
+        ///     Constructor.
+        /// </summary>
+        /// <param name="panel"></param>
+        /// <param name="theme"></param>
+        public ConnectProTouchDisplayInterface(IPanelDevice panel, ConnectProTheme theme)
+        {
+            Panel = panel;
+            UpdatePanelOfflineJoin();
 
-		public IPanelDevice Panel { get { return m_Panel; } }
+            ITouchDisplayViewFactory viewFactory = new ConnectProTouchDisplayViewFactory(panel, theme);
+            m_NavigationController = new ConnectProTouchDisplayNavigationController(viewFactory, theme);
 
-		public override IRoom Room { get { return m_Room; } }
+            BuildVisibilityTree();
+        }
 
-		public override object Target { get { return m_Panel; } }
+        /// <summary>
+        ///     Release resources.
+        /// </summary>
+        public override void Dispose()
+        {
+            SetRoom(null);
 
-		#endregion
+            m_NavigationController.Dispose();
+        }
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="panel"></param>
-		/// <param name="theme"></param>
-		public ConnectProTouchDisplayInterface(IPanelDevice panel, ConnectProTheme theme)
-		{
-			m_Panel = panel;
-			UpdatePanelOfflineJoin();
+        /// <summary>
+        ///     Updates the "offline" visual state of the panel
+        /// </summary>
+        private void UpdatePanelOfflineJoin()
+        {
+            Panel.SendInputDigital(CommonJoins.DIGITAL_OFFLINE_JOIN, m_Room == null || !m_UserInterfaceReady);
+        }
 
-			ITouchDisplayViewFactory viewFactory = new ConnectProTouchDisplayViewFactory(panel, theme);
-			m_NavigationController = new ConnectProTouchDisplayNavigationController(viewFactory, theme);
+        /// <summary>
+        ///     Builds the rules for view visibility, e.g. prevent certain items from being visible at the same time.
+        /// </summary>
+        private void BuildVisibilityTree()
+        {
+            //// Show "hello" when no notifications are visible
+            //m_DefaultNotification = new NotificationVisibilityNode(m_NavigationController.LazyLoadPresenter<IOsdHelloPresenter>());
+            //m_DefaultNotification.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdIncomingCallPresenter>());
+            //m_DefaultNotification.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdMutePresenter>());
 
-			BuildVisibilityTree();
-		}
+            //// show "welcome" when no other main page is visible
+            //m_MainPageVisibility = new SingleVisibilityNode();
+            //m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdWelcomePresenter>());
+            //m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdSourcesPresenter>());
+            //m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdConferencePresenter>());
 
-		/// <summary>
-		/// Release resources.
-		/// </summary>
-		public override void Dispose()
-		{
-			SetRoom(null);
+            //// these presenters are initially visible
+            //m_NavigationController.NavigateTo<IOsdHelloPresenter>();
 
-			m_NavigationController.Dispose();
-		}
-
-		/// <summary>
-		/// Updates the "offline" visual state of the panel
-		/// </summary>
-		private void UpdatePanelOfflineJoin()
-		{
-			m_Panel.SendInputDigital(CommonJoins.DIGITAL_OFFLINE_JOIN, m_Room == null || !m_UserInterfaceReady);
-		}
-
-		/// <summary>
-		/// Builds the rules for view visibility, e.g. prevent certain items from being visible at the same time.
-		/// </summary>
-		private void BuildVisibilityTree()
-		{
-			//// Show "hello" when no notifications are visible
-			//m_DefaultNotification = new NotificationVisibilityNode(m_NavigationController.LazyLoadPresenter<IOsdHelloPresenter>());
-			//m_DefaultNotification.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdIncomingCallPresenter>());
-			//m_DefaultNotification.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdMutePresenter>());
-			
-			//// show "welcome" when no other main page is visible
-			//m_MainPageVisibility = new SingleVisibilityNode();
-			//m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdWelcomePresenter>());
-			//m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdSourcesPresenter>());
-			//m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdConferencePresenter>());
-
-			//// these presenters are initially visible
-			//m_NavigationController.NavigateTo<IOsdHelloPresenter>();
-
-			// always visible
+            // always visible
             m_NavigationController.NavigateTo<IHeaderPresenter>();
-			m_NavigationController.LazyLoadPresenter<IBackgroundPresenter>();
-			
-			UpdateVisibility();
-		}
+            m_NavigationController.LazyLoadPresenter<IBackgroundPresenter>();
 
-		#region Methods
+            UpdateVisibility();
+        }
 
-		/// <summary>
-		/// Updates the UI to represent the given room.
-		/// </summary>
-		/// <param name="room"></param>
-		public override void SetRoom(IRoom room)
-		{
-			SetRoom(room as IConnectProRoom);
-		}
+        #region Properties
 
-		/// <summary>
-		/// Updates the UI to represent the given room.
-		/// </summary>
-		/// <param name="room"></param>
-		public void SetRoom(IConnectProRoom room)
-		{
-			if (room == m_Room)
-				return;
+        public IPanelDevice Panel { get; }
 
-			ServiceProvider.GetService<ILoggerService>()
-			               .AddEntry(eSeverity.Informational, "{0} setting room to {1}", this, room);
+        public override IRoom Room => m_Room;
 
-			Unsubscribe(m_Room);
-			m_Room = room;
-			Subscribe(m_Room);
+        public override object Target => Panel;
 
-			m_NavigationController.SetRoom(room);
+        #endregion
 
-			UpdatePanelOfflineJoin();
-			UpdateVisibility();
-		}
-		
-		private void RoutingStateOnSourceRoutedChanged(object sender, EventArgs e)
-		{
-			UpdateVisibility();
-		}
+        #region Methods
 
-		/// <summary>
-		/// Tells the UI that it should be considered ready to use.
-		/// For example updating the online join on a panel or starting a long-running process that should be delayed.
-		/// </summary>
-		public override void Activate()
-		{
-			m_UserInterfaceReady = true;
-			UpdatePanelOfflineJoin();
-		}
+        /// <summary>
+        ///     Updates the UI to represent the given room.
+        /// </summary>
+        /// <param name="room"></param>
+        public override void SetRoom(IRoom room)
+        {
+            SetRoom(room as IConnectProRoom);
+        }
 
-		#endregion
+        /// <summary>
+        ///     Updates the UI to represent the given room.
+        /// </summary>
+        /// <param name="room"></param>
+        public void SetRoom(IConnectProRoom room)
+        {
+            if (room == m_Room)
+                return;
 
-		#region Room Callbacks
+            ServiceProvider.GetService<ILoggerService>()
+                .AddEntry(eSeverity.Informational, "{0} setting room to {1}", this, room);
 
-		/// <summary>
-		/// Subscribe to the room events.
-		/// </summary>
-		/// <param name="room"></param>
-		private void Subscribe(IConnectProRoom room)
-		{
-			if (room == null)
-				return;
+            Unsubscribe(m_Room);
+            m_Room = room;
+            Subscribe(m_Room);
 
-			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
-			room.Routing.State.OnSourceRoutedChanged += RoutingStateOnSourceRoutedChanged;
-		}
+            m_NavigationController.SetRoom(room);
 
-		/// <summary>
-		/// Unsubscribe from the room events.
-		/// </summary>
-		/// <param name="room"></param>
-		private void Unsubscribe(IConnectProRoom room)
-		{
-			if (room == null)
-				return;
+            UpdatePanelOfflineJoin();
+            UpdateVisibility();
+        }
 
-			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
-			room.Routing.State.OnSourceRoutedChanged -= RoutingStateOnSourceRoutedChanged;
-		}
+        private void RoutingStateOnSourceRoutedChanged(object sender, EventArgs e)
+        {
+            UpdateVisibility();
+        }
 
-		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs eventArgs)
-		{
-			UpdateVisibility();
-		}
+        /// <summary>
+        ///     Tells the UI that it should be considered ready to use.
+        ///     For example updating the online join on a panel or starting a long-running process that should be delayed.
+        /// </summary>
+        public override void Activate()
+        {
+            m_UserInterfaceReady = true;
+            UpdatePanelOfflineJoin();
+        }
 
-		private void UpdateVisibility()
-		{
+        #endregion
 
-			if (Room == null)
-				return;
+        #region Room Callbacks
 
-			IEnumerable<ISource> activeSources = m_Room.Routing.State.GetSourceRoutedStates()
-													 .Where(kvp => kvp.Value == eSourceState.Masked || kvp.Value == eSourceState.Active)
-													 .Select(kvp => kvp.Key).ToList();
-			bool zoomRouted = false;
-			foreach (var source in activeSources)
-			{
-				IOriginator child;
-				if (Room.Core.Originators.TryGetChild(source.Device, out child) && child is ZoomRoom)
-				{
-					zoomRouted = true;
-					var control = (child as IDevice).Controls.GetControl<IConferenceDeviceControl>();
-					//m_NavigationController.LazyLoadPresenter<IOsdConferencePresenter>().ActiveConferenceControl = control;
-					break;
-				}
-			}
+        /// <summary>
+        ///     Subscribe to the room events.
+        /// </summary>
+        /// <param name="room"></param>
+        private void Subscribe(IConnectProRoom room)
+        {
+            if (room == null)
+                return;
 
-			//if (zoomRouted)
-			//	m_NavigationController.NavigateTo<IOsdConferencePresenter>();
-			//else if (m_Room.IsInMeeting)
-			//	m_NavigationController.NavigateTo<IOsdSourcesPresenter>();
-			//else if (m_Room.CalendarControl != null)
-			//	m_NavigationController.NavigateTo<IOsdWelcomePresenter>();
-		}
+            room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
+            room.Routing.State.OnSourceRoutedChanged += RoutingStateOnSourceRoutedChanged;
+        }
 
-		#endregion
-	}
+        /// <summary>
+        ///     Unsubscribe from the room events.
+        /// </summary>
+        /// <param name="room"></param>
+        private void Unsubscribe(IConnectProRoom room)
+        {
+            if (room == null)
+                return;
+
+            room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
+            room.Routing.State.OnSourceRoutedChanged -= RoutingStateOnSourceRoutedChanged;
+        }
+
+        private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs eventArgs)
+        {
+            UpdateVisibility();
+        }
+
+        private void UpdateVisibility()
+        {
+            if (Room == null)
+                return;
+
+            IEnumerable<ISource> activeSources = m_Room.Routing.State.GetSourceRoutedStates()
+                .Where(kvp => kvp.Value == eSourceState.Masked || kvp.Value == eSourceState.Active)
+                .Select(kvp => kvp.Key).ToList();
+            var zoomRouted = false;
+            foreach (var source in activeSources)
+            {
+                IOriginator child;
+                if (Room.Core.Originators.TryGetChild(source.Device, out child) && child is ZoomRoom)
+                {
+                    zoomRouted = true;
+                    var control = (child as IDevice).Controls.GetControl<IConferenceDeviceControl>();
+                    //m_NavigationController.LazyLoadPresenter<IOsdConferencePresenter>().ActiveConferenceControl = control;
+                    break;
+                }
+            }
+
+            //if (zoomRouted)
+            //	m_NavigationController.NavigateTo<IOsdConferencePresenter>();
+            //else if (m_Room.IsInMeeting)
+            //	m_NavigationController.NavigateTo<IOsdSourcesPresenter>();
+            //else if (m_Room.CalendarControl != null)
+            //	m_NavigationController.NavigateTo<IOsdWelcomePresenter>();
+        }
+
+        #endregion
+    }
 }
