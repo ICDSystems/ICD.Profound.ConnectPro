@@ -12,9 +12,9 @@ using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Themes.UserInterfaces;
 using ICD.Profound.ConnectPRO.Rooms;
 
-namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
+namespace ICD.Profound.ConnectPRO.Themes.ShureMicrophoneInterface
 {
-	public sealed class ConnectProMicrophoneInterface : AbstractUserInterface
+	public sealed class ConnectProShureMicrophoneInterface : AbstractUserInterface
 	{
 		private bool m_IsDisposed;
 
@@ -41,7 +41,7 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		/// </summary>
 		/// <param name="microphone"></param>
 		/// <param name="theme"></param>
-		public ConnectProMicrophoneInterface(IShureMicDevice microphone, ConnectProTheme theme)
+		public ConnectProShureMicrophoneInterface(IShureMicDevice microphone, ConnectProTheme theme)
 		{
 			m_Microphone = microphone;
 			Subscribe(m_Microphone);

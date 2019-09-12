@@ -20,9 +20,9 @@ using ICD.Connect.Themes;
 using ICD.Connect.Themes.UserInterfaceFactories;
 using ICD.Connect.TvPresets;
 using ICD.Profound.ConnectPRO.Rooms.Combine;
-using ICD.Profound.ConnectPRO.Themes.MicrophoneInterface;
 using ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface;
+using ICD.Profound.ConnectPRO.Themes.ShureMicrophoneInterface;
 using ICD.Profound.ConnectPRO.Themes.UserInterface;
 using ICD.Profound.ConnectPRO.WebConferencing;
 
@@ -120,7 +120,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 			m_UiFactories = new IcdHashSet<IUserInterfaceFactory>
 			{
 				new ConnectProUserInterfaceFactory(this),
-				new ConnectProMicrophoneInterfaceFactory(this),
+				new ConnectProShureMicrophoneInterfaceFactory(this),
 				new ConnectProOsdInterfaceFactory(this),
 				new ConnectProMpc3201InterfaceFactory(this)
 			};

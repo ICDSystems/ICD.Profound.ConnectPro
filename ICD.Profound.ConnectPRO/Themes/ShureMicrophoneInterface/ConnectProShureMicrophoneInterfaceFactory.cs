@@ -5,16 +5,16 @@ using ICD.Connect.Audio.Shure;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Profound.ConnectPRO.Rooms;
 
-namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
+namespace ICD.Profound.ConnectPRO.Themes.ShureMicrophoneInterface
 {
-	public sealed class ConnectProMicrophoneInterfaceFactory :
-		AbstractConnectProUserInterfaceFactory<ConnectProMicrophoneInterface>
+	public sealed class ConnectProShureMicrophoneInterfaceFactory :
+		AbstractConnectProUserInterfaceFactory<ConnectProShureMicrophoneInterface>
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="theme"></param>
-		public ConnectProMicrophoneInterfaceFactory(ConnectProTheme theme)
+		public ConnectProShureMicrophoneInterfaceFactory(ConnectProTheme theme)
 			: base(theme)
 		{
 		}
@@ -24,9 +24,9 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		/// </summary>
 		/// <param name="originator"></param>
 		/// <returns></returns>
-		private ConnectProMicrophoneInterface CreateUserInterface(IShureMxaDevice originator)
+		private ConnectProShureMicrophoneInterface CreateUserInterface(IShureMxaDevice originator)
 		{
-			return new ConnectProMicrophoneInterface(originator, Theme);
+			return new ConnectProShureMicrophoneInterface(originator, Theme);
 		}
 
 		/// <summary>
@@ -34,7 +34,7 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		/// </summary>
 		/// <param name="room"></param>
 		/// <returns></returns>
-		protected override IEnumerable<ConnectProMicrophoneInterface> CreateUserInterfaces(IConnectProRoom room)
+		protected override IEnumerable<ConnectProShureMicrophoneInterface> CreateUserInterfaces(IConnectProRoom room)
 		{
 			if (room == null)
 				throw new ArgumentNullException("room");
@@ -50,7 +50,7 @@ namespace ICD.Profound.ConnectPRO.Themes.MicrophoneInterface
 		/// <param name="room"></param>
 		/// <param name="ui"></param>
 		/// <returns></returns>
-		protected override bool RoomContainsOriginator(IRoom room, ConnectProMicrophoneInterface ui)
+		protected override bool RoomContainsOriginator(IRoom room, ConnectProShureMicrophoneInterface ui)
 		{
 			return room.Originators.ContainsRecursive(ui.Microphone.Id);
 		}

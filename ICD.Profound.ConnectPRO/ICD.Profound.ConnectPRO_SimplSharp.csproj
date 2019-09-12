@@ -115,8 +115,8 @@
     <Compile Include="Themes\ConnectProDateFormatting.cs" />
     <Compile Include="Themes\ConnectProTheme.cs" />
     <Compile Include="Themes\ConnectProThemeSettings.cs" />
-    <Compile Include="Themes\MicrophoneInterface\ConnectProMicrophoneInterface.cs" />
-    <Compile Include="Themes\MicrophoneInterface\ConnectProMicrophoneInterfaceFactory.cs" />
+    <Compile Include="Themes\ShureMicrophoneInterface\ConnectProShureMicrophoneInterface.cs" />
+    <Compile Include="Themes\ShureMicrophoneInterface\ConnectProShureMicrophoneInterfaceFactory.cs" />
     <Compile Include="Themes\Mpc3201UserInterface\ConnectProMpc3201Interface.cs" />
     <Compile Include="Themes\Mpc3201UserInterface\ConnectProMpc3201InterfaceFactory.cs" />
     <Compile Include="Themes\OsdInterface\ConnectProOsdInterface.cs" />
