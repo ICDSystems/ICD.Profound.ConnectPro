@@ -112,6 +112,8 @@
     <Compile Include="SettingsTree\SettingsTreeIcons.cs" />
     <Compile Include="SettingsTree\SettingsTreeImages.cs" />
     <Compile Include="Themes\AbstractConnectProUserInterfaceFactory.cs" />
+    <Compile Include="Themes\Ccrm4000UserInterface\ConnectProCcrm4000UserInterface.cs" />
+    <Compile Include="Themes\Ccrm4000UserInterface\ConnectProCcrm4000UserInterfaceFactory.cs" />
     <Compile Include="Themes\ConnectProDateFormatting.cs" />
     <Compile Include="Themes\ConnectProTheme.cs" />
     <Compile Include="Themes\ConnectProThemeSettings.cs" />
@@ -624,6 +626,10 @@
     <ProjectReference Include="..\..\ICD.Connect.API\ICD.Connect.API\ICD.Connect.API_SimplSharp.csproj">
       <Project>{727F5820-5A61-440D-8899-E454FE8238D7}</Project>
       <Name>ICD.Connect.API_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Audio\ICD.Connect.Audio.ClockAudio\ICD.Connect.Audio.ClockAudio_SimplSharp.csproj">
+      <Project>{DFDEA2A3-B470-4EBC-B959-338437340CAE}</Project>
+      <Name>ICD.Connect.Audio.ClockAudio_SimplSharp</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ICD.Connect.Audio\ICD.Connect.Audio.Shure\ICD.Connect.Audio.Shure_SimplSharp.csproj">
       <Project>{AFEEC857-710B-4F94-B982-7BD8648904DD}</Project>

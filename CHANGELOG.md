@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
  - Added settings page for changing clock time and 12/24 hour mode
+ - ClockAudio CCRM4000 will extend and retract based on call state
 
 ### Changed
  - Only updating relevant displays presenters halves routing feedback time
