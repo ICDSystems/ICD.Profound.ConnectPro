@@ -71,9 +71,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 			}
 		}
 
-		private static string FormatTime(DateTime time)
+		private string FormatTime(DateTime time)
 		{
-			return ConnectProDateFormatting.GetShortTime(time);
+			return Theme.DateFormatting.GetShortTime(time);
 		}
 
 		#region View Callbacks

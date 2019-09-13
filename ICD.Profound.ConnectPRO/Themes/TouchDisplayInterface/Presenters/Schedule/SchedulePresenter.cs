@@ -190,9 +190,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 			return GetView().GetChildComponentViews(ViewFactory as ITouchDisplayViewFactory, count);
 		}
 
-		private static string FormatTime(DateTime time)
+		private string FormatTime(DateTime time)
 		{
-			return ConnectProDateFormatting.GetShortTime(time);
+			return Theme.DateFormatting.GetShortTime(time);
 		}
 
 		#endregion

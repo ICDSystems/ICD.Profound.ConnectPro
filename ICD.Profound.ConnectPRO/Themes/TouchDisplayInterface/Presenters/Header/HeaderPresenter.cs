@@ -83,7 +83,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 
 			try
 			{
-				view.SetTimeLabel(ConnectProDateFormatting.ShortTime);
+				view.SetTimeLabel(Theme.DateFormatting.ShortTime);
 			}
 			finally
 			{
