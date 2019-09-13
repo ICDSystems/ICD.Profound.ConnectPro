@@ -91,16 +91,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		}
 
 		/// <summary>
-		/// Called when the keypad visibility state changes.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="boolEventArgs"></param>
-		private void KeypadPresenterOnViewVisibilityChanged(object sender, BoolEventArgs boolEventArgs)
-		{
-			RefreshIfVisible();
-		}
-
-		/// <summary>
 		/// Called when the keyboard visibility state changes.
 		/// </summary>
 		/// <param name="sender"></param>

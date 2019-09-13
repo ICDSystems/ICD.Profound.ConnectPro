@@ -394,6 +394,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			m_Filter = null;
 			m_ConfirmedFilter = null;
 			m_SelectedContacts.Clear();
+
+			Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>().ShowView(false);
 		}
 
 		#endregion
