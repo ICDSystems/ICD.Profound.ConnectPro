@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
@@ -8,7 +7,6 @@ using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Destinations;
-using ICD.Connect.Routing.Endpoints.Sources;
 
 namespace ICD.Profound.ConnectPRO.Routing
 {
@@ -25,11 +23,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// Returns true if the room contains more than 1 display.
 		/// </summary>
 		public bool IsMultiDisplayRoom { get { return DisplayDestinationsCount > 1; } }
-
-		/// <summary>
-		/// Returns true if the room has an audio destination.
-		/// </summary>
-		public bool RoomHasAudio { get { return GetAudioDestinations().Any(); } }
 
 		/// <summary>
 		/// Gets the number of display destinations.
@@ -51,7 +44,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			m_CacheSection = new SafeCriticalSection();
 		}
 
-		#region Destinations
+		#region Methods
 
 		/// <summary>
 		/// Returns the first two ordered display destinations for the room.
@@ -120,42 +113,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 			{
 				m_CacheSection.Leave();
 			}
-		}
-
-		private IEnumerable<ISource> GetActiveAudioSources()
-		{
-			return GetAudioDestinations().SelectMany(destination => GetActiveSources(destination, eConnectionType.Audio));
-		}
-
-		/// <summary>
-		/// Gets all of the source endpoints actively routed to the given destination.
-		/// </summary>
-		/// <param name="destination"></param>
-		/// <param name="flag"></param>
-		/// <returns></returns>
-		private IEnumerable<EndpointInfo> GetActiveEndpoints(IDestination destination, eConnectionType flag)
-		{
-			if (destination == null)
-				throw new ArgumentNullException("destination");
-
-			return m_Routing.RoutingGraph.RoutingCache.GetSourceEndpointsForDestination(destination, flag, false, true);
-		}
-
-		private IEnumerable<ISource> GetActiveVideoSources(IDestination destination)
-		{
-			if (destination == null)
-				throw new ArgumentNullException("destination");
-
-			return GetActiveSources(destination, eConnectionType.Video);
-		}
-
-		private IEnumerable<ISource> GetActiveSources(IDestination destination, eConnectionType flag)
-		{
-			if (destination == null)
-				throw new ArgumentNullException("destination");
-
-			return GetActiveEndpoints(destination, flag).SelectMany(e => m_Routing.RoutingGraph.Sources.GetChildren(e, flag))
-														.Distinct();
 		}
 
 		#endregion
