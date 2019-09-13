@@ -630,17 +630,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		private void UpdateRouting()
 		{
-			IcdHashSet<ISource> activeAudio =
-				m_Room == null
-					? new IcdHashSet<ISource>()
-					: m_Room.Routing.State.GetCachedActiveAudioSources().ToIcdHashSet();
-
-			Dictionary<IDestination, IcdHashSet<ISource>> activeVideo =
-				m_Room == null
-					? new Dictionary<IDestination, IcdHashSet<ISource>>()
-					: m_Room.Routing.State.GetFakeActiveVideoSources().ToDictionary();
+			if (m_Room == null)
+				return;
 
 			ConnectProCombineRoom combineRoom = m_Room as ConnectProCombineRoom;
+
+			// Perf - Don't bother updating destination routing if there is only 1 destination in the system
+			if (combineRoom == null && m_Room.Routing.Destinations.DisplayDestinationsCount < 2)
+				return;
+
+			IcdHashSet<ISource> activeAudio =
+				m_Room.Routing
+				      .State
+				      .GetCachedActiveAudioSources()
+				      .ToIcdHashSet();
+
+			Dictionary<IDestination, IcdHashSet<ISource>> activeVideo =
+				m_Room.Routing
+				      .State
+				      .GetFakeActiveVideoSources()
+				      .ToDictionary();
 
 			if (combineRoom == null)
 				UpdateDisplaysRouting(activeVideo, activeAudio);
