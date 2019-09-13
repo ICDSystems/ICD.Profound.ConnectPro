@@ -84,51 +84,61 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{
 				DigitalPressJoin = 2700
 			};
+			m_Key0Button.DigitalLabelJoins.Add(2698);
 
 			m_Key1Button = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2701
 			};
+			m_Key1Button.DigitalLabelJoins.Add(2698);
 
 			m_Key2Button = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2702
 			};
+			m_Key2Button.DigitalLabelJoins.Add(2698);
 
 			m_Key3Button = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2703
 			};
+			m_Key3Button.DigitalLabelJoins.Add(2698);
 
 			m_Key4Button = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2704
 			};
+			m_Key4Button.DigitalLabelJoins.Add(2698);
 
 			m_Key5Button = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2705
 			};
+			m_Key5Button.DigitalLabelJoins.Add(2698);
 
 			m_Key6Button = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2706
 			};
+			m_Key6Button.DigitalLabelJoins.Add(2698);
 
 			m_Key7Button = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2707
 			};
+			m_Key7Button.DigitalLabelJoins.Add(2698);
 
 			m_Key8Button = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2708
 			};
+			m_Key8Button.DigitalLabelJoins.Add(2698);
 
 			m_Key9Button = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2709
 			};
+			m_Key9Button.DigitalLabelJoins.Add(2698);
 
 			m_KeyQButton = new VtProButton(panel, m_Subpage)
 			{
@@ -290,26 +300,31 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 			{
 				DigitalPressJoin = 2760
 			};
+			m_KeyPeriodButton.DigitalLabelJoins.Add(2698);
 
 			m_KeyCommaButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2751
 			};
+			m_KeyCommaButton.DigitalLabelJoins.Add(2698);
 
 			m_KeySlashButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2761
 			};
+			m_KeySlashButton.DigitalLabelJoins.Add(2698);
 
 			m_KeySemiColonButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2762
 			};
+			m_KeySemiColonButton.DigitalLabelJoins.Add(2698);
 
 			m_KeyApostropheButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2763
 			};
+			m_KeyApostropheButton.DigitalLabelJoins.Add(2698);
 
 			m_FeedbackText = new VtProSimpleLabel(panel, m_Subpage)
 			{
