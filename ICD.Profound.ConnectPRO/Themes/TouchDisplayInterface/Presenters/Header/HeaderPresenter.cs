@@ -11,139 +11,139 @@ using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Header;
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 {
-    [PresenterBinding(typeof(IHeaderPresenter))]
-    public sealed class HeaderPresenter : AbstractTouchDisplayPresenter<IHeaderView>, IHeaderPresenter
-    {
-        private readonly SafeCriticalSection m_RefreshSection;
-        private readonly SafeTimer m_RefreshTimer;
+	[PresenterBinding(typeof(IHeaderPresenter))]
+	public sealed class HeaderPresenter : AbstractTouchDisplayPresenter<IHeaderView>, IHeaderPresenter
+	{
+		private readonly SafeCriticalSection m_RefreshSection;
+		private readonly SafeTimer m_RefreshTimer;
 
-        /// <summary>
-        ///     Constructor.
-        /// </summary>
-        /// <param name="nav"></param>
-        /// <param name="views"></param>
-        /// <param name="theme"></param>
-        public HeaderPresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views,
-            ConnectProTheme theme)
-            : base(nav, views, theme)
-        {
-            m_RefreshSection = new SafeCriticalSection();
+		/// <summary>
+		///     Constructor.
+		/// </summary>
+		/// <param name="nav"></param>
+		/// <param name="views"></param>
+		/// <param name="theme"></param>
+		public HeaderPresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views,
+			ConnectProTheme theme)
+			: base(nav, views, theme)
+		{
+			m_RefreshSection = new SafeCriticalSection();
 
-            // Refresh every second to update the time
-            m_RefreshTimer = new SafeTimer(RefreshTime, 1000, 1000);
-        }
+			// Refresh every second to update the time
+			m_RefreshTimer = new SafeTimer(RefreshTime, 1000, 1000);
+		}
 
-        /// <summary>
-        ///     Release resources.
-        /// </summary>
-        public override void Dispose()
-        {
-            m_RefreshTimer.Dispose();
+		/// <summary>
+		///     Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			m_RefreshTimer.Dispose();
 
-            base.Dispose();
-        }
+			base.Dispose();
+		}
 
-        /// <summary>
-        ///     Updates the view.
-        /// </summary>
-        /// <param name="view"></param>
-        protected override void Refresh(IHeaderView view)
-        {
-            base.Refresh(view);
+		/// <summary>
+		///     Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
+		protected override void Refresh(IHeaderView view)
+		{
+			base.Refresh(view);
 
-            m_RefreshSection.Enter();
+			m_RefreshSection.Enter();
 
-            try
-            {
-                var roomName = Room == null ? string.Empty : Room.Name;
-                view.SetRoomName(roomName);
-                view.SetStartEndMeetingButtonMode(Room != null && Room.IsInMeeting
-                    ? eStartEndMeetingMode.EndMeeting
-                    : eStartEndMeetingMode.StartMeeting);
+			try
+			{
+				var roomName = Room == null ? string.Empty : Room.Name;
+				view.SetRoomName(roomName);
+				view.SetStartEndMeetingButtonMode(Room != null && Room.IsInMeeting
+					? eStartEndMeetingMode.EndMeeting
+					: eStartEndMeetingMode.StartMeeting);
 
-                RefreshTime();
-            }
-            finally
-            {
-                m_RefreshSection.Leave();
-            }
-        }
+				RefreshTime();
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+		}
 
-        /// <summary>
-        ///     Updates the time label on the header.
-        /// </summary>
-        private void RefreshTime()
-        {
-            var view = GetView();
-            if (view == null)
-                return;
+		/// <summary>
+		///     Updates the time label on the header.
+		/// </summary>
+		private void RefreshTime()
+		{
+			var view = GetView();
+			if (view == null)
+				return;
 
-            if (!m_RefreshSection.TryEnter())
-                return;
+			if (!m_RefreshSection.TryEnter())
+				return;
 
-            try
-            {
-                view.SetTimeLabel(ConnectProDateFormatting.ShortTime);
-            }
-            finally
-            {
-                m_RefreshSection.Leave();
-            }
-        }
+			try
+			{
+				view.SetTimeLabel(ConnectProDateFormatting.ShortTime);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+		}
 
-        #region Room Callbacks
+		#region Room Callbacks
 
-        protected override void Subscribe(IConnectProRoom room)
-        {
-            base.Subscribe(room);
+		protected override void Subscribe(IConnectProRoom room)
+		{
+			base.Subscribe(room);
 
-            if (room == null)
-                return;
+			if (room == null)
+				return;
 
-            room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
-        }
+			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
+		}
 
-        protected override void Unsubscribe(IConnectProRoom room)
-        {
-            base.Unsubscribe(room);
+		protected override void Unsubscribe(IConnectProRoom room)
+		{
+			base.Unsubscribe(room);
 
-            if (room == null)
-                return;
+			if (room == null)
+				return;
 
-            room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
-        }
+			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
+		}
 
-        private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs e)
-        {
-            Refresh();
-        }
+		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs e)
+		{
+			Refresh();
+		}
 
-        #endregion
+		#endregion
 
-        #region View Callbacks
+		#region View Callbacks
 
-        protected override void Subscribe(IHeaderView view)
-        {
-            base.Subscribe(view);
+		protected override void Subscribe(IHeaderView view)
+		{
+			base.Subscribe(view);
 
-            view.OnStartEndMeetingPressed += ViewOnStartEndMeetingPressed;
-        }
+			view.OnStartEndMeetingPressed += ViewOnStartEndMeetingPressed;
+		}
 
-        protected override void Unsubscribe(IHeaderView view)
-        {
-            base.Unsubscribe(view);
+		protected override void Unsubscribe(IHeaderView view)
+		{
+			base.Unsubscribe(view);
 
-            view.OnStartEndMeetingPressed -= ViewOnStartEndMeetingPressed;
-        }
+			view.OnStartEndMeetingPressed -= ViewOnStartEndMeetingPressed;
+		}
 
-        private void ViewOnStartEndMeetingPressed(object sender, EventArgs e)
-        {
-            if (Room.IsInMeeting)
-                Room.EndMeeting();
-            else
-                Room.StartMeeting();
-        }
+		private void ViewOnStartEndMeetingPressed(object sender, EventArgs e)
+		{
+			if (Room.IsInMeeting)
+				Room.EndMeeting();
+			else
+				Room.StartMeeting();
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

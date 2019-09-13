@@ -5,35 +5,35 @@ using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views
 {
-    public abstract class AbstractTouchDisplayView : AbstractView, ITouchDisplayView
-    {
-        public ConnectProTheme Theme { get; }
+	public abstract class AbstractTouchDisplayView : AbstractView, ITouchDisplayView
+	{
+		public ConnectProTheme Theme { get; }
 
-        #region Constructors
+		#region Constructors
 
-        /// <summary>
-        ///     Constructor.
-        /// </summary>
-        /// <param name="panel"></param>
-        /// <param name="theme"></param>
-        protected AbstractTouchDisplayView(ISigInputOutput panel, ConnectProTheme theme) : base(panel)
-        {
-            Theme = theme;
-        }
+		/// <summary>
+		///     Constructor.
+		/// </summary>
+		/// <param name="panel"></param>
+		/// <param name="theme"></param>
+		protected AbstractTouchDisplayView(ISigInputOutput panel, ConnectProTheme theme) : base(panel)
+		{
+			Theme = theme;
+		}
 
-        /// <summary>
-        ///     Constructor
-        /// </summary>
-        /// <param name="panel"></param>
-        /// <param name="theme"></param>
-        /// <param name="parent"></param>
-        /// <param name="index"></param>
-        protected AbstractTouchDisplayView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent,
-            ushort index) : base(panel, parent, index)
-        {
-            Theme = theme;
-        }
+		/// <summary>
+		///     Constructor
+		/// </summary>
+		/// <param name="panel"></param>
+		/// <param name="theme"></param>
+		/// <param name="parent"></param>
+		/// <param name="index"></param>
+		protected AbstractTouchDisplayView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent,
+			ushort index) : base(panel, parent, index)
+		{
+			Theme = theme;
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

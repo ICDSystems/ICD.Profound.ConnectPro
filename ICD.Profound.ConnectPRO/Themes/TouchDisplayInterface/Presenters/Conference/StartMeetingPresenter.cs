@@ -15,194 +15,194 @@ using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Conference;
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Conference
 {
-    [PresenterBinding(typeof(IStartMeetingPresenter))]
-    public sealed class StartMeetingPresenter : AbstractTouchDisplayPresenter<IStartMeetingView>, IStartMeetingPresenter
-    {
-        private readonly StringBuilder m_Builder;
-        private readonly SafeCriticalSection m_RefreshSection;
+	[PresenterBinding(typeof(IStartMeetingPresenter))]
+	public sealed class StartMeetingPresenter : AbstractTouchDisplayPresenter<IStartMeetingView>, IStartMeetingPresenter
+	{
+		private readonly StringBuilder m_Builder;
+		private readonly SafeCriticalSection m_RefreshSection;
 
-        private IWebConferenceDeviceControl m_ActiveConferenceControl;
+		private IWebConferenceDeviceControl m_ActiveConferenceControl;
 
-        public StartMeetingPresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views,
-            ConnectProTheme theme) : base(nav, views, theme)
-        {
-            m_Builder = new StringBuilder();
-            m_RefreshSection = new SafeCriticalSection();
-        }
+		public StartMeetingPresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views,
+			ConnectProTheme theme) : base(nav, views, theme)
+		{
+			m_Builder = new StringBuilder();
+			m_RefreshSection = new SafeCriticalSection();
+		}
 
-        private bool IsInConference =>
-            ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConference() != null;
+		private bool IsInConference =>
+			ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConference() != null;
 
-        public IWebConferenceDeviceControl ActiveConferenceControl
-        {
-            get => m_ActiveConferenceControl;
-            set
-            {
-                if (value == m_ActiveConferenceControl)
-                    return;
+		public IWebConferenceDeviceControl ActiveConferenceControl
+		{
+			get => m_ActiveConferenceControl;
+			set
+			{
+				if (value == m_ActiveConferenceControl)
+					return;
 
-                Unsubscribe(m_ActiveConferenceControl);
-                m_ActiveConferenceControl = value;
-                Subscribe(m_ActiveConferenceControl);
-            }
-        }
+				Unsubscribe(m_ActiveConferenceControl);
+				m_ActiveConferenceControl = value;
+				Subscribe(m_ActiveConferenceControl);
+			}
+		}
 
-        protected override void Refresh(IStartMeetingView view)
-        {
-            base.Refresh(view);
+		protected override void Refresh(IStartMeetingView view)
+		{
+			base.Refresh(view);
 
-            m_RefreshSection.Enter();
-            try
-            {
-                var inConference = IsInConference;
-                view.SetMeetNowButtonEnabled(!inConference);
-                view.SetJoinByIdButtonEnabled(true);
+			m_RefreshSection.Enter();
+			try
+			{
+				var inConference = IsInConference;
+				view.SetMeetNowButtonEnabled(!inConference);
+				view.SetJoinByIdButtonEnabled(true);
 
-                view.SetMeetingIdText(m_Builder.ToString());
-            }
-            finally
-            {
-                m_RefreshSection.Leave();
-            }
-        }
+				view.SetMeetingIdText(m_Builder.ToString());
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+		}
 
-        #region Control Callbacks
+		#region Control Callbacks
 
-        private void Subscribe(IWebConferenceDeviceControl control)
-        {
-            if (control == null)
-                return;
+		private void Subscribe(IWebConferenceDeviceControl control)
+		{
+			if (control == null)
+				return;
 
-            control.OnConferenceAdded += ControlOnConferenceAdded;
-            control.OnConferenceRemoved += ControlOnConferenceRemoved;
-        }
+			control.OnConferenceAdded += ControlOnConferenceAdded;
+			control.OnConferenceRemoved += ControlOnConferenceRemoved;
+		}
 
-        private void Unsubscribe(IWebConferenceDeviceControl control)
-        {
-            if (control == null)
-                return;
+		private void Unsubscribe(IWebConferenceDeviceControl control)
+		{
+			if (control == null)
+				return;
 
-            control.OnConferenceAdded -= ControlOnConferenceAdded;
-            control.OnConferenceRemoved -= ControlOnConferenceRemoved;
-        }
+			control.OnConferenceAdded -= ControlOnConferenceAdded;
+			control.OnConferenceRemoved -= ControlOnConferenceRemoved;
+		}
 
-        private void ControlOnConferenceAdded(object sender, ConferenceEventArgs args)
-        {
-            Subscribe(args.Data);
-            RefreshIfVisible();
-        }
+		private void ControlOnConferenceAdded(object sender, ConferenceEventArgs args)
+		{
+			Subscribe(args.Data);
+			RefreshIfVisible();
+		}
 
-        private void ControlOnConferenceRemoved(object sender, ConferenceEventArgs args)
-        {
-            Unsubscribe(args.Data);
-            RefreshIfVisible();
-        }
+		private void ControlOnConferenceRemoved(object sender, ConferenceEventArgs args)
+		{
+			Unsubscribe(args.Data);
+			RefreshIfVisible();
+		}
 
-        #endregion
+		#endregion
 
-        #region Conference Callbacks
+		#region Conference Callbacks
 
-        private void Subscribe(IConference conference)
-        {
-            if (conference == null)
-                return;
+		private void Subscribe(IConference conference)
+		{
+			if (conference == null)
+				return;
 
-            conference.OnStatusChanged += ConferenceOnOnStatusChanged;
-        }
+			conference.OnStatusChanged += ConferenceOnOnStatusChanged;
+		}
 
-        private void Unsubscribe(IConference conference)
-        {
-            if (conference == null)
-                return;
+		private void Unsubscribe(IConference conference)
+		{
+			if (conference == null)
+				return;
 
-            conference.OnStatusChanged -= ConferenceOnOnStatusChanged;
-        }
+			conference.OnStatusChanged -= ConferenceOnOnStatusChanged;
+		}
 
-        private void ConferenceOnOnStatusChanged(object sender, ConferenceStatusEventArgs conferenceStatusEventArgs)
-        {
-            RefreshIfVisible();
-        }
+		private void ConferenceOnOnStatusChanged(object sender, ConferenceStatusEventArgs conferenceStatusEventArgs)
+		{
+			RefreshIfVisible();
+		}
 
-        #endregion
+		#endregion
 
-        #region View Callbacks
+		#region View Callbacks
 
-        protected override void Subscribe(IStartMeetingView view)
-        {
-            base.Subscribe(view);
+		protected override void Subscribe(IStartMeetingView view)
+		{
+			base.Subscribe(view);
 
-            view.OnMeetNowButtonPressed += ViewOnOnMeetNowButtonPressed;
-            view.OnJoinByIdButtonPressed += ViewOnJoinByIdButtonPressed;
-            view.OnTextEntered += ViewOnTextEntered;
-            view.OnBackButtonPressed += ViewOnBackButtonPressed;
-            view.OnClearButtonPressed += ViewOnClearButtonPressed;
-            view.OnKeypadButtonPressed += ViewOnKeypadButtonPressed;
-        }
+			view.OnMeetNowButtonPressed += ViewOnOnMeetNowButtonPressed;
+			view.OnJoinByIdButtonPressed += ViewOnJoinByIdButtonPressed;
+			view.OnTextEntered += ViewOnTextEntered;
+			view.OnBackButtonPressed += ViewOnBackButtonPressed;
+			view.OnClearButtonPressed += ViewOnClearButtonPressed;
+			view.OnKeypadButtonPressed += ViewOnKeypadButtonPressed;
+		}
 
-        protected override void Unsubscribe(IStartMeetingView view)
-        {
-            base.Unsubscribe(view);
+		protected override void Unsubscribe(IStartMeetingView view)
+		{
+			base.Unsubscribe(view);
 
-            view.OnMeetNowButtonPressed -= ViewOnOnMeetNowButtonPressed;
-            view.OnJoinByIdButtonPressed -= ViewOnJoinByIdButtonPressed;
-            view.OnTextEntered -= ViewOnTextEntered;
-            view.OnBackButtonPressed -= ViewOnBackButtonPressed;
-            view.OnClearButtonPressed -= ViewOnClearButtonPressed;
-            view.OnKeypadButtonPressed -= ViewOnKeypadButtonPressed;
-        }
+			view.OnMeetNowButtonPressed -= ViewOnOnMeetNowButtonPressed;
+			view.OnJoinByIdButtonPressed -= ViewOnJoinByIdButtonPressed;
+			view.OnTextEntered -= ViewOnTextEntered;
+			view.OnBackButtonPressed -= ViewOnBackButtonPressed;
+			view.OnClearButtonPressed -= ViewOnClearButtonPressed;
+			view.OnKeypadButtonPressed -= ViewOnKeypadButtonPressed;
+		}
 
-        private void ViewOnOnMeetNowButtonPressed(object sender, EventArgs eventArgs)
-        {
-            // TODO make generic if other web conference platforms support personal meeting
-            var zoomControl = ActiveConferenceControl as ZoomRoomConferenceControl;
-            if (zoomControl != null)
-                zoomControl.StartPersonalMeeting();
-        }
+		private void ViewOnOnMeetNowButtonPressed(object sender, EventArgs eventArgs)
+		{
+			// TODO make generic if other web conference platforms support personal meeting
+			var zoomControl = ActiveConferenceControl as ZoomRoomConferenceControl;
+			if (zoomControl != null)
+				zoomControl.StartPersonalMeeting();
+		}
 
-        private void ViewOnJoinByIdButtonPressed(object sender, EventArgs eventArgs)
-        {
-            if (ActiveConferenceControl == null)
-                return;
+		private void ViewOnJoinByIdButtonPressed(object sender, EventArgs eventArgs)
+		{
+			if (ActiveConferenceControl == null)
+				return;
 
-            ActiveConferenceControl.Dial(new ZoomDialContext {DialString = m_Builder.ToString()});
-            RefreshIfVisible();
-        }
+			ActiveConferenceControl.Dial(new ZoomDialContext {DialString = m_Builder.ToString()});
+			RefreshIfVisible();
+		}
 
-        protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
-        {
-            base.ViewOnVisibilityChanged(sender, args);
+		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			base.ViewOnVisibilityChanged(sender, args);
 
-            m_Builder.Clear();
-            RefreshIfVisible();
-        }
+			m_Builder.Clear();
+			RefreshIfVisible();
+		}
 
-        private void ViewOnKeypadButtonPressed(object sender, CharEventArgs e)
-        {
-            m_Builder.Append(e.Data);
-            RefreshIfVisible();
-        }
+		private void ViewOnKeypadButtonPressed(object sender, CharEventArgs e)
+		{
+			m_Builder.Append(e.Data);
+			RefreshIfVisible();
+		}
 
-        private void ViewOnClearButtonPressed(object sender, EventArgs e)
-        {
-            m_Builder.Clear();
-            RefreshIfVisible();
-        }
+		private void ViewOnClearButtonPressed(object sender, EventArgs e)
+		{
+			m_Builder.Clear();
+			RefreshIfVisible();
+		}
 
-        private void ViewOnBackButtonPressed(object sender, EventArgs e)
-        {
-            if (m_Builder.Length == 0)
-                return;
+		private void ViewOnBackButtonPressed(object sender, EventArgs e)
+		{
+			if (m_Builder.Length == 0)
+				return;
 
-            m_Builder.Remove(m_Builder.Length - 1, 1);
-            RefreshIfVisible();
-        }
+			m_Builder.Remove(m_Builder.Length - 1, 1);
+			RefreshIfVisible();
+		}
 
-        private void ViewOnTextEntered(object sender, StringEventArgs e)
-        {
-            m_Builder.Clear();
-            m_Builder.Append(e.Data);
-        }
+		private void ViewOnTextEntered(object sender, StringEventArgs e)
+		{
+			m_Builder.Clear();
+			m_Builder.Append(e.Data);
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

@@ -19,240 +19,240 @@ using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Schedule;
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedule
 {
-    [PresenterBinding(typeof(ISchedulePresenter))]
-    public sealed class SchedulePresenter : AbstractTouchDisplayPresenter<IScheduleView>, ISchedulePresenter
-    {
-        private const int DEFAULT_REFRESH_TIME = 15 * 60 * 1000;
-        private readonly ReferencedBookingPresenterFactory m_ChildrenFactory;
+	[PresenterBinding(typeof(ISchedulePresenter))]
+	public sealed class SchedulePresenter : AbstractTouchDisplayPresenter<IScheduleView>, ISchedulePresenter
+	{
+		private const int DEFAULT_REFRESH_TIME = 15 * 60 * 1000;
+		private readonly ReferencedBookingPresenterFactory m_ChildrenFactory;
 
-        private readonly SafeCriticalSection m_RefreshSection;
-        private readonly SafeTimer m_RefreshTimer;
+		private readonly SafeCriticalSection m_RefreshSection;
+		private readonly SafeTimer m_RefreshTimer;
 
-        private ICalendarControl m_CalendarControl;
-        private IReferencedBookingPresenter m_SelectedBooking;
+		private ICalendarControl m_CalendarControl;
+		private IReferencedBookingPresenter m_SelectedBooking;
 
-        /// <summary>
-        ///     Constructor.
-        /// </summary>
-        /// <param name="nav"></param>
-        /// <param name="views"></param>
-        /// <param name="theme"></param>
-        public SchedulePresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views,
-            ConnectProTheme theme) :
-            base(nav, views, theme)
-        {
-            m_RefreshSection = new SafeCriticalSection();
-            m_ChildrenFactory = new ReferencedBookingPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
+		/// <summary>
+		///     Constructor.
+		/// </summary>
+		/// <param name="nav"></param>
+		/// <param name="views"></param>
+		/// <param name="theme"></param>
+		public SchedulePresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views,
+			ConnectProTheme theme) :
+			base(nav, views, theme)
+		{
+			m_RefreshSection = new SafeCriticalSection();
+			m_ChildrenFactory = new ReferencedBookingPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
 
-            m_RefreshTimer = new SafeTimer(RefreshIfVisible, DEFAULT_REFRESH_TIME);
-        }
+			m_RefreshTimer = new SafeTimer(RefreshIfVisible, DEFAULT_REFRESH_TIME);
+		}
 
-        protected override void Refresh(IScheduleView view)
-        {
-            base.Refresh(view);
+		protected override void Refresh(IScheduleView view)
+		{
+			base.Refresh(view);
 
-            m_RefreshSection.Enter();
+			m_RefreshSection.Enter();
 
-            try
-            {
-                if (m_CalendarControl == null)
-                    return;
+			try
+			{
+				if (m_CalendarControl == null)
+					return;
 
-                var now = IcdEnvironment.GetLocalTime();
-                var tomorrow = now.AddDays(1);
+				var now = IcdEnvironment.GetLocalTime();
+				var tomorrow = now.AddDays(1);
 
-                var bookings =
-                    m_CalendarControl.GetBookings()
-                        .Where(b => b.EndTime > now && b.StartTime < tomorrow)
-                        .OrderBy(b => b.StartTime)
-                        .ToList();
+				var bookings =
+					m_CalendarControl.GetBookings()
+						.Where(b => b.EndTime > now && b.StartTime < tomorrow)
+						.OrderBy(b => b.StartTime)
+						.ToList();
 
-                var roomName = Room == null ? string.Empty : Room.Name;
+				var roomName = Room == null ? string.Empty : Room.Name;
 
-                var upcomingBookingsAndAvailability = new List<IBooking>();
+				var upcomingBookingsAndAvailability = new List<IBooking>();
 
-                var firstBooking = bookings.FirstOrDefault();
-                // find out if room is currently available
-                if (firstBooking != null && firstBooking.StartTime - now > TimeSpan.FromMinutes(15))
-                    upcomingBookingsAndAvailability.Add(new EmptyBooking
-                    {
-                        StartTime = DateTime.MinValue,
-                        EndTime = firstBooking.StartTime
-                    });
-                // build list of bookings and available times
-                for (var i = 0; i < bookings.Count && upcomingBookingsAndAvailability.Count < 7; i++)
-                {
-                    if (bookings[i] == null)
-                        continue;
+				var firstBooking = bookings.FirstOrDefault();
+				// find out if room is currently available
+				if (firstBooking != null && firstBooking.StartTime - now > TimeSpan.FromMinutes(15))
+					upcomingBookingsAndAvailability.Add(new EmptyBooking
+					{
+						StartTime = DateTime.MinValue,
+						EndTime = firstBooking.StartTime
+					});
+				// build list of bookings and available times
+				for (var i = 0; i < bookings.Count && upcomingBookingsAndAvailability.Count < 7; i++)
+				{
+					if (bookings[i] == null)
+						continue;
 
-                    upcomingBookingsAndAvailability.Add(bookings[i]);
+					upcomingBookingsAndAvailability.Add(bookings[i]);
 
-                    if (i + 1 >= bookings.Count)
-                        upcomingBookingsAndAvailability.Add(new EmptyBooking
-                        {
-                            StartTime = bookings[i].EndTime,
-                            EndTime = DateTime.MaxValue
-                        });
+					if (i + 1 >= bookings.Count)
+						upcomingBookingsAndAvailability.Add(new EmptyBooking
+						{
+							StartTime = bookings[i].EndTime,
+							EndTime = DateTime.MaxValue
+						});
 
-                    // calculate availability between this booking and next
-                    else if (bookings[i + 1].StartTime - bookings[i].EndTime >= TimeSpan.FromMinutes(30))
-                        upcomingBookingsAndAvailability.Add(new EmptyBooking
-                        {
-                            StartTime = bookings[i].EndTime,
-                            EndTime = bookings[i + 1].StartTime
-                        });
-                }
+					// calculate availability between this booking and next
+					else if (bookings[i + 1].StartTime - bookings[i].EndTime >= TimeSpan.FromMinutes(30))
+						upcomingBookingsAndAvailability.Add(new EmptyBooking
+						{
+							StartTime = bookings[i].EndTime,
+							EndTime = bookings[i + 1].StartTime
+						});
+				}
 
-                // build presenters
-                foreach (var presenter in m_ChildrenFactory.BuildChildren(upcomingBookingsAndAvailability.Skip(1)))
-                {
-                    presenter.ShowView(true);
-                    presenter.SetSelected(presenter == m_SelectedBooking);
-                    presenter.Refresh();
-                }
+				// build presenters
+				foreach (var presenter in m_ChildrenFactory.BuildChildren(upcomingBookingsAndAvailability.Skip(1)))
+				{
+					presenter.ShowView(true);
+					presenter.SetSelected(presenter == m_SelectedBooking);
+					presenter.Refresh();
+				}
 
-                // display current room status
-                var currentBooking = upcomingBookingsAndAvailability.FirstOrDefault();
-                if (currentBooking != null && !(currentBooking is EmptyBooking))
-                {
-                    view.SetCurrentBookingIcon(GetBookingIcon(currentBooking));
+				// display current room status
+				var currentBooking = upcomingBookingsAndAvailability.FirstOrDefault();
+				if (currentBooking != null && !(currentBooking is EmptyBooking))
+				{
+					view.SetCurrentBookingIcon(GetBookingIcon(currentBooking));
 
-                    view.SetCurrentBookingSubject(currentBooking.IsPrivate
-                        ? "Private Meeting"
-                        : currentBooking.MeetingName);
-                    view.SetCurrentBookingTime(string.Format("{0} - {1}",
-                        FormatTime(currentBooking.StartTime),
-                        FormatTime(currentBooking.EndTime)));
-                    view.SetAvailabilityText("RESERVED");
-                    m_RefreshTimer.Reset((long) (currentBooking.EndTime - now).TotalMilliseconds + 1000);
-                }
-                else
-                {
-                    view.SetCurrentBookingIcon("thumbsUp");
-                    view.SetAvailabilityText("AVAILABLE");
-                    view.SetCurrentBookingSubject(roomName);
+					view.SetCurrentBookingSubject(currentBooking.IsPrivate
+						? "Private Meeting"
+						: currentBooking.MeetingName);
+					view.SetCurrentBookingTime(string.Format("{0} - {1}",
+						FormatTime(currentBooking.StartTime),
+						FormatTime(currentBooking.EndTime)));
+					view.SetAvailabilityText("RESERVED");
+					m_RefreshTimer.Reset((long) (currentBooking.EndTime - now).TotalMilliseconds + 1000);
+				}
+				else
+				{
+					view.SetCurrentBookingIcon("thumbsUp");
+					view.SetAvailabilityText("AVAILABLE");
+					view.SetCurrentBookingSubject(roomName);
 
-                    if (currentBooking != null)
-                    {
-                        view.SetCurrentBookingTime(string.Format("Now - {0}",
-                            FormatTime(currentBooking.EndTime)));
-                        m_RefreshTimer.Reset((long) (currentBooking.EndTime - now - TimeSpan.FromMinutes(15))
-                                             .TotalMilliseconds + 1000);
-                    }
-                    else
-                    {
-                        view.SetCurrentBookingTime(" ");
-                        m_RefreshTimer.Reset(DEFAULT_REFRESH_TIME);
-                    }
-                }
-            }
-            finally
-            {
-                m_RefreshSection.Leave();
-            }
-        }
+					if (currentBooking != null)
+					{
+						view.SetCurrentBookingTime(string.Format("Now - {0}",
+							FormatTime(currentBooking.EndTime)));
+						m_RefreshTimer.Reset((long) (currentBooking.EndTime - now - TimeSpan.FromMinutes(15))
+						                     .TotalMilliseconds + 1000);
+					}
+					else
+					{
+						view.SetCurrentBookingTime(" ");
+						m_RefreshTimer.Reset(DEFAULT_REFRESH_TIME);
+					}
+				}
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+		}
 
-        private string GetBookingIcon(IBooking booking)
-        {
-            var dialers =
-                Room == null
-                    ? Enumerable.Empty<IConferenceDeviceControl>()
-                    : Room.GetControlsRecursive<IConferenceDeviceControl>();
+		private string GetBookingIcon(IBooking booking)
+		{
+			var dialers =
+				Room == null
+					? Enumerable.Empty<IConferenceDeviceControl>()
+					: Room.GetControlsRecursive<IConferenceDeviceControl>();
 
-            switch (ConferencingBookingUtils.GetMeetingType(booking, dialers))
-            {
-                case eMeetingType.VideoConference:
-                    return "videoConference";
-                case eMeetingType.AudioConference:
-                    return "audioConference";
-                case eMeetingType.Presentation:
-                    return "display";
-            }
+			switch (ConferencingBookingUtils.GetMeetingType(booking, dialers))
+			{
+				case eMeetingType.VideoConference:
+					return "videoConference";
+				case eMeetingType.AudioConference:
+					return "audioConference";
+				case eMeetingType.Presentation:
+					return "display";
+			}
 
-            return "display";
-        }
+			return "display";
+		}
 
-        #region View Callbacks
+		#region View Callbacks
 
-        protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
-        {
-            base.ViewOnVisibilityChanged(sender, args);
+		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			base.ViewOnVisibilityChanged(sender, args);
 
-            m_SelectedBooking = null;
-        }
+			m_SelectedBooking = null;
+		}
 
-        #endregion
+		#endregion
 
-        #region Private Methods
+		#region Private Methods
 
-        private IEnumerable<IReferencedBookingView> ItemFactory(ushort count)
-        {
-            return GetView().GetChildComponentViews(ViewFactory as ITouchDisplayViewFactory, count);
-        }
+		private IEnumerable<IReferencedBookingView> ItemFactory(ushort count)
+		{
+			return GetView().GetChildComponentViews(ViewFactory as ITouchDisplayViewFactory, count);
+		}
 
-        private static string FormatTime(DateTime time)
-        {
-            return ConnectProDateFormatting.GetShortTime(time);
-        }
+		private static string FormatTime(DateTime time)
+		{
+			return ConnectProDateFormatting.GetShortTime(time);
+		}
 
-        #endregion
+		#endregion
 
-        #region Room Callbacks
+		#region Room Callbacks
 
-        public override void SetRoom(IConnectProRoom room)
-        {
-            base.SetRoom(room);
+		public override void SetRoom(IConnectProRoom room)
+		{
+			base.SetRoom(room);
 
-            if (m_CalendarControl != null)
-                Unsubscribe(m_CalendarControl);
+			if (m_CalendarControl != null)
+				Unsubscribe(m_CalendarControl);
 
-            m_CalendarControl = room == null ? null : room.CalendarControl;
+			m_CalendarControl = room == null ? null : room.CalendarControl;
 
-            if (m_CalendarControl != null)
-                Subscribe(m_CalendarControl);
+			if (m_CalendarControl != null)
+				Subscribe(m_CalendarControl);
 
-            Refresh();
-        }
+			Refresh();
+		}
 
-        private void Subscribe(ICalendarControl control)
-        {
-            control.OnBookingsChanged += ControlOnBookingsChanged;
-        }
+		private void Subscribe(ICalendarControl control)
+		{
+			control.OnBookingsChanged += ControlOnBookingsChanged;
+		}
 
-        private void Unsubscribe(ICalendarControl control)
-        {
-            control.OnBookingsChanged -= ControlOnBookingsChanged;
-        }
+		private void Unsubscribe(ICalendarControl control)
+		{
+			control.OnBookingsChanged -= ControlOnBookingsChanged;
+		}
 
-        private void ControlOnBookingsChanged(object sender, EventArgs e)
-        {
-            RefreshIfVisible();
-        }
+		private void ControlOnBookingsChanged(object sender, EventArgs e)
+		{
+			RefreshIfVisible();
+		}
 
-        #endregion
+		#endregion
 
-        #region Child Callbacks
+		#region Child Callbacks
 
-        private void Subscribe(IReferencedBookingPresenter presenter)
-        {
-            presenter.OnBookingPressed += PresenterOnBookingPressed;
-        }
+		private void Subscribe(IReferencedBookingPresenter presenter)
+		{
+			presenter.OnBookingPressed += PresenterOnBookingPressed;
+		}
 
-        private void Unsubscribe(IReferencedBookingPresenter presenter)
-        {
-            presenter.OnBookingPressed -= PresenterOnBookingPressed;
-        }
+		private void Unsubscribe(IReferencedBookingPresenter presenter)
+		{
+			presenter.OnBookingPressed -= PresenterOnBookingPressed;
+		}
 
-        private void PresenterOnBookingPressed(object sender, EventArgs e)
-        {
-            var presenter = sender as IReferencedBookingPresenter;
-            if (presenter == null)
-                return;
+		private void PresenterOnBookingPressed(object sender, EventArgs e)
+		{
+			var presenter = sender as IReferencedBookingPresenter;
+			if (presenter == null)
+				return;
 
-            m_SelectedBooking = presenter;
-            RefreshIfVisible();
-        }
+			m_SelectedBooking = presenter;
+			RefreshIfVisible();
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }
