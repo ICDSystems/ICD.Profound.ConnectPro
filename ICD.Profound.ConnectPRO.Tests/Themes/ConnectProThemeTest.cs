@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using ICD.Connect.Partitioning;
 using ICD.Profound.ConnectPRO.Tests.RoomTypes;
-using ICD.Profound.ConnectPRO.Themes.MicrophoneInterface;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface;
+using ICD.Profound.ConnectPRO.Themes.ShureMicrophoneInterface;
 using ICD.Profound.ConnectPRO.Themes.UserInterface;
 using NUnit.Framework;
 
@@ -70,7 +70,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes
 			    Assert.IsNull(connectProOsdInterfaceList.FirstOrDefault());
 
 			    Assert.AreEqual(simpleTestRoomType.ConnectProRoom1, (connectProUserInterfaceList.FirstOrDefault() as ConnectProUserInterface)?.Room);
-			    Assert.AreEqual(simpleTestRoomType.ConnectProRoom2, (connectProMicrophoneInterfaceList.FirstOrDefault() as ConnectProMicrophoneInterface)?.Room);
+			    Assert.AreEqual(simpleTestRoomType.ConnectProRoom2, (connectProMicrophoneInterfaceList.FirstOrDefault() as ConnectProShureMicrophoneInterface)?.Room);
 			}
 	    }
 
@@ -108,7 +108,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes
 			    Assert.AreEqual(simpleTestRoomType.MockPanelDevice, (connectProUserInterfaceList.FirstOrDefault() as ConnectProUserInterface)?.Panel);
 
 			    Assert.AreEqual(simpleTestRoomType.ConnectProRoom1, (connectProUserInterfaceList.FirstOrDefault() as ConnectProUserInterface)?.Room);
-			    Assert.AreEqual(simpleTestRoomType.ConnectProRoom1, (connectProMicrophoneInterfaceList.FirstOrDefault() as ConnectProMicrophoneInterface)?.Room);
+			    Assert.AreEqual(simpleTestRoomType.ConnectProRoom1, (connectProMicrophoneInterfaceList.FirstOrDefault() as ConnectProShureMicrophoneInterface)?.Room);
 			    Assert.AreEqual(simpleTestRoomType.ConnectProRoom1, (connectProOsdInterfaceList.FirstOrDefault() as ConnectProOsdInterface)?.Room);
 			}
 	    }

@@ -33,6 +33,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\ICD.Common.Utils\ICD.Common.Utils\ICD.Common.Utils_NetStandard.csproj" />
+    <ProjectReference Include="..\..\ICD.Connect.Audio\ICD.Connect.Audio.ClockAudio\ICD.Connect.Audio.ClockAudio_NetStandard.csproj" />
     <ProjectReference Include="..\..\ICD.Connect.Audio\ICD.Connect.Audio.Shure\ICD.Connect.Audio.Shure_NetStandard.csproj" />
     <ProjectReference Include="..\..\ICD.Connect.Cameras\ICD.Connect.Cameras\ICD.Connect.Cameras_NetStandard.csproj" />
     <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing.Cisco\ICD.Connect.Conferencing.Cisco_NetStandard.csproj" />
