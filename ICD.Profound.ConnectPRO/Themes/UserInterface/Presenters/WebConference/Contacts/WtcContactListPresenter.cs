@@ -383,7 +383,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private void ViewOnOnSearchButtonPressed(object sender, EventArgs e)
 		{
 			Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>()
-			          .ShowView("Filter contacts", m_ConfirmedFilter, KeyboardOnEnterPressed, KeyboardOnClosePressed,
+			          .ShowView("Filter Contacts", m_ConfirmedFilter, KeyboardOnEnterPressed, KeyboardOnClosePressed,
 			                    KeyboardOnStringChanged);
 		}
 

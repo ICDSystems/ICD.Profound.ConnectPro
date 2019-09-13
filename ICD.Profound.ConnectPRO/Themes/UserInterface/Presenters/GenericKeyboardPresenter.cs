@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.EventArguments;
@@ -112,7 +111,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		protected override void Refresh(IGenericKeyboardView view)
 		{
 			base.Refresh(view);
-
+			
 			view.SetPrompt(Prompt);
 			view.SelectCapsButton(Caps);
 			view.SelectShiftButton(Shift);
@@ -135,6 +134,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		{
 			Prompt = prompt;
 
+			m_StringBuilder.Clear();
+			m_StringBuilder.SetString(text);
+
 			EnterCallback = enterCallback;
 			CloseCallback = closeCallback;
 			ChangeCallback = changeCallback;
@@ -149,8 +151,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="stringEventArgs"></param>
 		private void StringBuilderOnStringChanged(object sender, StringEventArgs stringEventArgs)
 		{
-			// Refresh synchronously to avoid interfering with user input.
-			RefreshIfVisible(false);
+			if (ChangeCallback != null)
+				ChangeCallback(stringEventArgs.Data);
+
+			RefreshIfVisible();
 		}
 
 		/// <summary>
@@ -219,14 +223,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="eventArgs"></param>
 		private void ViewOnEnterButtonPressed(object sender, EventArgs eventArgs)
 		{
-			string text = m_StringBuilder.ToString();
-			Action<string> callback = EnterCallback;
+			if (EnterCallback != null)
+				EnterCallback(m_StringBuilder.ToString());
 
-			EnterCallback = null;
 			ShowView(false);
-
-			if (callback != null)
-				callback(text);
 		}
 
 		/// <summary>
@@ -236,8 +236,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="eventArgs"></param>
 		private void ViewOnCloseButtonPressed(object sender, EventArgs eventArgs)
 		{
+			if (CloseCallback != null)
+				CloseCallback(m_StringBuilder.ToString());
+
 			ShowView(false);
-			CloseCallback = null;
 		}
 
 		/// <summary>
@@ -317,6 +319,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
 		{
 			base.ViewOnVisibilityChanged(sender, args);
+
+			if (args.Data)
+				return;
+
+			EnterCallback = null;
+			CloseCallback = null;
+			ChangeCallback = null;
 
 			m_StringBuilder.Clear();
 		}
