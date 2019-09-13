@@ -191,7 +191,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 				{m_KeyCommaButton, new KeyboardKey(',', '<')},
 				{m_KeySlashButton, new KeyboardKey('/', '?')},
 				{m_KeySemiColonButton, new KeyboardKey(';', ':')},
-				{m_KeySemiColonButton, new KeyboardKey('\'', '"')}
+				{m_KeyApostropheButton, new KeyboardKey('\'', '"')}
 			};
 
 			foreach (VtProButton button in m_KeyMap.Keys)
