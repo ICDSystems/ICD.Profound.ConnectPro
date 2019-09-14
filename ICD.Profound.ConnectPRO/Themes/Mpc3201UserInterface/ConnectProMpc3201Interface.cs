@@ -661,7 +661,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// <param name="volumeControl"></param>
 		private void Subscribe(IVolumeDeviceControl volumeControl)
 		{
-			volumeControl.OnControlAvaliableChanged += VolumeControl_OnControlAvaliableChanged;
+			volumeControl.OnControlAvaliableChanged += VolumeControlOnControlAvaliableChanged;
 
 			IVolumePositionDeviceControl volumePositionControl = volumeControl as IVolumePositionDeviceControl;
 			if (volumePositionControl != null)
@@ -678,7 +678,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// <param name="volumeControl"></param>
 		private void Unsubscribe(IVolumeDeviceControl volumeControl)
 		{
-			volumeControl.OnControlAvaliableChanged -= VolumeControl_OnControlAvaliableChanged;
+			volumeControl.OnControlAvaliableChanged -= VolumeControlOnControlAvaliableChanged;
 
 			IVolumePositionDeviceControl volumePositionControl = volumeControl as IVolumePositionDeviceControl;
 			if (volumePositionControl != null)
@@ -709,7 +709,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			Refresh();
 		}
 
-		private void VolumeControl_OnControlAvaliableChanged(object sender, DeviceControlAvaliableApiEventArgs e)
+		private void VolumeControlOnControlAvaliableChanged(object sender, DeviceControlAvaliableApiEventArgs e)
 		{
 			Refresh();
 		}

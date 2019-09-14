@@ -313,11 +313,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				controlPosition.OnVolumeChanged += DeviceOnVolumeChanged;
 		}
 
-		private void ControlOnControlAvaliableChanged(object sender, DeviceControlAvaliableApiEventArgs e)
-		{
-			RefreshIfVisible();
-		}
-
 		/// <summary>
 		/// Unsubscribe from the device events.
 		/// </summary>
@@ -339,6 +334,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				controlPosition.VolumeRampStop();
 				controlPosition.OnVolumeChanged -= DeviceOnVolumeChanged;
 			}
+		}
+
+		private void ControlOnControlAvaliableChanged(object sender, DeviceControlAvaliableApiEventArgs e)
+		{
+			RefreshIfVisible();
 		}
 
 		/// <summary>
