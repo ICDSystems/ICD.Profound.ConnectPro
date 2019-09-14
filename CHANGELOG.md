@@ -5,15 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Changed
- - Updated IPowerDeviceControls consumers to use PowerState
- - Updated Volume Controls to use ControlAvaliable instead of power state
-
 
 ### Added
  - Added settings page for changing clock time and 12/24 hour mode
  - ClockAudio CCRM4000 will extend and retract based on call state
  - Added a generic keyboard presenter and views
+ - The user is presented with a keyboard when a zoom meeting asks for a password
 
 ### Changed
  - Only updating relevant displays presenters halves routing feedback time
@@ -21,6 +18,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Complete overhaul of settings pages
  - Performance improvement for routing in single display rooms
  - All keyboard usages have been changed to the generic keyboard
+ - Updated IPowerDeviceControls consumers to use PowerState
+ - Updated Volume Controls to use ControlAvaliable instead of power state
 
 ## [9.1.0] - 2019-08-27
 ### Added

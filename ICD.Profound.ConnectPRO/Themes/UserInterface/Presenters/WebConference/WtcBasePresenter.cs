@@ -7,8 +7,10 @@ using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Routing;
+using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Zoom.Controls;
+using ICD.Connect.Conferencing.Zoom.EventArguments;
 using ICD.Connect.Conferencing.Zoom.Responses;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
@@ -195,8 +197,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				Subscribe(conference);
 
 			var zoomControl = control as ZoomRoomConferenceControl;
-			if(zoomControl != null)
+			if (zoomControl != null)
+			{
 				zoomControl.OnCallError += ZoomControlOnCallError;
+				zoomControl.OnPasswordRequired += ZoomControlOnPasswordRequired;
+			}
 
 			UpdateVisibility();
 
@@ -219,9 +224,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				Unsubscribe(conference);
 
 			var zoomControl = control as ZoomRoomConferenceControl;
-			if(zoomControl != null)
+			if (zoomControl != null)
+			{
 				zoomControl.OnCallError -= ZoomControlOnCallError;
-			
+				zoomControl.OnPasswordRequired -= ZoomControlOnPasswordRequired;
+			}
+
 			UpdateVisibility();
 
 			if (m_SubscribedPowerControl == null)
@@ -243,9 +251,38 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			UpdateVisibility();
 		}
 
-		private void ZoomControlOnCallError(object sender, GenericEventArgs<CallConnectError> e)
+		private void ZoomControlOnCallError(object sender, GenericEventArgs<CallConnectError> args)
 		{
-			Navigation.LazyLoadPresenter<IGenericAlertPresenter>().Show(e.Data.ErrorMessage);
+			Navigation.LazyLoadPresenter<IGenericAlertPresenter>().Show(args.Data.ErrorMessage);
+		}
+
+		private void ZoomControlOnPasswordRequired(object sender, MeetingNeedsPasswordEventArgs args)
+		{
+			if (!args.NeedsPassword)
+				return;
+
+			string prompt = args.WrongAndRetry
+				? "Please retry - Incorrect password"
+				: "Please enter Zoom Meeting password";
+
+			Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>()
+			          .ShowView(prompt, null, p => SubmitZoomPassword(args.MeetingNumber, p), null, null);
+		}
+
+		private void SubmitZoomPassword(string meetingNumber, string password)
+		{
+			ZoomRoomConferenceControl zoomControl = ActiveConferenceControl as ZoomRoomConferenceControl;
+			if (zoomControl == null)
+				return;
+
+			ZoomDialContext context = new ZoomDialContext
+			{
+				CallType = eCallType.Video,
+				DialString = meetingNumber,
+				Password = password
+			};
+
+			zoomControl.Dial(context);
 		}
 
 		/// <summary>
@@ -357,6 +394,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 					if (active != null)
 						active.Hangup();
 				}
+
+				Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>().ShowView(false);
 
 				if (Room != null)
 					Room.FocusSource = null;
