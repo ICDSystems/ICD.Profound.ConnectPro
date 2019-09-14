@@ -13,7 +13,6 @@ using ICD.Connect.Devices;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts;
@@ -49,9 +48,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			m_DirectoryBrowser.OnPathContentsChanged += DirectoryBrowserOnOnPathContentsChanged;
 
 			m_DebounceTimer = SafeTimer.Stopped(RefreshIfVisible);
-
-			var keyboardPresenter = Navigation.LazyLoadPresenter<IWtcKeyboardPresenter>();
-			Subscribe(keyboardPresenter);
 		}
 
 		private void DirectoryBrowserOnOnPathContentsChanged(object sender, EventArgs e)
@@ -65,7 +61,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			m_ContactFactory.Dispose();
 			m_SelectedContactFactory.Dispose();
 
-			Unsubscribe(Navigation.LazyLoadPresenter<IWtcKeyboardPresenter>());
 			base.Dispose();
 		}
 
@@ -319,33 +314,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		#region Keyboard Callbacks
 
-		private void Subscribe(IWtcKeyboardPresenter keyboard)
-		{
-			keyboard.OnStringChanged += KeyboardOnStringChanged;
-			keyboard.OnEnterPressed += KeyboardOnEnterPressed;
-			keyboard.OnClosePressed += KeyboardOnClosePressed;
-		}
-
-		private void Unsubscribe(IWtcKeyboardPresenter keyboard)
-		{
-			keyboard.OnStringChanged -= KeyboardOnStringChanged;
-			keyboard.OnEnterPressed -= KeyboardOnEnterPressed;
-			keyboard.OnClosePressed -= KeyboardOnClosePressed;
-		}
-
-		private void KeyboardOnStringChanged(object sender, StringEventArgs args)
+		private void KeyboardOnStringChanged(string text)
 		{
 			if (IsViewVisible)
-				PreviewFilter(args.Data);
+				PreviewFilter(text);
 		}
 
-		private void KeyboardOnEnterPressed(object sender, StringEventArgs args)
+		private void KeyboardOnEnterPressed(string text)
 		{
 			if (IsViewVisible)
-				ConfirmFilter(args.Data);
+				ConfirmFilter(text);
 		}
 
-		private void KeyboardOnClosePressed(object sender, EventArgs args)
+		private void KeyboardOnClosePressed(string text)
 		{
 			if (IsViewVisible)
 				CancelFilter();
@@ -401,7 +382,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private void ViewOnOnSearchButtonPressed(object sender, EventArgs e)
 		{
-			Navigation.LazyLoadPresenter<IWtcKeyboardPresenter>().Show(m_ConfirmedFilter);
+			Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>()
+			          .ShowView("Filter Contacts", m_ConfirmedFilter, KeyboardOnEnterPressed, KeyboardOnClosePressed,
+			                    KeyboardOnStringChanged);
 		}
 
 		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
@@ -411,6 +394,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			m_Filter = null;
 			m_ConfirmedFilter = null;
 			m_SelectedContacts.Clear();
+
+			Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>().ShowView(false);
 		}
 
 		#endregion

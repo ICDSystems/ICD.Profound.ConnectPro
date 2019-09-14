@@ -1,30 +1,42 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
-using ICD.Common.Utils.Extensions;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.EventArguments;
 using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 {
-	[PresenterBinding(typeof(IWtcKeyboardPresenter))]
-	public sealed class WtcKeyboardPresenter : AbstractUiPresenter<IWtcKeyboardView>, IWtcKeyboardPresenter
+	[PresenterBinding(typeof(IGenericKeyboardPresenter))]
+	public sealed class GenericKeyboardPresenter : AbstractUiPresenter<IGenericKeyboardView>, IGenericKeyboardPresenter
 	{
-		public event EventHandler<StringEventArgs> OnStringChanged;
-		public event EventHandler<StringEventArgs> OnEnterPressed;
-		public event EventHandler OnClosePressed;
-
 		private readonly KeypadStringBuilder m_StringBuilder;
 
 		private bool m_RefreshTextField;
 		private bool m_Shift;
 		private bool m_Caps;
 
+		private string m_Prompt;
+
 		#region Properties
+
+		/// <summary>
+		/// Gets/sets the prompt.
+		/// </summary>
+		public string Prompt
+		{
+			get { return m_Prompt; }
+			set
+			{
+				if (value == m_Prompt)
+					return;
+
+				m_Prompt = value;
+
+				RefreshIfVisible();
+			}
+		}
 
 		/// <summary>
 		/// Gets/sets the caps state.
@@ -60,15 +72,30 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			}
 		}
 
+		/// <summary>
+		/// Gets/sets the enter callback
+		/// </summary>
+		private Action<string> EnterCallback { get; set; }
+
+		/// <summary>
+		/// Gets/sets the close callback
+		/// </summary>
+		private Action<string> CloseCallback { get; set; }
+
+		/// <summary>
+		/// Gets/sets the change callback
+		/// </summary>
+		private Action<string> ChangeCallback { get; set; } 
+
 		#endregion
 
 		/// <summary>
-		/// Constructor.
+		/// Constructor
 		/// </summary>
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public WtcKeyboardPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+		public GenericKeyboardPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) 
 			: base(nav, views, theme)
 		{
 			m_StringBuilder = new KeypadStringBuilder();
@@ -77,20 +104,43 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			m_RefreshTextField = true;
 		}
 
-		public override void Dispose()
+		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
+		protected override void Refresh(IGenericKeyboardView view)
 		{
-			base.Dispose();
+			base.Refresh(view);
+			
+			view.SetPrompt(Prompt);
+			view.SelectCapsButton(Caps);
+			view.SelectShiftButton(Shift);
+			view.SetShift(Shift, Caps);
 
-			m_StringBuilder.OnStringChanged -= StringBuilderOnStringChanged;
-
-			OnStringChanged = null;
-			OnClosePressed = null;
-			OnEnterPressed = null;
+			if (m_RefreshTextField)
+				view.SetText(m_StringBuilder.ToString());
 		}
 
-		public void Show(string text)
+		/// <summary>
+		/// Shows the view using the given callback for the enter button.
+		/// </summary>
+		/// <param name="prompt"></param>
+		/// <param name="text"></param>
+		/// <param name="enterCallback"></param>
+		/// <param name="closeCallback"></param>
+		/// <param name="changeCallback"></param>
+		public void ShowView(string prompt, string text, Action<string> enterCallback, Action<string> closeCallback,
+		              Action<string> changeCallback)
 		{
+			Prompt = prompt;
+
+			m_StringBuilder.Clear();
 			m_StringBuilder.SetString(text);
+
+			EnterCallback = enterCallback;
+			CloseCallback = closeCallback;
+			ChangeCallback = changeCallback;
+
 			ShowView(true);
 		}
 
@@ -101,26 +151,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// <param name="stringEventArgs"></param>
 		private void StringBuilderOnStringChanged(object sender, StringEventArgs stringEventArgs)
 		{
-			// Refresh synchronously to avoid interfering with user input.
-			RefreshIfVisible(false);
+			if (ChangeCallback != null)
+				ChangeCallback(stringEventArgs.Data);
 
-			OnStringChanged.Raise(this, new StringEventArgs(m_StringBuilder.ToString()));
-		}
-
-		/// <summary>
-		/// Updates the view.
-		/// </summary>
-		/// <param name="view"></param>
-		protected override void Refresh(IWtcKeyboardView view)
-		{
-			base.Refresh(view);
-
-			if (m_RefreshTextField)
-				view.SetText(m_StringBuilder.ToString());
-
-			view.SelectCapsButton(Caps);
-			view.SelectShiftButton(Shift);
-			view.SetShift(Shift, Caps);
+			RefreshIfVisible();
 		}
 
 		/// <summary>
@@ -138,7 +172,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// Subscribe to the view events.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Subscribe(IWtcKeyboardView view)
+		protected override void Subscribe(IGenericKeyboardView view)
 		{
 			base.Subscribe(view);
 
@@ -156,7 +190,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// Unsubscribe from the view events.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Unsubscribe(IWtcKeyboardView view)
+		protected override void Unsubscribe(IGenericKeyboardView view)
 		{
 			base.Unsubscribe(view);
 
@@ -189,33 +223,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// <param name="eventArgs"></param>
 		private void ViewOnEnterButtonPressed(object sender, EventArgs eventArgs)
 		{
-			string searchString = m_StringBuilder.ToString();
+			if (EnterCallback != null)
+				EnterCallback(m_StringBuilder.ToString());
+
 			ShowView(false);
-			
-			OnEnterPressed.Raise(this, new StringEventArgs(searchString));
 		}
 
 		/// <summary>
-		/// Called when the user presses the backspace button.
+		/// Called when the user presses the keypad button.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void ViewOnBackspaceButtonPressed(object sender, EventArgs eventArgs)
+		private void ViewOnCloseButtonPressed(object sender, EventArgs eventArgs)
 		{
-			m_StringBuilder.Backspace();
-		}
+			if (CloseCallback != null)
+				CloseCallback(m_StringBuilder.ToString());
 
-		/// <summary>
-		/// Called when the view visibility changes.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
-		{
-			base.ViewOnVisibilityChanged(sender, args);
-			
-			if (!args.Data)
-				m_StringBuilder.Clear();
+			ShowView(false);
 		}
 
 		/// <summary>
@@ -229,6 +253,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			Shift = false;
 			AppendCharacter(character);
+		}
+
+		/// <summary>
+		/// Called when the user presses the backspace button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ViewOnBackspaceButtonPressed(object sender, EventArgs eventArgs)
+		{
+			m_StringBuilder.Backspace();
 		}
 
 		/// <summary>
@@ -249,18 +283,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		private void ViewOnShiftButtonPressed(object sender, EventArgs eventArgs)
 		{
 			Shift = !Shift;
-		}
-
-		/// <summary>
-		/// Called when the user presses the keypad button.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="eventArgs"></param>
-		private void ViewOnCloseButtonPressed(object sender, EventArgs eventArgs)
-		{
-			ShowView(false);
-
-			OnClosePressed.Raise(this);
 		}
 
 		/// <summary>
@@ -287,6 +309,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				Caps = false;
 				Shift = false;
 			}
+		}
+
+		/// <summary>
+		/// Called when the view visibility changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			base.ViewOnVisibilityChanged(sender, args);
+
+			if (args.Data)
+				return;
+
+			EnterCallback = null;
+			CloseCallback = null;
+			ChangeCallback = null;
+
+			m_StringBuilder.Clear();
 		}
 
 		#endregion

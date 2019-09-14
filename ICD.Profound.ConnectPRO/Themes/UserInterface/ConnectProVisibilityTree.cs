@@ -48,8 +48,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			videoConferencingVisibility.AddPresenter(navigationController.LazyLoadPresenter<IVtcSharePresenter>());
 			videoConferencingVisibility.AddPresenter(navigationController.LazyLoadPresenter<IVtcDtmfPresenter>());
 			videoConferencingVisibility.AddPresenter(navigationController.LazyLoadPresenter<IVtcActiveCallsPresenter>());
-			videoConferencingVisibility.AddPresenter(navigationController.LazyLoadPresenter<IVtcKeyboardPresenter>());
-			videoConferencingVisibility.AddPresenter(navigationController.LazyLoadPresenter<IVtcKeypadPresenter>());
 
 			// Web Conference node
 			IVisibilityNode webConferencingVisibility = new SingleVisibilityNode();

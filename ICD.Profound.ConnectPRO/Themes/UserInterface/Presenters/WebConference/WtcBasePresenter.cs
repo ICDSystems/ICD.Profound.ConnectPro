@@ -314,7 +314,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			}
 
 			// If the keyboard subpage is open close that instead
-			IWtcKeyboardPresenter keyboardPresenter = Navigation.LazyLoadPresenter<IWtcKeyboardPresenter>();
+			var keyboardPresenter = Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>();
 			if (keyboardPresenter.IsViewVisible)
 			{
 				keyboardPresenter.ShowView(false);

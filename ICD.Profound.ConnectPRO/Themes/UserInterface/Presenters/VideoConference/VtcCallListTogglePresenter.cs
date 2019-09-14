@@ -21,8 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private readonly IVtcKeyboardPresenter m_KeyboardPresenter;
-		private readonly IVtcKeypadPresenter m_KeypadPresenter;
+		private readonly IGenericKeyboardPresenter m_KeyboardPresenter;
 
 		private bool m_Mode;
 
@@ -37,11 +36,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			m_RefreshSection = new SafeCriticalSection();
 
-			m_KeyboardPresenter = nav.LazyLoadPresenter<IVtcKeyboardPresenter>();
+			m_KeyboardPresenter = nav.LazyLoadPresenter<IGenericKeyboardPresenter>();
 			m_KeyboardPresenter.OnViewVisibilityChanged += KeyboardPresenterOnViewVisibilityChanged;
-
-			m_KeypadPresenter = nav.LazyLoadPresenter<IVtcKeypadPresenter>();
-			m_KeypadPresenter.OnViewVisibilityChanged += KeypadPresenterOnViewVisibilityChanged;
 		}
 
 		/// <summary>
@@ -54,7 +50,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			base.Dispose();
 
 			m_KeyboardPresenter.OnViewVisibilityChanged -= KeyboardPresenterOnViewVisibilityChanged;
-			m_KeypadPresenter.OnViewVisibilityChanged -= KeypadPresenterOnViewVisibilityChanged;
 		}
 
 		/// <summary>
@@ -71,7 +66,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			{
 				view.SetContactsMode(m_Mode);
 
-				bool hide = m_KeyboardPresenter.IsViewVisible || m_KeypadPresenter.IsViewVisible;
+				bool hide = m_KeyboardPresenter.IsViewVisible;
 
 				view.SetButtonVisible(!hide);
 			}
@@ -92,16 +87,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			m_Mode = mode;
 
-			RefreshIfVisible();
-		}
-
-		/// <summary>
-		/// Called when the keypad visibility state changes.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="boolEventArgs"></param>
-		private void KeypadPresenterOnViewVisibilityChanged(object sender, BoolEventArgs boolEventArgs)
-		{
 			RefreshIfVisible();
 		}
 

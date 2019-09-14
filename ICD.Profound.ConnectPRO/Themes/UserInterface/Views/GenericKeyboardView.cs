@@ -8,27 +8,27 @@ using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.EventArguments;
 using ICD.Connect.UI.Utils;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 {
-	[ViewBinding(typeof(IVtcKeyboardView))]
-	public sealed partial class VtcKeyboardView : AbstractVtcBaseKeyboardView, IVtcKeyboardView
+	[ViewBinding(typeof(IGenericKeyboardView))]
+	public sealed partial class GenericKeyboardView : AbstractUiView, IGenericKeyboardView
 	{
 		/// <summary>
 		/// Raised when the user presses a key button.
 		/// </summary>
-		public override event EventHandler<KeyboardKeyEventArgs> OnKeyPressed;
+		public event EventHandler<KeyboardKeyEventArgs> OnKeyPressed;
 
 		/// <summary>
 		/// Raised when the user enters text in the text field.
 		/// </summary>
-		public override event EventHandler<StringEventArgs> OnTextEntered;
+		public event EventHandler<StringEventArgs> OnTextEntered;
 
 		/// <summary>
 		/// Raised when the user presses the backspace button.
 		/// </summary>
-		public override event EventHandler OnBackspaceButtonPressed;
+		public event EventHandler OnBackspaceButtonPressed;
 
 		/// <summary>
 		/// Raised when the user presses the space button.
@@ -46,23 +46,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		public event EventHandler OnShiftButtonPressed;
 
 		/// <summary>
-		/// Raised when the user presses the submit button.
+		/// Raised when the user presses the enter button.
 		/// </summary>
-		public override event EventHandler OnDialButtonPressed;
+		public event EventHandler OnEnterButtonPressed;
 
 		/// <summary>
-		/// Raised when the user presses the exit button.
+		/// Raised when the user presses the close button.
 		/// </summary>
-		public event EventHandler OnKeypadButtonPressed;
+		public event EventHandler OnCloseButtonPressed;
 
 		private Dictionary<VtProButton, KeyboardKey> m_KeyMap;
 
 		/// <summary>
-		/// Constructor.
+		/// Constructor
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public VtcKeyboardView(ISigInputOutput panel, ConnectProTheme theme)
+		public GenericKeyboardView(ISigInputOutput panel, ConnectProTheme theme) 
 			: base(panel, theme)
 		{
 		}
@@ -80,16 +80,34 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			OnSpaceButtonPressed = null;
 			OnCapsButtonPressed = null;
 			OnShiftButtonPressed = null;
-			OnDialButtonPressed = null;
-			OnKeypadButtonPressed = null;
+			OnEnterButtonPressed = null;
+			OnCloseButtonPressed = null;
 
 			base.Dispose();
 		}
 
 		/// <summary>
+		/// Sets the prompt above the text box.
+		/// </summary>
+		/// <param name="prompt"></param>
+		public void SetPrompt(string prompt)
+		{
+			m_FeedbackText.SetLabelText(prompt);
+		}
+
+		/// <summary>
+		/// Sets the text in the text entry field.
+		/// </summary>
+		/// <param name="text"></param>
+		public void SetText(string text)
+		{
+			m_TextEntry.SetLabelTextAtJoin(m_TextEntry.SerialLabelJoins.First(), text);
+		}
+
+		/// <summary>
 		/// Sets the selected state of the caps button.
 		/// </summary>
-		public void SelectCapsButton(bool select)
+		public void SelectCapsButton(bool @select)
 		{
 			m_CapsButton.SetSelected(@select);
 		}
@@ -97,18 +115,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		/// <summary>
 		/// Sets the selected state of the shift button.
 		/// </summary>
-		public void SelectShiftButton(bool select)
+		public void SelectShiftButton(bool @select)
 		{
 			m_ShiftButton.SetSelected(@select);
-		}
-
-		/// <summary>
-		/// Sets the text in the text entry field.
-		/// </summary>
-		/// <param name="text"></param>
-		public override void SetText(string text)
-		{
-			m_TextEntry.SetLabelTextAtJoin(m_TextEntry.SerialLabelJoins.First(), text);
 		}
 
 		/// <summary>
@@ -118,7 +127,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		/// <param name="caps"></param>
 		public void SetShift(bool shift, bool caps)
 		{
-			// All letters use the same join
+			//All numbers & special characters use the same join.
+			m_Key0Button.SetLabelTextAtJoin(m_Key0Button.DigitalLabelJoins.First(), shift);
+
+			//All letters use the same join.
 			m_KeyQButton.SetLabelTextAtJoin(m_KeyQButton.DigitalLabelJoins.First(), shift ^ caps);
 		}
 
@@ -133,50 +145,54 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		{
 			base.SubscribeControls();
 
-			m_KeyMap = new Dictionary<VtProButton, KeyboardKey>();
+			m_KeyMap = new Dictionary<VtProButton, KeyboardKey>
+			{
+				{m_Key0Button, new KeyboardKey('0', ')')},
+				{m_Key1Button, new KeyboardKey('1', '!')},
+				{m_Key2Button, new KeyboardKey('2', '@')},
+				{m_Key3Button, new KeyboardKey('3', '#')},
+				{m_Key4Button, new KeyboardKey('4', '$')},
+				{m_Key5Button, new KeyboardKey('5', '%')},
+				{m_Key6Button, new KeyboardKey('6', '^')},
+				{m_Key7Button, new KeyboardKey('7', '&')},
+				{m_Key8Button, new KeyboardKey('8', '*')},
+				{m_Key9Button, new KeyboardKey('9', '(')},
 
-			m_KeyMap[m_Key0Button] = new KeyboardKey('0', '0');
-			m_KeyMap[m_Key1Button] = new KeyboardKey('1', '1');
-			m_KeyMap[m_Key2Button] = new KeyboardKey('2', '2');
-			m_KeyMap[m_Key3Button] = new KeyboardKey('3', '3');
-			m_KeyMap[m_Key4Button] = new KeyboardKey('4', '4');
-			m_KeyMap[m_Key5Button] = new KeyboardKey('5', '5');
-			m_KeyMap[m_Key6Button] = new KeyboardKey('6', '6');
-			m_KeyMap[m_Key7Button] = new KeyboardKey('7', '7');
-			m_KeyMap[m_Key8Button] = new KeyboardKey('8', '8');
-			m_KeyMap[m_Key9Button] = new KeyboardKey('9', '9');
+				{m_KeyQButton, new KeyboardKey('q')},
+				{m_KeyWButton, new KeyboardKey('w')},
+				{m_KeyEButton, new KeyboardKey('e')},
+				{m_KeyRButton, new KeyboardKey('r')},
+				{m_KeyTButton, new KeyboardKey('t')},
+				{m_KeyYButton, new KeyboardKey('y')},
+				{m_KeyUButton, new KeyboardKey('u')},
+				{m_KeyIButton, new KeyboardKey('i')},
+				{m_KeyOButton, new KeyboardKey('o')},
+				{m_KeyPButton, new KeyboardKey('p')},
 
-			m_KeyMap[m_KeyQButton] = new KeyboardKey('q');
-			m_KeyMap[m_KeyWButton] = new KeyboardKey('w');
-			m_KeyMap[m_KeyEButton] = new KeyboardKey('e');
-			m_KeyMap[m_KeyRButton] = new KeyboardKey('r');
-			m_KeyMap[m_KeyTButton] = new KeyboardKey('t');
-			m_KeyMap[m_KeyYButton] = new KeyboardKey('y');
-			m_KeyMap[m_KeyUButton] = new KeyboardKey('u');
-			m_KeyMap[m_KeyIButton] = new KeyboardKey('i');
-			m_KeyMap[m_KeyOButton] = new KeyboardKey('o');
-			m_KeyMap[m_KeyPButton] = new KeyboardKey('p');
+				{m_KeyAButton, new KeyboardKey('a')},
+				{m_KeySButton, new KeyboardKey('s')},
+				{m_KeyDButton, new KeyboardKey('d')},
+				{m_KeyFButton, new KeyboardKey('f')},
+				{m_KeyGButton, new KeyboardKey('g')},
+				{m_KeyHButton, new KeyboardKey('h')},
+				{m_KeyJButton, new KeyboardKey('j')},
+				{m_KeyKButton, new KeyboardKey('k')},
+				{m_KeyLButton, new KeyboardKey('l')},
 
-			m_KeyMap[m_KeyAButton] = new KeyboardKey('a');
-			m_KeyMap[m_KeySButton] = new KeyboardKey('s');
-			m_KeyMap[m_KeyDButton] = new KeyboardKey('d');
-			m_KeyMap[m_KeyFButton] = new KeyboardKey('f');
-			m_KeyMap[m_KeyGButton] = new KeyboardKey('g');
-			m_KeyMap[m_KeyHButton] = new KeyboardKey('h');
-			m_KeyMap[m_KeyJButton] = new KeyboardKey('j');
-			m_KeyMap[m_KeyKButton] = new KeyboardKey('k');
-			m_KeyMap[m_KeyLButton] = new KeyboardKey('l');
+				{m_KeyZButton, new KeyboardKey('z')},
+				{m_KeyXButton, new KeyboardKey('x')},
+				{m_KeyCButton, new KeyboardKey('c')},
+				{m_KeyVButton, new KeyboardKey('v')},
+				{m_KeyBButton, new KeyboardKey('b')},
+				{m_KeyNButton, new KeyboardKey('n')},
+				{m_KeyMButton, new KeyboardKey('m')},
 
-			m_KeyMap[m_KeyZButton] = new KeyboardKey('z');
-			m_KeyMap[m_KeyXButton] = new KeyboardKey('x');
-			m_KeyMap[m_KeyCButton] = new KeyboardKey('c');
-			m_KeyMap[m_KeyVButton] = new KeyboardKey('v');
-			m_KeyMap[m_KeyBButton] = new KeyboardKey('b');
-			m_KeyMap[m_KeyNButton] = new KeyboardKey('n');
-			m_KeyMap[m_KeyMButton] = new KeyboardKey('m');
-
-			m_KeyMap[m_KeyAtButton] = new KeyboardKey('@', '@');
-			m_KeyMap[m_KeyStopButton] = new KeyboardKey('.', '.');
+				{m_KeyPeriodButton, new KeyboardKey('.', '>')},
+				{m_KeyCommaButton, new KeyboardKey(',', '<')},
+				{m_KeySlashButton, new KeyboardKey('/', '?')},
+				{m_KeySemiColonButton, new KeyboardKey(';', ':')},
+				{m_KeyApostropheButton, new KeyboardKey('\'', '"')}
+			};
 
 			foreach (VtProButton button in m_KeyMap.Keys)
 				button.OnPressed += ButtonOnPressed;
@@ -186,8 +202,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			m_SpaceButton.OnPressed += SpaceButtonOnPressed;
 			m_CapsButton.OnPressed += CapsButtonOnPressed;
 			m_ShiftButton.OnPressed += ShiftButtonOnPressed;
-			m_DialButton.OnPressed += DialButtonOnPressed;
-			m_KeypadButton.OnPressed += KeypadButtonOnPressed;
+			m_EnterButton.OnPressed += DialButtonOnPressed;
+			m_CloseButton.OnPressed += KeypadButtonOnPressed;
 		}
 
 		/// <summary>
@@ -205,8 +221,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			m_SpaceButton.OnPressed -= SpaceButtonOnPressed;
 			m_CapsButton.OnPressed -= CapsButtonOnPressed;
 			m_ShiftButton.OnPressed -= ShiftButtonOnPressed;
-			m_DialButton.OnPressed -= DialButtonOnPressed;
-			m_KeypadButton.OnPressed -= KeypadButtonOnPressed;
+			m_EnterButton.OnPressed -= DialButtonOnPressed;
+			m_CloseButton.OnPressed -= KeypadButtonOnPressed;
 		}
 
 		/// <summary>
@@ -276,7 +292,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		/// <param name="args"></param>
 		private void DialButtonOnPressed(object sender, EventArgs args)
 		{
-			OnDialButtonPressed.Raise(this);
+			OnEnterButtonPressed.Raise(this);
 		}
 
 		/// <summary>
@@ -286,7 +302,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		/// <param name="eventArgs"></param>
 		private void KeypadButtonOnPressed(object sender, EventArgs eventArgs)
 		{
-			OnKeypadButtonPressed.Raise(this);
+			OnCloseButtonPressed.Raise(this);
 		}
 
 		#endregion

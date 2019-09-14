@@ -5,9 +5,9 @@ using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Connect.UI.Controls.TextControls;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 {
-	public sealed partial class VtcKeyboardView
+	public sealed partial class GenericKeyboardView
 	{
 		private VtProSubpage m_Subpage;
 
@@ -50,18 +50,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		private VtProButton m_KeyBButton;
 		private VtProButton m_KeyNButton;
 		private VtProButton m_KeyMButton;
+		
+		private VtProButton m_KeyPeriodButton;
+		private VtProButton m_KeyCommaButton;
+		private VtProButton m_KeySlashButton;
+		private VtProButton m_KeySemiColonButton;
+		private VtProButton m_KeyApostropheButton;
 
-		private VtProButton m_KeyAtButton;
-		private VtProButton m_KeyStopButton;
-
+		private VtProSimpleLabel m_FeedbackText;
 		private VtProTextEntry m_TextEntry;
 
 		private VtProButton m_BackspaceButton;
 		private VtProButton m_ShiftButton;
 		private VtProButton m_CapsButton;
 		private VtProButton m_SpaceButton;
-		private VtProButton m_DialButton;
-		private VtProButton m_KeypadButton;
+		private VtProButton m_EnterButton;
+		private VtProButton m_CloseButton;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -73,58 +77,68 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 126
+				DigitalVisibilityJoin = 2690
 			};
 
 			m_Key0Button = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2700
 			};
+			m_Key0Button.DigitalLabelJoins.Add(2698);
 
 			m_Key1Button = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2701
 			};
+			m_Key1Button.DigitalLabelJoins.Add(2698);
 
 			m_Key2Button = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2702
 			};
+			m_Key2Button.DigitalLabelJoins.Add(2698);
 
 			m_Key3Button = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2703
 			};
+			m_Key3Button.DigitalLabelJoins.Add(2698);
 
 			m_Key4Button = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2704
 			};
+			m_Key4Button.DigitalLabelJoins.Add(2698);
 
 			m_Key5Button = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2705
 			};
+			m_Key5Button.DigitalLabelJoins.Add(2698);
 
 			m_Key6Button = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2706
 			};
+			m_Key6Button.DigitalLabelJoins.Add(2698);
 
 			m_Key7Button = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2707
 			};
+			m_Key7Button.DigitalLabelJoins.Add(2698);
 
 			m_Key8Button = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2708
 			};
+			m_Key8Button.DigitalLabelJoins.Add(2698);
 
 			m_Key9Button = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2709
 			};
+			m_Key9Button.DigitalLabelJoins.Add(2698);
 
 			m_KeyQButton = new VtProButton(panel, m_Subpage)
 			{
@@ -282,21 +296,46 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			};
 			m_KeyMButton.DigitalLabelJoins.Add(2699);
 
-			m_KeyAtButton = new VtProButton(panel, m_Subpage)
+			m_KeyPeriodButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 2750
+				DigitalPressJoin = 2760
 			};
+			m_KeyPeriodButton.DigitalLabelJoins.Add(2698);
 
-			m_KeyStopButton = new VtProButton(panel, m_Subpage)
+			m_KeyCommaButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2751
+			};
+			m_KeyCommaButton.DigitalLabelJoins.Add(2698);
+
+			m_KeySlashButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 2761
+			};
+			m_KeySlashButton.DigitalLabelJoins.Add(2698);
+
+			m_KeySemiColonButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 2762
+			};
+			m_KeySemiColonButton.DigitalLabelJoins.Add(2698);
+
+			m_KeyApostropheButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 2763
+			};
+			m_KeyApostropheButton.DigitalLabelJoins.Add(2698);
+
+			m_FeedbackText = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				IndirectTextJoin = 2700
 			};
 
 			m_TextEntry = new VtProTextEntry(panel, m_Subpage)
 			{
-				SerialOutputJoin = 1030
+				SerialOutputJoin = 3033
 			};
-			m_TextEntry.SerialLabelJoins.Add(1030);
+			m_TextEntry.SerialLabelJoins.Add(3033);
 
 			m_BackspaceButton = new VtProButton(panel, m_Subpage)
 			{
@@ -318,12 +357,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 				DigitalPressJoin = 2747
 			};
 
-			m_DialButton = new VtProButton(panel, m_Subpage)
+			m_EnterButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2754
 			};
 
-			m_KeypadButton = new VtProButton(panel, m_Subpage)
+			m_CloseButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2755
 			};
@@ -376,17 +415,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			yield return m_KeyBButton;
 			yield return m_KeyNButton;
 			yield return m_KeyMButton;
+			
+			yield return m_KeyPeriodButton;
+			yield return m_KeyCommaButton;
+			yield return m_KeySlashButton;
+			yield return m_KeySemiColonButton;
+			yield return m_KeyApostropheButton;
 
-			yield return m_KeyAtButton;
-			yield return m_KeyStopButton;
-
+			yield return m_FeedbackText;
 			yield return m_TextEntry;
 			yield return m_BackspaceButton;
 			yield return m_ShiftButton;
 			yield return m_CapsButton;
 			yield return m_SpaceButton;
-			yield return m_DialButton;
-			yield return m_KeypadButton;
+			yield return m_EnterButton;
+			yield return m_CloseButton;
 		}
 	}
 }

@@ -9,12 +9,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
  - Added settings page for changing clock time and 12/24 hour mode
  - ClockAudio CCRM4000 will extend and retract based on call state
+ - Added a generic keyboard presenter and views
 
 ### Changed
  - Only updating relevant displays presenters halves routing feedback time
  - CUE Pages will now properly be hidden in rooms without a scheduler
  - Complete overhaul of settings pages
  - Performance improvement for routing in single display rooms
+ - All keyboard usages have been changed to the generic keyboard
 
 ## [9.1.0] - 2019-08-27
 ### Added

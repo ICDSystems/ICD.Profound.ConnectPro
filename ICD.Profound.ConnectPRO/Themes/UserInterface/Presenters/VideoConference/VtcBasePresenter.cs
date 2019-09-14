@@ -33,8 +33,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private readonly IVtcButtonListPresenter m_ButtonListPresenter;
 		private readonly ICameraControlPresenter m_CameraControlPresenter;
 		private readonly ICameraActivePresenter m_CameraActivePresenter;
-		private readonly IVtcKeyboardPresenter m_KeyboardPresenter;
-		private readonly IVtcKeypadPresenter m_KeypadPresenter;
+		private readonly IGenericKeyboardPresenter m_KeyboardPresenter;
 		private readonly List<IVtcPresenter> m_VtcPresenters;
 
 		private IPowerDeviceControl m_SubscribedPowerControl;
@@ -105,8 +104,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_CameraActivePresenter = nav.LazyLoadPresenter<ICameraActivePresenter>();
 			m_CameraActivePresenter.OnViewVisibilityChanged += CameraPresenterOnOnViewVisibilityChanged;
 
-			m_KeyboardPresenter = nav.LazyLoadPresenter<IVtcKeyboardPresenter>();
-			m_KeypadPresenter = nav.LazyLoadPresenter<IVtcKeypadPresenter>();
+			m_KeyboardPresenter = nav.LazyLoadPresenter<IGenericKeyboardPresenter>();
 
 			m_ButtonListPresenter = nav.LazyLoadPresenter<IVtcButtonListPresenter>();
 
@@ -346,14 +344,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				return;
 			}
 
-			// If the keypad subpage is open close that instead
-			if (m_KeypadPresenter != null && m_KeypadPresenter.IsViewVisible)
-			{
-				m_KeypadPresenter.ShowView(false);
-				ShowContactsPresenter(true);
-				return;
-			}
-
 			// If we are in a call we want to confirm before closing
 			IConferenceManager manager = Room == null ? null : Room.ConferenceManager;
 			bool isInCall = manager != null && manager.IsInCall >= eInCall.Audio;
@@ -376,7 +366,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_CameraControlPresenter.ShowView(false);
 			m_ButtonListPresenter.ShowView(false);
 			m_KeyboardPresenter.ShowView(false);
-			m_KeypadPresenter.ShowView(false);
 
 			// View became visible
 			if (args.Data)

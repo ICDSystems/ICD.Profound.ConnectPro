@@ -2,9 +2,9 @@
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.UI.EventArguments;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews
 {
-	public interface IWtcKeyboardView : IUiView
+	public interface IGenericKeyboardView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses a key button.
@@ -22,16 +22,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference
 		event EventHandler OnBackspaceButtonPressed;
 
 		/// <summary>
-		/// Raised when the user presses the Close button.
-		/// </summary>
-		event EventHandler OnCloseButtonPressed;
-
-		/// <summary>
-		/// Raised when the user presses the Enter button.
-		/// </summary>
-		event EventHandler OnEnterButtonPressed;
-
-		/// <summary>
 		/// Raised when the user presses the space button.
 		/// </summary>
 		event EventHandler OnSpaceButtonPressed;
@@ -45,6 +35,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference
 		/// Raised when the user presses the shift button.
 		/// </summary>
 		event EventHandler OnShiftButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the enter button.
+		/// </summary>
+		event EventHandler OnEnterButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the close button.
+		/// </summary>
+		event EventHandler OnCloseButtonPressed;
+
+		/// <summary>
+		/// Sets the prompt above the text box.
+		/// </summary>
+		/// <param name="prompt"></param>
+		void SetPrompt(string prompt);
 
 		/// <summary>
 		/// Sets the text in the text entry field.
@@ -69,5 +75,4 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference
 		/// <param name="caps"></param>
 		void SetShift(bool shift, bool caps);
 	}
-
 }
