@@ -6,7 +6,7 @@ using ICD.Connect.Routing.Endpoints.Sources;
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays
 {
 	public delegate void MenuDestinationPressedCallback(
-		object sender, ISource routedSource, IDestination destination);
+		object sender, ISource routedSource, IDestinationBase destination);
 
 	public interface IDisplaysPresenter : IUiPresenter
 	{
@@ -17,6 +17,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displa
 		/// </summary>
 		void SetSelectedSource(ISource source);
 
-		void SetRouting(IDictionary<IDestination, IcdHashSet<ISource>> routing, IcdHashSet<ISource> activeAudio);
+		void SetRouting(IDictionary<IDestinationBase, IcdHashSet<ISource>> routing, IcdHashSet<ISource> activeAudio);
 	}
 }

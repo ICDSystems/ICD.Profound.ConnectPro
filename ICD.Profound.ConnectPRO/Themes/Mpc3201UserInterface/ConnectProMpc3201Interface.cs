@@ -40,9 +40,9 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			{5, MPC3x201TouchScreenButtons.BUTTON_ACTION_6},
 		};
 
-		private readonly Dictionary<IDestination, IcdHashSet<ISource>> m_ActiveVideo;
+		private readonly Dictionary<IDestinationBase, IcdHashSet<ISource>> m_ActiveVideo;
 		private readonly Dictionary<ISource, eSourceState> m_SourceRoutedStates;
-		private readonly Dictionary<IDestination, ISource> m_ProcessingSources;
+		private readonly Dictionary<IDestinationBase, ISource> m_ProcessingSources;
 		private readonly SafeCriticalSection m_RoutingSection;
 
 		private readonly IMPC3x201TouchScreenControl m_Control;
@@ -84,9 +84,9 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			if (theme == null)
 				throw new ArgumentNullException("theme");
 
-			m_ActiveVideo = new Dictionary<IDestination, IcdHashSet<ISource>>();
+			m_ActiveVideo = new Dictionary<IDestinationBase, IcdHashSet<ISource>>();
 			m_SourceRoutedStates = new Dictionary<ISource, eSourceState>();
-			m_ProcessingSources = new Dictionary<IDestination, ISource>();
+			m_ProcessingSources = new Dictionary<IDestinationBase, ISource>();
 			m_RoutingSection = new SafeCriticalSection();
 
 			m_Sources = new ISource[0];
@@ -312,7 +312,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// <param name="source"></param>
 		private void SetProcessingSource(ISource source)
 		{
-			IDestination destination = Room == null ? null : m_Room.Routing.Destinations.GetDisplayDestinations().FirstOrDefault();
+			IDestinationBase destination = Room == null ? null : m_Room.Routing.Destinations.GetVideoDestinations().FirstOrDefault();
 			if (destination == null)
 				return;
 
@@ -324,7 +324,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// </summary>
 		/// <param name="destination"></param>
 		/// <param name="source"></param>
-		private void SetProcessingSource(IDestination destination, ISource source)
+		private void SetProcessingSource(IDestinationBase destination, ISource source)
 		{
 			if (destination == null)
 				throw new ArgumentNullException("destination");
@@ -383,9 +383,9 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 
 			try
 			{
-				Dictionary<IDestination, IcdHashSet<ISource>> routing =
+				Dictionary<IDestinationBase, IcdHashSet<ISource>> routing =
 					(m_Room == null
-						 ? Enumerable.Empty<KeyValuePair<IDestination, IcdHashSet<ISource>>>()
+						 ? Enumerable.Empty<KeyValuePair<IDestinationBase, IcdHashSet<ISource>>>()
 						 : m_Room.Routing.State
 						       .GetFakeActiveVideoSources())
 						.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
@@ -397,7 +397,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 				m_ActiveVideo.AddRange(routing.Keys, k => new IcdHashSet<ISource>(routing[k]));
 
 				// Remove routed items from the processing sources collection
-				foreach (KeyValuePair<IDestination, IcdHashSet<ISource>> kvp in m_ActiveVideo)
+				foreach (KeyValuePair<IDestinationBase, IcdHashSet<ISource>> kvp in m_ActiveVideo)
 				{
 					ISource processing = m_ProcessingSources.GetDefault(kvp.Key);
 					if (processing == null)

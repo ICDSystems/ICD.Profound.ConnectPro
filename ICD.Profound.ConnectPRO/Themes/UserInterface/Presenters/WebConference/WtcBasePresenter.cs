@@ -151,17 +151,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// </summary>
 		private void UpdateCodecAwakeState(bool forcePowerOff)
 		{
+			if (Room == null)
+				return;
+
 			if (m_SubscribedPowerControl == null)
 				return;
 
-			bool visible = IsViewVisible;
-			if (visible == (m_SubscribedPowerControl.PowerState == ePowerState.PowerOn))
-				return;
-
-			if (visible)
-				m_SubscribedPowerControl.PowerOn();
+			if (IsViewVisible)
+				Room.Routing.PowerDevice(m_SubscribedPowerControl.Parent, true);
 			else if (forcePowerOff)
-				m_SubscribedPowerControl.PowerOff();
+				Room.Routing.PowerDevice(m_SubscribedPowerControl.Parent, false);
 		}
 
 		private void UpdateVisibility()

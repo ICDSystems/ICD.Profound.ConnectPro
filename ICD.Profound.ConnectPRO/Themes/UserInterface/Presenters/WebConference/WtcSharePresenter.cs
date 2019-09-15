@@ -13,10 +13,10 @@ using ICD.Connect.Conferencing.Participants.EventHelpers;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing;
 using ICD.Connect.Routing.Connections;
-using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.Extensions;
 using ICD.Connect.Routing.RoutingGraphs;
+using ICD.Connect.Settings.Originators;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
@@ -105,7 +105,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 					view.SetButtonSelected(index, select);
 					view.SetButtonIcon(index, icon);
-					view.SetButtonLabel(index, source == null ? null : source.GetNameOrDeviceName(combine));
+					view.SetButtonLabel(index, source == null ? null : source.GetName(combine));
 				}
 
 				bool enabled = inPresentation || m_Selected != null;

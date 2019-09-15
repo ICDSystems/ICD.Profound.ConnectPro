@@ -43,13 +43,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		public override void SetRoom(IConnectProRoom room)
 		{
 			bool combine = room != null && room.IsCombineRoom();
-			IDestination[] destinations = room == null ? new IDestination[0] : room.Routing.Destinations.GetDisplayDestinations().ToArray();
+			IDestinationBase[] destinations = room == null ? new IDestinationBase[0] : room.Routing.Destinations.GetVideoDestinations().ToArray();
 			
 			for (int i = 0; i < Displays.Count; i++)
 			{
 				MenuDisplaysPresenterDisplay display = Displays[i];
 				display.SetRoomCombine(combine);
-				IDestination dest;
+				IDestinationBase dest;
 				destinations.TryElementAt(i, out dest);
 				display.SetDestination(dest);
 			}
@@ -57,7 +57,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			base.SetRoom(room);
 		}
 
-		public void SetRouting(IDictionary<IDestination, IcdHashSet<ISource>> routing, IcdHashSet<ISource> activeAudio)
+		public void SetRouting(IDictionary<IDestinationBase, IcdHashSet<ISource>> routing, IcdHashSet<ISource> activeAudio)
 		{
 			bool refresh = false;
 
@@ -121,7 +121,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			Room.Routing.RouteAudio(display.RoutedSource);
 		}
 
-		private static ISource GetRoutedSource(IDestination destination, IDictionary<IDestination, IcdHashSet<ISource>> routing)
+		private static ISource GetRoutedSource(IDestinationBase destination, IDictionary<IDestinationBase, IcdHashSet<ISource>> routing)
 		{
 			if (destination == null)
 				return null;

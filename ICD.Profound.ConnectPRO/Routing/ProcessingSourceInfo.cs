@@ -12,10 +12,10 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		private const long TIMEOUT_INTERVAL = 5 * 1000;
 
-		private readonly IDestination m_Destination;
+		private readonly IDestinationBase m_Destination;
 		private readonly SafeTimer m_Timer;
 
-		private Action<IDestination, ISource> m_Callback;
+		private Action<IDestinationBase, ISource> m_Callback;
 
 		/// <summary>
 		/// Gets the source.
@@ -25,14 +25,14 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <summary>
 		/// Gets the destination.
 		/// </summary>
-		public IDestination Destination { get { return m_Destination; } }
+		public IDestinationBase Destination { get { return m_Destination; } }
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="destination"></param>
 		/// <param name="timerCallback"></param>
-		public ProcessingSourceInfo(IDestination destination, Action<IDestination, ISource> timerCallback)
+		public ProcessingSourceInfo(IDestinationBase destination, Action<IDestinationBase, ISource> timerCallback)
 		{
 			if (destination == null)
 				throw new ArgumentNullException("destination");

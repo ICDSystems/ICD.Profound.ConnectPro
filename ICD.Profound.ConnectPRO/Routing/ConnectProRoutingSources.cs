@@ -76,7 +76,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <returns></returns>
 		public IEnumerable<ISource> GetRoomSourcesForUi()
 		{
-			IDestination[] videoDestinations = m_Routing.Destinations.GetDisplayDestinations().ToArray();
+			IDestinationBase[] videoDestinations = m_Routing.Destinations.GetVideoDestinations().ToArray();
 			
 			bool multipleDisplays = m_Routing.Destinations.IsMultiDisplayRoom;
 				

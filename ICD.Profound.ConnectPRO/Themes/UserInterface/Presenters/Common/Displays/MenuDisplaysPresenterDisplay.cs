@@ -1,6 +1,5 @@
 ﻿using ICD.Common.Utils.Extensions;
 using ICD.Connect.Routing.Connections;
-using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings.Originators;
@@ -22,7 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		private bool m_AudioActive;
 		private ISource m_RoutedSource;
 		private ISource m_SelectedSource;
-		private IDestination m_Destination;
+		private IDestinationBase m_Destination;
 		private bool m_RoomCombine;
 		private bool m_HasControl;
 		private bool m_ShowSpeaker;
@@ -43,7 +42,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		public bool AudioActive { get { return m_AudioActive; } }
 
-		public IDestination Destination { get { return m_Destination; } }
+		public IDestinationBase Destination { get { return m_Destination; } }
 
 		public ISource RoutedSource { get { return m_RoutedSource; } }
 
@@ -119,7 +118,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			return true;
 		}
 
-		public bool SetDestination(IDestination destination)
+		public bool SetDestination(IDestinationBase destination)
 		{
 			if (destination == m_Destination)
 				return false;
@@ -212,9 +211,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				}
 			}
 
-			m_SourceName = m_RoutedSource == null
-				               ? string.Empty
-				               : m_RoutedSource.GetNameOrDeviceName(m_RoomCombine);
+			m_SourceName = m_RoutedSource == null ? string.Empty : m_RoutedSource.GetName(m_RoomCombine);
 
 			string hexColor = Colors.DisplayColorToTextColor(m_Color);
 			m_SourceName = HtmlUtils.FormatColoredText(m_SourceName, hexColor);

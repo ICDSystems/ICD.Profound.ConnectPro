@@ -2,18 +2,18 @@
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
-using ICD.Connect.Displays.Devices;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Connections;
-using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Routing.Endpoints.Destinations;
+using ICD.Connect.Routing.Groups.Endpoints.Destinations;
+using ICD.Connect.Settings.Originators;
 
 namespace ICD.Profound.ConnectPRO.Routing
 {
 	public sealed class ConnectProRoutingDestinations
 	{
-		private readonly List<IDestination> m_Displays;
-		private readonly List<IDestination> m_AudioDestinations;
+		private readonly List<IDestinationBase> m_VideoDestinations;
+		private readonly List<IDestinationBase> m_AudioDestinations;
 		private readonly ConnectProRouting m_Routing;
 		private readonly SafeCriticalSection m_CacheSection;
 
@@ -27,7 +27,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <summary>
 		/// Gets the number of display destinations.
 		/// </summary>
-		public int DisplayDestinationsCount { get { return GetDisplayDestinations().Count(); } }
+		public int DisplayDestinationsCount { get { return GetVideoDestinations().Count(); } }
 
 		#endregion
 
@@ -37,8 +37,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <param name="routing"></param>
 		public ConnectProRoutingDestinations(ConnectProRouting routing)
 		{
-			m_Displays = new List<IDestination>();
-			m_AudioDestinations = new List<IDestination>();
+			m_VideoDestinations = new List<IDestinationBase>();
+			m_AudioDestinations = new List<IDestinationBase>();
 
 			m_Routing = routing;
 			m_CacheSection = new SafeCriticalSection();
@@ -50,30 +50,19 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// Returns the first two ordered display destinations for the room.
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<IDestination> GetDisplayDestinations()
+		public IEnumerable<IDestinationBase> GetVideoDestinations()
 		{
 			m_CacheSection.Enter();
 
 			try
 			{
-				if (m_Displays.Count == 0)
+				if (m_VideoDestinations.Count == 0)
 				{
-					bool combine = m_Routing.Room.IsCombineRoom();
-
-					IEnumerable<IDestination> displays =
-						m_Routing.Room
-						         .Originators
-						         .GetInstancesRecursive<IDestination>()
-						         .Where(d => !d.Hide)
-						         .Where(d => d.ConnectionType.HasFlag(eConnectionType.Video))
-						         .Where(d => m_Routing.Room.Core.Originators.GetChild(d.Device) is IDisplay)
-						         .OrderBy(d => d.Order)
-						         .ThenBy(d => d.GetNameOrDeviceName(combine));
-
-					m_Displays.AddRange(displays);
+					IEnumerable<IDestinationBase> videoDestinations = GetDestinations(eConnectionType.Video);
+					m_VideoDestinations.AddRange(videoDestinations);
 				}
 
-				return m_Displays.ToArray(m_Displays.Count);
+				return m_VideoDestinations.ToArray(m_VideoDestinations.Count);
 			}
 			finally
 			{
@@ -85,7 +74,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// Returns the ordered audio only destinations for the room.
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<IDestination> GetAudioDestinations()
+		public IEnumerable<IDestinationBase> GetAudioDestinations()
 		{
 			m_CacheSection.Enter();
 
@@ -93,17 +82,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			{
 				if (m_AudioDestinations.Count == 0)
 				{
-					bool combine = m_Routing.Room.IsCombineRoom();
-
-					IEnumerable<IDestination> audioDestinations =
-						m_Routing.Room
-						         .Originators
-						         .GetInstancesRecursive<IDestination>()
-						         .Where(d => !d.Hide)
-						         .Where(d => d.ConnectionType.HasFlag(eConnectionType.Audio))
-						         .OrderBy(d => d.Order)
-						         .ThenBy(d => d.GetNameOrDeviceName(combine));
-
+					IEnumerable<IDestinationBase> audioDestinations = GetDestinations(eConnectionType.Audio);
 					m_AudioDestinations.AddRange(audioDestinations);
 				}
 
@@ -113,6 +92,40 @@ namespace ICD.Profound.ConnectPRO.Routing
 			{
 				m_CacheSection.Leave();
 			}
+		}
+
+		#endregion
+
+		#region Private Methods
+
+		/// <summary>
+		/// Returns an ordered sequence of destination groups and any loose destinations.
+		/// </summary>
+		/// <param name="flag"></param>
+		/// <returns></returns>
+		private IEnumerable<IDestinationBase> GetDestinations(eConnectionType flag)
+		{
+			bool combine = m_Routing.Room.IsCombineRoom();
+
+			IDestinationGroup[] groups =
+				m_Routing.Room
+				         .Originators
+						 .GetInstancesRecursive<IDestinationGroup>()
+				         .Where(d => !d.Hide)
+				         .Where(d => d.ConnectionType.HasFlag(flag))
+						 .ToArray();
+
+			IEnumerable<IDestination> destinations =
+				m_Routing.Room
+						 .Originators
+						 .GetInstancesRecursive<IDestination>()
+						 .Where(d => !d.Hide)
+						 .Where(d => d.ConnectionType.HasFlag(flag))
+						 .Where(d => !groups.Any(g => g.Contains(d)));
+
+			return groups.Concat(destinations.Cast<IDestinationBase>())
+			             .OrderBy(d => d.Order)
+			             .ThenBy(d => d.GetName(combine));
 		}
 
 		#endregion

@@ -19,13 +19,10 @@ using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Presentation;
-using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Devices;
-using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Extensions;
-using ICD.Connect.Displays.Devices;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Destinations;
@@ -298,8 +295,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			// Power the panels
 			Originators.GetInstancesRecursive<IPanelDevice>()
-					   .SelectMany(panel => panel.Controls.GetControls<IPowerDeviceControl>())
-					   .ForEach(c => c.PowerOn());
+			           .ForEach(p => Routing.PowerDevice(p, true));
 		}
 
 		/// <summary>
@@ -317,17 +313,15 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			Routing.RouteOsd();
 
 			// Power off displays
-			foreach (IDestination destination in Routing.Destinations.GetDisplayDestinations())
+			foreach (IDestinationBase destination in Routing.Destinations.GetVideoDestinations())
 			{
-				IDisplay display = Core.Originators.GetChild(destination.Device) as IDisplay;
-				if (display != null)
-					display.PowerOff();
+				foreach (IDeviceBase device in destination.GetDevices())
+					Routing.PowerDevice(device, false);
 			}
 
 			// Power off the panels
 			Originators.GetInstancesRecursive<IPanelDevice>()
-					   .SelectMany(panel => panel.Controls.GetControls<IPowerDeviceControl>())
-					   .ForEach(c => c.PowerOff());
+		   .ForEach(p => Routing.PowerDevice(p, false));
 		}
 		/// <summary>
 		/// Called when the meeting state is changed

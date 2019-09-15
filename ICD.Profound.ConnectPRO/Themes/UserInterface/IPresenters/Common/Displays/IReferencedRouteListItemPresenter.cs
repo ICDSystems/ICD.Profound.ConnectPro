@@ -14,14 +14,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displa
 	public struct RouteListItem : IEquatable<RouteListItem>
 	{
 		private readonly IRoom m_Room;
-		private readonly IDestination m_Destination;
+		private readonly IDestinationBase m_Destination;
 		private readonly ISource m_Source;
 
 		public IRoom Room { get { return m_Room; } }
-		public IDestination Destination { get { return m_Destination; } }
+		public IDestinationBase Destination { get { return m_Destination; } }
 		public ISource Source { get { return m_Source; } }
 
-		public RouteListItem(IRoom room, IDestination destination, ISource source)
+		public RouteListItem(IRoom room, IDestinationBase destination, ISource source)
 		{
 			m_Room = room;
 			m_Destination = destination;

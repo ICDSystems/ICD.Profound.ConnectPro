@@ -45,7 +45,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			}
 		}
 
-		public void SetRouting(IDictionary<IDestination, IcdHashSet<ISource>> routing)
+		public void SetRouting(IDictionary<IDestinationBase, IcdHashSet<ISource>> routing)
 		{
 			IEnumerable<RouteListItem> models = routing.SelectMany(kvp => kvp.Value.Select(s => GetListItem(kvp.Key, s)))
 			                                           .OrderBy(i => i.Room.GetName(true))
@@ -55,7 +55,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			RefreshIfVisible();
 		}
 
-		private RouteListItem GetListItem(IDestination destination, ISource source)
+		private RouteListItem GetListItem(IDestinationBase destination, ISource source)
 		{
 			IRoom room = Room.GetRoomsRecursive().FirstOrDefault(r => r.Originators.Contains(destination.Id));
 			return new RouteListItem(room, destination, source);

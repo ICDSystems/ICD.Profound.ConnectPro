@@ -8,6 +8,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displa
 {
 	public interface IMenuRouteSummaryPresenter : IUiPresenter<IMenuRouteSummaryView>
 	{
-		void SetRouting(IDictionary<IDestination, IcdHashSet<ISource>> routing);
+		void SetRouting(IDictionary<IDestinationBase, IcdHashSet<ISource>> routing);
 	}
 }

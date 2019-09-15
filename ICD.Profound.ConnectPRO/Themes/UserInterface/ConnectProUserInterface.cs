@@ -343,7 +343,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// </summary>
 		/// <param name="routedSource"></param>
 		/// <param name="destination"></param>
-		private void HandleSelectedDisplay(ISource routedSource, IDestination destination)
+		private void HandleSelectedDisplay(ISource routedSource, IDestinationBase destination)
 		{
 			if (m_Room == null)
 				return;
@@ -479,7 +479,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="sender"></param>
 		/// <param name="routedSource"></param>
 		/// <param name="destination"></param>
-		private void DisplaysPresenterOnDestinationPressed(object sender, ISource routedSource, IDestination destination)
+		private void DisplaysPresenterOnDestinationPressed(object sender, ISource routedSource, IDestinationBase destination)
 		{
 			HandleSelectedDisplay(routedSource, destination);
 		}
@@ -645,7 +645,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				      .GetCachedActiveAudioSources()
 				      .ToIcdHashSet();
 
-			Dictionary<IDestination, IcdHashSet<ISource>> activeVideo =
+			Dictionary<IDestinationBase, IcdHashSet<ISource>> activeVideo =
 				m_Room.Routing
 				      .State
 				      .GetFakeActiveVideoSources()
@@ -661,7 +661,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				SetSelectedSource(null);
 		}
 
-		private void UpdateDisplaysRouting(IDictionary<IDestination, IcdHashSet<ISource>> activeVideo,
+		private void UpdateDisplaysRouting(IDictionary<IDestinationBase, IcdHashSet<ISource>> activeVideo,
 		                                   IcdHashSet<ISource> activeAudio)
 		{
 			int displayCount = m_Room == null ? 0 : m_Room.Routing.Destinations.DisplayDestinationsCount;
@@ -676,7 +676,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				                      .SetRouting(activeVideo, activeAudio);
 		}
 
-		private void UpdateCombinedDisplaysRouting(IDictionary<IDestination, IcdHashSet<ISource>> activeVideo,
+		private void UpdateCombinedDisplaysRouting(IDictionary<IDestinationBase, IcdHashSet<ISource>> activeVideo,
 		                                           IcdHashSet<ISource> activeAudio)
 		{
 			ConnectProCombineRoom combineRoom = m_Room as ConnectProCombineRoom;
