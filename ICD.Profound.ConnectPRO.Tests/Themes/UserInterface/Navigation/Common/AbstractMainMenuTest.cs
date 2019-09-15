@@ -113,7 +113,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 			uint sourceIndex = (uint)roomType.Room.Routing.Sources.GetCoreSources().ToList().IndexOf(source);
 
 			// Get number of displays
-			var displayCount = roomType.Room.Routing.Destinations.GetDisplayDestinations().Count();
+			var displayCount = roomType.Room.Routing.Destinations.GetVideoDestinations().Count();
 
 			MockSmartObject sourcesSmartObject = roomType.Panel.SmartObjects[1] as MockSmartObject;
 
@@ -289,7 +289,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 		private void CheckActiveRoutes(TRoomType roomType, ISource source)
 		{
 			//Get Displays
-			var destinations = roomType.Room.Routing.Destinations.GetDisplayDestinations();
+			var destinations = roomType.Room.Routing.Destinations.GetVideoDestinations();
 
 			//Get active video routes
 			var routingVideo = roomType.Room.Routing.State.GetFakeActiveVideoSources()

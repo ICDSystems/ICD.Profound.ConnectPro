@@ -129,7 +129,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 		{
 			Assert.IsTrue(NavigationHelpers.CheckVisibilty(142, roomType.Panel));
 
-			foreach (IDestination destination in roomType.Room.Routing.Destinations.GetDisplayDestinations())
+			foreach (IDestination destination in roomType.Room.Routing.Destinations.GetVideoDestinations())
 			{
 				if (roomType.Core.Originators.GetChild(destination.Device) is IDisplay display)
 					display.PowerOn();
@@ -140,7 +140,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 			// Check Power for displays (wake)
 			if (!powerOn)
 			{
-				foreach (IDestination destination in roomType.Room.Routing.Destinations.GetDisplayDestinations())
+				foreach (IDestination destination in roomType.Room.Routing.Destinations.GetVideoDestinations())
 				{
 					if (roomType.Core.Originators.GetChild(destination.Device) is IDisplay display)
 						Assert.AreEqual(ePowerState.PowerOff, display.PowerState);
