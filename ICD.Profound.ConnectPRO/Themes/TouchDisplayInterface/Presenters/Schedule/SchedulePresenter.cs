@@ -45,6 +45,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 			m_ChildrenFactory = new ReferencedBookingPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
 
 			m_RefreshTimer = new SafeTimer(RefreshIfVisible, DEFAULT_REFRESH_TIME);
+			theme.DateFormatting.OnFormatChanged += DateFormattingOnFormatChanged;
 		}
 
 		protected override void Refresh(IScheduleView view)
@@ -166,10 +167,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 				case eMeetingType.AudioConference:
 					return "audioConference";
 				case eMeetingType.Presentation:
+				default:
 					return "display";
 			}
-
-			return "display";
 		}
 
 		#region View Callbacks
@@ -227,6 +227,15 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 		private void ControlOnBookingsChanged(object sender, EventArgs e)
 		{
 			RefreshIfVisible();
+		}
+
+		#endregion
+
+		#region Theme Callbacks
+
+		private void DateFormattingOnFormatChanged(object sender, EventArgs eventArgs)
+		{
+			Refresh();
 		}
 
 		#endregion

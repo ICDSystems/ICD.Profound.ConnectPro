@@ -28,6 +28,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
+
+			theme.DateFormatting.OnFormatChanged += DateFormattingOnFormatChanged;
 		}
 
 		public event EventHandler OnBookingPressed;
@@ -74,6 +76,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 		private string FormatTime(DateTime time)
 		{
 			return Theme.DateFormatting.GetShortTime(time);
+		}
+
+		private void DateFormattingOnFormatChanged(object sender, EventArgs e)
+		{
+			RefreshIfVisible();
 		}
 
 		#region View Callbacks

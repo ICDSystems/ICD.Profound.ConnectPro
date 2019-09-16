@@ -31,6 +31,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 
 			// Refresh every second to update the time
 			m_RefreshTimer = new SafeTimer(RefreshTime, 1000, 1000);
+			
+			theme.DateFormatting.OnFormatChanged += DateFormattingOnFormatChanged;
 		}
 
 		/// <summary>
@@ -116,6 +118,15 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs e)
 		{
 			Refresh();
+		}
+
+		#endregion
+
+		#region Theme Callbacks
+
+		private void DateFormattingOnFormatChanged(object sender, EventArgs e)
+		{
+			RefreshTime();
 		}
 
 		#endregion
