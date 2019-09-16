@@ -261,8 +261,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				return;
 
 			string prompt = args.WrongAndRetry
-				? "Please retry - Incorrect password"
-				: "Please enter Zoom Meeting password";
+				? string.Format("Please re-enter password for Zoom Meeting #{0} - Incorrect password", args.MeetingNumber)
+				: string.Format("Please enter password for Zoom Meeting #{0}", args.MeetingNumber);
 
 			Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>()
 			          .ShowView(prompt, null, p => SubmitZoomPassword(args.MeetingNumber, p), null, null);
@@ -312,12 +312,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		{
 			IGenericLoadingSpinnerPresenter spinner = Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>();
 
-			if (args.Data == eConferenceStatus.Connecting)
-				spinner.ShowView("Connecting...", 30 * 1000);
-			else if (args.Data == eConferenceStatus.Connected)
-				m_ConnectingTimer.Reset(1000); // hide connecting page 1 second after connection complete
-			else
-				spinner.ShowView(false);
+			switch (args.Data)
+			{
+				case eConferenceStatus.Connecting:
+					spinner.ShowView("Connecting...", 30 * 1000);
+					break;
+				case eConferenceStatus.Connected:
+					m_ConnectingTimer.Reset(1000); // hide connecting page 1 second after connection complete
+					Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>().ShowView(false);
+					break;
+				default:
+					spinner.ShowView(false);
+					break;
+			}
 
 			UpdateVisibility();
 		}
