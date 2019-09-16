@@ -590,6 +590,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			switch (powerControl.PowerState)
 			{
+				case ePowerState.Unknown:
+					break;
+
 				case ePowerState.PowerOn:
 				case ePowerState.Warming:
 					if (power)
