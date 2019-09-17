@@ -657,10 +657,6 @@
       <Project>{3BAE6352-77B5-499A-9DA5-2AB198F53183}</Project>
       <Name>ICD.Connect.Misc_SimplSharp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ICD.Connect.Misc\ICD.Connect.TvPresets\ICD.Connect.TvPresets_SimplSharp.csproj">
-      <Project>{5752751F-FDEB-40A0-9249-6580A62A6D88}</Project>
-      <Name>ICD.Connect.TvPresets_SimplSharp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\ICD.Connect.Panels\ICD.Connect.Panels.Crestron\ICD.Connect.Panels.Crestron_SimplSharp.csproj">
       <Project>{EF71F157-ED75-4B30-ABC9-1E7811615528}</Project>
       <Name>ICD.Connect.Panels.Crestron_SimplSharp</Name>

@@ -5,7 +5,7 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Sources.TvTuner.Controls;
-using ICD.Connect.TvPresets;
+using ICD.Connect.Sources.TvTuner.TvPresets;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.CableTv;
