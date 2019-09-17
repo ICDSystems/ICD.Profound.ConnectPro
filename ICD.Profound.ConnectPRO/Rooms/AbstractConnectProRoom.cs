@@ -465,6 +465,10 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 		#region Conference Manager Callbacks 
 
+		/// <summary>
+		/// Sets the conference manager for this room.
+		/// </summary>
+		/// <param name="conferenceManager"></param>
 		private void SetConferenceManager(IConferenceManager conferenceManager)
 		{
 			if (conferenceManager == ConferenceManager)
@@ -475,6 +479,10 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			Subscribe(ConferenceManager);
 		}
 
+		/// <summary>
+		/// Subscribe to the conference manager events.
+		/// </summary>
+		/// <param name="conferenceManager"></param>
 		private void Subscribe(IConferenceManager conferenceManager)
 		{
 			if (conferenceManager == null)
@@ -483,6 +491,10 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			conferenceManager.OnInCallChanged += ConferenceManagerOnInCallChanged;
 		}
 
+		/// <summary>
+		/// Unsubscribe from the conference manager events.
+		/// </summary>
+		/// <param name="conferenceManager"></param>
 		private void Unsubscribe(IConferenceManager conferenceManager)
 		{
 			if (conferenceManager == null)
@@ -491,9 +503,18 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			conferenceManager.OnInCallChanged -= ConferenceManagerOnInCallChanged;
 		}
 
+		/// <summary>
+		/// Called when the conference manager enters/leaves a call.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void ConferenceManagerOnInCallChanged(object sender, InCallEventArgs eventArgs)
 		{
 			UpdateMeetingTimeoutTimer();
+
+			// Turn off privacy mute between calls
+			if (ConferenceManager != null)
+				ConferenceManager.EnablePrivacyMute(false);
 		}
 
 		#endregion
