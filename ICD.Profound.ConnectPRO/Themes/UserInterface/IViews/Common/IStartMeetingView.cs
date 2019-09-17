@@ -12,9 +12,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 		event EventHandler OnStartMyMeetingButtonPressed;
 
 		/// <summary>
-		/// Raised when the user presses the start new meeting button.
+		/// Raised when the user presses the instant meeting button.
 		/// </summary>
-		event EventHandler OnStartNewMeetingButtonPressed;
+		event EventHandler OnInstantMeetingButtonPressed;
 
 		/// <summary>
 		/// Raised when the user presses the settings button.

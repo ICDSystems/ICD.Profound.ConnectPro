@@ -320,7 +320,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			base.Subscribe(view);
 
 			view.OnStartMyMeetingButtonPressed += ViewOnStartMyMeetingButtonPressed;
-			view.OnStartNewMeetingButtonPressed += ViewOnStartNewMeetingButtonPressed;
+			view.OnInstantMeetingButtonPressed += ViewOnInstantMeetingButtonPressed;
 			view.OnSettingsButtonPressed += ViewOnSettingsButtonPressed;
 		}
 
@@ -333,7 +333,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			base.Unsubscribe(view);
 
 			view.OnStartMyMeetingButtonPressed -= ViewOnStartMyMeetingButtonPressed;
-			view.OnStartNewMeetingButtonPressed -= ViewOnStartNewMeetingButtonPressed;
+			view.OnInstantMeetingButtonPressed -= ViewOnInstantMeetingButtonPressed;
 			view.OnSettingsButtonPressed -= ViewOnSettingsButtonPressed;
 		}
 
@@ -357,19 +357,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (Room == null)
 				return;
 
-			if (!HasCalendarControl || m_SelectedBooking == null || m_SelectedBooking.Booking == null)
+			// If the room doesn't have a calendar control then start the meeting
+			if (!HasCalendarControl)
 			{
 				Room.StartMeeting();
 				return;
 			}
 
-			IBooking booking = m_SelectedBooking.Booking;
+			// Otherwise, the user needs to have selected a booking before starting the meeting
+			IBooking booking = m_SelectedBooking == null ? null : m_SelectedBooking.Booking;
+			if (booking == null)
+				return;
+
 			m_SelectedBooking = null;
 
 			Room.StartMeeting(booking);
 		}
 
-		private void ViewOnStartNewMeetingButtonPressed(object sender, EventArgs eventArgs)
+		/// <summary>
+		/// Called when the user presses the instant meeting button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ViewOnInstantMeetingButtonPressed(object sender, EventArgs eventArgs)
 		{
 			if (Room != null)
 				Room.StartMeeting();

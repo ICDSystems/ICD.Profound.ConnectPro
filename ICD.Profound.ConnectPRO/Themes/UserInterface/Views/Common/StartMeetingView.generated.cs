@@ -14,7 +14,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 	{
 		private VtProSubpage m_Subpage;
 		private VtProButton m_StartMyMeetingButton;
-		private VtProButton m_StartNewMeetingButton;
+		private VtProButton m_InstantMeetingButton;
 		private VtProButton m_SettingsButton;
 		private VtProImageObject m_Logo;
 		private VtProSubpageReferenceList m_ScheduleList;
@@ -40,7 +40,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 				DigitalPressJoin = 91
 			};
 
-			m_StartNewMeetingButton = new VtProButton(panel, m_Subpage)
+			m_InstantMeetingButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 700,
 				DigitalEnableJoin = 701
@@ -88,7 +88,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		{
 			yield return m_Subpage;
 			yield return m_StartMyMeetingButton;
-			yield return m_StartNewMeetingButton;
+			yield return m_InstantMeetingButton;
 			yield return m_SettingsButton;
 			yield return m_Logo;
 			yield return m_ScheduleList;

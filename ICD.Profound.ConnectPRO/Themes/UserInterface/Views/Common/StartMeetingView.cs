@@ -23,7 +23,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		/// <summary>
 		/// Raised when the user pressed the start new meeting button.
 		/// </summary>
-		public event EventHandler OnStartNewMeetingButtonPressed;
+		public event EventHandler OnInstantMeetingButtonPressed;
 
 		/// <summary>
 		/// Raised when the user presses the settings button.
@@ -49,7 +49,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		public override void Dispose()
 		{
 			OnStartMyMeetingButtonPressed = null;
-			OnStartNewMeetingButtonPressed = null;
+			OnInstantMeetingButtonPressed = null;
 			OnSettingsButtonPressed = null;
 
 			base.Dispose();
@@ -130,7 +130,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		/// <param name="enabled"></param>
 		public void SetStartNewMeetingButtonEnabled(bool enabled)
 		{
-			m_StartNewMeetingButton.Enable(enabled);
+			m_InstantMeetingButton.Enable(enabled);
 		}
 
 		/// <summary>
@@ -163,7 +163,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			base.SubscribeControls();
 
 			m_StartMyMeetingButton.OnPressed += StartMyMeetingButtonOnPressed;
-			m_StartNewMeetingButton.OnPressed += StartNewMeetingButtonOnPressed;
+			m_InstantMeetingButton.OnPressed += InstantMeetingButtonOnPressed;
 			m_SettingsButton.OnPressed += SettingsButtonOnPressed;
 		}
 
@@ -175,7 +175,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			base.UnsubscribeControls();
 
 			m_StartMyMeetingButton.OnPressed -= StartMyMeetingButtonOnPressed;
-			m_StartNewMeetingButton.OnPressed -= StartNewMeetingButtonOnPressed;
+			m_InstantMeetingButton.OnPressed -= InstantMeetingButtonOnPressed;
 			m_SettingsButton.OnPressed -= SettingsButtonOnPressed;
 		}
 
@@ -200,13 +200,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		}
 
 		/// <summary>
-		/// Called when the user presses the start meeting button.
+		/// Called when the user presses the instant meeting button.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void StartNewMeetingButtonOnPressed(object sender, EventArgs eventArgs)
+		private void InstantMeetingButtonOnPressed(object sender, EventArgs eventArgs)
 		{
-			OnStartNewMeetingButtonPressed.Raise(this);
+			OnInstantMeetingButtonPressed.Raise(this);
 		}
 
 		#endregion

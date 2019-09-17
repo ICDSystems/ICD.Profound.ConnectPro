@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+ - Prevent users from pressing Start My Meeting button when no booking is selected
+
 ## [10.0.0] - 2019-09-16
 ### Added
  - Added settings page for changing clock time and 12/24 hour mode
