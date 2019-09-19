@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.UI.Attributes;
-using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
@@ -12,29 +14,52 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 	[PresenterBinding(typeof(IGenericAlertPresenter))]
 	public sealed class GenericAlertPresenter : AbstractUiPresenter<IGenericAlertView>, IGenericAlertPresenter
 	{
-		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly SafeTimer m_CloseTimer;
+		private readonly List<GenericAlertPresenterButton> m_Buttons;
+		private readonly SafeCriticalSection m_RefreshSection;
 
-		private string Message { get; set; }
+		private string m_Message;
+		private bool m_Timed;
 
-		private bool Timed { get; set; }
-
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="nav"></param>
+		/// <param name="views"></param>
+		/// <param name="theme"></param>
 		public GenericAlertPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
+			m_Buttons = new List<GenericAlertPresenterButton>();
 			m_CloseTimer = SafeTimer.Stopped(() => ShowView(false));
 		}
 
+		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Refresh(IGenericAlertView view)
 		{
 			base.Refresh(view);
 
 			m_RefreshSection.Enter();
+
 			try
 			{
-				view.SetAlertText(Message);
-				view.SetDismissButtonEnabled(!Timed);
+				view.SetAlertText(m_Message);
+
+
+				view.SetButtons(m_Buttons.Select(b => b.Label));
+
+				for (ushort index = 0; index < m_Buttons.Count; index++)
+				{
+					GenericAlertPresenterButton button = m_Buttons[index];
+
+					view.SetButtonEnabled(index, button.Enabled);
+					view.SetButtonVisible(index, button.Visible);
+					view.SetButtonSelected(index, button.UseDismissColor);
+				}
 			}
 			finally
 			{
@@ -42,87 +67,106 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			}
 		}
 
-		public void Show(string message)
+		#region Methods
+
+		/// <summary>
+		/// Set the message of the presenter and show it.
+		/// </summary>
+		/// <param name="message">Message to display</param>
+		/// <param name="buttons"></param>
+		public void Show(string message, params GenericAlertPresenterButton[] buttons)
 		{
-			Timed = false;
-			Message = message;
-			Refresh();
-			ShowView(true);
-		}
+			if (buttons == null)
+				throw new ArgumentNullException("buttons");
 
-		public void Show(string message, long time)
-		{
-			Timed = true;
-			m_CloseTimer.Reset(time);
-			Message = message;
-			Refresh();
-			ShowView(true);
-		}
-
-		#region Room Callbacks
-
-		protected override void Subscribe(IConnectProRoom room)
-		{
-			base.Subscribe(room);
-
-			if (room == null)
-				return;
-
-			room.OnIsInMeetingChanged += RoomOnOnIsInMeetingChanged;
+			Show(message, 0, buttons);
 		}
 
 		/// <summary>
-		/// Unsubscribe from the room events.
+		/// Set the message of the presenter and show it for the given time.
 		/// </summary>
-		/// <param name="room"></param>
-		protected override void Unsubscribe(IConnectProRoom room)
+		/// <param name="message">Message to display</param>
+		/// <param name="timeout">Time in milliseconds to show the popup</param>
+		/// <param name="buttons"></param>
+		public void Show(string message, long timeout, params GenericAlertPresenterButton[] buttons)
 		{
-			base.Unsubscribe(room);
+			if (buttons == null)
+				throw new ArgumentNullException("buttons");
 
-			if (room == null)
-				return;
+			m_RefreshSection.Enter();
 
-			room.OnIsInMeetingChanged -= RoomOnOnIsInMeetingChanged;
-		}
+			try
+			{
+				m_Message = message;
 
-		private void RoomOnOnIsInMeetingChanged(object sender, BoolEventArgs e)
-		{
-			if (IsViewVisible && !e.Data)
-				ShowView(false);
+				m_Buttons.Clear();
+				m_Buttons.AddRange(buttons);
+
+				m_Timed = timeout > 0;
+				if (m_Timed)
+					m_CloseTimer.Reset(timeout);
+				else
+					m_CloseTimer.Stop();
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+			
+			Refresh();
+			ShowView(true);
 		}
 
 		#endregion
 
 		#region View Callbacks
 
+		/// <summary>
+		/// Subscribe to the view events.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Subscribe(IGenericAlertView view)
 		{
 			base.Subscribe(view);
 
-			view.OnDismissButtonPressed += ViewOnDismissButtonPressed;
+			view.OnButtonPressed += ViewOnButtonPressed;
 		}
 
+		/// <summary>
+		/// Unsubscribe from the view events.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Unsubscribe(IGenericAlertView view)
 		{
 			base.Unsubscribe(view);
 
-			view.OnDismissButtonPressed -= ViewOnDismissButtonPressed;
+			view.OnButtonPressed -= ViewOnButtonPressed;
 		}
 
-		private void ViewOnDismissButtonPressed(object sender, EventArgs e)
+		/// <summary>
+		/// Called when the user presses a button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ViewOnButtonPressed(object sender, UShortEventArgs eventArgs)
 		{
 			ShowView(false);
-		}
 
-		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
-		{
-			base.ViewOnVisibilityChanged(sender, args);
+			GenericAlertPresenterButton button;
 
-			if (args.Data)
-				return;
+			m_RefreshSection.Enter();
 
-			m_CloseTimer.Stop();
-			Timed = false;
+			try
+			{
+				if (!m_Buttons.TryElementAt(eventArgs.Data, out button))
+					return;
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+
+			button.PressCallback(this);
 		}
 
 		#endregion

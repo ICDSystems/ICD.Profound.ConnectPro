@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.ConferenceManagers;
@@ -99,6 +100,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				SafeTimer.Stopped(() => Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView(false));
 		}
 
+		/// <summary>
+		/// Release resources.
+		/// </summary>
 		public override void Dispose()
 		{
 			base.Dispose();
@@ -106,6 +110,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			Unsubscribe(m_CameraControlPresenter);
 			Unsubscribe(m_CameraActivePresenter);
 		}
+
+		#region Methods
 
 		/// <summary>
 		/// Closes the popup.
@@ -137,6 +143,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		{
 			return control is IWebConferenceDeviceControl;
 		}
+
+		#endregion
 
 		#region Private Methods
 
@@ -184,6 +192,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		#region Conference Control Callbacks
 
+		/// <summary>
+		/// Subscribe to the conference control events.
+		/// </summary>
+		/// <param name="control"></param>
 		private void Subscribe(IWebConferenceDeviceControl control)
 		{
 			if (control == null)
@@ -211,6 +223,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			m_SubscribedPowerControl.OnPowerStateChanged += SubscribedPowerControlOnPowerStateChanged;
 		}
 
+		/// <summary>
+		/// Unsubscribe from the conference control events.
+		/// </summary>
+		/// <param name="control"></param>
 		private void Unsubscribe(IWebConferenceDeviceControl control)
 		{
 			if (control == null)
@@ -238,23 +254,44 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			m_SubscribedPowerControl = null;
 		}
 
+		/// <summary>
+		/// Called when a conference is added to the control.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void ControlOnConferenceAdded(object sender, ConferenceEventArgs args)
 		{
 			Subscribe(args.Data);
 			UpdateVisibility();
 		}
 
+		/// <summary>
+		/// Called when a conference is removed from the control.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void ControlOnConferenceRemoved(object sender, ConferenceEventArgs args)
 		{
 			Unsubscribe(args.Data);
 			UpdateVisibility();
 		}
 
+		/// <summary>
+		/// Called when Zoom reports a call error.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void ZoomControlOnCallError(object sender, GenericEventArgs<CallConnectError> args)
 		{
-			Navigation.LazyLoadPresenter<IGenericAlertPresenter>().Show(args.Data.ErrorMessage);
+			Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
+			          .Show(args.Data.ErrorMessage, GenericAlertPresenterButton.Dismiss);
 		}
 
+		/// <summary>
+		/// Called when Zoom requests a password for a meeting.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void ZoomControlOnPasswordRequired(object sender, MeetingNeedsPasswordEventArgs args)
 		{
 			if (!args.NeedsPassword)
@@ -298,16 +335,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		#region Conference Callbacks
 
+		/// <summary>
+		/// Subscribe to the conference events.
+		/// </summary>
+		/// <param name="conference"></param>
 		private void Subscribe(IConference conference)
 		{
 			conference.OnStatusChanged += ConferenceOnStatusChanged;
 		}
 
+		/// <summary>
+		/// Unsubscribe from the conference events.
+		/// </summary>
+		/// <param name="conference"></param>
 		private void Unsubscribe(IConference conference)
 		{
 			conference.OnStatusChanged -= ConferenceOnStatusChanged;
 		}
 
+		/// <summary>
+		/// Called when a conference status changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void ConferenceOnStatusChanged(object sender, ConferenceStatusEventArgs args)
 		{
 			IGenericLoadingSpinnerPresenter spinner = Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>();

@@ -66,7 +66,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		public void TimeOut(string text)
 		{
 			ShowView(false);
-			Navigation.LazyLoadPresenter<IGenericAlertPresenter>().Show(text);
+
+			Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
+			          .Show(text, GenericAlertPresenterButton.Dismiss);
 		}
 
 		/// <summary>

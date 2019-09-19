@@ -376,7 +376,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				RemoveContact(contact);
 			}
 
-			Navigation.LazyLoadPresenter<IGenericAlertPresenter>().Show("Invitation sent.", 1000);
+			Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
+			          .Show("Invitation sent.", 1000);
+
 			RefreshIfVisible();
 		}
 

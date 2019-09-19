@@ -111,17 +111,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		{
 			base.Subscribe(view);
 
-			view.OnParticipantPressed += ViewOnOnParticipantPressed;
+			view.OnParticipantPressed += ViewOnParticipantPressed;
 		}
 
 		protected override void Unsubscribe(IWtcReferencedParticipantView view)
 		{
 			base.Unsubscribe(view);
 
-			view.OnParticipantPressed -= ViewOnOnParticipantPressed;
+			view.OnParticipantPressed -= ViewOnParticipantPressed;
 		}
 
-		private void ViewOnOnParticipantPressed(object sender, EventArgs eventArgs)
+		private void ViewOnParticipantPressed(object sender, EventArgs eventArgs)
 		{
 			OnPressed.Raise(this);
 		}
