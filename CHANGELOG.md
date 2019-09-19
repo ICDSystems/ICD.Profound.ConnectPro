@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+ - Showing a confirmation dialog when a remote Zoom participant requests microphone mute
+
 ### Changed
  - Prevent users from pressing Start My Meeting button when no booking is selected
  - Privacy mute is turned off between calls

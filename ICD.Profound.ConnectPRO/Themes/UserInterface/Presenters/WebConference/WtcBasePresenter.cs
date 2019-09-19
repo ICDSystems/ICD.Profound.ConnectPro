@@ -188,6 +188,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				                                                  : value.Parent.Controls.GetControl<IVideoConferenceRouteControl>());
 		}
 
+		private void SubmitZoomPassword(string meetingNumber, string password)
+		{
+			ZoomRoomConferenceControl zoomControl = ActiveConferenceControl as ZoomRoomConferenceControl;
+			if (zoomControl == null)
+				return;
+
+			ZoomDialContext context = new ZoomDialContext
+			{
+				CallType = eCallType.Video,
+				DialString = meetingNumber,
+				Password = password
+			};
+
+			zoomControl.Dial(context);
+		}
+
 		#endregion
 
 		#region Conference Control Callbacks
@@ -212,6 +228,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			{
 				zoomControl.OnCallError += ZoomControlOnCallError;
 				zoomControl.OnPasswordRequired += ZoomControlOnPasswordRequired;
+				zoomControl.OnMicrophoneMuteRequested += ZoomControlOnMicrophoneMuteRequested;
 			}
 
 			UpdateVisibility();
@@ -243,6 +260,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			{
 				zoomControl.OnCallError -= ZoomControlOnCallError;
 				zoomControl.OnPasswordRequired -= ZoomControlOnPasswordRequired;
+				zoomControl.OnMicrophoneMuteRequested -= ZoomControlOnMicrophoneMuteRequested;
 			}
 
 			UpdateVisibility();
@@ -305,20 +323,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			          .ShowView(prompt, null, p => SubmitZoomPassword(args.MeetingNumber, p), null, null);
 		}
 
-		private void SubmitZoomPassword(string meetingNumber, string password)
+		/// <summary>
+		/// Called when the far end requests a microphone mute state.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ZoomControlOnMicrophoneMuteRequested(object sender, BoolEventArgs eventArgs)
 		{
-			ZoomRoomConferenceControl zoomControl = ActiveConferenceControl as ZoomRoomConferenceControl;
-			if (zoomControl == null)
+			if (Room == null)
 				return;
 
-			ZoomDialContext context = new ZoomDialContext
-			{
-				CallType = eCallType.Video,
-				DialString = meetingNumber,
-				Password = password
-			};
+			string message = string.Format("The far end is requesting that you {0} your microphone",
+			                               eventArgs.Data ? "mute" : "unmute");
 
-			zoomControl.Dial(context);
+			Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
+			          .Show(message,
+			                new GenericAlertPresenterButton
+			                {
+				                Label = eventArgs.Data ? "Mute" : "Unmute",
+				                Enabled = true,
+				                Visible = true,
+				                PressCallback = p => Room.ConferenceManager.EnablePrivacyMute(eventArgs.Data),
+			                },
+			                GenericAlertPresenterButton.Dismiss);
 		}
 
 		/// <summary>
