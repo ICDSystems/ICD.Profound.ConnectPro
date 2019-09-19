@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
  - Prevent users from pressing Start My Meeting button when no booking is selected
  - Privacy mute is turned off between calls
+ - Using short date format for Start Meeting splash page
 
 ## [10.0.0] - 2019-09-16
 ### Added

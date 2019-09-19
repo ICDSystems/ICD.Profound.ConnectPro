@@ -124,8 +124,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
-				// 14 May 2019 1:32p
-				string dateTime = string.Format("{0} {1}", Theme.DateFormatting.LongDate, Theme.DateFormatting.ShortTime);
+				// 5/14/2019 1:32p
+				string dateTime = string.Format("{0} {1}", Theme.DateFormatting.ShortDate, Theme.DateFormatting.ShortTime);
 
 				view.SetSplashTimeLabel(dateTime);
 			}

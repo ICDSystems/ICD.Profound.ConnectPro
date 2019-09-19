@@ -54,7 +54,13 @@ namespace ICD.Profound.ConnectPRO.Themes
 		public string ShortTime { get { return GetShortTime(IcdEnvironment.GetLocalTime()); } }
 
 		/// <summary>
-		/// Gets the long data representation.
+		/// Gets the short date representation.
+		/// E.g. for en-US: 5/14/2019
+		/// </summary>
+		public string ShortDate { get { return GetShortDate(IcdEnvironment.GetLocalTime()); } }
+
+		/// <summary>
+		/// Gets the long date representation.
 		/// E.g. for en-US: Tuesday, May 14, 2019
 		/// </summary>
 		public string LongDate { get { return GetLongDate(IcdEnvironment.GetLocalTime()); } }
@@ -87,7 +93,16 @@ namespace ICD.Profound.ConnectPRO.Themes
 		}
 
 		/// <summary>
-		/// Gets the long data representation.
+		/// Gets the short date representation.
+		/// E.g. for en-US: 5/14/2019
+		/// </summary>
+		public string GetShortDate(DateTime dateTime)
+		{
+			return dateTime.ToString(ThemeCulture.DateTimeFormat.ShortDatePattern, ThemeCulture);
+		}
+
+		/// <summary>
+		/// Gets the long date representation.
 		/// E.g. for en-US: Tuesday, May 14, 2019
 		/// </summary>
 		public string GetLongDate(DateTime dateTime)
