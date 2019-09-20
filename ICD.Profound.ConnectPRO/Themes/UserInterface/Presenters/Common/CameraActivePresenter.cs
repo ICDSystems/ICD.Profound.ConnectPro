@@ -142,6 +142,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			{
 				bool combine = Room != null && Room.IsCombineRoom();
 
+				view.SetTabSelected(0, true);
+				view.SetTabSelected(1, false);
+
 				// Cameras
 				IEnumerable<string> cameraLabels = ZoomMode ? m_ZoomCameras.Select(z => z.Name) : m_Cameras.Select(c => c.GetName(combine));
 				view.SetCameraLabels(cameraLabels);
