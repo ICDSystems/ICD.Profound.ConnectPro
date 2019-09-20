@@ -180,7 +180,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private IEnumerable<IContact> GetSelectedContacts()
 		{
-			return m_ContactSection.Execute(() => m_SelectedContacts.ToList());
+			return m_ContactSection.Execute(() => m_SelectedContacts.ToArray());
 		}
 
 		private void AddContact(IContact contact)
@@ -197,6 +197,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			{
 				m_ContactSection.Leave();
 			}
+
+			RefreshIfVisible();
 		}
 
 		private void RemoveContact(IContact contact)
@@ -212,6 +214,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			{
 				m_ContactSection.Leave();
 			}
+
+			RefreshIfVisible();
 		}
 		
 		private void ConfirmFilter(string filter)
@@ -254,8 +258,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				return;
 
 			AddContact(presenter.Contact);
-
-			RefreshIfVisible();
 		}
 
 		#endregion
@@ -279,8 +281,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				return;
 
 			RemoveContact(presenter.Contact);
-
-			RefreshIfVisible();
 		}
 
 		#endregion

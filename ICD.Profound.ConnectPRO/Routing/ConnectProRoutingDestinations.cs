@@ -62,7 +62,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 					m_VideoDestinations.AddRange(videoDestinations);
 				}
 
-				return m_VideoDestinations.ToArray(m_VideoDestinations.Count);
+				return m_VideoDestinations.ToArray();
 			}
 			finally
 			{
@@ -86,7 +86,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 					m_AudioDestinations.AddRange(audioDestinations);
 				}
 
-				return m_AudioDestinations.ToArray(m_AudioDestinations.Count);
+				return m_AudioDestinations.ToArray();
 			}
 			finally
 			{
