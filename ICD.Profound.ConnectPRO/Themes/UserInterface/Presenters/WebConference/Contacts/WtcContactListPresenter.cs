@@ -69,24 +69,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			base.Refresh(view);
 
 			m_RefreshSection.Enter();
+
 			try
 			{
-				view.SetContactListLabelText(string.IsNullOrEmpty(m_Filter) ? "Contact List" : string.Format("Contact List - Filter: \"{0}\"", m_Filter));
-				var contacts = GetContacts().ToList();
+				string label =
+					string.IsNullOrEmpty(m_Filter)
+						? "Contact List"
+						: string.Format("Contact List - Filter: \"{0}\"", m_Filter);
+
+				view.SetContactListLabelText(label);
 				view.SetSearchButtonEnabled(true);
 
-				var selectedContacts = GetSelectedContacts().ToList();
-				view.SetInviteParticipantButtonEnabled(selectedContacts.Any());
-				foreach (var presenter in m_ContactFactory.BuildChildren(contacts))
-				{
-					presenter.ShowView(true);
-					presenter.Refresh();
-				}
+				IContact[] selectedContacts = GetSelectedContacts().OrderBy(c => c.Name).ToArray();
+				IContact[] contacts = GetContacts().Except(selectedContacts).OrderBy(c => c.Name).ToArray();
 
-				foreach (var presenter in m_SelectedContactFactory.BuildChildren(selectedContacts))
+				view.SetInviteParticipantButtonEnabled(selectedContacts.Length > 0);
+
+				foreach (IWtcReferencedContactPresenter presenter in m_ContactFactory.BuildChildren(contacts))
+					presenter.ShowView(true);
+
+				foreach (IWtcReferencedSelectedContactPresenter presenter in
+					m_SelectedContactFactory.BuildChildren(selectedContacts))
 				{
 					presenter.ShowView(true);
-					presenter.Refresh();
 				}
 			}
 			finally
