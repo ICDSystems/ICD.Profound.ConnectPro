@@ -83,6 +83,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				IContact[] selectedContacts = GetSelectedContacts().OrderBy(c => c.Name).ToArray();
 				IContact[] contacts = GetContacts().Except(selectedContacts).OrderBy(c => c.Name).ToArray();
 
+				view.ShowNoContactsSelectedLabel(selectedContacts.Length == 0);
 				view.SetInviteParticipantButtonEnabled(selectedContacts.Length > 0);
 
 				foreach (IWtcReferencedContactPresenter presenter in m_ContactFactory.BuildChildren(contacts))

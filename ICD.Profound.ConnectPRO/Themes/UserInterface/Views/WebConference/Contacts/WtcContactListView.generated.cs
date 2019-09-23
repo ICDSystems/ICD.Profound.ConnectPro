@@ -17,6 +17,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 		private VtProButton m_SearchButton;
 		private VtProButton m_InviteParticipantButton;
 		private VtProSimpleLabel m_ContactListLabel;
+		private VtProSimpleLabel m_NoContactsSelectedLabel;
 		
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
@@ -57,6 +58,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 			{
 				IndirectTextJoin = 702
 			};
+
+			m_NoContactsSelectedLabel = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				DigitalVisibilityJoin = 756
+			};
 		}
 
 		protected override IEnumerable<IVtProControl> GetChildren()
@@ -67,6 +73,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 			yield return m_InviteParticipantButton;
 			yield return m_SearchButton;
 			yield return m_ContactListLabel;
+			yield return m_NoContactsSelectedLabel;
 		}
 	}
 }

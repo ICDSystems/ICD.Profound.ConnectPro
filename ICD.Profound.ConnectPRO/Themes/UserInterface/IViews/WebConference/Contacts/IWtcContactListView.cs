@@ -35,6 +35,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Cont
 		void SetContactListLabelText(string text);
 
 		/// <summary>
+		/// Sets the visibility of the no contacts selected label.
+		/// </summary>
+		/// <param name="show"></param>
+		void ShowNoContactsSelectedLabel(bool show);
+
+		/// <summary>
 		/// Returns child views for list items.
 		/// </summary>
 		/// <param name="factory"></param>

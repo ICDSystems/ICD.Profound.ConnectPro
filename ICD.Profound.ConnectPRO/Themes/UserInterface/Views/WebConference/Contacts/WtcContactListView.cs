@@ -56,6 +56,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 			m_ContactListLabel.SetLabelText(text);
 		}
 
+		public void ShowNoContactsSelectedLabel(bool show)
+		{
+			m_NoContactsSelectedLabel.Show(show);
+		}
+
 		#region Control Callbacks
 
 		protected override void SubscribeControls()
