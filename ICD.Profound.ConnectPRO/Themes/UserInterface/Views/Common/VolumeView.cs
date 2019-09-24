@@ -47,7 +47,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		/// <param name="volume"></param>
 		public void SetVolumePercentage(float volume)
 		{
-			m_Guage.SetValuePercentage(volume);
+			m_Gauge.SetValuePercentage(volume);
 		}
 
 		/// <summary>
@@ -56,7 +56,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		/// <param name="muted"></param>
 		public void SetMuted(bool muted)
 		{
-			m_Guage.Enable(!muted);
+			m_Gauge.Enable(!muted);
 			m_MuteButton.SetSelected(muted);
 		}
 
