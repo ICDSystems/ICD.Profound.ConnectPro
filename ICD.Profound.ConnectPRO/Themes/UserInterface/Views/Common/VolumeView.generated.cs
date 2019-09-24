@@ -2,7 +2,7 @@
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
-using ICD.Connect.UI.Controls.Guages;
+using ICD.Connect.UI.Controls.Gauges;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Connect.UI.Controls.TextControls;
 
