@@ -20,12 +20,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private IContact m_Contact;
+		private bool m_Selected;
+
+		#region Properties
+
 		public IContact Contact
 		{
 			get { return m_Contact; }
 			set
 			{
-				if (m_Contact == value)
+				if (value == m_Contact)
 					return;
 
 				Unsubscribe(m_Contact);
@@ -36,7 +40,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			}
 		}
 
-		public bool Selected { get; set; }
+		public bool Selected
+		{
+			get { return m_Selected; }
+			set
+			{
+				if (value == m_Selected)
+					return;
+
+				m_Selected = value;
+
+				RefreshIfVisible();
+			}
+		}
+
+		#endregion
 
 		public WtcReferencedContactPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
@@ -56,15 +74,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			base.Refresh(view);
 
 			m_RefreshSection.Enter();
+
 			try
 			{
 				view.SetContactName(Contact == null ? "Missing Contact Name" : Contact.Name);
 
 				var onlineContact = Contact as IContactWithOnlineState;
-				view.SetOnlineStateMode(onlineContact == null ? eOnlineState.Offline : onlineContact.OnlineState);
+				view.SetOnlineStateMode(onlineContact == null
+					                        ? eOnlineState.Offline
+					                        : onlineContact.OnlineState);
 
 				var zoomContact = Contact as ZoomContact;
-				view.SetAvatarImageVisibility(zoomContact != null && !string.IsNullOrEmpty(zoomContact.AvatarUrl));
+				view.SetAvatarImageVisibility(zoomContact != null &&
+				                              !string.IsNullOrEmpty(zoomContact.AvatarUrl));
 				view.SetAvatarImagePath(zoomContact == null ? null : zoomContact.AvatarUrl);
 				view.SetButtonSelected(Selected);
 			}
@@ -103,17 +125,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		{
 			base.Subscribe(view);
 
-			view.OnContactPressed += ViewOnOnContactPressed;
+			view.OnContactPressed += ViewOnContactPressed;
 		}
 
 		protected override void Unsubscribe(IWtcReferencedContactView view)
 		{
 			base.Unsubscribe(view);
 
-			view.OnContactPressed -= ViewOnOnContactPressed;
+			view.OnContactPressed -= ViewOnContactPressed;
 		}
 
-		private void ViewOnOnContactPressed(object sender, EventArgs eventArgs)
+		private void ViewOnContactPressed(object sender, EventArgs eventArgs)
 		{
 			OnPressed.Raise(this);
 		}

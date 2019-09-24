@@ -82,17 +82,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 		{
 			base.SubscribeControls();
 
-			m_ContactButton.OnPressed += ContactButtonOnOnPressed;
+			m_ContactButton.OnPressed += ContactButtonOnPressed;
 		}
 
 		protected override void UnsubscribeControls()
 		{
 			base.UnsubscribeControls();
 
-			m_ContactButton.OnPressed -= ContactButtonOnOnPressed;
+			m_ContactButton.OnPressed -= ContactButtonOnPressed;
 		}
 
-		private void ContactButtonOnOnPressed(object sender, EventArgs eventArgs)
+		private void ContactButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnContactPressed.Raise(this);
 		}

@@ -19,8 +19,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		protected override void BindMvpTriad(IContact model, IWtcReferencedContactPresenter presenter, IWtcReferencedContactView view)
 		{
-			presenter.SetView(view);
 			presenter.Contact = model;
+			presenter.SetView(view);
 		}
 	}
 }

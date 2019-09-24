@@ -7,7 +7,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.Contacts
 {
-	public class WtcReferencedSelectedContactPresenterFactory : AbstractUiListItemFactory<IContact, IWtcReferencedSelectedContactPresenter, IWtcReferencedSelectedContactView>
+	public sealed class WtcReferencedSelectedContactPresenterFactory : AbstractUiListItemFactory<IContact, IWtcReferencedSelectedContactPresenter, IWtcReferencedSelectedContactView>
 	{
 		public WtcReferencedSelectedContactPresenterFactory(IConnectProNavigationController navigationController, ListItemFactory<IWtcReferencedSelectedContactView> viewFactory, Action<IWtcReferencedSelectedContactPresenter> subscribe, Action<IWtcReferencedSelectedContactPresenter> unsubscribe) : base(navigationController, viewFactory, subscribe, unsubscribe)
 		{
