@@ -2,7 +2,7 @@
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
-using ICD.Connect.UI.Controls.Guages;
+using ICD.Connect.UI.Controls.Gauges;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Connect.UI.Controls.TextControls;
 
@@ -12,7 +12,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 	{
 		private VtProSubpage m_Subpage;
 		private VtProButton m_CloseButton;
-		private VtProGuage m_Guage;
+		private VtProGauge m_Gauge;
 		private VtProButton m_VolumeUpButton;
 		private VtProButton m_VolumeDownButton;
 		private VtProButton m_MuteButton;
@@ -35,7 +35,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 				DigitalPressJoin = 46
 			};
 
-			m_Guage = new VtProGuage(panel, m_Subpage)
+			m_Gauge = new VtProGauge(panel, m_Subpage)
 			{
 				AnalogFeedbackJoin = 500,
 				DigitalEnableJoin = 525
@@ -68,7 +68,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		{
 			yield return m_Subpage;
 			yield return m_CloseButton;
-			yield return m_Guage;
+			yield return m_Gauge;
 			yield return m_VolumeUpButton;
 			yield return m_VolumeDownButton;
 			yield return m_MuteButton;
