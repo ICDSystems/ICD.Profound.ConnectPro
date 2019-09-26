@@ -1,18 +1,33 @@
-﻿using ICD.Common.Utils.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using ICD.Common.Utils;
+using ICD.Common.Utils.Extensions;
+using ICD.Common.Utils.Timers;
+using ICD.Connect.Devices;
+using ICD.Connect.Devices.Controls;
+using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings.Originators;
 using ICD.Connect.UI.Utils;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Routing;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Displays
 {
-	public sealed class MenuDisplaysPresenterDisplay
+	public sealed class MenuDisplaysPresenterDisplay : IDisposable
 	{
 		private const int MAX_LINE_WIDTH = 20;
+		private const ushort GRAPH_MINUM_POSITON_FROM_END = 1310;
+		private const int DURATION_MINIMUM_VISIBLE = 2 * 1000; //Don't show graph <2 second times;
+
+		private readonly IConnectProRoom m_Room;
+		private readonly IDestinationBase m_Destination;
+		private readonly bool m_RoomCombine;
+		private readonly Dictionary<IPowerDeviceControl, DisplayPowerState> m_PowerStateCache;
 
 		private eDisplayColor m_Color;
 		private string m_SourceName;
@@ -21,13 +36,30 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		private bool m_AudioActive;
 		private ISource m_RoutedSource;
 		private ISource m_SelectedSource;
-		private IDestinationBase m_Destination;
-		private bool m_RoomCombine;
 		private bool m_HasControl;
 		private bool m_ShowSpeaker;
 		private bool m_CanRouteToRoomAudio;
 		private string m_Icon;
 		private bool m_CanRouteVideo;
+
+		private ePowerState m_PowerState;
+		private DateTime m_PowerStateChangedTime;
+		private int m_PowerStateExpectedDuration;
+		private IPowerDeviceControl m_ActivePowerControl;
+
+		/// <summary>
+		/// We use a stopwatch to count elapsed time because DateTime is only has second-precision on some Crestron platforms
+		/// </summary>
+		private IcdStopwatch m_Stopwatch;
+		private int m_StopwatchInitialTime;
+
+		#region Events
+
+		public event EventHandler OnRefreshNeeded;
+
+		#endregion
+
+
 
 		#region Properties
 
@@ -46,14 +78,59 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		public ISource RoutedSource { get { return m_RoutedSource; } }
 
+		public string PowerStateText { get; private set; }
+
+		public bool ShowStatusGauge { get { return (m_PowerState == ePowerState.Warming || m_PowerState == ePowerState.Cooling) && m_PowerStateExpectedDuration >= DURATION_MINIMUM_VISIBLE; } }
+
+		public ushort DurationGraphValue
+		{
+			get
+			{
+				int? timeRemaining = GetTimeRemaining();
+
+				if (!timeRemaining.HasValue)
+					return 0;
+				if (timeRemaining.Value <= 0)
+				{
+					if (m_PowerState == ePowerState.Warming)
+						return ushort.MaxValue - GRAPH_MINUM_POSITON_FROM_END;
+
+					return GRAPH_MINUM_POSITON_FROM_END;
+				}
+
+				IcdConsole.PrintLine(eConsoleColor.Magenta, "DurationGraphValue Calc: TimeRemaining {0}", timeRemaining.Value);
+
+				float graphPosition = (float)timeRemaining.Value / m_PowerStateExpectedDuration;
+
+				//If warming, flip to incresing
+				if (m_PowerState == ePowerState.Warming)
+					graphPosition = 1 - graphPosition;
+
+
+				// Max value is Expired value
+				return MathUtils.Clamp((ushort)(graphPosition * ushort.MaxValue), GRAPH_MINUM_POSITON_FROM_END, (ushort)(ushort.MaxValue - GRAPH_MINUM_POSITON_FROM_END));
+
+			}
+		}
+
+
 		#endregion
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public MenuDisplaysPresenterDisplay()
+		public MenuDisplaysPresenterDisplay(IConnectProRoom room, IDestinationBase destination, bool combine)
 		{
+			m_Room = room;
+			m_Destination = destination;
 			m_Color = eDisplayColor.Grey;
+			m_RoomCombine = combine;
+			m_PowerStateCache = new Dictionary<IPowerDeviceControl, DisplayPowerState>();
+			m_Stopwatch = new IcdStopwatch();
+
+			Subscribe(m_Destination);
+
+			UpdateLabels();
 		}
 
 		#region Methods
@@ -118,30 +195,51 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			return true;
 		}
 
-		public bool SetDestination(IDestinationBase destination)
+		/// <summary>
+		/// Gets expected time remaining in milliseconds
+		/// If time is not avaliable, returns null
+		/// If time is past due, returns 0
+		/// </summary>
+		/// <returns></returns>
+		public int? GetTimeRemaining()
 		{
-			if (destination == m_Destination)
-				return false;
 
-			m_Destination = destination;
+			//todo: Remove Debug
+			IcdConsole.PrintLine("GetTimeRemaining calc: ExpectedDuration:{0}", m_PowerStateExpectedDuration);
 
-			// Update the labels
-			UpdateLabels();
+			if (m_PowerStateExpectedDuration == 0)
+				return null;
 
-			return true;
+			int elapsedTime = (int)m_Stopwatch.ElapsedMilliseconds;
+
+			//todo: Remove Debug
+			IcdConsole.PrintLine("GetTimeRemaining calc: Initial={0}, Elapsed={1}", m_StopwatchInitialTime, elapsedTime);
+
+			int elapsedMiliseconds = m_StopwatchInitialTime + elapsedTime;
+
+			return m_PowerStateExpectedDuration - elapsedMiliseconds;
 		}
 
-		public bool SetRoomCombine(bool combine)
+		private int? GetTimeRemaining(DateTime startTime, int expectedDuration)
 		{
-			if (combine == m_RoomCombine)
-				return false;
+			if (expectedDuration == 0)
+				return null;
+			int runningTime = GetMillisecondsSince(startTime);
 
-			m_RoomCombine = true;
+			//todo: Remove Debug
+			IcdConsole.PrintLine(eConsoleColor.Magenta, "GetTimeRemaining DT calc: runningTime TotalMs {0}", runningTime);
 
-			// Update the labels
-			UpdateLabels();
+			if (runningTime >= expectedDuration)
+				return 0;
 
-			return true;
+			int remainingTime = expectedDuration - runningTime;
+
+			return remainingTime;
+		}
+
+		private int GetMillisecondsSince(DateTime time)
+		{
+			return (int)DateTime.UtcNow.Subtract(time).TotalMilliseconds;
 		}
 
 		#endregion
@@ -227,6 +325,228 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			                m_RoutedSource.ConnectionType.HasFlag(eConnectionType.Audio);
 		}
 
+		private void UpdatePowerStateLabel()
+		{
+			switch (m_PowerState)
+			{
+				case ePowerState.Warming:
+					PowerStateText = "Warming";
+					break;
+				case ePowerState.Cooling:
+					PowerStateText = "Cooling";
+					break;
+				default:
+					PowerStateText = string.Empty;
+					break;
+			}
+		}
+
+		/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+		public void Dispose()
+		{
+			Unsubscribe(m_Destination);
+		}
+
 		#endregion
+
+		#region Destination Callbacks
+
+		private void Subscribe(IDestinationBase destinationBase)
+		{
+			if (destinationBase == null)
+				return;
+
+			foreach (IDestination destination in destinationBase.GetDestinations())
+			{
+				IDeviceBase device = m_Room.Core.Originators.GetChild<IDeviceBase>(destination.Device);
+				IPowerDeviceControl powerControl = device.Controls.GetControl<IPowerDeviceControl>();
+
+				Subscribe(powerControl);
+			}
+		}
+
+		private void Unsubscribe(IDestinationBase destinationBase)
+		{
+			if (destinationBase == null)
+				return;
+
+			m_PowerStateCache.Keys.ForEach(Unsubscribe);
+			m_PowerStateCache.Clear();
+		}
+
+		#endregion
+
+		#region PowerDeviceControl callbacks
+
+		private void Subscribe(IPowerDeviceControl powerControl)
+		{
+			if (powerControl == null)
+				return;
+
+			m_PowerStateCache[powerControl] = new DisplayPowerState(powerControl.PowerState);
+
+			powerControl.OnPowerStateChanged += PowerControlOnPowerStateChanged;
+		}
+
+		private void Unsubscribe(IPowerDeviceControl powerControl)
+		{
+			if (powerControl == null)
+				return;
+
+			powerControl.OnPowerStateChanged -= PowerControlOnPowerStateChanged;
+		}
+
+		private void PowerControlOnPowerStateChanged(object sender, PowerDeviceControlPowerStateApiEventArgs args)
+		{
+			IPowerDeviceControl powerControl = sender as IPowerDeviceControl;
+
+			if (powerControl == null)
+				return;
+
+			//Update the dictionary
+			m_PowerStateCache[powerControl] = new DisplayPowerState(args.Data);
+
+			// Is the control that we're currently using as the active one
+			if (m_ActivePowerControl == powerControl)
+			{
+				// Check if the new state is same or higher priority, if so, update for new state
+				// If not, recaculate power feedback from all the controls
+				if(CompareState(args.Data.PowerState, m_PowerState) < 1)
+					UpdatePowerState(powerControl);
+				else
+					RecaculatePowerFeedback();
+			}
+			else
+			{
+				int powerStateComparison = CompareState(args.Data.PowerState,m_PowerState);
+
+				// If the priority is higher, or the priority is the same but the expected duration is longer, use this power control instead
+				if (powerStateComparison == -1)
+					UpdatePowerState(powerControl);
+				else if (powerStateComparison == 0 && args.Data.ExpectedDuration > GetTimeRemaining())
+					UpdatePowerState(powerControl);
+
+			}
+		}
+
+		/// <summary>
+		/// Update all the power state variables with the info from the given control
+		/// </summary>
+		/// <param name="control"></param>
+		private void UpdatePowerState(IPowerDeviceControl control)
+		{
+			DisplayPowerState state;
+
+			if (!m_PowerStateCache.TryGetValue(control, out state))
+				return;
+
+			m_ActivePowerControl = control;
+			m_PowerStateChangedTime = state.EffectiveTime;
+			m_PowerStateExpectedDuration = state.ExpectedDuration;
+			m_PowerState = state.PowerState;
+
+			//Get current elapsed time and start stopwatch
+			int? remainingTime = GetTimeRemaining(m_PowerStateChangedTime, m_PowerStateExpectedDuration);
+			if (remainingTime.HasValue && remainingTime.Value > 0)
+			{
+				m_StopwatchInitialTime = GetMillisecondsSince(m_PowerStateChangedTime);
+				//todo: remove debug
+				IcdConsole.PrintLine(eConsoleColor.Magenta, "Restart Stopwatch Control: {0}", control);
+				m_Stopwatch.Restart();
+			}
+			else
+			{
+				m_StopwatchInitialTime = 0;
+				//todo: remove debug
+				IcdConsole.PrintLine(eConsoleColor.Magenta, "Stop Stopwatch Control: {0}", control);
+				m_Stopwatch.Stop();
+			}
+
+
+			UpdatePowerStateLabel();
+
+			OnRefreshNeeded.Raise(this);
+		}
+
+		private void RecaculatePowerFeedback()
+		{
+			ePowerState currentState = ePowerState.Unknown;
+			int currentRemaining = 0;
+			IPowerDeviceControl control = null;
+
+			foreach (var kvp in m_PowerStateCache)
+			{
+				int stateCompare = CompareState(kvp.Value.PowerState, currentState);
+				int? itemTimeRemaining = GetTimeRemaining(kvp.Value.EffectiveTime, kvp.Value.ExpectedDuration);
+				if (stateCompare == -1 || (stateCompare == 0 && (itemTimeRemaining.GetValueOrDefault() > currentRemaining)))
+				{
+					control = kvp.Key;
+					currentRemaining = itemTimeRemaining.GetValueOrDefault();
+					currentState = kvp.Value.PowerState;
+				}
+			}
+
+			UpdatePowerState(control);
+		}
+
+		public static int CompareState(ePowerState x, ePowerState y)
+		{
+			if (x == y)
+				return 0;
+
+			if (x == ePowerState.Warming)
+				return -1;
+			if (y == ePowerState.Warming)
+				return 1;
+
+			if (x == ePowerState.PowerOn)
+				return -1;
+			if (y == ePowerState.PowerOn)
+				return 1;
+
+			if (x == ePowerState.Cooling)
+				return -1;
+			if (y == ePowerState.Cooling)
+				return 1;
+
+			if (x == ePowerState.PowerOff)
+				return -1;
+			if (y == ePowerState.PowerOff)
+				return 1;
+
+			throw new ArgumentException();
+		}
+
+		#endregion
+
+		private sealed class DisplayPowerState
+		{
+
+
+			private readonly DateTime m_EffectiveTime;
+
+			private readonly PowerDeviceControlPowerStateEventData m_StateData;
+
+			public DateTime EffectiveTime { get { return m_EffectiveTime; } }
+
+			public PowerDeviceControlPowerStateEventData StateData { get { return m_StateData; } }
+
+			public ePowerState PowerState { get { return m_StateData.PowerState; } }
+
+			public int ExpectedDuration { get { return m_StateData.ExpectedDuration; } }
+
+			public DisplayPowerState(PowerDeviceControlPowerStateEventData stateData)
+			{
+				m_StateData = stateData;
+				m_EffectiveTime = DateTime.UtcNow;
+			}
+
+			public DisplayPowerState(ePowerState powerState) : this(new PowerDeviceControlPowerStateEventData(powerState))
+			{
+			}
+
+		}
 	}
+
+	
 }
