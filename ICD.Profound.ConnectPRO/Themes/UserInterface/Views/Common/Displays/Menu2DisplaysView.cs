@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
@@ -122,6 +123,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 			m_Display1SourceLabel.SetLabelText(text);
 		}
 
+		/// <summary>
+		/// Warming/cooling bar graph - show/hide and set position
+		/// </summary>
+		/// <param name="visible"></param>
+		/// <param name="position"></param>
+		/// <param name="text"></param>
+		public void SetDisplay1StatusGauge(bool visible, ushort position, string text)
+		{
+			//todo: Remove Debug
+			IcdConsole.PrintLine(eConsoleColor.Magenta, "Display1 Setting visible:{0} position:{1} text:{2}", visible,position,text);
+
+			m_Display1StatusGauge.Show(visible);
+			m_Display1StatusGauge.SetValue(position);
+			m_Display1StatusGauge.SetCenterLabel(text);
+		}
+
 		#endregion
 
 		#region Display 2
@@ -206,6 +223,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		public void SetDisplay2SourceText(string text)
 		{
 			m_Display2SourceLabel.SetLabelText(text);
+		}
+
+		/// <summary>
+		/// Warming/cooling bar graph - show/hide and set position
+		/// </summary>
+		/// <param name="visible"></param>
+		/// <param name="position"></param>
+		/// <param name="text"></param>
+		public void SetDisplay2StatusGauge(bool visible, ushort position, string text)
+		{
+			//todo: Remove Debug
+			IcdConsole.PrintLine(eConsoleColor.Magenta, "Display1 Setting visible:{0} position:{1} text:{2}", visible, position, text);
+
+			m_Display2StatusGauge.Show(visible);
+			m_Display2StatusGauge.SetValue(position);
+			m_Display2StatusGauge.SetCenterLabel(text);
 		}
 
 		#endregion

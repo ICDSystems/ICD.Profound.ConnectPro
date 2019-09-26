@@ -58,6 +58,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays
 		/// <param name="text"></param>
 		void SetDisplay1SourceText(string text);
 
+		/// <summary>
+		/// Warming/cooling bar graph - show/hide and set position and text
+		/// </summary>
+		/// <param name="visible"></param>
+		/// <param name="position"></param>
+		/// <param name="text"></param>
+		void SetDisplay1StatusGauge(bool visible, ushort position, string text);
+
 		#endregion
 
 		#region Display 2
@@ -113,6 +121,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays
 		/// </summary>
 		/// <param name="text"></param>
 		void SetDisplay2SourceText(string text);
+
+		/// <summary>
+		/// Warming/cooling bar graph - show/hide and set position
+		/// </summary>
+		/// <param name="visible"></param>
+		/// <param name="position"></param>
+		/// <param name="text"></param>
+		void SetDisplay2StatusGauge(bool visible, ushort position, string text);
 
 		#endregion
 	}

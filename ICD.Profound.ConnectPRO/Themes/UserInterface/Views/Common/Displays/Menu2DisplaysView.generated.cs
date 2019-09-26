@@ -2,6 +2,7 @@
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
+using ICD.Connect.UI.Controls.Gauges;
 using ICD.Connect.UI.Controls.Images;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Connect.UI.Controls.TextControls;
@@ -18,6 +19,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		private VtProSimpleLabel m_Display1SourceLabel;
 		private VtProSimpleLabel m_Display1Line1Label;
 		private VtProSimpleLabel m_Display1Line2Label;
+		private VtProCircularGauge m_Display1StatusGauge;
 
 		private VtProAdvancedButton m_Display2BackgroundButton;
 		private VtProButton m_Display2SpeakerButton;
@@ -25,6 +27,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		private VtProSimpleLabel m_Display2SourceLabel;
 		private VtProSimpleLabel m_Display2Line1Label;
 		private VtProSimpleLabel m_Display2Line2Label;
+		private VtProCircularGauge m_Display2StatusGauge;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -71,6 +74,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 				IndirectTextJoin = 302
 			};
 
+			m_Display1StatusGauge = new VtProCircularGauge(panel, m_Subpage)
+			{
+				AnalogFeedbackJoin =  320,
+				DigitalVisibilityJoin = 315,
+				CenterLabelSerialJoin = 320
+			};
+
 			m_Display2BackgroundButton = new VtProAdvancedButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 304,
@@ -101,6 +111,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 			m_Display2Line2Label = new VtProSimpleLabel(panel, m_Subpage)
 			{
 				IndirectTextJoin = 306
+			};
+
+			m_Display2StatusGauge = new VtProCircularGauge(panel, m_Subpage)
+			{
+				AnalogFeedbackJoin = 321,
+				DigitalVisibilityJoin = 317,
+				CenterLabelSerialJoin = 321
 			};
 		}
 
