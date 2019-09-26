@@ -34,7 +34,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
-			m_Displays = Enumerable.Range(0, 2).Select(i => new MenuDisplaysPresenterDisplay()).ToList();
+			m_DisplayGaugeRefreshTimer = SafeTimer.Stopped(RefreshDisplayStatusGauge);
 		}
 
 		protected override void Refresh(IMenu2DisplaysView view)
@@ -62,6 +62,46 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				view.SetDisplay2Icon(Display2.Icon);
 				view.ShowDisplay2SpeakerButton(Display2.ShowSpeaker);
 				view.SetDisplay2SpeakerButtonActive(Display2.AudioActive);
+				view.SetDisplay2StatusGauge(Display2.ShowStatusGauge, Display2.DurationGraphValue, Display2.PowerStateText);
+
+				RefreshDisplayStatusGauge(view);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+		}
+
+		private void RefreshDisplayStatusGauge()
+		{
+			IMenu2DisplaysView view = GetView();
+
+			if (view != null && IsViewVisible)
+				RefreshDisplayStatusGauge(view);
+		}
+
+		private void RefreshDisplayStatusGauge(IMenu2DisplaysView view)
+		{
+			m_RefreshSection.Enter();
+
+			try
+			{
+				bool doTimerRefresh = false;
+
+				// Display1
+				bool display1ShowGauge = Display1.ShowStatusGauge;
+				view.SetDisplay1StatusGauge(display1ShowGauge, Display1.DurationGraphValue, Display1.PowerStateText);
+				doTimerRefresh |= display1ShowGauge;
+
+				// Display2
+				bool display2ShowGauge = Display2.ShowStatusGauge;
+				view.SetDisplay2StatusGauge(display2ShowGauge, Display2.DurationGraphValue, Display2.PowerStateText);
+				doTimerRefresh |= display2ShowGauge;
+
+				if (doTimerRefresh)
+					m_DisplayGaugeRefreshTimer.Reset(DISPLAY_GAUGE_REFRESH_INTERVAL);
+				else
+					m_DisplayGaugeRefreshTimer.Stop();
 			}
 			finally
 			{
