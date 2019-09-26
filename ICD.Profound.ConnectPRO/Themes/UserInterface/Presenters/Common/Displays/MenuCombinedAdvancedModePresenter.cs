@@ -22,15 +22,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly ReferencedDisplayPresenterFactory m_PresenterFactory;
-		private readonly List<MenuDisplaysPresenterDisplay> m_Displays;
-
-		protected override List<MenuDisplaysPresenterDisplay> Displays { get { return m_Displays; } }
 
 		public MenuCombinedAdvancedModePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
 			m_PresenterFactory = new ReferencedDisplayPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
-			m_Displays = new List<MenuDisplaysPresenterDisplay>();
 		}
 
 		protected override void Refresh(IMenuCombinedAdvancedModeView view)
@@ -61,17 +57,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		private IEnumerable<IReferencedDisplayView> ItemFactory(ushort count)
 		{
 			return GetView().GetChildComponentViews(ViewFactory, count);
-		}
-
-		public override void SetRoom(IConnectProRoom room)
-		{
-			int displayCount = room == null ? 0 : room.Routing.Destinations.DisplayDestinationsCount;
-
-			// remake displays list
-			m_Displays.Clear();
-			m_Displays.AddRange(Enumerable.Range(0, displayCount).Select(i => new MenuDisplaysPresenterDisplay()));
-
-			base.SetRoom(room);
 		}
 
 		#region View Callbacks

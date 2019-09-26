@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.Extensions;
@@ -19,11 +20,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private ISource m_SelectedSource;
 
-		protected abstract List<MenuDisplaysPresenterDisplay> Displays { get; }
+
+		private readonly List<MenuDisplaysPresenterDisplay> m_Displays;
+
+		protected List<MenuDisplaysPresenterDisplay> Displays { get { return m_Displays; } }
 
 		protected AbstractDisplaysPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
+			m_Displays = new List<MenuDisplaysPresenterDisplay>();
 		}
 
 		/// <summary>
@@ -43,16 +48,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		public override void SetRoom(IConnectProRoom room)
 		{
 			bool combine = room != null && room.IsCombineRoom();
-			IDestinationBase[] destinations = room == null ? new IDestinationBase[0] : room.Routing.Destinations.GetVideoDestinations().ToArray();
-			
-			for (int i = 0; i < Displays.Count; i++)
-			{
-				MenuDisplaysPresenterDisplay display = Displays[i];
-				display.SetRoomCombine(combine);
-				IDestinationBase dest;
-				destinations.TryElementAt(i, out dest);
-				display.SetDestination(dest);
-			}
+
+			// remake displays list
+			m_Displays.ForEach(Unsubscribe);
+			m_Displays.ForEach(d => d.Dispose());
+			m_Displays.Clear();
+			if (room != null)
+				m_Displays.AddRange(room.Routing.Destinations.GetVideoDestinations()
+				                        .Select(d => new MenuDisplaysPresenterDisplay(room, d,combine)));
+
+			m_Displays.ForEach(Subscribe);
 
 			base.SetRoom(room);
 		}
@@ -134,5 +139,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			              .ThenBy(s => s.Id)
 			              .FirstOrDefault();
 		}
+
+		#region Display Callbacks
+
+		private void Subscribe(MenuDisplaysPresenterDisplay display)
+		{
+			display.OnRefreshNeeded += DisplayOnRefreshNeeded;
+		}
+
+		private void Unsubscribe(MenuDisplaysPresenterDisplay display)
+		{
+			display.OnRefreshNeeded -= DisplayOnRefreshNeeded;
+		}
+
+		private void DisplayOnRefreshNeeded(object sender, EventArgs e)
+		{
+			RefreshIfVisible();
+		}
+
+		#endregion
+
 	}
 }

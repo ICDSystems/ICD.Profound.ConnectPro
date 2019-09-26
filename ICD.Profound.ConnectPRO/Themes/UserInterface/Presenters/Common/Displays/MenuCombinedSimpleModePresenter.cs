@@ -25,17 +25,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		public event EventHandler OnAdvancedModePressed;
 
 		private readonly SafeCriticalSection m_RefreshSection;
-		private readonly List<MenuDisplaysPresenterDisplay> m_Displays;
 
-		protected override List<MenuDisplaysPresenterDisplay> Displays
-		{
-			get { return m_Displays.ToList(1); }
-		}
 
 		public MenuCombinedSimpleModePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
-			m_Displays = new List<MenuDisplaysPresenterDisplay>();
 		}
 
 		protected override void Refresh(IMenuCombinedSimpleModeView view)
@@ -55,20 +49,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				string line2;
 				string sourceName;
 
-				if (!m_Displays.Select(d => d.Color).Unanimous(out color))
+				if (!Displays.Select(d => d.Color).Unanimous(out color))
 					color = DEFAULT_COLOR;
 				string textColor = Colors.DisplayColorToTextColor(color);
 
-				if (!m_Displays.Select(d => d.Icon).Unanimous(out icon))
+				if (!Displays.Select(d => d.Icon).Unanimous(out icon))
 					icon = Icons.GetDisplayIcon(DEFAULT_ICON, eDisplayColor.White);
 
-				if (!m_Displays.Select(d => d.Line1).Unanimous(out line1))
+				if (!Displays.Select(d => d.Line1).Unanimous(out line1))
 					line1 = HtmlUtils.FormatColoredText(DEFAULT_LINE_1, textColor);
 
-				if (!m_Displays.Select(d => d.Line2).Unanimous(out line2))
+				if (!Displays.Select(d => d.Line2).Unanimous(out line2))
 					line2 = HtmlUtils.FormatColoredText(DEFAULT_LINE_2, textColor);
 				
-				if (!m_Displays.Select(d => d.SourceName).Unanimous(out sourceName))
+				if (!Displays.Select(d => d.SourceName).Unanimous(out sourceName))
 					sourceName = HtmlUtils.FormatColoredText(DEFAULT_SOURCE_NAME, textColor);
 
 				view.SetDisplayColor(color);
@@ -76,23 +70,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				view.SetDisplayLine1Text(line1);
 				view.SetDisplayLine2Text(line2);
 				view.SetDisplaySourceText(sourceName);
-				view.SetDisplaySpeakerButtonActive(m_Displays.Any(d => d.AudioActive));
+				view.SetDisplaySpeakerButtonActive(Displays.Any(d => d.AudioActive));
 			}
 			finally
 			{
 				m_RefreshSection.Leave();
 			}
-		}
-
-		public override void SetRoom(IConnectProRoom room)
-		{
-			int displayCount = room == null ? 0 : room.Routing.Destinations.DisplayDestinationsCount;
-
-			// remake displays list
-			m_Displays.Clear();
-			m_Displays.AddRange(Enumerable.Range(0, displayCount).Select(i => new MenuDisplaysPresenterDisplay()));
-
-			base.SetRoom(room);
 		}
 
 		#region View Callbacks
@@ -122,18 +105,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private void ViewOnDisplayButtonPressed(object sender, EventArgs args)
 		{
-			if (!m_Displays.Any())
+			if (!Displays.Any())
 				return;
 
-			DisplayButtonPressed(m_Displays[0]);
+			DisplayButtonPressed(Displays[0]);
 		}
 
 		private void ViewOnDisplaySpeakerButtonPressed(object sender, EventArgs args)
 		{
-			if (!m_Displays.Any())
+			if (!Displays.Any())
 				return;
 
-			DisplaySpeakerButtonPressed(m_Displays[0]);
+			DisplaySpeakerButtonPressed(Displays[0]);
 		}
 
 		#endregion

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Timers;
 using ICD.Connect.UI.Attributes;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -13,13 +15,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 	[PresenterBinding(typeof(IMenu2DisplaysPresenter))]
 	public sealed class Menu2DisplaysPresenter : AbstractDisplaysPresenter<IMenu2DisplaysView>, IMenu2DisplaysPresenter
 	{
+		private const long DISPLAY_GAUGE_REFRESH_INTERVAL = 250;
+
 		private readonly SafeCriticalSection m_RefreshSection;
-		private readonly List<MenuDisplaysPresenterDisplay> m_Displays;
-		
-		protected override List<MenuDisplaysPresenterDisplay> Displays { get { return m_Displays; } }
 
 		private MenuDisplaysPresenterDisplay Display1 { get { return Displays[0]; } }
 		private MenuDisplaysPresenterDisplay Display2 { get { return Displays[1]; } }
+
+		private readonly SafeTimer m_DisplayGaugeRefreshTimer;
 
 		/// <summary>
 		/// Constructor.
