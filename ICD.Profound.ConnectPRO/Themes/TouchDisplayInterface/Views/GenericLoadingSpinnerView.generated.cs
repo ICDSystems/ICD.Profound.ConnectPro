@@ -4,7 +4,7 @@ using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Connect.UI.Controls.TextControls;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
+namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views
 {
 	public partial class GenericLoadingSpinnerView
 	{

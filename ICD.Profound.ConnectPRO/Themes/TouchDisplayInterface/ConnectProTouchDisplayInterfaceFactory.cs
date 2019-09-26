@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Connect.Panels.Devices;
-using ICD.Connect.Panels.Server;
+using ICD.Connect.Panels.Server.TouchDisplay;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Profound.ConnectPRO.Rooms;
 
@@ -26,7 +26,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 				throw new ArgumentNullException("room");
 
 			return room.Originators
-				.GetInstancesRecursive<ITouchDisplayDevice>()
+				.GetInstancesRecursive<TouchDisplayDevice>()
 				.Select(o => CreateUserInterface(o));
 		}
 

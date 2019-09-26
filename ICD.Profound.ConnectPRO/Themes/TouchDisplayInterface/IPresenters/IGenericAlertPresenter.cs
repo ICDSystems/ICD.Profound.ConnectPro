@@ -1,8 +1,8 @@
-﻿using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
+﻿using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters
+namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters
 {
-	public interface IGenericAlertPresenter : IUiPresenter<IGenericAlertView>
+	public interface IGenericAlertPresenter : ITouchDisplayPresenter<IGenericAlertView>
 	{
 		/// <summary>
 		/// Set the message of the presenter and show it.
