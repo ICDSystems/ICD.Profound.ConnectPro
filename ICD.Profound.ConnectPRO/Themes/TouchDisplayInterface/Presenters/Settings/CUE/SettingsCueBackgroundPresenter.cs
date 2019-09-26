@@ -5,13 +5,13 @@ using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.SettingsTree.CUE;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.CUE;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.CUE.Modes;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.CUE;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Settings.CUE;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Settings.CUE.Modes;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Settings.CUE;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings.CUE
+namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settings.CUE
 {
 	[PresenterBinding(typeof(ISettingsCueBackgroundPresenter))]
 	public sealed class SettingsCueBackgroundPresenter : AbstractSettingsNodeBasePresenter<ISettingsCueBackgroundView, BackgroundSettingsLeaf>,
@@ -44,7 +44,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public SettingsCueBackgroundPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+		public SettingsCueBackgroundPresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

@@ -4,12 +4,12 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.SettingsTree.Administrative;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Administrative;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Administrative;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Settings.Administrative;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Settings.Administrative;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings.Administrative
+namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settings.Administrative
 {
 	[PresenterBinding(typeof(ISettingsClockPresenter))]
 	public sealed class SettingsClockPresenter : AbstractSettingsNodeBasePresenter<ISettingsClockView, ClockSettingsLeaf>, ISettingsClockPresenter
@@ -25,7 +25,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public SettingsClockPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+		public SettingsClockPresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

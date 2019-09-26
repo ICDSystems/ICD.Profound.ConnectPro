@@ -72,10 +72,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 							             ? null
 							             : m_SubscribedPartitionManager.Cells.GetCell(column, row);
 						IRoom room = cell == null ? null : cell.Room;
-
+						
 						string roomLabel = room == null ? null : room.Name;
 						if (room != null && Room != null && (room == Room || Room.ContainsRoom(room)))
-							roomLabel = HtmlUtils.FormatColoredText(roomLabel, Colors.COLOR_DARK_BLUE);
+							// TODO
+							roomLabel = roomLabel;//HtmlUtils.FormatColoredText(roomLabel, Colors.COLOR_DARK_BLUE);
 
 						view.SetCellVisible(column, row, room != null);
 						view.SetCellLabel(column, row, roomLabel);
