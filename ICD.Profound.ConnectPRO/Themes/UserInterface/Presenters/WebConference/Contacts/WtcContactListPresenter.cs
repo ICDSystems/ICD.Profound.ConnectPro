@@ -34,8 +34,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private readonly List<IContact> m_SelectedContacts;
 		private readonly SafeTimer m_DebounceTimer;
 
-		private string m_Filter = "";
-		private string m_ConfirmedFilter = ""; //used to store filter when user hits enter so cancelling can return to old filter
+		private string m_Filter;
+
+		/// <summary>
+		/// used to store filter when user hits enter so cancelling can return to old filter.
+		/// </summary>
+		private string m_ConfirmedFilter;
+
+		/// <summary>
+		/// Gets/sets the active contact filter.
+		/// </summary>
+		private string Filter
+		{
+			get { return m_Filter; }
+			set
+			{
+				if (value == m_Filter)
+					return;
+
+				m_Filter = value;
+
+				RebuildContacts();
+			}
+		}
 
 		/// <summary>
 		/// Constructor.
@@ -82,9 +103,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			try
 			{
 				string label =
-					string.IsNullOrEmpty(m_Filter)
+					string.IsNullOrEmpty(Filter)
 						? "Contact List"
-						: string.Format("Contact List - Filter: \"{0}\"", m_Filter);
+						: string.Format("Contact List - Filter: \"{0}\"", Filter);
 
 				view.SetContactListLabelText(label);
 				view.SetSearchButtonEnabled(true);
@@ -138,22 +159,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private void ConfirmFilter(string filter)
 		{
 			m_ConfirmedFilter = filter;
-			m_Filter = filter;
-
-			RebuildContacts();
+			Filter = filter;
 		}
 
 		private void PreviewFilter(string filter)
 		{
 			m_DebounceTimer.Reset(KEYBOARD_DEBOUNCE_TIME);
-			m_Filter = filter;
+			Filter = filter;
 		}
 
 		private void CancelFilter()
 		{
-			m_Filter = m_ConfirmedFilter;
-
-			RebuildContacts();
+			Filter = m_ConfirmedFilter;
 		}
 
 		#endregion
@@ -193,7 +210,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			if (current == null)
 				return Enumerable.Empty<IContact>();
 
-			if (string.IsNullOrEmpty(m_Filter))
+			if (string.IsNullOrEmpty(Filter))
 				return current.GetContacts()
 				              .OrderBy(c =>
 				              {
@@ -204,7 +221,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				              })
 				              .ThenBy(c => c.Name);
 
-			var nameScoringMethod = GetWeightedTokenSearchFunc(m_Filter);
+			var nameScoringMethod = GetWeightedTokenSearchFunc(Filter);
 			return current.GetContacts()
 			              .GroupBy(c => nameScoringMethod(c.Name)) // group so we can filter low scores
 			              .Where(g => g.Key > 0) // filter out non-matches
@@ -414,7 +431,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		{
 			base.ViewOnVisibilityChanged(sender, args);
 
-			m_Filter = null;
+			Filter = null;
 			m_ConfirmedFilter = null;
 			m_SelectedContacts.Clear();
 
