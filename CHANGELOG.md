@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
  - Fixed a bug where DTMF was not available in video calls
 
+### Added
+ - Show a generic alert box when the far end asks a ZoomRoom participant to unmute their video
+
 ## [10.1.1] - 2019-10-10
 ### Changed
  - Fixed a bug where volume control was not available in a combined space

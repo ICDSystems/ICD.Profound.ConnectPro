@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.ConferenceManagers;
@@ -229,6 +228,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				zoomControl.OnCallError += ZoomControlOnCallError;
 				zoomControl.OnPasswordRequired += ZoomControlOnPasswordRequired;
 				zoomControl.OnMicrophoneMuteRequested += ZoomControlOnMicrophoneMuteRequested;
+				zoomControl.OnVideoUnMuteRequested += ZoomControlOnVideoUnMuteRequested;
 			}
 
 			UpdateVisibility();
@@ -261,6 +261,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				zoomControl.OnCallError -= ZoomControlOnCallError;
 				zoomControl.OnPasswordRequired -= ZoomControlOnPasswordRequired;
 				zoomControl.OnMicrophoneMuteRequested -= ZoomControlOnMicrophoneMuteRequested;
+				zoomControl.OnVideoUnMuteRequested -= ZoomControlOnVideoUnMuteRequested;
 			}
 
 			UpdateVisibility();
@@ -348,6 +349,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			                GenericAlertPresenterButton.Dismiss);
 		}
 
+		private void ZoomControlOnVideoUnMuteRequested(object sender, BoolEventArgs args)
+		{
+			if (Room == null)
+				return;
+
+			var zoomControl = ActiveConferenceControl as ZoomRoomConferenceControl;
+
+			if (zoomControl == null)
+				return;
+
+			string message = "The far end is requesting that you Unmute your video";
+
+			Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
+			          .Show(message, new GenericAlertPresenterButton
+			                {
+				                Label = args.Data ? "Unmute" : "Mute",
+				                Enabled = true,
+				                Visible = true,
+				                PressCallback = p => zoomControl.SetCameraEnabled(true)
+			                },
+			                GenericAlertPresenterButton.Dismiss);
+
+		}
 		/// <summary>
 		/// Called when the codec awake state changes.
 		/// </summary>
