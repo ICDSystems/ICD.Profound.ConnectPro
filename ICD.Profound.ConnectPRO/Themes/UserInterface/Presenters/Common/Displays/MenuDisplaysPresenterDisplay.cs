@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
-using ICD.Common.Utils.Timers;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
@@ -46,12 +45,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		private DateTime m_PowerStateChangedTime;
 		private int m_PowerStateExpectedDuration;
 		private IPowerDeviceControl m_ActivePowerControl;
-
-		/// <summary>
-		/// We use a stopwatch to count elapsed time because DateTime is only has second-precision on some Crestron platforms
-		/// </summary>
-		private IcdStopwatch m_Stopwatch;
-		private int m_StopwatchInitialTime;
 
 		#region Events
 
@@ -126,7 +119,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			m_Color = eDisplayColor.Grey;
 			m_RoomCombine = combine;
 			m_PowerStateCache = new Dictionary<IPowerDeviceControl, DisplayPowerState>();
-			m_Stopwatch = new IcdStopwatch();
 
 			Subscribe(m_Destination);
 
@@ -203,21 +195,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		/// <returns></returns>
 		public int? GetTimeRemaining()
 		{
-
-			//todo: Remove Debug
-			IcdConsole.PrintLine("GetTimeRemaining calc: ExpectedDuration:{0}", m_PowerStateExpectedDuration);
-
-			if (m_PowerStateExpectedDuration == 0)
-				return null;
-
-			int elapsedTime = (int)m_Stopwatch.ElapsedMilliseconds;
-
-			//todo: Remove Debug
-			IcdConsole.PrintLine("GetTimeRemaining calc: Initial={0}, Elapsed={1}", m_StopwatchInitialTime, elapsedTime);
-
-			int elapsedMiliseconds = m_StopwatchInitialTime + elapsedTime;
-
-			return m_PowerStateExpectedDuration - elapsedMiliseconds;
+			return GetTimeRemaining(m_PowerStateChangedTime, m_PowerStateExpectedDuration);
 		}
 
 		private int? GetTimeRemaining(DateTime startTime, int expectedDuration)
@@ -445,24 +423,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			m_PowerStateExpectedDuration = state.ExpectedDuration;
 			m_PowerState = state.PowerState;
 
-			//Get current elapsed time and start stopwatch
-			int? remainingTime = GetTimeRemaining(m_PowerStateChangedTime, m_PowerStateExpectedDuration);
-			if (remainingTime.HasValue && remainingTime.Value > 0)
-			{
-				m_StopwatchInitialTime = GetMillisecondsSince(m_PowerStateChangedTime);
-				//todo: remove debug
-				IcdConsole.PrintLine(eConsoleColor.Magenta, "Restart Stopwatch Control: {0}", control);
-				m_Stopwatch.Restart();
-			}
-			else
-			{
-				m_StopwatchInitialTime = 0;
-				//todo: remove debug
-				IcdConsole.PrintLine(eConsoleColor.Magenta, "Stop Stopwatch Control: {0}", control);
-				m_Stopwatch.Stop();
-			}
-
-
 			UpdatePowerStateLabel();
 
 			OnRefreshNeeded.Raise(this);
@@ -528,8 +488,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			private readonly PowerDeviceControlPowerStateEventData m_StateData;
 
 			public DateTime EffectiveTime { get { return m_EffectiveTime; } }
-
-			public PowerDeviceControlPowerStateEventData StateData { get { return m_StateData; } }
 
 			public ePowerState PowerState { get { return m_StateData.PowerState; } }
 
