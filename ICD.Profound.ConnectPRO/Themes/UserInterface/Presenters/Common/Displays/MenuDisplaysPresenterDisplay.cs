@@ -217,7 +217,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private int GetMillisecondsSince(DateTime time)
 		{
-			return (int)DateTime.UtcNow.Subtract(time).TotalMilliseconds;
+			return (int)IcdEnvironment.GetUtcTime().Subtract(time).TotalMilliseconds;
 		}
 
 		#endregion
@@ -496,7 +496,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			public DisplayPowerState(PowerDeviceControlPowerStateEventData stateData)
 			{
 				m_StateData = stateData;
-				m_EffectiveTime = DateTime.UtcNow;
+				m_EffectiveTime = IcdEnvironment.GetUtcTime();
 			}
 
 			public DisplayPowerState(ePowerState powerState) : this(new PowerDeviceControlPowerStateEventData(powerState))
