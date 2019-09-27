@@ -319,6 +319,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 			m_DirectoryBrowser.SetControl(directoryControl);
 			m_DirectoryBrowser.PopulateCurrentFolder();
+
+			RebuildContacts();
 		}
 
 		protected override void Unsubscribe(IWebConferenceDeviceControl control)
