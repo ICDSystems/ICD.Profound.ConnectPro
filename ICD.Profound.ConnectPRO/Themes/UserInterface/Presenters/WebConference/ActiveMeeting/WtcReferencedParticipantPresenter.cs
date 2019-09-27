@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
@@ -20,6 +21,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private IWebParticipant m_Participant;
+
+		[CanBeNull]
 		public IWebParticipant Participant
 		{
 			get { return m_Participant; }
@@ -63,7 +66,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			try
 			{
 				string tags;
-				if (Participant.IsHost && Participant.IsSelf)
+
+				if (Participant == null)
+					tags = string.Empty;
+				else if (Participant.IsHost && Participant.IsSelf)
 					tags = " (Self, Host)";
 				else if (Participant.IsHost)
 					tags = " (Host)";
@@ -72,9 +78,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				else
 					tags = string.Empty;
 
-				view.SetParticipantName(Participant.Name + tags);
+				view.SetParticipantName(Participant == null ? string.Empty : Participant.Name + tags);
 				view.SetButtonSelected(Selected);
-				view.SetMuteIconVisibility(Participant.IsMuted);
+				view.SetMuteIconVisibility(Participant != null && Participant.IsMuted);
 
 				var zoomParticipant = Participant as ZoomParticipant;
 				view.SetAvatarImageVisibility(zoomParticipant != null && !string.IsNullOrEmpty(zoomParticipant.AvatarUrl));
