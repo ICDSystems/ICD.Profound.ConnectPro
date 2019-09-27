@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
@@ -87,9 +88,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 			child.OnSourcePressed -= ChildOnSourcePressed;
 		}
 		
-		private void ChildOnSourcePressed(object sender, System.EventArgs e)
+		private void ChildOnSourcePressed(object sender, EventArgs e)
 		{
-			// route the source
+			
 		}
 
 		#endregion

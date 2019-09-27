@@ -19,7 +19,10 @@ using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Routing;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Background;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Conference;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.DeviceDrawer;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Header;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Schedule;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views;
@@ -82,10 +85,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 			//m_DefaultNotification.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdMutePresenter>());
 
 			//// show "welcome" when no other main page is visible
-			//m_MainPageVisibility = new SingleVisibilityNode();
-			//m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdWelcomePresenter>());
-			//m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdSourcesPresenter>());
-			//m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdConferencePresenter>());
+			m_MainPageVisibility = new SingleVisibilityNode();
+			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISchedulePresenter>());
+			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IDeviceDrawerPresenter>());
+			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IStartMeetingPresenter>());
 
 			//// these presenters are initially visible
 			//m_NavigationController.NavigateTo<IOsdHelloPresenter>();
