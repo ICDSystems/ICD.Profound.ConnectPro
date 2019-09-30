@@ -21,9 +21,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 
 			m_DisplayList = new VtProSubpageReferenceList(7, panel as IPanelDevice, m_Subpage)
 			{
-				AnalogJoinIncrement = 1,
-				DigitalJoinIncrement = 3,
-				SerialJoinIncrement = 4,
+				AnalogJoinIncrement = 2,
+				DigitalJoinIncrement = 4,
+				SerialJoinIncrement = 5,
 				MaxSize = 100
 			};
 		}
