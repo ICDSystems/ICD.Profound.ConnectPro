@@ -91,8 +91,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 					return GRAPH_MINUM_POSITON_FROM_END;
 				}
 
-				IcdConsole.PrintLine(eConsoleColor.Magenta, "DurationGraphValue Calc: TimeRemaining {0}", timeRemaining.Value);
-
 				float graphPosition = (float)timeRemaining.Value / m_PowerStateExpectedDuration;
 
 				//If warming, flip to incresing
@@ -203,9 +201,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			if (expectedDuration == 0)
 				return null;
 			int runningTime = GetMillisecondsSince(startTime);
-
-			//todo: Remove Debug
-			IcdConsole.PrintLine(eConsoleColor.Magenta, "GetTimeRemaining DT calc: runningTime TotalMs {0}", runningTime);
 
 			if (runningTime >= expectedDuration)
 				return 0;
