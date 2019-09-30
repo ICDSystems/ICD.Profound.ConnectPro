@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
+using ICD.Common.Utils.Timers;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Utils;
-using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -26,10 +25,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private readonly SafeCriticalSection m_RefreshSection;
 
+		private readonly SafeTimer m_DisplayGaugeRefreshTimer;
+
 
 		public MenuCombinedSimpleModePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
+			m_DisplayGaugeRefreshTimer = SafeTimer.Stopped(RefreshDisplayStatusGauge);
 		}
 
 		protected override void Refresh(IMenuCombinedSimpleModeView view)
@@ -71,6 +73,41 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				view.SetDisplayLine2Text(line2);
 				view.SetDisplaySourceText(sourceName);
 				view.SetDisplaySpeakerButtonActive(Displays.Any(d => d.AudioActive));
+
+				RefreshDisplayStatusGauge(view);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+		}
+
+		private void RefreshDisplayStatusGauge()
+		{
+			IMenuCombinedSimpleModeView view = GetView();
+
+			if (view != null && IsViewVisible)
+				RefreshDisplayStatusGauge(view);
+		}
+
+		private void RefreshDisplayStatusGauge(IMenuCombinedSimpleModeView view)
+		{
+			MenuDisplaysPresenterDisplay display = Displays[0];
+
+			if (display == null)
+				return;
+
+			m_RefreshSection.Enter();
+
+			try
+			{
+				bool displayShowGauge = display.ShowStatusGauge;
+				view.SetDisplayStatusGauge(displayShowGauge, display.DurationGraphValue, display.PowerStateText);
+
+				if (displayShowGauge)
+					m_DisplayGaugeRefreshTimer.Reset(DISPLAY_GAUGE_REFRESH_INTERVAL);
+				else
+					m_DisplayGaugeRefreshTimer.Stop();
 			}
 			finally
 			{

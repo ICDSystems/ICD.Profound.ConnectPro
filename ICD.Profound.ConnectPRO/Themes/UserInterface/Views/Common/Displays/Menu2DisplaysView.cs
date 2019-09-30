@@ -133,7 +133,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		{
 			m_Display1StatusGauge.Show(visible);
 			m_Display1StatusGauge.SetValue(position);
-			m_Display1StatusGauge.SetCenterLabel(text);
+			m_Display1StatusGauge.SetCenterChildLabel(text);
 		}
 
 		#endregion

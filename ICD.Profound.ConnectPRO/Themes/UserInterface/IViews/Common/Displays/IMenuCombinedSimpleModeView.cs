@@ -66,5 +66,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays
 		/// </summary>
 		/// <param name="text"></param>
 		void SetDisplaySourceText(string text);
+
+		/// <summary>
+		/// Warming/cooling bar graph - show/hide and set position and text
+		/// </summary>
+		/// <param name="visible"></param>
+		/// <param name="position"></param>
+		/// <param name="text"></param>
+		void SetDisplayStatusGauge(bool visible, ushort position, string text);
 	}
 }

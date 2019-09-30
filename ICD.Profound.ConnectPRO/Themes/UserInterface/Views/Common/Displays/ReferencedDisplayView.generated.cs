@@ -2,6 +2,7 @@
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
+using ICD.Connect.UI.Controls.Gauges;
 using ICD.Connect.UI.Controls.Images;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Connect.UI.Controls.TextControls;
@@ -17,6 +18,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		private VtProSimpleLabel m_SourceLabel;
 		private VtProSimpleLabel m_Line1Label;
 		private VtProSimpleLabel m_Line2Label;
+		private VtProCircularGauge m_DisplayStatusGauge;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -59,6 +61,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 			{
 				IndirectTextJoin = 2
 			};
+
+			m_DisplayStatusGauge = new VtProCircularGauge(panel, m_Subpage)
+			{
+				DigitalVisibilityJoin = 4,
+				AnalogFeedbackJoin = 2,
+				CenterChildLabelSerialJoin = 5
+			};
+
 		}
 
 		/// <summary>

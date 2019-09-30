@@ -16,6 +16,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 {
 	public abstract class AbstractDisplaysPresenter<TView> : AbstractUiPresenter<TView>, IDisplaysPresenter where TView : class, IUiView
 	{
+		protected const long DISPLAY_GAUGE_REFRESH_INTERVAL = 250;
+
 		public event MenuDestinationPressedCallback OnDestinationPressed;
 
 		private ISource m_SelectedSource;

@@ -117,7 +117,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 			{
 				AnalogFeedbackJoin = 321,
 				DigitalVisibilityJoin = 317,
-				CenterLabelSerialJoin = 321
+				CenterChildLabelSerialJoin = 321
 			};
 		}
 
