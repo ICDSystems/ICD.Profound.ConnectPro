@@ -9,7 +9,7 @@ using ICD.Connect.UI.Controls.TextControls;
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Conference
 {
-	public partial class StartMeetingView
+	public partial class StartConferenceView
 	{
 		private VtProSubpage m_Subpage;
 		private VtProButton m_MeetNowButton;

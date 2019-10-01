@@ -1,8 +1,8 @@
 ﻿using System;
 using ICD.Connect.Panels;
-using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Settings;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews;
 
-namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings
+namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views
 {
 	public abstract class AbstractPopupView : AbstractTouchDisplayView, IPopupView
 	{

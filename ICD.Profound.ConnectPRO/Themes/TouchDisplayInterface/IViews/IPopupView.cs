@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Settings
+namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews
 {
 	public interface IPopupView : ITouchDisplayView
 	{

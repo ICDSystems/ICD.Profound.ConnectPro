@@ -1,6 +1,6 @@
-﻿using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Settings;
+﻿using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews;
 
-namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Settings
+namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters
 {
 	public interface IPopupPresenter<TView> : ITouchDisplayPresenter<TView>
 		where TView : IPopupView

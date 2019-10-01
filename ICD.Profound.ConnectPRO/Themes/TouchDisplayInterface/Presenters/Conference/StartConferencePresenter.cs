@@ -15,15 +15,15 @@ using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Conference;
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Conference
 {
-	[PresenterBinding(typeof(IStartMeetingPresenter))]
-	public sealed class StartMeetingPresenter : AbstractTouchDisplayPresenter<IStartMeetingView>, IStartMeetingPresenter
+	[PresenterBinding(typeof(IStartConferencePresenter))]
+	public sealed class StartConferencePresenter : AbstractTouchDisplayPresenter<IStartConferenceView>, IStartConferencePresenter
 	{
 		private readonly StringBuilder m_Builder;
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private IWebConferenceDeviceControl m_ActiveConferenceControl;
 
-		public StartMeetingPresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views,
+		public StartConferencePresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views,
 			ConnectProTheme theme) : base(nav, views, theme)
 		{
 			m_Builder = new StringBuilder();
@@ -47,7 +47,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			}
 		}
 
-		protected override void Refresh(IStartMeetingView view)
+		protected override void Refresh(IStartConferenceView view)
 		{
 			base.Refresh(view);
 
@@ -127,7 +127,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 
 		#region View Callbacks
 
-		protected override void Subscribe(IStartMeetingView view)
+		protected override void Subscribe(IStartConferenceView view)
 		{
 			base.Subscribe(view);
 
@@ -139,7 +139,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			view.OnKeypadButtonPressed += ViewOnKeypadButtonPressed;
 		}
 
-		protected override void Unsubscribe(IStartMeetingView view)
+		protected override void Unsubscribe(IStartConferenceView view)
 		{
 			base.Unsubscribe(view);
 

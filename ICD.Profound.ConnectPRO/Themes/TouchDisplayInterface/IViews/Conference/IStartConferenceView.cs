@@ -3,7 +3,7 @@ using ICD.Common.Utils.EventArguments;
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Conference
 {
-	public interface IStartMeetingView : ITouchDisplayView
+	public interface IStartConferenceView : ITouchDisplayView
 	{
 		/// <summary>
 		///     Raised when the user presses the Meet Now button.

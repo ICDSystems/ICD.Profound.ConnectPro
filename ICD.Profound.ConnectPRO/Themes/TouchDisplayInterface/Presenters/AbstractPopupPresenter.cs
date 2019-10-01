@@ -1,10 +1,8 @@
 ﻿using System;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
-using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Settings;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Settings;
 
-namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settings
+namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 {
 	public abstract class AbstractPopupPresenter<TView> : AbstractTouchDisplayPresenter<TView>, IPopupPresenter<TView>
 		where TView : class, IPopupView

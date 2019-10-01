@@ -8,10 +8,10 @@ using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Conference;
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Conference
 {
-	[ViewBinding(typeof(IStartMeetingView))]
-	public sealed partial class StartMeetingView : AbstractTouchDisplayView, IStartMeetingView
+	[ViewBinding(typeof(IStartConferenceView))]
+	public sealed partial class StartConferenceView : AbstractTouchDisplayView, IStartConferenceView
 	{
-		public StartMeetingView(ISigInputOutput panel, ConnectProTheme theme)
+		public StartConferenceView(ISigInputOutput panel, ConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}
