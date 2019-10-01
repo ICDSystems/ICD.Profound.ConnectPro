@@ -4,7 +4,9 @@ using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Connect.Routing.EventArguments;
 using ICD.Connect.UI.Attributes;
+using ICD.Profound.ConnectPRO.Routing;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.DeviceDrawer;
@@ -16,6 +18,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 	[PresenterBinding(typeof(IDeviceDrawerPresenter))]
 	public sealed class DeviceDrawerPresenter : AbstractTouchDisplayPresenter<IDeviceDrawerView>, IDeviceDrawerPresenter
 	{
+		public event EventHandler<SourceEventArgs> OnSourcePressed;
+
 		private readonly ReferencedSourcePresenterFactory m_SourceFactory;
 		private readonly SafeCriticalSection m_RefreshSection;
 
@@ -49,6 +53,12 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		public void SetRoutedSources(Dictionary<ISource, eSourceState> sources)
+		{
+			// TODO
+			//throw new NotImplementedException();
 		}
 
 		private IEnumerable<IReferencedSourceView> ItemFactory(ushort count)
@@ -90,7 +100,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 		
 		private void ChildOnSourcePressed(object sender, EventArgs e)
 		{
+			IReferencedSourcePresenter presenter = sender as IReferencedSourcePresenter;
+			if (presenter == null || presenter.Source == null)
+				return;
 			
+			OnSourcePressed.Raise(this, new SourceEventArgs(presenter.Source));
 		}
 
 		#endregion
