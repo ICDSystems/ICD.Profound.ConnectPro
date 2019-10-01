@@ -51,8 +51,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			yield return new ConsoleCommand("Start Meeting", "Starts the meeting", () => instance.StartMeeting());
 			yield return new ConsoleCommand("End Meeting", "Ends the meeting", () => instance.EndMeeting(false));
-			yield return new ConsoleCommand("Wake", "Wakes the room", () => instance.Wake());
-			yield return new ConsoleCommand("Sleep", "Puts the room to sleep", () => instance.Sleep());
 			yield return new ConsoleCommand("PrintSources", "Prints a table of the sources in the room and their availability", () => PrintSources(instance));
 		}
 
