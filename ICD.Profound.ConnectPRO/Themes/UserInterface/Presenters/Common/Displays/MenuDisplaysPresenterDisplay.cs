@@ -44,22 +44,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private ePowerState m_PowerState;
 		private DateTime m_PowerStateChangedTime;
-		private int m_PowerStateExpectedDuration;
+		private long m_PowerStateExpectedDuration;
 		private IPowerDeviceControl m_ActivePowerControl;
 
 		/// <summary>
 		/// We use a stopwatch to count elapsed time because DateTime is only has second-precision on some Crestron platforms
 		/// </summary>
-		private IcdStopwatch m_Stopwatch;
-		private int m_StopwatchInitialTime;
+		private readonly IcdStopwatch m_Stopwatch;
+		private long m_StopwatchInitialTime;
 
 		#region Events
 
 		public event EventHandler OnRefreshNeeded;
 
 		#endregion
-
-
 
 		#region Properties
 
@@ -86,10 +84,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		{
 			get
 			{
-				int? timeRemaining = GetTimeRemaining();
-
+				long? timeRemaining = GetTimeRemaining();
 				if (!timeRemaining.HasValue)
 					return 0;
+
 				if (timeRemaining.Value <= 0)
 				{
 					if (m_PowerState == ePowerState.Warming)
@@ -100,17 +98,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 				float graphPosition = (float)timeRemaining.Value / m_PowerStateExpectedDuration;
 
-				//If warming, flip to incresing
+				// If warming, flip to incresing
 				if (m_PowerState == ePowerState.Warming)
 					graphPosition = 1 - graphPosition;
 
-
 				// Max value is Expired value
-				return MathUtils.Clamp((ushort)(graphPosition * ushort.MaxValue), GRAPH_MINUM_POSITON_FROM_END, (ushort)(ushort.MaxValue - GRAPH_MINUM_POSITON_FROM_END));
-
+				return MathUtils.Clamp((ushort)(graphPosition * ushort.MaxValue),
+				                       GRAPH_MINUM_POSITON_FROM_END,
+				                       (ushort)(ushort.MaxValue - GRAPH_MINUM_POSITON_FROM_END));
 			}
 		}
-
 
 		#endregion
 
@@ -199,42 +196,32 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		/// If time is past due, returns 0
 		/// </summary>
 		/// <returns></returns>
-		public int? GetTimeRemaining()
+		public long? GetTimeRemaining()
 		{
-
-			//todo: Remove Debug
-			IcdConsole.PrintLine("GetTimeRemaining calc: ExpectedDuration:{0}", m_PowerStateExpectedDuration);
-
 			if (m_PowerStateExpectedDuration == 0)
 				return null;
 
-			int elapsedTime = (int)m_Stopwatch.ElapsedMilliseconds;
-
-			//todo: Remove Debug
-			IcdConsole.PrintLine("GetTimeRemaining calc: Initial={0}, Elapsed={1}", m_StopwatchInitialTime, elapsedTime);
-
-			int elapsedMiliseconds = m_StopwatchInitialTime + elapsedTime;
+			long elapsedTime = m_Stopwatch.ElapsedMilliseconds;
+			long elapsedMiliseconds = m_StopwatchInitialTime + elapsedTime;
 
 			return m_PowerStateExpectedDuration - elapsedMiliseconds;
 		}
 
-		private int? GetTimeRemaining(DateTime startTime, int expectedDuration)
+		private static long? GetTimeRemaining(DateTime startTime, long expectedDuration)
 		{
 			if (expectedDuration == 0)
 				return null;
-			int runningTime = GetMillisecondsSince(startTime);
 
+			long runningTime = GetMillisecondsSince(startTime);
 			if (runningTime >= expectedDuration)
 				return 0;
 
-			int remainingTime = expectedDuration - runningTime;
-
-			return remainingTime;
+			return expectedDuration - runningTime;
 		}
 
-		private int GetMillisecondsSince(DateTime time)
+		private static long GetMillisecondsSince(DateTime time)
 		{
-			return (int)IcdEnvironment.GetUtcTime().Subtract(time).TotalMilliseconds;
+			return (long)IcdEnvironment.GetUtcTime().Subtract(time).TotalMilliseconds;
 		}
 
 		#endregion
@@ -441,23 +428,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			m_PowerStateExpectedDuration = state.ExpectedDuration;
 			m_PowerState = state.PowerState;
 
-			//Get current elapsed time and start stopwatch
-			int? remainingTime = GetTimeRemaining(m_PowerStateChangedTime, m_PowerStateExpectedDuration);
+			// Get current elapsed time and start stopwatch
+			long? remainingTime = GetTimeRemaining(m_PowerStateChangedTime, m_PowerStateExpectedDuration);
 			if (remainingTime.HasValue && remainingTime.Value > 0)
 			{
 				m_StopwatchInitialTime = GetMillisecondsSince(m_PowerStateChangedTime);
-				//todo: remove debug
-				IcdConsole.PrintLine(eConsoleColor.Magenta, "Restart Stopwatch Control: {0}", control);
 				m_Stopwatch.Restart();
 			}
 			else
 			{
 				m_StopwatchInitialTime = 0;
-				//todo: remove debug
-				IcdConsole.PrintLine(eConsoleColor.Magenta, "Stop Stopwatch Control: {0}", control);
 				m_Stopwatch.Stop();
 			}
-
 
 			UpdatePowerStateLabel();
 
@@ -467,13 +449,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		private void RecaculatePowerFeedback()
 		{
 			ePowerState currentState = ePowerState.Unknown;
-			int currentRemaining = 0;
+			long currentRemaining = 0;
 			IPowerDeviceControl control = null;
 
 			foreach (var kvp in m_PowerStateCache)
 			{
 				int stateCompare = CompareState(kvp.Value.PowerState, currentState);
-				int? itemTimeRemaining = GetTimeRemaining(kvp.Value.EffectiveTime, kvp.Value.ExpectedDuration);
+				long? itemTimeRemaining = GetTimeRemaining(kvp.Value.EffectiveTime, kvp.Value.ExpectedDuration);
 				if (stateCompare == -1 || (stateCompare == 0 && (itemTimeRemaining.GetValueOrDefault() > currentRemaining)))
 				{
 					control = kvp.Key;
@@ -517,8 +499,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private sealed class DisplayPowerState
 		{
-
-
 			private readonly DateTime m_EffectiveTime;
 
 			private readonly PowerDeviceControlPowerStateEventData m_StateData;
@@ -529,7 +509,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 			public ePowerState PowerState { get { return m_StateData.PowerState; } }
 
-			public int ExpectedDuration { get { return m_StateData.ExpectedDuration; } }
+			public long ExpectedDuration { get { return m_StateData.ExpectedDuration; } }
 
 			public DisplayPowerState(PowerDeviceControlPowerStateEventData stateData)
 			{
@@ -540,9 +520,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			public DisplayPowerState(ePowerState powerState) : this(new PowerDeviceControlPowerStateEventData(powerState))
 			{
 			}
-
 		}
 	}
-
-	
 }
