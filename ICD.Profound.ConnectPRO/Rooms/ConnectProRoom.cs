@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
-using ICD.Common.Utils.IO;
-using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
-using ICD.Common.Utils.Services.Scheduler;
 using ICD.Connect.API.Commands;
 using ICD.Connect.API.Nodes;
 using ICD.Connect.Audio.Controls.Mute;
@@ -18,45 +14,31 @@ using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Calendaring.CalendarControl;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
-using ICD.Connect.Conferencing.Controls.Dialing;
-using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Favorites.SqLite;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Displays.Devices;
 using ICD.Connect.Panels.Devices;
-using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Settings.Core;
 using ICD.Profound.ConnectPRO.Routing;
 
 namespace ICD.Profound.ConnectPRO.Rooms
 {
-	public sealed class ConnectProRoom : AbstractRoom<ConnectProRoomSettings>, IConnectProRoom
+	public sealed class ConnectProRoom : AbstractCommercialRoom<ConnectProRoomSettings>, IConnectProRoom
 	{
 		/// <summary>
 		/// Raised when the room starts/stops a meeting.
 		/// </summary>
 		public event EventHandler<BoolEventArgs> OnIsInMeetingChanged;
 
-		private readonly IConferenceManager m_ConferenceManager;
 		private readonly ConnectProRouting m_Routing;
 
-		private readonly WakeSchedule m_WakeSchedule;
-
 		private bool m_IsInMeeting;
-		private DialingPlanInfo m_DialingPlan;
 
 		#region Properties
-
-		/// <summary>
-		/// Gets the scheduler service.
-		/// </summary>
-		private IActionSchedulerService SchedulerService
-		{
-			get { return ServiceProvider.TryGetService<IActionSchedulerService>(); }
-		}
 
 		/// <summary>
 		/// Gets/sets the current meeting status.
@@ -83,16 +65,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		public ConnectProRouting Routing { get { return m_Routing; } }
 
 		/// <summary>
-		/// Gets the conference manager.
-		/// </summary>
-		public IConferenceManager ConferenceManager { get { return m_ConferenceManager; } }
-
-		/// <summary>
-		/// Gets the wake/sleep schedule.
-		/// </summary>
-		public WakeSchedule WakeSchedule { get { return m_WakeSchedule; } }
-
-		/// <summary>
 		/// Gets/sets the passcode for the settings page.
 		/// </summary>
 		public string Passcode { get; set; }
@@ -115,12 +87,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		public ConnectProRoom()
 		{
 			m_Routing = new ConnectProRouting(this);
-			m_ConferenceManager = new ConferenceManager();
-			m_WakeSchedule = new WakeSchedule();
-
-			Subscribe(m_WakeSchedule);
-
-			SchedulerService.Add(m_WakeSchedule);
+			ConferenceManager = new ConferenceManager();
 		}
 
 		/// <summary>
@@ -129,11 +96,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <param name="disposing"></param>
 		protected override void DisposeFinal(bool disposing)
 		{
+			OnIsInMeetingChanged = null;
+
 			base.DisposeFinal(disposing);
 
-			Unsubscribe(m_WakeSchedule);
-
-			SchedulerService.Remove(m_WakeSchedule);
+			m_Routing.Dispose();
 		}
 
 		#region Methods
@@ -209,9 +176,19 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		}
 
 		/// <summary>
+		/// Returns true if a source is actively routed to a display or we are in a conference.
+		/// </summary>
+		/// <returns></returns>
+		protected override bool GetIsInActiveMeeting()
+		{
+			// TODO
+			return false;
+		}
+
+		/// <summary>
 		/// Wakes up the room.
 		/// </summary>
-		public void Wake()
+		public override void Wake()
 		{
 			// Change meeting state before any routing for UX
 			IsInMeeting = false;
@@ -228,7 +205,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <summary>
 		/// Shuts down the room.
 		/// </summary>
-		public void Sleep()
+		public override void Sleep()
 		{
 			// Hangup
 			if (ConferenceManager != null && ConferenceManager.ActiveConference != null)
@@ -274,13 +251,10 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		{
 			base.CopySettingsFinal(settings);
 
-			settings.DialingPlan = m_DialingPlan;
 			settings.Passcode = Passcode;
 
 			if (CalendarControl != null && CalendarControl.Parent != null)
 				settings.CalendarDevice = CalendarControl.Parent.Id;
-
-			settings.WakeSchedule.Copy(m_WakeSchedule);
 		}
 
 		/// <summary>
@@ -290,17 +264,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		{
 			base.ClearSettingsFinal();
 
-			m_DialingPlan = default(DialingPlanInfo);
-
-			m_ConferenceManager.ClearDialingProviders();
-			m_ConferenceManager.Favorites = null;
-			m_ConferenceManager.DialingPlan.ClearMatchers();
-
 			AtcNumber = null;
 			Passcode = null;
 			CalendarControl = null;
-
-			m_WakeSchedule.Clear();
 		}
 
 		/// <summary>
@@ -312,12 +278,10 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		{
 			base.ApplySettingsFinal(settings, factory);
 
-			// Dialing plan
-			SetDialingPlan(settings.DialingPlan, factory);
-
 			// Favorites
 			string path = PathUtils.GetProgramConfigPath("favorites");
-			m_ConferenceManager.Favorites = new SqLiteFavorites(path);
+			if (ConferenceManager != null)
+				ConferenceManager.Favorites = new SqLiteFavorites(path);
 
 			// ATC Number
 			AtcNumber = settings.AtcNumber;
@@ -332,107 +296,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 				if (calendarDevice != null)
 					CalendarControl = calendarDevice.Controls.GetControl<ICalendarControl>();
 			}
-
-			// Wake Schedule
-			m_WakeSchedule.Copy(settings.WakeSchedule);
-		}
-
-		/// <summary>
-		/// Sets the dialing plan from the settings.
-		/// </summary>
-		/// <param name="planInfo"></param>
-		/// <param name="factory"></param>
-		private void SetDialingPlan(DialingPlanInfo planInfo, IDeviceFactory factory)
-		{
-			m_DialingPlan = planInfo;
-
-			// TODO - Move loading from path into the DialingPlan.
-			string dialingPlanPath = string.IsNullOrEmpty(m_DialingPlan.ConfigPath)
-										 ? null
-										 : PathUtils.GetDefaultConfigPath("DialingPlans", m_DialingPlan.ConfigPath);
-
-			try
-			{
-				if (string.IsNullOrEmpty(dialingPlanPath))
-					Log(eSeverity.Warning, "No Dialing Plan configured");
-				else
-				{
-					string xml = IcdFile.ReadToEnd(dialingPlanPath, new UTF8Encoding(false));
-					xml = EncodingUtils.StripUtf8Bom(xml);
-
-					m_ConferenceManager.DialingPlan.LoadMatchersFromXml(xml);
-				}
-			}
-			catch (Exception e)
-			{
-				Log(eSeverity.Error, "failed to load Dialing Plan {0} - {1}", dialingPlanPath, e.Message);
-			}
-
-			// If there are no audio or video providers, search the available controls
-			if (m_DialingPlan.VideoEndpoint.DeviceId == 0 && m_DialingPlan.AudioEndpoint.DeviceId == 0)
-			{
-				IDialingDeviceControl[] dialers = this.GetControlsRecursive<IDialingDeviceControl>().ToArray();
-
-				DeviceControlInfo video = dialers.Where(d => d.Supports == eConferenceSourceType.Video)
-												 .Select(d => d.DeviceControlInfo)
-												 .FirstOrDefault();
-
-				DeviceControlInfo audio = dialers.Where(d => d.Supports == eConferenceSourceType.Audio)
-												 .Select(d => d.DeviceControlInfo)
-												 .FirstOrDefault(video);
-
-				m_DialingPlan = new DialingPlanInfo(m_DialingPlan.ConfigPath, video, audio);
-			}
-
-			// Setup the dialing providers
-			if (m_DialingPlan.VideoEndpoint.DeviceId != 0)
-				TryRegisterDialingProvider(m_DialingPlan.VideoEndpoint, eConferenceSourceType.Video, factory);
-
-			if (m_DialingPlan.AudioEndpoint.DeviceId != 0)
-				TryRegisterDialingProvider(m_DialingPlan.AudioEndpoint, eConferenceSourceType.Audio, factory);
-		}
-
-		private void TryRegisterDialingProvider(DeviceControlInfo info, eConferenceSourceType sourceType, IDeviceFactory factory)
-		{
-			try
-			{
-				IDeviceBase device = factory.GetOriginatorById<IDeviceBase>(info.DeviceId);
-				IDialingDeviceControl control = device.Controls.GetControl<IDialingDeviceControl>(info.ControlId);
-
-				m_ConferenceManager.RegisterDialingProvider(sourceType, control);
-			}
-			catch (Exception e)
-			{
-				Log(eSeverity.Error, "failed add {0} dialing provider - {1}", sourceType, e.Message);
-			}
-		}
-
-		#endregion
-
-		#region WakeSchedule Callbacks
-
-		private void Subscribe(WakeSchedule schedule)
-		{
-			schedule.OnWakeActionRequested += ScheduleOnWakeActionRequested;
-			schedule.OnSleepActionRequested += ScheduleOnSleepActionRequested;
-		}
-
-		private void Unsubscribe(WakeSchedule schedule)
-		{
-			schedule.OnWakeActionRequested -= ScheduleOnWakeActionRequested;
-			schedule.OnSleepActionRequested -= ScheduleOnSleepActionRequested;
-		}
-
-		private void ScheduleOnSleepActionRequested(object sender, EventArgs eventArgs)
-		{
-			Log(eSeverity.Informational, "Scheduled sleep occurring at {0}", IcdEnvironment.GetLocalTime().ToShortTimeString());
-			Sleep();
-		}
-
-		private void ScheduleOnWakeActionRequested(object sender, EventArgs eventArgs)
-		{
-			Log(eSeverity.Informational, "Scheduled wake occurring at {0}", IcdEnvironment.GetLocalTime().ToShortTimeString());
-			Wake();
 		}
 
 		#endregion
@@ -461,8 +324,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			yield return new ConsoleCommand("Start Meeting", "Starts the meeting", () => StartMeeting());
 			yield return new ConsoleCommand("End Meeting", "Ends the meeting", () => EndMeeting(false));
-			yield return new ConsoleCommand("Wake", "Wakes the room", () => Wake());
-			yield return new ConsoleCommand("Sleep", "Puts the room to sleep", () => Sleep());
 		}
 
 		/// <summary>

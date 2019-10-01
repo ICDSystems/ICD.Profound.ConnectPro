@@ -3,13 +3,12 @@ using ICD.Common.Properties;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Calendaring.CalendarControl;
-using ICD.Connect.Conferencing.ConferenceManagers;
-using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Profound.ConnectPRO.Routing;
 
 namespace ICD.Profound.ConnectPRO.Rooms
 {
-	public interface IConnectProRoom : IRoom
+	public interface IConnectProRoom : ICommercialRoom
 	{
 		/// <summary>
 		/// Raised when the room starts/stops a meeting.
@@ -24,16 +23,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// Gets the routing features for this room.
 		/// </summary>
 		ConnectProRouting Routing { get; }
-
-		/// <summary>
-		/// Gets the conference manager.
-		/// </summary>
-		IConferenceManager ConferenceManager { get; }
-
-		/// <summary>
-		/// Gets the wake/sleep schedule.
-		/// </summary>
-		WakeSchedule WakeSchedule { get; }
 
 		/// <summary>
 		/// Gets/sets the passcode for the settings page.
