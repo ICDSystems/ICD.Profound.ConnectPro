@@ -24,6 +24,7 @@ using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Extensions;
 using ICD.Connect.Panels.Devices;
+using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
@@ -32,7 +33,7 @@ using ICD.Profound.ConnectPRO.Routing;
 
 namespace ICD.Profound.ConnectPRO.Rooms
 {
-	public abstract class AbstractConnectProRoom<TSettings> : AbstractRoom<TSettings>, IConnectProRoom
+	public abstract class AbstractConnectProRoom<TSettings> : AbstractCommercialRoom<TSettings>, IConnectProRoom
 		where TSettings : IConnectProRoomSettings, new()
 	{
 		/// <summary>
@@ -85,17 +86,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// Gets the routing features for this room.
 		/// </summary>
 		public ConnectProRouting Routing { get { return m_Routing; } }
-
-		/// <summary>
-		/// Gets the conference manager.
-		/// </summary>
-		[CanBeNull]
-		public IConferenceManager ConferenceManager { get; private set; }
-
-		/// <summary>
-		/// Gets the wake/sleep schedule.
-		/// </summary>
-		public abstract WakeSchedule WakeSchedule { get; }
 
 		/// <summary>
 		/// Gets/sets the passcode for the settings page.
@@ -284,7 +274,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <summary>
 		/// Wakes up the room.
 		/// </summary>
-		public void Wake()
+		public override void Wake()
 		{
 			// Change meeting state before any routing for UX
 			CurrentBooking = null;
@@ -301,7 +291,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <summary>
 		/// Shuts down the room.
 		/// </summary>
-		public void Sleep()
+		public override void Sleep()
 		{
 			EndAllConferences();
 
@@ -345,9 +335,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		protected override void OriginatorsOnChildrenChanged(object sender, EventArgs args)
 		{
 			base.OriginatorsOnChildrenChanged(sender, args);
-
-			IConferenceManager conferenceManager = GetConferenceManager();
-			SetConferenceManager(conferenceManager);
 
 			foreach (var presentationControl in m_SubscribedPresentationControls)
 				Unsubscribe(presentationControl);
@@ -397,18 +384,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		}
 
 		/// <summary>
-		/// Gets the conference manager for this room.
-		/// </summary>
-		/// <returns></returns>
-		[NotNull]
-		protected abstract IConferenceManager GetConferenceManager();
-
-		/// <summary>
 		/// Stops/resets the delayed sleep timer based on the current meeting state.
 		/// </summary>
 		private void UpdateMeetingTimeoutTimer()
 		{
-			if (IsInActiveMeeting())
+			if (GetIsInActiveMeeting())
 				m_MeetingTimeoutTimer.Stop();
 			else
 				m_MeetingTimeoutTimer.Reset(MEETING_TIMEOUT);
@@ -418,7 +398,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// Returns true if a source is actively routed to a display or we are in a conference.
 		/// </summary>
 		/// <returns></returns>
-		private bool IsInActiveMeeting()
+		protected override bool GetIsInActiveMeeting()
 		{
 			// If the user is currently on a control subpage assume that the room is being used
 			if (FocusSource != null)
@@ -466,24 +446,10 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		#region Conference Manager Callbacks 
 
 		/// <summary>
-		/// Sets the conference manager for this room.
-		/// </summary>
-		/// <param name="conferenceManager"></param>
-		private void SetConferenceManager(IConferenceManager conferenceManager)
-		{
-			if (conferenceManager == ConferenceManager)
-				return;
-
-			Unsubscribe(ConferenceManager);
-			ConferenceManager = conferenceManager;
-			Subscribe(ConferenceManager);
-		}
-
-		/// <summary>
 		/// Subscribe to the conference manager events.
 		/// </summary>
 		/// <param name="conferenceManager"></param>
-		private void Subscribe(IConferenceManager conferenceManager)
+		protected override void Subscribe(IConferenceManager conferenceManager)
 		{
 			if (conferenceManager == null)
 				return;
@@ -495,7 +461,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// Unsubscribe from the conference manager events.
 		/// </summary>
 		/// <param name="conferenceManager"></param>
-		private void Unsubscribe(IConferenceManager conferenceManager)
+		protected override void Unsubscribe(IConferenceManager conferenceManager)
 		{
 			if (conferenceManager == null)
 				return;
@@ -515,52 +481,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			// Turn off privacy mute between calls
 			if (ConferenceManager != null)
 				ConferenceManager.EnablePrivacyMute(false);
-		}
-
-		#endregion
-
-		#region WakeSchedule Callbacks
-
-		protected void Subscribe(WakeSchedule schedule)
-		{
-			if (schedule == null)
-				return;
-
-			schedule.OnWakeActionRequested += ScheduleOnWakeActionRequested;
-			schedule.OnSleepActionRequested += ScheduleOnSleepActionRequested;
-		}
-
-		protected void Unsubscribe(WakeSchedule schedule)
-		{
-			if (schedule == null)
-				return;
-
-			schedule.OnWakeActionRequested -= ScheduleOnWakeActionRequested;
-			schedule.OnSleepActionRequested -= ScheduleOnSleepActionRequested;
-		}
-
-		private void ScheduleOnSleepActionRequested(object sender, EventArgs eventArgs)
-		{
-			if (CombineState)
-				return;
-
-			if (IsInActiveMeeting())
-				return;
-
-			Log(eSeverity.Informational, "Scheduled sleep occurring at {0}", IcdEnvironment.GetLocalTime().ToShortTimeString());
-			Sleep();
-		}
-
-		private void ScheduleOnWakeActionRequested(object sender, EventArgs eventArgs)
-		{
-			if (CombineState)
-				return;
-
-			if (IsInActiveMeeting())
-				return;
-
-			Log(eSeverity.Informational, "Scheduled wake occurring at {0}", IcdEnvironment.GetLocalTime().ToShortTimeString());
-			Wake();
 		}
 
 		#endregion

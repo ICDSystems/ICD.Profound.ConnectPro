@@ -1,4 +1,5 @@
-﻿using ICD.Profound.ConnectPRO.Rooms;
+﻿using ICD.Connect.Partitioning.Commercial;
+using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 {
