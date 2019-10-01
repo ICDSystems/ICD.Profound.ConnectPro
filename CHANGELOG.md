@@ -25,6 +25,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
  - Updating namespaces for port configuration features
 
+## [7.6.0] - 2019-10-01
+### Changed
+ - ConnectProRoom inherits from AbstractCommercialRoom
+
 ## [7.5.0] - 2019-07-26
 ### Added
  - Supporting Shure MXWAPT devices
