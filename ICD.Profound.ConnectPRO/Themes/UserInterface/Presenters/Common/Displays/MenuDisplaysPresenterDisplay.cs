@@ -339,6 +339,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
 		public void Dispose()
 		{
+			m_Stopwatch.Stop();
 			Unsubscribe(m_Destination);
 		}
 
