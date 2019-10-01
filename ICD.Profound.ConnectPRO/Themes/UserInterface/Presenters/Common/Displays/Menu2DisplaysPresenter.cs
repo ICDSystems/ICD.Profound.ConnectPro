@@ -14,8 +14,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private MenuDisplaysPresenterDisplay Display1 { get { return Displays[0]; } }
-		private MenuDisplaysPresenterDisplay Display2 { get { return Displays[1]; } }
+		private MenuDisplaysPresenterDisplay Display1
+		{
+			get
+			{
+				return Displays.Count >= 1 ? Displays[0] : null;
+			}
+		}
+
+		private MenuDisplaysPresenterDisplay Display2
+		{
+			get
+			{
+				return Displays.Count >= 2 ? Displays[1] : null;
+			}
+		}
 
 		private readonly SafeTimer m_DisplayGaugeRefreshTimer;
 
@@ -40,24 +53,32 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 			try
 			{
+				MenuDisplaysPresenterDisplay display1 = Display1;
+				MenuDisplaysPresenterDisplay display2 = Display2;
+
 				// Display 1
-				view.SetDisplay1Color(Display1.Color);
-				view.SetDisplay1SourceText(Display1.SourceName);
-				view.SetDisplay1Line1Text(Display1.Line1);
-				view.SetDisplay1Line2Text(Display1.Line2);
-				view.SetDisplay1Icon(Display1.Icon);
-				view.ShowDisplay1SpeakerButton(Display1.ShowSpeaker);
-				view.SetDisplay1SpeakerButtonActive(Display1.AudioActive);
+				if (display1 != null)
+				{
+					view.SetDisplay1Color(display1.Color);
+					view.SetDisplay1SourceText(display1.SourceName);
+					view.SetDisplay1Line1Text(display1.Line1);
+					view.SetDisplay1Line2Text(display1.Line2);
+					view.SetDisplay1Icon(display1.Icon);
+					view.ShowDisplay1SpeakerButton(display1.ShowSpeaker);
+					view.SetDisplay1SpeakerButtonActive(display1.AudioActive);
+				}
 
 				// Display 2
-				view.SetDisplay2Color(Display2.Color);
-				view.SetDisplay2SourceText(Display2.SourceName);
-				view.SetDisplay2Line1Text(Display2.Line1);
-				view.SetDisplay2Line2Text(Display2.Line2);
-				view.SetDisplay2Icon(Display2.Icon);
-				view.ShowDisplay2SpeakerButton(Display2.ShowSpeaker);
-				view.SetDisplay2SpeakerButtonActive(Display2.AudioActive);
-				view.SetDisplay2StatusGauge(Display2.ShowStatusGauge, Display2.DurationGraphValue, Display2.PowerStateText);
+				if (display2 != null)
+				{
+					view.SetDisplay2Color(display2.Color);
+					view.SetDisplay2SourceText(display2.SourceName);
+					view.SetDisplay2Line1Text(display2.Line1);
+					view.SetDisplay2Line2Text(display2.Line2);
+					view.SetDisplay2Icon(display2.Icon);
+					view.ShowDisplay2SpeakerButton(display2.ShowSpeaker);
+					view.SetDisplay2SpeakerButtonActive(display2.AudioActive);
+				}
 
 				RefreshDisplayStatusGauge(view);
 			}
@@ -82,16 +103,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			try
 			{
 				bool doTimerRefresh = false;
+				MenuDisplaysPresenterDisplay display1 = Display1;
+				MenuDisplaysPresenterDisplay display2 = Display2;
 
 				// Display1
-				bool display1ShowGauge = Display1.ShowStatusGauge;
-				view.SetDisplay1StatusGauge(display1ShowGauge, Display1.DurationGraphValue, Display1.PowerStateText);
-				doTimerRefresh |= display1ShowGauge;
+				if (display1 != null)
+				{
+					bool display1ShowGauge = display1.ShowStatusGauge;
+					view.SetDisplay1StatusGauge(display1ShowGauge, display1.DurationGraphValue, display1.PowerStateText);
+					doTimerRefresh |= display1ShowGauge;
+				}
 
 				// Display2
-				bool display2ShowGauge = Display2.ShowStatusGauge;
-				view.SetDisplay2StatusGauge(display2ShowGauge, Display2.DurationGraphValue, Display2.PowerStateText);
-				doTimerRefresh |= display2ShowGauge;
+				if (display2 != null)
+				{
+					bool display2ShowGauge = display2.ShowStatusGauge;
+					view.SetDisplay2StatusGauge(display2ShowGauge, display2.DurationGraphValue, display2.PowerStateText);
+					doTimerRefresh |= display2ShowGauge;
+				}
 
 				if (doTimerRefresh)
 					m_DisplayGaugeRefreshTimer.Reset(DISPLAY_GAUGE_REFRESH_INTERVAL);

@@ -92,6 +92,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private void RefreshDisplayStatusGauge(IMenuCombinedSimpleModeView view)
 		{
+			if (Displays.Count < 1)
+				return;
+
 			MenuDisplaysPresenterDisplay display = Displays[0];
 
 			if (display == null)
