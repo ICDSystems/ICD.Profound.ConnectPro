@@ -232,7 +232,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		{
 			m_Display2StatusGauge.Show(visible);
 			m_Display2StatusGauge.SetValue(position);
-			m_Display2StatusGauge.SetCenterLabel(text);
+			m_Display2StatusGauge.SetCenterChildLabel(text);
 		}
 
 		#endregion

@@ -78,7 +78,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 			{
 				AnalogFeedbackJoin =  320,
 				DigitalVisibilityJoin = 315,
-				CenterLabelSerialJoin = 320
+				CenterChildLabelSerialJoin = 320
 			};
 
 			m_Display2BackgroundButton = new VtProAdvancedButton(panel, m_Subpage)
