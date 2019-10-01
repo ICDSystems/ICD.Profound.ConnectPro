@@ -1,7 +1,6 @@
 ﻿using System;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Calendaring.Controls;
-using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Partitioning.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Rooms.Combine
@@ -17,11 +16,6 @@ namespace ICD.Profound.ConnectPRO.Rooms.Combine
 		private eCombineAdvancedMode m_CombinedAdvancedMode;
 
 		#region Properties
-
-		/// <summary>
-		/// Gets the wake/sleep schedule.
-		/// </summary>
-		public override WakeSchedule WakeSchedule { get { return m_MasterRoom == null ? null : m_MasterRoom.WakeSchedule; } }
 
 		/// <summary>
 		/// Gets/sets the passcode for the settings page.
@@ -54,6 +48,9 @@ namespace ICD.Profound.ConnectPRO.Rooms.Combine
 		/// </summary>
 		public override ICalendarControl CalendarControl { get { return m_MasterRoom == null ? null : m_MasterRoom.CalendarControl; } }
 
+		/// <summary>
+		/// Gets/sets the combined advanced mode.
+		/// </summary>
 		public eCombineAdvancedMode CombinedAdvancedMode
 		{
 			get { return m_CombinedAdvancedMode; }
@@ -68,18 +65,12 @@ namespace ICD.Profound.ConnectPRO.Rooms.Combine
 			}
 		}
 
-		/// <summary>
-		/// Sets combine mode to simple when the meeting state is changed
-		/// </summary>
-		/// <param name="isInMeeting"></param>
-		protected override void HandleIsInMeetingChanged(bool isInMeeting)
-		{
-			if (Routing.SupportsSimpleMode())
-				CombinedAdvancedMode = eCombineAdvancedMode.Simple;
-		}
-
 		#endregion
 
+		/// <summary>
+		/// Release resources.
+		/// </summary>
+		/// <param name="disposing"></param>
 		protected override void DisposeFinal(bool disposing)
 		{
 			OnCombinedAdvancedModeChanged = null;
@@ -101,28 +92,25 @@ namespace ICD.Profound.ConnectPRO.Rooms.Combine
 		/// <param name="masterRoom"></param>
 		private void SetMasterRoom(IConnectProRoom masterRoom)
 		{
-			Unsubscribe(WakeSchedule);
-
 			m_MasterRoom = masterRoom;
 
-			Subscribe(WakeSchedule);
-
-			if (m_MasterRoom == null)
-				return;
-
-			Name = m_MasterRoom.Name;
-			CombineName = m_MasterRoom.Name;
+			Name = m_MasterRoom == null ? null : m_MasterRoom.Name;
+			CombineName = m_MasterRoom == null ? null : m_MasterRoom.Name;
+			WakeSchedule = m_MasterRoom == null ? null : m_MasterRoom.WakeSchedule;
+			ConferenceManager = m_MasterRoom == null ? null : m_MasterRoom.ConferenceManager;
 
 			if (!Routing.SupportsSimpleMode())
 				CombinedAdvancedMode = eCombineAdvancedMode.Advanced;
 		}
 
 		/// <summary>
-		/// Gets the conference manager.
+		/// Sets combine mode to simple when the meeting state is changed
 		/// </summary>
-		protected override IConferenceManager GetConferenceManager()
+		/// <param name="isInMeeting"></param>
+		protected override void HandleIsInMeetingChanged(bool isInMeeting)
 		{
-			return m_MasterRoom == null ? null : m_MasterRoom.ConferenceManager;
+			if (Routing.SupportsSimpleMode())
+				CombinedAdvancedMode = eCombineAdvancedMode.Simple;
 		}
 	}
 }

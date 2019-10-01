@@ -1,8 +1,8 @@
-﻿using ICD.Connect.Partitioning.Rooms;
+﻿using ICD.Connect.Partitioning.Commercial.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Rooms
 {
-	public interface IConnectProRoomSettings : IRoomSettings
+	public interface IConnectProRoomSettings : ICommercialRoomSettings
 	{
 	}
 }

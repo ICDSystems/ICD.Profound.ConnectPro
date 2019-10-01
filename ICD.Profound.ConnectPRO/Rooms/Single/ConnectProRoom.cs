@@ -1,11 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using ICD.Common.Utils;
-using ICD.Common.Utils.IO;
-using ICD.Common.Utils.Services;
-using ICD.Common.Utils.Services.Logging;
-using ICD.Common.Utils.Services.Scheduler;
 using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.ConferencePoints;
@@ -13,6 +7,7 @@ using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Favorites.SqLite;
 using ICD.Connect.Devices;
 using ICD.Connect.Partitioning;
+using ICD.Connect.Partitioning.Commercial;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings;
 using ICD.Connect.Settings.Utils;
@@ -21,26 +16,9 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 {
 	public sealed class ConnectProRoom : AbstractConnectProRoom<ConnectProRoomSettings>
 	{
-		private readonly IConferenceManager m_ConferenceManager;
-		private readonly WakeSchedule m_WakeSchedule;
-
-		private string m_DialingPlan;
 		private ICalendarControl m_CalendarControl;
 
 		#region Properties
-
-		/// <summary>
-		/// Gets the scheduler service.
-		/// </summary>
-		private IActionSchedulerService SchedulerService
-		{
-			get { return ServiceProvider.TryGetService<IActionSchedulerService>(); }
-		}
-
-		/// <summary>
-		/// Gets the wake/sleep schedule.
-		/// </summary>
-		public override WakeSchedule WakeSchedule { get { return m_WakeSchedule; } }
 
 		/// <summary>
 		/// Gets/sets the passcode for the settings page.
@@ -64,12 +42,8 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 		/// </summary>
 		public ConnectProRoom()
 		{
-			m_ConferenceManager = new ConferenceManager();
-			m_WakeSchedule = new WakeSchedule();
-
-			Subscribe(m_WakeSchedule);
-
-			SchedulerService.Add(m_WakeSchedule);
+			ConferenceManager = new ConferenceManager();
+			WakeSchedule = new WakeSchedule();
 		}
 
 		/// <summary>
@@ -80,17 +54,8 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 		{
 			base.DisposeFinal(disposing);
 
-			Unsubscribe(m_WakeSchedule);
-
-			SchedulerService.Remove(m_WakeSchedule);
-		}
-
-		/// <summary>
-		/// Gets the conference manager.
-		/// </summary>
-		protected override IConferenceManager GetConferenceManager()
-		{
-			return m_ConferenceManager;
+			ConferenceManager = null;
+			WakeSchedule = null;
 		}
 
 		#region Settings
@@ -103,13 +68,10 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 		{
 			base.CopySettingsFinal(settings);
 
-			settings.DialingPlan = m_DialingPlan;
 			settings.Passcode = Passcode;
 
 			if (CalendarControl != null && CalendarControl.Parent != null)
 				settings.CalendarDevice = CalendarControl.Parent.Id;
-
-			settings.WakeSchedule.Copy(m_WakeSchedule);
 		}
 
 		/// <summary>
@@ -119,17 +81,9 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 		{
 			base.ClearSettingsFinal();
 
-			m_DialingPlan = null;
-
-			m_ConferenceManager.ClearDialingProviders();
-			m_ConferenceManager.Favorites = null;
-			m_ConferenceManager.DialingPlan.ClearMatchers();
-
 			AtcNumber = null;
 			Passcode = null;
 			m_CalendarControl = null;
-
-			m_WakeSchedule.Clear();
 		}
 
 		/// <summary>
@@ -141,12 +95,10 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 		{
 			base.ApplySettingsFinal(settings, factory);
 
-			// Dialing plan
-			SetDialingPlan(settings.DialingPlan);
-
 			// Favorites
 			string path = PathUtils.GetProgramConfigPath("favorites");
-			m_ConferenceManager.Favorites = new SqLiteFavorites(path);
+			if (ConferenceManager != null)
+				ConferenceManager.Favorites = new SqLiteFavorites(path);
 
 			// ATC Number
 			AtcNumber = settings.AtcNumber;
@@ -161,9 +113,6 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 				if (calendarDevice != null)
 					m_CalendarControl = calendarDevice.Controls.GetControl<ICalendarControl>();
 			}
-
-			// Wake Schedule
-			m_WakeSchedule.Copy(settings.WakeSchedule);
 
 			// Generate conference points
 			GenerateConferencePoints(factory);
@@ -207,40 +156,8 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 				Core.Originators.AddChild(point);
 				Originators.Add(id, combineMode);
 
-				m_ConferenceManager.RegisterDialingProvider(point);
+				ConferenceManager.RegisterDialingProvider(point);
 			}
-		}
-
-		/// <summary>
-		/// Sets the dialing plan from the settings.
-		/// </summary>
-		/// <param name="path"></param>
-		private void SetDialingPlan(string path)
-		{
-			m_DialingPlan = path;
-
-			if (!string.IsNullOrEmpty(path))
-				path = PathUtils.GetDefaultConfigPath("DialingPlans", path);
-
-			try
-			{
-				if (string.IsNullOrEmpty(path))
-					Log(eSeverity.Warning, "No Dialing Plan configured");
-				else
-				{
-					string xml = IcdFile.ReadToEnd(path, new UTF8Encoding(false));
-					xml = EncodingUtils.StripUtf8Bom(xml);
-
-					m_ConferenceManager.DialingPlan.LoadMatchersFromXml(xml);
-				}
-			}
-			catch (Exception e)
-			{
-				Log(eSeverity.Error, "failed to load Dialing Plan {0} - {1}", path, e.Message);
-			}
-
-			foreach (IConferencePoint conferencePoint in Originators.GetInstancesRecursive<IConferencePoint>())
-				m_ConferenceManager.RegisterDialingProvider(conferencePoint);
 		}
 
 		#endregion
