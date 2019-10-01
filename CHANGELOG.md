@@ -5,17 +5,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Changed
- - Fixed gauges in theme after ICD.Connect.UI rename
-
 ### Added
  - Showing a confirmation dialog when a remote Zoom participant requests microphone mute
+ - Added warming/cooling status gauges for displays
 
 ### Changed
  - Prevent users from pressing Start My Meeting button when no booking is selected
  - Privacy mute is turned off between calls
  - Using short date format for Start Meeting splash page
  - Generic Alert subpage now supports multiple buttons
+ - Fixed gauges in theme after ICD.Connect.UI rename
 
 ## [10.0.0] - 2019-09-16
 ### Added
