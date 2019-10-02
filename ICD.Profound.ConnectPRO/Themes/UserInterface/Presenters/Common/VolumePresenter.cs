@@ -90,7 +90,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 				view.SetMuted(muted);
 				view.SetVolumePercentage(volume);
-				view.SetControlsEnabled(m_VolumeControl == null || m_VolumeControl.ControlAvaliable);
+				view.SetControlsEnabled(m_VolumeControl == null || m_VolumeControl.ControlAvailable);
 			}
 			finally
 			{
@@ -302,7 +302,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (control == null)
 				return;
 
-			control.OnControlAvaliableChanged += ControlOnControlAvaliableChanged;
+			control.OnControlAvailableChanged += ControlOnControlAvailableChanged;
 
 			IVolumeMuteFeedbackDeviceControl controlMute = control as IVolumeMuteFeedbackDeviceControl;
 			if (controlMute != null)
@@ -322,7 +322,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (control == null)
 				return;
 
-			control.OnControlAvaliableChanged -= ControlOnControlAvaliableChanged;
+			control.OnControlAvailableChanged -= ControlOnControlAvailableChanged;
 
 			IVolumeMuteFeedbackDeviceControl controlMute = control as IVolumeMuteFeedbackDeviceControl;
 			if (controlMute != null)
@@ -336,7 +336,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			}
 		}
 
-		private void ControlOnControlAvaliableChanged(object sender, DeviceControlAvaliableApiEventArgs e)
+		private void ControlOnControlAvailableChanged(object sender, DeviceControlAvailableApiEventArgs e)
 		{
 			RefreshIfVisible();
 		}

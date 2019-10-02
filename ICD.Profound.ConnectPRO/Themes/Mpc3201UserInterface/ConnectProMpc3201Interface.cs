@@ -194,7 +194,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 				}
 
 				// Volume power
-				bool volumeOff = m_VolumeControl != null && !m_VolumeControl.ControlAvaliable;
+				bool volumeOff = m_VolumeControl != null && !m_VolumeControl.ControlAvailable;
 
 				// Volume
 				bool volumeEnabled = !volumeOff && m_VolumeControl is IVolumeRampDeviceControl;
@@ -661,7 +661,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// <param name="volumeControl"></param>
 		private void Subscribe(IVolumeDeviceControl volumeControl)
 		{
-			volumeControl.OnControlAvaliableChanged += VolumeControlOnControlAvaliableChanged;
+			volumeControl.OnControlAvailableChanged += VolumeControlOnControlAvailableChanged;
 
 			IVolumePositionDeviceControl volumePositionControl = volumeControl as IVolumePositionDeviceControl;
 			if (volumePositionControl != null)
@@ -678,7 +678,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// <param name="volumeControl"></param>
 		private void Unsubscribe(IVolumeDeviceControl volumeControl)
 		{
-			volumeControl.OnControlAvaliableChanged -= VolumeControlOnControlAvaliableChanged;
+			volumeControl.OnControlAvailableChanged -= VolumeControlOnControlAvailableChanged;
 
 			IVolumePositionDeviceControl volumePositionControl = volumeControl as IVolumePositionDeviceControl;
 			if (volumePositionControl != null)
@@ -709,7 +709,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			Refresh();
 		}
 
-		private void VolumeControlOnControlAvaliableChanged(object sender, DeviceControlAvaliableApiEventArgs e)
+		private void VolumeControlOnControlAvailableChanged(object sender, DeviceControlAvailableApiEventArgs e)
 		{
 			Refresh();
 		}

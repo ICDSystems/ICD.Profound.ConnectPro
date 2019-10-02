@@ -54,7 +54,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		{
 			base.Refresh(view);
 
-			view.SetButtonEnabled(m_SubscribedVolumeControl == null || m_SubscribedVolumeControl.ControlAvaliable);
+			view.SetButtonEnabled(m_SubscribedVolumeControl == null || m_SubscribedVolumeControl.ControlAvailable);
 		}
 
 		/// <summary>
@@ -153,7 +153,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 
 			m_SubscribedVolumeControl = GetVolumeControl(room);
 			if (m_SubscribedVolumeControl != null)
-				m_SubscribedVolumeControl.OnControlAvaliableChanged += SubscribedVolumeControlOnControlAvaliableChanged;
+				m_SubscribedVolumeControl.OnControlAvailableChanged += SubscribedVolumeControlOnControlAvailableChanged;
 
 			m_SubscribedMuteFeedbackControl = GetMuteFeedbackControl(room);
 			if (m_SubscribedMuteFeedbackControl != null)
@@ -171,7 +171,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			base.Unsubscribe(room);
 
 			if (m_SubscribedVolumeControl != null)
-				m_SubscribedVolumeControl.OnControlAvaliableChanged -= SubscribedVolumeControlOnControlAvaliableChanged;
+				m_SubscribedVolumeControl.OnControlAvailableChanged -= SubscribedVolumeControlOnControlAvailableChanged;
 			m_SubscribedVolumeControl = null;
 
 			if (m_SubscribedMuteFeedbackControl != null)
@@ -182,7 +182,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 				room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
 		}
 
-		private void SubscribedVolumeControlOnControlAvaliableChanged(object sender, DeviceControlAvaliableApiEventArgs e)
+		private void SubscribedVolumeControlOnControlAvailableChanged(object sender, DeviceControlAvailableApiEventArgs e)
 		{
 			RefreshIfVisible();
 		}

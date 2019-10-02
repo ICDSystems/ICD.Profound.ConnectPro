@@ -70,7 +70,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 					return;
 
 				bool isInMeeting = Room != null && Room.IsInMeeting;
-				bool hasVolumeControl = m_VolumeControl != null && m_VolumeControl.ControlAvaliable;
+				bool hasVolumeControl = m_VolumeControl != null && m_VolumeControl.ControlAvailable;
 
 				m_ButtonsControl.SetBacklightEnabled(ADDRESS_POWER, isInMeeting);
 				m_ButtonsControl.SetBacklightEnabled(ADDRESS_HOME, isInMeeting);
@@ -218,7 +218,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			if (m_VolumeControl == null)
 				return;
 
-			m_VolumeControl.OnControlAvaliableChanged += VolumeControlOnControlAvaliableChanged;
+			m_VolumeControl.OnControlAvailableChanged += VolumeControlOnControlAvailableChanged;
 		}
 
 		/// <summary>
@@ -235,7 +235,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
 
 			if (m_VolumeControl != null)
-				m_VolumeControl.OnControlAvaliableChanged -= VolumeControlOnControlAvaliableChanged;
+				m_VolumeControl.OnControlAvailableChanged -= VolumeControlOnControlAvailableChanged;
 			m_VolumeControl = null;
 		}
 
@@ -244,7 +244,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			RefreshIfVisible();
 		}
 
-		private void VolumeControlOnControlAvaliableChanged(object sender, DeviceControlAvaliableApiEventArgs e)
+		private void VolumeControlOnControlAvailableChanged(object sender, DeviceControlAvailableApiEventArgs e)
 		{
 			RefreshIfVisible();
 		}

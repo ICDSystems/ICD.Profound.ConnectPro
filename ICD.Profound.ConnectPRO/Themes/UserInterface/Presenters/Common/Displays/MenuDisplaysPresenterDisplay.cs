@@ -192,7 +192,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		/// <summary>
 		/// Gets expected time remaining in milliseconds
-		/// If time is not avaliable, returns null
+		/// If time is not available, returns null
 		/// If time is past due, returns 0
 		/// </summary>
 		/// <returns></returns>
