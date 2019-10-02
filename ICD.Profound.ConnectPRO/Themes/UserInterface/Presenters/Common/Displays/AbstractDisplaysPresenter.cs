@@ -14,19 +14,28 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Displays
 {
-	public abstract class AbstractDisplaysPresenter<TView> : AbstractUiPresenter<TView>, IDisplaysPresenter where TView : class, IUiView
+	public abstract class AbstractDisplaysPresenter<TView> : AbstractUiPresenter<TView>, IDisplaysPresenter
+		where TView : class, IUiView
 	{
 		protected const long DISPLAY_GAUGE_REFRESH_INTERVAL = 250;
 
+		/// <summary>
+		/// Raised when a display destination is pressed.
+		/// </summary>
 		public event MenuDestinationPressedCallback OnDestinationPressed;
 
 		private ISource m_SelectedSource;
-
 
 		private readonly List<MenuDisplaysPresenterDisplay> m_Displays;
 
 		protected List<MenuDisplaysPresenterDisplay> Displays { get { return m_Displays; } }
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="nav"></param>
+		/// <param name="views"></param>
+		/// <param name="theme"></param>
 		protected AbstractDisplaysPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
@@ -43,6 +52,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			base.Dispose();
 		}
 
+		#region Methods
+
 		/// <summary>
 		/// Sets the room for this presenter to represent.
 		/// </summary>
@@ -51,7 +62,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		{
 			bool combine = room != null && room.IsCombineRoom();
 
-			// remake displays list
+			// Remake displays list
 			m_Displays.ForEach(Unsubscribe);
 			m_Displays.ForEach(d => d.Dispose());
 			m_Displays.Clear();
@@ -110,6 +121,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				RefreshIfVisible();
 		}
 
+		#endregion
+
+		#region Private Methods
+
 		protected void DisplayButtonPressed(MenuDisplaysPresenterDisplay display)
 		{
 			MenuDestinationPressedCallback handler = OnDestinationPressed;
@@ -142,24 +157,38 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			              .FirstOrDefault();
 		}
 
+		#endregion
+
 		#region Display Callbacks
 
+		/// <summary>
+		/// Subscribe to the display events.
+		/// </summary>
+		/// <param name="display"></param>
 		private void Subscribe(MenuDisplaysPresenterDisplay display)
 		{
 			display.OnRefreshNeeded += DisplayOnRefreshNeeded;
 		}
 
+		/// <summary>
+		/// Unsubscribe from the display events.
+		/// </summary>
+		/// <param name="display"></param>
 		private void Unsubscribe(MenuDisplaysPresenterDisplay display)
 		{
 			display.OnRefreshNeeded -= DisplayOnRefreshNeeded;
 		}
 
+		/// <summary>
+		/// Called when a display requests a refresh.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void DisplayOnRefreshNeeded(object sender, EventArgs e)
 		{
 			RefreshIfVisible();
 		}
 
 		#endregion
-
 	}
 }

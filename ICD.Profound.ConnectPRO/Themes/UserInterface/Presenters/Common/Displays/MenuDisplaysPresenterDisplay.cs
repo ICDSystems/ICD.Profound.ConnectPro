@@ -323,7 +323,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			}
 		}
 
-		/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+		/// <summary>
+		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+		/// </summary>
 		public void Dispose()
 		{
 			m_Stopwatch.Stop();
@@ -386,7 +388,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			if (powerControl == null)
 				return;
 
-			//Update the dictionary
+			// Update the dictionary
 			m_PowerStateCache[powerControl] = new DisplayPowerState(args.Data);
 
 			// Is the control that we're currently using as the active one

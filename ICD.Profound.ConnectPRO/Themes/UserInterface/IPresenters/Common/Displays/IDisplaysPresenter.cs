@@ -10,6 +10,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displa
 
 	public interface IDisplaysPresenter : IUiPresenter
 	{
+		/// <summary>
+		/// Raised when a display destination is pressed.
+		/// </summary>
 		event MenuDestinationPressedCallback OnDestinationPressed;
 
 		/// <summary>
@@ -17,6 +20,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displa
 		/// </summary>
 		void SetSelectedSource(ISource source);
 
+		/// <summary>
+		/// Sets the current routing state for the displays.
+		/// </summary>
+		/// <param name="routing"></param>
+		/// <param name="activeAudio"></param>
 		void SetRouting(IDictionary<IDestinationBase, IcdHashSet<ISource>> routing, IcdHashSet<ISource> activeAudio);
 	}
 }
