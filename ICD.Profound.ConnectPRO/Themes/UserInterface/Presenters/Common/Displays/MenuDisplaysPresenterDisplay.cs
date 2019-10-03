@@ -21,8 +21,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 	public sealed class MenuDisplaysPresenterDisplay : IDisposable
 	{
 		private const int MAX_LINE_WIDTH = 20;
-		private const ushort GRAPH_MINUM_POSITON_FROM_END = 1310;
-		private const int DURATION_MINIMUM_VISIBLE = 2 * 1000; //Don't show graph <2 second times;
+		private const ushort GRAPH_MINIMUM_POSITION_FROM_END = 1310;
+		private const int DURATION_MINIMUM_VISIBLE = 2 * 1000; // Don't show graph <2 second times;
 
 		private readonly IConnectProRoom m_Room;
 		private readonly IDestinationBase m_Destination;
@@ -78,7 +78,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		public string PowerStateText { get; private set; }
 
-		public bool ShowStatusGauge { get { return (m_PowerState == ePowerState.Warming || m_PowerState == ePowerState.Cooling) && m_PowerStateExpectedDuration >= DURATION_MINIMUM_VISIBLE; } }
+		public bool ShowStatusGauge
+		{
+			get
+			{
+				return (m_PowerState == ePowerState.Warming || m_PowerState == ePowerState.Cooling) &&
+				       m_PowerStateExpectedDuration >= DURATION_MINIMUM_VISIBLE;
+			}
+		}
 
 		public ushort DurationGraphValue
 		{
@@ -91,21 +98,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				if (timeRemaining.Value <= 0)
 				{
 					if (m_PowerState == ePowerState.Warming)
-						return ushort.MaxValue - GRAPH_MINUM_POSITON_FROM_END;
+						return ushort.MaxValue - GRAPH_MINIMUM_POSITION_FROM_END;
 
-					return GRAPH_MINUM_POSITON_FROM_END;
+					return GRAPH_MINIMUM_POSITION_FROM_END;
 				}
 
 				float graphPosition = (float)timeRemaining.Value / m_PowerStateExpectedDuration;
 
-				// If warming, flip to incresing
+				// If warming, flip to increasing
 				if (m_PowerState == ePowerState.Warming)
 					graphPosition = 1 - graphPosition;
 
 				// Max value is Expired value
 				return MathUtils.Clamp((ushort)(graphPosition * ushort.MaxValue),
-				                       GRAPH_MINUM_POSITON_FROM_END,
-				                       (ushort)(ushort.MaxValue - GRAPH_MINUM_POSITON_FROM_END));
+				                       GRAPH_MINIMUM_POSITION_FROM_END,
+				                       (ushort)(ushort.MaxValue - GRAPH_MINIMUM_POSITION_FROM_END));
 			}
 		}
 
@@ -129,6 +136,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		}
 
 		#region Methods
+
+		/// <summary>
+		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+		/// </summary>
+		public void Dispose()
+		{
+			m_Stopwatch.Stop();
+			Unsubscribe(m_Destination);
+		}
 
 		public bool SetRoutedSource(ISource routedSource, bool canRouteToRoomAudio)
 		{
@@ -190,21 +206,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			return true;
 		}
 
+		#endregion
+
+		#region Private Methods
+
 		/// <summary>
 		/// Gets expected time remaining in milliseconds
 		/// If time is not available, returns null
 		/// If time is past due, returns 0
 		/// </summary>
 		/// <returns></returns>
-		public long? GetTimeRemaining()
+		private long? GetTimeRemaining()
 		{
 			if (m_PowerStateExpectedDuration == 0)
 				return null;
 
 			long elapsedTime = m_Stopwatch.ElapsedMilliseconds;
-			long elapsedMiliseconds = m_StopwatchInitialTime + elapsedTime;
+			long elapsedMilliseconds = m_StopwatchInitialTime + elapsedTime;
 
-			return m_PowerStateExpectedDuration - elapsedMiliseconds;
+			return m_PowerStateExpectedDuration - elapsedMilliseconds;
 		}
 
 		private static long? GetTimeRemaining(DateTime startTime, long expectedDuration)
@@ -223,10 +243,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		{
 			return (long)IcdEnvironment.GetUtcTime().Subtract(time).TotalMilliseconds;
 		}
-
-		#endregion
-
-		#region Private Methods
 
 		private void UpdateHasControl()
 		{
@@ -323,15 +339,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			}
 		}
 
-		/// <summary>
-		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-		/// </summary>
-		public void Dispose()
-		{
-			m_Stopwatch.Stop();
-			Unsubscribe(m_Destination);
-		}
-
 		#endregion
 
 		#region Destination Callbacks
@@ -395,11 +402,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			if (m_ActivePowerControl == powerControl)
 			{
 				// Check if the new state is same or higher priority, if so, update for new state
-				// If not, recaculate power feedback from all the controls
+				// If not, recalculate power feedback from all the controls
 				if(CompareState(args.Data.PowerState, m_PowerState) < 1)
 					UpdatePowerState(powerControl);
 				else
-					RecaculatePowerFeedback();
+					RecalculatePowerFeedback();
 			}
 			else
 			{
@@ -448,7 +455,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			OnRefreshNeeded.Raise(this);
 		}
 
-		private void RecaculatePowerFeedback()
+		private void RecalculatePowerFeedback()
 		{
 			ePowerState currentState = ePowerState.Unknown;
 			long currentRemaining = 0;
@@ -469,7 +476,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			UpdatePowerState(control);
 		}
 
-		public static int CompareState(ePowerState x, ePowerState y)
+		private static int CompareState(ePowerState x, ePowerState y)
 		{
 			if (x == y)
 				return 0;
@@ -519,7 +526,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				m_EffectiveTime = IcdEnvironment.GetUtcTime();
 			}
 
-			public DisplayPowerState(ePowerState powerState) : this(new PowerDeviceControlPowerStateEventData(powerState))
+			public DisplayPowerState(ePowerState powerState)
+				: this(new PowerDeviceControlPowerStateEventData(powerState))
 			{
 			}
 		}
