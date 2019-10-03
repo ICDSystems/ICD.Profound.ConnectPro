@@ -5,6 +5,7 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
+using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Partitioning.Cells;
 using ICD.Connect.Partitioning.Controls;
 using ICD.Connect.Partitioning.PartitionManagers;
@@ -301,6 +302,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			}
 			catch (Exception e)
 			{
+				Room.Logger.AddEntry(eSeverity.Error, e, "Failed to combine rooms - " + e.Message);
+
 				Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>()
 				          .TimeOut("Failed to complete operation - " + e.Message);
 			}
