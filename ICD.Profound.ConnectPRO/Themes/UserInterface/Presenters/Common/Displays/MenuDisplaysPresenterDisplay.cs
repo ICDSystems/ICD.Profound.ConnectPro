@@ -43,15 +43,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		private bool m_CanRouteVideo;
 
 		private ePowerState m_PowerState;
-		private DateTime m_PowerStateChangedTime;
 		private long m_PowerStateExpectedDuration;
-		private IPowerDeviceControl m_ActivePowerControl;
 
 		/// <summary>
 		/// We use a stopwatch to count elapsed time because DateTime is only has second-precision on some Crestron platforms
 		/// </summary>
 		private readonly IcdStopwatch m_Stopwatch;
-		private long m_StopwatchInitialTime;
 
 		#region Events
 
@@ -76,7 +73,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		public ISource RoutedSource { get { return m_RoutedSource; } }
 
-		public string PowerStateText { get; private set; }
+		public string PowerStateText
+		{
+			get
+			{
+				switch (m_PowerState)
+				{
+					case ePowerState.Warming:
+						return "Warming";
+					case ePowerState.Cooling:
+						return "Cooling";
+				}
+
+				return string.Empty;
+			}
+		}
 
 		public bool ShowStatusGauge
 		{
@@ -91,19 +102,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		{
 			get
 			{
-				long? timeRemaining = GetTimeRemaining();
-				if (!timeRemaining.HasValue)
-					return 0;
-
-				if (timeRemaining.Value <= 0)
-				{
-					if (m_PowerState == ePowerState.Warming)
-						return ushort.MaxValue - GRAPH_MINIMUM_POSITION_FROM_END;
-
-					return GRAPH_MINIMUM_POSITION_FROM_END;
-				}
-
-				float graphPosition = (float)timeRemaining.Value / m_PowerStateExpectedDuration;
+				long timeRemaining = GetTimeRemaining();
+				float graphPosition = (float)timeRemaining / m_PowerStateExpectedDuration;
 
 				// If warming, flip to increasing
 				if (m_PowerState == ePowerState.Warming)
@@ -211,37 +211,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		#region Private Methods
 
 		/// <summary>
-		/// Gets expected time remaining in milliseconds
-		/// If time is not available, returns null
-		/// If time is past due, returns 0
+		/// Gets expected time remaining in milliseconds.
+		/// If time is past due, returns 0.
 		/// </summary>
 		/// <returns></returns>
-		private long? GetTimeRemaining()
+		private long GetTimeRemaining()
 		{
-			if (m_PowerStateExpectedDuration == 0)
-				return null;
-
-			long elapsedTime = m_Stopwatch.ElapsedMilliseconds;
-			long elapsedMilliseconds = m_StopwatchInitialTime + elapsedTime;
-
-			return m_PowerStateExpectedDuration - elapsedMilliseconds;
+			return GetTimeRemaining(m_PowerStateExpectedDuration);
 		}
 
-		private static long? GetTimeRemaining(DateTime startTime, long expectedDuration)
+		/// <summary>
+		/// Gets expected time remaining in milliseconds.
+		/// If time is past due, returns 0.
+		/// </summary>
+		/// <param name="expectedDuration"></param>
+		/// <returns></returns>
+		private long GetTimeRemaining(long expectedDuration)
 		{
-			if (expectedDuration == 0)
-				return null;
-
-			long runningTime = GetMillisecondsSince(startTime);
-			if (runningTime >= expectedDuration)
-				return 0;
-
-			return expectedDuration - runningTime;
-		}
-
-		private static long GetMillisecondsSince(DateTime time)
-		{
-			return (long)IcdEnvironment.GetUtcTime().Subtract(time).TotalMilliseconds;
+			long remaining = expectedDuration - m_Stopwatch.ElapsedMilliseconds;
+			return remaining < 0 ? 0 : remaining;
 		}
 
 		private void UpdateHasControl()
@@ -264,7 +252,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private void UpdateIcon()
 		{
-
 			ConnectProSource source = m_RoutedSource as ConnectProSource;
 			string icon = source == null ? null : source.Icon;
 			m_Icon = Icons.GetDisplayIcon(icon, m_Color);
@@ -323,26 +310,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			                m_RoutedSource.ConnectionType.HasFlag(eConnectionType.Audio);
 		}
 
-		private void UpdatePowerStateLabel()
-		{
-			switch (m_PowerState)
-			{
-				case ePowerState.Warming:
-					PowerStateText = "Warming";
-					break;
-				case ePowerState.Cooling:
-					PowerStateText = "Cooling";
-					break;
-				default:
-					PowerStateText = string.Empty;
-					break;
-			}
-		}
-
 		#endregion
 
 		#region Destination Callbacks
 
+		/// <summary>
+		/// Subscribe to the destination events.
+		/// </summary>
+		/// <param name="destinationBase"></param>
 		private void Subscribe(IDestinationBase destinationBase)
 		{
 			if (destinationBase == null)
@@ -357,6 +332,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			}
 		}
 
+		/// <summary>
+		/// Unsubscribe from the destination events.
+		/// </summary>
+		/// <param name="destinationBase"></param>
 		private void Unsubscribe(IDestinationBase destinationBase)
 		{
 			if (destinationBase == null)
@@ -370,6 +349,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		#region PowerDeviceControl callbacks
 
+		/// <summary>
+		/// Subscribe to the power control events.
+		/// </summary>
+		/// <param name="powerControl"></param>
 		private void Subscribe(IPowerDeviceControl powerControl)
 		{
 			if (powerControl == null)
@@ -380,6 +363,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			powerControl.OnPowerStateChanged += PowerControlOnPowerStateChanged;
 		}
 
+		/// <summary>
+		/// Unsubscribe from the power control events.
+		/// </summary>
+		/// <param name="powerControl"></param>
 		private void Unsubscribe(IPowerDeviceControl powerControl)
 		{
 			if (powerControl == null)
@@ -388,94 +375,73 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			powerControl.OnPowerStateChanged -= PowerControlOnPowerStateChanged;
 		}
 
+		/// <summary>
+		/// Called when a power controls power state changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void PowerControlOnPowerStateChanged(object sender, PowerDeviceControlPowerStateApiEventArgs args)
 		{
 			IPowerDeviceControl powerControl = sender as IPowerDeviceControl;
-
 			if (powerControl == null)
 				return;
 
-			// Update the dictionary
 			m_PowerStateCache[powerControl] = new DisplayPowerState(args.Data);
 
-			// Is the control that we're currently using as the active one
-			if (m_ActivePowerControl == powerControl)
-			{
-				// Check if the new state is same or higher priority, if so, update for new state
-				// If not, recalculate power feedback from all the controls
-				if(CompareState(args.Data.PowerState, m_PowerState) < 1)
-					UpdatePowerState(powerControl);
-				else
-					RecalculatePowerFeedback();
-			}
-			else
-			{
-				int powerStateComparison = CompareState(args.Data.PowerState,m_PowerState);
-
-				// If the priority is higher, or the priority is the same but the expected duration is longer, use this power control instead
-				if (powerStateComparison == -1)
-					UpdatePowerState(powerControl);
-				else if (powerStateComparison == 0 && args.Data.ExpectedDuration > GetTimeRemaining())
-					UpdatePowerState(powerControl);
-
-			}
-		}
-
-		/// <summary>
-		/// Update all the power state variables with the info from the given control
-		/// </summary>
-		/// <param name="control"></param>
-		private void UpdatePowerState(IPowerDeviceControl control)
-		{
-			DisplayPowerState state;
-
-			if (!m_PowerStateCache.TryGetValue(control, out state))
-				return;
-
-			m_ActivePowerControl = control;
-			m_PowerStateChangedTime = state.EffectiveTime;
-			m_PowerStateExpectedDuration = state.ExpectedDuration;
-			m_PowerState = state.PowerState;
-
-			// Get current elapsed time and start stopwatch
-			long? remainingTime = GetTimeRemaining(m_PowerStateChangedTime, m_PowerStateExpectedDuration);
-			if (remainingTime.HasValue && remainingTime.Value > 0)
-			{
-				m_StopwatchInitialTime = GetMillisecondsSince(m_PowerStateChangedTime);
-				m_Stopwatch.Restart();
-			}
-			else
-			{
-				m_StopwatchInitialTime = 0;
-				m_Stopwatch.Stop();
-			}
-
-			UpdatePowerStateLabel();
-
-			OnRefreshNeeded.Raise(this);
-		}
-
-		private void RecalculatePowerFeedback()
-		{
 			ePowerState currentState = ePowerState.Unknown;
 			long currentRemaining = 0;
 			IPowerDeviceControl control = null;
 
-			foreach (var kvp in m_PowerStateCache)
+			foreach (KeyValuePair<IPowerDeviceControl, DisplayPowerState> kvp in m_PowerStateCache)
 			{
 				int stateCompare = CompareState(kvp.Value.PowerState, currentState);
-				long? itemTimeRemaining = GetTimeRemaining(kvp.Value.EffectiveTime, kvp.Value.ExpectedDuration);
-				if (stateCompare == -1 || (stateCompare == 0 && (itemTimeRemaining.GetValueOrDefault() > currentRemaining)))
-				{
-					control = kvp.Key;
-					currentRemaining = itemTimeRemaining.GetValueOrDefault();
-					currentState = kvp.Value.PowerState;
-				}
+				long itemTimeRemaining = GetTimeRemaining(kvp.Value.ExpectedDuration);
+
+				if (stateCompare != -1 && (stateCompare != 0 || itemTimeRemaining <= currentRemaining))
+					continue;
+
+				control = kvp.Key;
+				currentRemaining = itemTimeRemaining;
+				currentState = kvp.Value.PowerState;
 			}
 
 			UpdatePowerState(control);
 		}
 
+		/// <summary>
+		/// Update all the power state variables with the info from the given control.
+		/// </summary>
+		/// <param name="control"></param>
+		private void UpdatePowerState(IPowerDeviceControl control)
+		{
+			if (control == null)
+				throw new ArgumentNullException("control");
+
+			DisplayPowerState state;
+			if (!m_PowerStateCache.TryGetValue(control, out state))
+				return;
+
+			m_PowerStateExpectedDuration = state.ExpectedDuration;
+			m_PowerState = state.PowerState;
+
+			// Get current elapsed time and start stopwatch
+			long remainingTime = GetTimeRemaining();
+			if (remainingTime > 0)
+				m_Stopwatch.Restart();
+			else
+				m_Stopwatch.Stop();
+
+			OnRefreshNeeded.Raise(this);
+		}
+
+		/// <summary>
+		/// Returns 0 if states are the same.
+		/// Returns -1 if x is more important than y.
+		/// Returns 1 if x is less important than y.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
 		private static int CompareState(ePowerState x, ePowerState y)
 		{
 			if (x == y)
@@ -506,29 +472,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		#endregion
 
-		private sealed class DisplayPowerState
+		private struct DisplayPowerState
 		{
-			private readonly DateTime m_EffectiveTime;
+			private readonly ePowerState m_PowerState;
+			private readonly long m_ExpectedDuration;
 
-			private readonly PowerDeviceControlPowerStateEventData m_StateData;
+			public ePowerState PowerState { get { return m_PowerState; } }
 
-			public DateTime EffectiveTime { get { return m_EffectiveTime; } }
-
-			public PowerDeviceControlPowerStateEventData StateData { get { return m_StateData; } }
-
-			public ePowerState PowerState { get { return m_StateData.PowerState; } }
-
-			public long ExpectedDuration { get { return m_StateData.ExpectedDuration; } }
+			public long ExpectedDuration { get { return m_ExpectedDuration; } }
 
 			public DisplayPowerState(PowerDeviceControlPowerStateEventData stateData)
+				: this(stateData.PowerState, stateData.ExpectedDuration)
 			{
-				m_StateData = stateData;
-				m_EffectiveTime = IcdEnvironment.GetUtcTime();
 			}
 
 			public DisplayPowerState(ePowerState powerState)
-				: this(new PowerDeviceControlPowerStateEventData(powerState))
+				: this(powerState, 0)
 			{
+			}
+
+			public DisplayPowerState(ePowerState powerState, long expectedDuration)
+			{
+				m_PowerState = powerState;
+				m_ExpectedDuration = expectedDuration;
 			}
 		}
 	}
