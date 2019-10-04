@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.UI.Attributes;
@@ -20,6 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.WebConf
 
 		private WebConferencingAppInstructions m_App;
 
+		[CanBeNull]
 		public WebConferencingAppInstructions App
 		{
 			get { return m_App; }

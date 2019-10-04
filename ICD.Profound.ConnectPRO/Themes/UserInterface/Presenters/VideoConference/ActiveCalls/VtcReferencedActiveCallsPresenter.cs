@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Timers;
@@ -24,6 +25,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Sets the conference source for this presenter.
 		/// </summary>
 		/// <value></value>
+		[CanBeNull]
 		public ITraditionalParticipant Participant
 		{
 			get { return m_Source; }

@@ -1,4 +1,5 @@
-﻿using ICD.Connect.Conferencing.DialContexts;
+﻿using ICD.Common.Properties;
+using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -12,6 +13,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 	{
 		private ITraditionalParticipant m_Recent;
 
+		[CanBeNull]
 		public ITraditionalParticipant Recent
 		{
 			get { return m_Recent; }

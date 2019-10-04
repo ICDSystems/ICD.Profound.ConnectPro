@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Common.Properties;
 using ICD.Connect.Conferencing.Directory.Tree;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -12,6 +13,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 	{
 		private IDirectoryFolder m_Folder;
 
+		[CanBeNull]
 		public IDirectoryFolder Folder
 		{
 			get { return m_Folder; }

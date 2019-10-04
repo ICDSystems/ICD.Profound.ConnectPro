@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using ICD.Common.Properties;
 using ICD.Connect.Conferencing.Favorites;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
@@ -15,6 +16,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 	{
 		private Favorite m_Favorite;
 
+		[CanBeNull]
 		public Favorite Favorite
 		{
 			get { return m_Favorite; }

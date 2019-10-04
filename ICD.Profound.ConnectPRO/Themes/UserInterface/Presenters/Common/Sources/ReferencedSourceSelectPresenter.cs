@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Partitioning.Rooms;
@@ -29,6 +30,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// <summary>
 		/// Gets/sets the source for the presenter.
 		/// </summary>
+		[CanBeNull]
 		public ISource Source
 		{
 			get { return m_Cache.Source; }

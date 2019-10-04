@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Contacts;
@@ -19,6 +20,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private IContact m_Contact;
+
+		[CanBeNull]
 		public IContact Contact
 		{
 			get { return m_Contact; }

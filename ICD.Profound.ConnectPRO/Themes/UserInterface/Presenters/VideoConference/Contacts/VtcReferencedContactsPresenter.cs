@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Common.Properties;
 using ICD.Connect.Conferencing.Contacts;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Favorites;
@@ -15,6 +16,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 	{
 		private IContact m_Contact;
 
+		[CanBeNull]
 		public IContact Contact
 		{
 			get { return m_Contact; }
