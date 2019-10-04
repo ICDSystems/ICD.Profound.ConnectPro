@@ -168,10 +168,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (source == null)
 				throw new ArgumentNullException("source");
 
-			// This room takes precedence
-			if (m_Routing.Room.Originators.ContainsRecursive(source.Id))
-				return m_Routing.Room;
-
 			return m_Routing.Room
 			                .Core
 			                .Originators
