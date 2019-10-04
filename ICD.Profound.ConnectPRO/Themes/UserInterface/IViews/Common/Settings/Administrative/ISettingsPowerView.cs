@@ -17,11 +17,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Ad
 		event EventHandler OnSleepMinuteIncrementButtonPressed;
 		event EventHandler OnSleepMinuteDecrementButtonPressed;
 
+		event EventHandler OnDisplayPowerTogglePressed;
 		event EventHandler OnEnableTogglePressed;
 
 		void SetWeekdaysButtonSelected();
 		void SetWeekendsButtonSelected();
 
+		void SetDisplayPowerToggleSelected(bool selected);
 		void SetEnableToggleSelected(bool selected);
 
 		void SetWakeHour(int hour);

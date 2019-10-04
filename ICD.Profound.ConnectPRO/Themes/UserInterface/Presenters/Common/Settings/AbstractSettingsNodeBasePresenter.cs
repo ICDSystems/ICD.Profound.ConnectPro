@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Common.Properties;
 using ICD.Profound.ConnectPRO.SettingsTree;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
@@ -23,6 +24,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <summary>
 		/// Gets/sets the settings node.
 		/// </summary>
+		[CanBeNull]
 		public TNode Node
 		{
 			get { return m_Node; }
@@ -83,7 +85,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// Subscribe to the node events.
 		/// </summary>
 		/// <param name="node"></param>
-		private void Subscribe(TNode node)
+		protected virtual void Subscribe(TNode node)
 		{
 			if (node == null)
 				return;
@@ -97,7 +99,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// Unsubscribe from the node events.
 		/// </summary>
 		/// <param name="node"></param>
-		private void Unsubscribe(TNode node)
+		protected virtual void Unsubscribe(TNode node)
 		{
 			if (node == null)
 				return;

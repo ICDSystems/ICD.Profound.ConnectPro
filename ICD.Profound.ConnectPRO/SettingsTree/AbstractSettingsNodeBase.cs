@@ -44,6 +44,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 				throw new ArgumentNullException("room");
 
 			m_Room = room;
+			Subscribe(m_Room);
 
 			Name = "Unnamed";
 			Icon = SettingsTreeIcons.ICON_ADMIN;
@@ -54,6 +55,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 		/// </summary>
 		public virtual void Dispose()
 		{
+			Unsubscribe(m_Room);
 		}
 
 		/// <summary>
@@ -61,5 +63,25 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 		/// </summary>
 		/// <param name="dirty"></param>
 		public abstract void SetDirty(bool dirty);
+
+		#region Room Callbacks
+
+		/// <summary>
+		/// Subscribe to the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected virtual void Subscribe(IConnectProRoom room)
+		{
+		}
+
+		/// <summary>
+		/// Unsubscribe from the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected virtual void Unsubscribe(IConnectProRoom room)
+		{
+		}
+
+		#endregion
 	}
 }

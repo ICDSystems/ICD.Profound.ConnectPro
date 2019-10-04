@@ -30,6 +30,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 		private VtProSimpleLabel m_SleepHourLabel;
 		private VtProSimpleLabel m_SleepMinuteLabel;
 
+		private VtProButton m_DisplayPowerToggleButton;
 		private VtProButton m_EnableToggleButton;
 
 		/// <summary>
@@ -107,6 +108,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 				IndirectTextJoin = 813
 			};
 
+			m_DisplayPowerToggleButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 408
+			};
+
 			m_EnableToggleButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 406
@@ -139,6 +145,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 			yield return m_SleepHourLabel;
 			yield return m_SleepMinuteLabel;
 
+			yield return m_DisplayPowerToggleButton;
 			yield return m_EnableToggleButton;
 		}
 	}
