@@ -787,28 +787,29 @@ namespace ICD.Profound.ConnectPRO.Routing
 			UnrouteAllExceptOsd(Destinations.GetAudioDestinations(), eConnectionType.Audio);
 		}
 
-		private void UnrouteAllExceptOsd(IEnumerable<IDestinationBase> destinations, eConnectionType type)
+		private void UnrouteAllExceptOsd(IEnumerable<IDestinationBase> destinations, eConnectionType flag)
 		{
 			Dictionary<EndpointInfo, IcdHashSet<EndpointInfo>> unrouteVideoEndpoints =
 				destinations.SelectMany(d => d.GetEndpoints())
-				            .ToDictionary(e => e,
-				                          e => RoutingGraph.RoutingCache
-				                                           .GetSourceEndpointsForDestinationEndpoint(e, type)
-				                                           .Where(s =>
-				                                                  {
-					                                                  // Don't unroute OSDs for this room
-					                                                  if (m_Room.Core.Originators.GetChild(s.Device) is OsdPanelDevice &&
-						                                                  m_Room.Originators.ContainsRecursive(s.Device))
-						                                                  return false;
-					                                                  return true;
-				                                                  })
-				                                           .ToIcdHashSet());
+				            .Distinct()
+				            .ToDictionary(e => e, e => GetNonOsdSourceEndpoints(e, flag).ToIcdHashSet());
 
 			foreach (KeyValuePair<EndpointInfo, IcdHashSet<EndpointInfo>> pair in unrouteVideoEndpoints)
 			{
 				foreach (EndpointInfo sourceEndpoint in pair.Value)
-					RoutingGraph.Unroute(sourceEndpoint, pair.Key, type, m_Room.Id);
+					RoutingGraph.Unroute(sourceEndpoint, pair.Key, flag, m_Room.Id);
 			}
+		}
+
+		private IEnumerable<EndpointInfo> GetNonOsdSourceEndpoints(EndpointInfo destinationEndpoint,
+		                                                           eConnectionType flag)
+		{
+			return RoutingGraph.RoutingCache
+			                   .GetSourceEndpointsForDestinationEndpoint(destinationEndpoint, flag)
+			                   .Where(s =>
+				                          !(m_Room.Core.Originators.GetChild(s.Device) is OsdPanelDevice) ||
+				                          !m_Room.Originators.ContainsRecursive(s.Device))
+			                   .ToIcdHashSet();
 		}
 
 		#endregion
