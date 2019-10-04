@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
@@ -22,8 +23,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private readonly SafeTimer m_DisplayGaugeRefreshTimer;
 
+		[CanBeNull]
 		public MenuDisplaysPresenterDisplay Model { get; set; }
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="nav"></param>
+		/// <param name="views"></param>
+		/// <param name="theme"></param>
 		public ReferencedDisplayPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
@@ -31,6 +39,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			m_DisplayGaugeRefreshTimer = SafeTimer.Stopped(RefreshDisplayStatusGauge);
 		}
 
+		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Refresh(IReferencedDisplayView view)
 		{
 			base.Refresh(view);
@@ -39,13 +51,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 			try
 			{
-				view.SetDisplayColor(Model.Color);
-				view.SetDisplayIcon(Model.Icon);
-				view.SetDisplaySourceText(Model.SourceName);
-				view.SetDisplayLine1Text(Model.Line1);
-				view.SetDisplayLine2Text(Model.Line2);
-				view.SetDisplaySpeakerButtonActive(Model.AudioActive);
-				view.ShowDisplaySpeakerButton(Model.ShowSpeaker);
+				eDisplayColor color = Model == null ? eDisplayColor.Grey : Model.Color;
+				string icon = Model == null ? string.Empty : Model.Icon;
+				string sourceName = Model == null ? string.Empty : Model.SourceName;
+				string line1 = Model == null ? string.Empty : Model.Line1;
+				string line2 = Model == null ? string.Empty : Model.Line2;
+				bool audioActive = Model != null && Model.AudioActive;
+				bool showSpeaker = Model != null && Model.ShowSpeaker;
+
+				view.SetDisplayColor(color);
+				view.SetDisplayIcon(icon);
+				view.SetDisplaySourceText(sourceName);
+				view.SetDisplayLine1Text(line1);
+				view.SetDisplayLine2Text(line2);
+				view.SetDisplaySpeakerButtonActive(audioActive);
+				view.ShowDisplaySpeakerButton(showSpeaker);
 
 				RefreshDisplayStatusGauge(view);
 			}
@@ -69,10 +89,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 			try
 			{
-				bool displayShowGauge = Model.ShowStatusGauge;
-				view.SetDisplayStatusGauge(displayShowGauge, Model.DurationGraphValue, Model.PowerStateText);
+				bool showGauge = Model != null && Model.ShowStatusGauge;
+				ushort position = Model == null ? (ushort)0 : Model.DurationGraphValue;
+				string text = Model == null ? string.Empty : Model.PowerStateText;
 
-				if (displayShowGauge)
+				view.SetDisplayStatusGauge(showGauge, position, text);
+
+				if (showGauge)
 					m_DisplayGaugeRefreshTimer.Reset(DISPLAY_GAUGE_REFRESH_INTERVAL);
 				else
 					m_DisplayGaugeRefreshTimer.Stop();
@@ -85,6 +108,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		#region View Callbacks
 
+		/// <summary>
+		/// Subscribe to the view events.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Subscribe(IReferencedDisplayView view)
 		{
 			base.Subscribe(view);
@@ -93,6 +120,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			view.OnDisplaySpeakerButtonPressed += ViewOnDisplaySpeakerButtonPressed;
 		}
 
+		/// <summary>
+		/// Unsubscribe from the view events.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Unsubscribe(IReferencedDisplayView view)
 		{
 			base.Subscribe(view);
@@ -101,11 +132,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			view.OnDisplaySpeakerButtonPressed -= ViewOnDisplaySpeakerButtonPressed;
 		}
 
+		/// <summary>
+		/// Called when the user presses the display button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ViewOnDisplayButtonPressed(object sender, EventArgs e)
 		{
 			OnDisplayPressed.Raise(this);
 		}
 
+		/// <summary>
+		/// Called when the user presses the speaker button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ViewOnDisplaySpeakerButtonPressed(object sender, EventArgs e)
 		{
 			OnDisplaySpeakerPressed.Raise(this);
