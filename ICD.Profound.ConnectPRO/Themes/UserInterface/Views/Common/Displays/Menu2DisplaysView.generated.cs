@@ -19,7 +19,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		private VtProSimpleLabel m_Display1SourceLabel;
 		private VtProSimpleLabel m_Display1Line1Label;
 		private VtProSimpleLabel m_Display1Line2Label;
-		private VtProCircularGauge m_Display1StatusGauge;
+		private VtProSimpleLabel m_Display1WarmupLabel;
 
 		private VtProAdvancedButton m_Display2BackgroundButton;
 		private VtProButton m_Display2SpeakerButton;
@@ -27,7 +27,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		private VtProSimpleLabel m_Display2SourceLabel;
 		private VtProSimpleLabel m_Display2Line1Label;
 		private VtProSimpleLabel m_Display2Line2Label;
-		private VtProCircularGauge m_Display2StatusGauge;
+		private VtProSimpleLabel m_Display2WarmupLabel;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -74,11 +74,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 				IndirectTextJoin = 302
 			};
 
-			m_Display1StatusGauge = new VtProCircularGauge(panel, m_Subpage)
+			m_Display1WarmupLabel = new VtProSimpleLabel(panel, m_Subpage)
 			{
-				AnalogFeedbackJoin =  320,
-				DigitalVisibilityJoin = 315,
-				CenterChildLabelSerialJoin = 320
+				IndirectTextJoin = 309
 			};
 
 			m_Display2BackgroundButton = new VtProAdvancedButton(panel, m_Subpage)
@@ -113,11 +111,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 				IndirectTextJoin = 306
 			};
 
-			m_Display2StatusGauge = new VtProCircularGauge(panel, m_Subpage)
+			m_Display2WarmupLabel = new VtProSimpleLabel(panel, m_Subpage)
 			{
-				AnalogFeedbackJoin = 321,
-				DigitalVisibilityJoin = 317,
-				CenterChildLabelSerialJoin = 321
+				IndirectTextJoin = 310
 			};
 		}
 
@@ -135,6 +131,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 			yield return m_Display1SourceLabel;
 			yield return m_Display1Line1Label;
 			yield return m_Display1Line2Label;
+			yield return m_Display1WarmupLabel;
 
 			yield return m_Display2BackgroundButton;
 			yield return m_Display2SpeakerButton;
@@ -142,6 +139,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 			yield return m_Display2SourceLabel;
 			yield return m_Display2Line1Label;
 			yield return m_Display2Line2Label;
+			yield return m_Display2WarmupLabel;
 		}
 	}
 }

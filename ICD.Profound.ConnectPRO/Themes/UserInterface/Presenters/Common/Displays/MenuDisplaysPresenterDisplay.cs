@@ -21,7 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 	public sealed class MenuDisplaysPresenterDisplay : IDisposable
 	{
 		private const int MAX_LINE_WIDTH = 20;
-		private const ushort GRAPH_MINIMUM_POSITION_FROM_END = 1310;
+		private const float GRAPH_MINIMUM_POSITION_FROM_END = 0.01f;
 		private const int DURATION_MINIMUM_VISIBLE = 2 * 1000; // Don't show graph <2 second times;
 
 		private readonly IConnectProRoom m_Room;
@@ -73,23 +73,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		public ISource RoutedSource { get { return m_RoutedSource; } }
 
-		public string PowerStateText
-		{
-			get
-			{
-				switch (m_PowerState)
-				{
-					case ePowerState.Warming:
-						return "Warming";
-					case ePowerState.Cooling:
-						return "Cooling";
-				}
+		public ePowerState PowerState { get { return m_PowerState; } }
 
-				return string.Empty;
-			}
-		}
-
-		public bool ShowStatusGauge
+		public bool ShowPowerState
 		{
 			get
 			{
@@ -98,7 +84,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			}
 		}
 
-		public ushort DurationGraphValue
+		public float PowerStatePercent
 		{
 			get
 			{
@@ -110,9 +96,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 					graphPosition = 1 - graphPosition;
 
 				// Max value is Expired value
-				return MathUtils.Clamp((ushort)(graphPosition * ushort.MaxValue),
+				return MathUtils.Clamp(graphPosition,
 				                       GRAPH_MINIMUM_POSITION_FROM_END,
-				                       (ushort)(ushort.MaxValue - GRAPH_MINIMUM_POSITION_FROM_END));
+				                       1.0f - GRAPH_MINIMUM_POSITION_FROM_END);
+			}
+		}
+
+		public string PowerStateText
+		{
+			get
+			{
+				if (!ShowPowerState)
+					return string.Empty;
+
+				string percent = PowerStatePercent.ToString("0");
+				string color =
+					PowerState == ePowerState.Warming
+						? Colors.COLOR_RED
+						: Colors.COLOR_DARK_BLUE;
+
+				return HtmlUtils.FormatColoredText(percent, color);
 			}
 		}
 

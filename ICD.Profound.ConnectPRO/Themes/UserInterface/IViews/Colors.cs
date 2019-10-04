@@ -23,6 +23,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews
 		public const string COLOR_WHITE = "#FFFFFF";
 		public const string COLOR_LIGHT_GREY = "#8B8B8B";
 		public const string COLOR_DARK_GREY = "#535353";
+		public const string COLOR_RED = "#FB2F24";
 
 		/// <summary>
 		/// Gets the hex color code for the display text in the current color mode.

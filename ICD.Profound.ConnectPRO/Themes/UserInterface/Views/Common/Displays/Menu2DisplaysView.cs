@@ -1,5 +1,4 @@
 ﻿using System;
-using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
@@ -124,16 +123,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		}
 
 		/// <summary>
-		/// Warming/cooling bar graph - show/hide and set position
+		/// Sets the text for the warmup label.
 		/// </summary>
-		/// <param name="visible"></param>
-		/// <param name="position"></param>
 		/// <param name="text"></param>
-		public void SetDisplay1StatusGauge(bool visible, ushort position, string text)
+		public void SetDisplay1WarmupStatusText(string text)
 		{
-			m_Display1StatusGauge.Show(visible);
-			m_Display1StatusGauge.SetValue(position);
-			m_Display1StatusGauge.SetCenterChildLabel(text);
+			m_Display1WarmupLabel.SetLabelText(text);
 		}
 
 		#endregion
@@ -225,14 +220,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		/// <summary>
 		/// Warming/cooling bar graph - show/hide and set position
 		/// </summary>
-		/// <param name="visible"></param>
-		/// <param name="position"></param>
 		/// <param name="text"></param>
-		public void SetDisplay2StatusGauge(bool visible, ushort position, string text)
+		public void SetDisplay2WarmupStatusText(string text)
 		{
-			m_Display2StatusGauge.Show(visible);
-			m_Display2StatusGauge.SetValue(position);
-			m_Display2StatusGauge.SetCenterChildLabel(text);
+			m_Display2WarmupLabel.SetLabelText(text);
 		}
 
 		#endregion

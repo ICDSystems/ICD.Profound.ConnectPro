@@ -19,7 +19,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		private VtProSimpleLabel m_SourceLabel;
 		private VtProSimpleLabel m_Line1Label;
 		private VtProSimpleLabel m_Line2Label;
-		private VtProCircularGauge m_DisplayStatusGauge;
+		private VtProSimpleLabel m_WarmupLabel;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -72,11 +72,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 				IndirectTextJoin = 312
 			};
 
-			m_DisplayStatusGauge = new VtProCircularGauge(panel, m_Subpage)
+			m_WarmupLabel = new VtProSimpleLabel(panel, m_Subpage)
 			{
-				DigitalVisibilityJoin = 319,
-				AnalogFeedbackJoin = 322,
-				CenterChildLabelSerialJoin = 322
+				IndirectTextJoin = 315,
 			};
 		}
 
@@ -90,6 +88,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 			yield return m_SourceLabel;
 			yield return m_Line1Label;
 			yield return m_Line2Label;
+			yield return m_WarmupLabel;
 		}
 	}
 }

@@ -104,8 +104,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 			try
 			{
-				bool displayShowGauge = display.ShowStatusGauge;
-				view.SetDisplayStatusGauge(displayShowGauge, display.DurationGraphValue, display.PowerStateText);
+				bool displayShowGauge = display.ShowPowerState;
+				view.SetDisplayWarmupStatusText(display.PowerStateText);
 
 				if (displayShowGauge)
 					m_DisplayGaugeRefreshTimer.Reset(DISPLAY_GAUGE_REFRESH_INTERVAL);

@@ -59,12 +59,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays
 		void SetDisplay1SourceText(string text);
 
 		/// <summary>
-		/// Warming/cooling bar graph - show/hide and set position and text
+		/// Sets the text for the warmup label.
 		/// </summary>
-		/// <param name="visible"></param>
-		/// <param name="position"></param>
 		/// <param name="text"></param>
-		void SetDisplay1StatusGauge(bool visible, ushort position, string text);
+		void SetDisplay1WarmupStatusText(string text);
 
 		#endregion
 
@@ -123,12 +121,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays
 		void SetDisplay2SourceText(string text);
 
 		/// <summary>
-		/// Warming/cooling bar graph - show/hide and set position
+		/// Sets the text for the warmup label.
 		/// </summary>
-		/// <param name="visible"></param>
-		/// <param name="position"></param>
 		/// <param name="text"></param>
-		void SetDisplay2StatusGauge(bool visible, ushort position, string text);
+		void SetDisplay2WarmupStatusText(string text);
 
 		#endregion
 	}

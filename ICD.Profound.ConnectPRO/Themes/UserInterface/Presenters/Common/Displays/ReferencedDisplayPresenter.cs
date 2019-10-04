@@ -89,11 +89,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 			try
 			{
-				bool showGauge = Model != null && Model.ShowStatusGauge;
-				ushort position = Model == null ? (ushort)0 : Model.DurationGraphValue;
+				bool showGauge = Model != null && Model.ShowPowerState;
 				string text = Model == null ? string.Empty : Model.PowerStateText;
 
-				view.SetDisplayStatusGauge(showGauge, position, text);
+				view.SetWarmupStatusText(text);
 
 				if (showGauge)
 					m_DisplayGaugeRefreshTimer.Reset(DISPLAY_GAUGE_REFRESH_INTERVAL);

@@ -86,14 +86,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		/// <summary>
 		/// Warming/cooling bar graph - show/hide and set position and text
 		/// </summary>
-		/// <param name="visible"></param>
-		/// <param name="position"></param>
 		/// <param name="text"></param>
-		public void SetDisplayStatusGauge(bool visible, ushort position, string text)
+		public void SetDisplayWarmupStatusText(string text)
 		{
-			m_DisplayStatusGauge.Show(visible);
-			m_DisplayStatusGauge.SetValue(position);
-			m_DisplayStatusGauge.SetCenterChildLabel(text);
+			m_WarmupLabel.SetLabelText(text);
 		}
 
 		#region Control Callbacks

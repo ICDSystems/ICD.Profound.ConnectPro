@@ -109,16 +109,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				// Display1
 				if (display1 != null)
 				{
-					bool display1ShowGauge = display1.ShowStatusGauge;
-					view.SetDisplay1StatusGauge(display1ShowGauge, display1.DurationGraphValue, display1.PowerStateText);
+					bool display1ShowGauge = display1.ShowPowerState;
+					view.SetDisplay1WarmupStatusText(display1.PowerStateText);
 					doTimerRefresh |= display1ShowGauge;
 				}
 
 				// Display2
 				if (display2 != null)
 				{
-					bool display2ShowGauge = display2.ShowStatusGauge;
-					view.SetDisplay2StatusGauge(display2ShowGauge, display2.DurationGraphValue, display2.PowerStateText);
+					bool display2ShowGauge = display2.ShowPowerState;
+					view.SetDisplay2WarmupStatusText(display2.PowerStateText);
 					doTimerRefresh |= display2ShowGauge;
 				}
 
