@@ -206,7 +206,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				m_CurrentPresenter = GetPresenterForNode(CurrentNode);
 
 				m_CurrentPresenter.Node = CurrentNode;
-				m_CurrentPresenter.ShowView(true);
+				m_CurrentPresenter.ShowView(IsViewVisible);
 			}
 			finally
 			{
