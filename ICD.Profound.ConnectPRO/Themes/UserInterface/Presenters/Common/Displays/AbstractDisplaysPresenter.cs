@@ -17,7 +17,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 	public abstract class AbstractDisplaysPresenter<TView> : AbstractUiPresenter<TView>, IDisplaysPresenter
 		where TView : class, IUiView
 	{
-		protected const long DISPLAY_GAUGE_REFRESH_INTERVAL = 250;
+		protected const long DISPLAY_GAUGE_REFRESH_INTERVAL = 100;
 
 		/// <summary>
 		/// Raised when a display destination is pressed.

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
-using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.Routing.Connections;
@@ -27,7 +27,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		private readonly IConnectProRoom m_Room;
 		private readonly IDestinationBase m_Destination;
 		private readonly bool m_RoomCombine;
-		private readonly Dictionary<IPowerDeviceControl, DisplayPowerState> m_PowerStateCache;
+		private readonly Dictionary<IPowerDeviceControl, ControlPowerState> m_PowerStateCache;
 
 		private eDisplayColor m_Color;
 		private string m_SourceName;
@@ -48,7 +48,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		/// <summary>
 		/// We use a stopwatch to count elapsed time because DateTime is only has second-precision on some Crestron platforms
 		/// </summary>
-		private readonly IcdStopwatch m_Stopwatch;
+		private readonly IcdStopwatch m_WarmupTimer;
 
 		#region Events
 
@@ -89,14 +89,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			get
 			{
 				long timeRemaining = GetTimeRemaining();
-				float graphPosition = (float)timeRemaining / m_PowerStateExpectedDuration;
+				float percent = (float)timeRemaining / m_PowerStateExpectedDuration;
 
 				// If warming, flip to increasing
 				if (m_PowerState == ePowerState.Warming)
-					graphPosition = 1 - graphPosition;
+					percent = 1.0f - percent;
 
 				// Max value is Expired value
-				return MathUtils.Clamp(graphPosition,
+				return MathUtils.Clamp(percent,
 				                       GRAPH_MINIMUM_POSITION_FROM_END,
 				                       1.0f - GRAPH_MINIMUM_POSITION_FROM_END);
 			}
@@ -109,7 +109,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				if (!ShowPowerState)
 					return string.Empty;
 
-				string percent = PowerStatePercent.ToString("0");
+				string percent = PowerStatePercent.ToString("P0");
 				string color =
 					PowerState == ePowerState.Warming
 						? Colors.COLOR_RED
@@ -130,8 +130,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			m_Destination = destination;
 			m_Color = eDisplayColor.Grey;
 			m_RoomCombine = combine;
-			m_PowerStateCache = new Dictionary<IPowerDeviceControl, DisplayPowerState>();
-			m_Stopwatch = new IcdStopwatch();
+			m_PowerStateCache = new Dictionary<IPowerDeviceControl, ControlPowerState>();
+			m_WarmupTimer = new IcdStopwatch();
 
 			Subscribe(m_Destination);
 
@@ -145,8 +145,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		/// </summary>
 		public void Dispose()
 		{
-			m_Stopwatch.Stop();
 			Unsubscribe(m_Destination);
+
+			m_WarmupTimer.Stop();
 		}
 
 		public bool SetRoutedSource(ISource routedSource, bool canRouteToRoomAudio)
@@ -220,18 +221,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		/// <returns></returns>
 		private long GetTimeRemaining()
 		{
-			return GetTimeRemaining(m_PowerStateExpectedDuration);
-		}
-
-		/// <summary>
-		/// Gets expected time remaining in milliseconds.
-		/// If time is past due, returns 0.
-		/// </summary>
-		/// <param name="expectedDuration"></param>
-		/// <returns></returns>
-		private long GetTimeRemaining(long expectedDuration)
-		{
-			long remaining = expectedDuration - m_Stopwatch.ElapsedMilliseconds;
+			long remaining = m_PowerStateExpectedDuration - m_WarmupTimer.ElapsedMilliseconds;
 			return remaining < 0 ? 0 : remaining;
 		}
 
@@ -313,6 +303,36 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			                m_RoutedSource.ConnectionType.HasFlag(eConnectionType.Audio);
 		}
 
+		/// <summary>
+		/// Update all the power state variables with the info from the control with the longest expected duration.
+		/// </summary>
+		private void UpdatePowerState()
+		{
+			// Get the control with the longest expected duration.
+			// Prefer warmup durations to cooldown durations.
+			KeyValuePair<IPowerDeviceControl, ControlPowerState> first;
+			bool any = m_PowerStateCache.OrderBy(kvp => kvp.Value.PowerState, PowerStateComparer.Instance)
+			                            .ThenByDescending(kvp => kvp.Value.ExpectedDuration)
+			                            .TryFirst(out first);
+
+			m_PowerStateExpectedDuration = any ? first.Value.ExpectedDuration : 0;
+			m_PowerState = any ? first.Value.PowerState : 0;
+
+			// Get current elapsed time and start stopwatch
+			long remainingTime = GetTimeRemaining();
+			if (remainingTime > 0)
+			{
+				if (!m_WarmupTimer.IsRunning)
+					m_WarmupTimer.Restart();
+			}
+			else
+			{
+				m_WarmupTimer.Reset();
+			}
+
+			OnRefreshNeeded.Raise(this);
+		}
+
 		#endregion
 
 		#region Destination Callbacks
@@ -326,13 +346,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			if (destinationBase == null)
 				return;
 
-			foreach (IDestination destination in destinationBase.GetDestinations())
-			{
-				IDeviceBase device = m_Room.Core.Originators.GetChild<IDeviceBase>(destination.Device);
-				IPowerDeviceControl powerControl = device.Controls.GetControl<IPowerDeviceControl>();
-
-				Subscribe(powerControl);
-			}
+			destinationBase.GetDevices()
+			               .SelectMany(d => d.Controls.GetControls<IPowerDeviceControl>())
+			               .ForEach(Subscribe);
 		}
 
 		/// <summary>
@@ -361,8 +377,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			if (powerControl == null)
 				return;
 
-			m_PowerStateCache[powerControl] = new DisplayPowerState(powerControl.PowerState);
-
 			powerControl.OnPowerStateChanged += PowerControlOnPowerStateChanged;
 		}
 
@@ -389,93 +403,62 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			if (powerControl == null)
 				return;
 
-			m_PowerStateCache[powerControl] = new DisplayPowerState(args.Data);
+			// Add the expected duration onto the end of the current elapsed time
+			long expected = args.Data.ExpectedDuration + m_WarmupTimer.ElapsedMilliseconds;
+			m_PowerStateCache[powerControl] = new ControlPowerState(args.Data.PowerState, expected);
 
-			ePowerState currentState = ePowerState.Unknown;
-			long currentRemaining = 0;
-			IPowerDeviceControl control = null;
-
-			foreach (KeyValuePair<IPowerDeviceControl, DisplayPowerState> kvp in m_PowerStateCache)
-			{
-				int stateCompare = CompareState(kvp.Value.PowerState, currentState);
-				long itemTimeRemaining = GetTimeRemaining(kvp.Value.ExpectedDuration);
-
-				if (stateCompare != -1 && (stateCompare != 0 || itemTimeRemaining <= currentRemaining))
-					continue;
-
-				control = kvp.Key;
-				currentRemaining = itemTimeRemaining;
-				currentState = kvp.Value.PowerState;
-			}
-
-			UpdatePowerState(control);
-		}
-
-		/// <summary>
-		/// Update all the power state variables with the info from the given control.
-		/// </summary>
-		/// <param name="control"></param>
-		private void UpdatePowerState(IPowerDeviceControl control)
-		{
-			if (control == null)
-				throw new ArgumentNullException("control");
-
-			DisplayPowerState state;
-			if (!m_PowerStateCache.TryGetValue(control, out state))
-				return;
-
-			m_PowerStateExpectedDuration = state.ExpectedDuration;
-			m_PowerState = state.PowerState;
-
-			// Get current elapsed time and start stopwatch
-			long remainingTime = GetTimeRemaining();
-			if (remainingTime > 0)
-				m_Stopwatch.Restart();
-			else
-				m_Stopwatch.Stop();
-
-			OnRefreshNeeded.Raise(this);
-		}
-
-		/// <summary>
-		/// Returns 0 if states are the same.
-		/// Returns -1 if x is more important than y.
-		/// Returns 1 if x is less important than y.
-		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <returns></returns>
-		private static int CompareState(ePowerState x, ePowerState y)
-		{
-			if (x == y)
-				return 0;
-
-			if (x == ePowerState.Warming)
-				return -1;
-			if (y == ePowerState.Warming)
-				return 1;
-
-			if (x == ePowerState.PowerOn)
-				return -1;
-			if (y == ePowerState.PowerOn)
-				return 1;
-
-			if (x == ePowerState.Cooling)
-				return -1;
-			if (y == ePowerState.Cooling)
-				return 1;
-
-			if (x == ePowerState.PowerOff)
-				return -1;
-			if (y == ePowerState.PowerOff)
-				return 1;
-
-			throw new ArgumentException();
+			UpdatePowerState();
 		}
 
 		#endregion
 
-		private struct DisplayPowerState
+		private sealed class PowerStateComparer : IComparer<ePowerState>
+		{
+			private static PowerStateComparer s_Instance;
+
+			public static PowerStateComparer Instance
+			{
+				get { return s_Instance ?? (s_Instance = new PowerStateComparer()); }
+			}
+
+			/// <summary>
+			/// Returns 0 if states are the same.
+			/// Returns -1 if x is more important than y.
+			/// Returns 1 if x is less important than y.
+			/// </summary>
+			/// <param name="x"></param>
+			/// <param name="y"></param>
+			/// <returns></returns>
+			public int Compare(ePowerState x, ePowerState y)
+			{
+				if (x == y)
+					return 0;
+
+				if (x == ePowerState.Warming)
+					return -1;
+				if (y == ePowerState.Warming)
+					return 1;
+
+				if (x == ePowerState.PowerOn)
+					return -1;
+				if (y == ePowerState.PowerOn)
+					return 1;
+
+				if (x == ePowerState.Cooling)
+					return -1;
+				if (y == ePowerState.Cooling)
+					return 1;
+
+				if (x == ePowerState.PowerOff)
+					return -1;
+				if (y == ePowerState.PowerOff)
+					return 1;
+
+				throw new ArgumentException();
+			}
+		}
+
+		private struct ControlPowerState
 		{
 			private readonly ePowerState m_PowerState;
 			private readonly long m_ExpectedDuration;
@@ -484,17 +467,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 			public long ExpectedDuration { get { return m_ExpectedDuration; } }
 
-			public DisplayPowerState(PowerDeviceControlPowerStateEventData stateData)
-				: this(stateData.PowerState, stateData.ExpectedDuration)
-			{
-			}
-
-			public DisplayPowerState(ePowerState powerState)
-				: this(powerState, 0)
-			{
-			}
-
-			public DisplayPowerState(ePowerState powerState, long expectedDuration)
+			public ControlPowerState(ePowerState powerState, long expectedDuration)
 			{
 				m_PowerState = powerState;
 				m_ExpectedDuration = expectedDuration;
