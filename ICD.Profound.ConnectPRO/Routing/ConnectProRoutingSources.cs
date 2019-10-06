@@ -168,13 +168,21 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (source == null)
 				throw new ArgumentNullException("source");
 
+			// Is the source immediately in this room?
+			if (m_Routing.Room.Originators.Contains(source.Id))
+				return m_Routing.Room;
+
+			// Is the source in one of our child rooms?
+			foreach (IRoom room in m_Routing.Room.GetRooms())
+				if (room.Originators.Contains(source.Id))
+					return room;
+
+			// This probably shouldn't happen - Get the first room in the core containing the source
 			return m_Routing.Room
 			                .Core
 			                .Originators
 			                .GetChildren<IRoom>()
-			                .Where(r => r.Originators.ContainsRecursive(source.Id))
-			                .OrderBy(r => r.IsCombineRoom())
-			                .FirstOrDefault();
+			                .FirstOrDefault(r => r.Originators.Contains(source.Id));
 		}
 
 		/// <summary>
