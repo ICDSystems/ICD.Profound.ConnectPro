@@ -370,17 +370,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			// Reset the selection timeout
 			m_SourceSelectionTimeout.Reset(SOURCE_SELECTION_TIMEOUT);
 
-			m_RoutingSection.Enter();
-
-			try
-			{
-				m_Room.Routing.State.SetProcessingSource(destination, selectedSource);
-			}
-			finally
-			{
-				m_RoutingSection.Leave();
-			}
-
 			m_Room.Routing.RouteToDisplay(selectedSource, destination);
 				
 			routedSource = selectedSource;

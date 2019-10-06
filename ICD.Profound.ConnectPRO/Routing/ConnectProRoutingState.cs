@@ -249,6 +249,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 			{
 				m_CacheSection.Leave();
 			}
+
+			OnDisplaySourceChanged.Raise(this);
 		}
 
 		/// <summary>
@@ -278,6 +280,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 			{
 				m_CacheSection.Leave();
 			}
+
+			OnDisplaySourceChanged.Raise(this);
 		}
 
 		/// <summary>
@@ -335,6 +339,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 			{
 				m_CacheSection.Leave();
 			}
+
+			OnDisplaySourceChanged.Raise(this);
 		}
 
 		#endregion

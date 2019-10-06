@@ -619,6 +619,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (destination == null)
 				throw new ArgumentNullException("destination");
 
+			State.SetProcessingSource(destination, source);
+
 			IEnumerable<ConnectionPath> paths =
 				PathBuilder.FindPaths()
 				           .From(source)
