@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
@@ -161,7 +160,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (destination == null)
 				throw new ArgumentNullException("destination");
 
-			var mask = m_MaskFactory.GetMaskedSourceInfo(source);
+			IMaskedSourceInfo mask = m_MaskFactory.GetMaskedSourceInfo(source);
 			if (mask == null)
 				RouteToDisplay(source, destination, null);
 			else
@@ -192,7 +191,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (!source.ConnectionType.HasFlag(eConnectionType.Audio))
 				return;
 
-			if (m_State.CanOverrideAudio(source, destination))
+			if (m_State.CanOverrideAudio(destination))
 				RouteToRoomAudio(source);
 			else
 				RouteAudioIfNoAudioRouted(source);
@@ -207,16 +206,15 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (source == null)
 				throw new ArgumentNullException("source");
 
-			var mask = m_MaskFactory.GetMaskedSourceInfo(source);
-			if (mask != null)
+			IMaskedSourceInfo mask = m_MaskFactory.GetMaskedSourceInfo(source);
+			if (mask == null)
 			{
-				var destinations = Destinations.GetVideoDestinations().ToList();
-				foreach (var destination in destinations)
-					State.SetMaskedSource(destination, mask);
+				RouteVtc(source, null);
 			}
 			else
 			{
-				RouteVtc(source, null);
+				foreach (IDestinationBase destination in Destinations.GetVideoDestinations())
+					State.SetMaskedSource(destination, mask);
 			}
 		}
 
