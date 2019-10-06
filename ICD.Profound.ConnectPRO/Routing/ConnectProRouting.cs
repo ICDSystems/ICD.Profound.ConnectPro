@@ -316,10 +316,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 		}
 
 		/// <summary>
-		/// Unroutes every destination that isn't currently showing the OSD.
-		/// 
+		/// Unroutes audio.
 		/// Routes the OSD to the displays.
-		/// 
 		/// Powers off displays that have no OSD routed.
 		/// </summary>
 		public void RouteOsd()
@@ -328,42 +326,52 @@ namespace ICD.Profound.ConnectPRO.Routing
 		}
 
 		/// <summary>
-		/// Unroutes every destination that isn't currently showing the OSD.
-		/// 
+		/// Unroutes audio.
 		/// Routes the OSD to the displays.
-		/// 
 		/// Powers off displays that have no OSD routed.
 		/// </summary>
 		public void RouteOsd(IMaskedSourceInfo mask)
 		{
-			// First unroute everything that isn't OSD
-			UnrouteAllExceptOsd();
-
-			OsdPanelDevice osd = m_Room.Originators.GetInstanceRecursive<OsdPanelDevice>();
-
 			if (mask == null)
 				State.ClearMaskedSources();
-			
-			IDestinationBase[] destinations = m_Destinations.GetVideoDestinations().ToArray();
 
-			// Route the OSD or power off displays
-			if (osd == null)
+			UnrouteAudio();
+
+			IRouteSourceControl[] osds = m_Room.Originators
+			                                   .GetInstancesRecursive<OsdPanelDevice>()
+			                                   .Select(o => o.Controls.GetControl<IRouteSourceControl>())
+			                                   .ToArray();
+
+			foreach (IDestination destination in m_Destinations.GetVideoDestinations().SelectMany(d => d.GetDestinations()))
 			{
-				foreach (IDestinationBase destination in destinations)
+				ConnectionPath path = null;
+
+				foreach (IRouteSourceControl osd in osds)
+				{
+					// Is there a path?
+					path = PathBuilder.FindPaths()
+					                  .From(osd)
+					                  .To(destination)
+					                  .OfType(eConnectionType.Video)
+					                  .With(m_PathFinder)
+					                  .FirstOrDefault();
+					if (path != null)
+						break;
+				}
+
+				if (path == null)
 				{
 					// Power off the destination
-					foreach (IDeviceBase device in destination.GetDevices())
-						PowerDevice(device, false);
-				}
-			}
-			else
-			{
-				IRouteSourceControl sourceControl = osd.Controls.GetControl<IRouteSourceControl>();
-				EndpointInfo sourceEndpoint = sourceControl.GetOutputEndpointInfo(1);
+					IDeviceBase destinationDevice = m_Room.Core.Originators.GetChild<IDeviceBase>(destination.Device);
+					PowerDevice(destinationDevice, false);
 
-				foreach (IDestinationBase destination in destinations)
+					// Unroute the destination
+					m_RoutingGraph.Unroute(destination, eConnectionType.Video, m_Room.Id);
+				}
+				else
 				{
-					Route(sourceEndpoint, destination, eConnectionType.Video);
+					// Route the source video and audio to the codec
+					Route(path);
 				}
 			}
 		}
@@ -764,40 +772,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 				foreach (IDestination audioDestination in audioDestinations)
 					RoutingGraph.Unroute(audioSource, audioDestination, eConnectionType.Audio, m_Room.Id);
 			}
-		}
-
-		/// <summary>
-		/// Unroute all sources except OSD from all destinations.
-		/// </summary>
-		private void UnrouteAllExceptOsd()
-		{
-			UnrouteAllExceptOsd(Destinations.GetVideoDestinations(), eConnectionType.Video);
-			UnrouteAllExceptOsd(Destinations.GetAudioDestinations(), eConnectionType.Audio);
-		}
-
-		private void UnrouteAllExceptOsd(IEnumerable<IDestinationBase> destinations, eConnectionType flag)
-		{
-			Dictionary<EndpointInfo, IcdHashSet<EndpointInfo>> unrouteVideoEndpoints =
-				destinations.SelectMany(d => d.GetEndpoints())
-				            .Distinct()
-				            .ToDictionary(e => e, e => GetNonOsdSourceEndpoints(e, flag).ToIcdHashSet());
-
-			foreach (KeyValuePair<EndpointInfo, IcdHashSet<EndpointInfo>> pair in unrouteVideoEndpoints)
-			{
-				foreach (EndpointInfo sourceEndpoint in pair.Value)
-					RoutingGraph.Unroute(sourceEndpoint, pair.Key, flag, m_Room.Id);
-			}
-		}
-
-		private IEnumerable<EndpointInfo> GetNonOsdSourceEndpoints(EndpointInfo destinationEndpoint,
-		                                                           eConnectionType flag)
-		{
-			return RoutingGraph.RoutingCache
-			                   .GetSourceEndpointsForDestinationEndpoint(destinationEndpoint, flag)
-			                   .Where(s =>
-				                          !(m_Room.Core.Originators.GetChild(s.Device) is OsdPanelDevice) ||
-				                          !m_Room.Originators.ContainsRecursive(s.Device))
-			                   .ToIcdHashSet();
 		}
 
 		#endregion
