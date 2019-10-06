@@ -211,7 +211,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				cameraComponent.SetActiveCameraByUsbId(m_SelectedZoomCamera.UsbId);
 			}				
 			else if (m_SelectedCamera != null)
-				Room.Routing.RouteVtcCamera(m_SelectedCamera, m_VtcDestinationControl);
+				Room.Routing.RouteCameraToVtc(m_SelectedCamera, m_VtcDestinationControl);
 		}
 
 		private CameraComponent GetZoomCameraComponent()

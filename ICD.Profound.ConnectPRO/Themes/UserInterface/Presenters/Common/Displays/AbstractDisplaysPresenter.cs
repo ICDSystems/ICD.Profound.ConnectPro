@@ -140,7 +140,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			if (display.RoutedSource == null || !display.RoutedSource.ConnectionType.HasFlag(eConnectionType.Audio))
 				return;
 
-			Room.Routing.RouteAudio(display.RoutedSource);
+			Room.Routing.RouteToRoomAudio(display.RoutedSource);
 		}
 
 		private static ISource GetRoutedSource(IDestinationBase destination, IDictionary<IDestinationBase, IcdHashSet<ISource>> routing)

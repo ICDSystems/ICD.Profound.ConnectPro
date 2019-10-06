@@ -312,7 +312,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			{
 				// Show the context menu before routing for UX
 				ShowSourceContextualMenu(source);
-				m_Room.Routing.RouteAllDisplays(source);
+				m_Room.Routing.RouteToAllDisplays(source);
 			}
 
 			SetSelectedSource(null);
@@ -381,7 +381,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				m_RoutingSection.Leave();
 			}
 
-			m_Room.Routing.RouteDualDisplay(selectedSource, destination);
+			m_Room.Routing.RouteToDisplay(selectedSource, destination);
 				
 			routedSource = selectedSource;
 

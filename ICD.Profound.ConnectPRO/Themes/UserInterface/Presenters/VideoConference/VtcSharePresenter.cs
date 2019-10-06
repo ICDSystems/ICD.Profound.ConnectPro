@@ -405,7 +405,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (Room == null || source == null)
 				return;
 
-			Room.Routing.RouteVtcPresentation(source, m_SubscribedPresentationComponent);
+			Room.Routing.RouteToVtcPresentation(source, m_SubscribedPresentationComponent);
 		}
 
 		private void StopPresenting()
@@ -413,7 +413,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (Room == null)
 				return;
 
-			Room.Routing.UnrouteVtcPresentation(m_SubscribedPresentationComponent);
+			Room.Routing.UnrouteAllFromVtcPresentation(m_SubscribedPresentationComponent);
 		}
 
 		#endregion

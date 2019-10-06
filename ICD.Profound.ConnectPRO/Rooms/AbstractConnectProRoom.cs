@@ -217,7 +217,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			else if (preferredDialer.Supports.HasFlag(eCallType.Audio))
 				Routing.RouteAtc(source);
 			else
-				Routing.RouteAllDisplays(source);
+				Routing.RouteToAllDisplays(source);
 
 			// Dial booking
 			preferredDialer.Dial(dialContext);

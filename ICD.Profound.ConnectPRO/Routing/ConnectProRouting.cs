@@ -102,38 +102,24 @@ namespace ICD.Profound.ConnectPRO.Routing
 		#region Methods
 
 		/// <summary>
-		/// Routes the source to the display and room audio.
-		/// </summary>
-		/// <param name="source"></param>
-		public void RouteSingleDisplay(ISource source)
-		{
-			if (source == null)
-				throw new ArgumentNullException("source");
-
-			// Functionally the same thing if there is only one display
-			RouteAllDisplays(source);
-		}
-
-		/// <summary>
 		/// Routes the source to all displays and room audio.
 		/// </summary>
 		/// <param name="source"></param>
-		public void RouteAllDisplays(ISource source)
+		public void RouteToAllDisplays(ISource source)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
 
 			var mask = m_MaskFactory.GetMaskedSourceInfo(source);
-			if (mask != null)
+			if (mask == null)
 			{
-				var destinations = Destinations.GetVideoDestinations().ToList();
-				foreach (var destination in destinations)
-					State.SetMaskedSource(destination, mask);
+				RouteToAllDisplays(source, null);
+				return;
 			}
-			else
-			{
-				RouteAllDisplays(source, null);
-			}
+
+			IDestinationBase[] destinations = Destinations.GetVideoDestinations().ToArray();
+			foreach (var destination in destinations)
+				State.SetMaskedSource(destination, mask);
 		}
 
 		/// <summary>
@@ -141,7 +127,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		/// <param name="source"></param>
 		/// <param name="mask"></param>
-		public void RouteAllDisplays(ISource source, IMaskedSourceInfo mask)
+		public void RouteToAllDisplays(ISource source, IMaskedSourceInfo mask)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
@@ -155,7 +141,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				Route(source, destination, eConnectionType.Video);
 
 			if (source.ConnectionType.HasFlag(eConnectionType.Audio))
-				RouteAudio(source);
+				RouteToRoomAudio(source);
 			else
 				UnrouteAudio();
 		}
@@ -167,7 +153,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		/// <param name="source"></param>
 		/// <param name="destination"></param>
-		public void RouteDualDisplay(ISource source, IDestinationBase destination)
+		public void RouteToDisplay(ISource source, IDestinationBase destination)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
@@ -176,10 +162,10 @@ namespace ICD.Profound.ConnectPRO.Routing
 				throw new ArgumentNullException("destination");
 
 			var mask = m_MaskFactory.GetMaskedSourceInfo(source);
-			if (mask != null)
-				State.SetMaskedSource(destination, mask);
+			if (mask == null)
+				RouteToDisplay(source, destination, null);
 			else
-				RouteDualDisplay(source, destination, null);
+				State.SetMaskedSource(destination, mask);
 		}
 
 		/// <summary>
@@ -190,7 +176,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <param name="source"></param>
 		/// <param name="destination"></param>
 		/// <param name="mask"></param>
-		public void RouteDualDisplay(ISource source, IDestinationBase destination, IMaskedSourceInfo mask)
+		public void RouteToDisplay(ISource source, IDestinationBase destination, IMaskedSourceInfo mask)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
@@ -207,7 +193,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				return;
 
 			if (m_State.CanOverrideAudio(source, destination))
-				RouteAudio(source);
+				RouteToRoomAudio(source);
 			else
 				RouteAudioIfNoAudioRouted(source);
 		}
@@ -320,13 +306,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// Unroutes any audio destinations with no path to the source.
 		/// </summary>
 		/// <param name="source"></param>
-		public void RouteAudio(ISource source)
+		public void RouteToRoomAudio(ISource source)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
 
 			foreach (IDestinationBase destination in m_Destinations.GetAudioDestinations())
-				RouteAudio(source, destination);
+				RouteToRoomAudio(source, destination);
 		}
 
 		/// <summary>
@@ -387,7 +373,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		/// <param name="camera"></param>
 		/// <param name="routingControl"></param>
-		public void RouteVtcCamera(ICameraDevice camera, IVideoConferenceRouteControl routingControl)
+		public void RouteCameraToVtc(ICameraDevice camera, IVideoConferenceRouteControl routingControl)
 		{
 			if (camera == null)
 				throw new ArgumentNullException("camera");
@@ -443,7 +429,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		/// <param name="source"></param>
 		/// <param name="presentationControl"></param>
-		public void RouteVtcPresentation(ISource source, IPresentationControl presentationControl)
+		public void RouteToVtcPresentation(ISource source, IPresentationControl presentationControl)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
@@ -499,7 +485,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// Unroutes the active VTC presentation source and ends the presentation.
 		/// </summary>
 		/// <param name="presentationControl"></param>
-		public void UnrouteVtcPresentation(IPresentationControl presentationControl)
+		public void UnrouteAllFromVtcPresentation(IPresentationControl presentationControl)
 		{
 			if (presentationControl == null)
 				throw new ArgumentNullException("presentationControl");
@@ -694,7 +680,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		/// <param name="source"></param>
 		/// <param name="destination"></param>
-		private void RouteAudio(ISource source, IDestinationBase destination)
+		private void RouteToRoomAudio(ISource source, IDestinationBase destination)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
@@ -723,7 +709,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				throw new ArgumentNullException("source");
 
 			if (!m_State.IsAudioRouted)
-				RouteAudio(source);
+				RouteToRoomAudio(source);
 		}
 
 		private void Route(IEnumerable<ConnectionPath> paths)

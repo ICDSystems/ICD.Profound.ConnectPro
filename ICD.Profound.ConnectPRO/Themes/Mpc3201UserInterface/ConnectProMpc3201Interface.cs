@@ -312,22 +312,11 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// <param name="source"></param>
 		private void SetProcessingSource(ISource source)
 		{
+			// TODO - Shouldn't this be in the ConnectPRO routing classes?
+
 			IDestinationBase destination = Room == null ? null : m_Room.Routing.Destinations.GetVideoDestinations().FirstOrDefault();
 			if (destination == null)
 				return;
-
-			SetProcessingSource(destination, source);
-		}
-
-		/// <summary>
-		/// Sets the processing source for the given destination.
-		/// </summary>
-		/// <param name="destination"></param>
-		/// <param name="source"></param>
-		private void SetProcessingSource(IDestinationBase destination, ISource source)
-		{
-			if (destination == null)
-				throw new ArgumentNullException("destination");
 
 			m_RoutingSection.Enter();
 
@@ -648,7 +637,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			SetProcessingSource(source);
 
 			// Route the source to the display
-			m_Room.Routing.RouteSingleDisplay(source);
+			m_Room.Routing.RouteToAllDisplays(source);
 		}
 
 		#endregion
