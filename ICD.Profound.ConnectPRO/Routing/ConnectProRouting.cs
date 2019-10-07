@@ -137,7 +137,10 @@ namespace ICD.Profound.ConnectPRO.Routing
 			IDestinationBase[] destinations = m_Destinations.GetVideoDestinations().ToArray();
 
 			foreach (IDestinationBase destination in destinations)
+			{
+				State.SetProcessingSource(destination, source);
 				Route(source, destination, eConnectionType.Video);
+			}
 
 			if (source.ConnectionType.HasFlag(eConnectionType.Audio))
 				RouteToRoomAudio(source);
@@ -186,6 +189,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (mask == null)
 				State.ClearMaskedSource(destination);
 
+			State.SetProcessingSource(destination, source);
 			Route(source, destination, eConnectionType.Video);
 
 			if (!source.ConnectionType.HasFlag(eConnectionType.Audio))
@@ -624,8 +628,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			if (destination == null)
 				throw new ArgumentNullException("destination");
-
-			State.SetProcessingSource(destination, source);
 
 			IEnumerable<ConnectionPath> paths =
 				PathBuilder.FindPaths()
