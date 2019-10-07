@@ -149,21 +149,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 				Dictionary<IDestinationBase, IcdHashSet<ISource>> cache =
 					m_VideoRoutingCache.ToDictionary(kvp => kvp.Key, kvp => new IcdHashSet<ISource>(kvp.Value));
 
-				foreach (KeyValuePair<IDestinationBase, ProcessingSourceInfo> kvp in m_ProcessingSources)
-				{
-					IcdHashSet<ISource> destinationCache = cache.GetOrAddNew(kvp.Key);
-					
-					if (kvp.Value.Source != null)
-						destinationCache.Add(kvp.Value.Source);
-				}
+				// Add the processing sources
+				m_ProcessingSources.Where(kvp => kvp.Value.Source != null)
+				                   .ForEach(kvp => cache.GetOrAddNew(kvp.Key).Add(kvp.Value.Source));
 
-				foreach (KeyValuePair<IDestinationBase, IMaskedSourceInfo> kvp in m_MaskedSources)
-				{
-					IcdHashSet<ISource> destinationCache = cache.GetOrAddNew(kvp.Key);
-
-					if (kvp.Value.Source != null)
-						destinationCache.Add(kvp.Value.Source);
-				}
+				// Add the masked sources
+				m_MaskedSources.Where(kvp => kvp.Value.Source != null)
+				               .ForEach(kvp => cache.GetOrAddNew(kvp.Key).Add(kvp.Value.Source));
 
 				return cache;
 			}
@@ -236,7 +228,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			try
 			{
-				foreach (ProcessingSourceInfo processing in m_ProcessingSources.Values.Where(p => p != null))
+				foreach (ProcessingSourceInfo processing in m_ProcessingSources.Values)
 					processing.Dispose();
 				m_ProcessingSources.Clear();
 
@@ -282,19 +274,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 		}
 
 		/// <summary>
-		/// Sets the processing source for the single display destination.
-		/// </summary>
-		/// <param name="source"></param>
-		public void SetProcessingSource([NotNull] ISource source)
-		{
-			IDestinationBase destination = m_Routing.Room == null ? null : m_Routing.Destinations.GetVideoDestinations().FirstOrDefault();
-			if (destination == null)
-				return;
-
-			SetProcessingSource(destination, source);
-		}
-
-		/// <summary>
 		/// Sets the processing source for the given destination.
 		/// </summary>
 		/// <param name="destination"></param>
@@ -311,12 +290,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			try
 			{
-				ProcessingSourceInfo processing;
-				if (!m_ProcessingSources.TryGetValue(destination, out processing))
-				{
-					processing = new ProcessingSourceInfo(destination, ClearProcessingSource);
-					m_ProcessingSources.Add(destination, processing);
-				}
+				ProcessingSourceInfo processing =
+					m_ProcessingSources.GetOrAddNew(destination, () => new ProcessingSourceInfo(destination, ClearProcessingSource));
 
 				// No change
 				if (source == processing.Source)
@@ -563,8 +538,12 @@ namespace ICD.Profound.ConnectPRO.Routing
 									   .ToDictionary(s => s, s => eSourceState.Active);
 
 				// A source may be processing for another display, so we override
-				foreach (ISource source in m_ProcessingSources.Values.Where(p => p != null && p.Source != null).Select(s => s.Source))
-					routedSources[source] = eSourceState.Processing;
+				foreach (ProcessingSourceInfo info in m_ProcessingSources.Values.Where(p => p.Source != null))
+				{
+					IcdHashSet<ISource> sources;
+					if (!m_VideoRoutingCache.TryGetValue(info.Destination, out sources) || !sources.Contains(info.Source))
+						routedSources[info.Source] = eSourceState.Processing;
+				}
 
 				// Apply the mask
 				foreach (ISource source in m_MaskedSources.Values.Where(m => m != null && m.Source != null).Select(m => m.Source))

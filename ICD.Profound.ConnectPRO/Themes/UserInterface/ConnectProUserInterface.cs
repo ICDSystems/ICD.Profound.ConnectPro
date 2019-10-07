@@ -60,7 +60,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		/// <summary>
 		/// Maps control types to potential context menu presenter types.
-		/// Checks each presenter type for compatibily and falls back to the next.
+		/// Checks each presenter type for compatibility and falls back to the next.
 		/// </summary>
 		private static readonly Dictionary<Type, List<Type>> s_ControlToPresenterType =
 			new Dictionary<Type, List<Type>>
@@ -289,9 +289,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			IDeviceBase device = m_Room.Core.Originators.GetChild<IDeviceBase>(source.Device);
 			IConferenceDeviceControl dialer = device.Controls.GetControl<IConferenceDeviceControl>();
 
-			if (!m_Room.Routing.State.GetIsRoutedCached(source, eConnectionType.Video))
-				m_Room.Routing.State.SetProcessingSource(source);
-
 			// Edge case - route the codec to both displays and open the context menu
 			if (dialer != null && dialer.Supports.HasFlag(eCallType.Video))
 			{
@@ -304,7 +301,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			{
 				// Show the context menu before routing for UX
 				ConnectProRoom.FocusSource = source;
-				ShowSourceContextualMenu(source);
 				m_Room.Routing.RouteAtc(source);
 			}
 			// Typical case - continue routing
