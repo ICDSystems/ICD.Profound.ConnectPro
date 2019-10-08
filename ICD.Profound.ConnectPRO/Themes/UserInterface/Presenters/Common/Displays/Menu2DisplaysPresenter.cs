@@ -13,24 +13,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 	public sealed class Menu2DisplaysPresenter : AbstractDisplaysPresenter<IMenu2DisplaysView>, IMenu2DisplaysPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
-
-		private MenuDisplaysPresenterDisplay Display1
-		{
-			get
-			{
-				return Displays.Count >= 1 ? Displays[0] : null;
-			}
-		}
-
-		private MenuDisplaysPresenterDisplay Display2
-		{
-			get
-			{
-				return Displays.Count >= 2 ? Displays[1] : null;
-			}
-		}
-
 		private readonly SafeTimer m_DisplayGaugeRefreshTimer;
+
+		private MenuDisplaysPresenterDisplay Display1 { get { return Displays.Count >= 1 ? Displays[0] : null; } }
+
+		private MenuDisplaysPresenterDisplay Display2 { get { return Displays.Count >= 2 ? Displays[1] : null; } }
 
 		/// <summary>
 		/// Constructor.

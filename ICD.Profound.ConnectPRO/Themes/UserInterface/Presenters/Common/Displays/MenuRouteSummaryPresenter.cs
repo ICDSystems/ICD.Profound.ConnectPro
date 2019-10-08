@@ -21,10 +21,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly ReferencedRouteListItemPresenterFactory m_PresenterFactory;
 
-		public MenuRouteSummaryPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="nav"></param>
+		/// <param name="views"></param>
+		/// <param name="theme"></param>
+		public MenuRouteSummaryPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
-			m_PresenterFactory = new ReferencedRouteListItemPresenterFactory(nav, ItemFactory, (a) => { }, (a) => { });
+			m_PresenterFactory = new ReferencedRouteListItemPresenterFactory(nav, ItemFactory, a => { }, a => { });
 		}
 
 		protected override void Refresh(IMenuRouteSummaryView view)
