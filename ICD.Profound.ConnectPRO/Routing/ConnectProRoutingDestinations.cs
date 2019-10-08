@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Partitioning.Rooms;
@@ -92,6 +94,34 @@ namespace ICD.Profound.ConnectPRO.Routing
 			{
 				m_CacheSection.Leave();
 			}
+		}
+
+		/// <summary>
+		/// Gets the room for the given destination.
+		/// </summary>
+		/// <param name="destination"></param>
+		/// <returns></returns>
+		[NotNull]
+		public IRoom GetRoomForDestination(IDestinationBase destination)
+		{
+			if (destination == null)
+				throw new ArgumentNullException("destination");
+
+			// Is the destination immediately in this room?
+			if (m_Routing.Room.Originators.Contains(destination.Id))
+				return m_Routing.Room;
+
+			// Is the destination in one of our child rooms?
+			foreach (IRoom room in m_Routing.Room.GetRooms())
+				if (room.Originators.Contains(destination.Id))
+					return room;
+
+			// This probably shouldn't happen - Get the first room in the core containing the destination
+			return m_Routing.Room
+			                .Core
+			                .Originators
+			                .GetChildren<IRoom>()
+			                .FirstOrDefault(r => r.Originators.Contains(destination.Id), m_Routing.Room);
 		}
 
 		#endregion

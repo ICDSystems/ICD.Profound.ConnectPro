@@ -245,7 +245,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public void EndMeeting()
 		{
-			bool shutdown = WakeSchedule.IsSleepTime;
+			bool shutdown = WakeSchedule != null && WakeSchedule.IsSleepTime;
 			EndMeeting(shutdown);
 		}
 

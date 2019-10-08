@@ -15,16 +15,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		
 		public RouteListItem Model { get; set; }
 
-		public ReferencedRouteListItemPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="nav"></param>
+		/// <param name="views"></param>
+		/// <param name="theme"></param>
+		public ReferencedRouteListItemPresenter(IConnectProNavigationController nav, IUiViewFactory views,
+		                                        ConnectProTheme theme)
+			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
 		}
 
+		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Refresh(IReferencedRouteListItemView view)
 		{
 			base.Refresh(view);
 
 			m_RefreshSection.Enter();
+
 			try
 			{
 				string roomLabel = Model.Room == null ? string.Empty : Model.Room.GetName(true);

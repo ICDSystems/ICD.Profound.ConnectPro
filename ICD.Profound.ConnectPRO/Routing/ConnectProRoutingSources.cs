@@ -162,7 +162,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		/// <param name="source"></param>
 		/// <returns></returns>
-		[CanBeNull]
+		[NotNull]
 		public IRoom GetRoomForSource(ISource source)
 		{
 			if (source == null)
@@ -182,7 +182,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			                .Core
 			                .Originators
 			                .GetChildren<IRoom>()
-			                .FirstOrDefault(r => r.Originators.Contains(source.Id));
+			                .FirstOrDefault(r => r.Originators.Contains(source.Id), m_Routing.Room);
 		}
 
 		/// <summary>

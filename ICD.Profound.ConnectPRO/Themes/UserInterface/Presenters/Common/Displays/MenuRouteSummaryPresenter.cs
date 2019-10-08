@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
@@ -34,9 +35,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				return;
 
 			m_RefreshSection.Enter();
+
 			try
 			{
-				foreach (var presenter in m_PresenterFactory)
+				foreach (IReferencedRouteListItemPresenter presenter in m_PresenterFactory)
 					presenter.Refresh();
 			}
 			finally
@@ -47,9 +49,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		public void SetRouting(IDictionary<IDestinationBase, IcdHashSet<ISource>> routing)
 		{
-			IEnumerable<RouteListItem> models = routing.SelectMany(kvp => kvp.Value.Select(s => GetListItem(kvp.Key, s)))
-			                                           .OrderBy(i => i.Room.GetName(true))
-			                                           .ThenBy(i => i.Destination.GetName(true));
+			if (routing == null)
+				throw new ArgumentNullException("routing");
+
+			IEnumerable<RouteListItem> models =
+				Room == null
+					? Enumerable.Empty<RouteListItem>()
+					: routing.SelectMany(kvp => kvp.Value.Select(s => GetListItem(kvp.Key, s)))
+					         .OrderBy(i => i.Room.GetName(true))
+					         .ThenBy(i => i.Destination.GetName(true));
 
 			m_PresenterFactory.BuildChildren(models);
 			RefreshIfVisible();
@@ -57,7 +65,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private RouteListItem GetListItem(IDestinationBase destination, ISource source)
 		{
-			IRoom room = Room.GetRoomsRecursive().FirstOrDefault(r => r.Originators.Contains(destination.Id));
+			if (destination == null)
+				throw new ArgumentNullException("destination");
+
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			IRoom room = Room.Routing.Destinations.GetRoomForDestination(destination);
 			return new RouteListItem(room, destination, source);
 		}
 
@@ -82,7 +96,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			view.OnCloseButtonPressed -= ViewOnCloseButtonPressed;
 		}
 
-		private void ViewOnCloseButtonPressed(object sender, System.EventArgs e)
+		private void ViewOnCloseButtonPressed(object sender, EventArgs e)
 		{
 			ShowView(false);
 		}

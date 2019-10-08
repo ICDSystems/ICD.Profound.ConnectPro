@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Common.Properties;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
@@ -17,12 +18,32 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displa
 		private readonly IDestinationBase m_Destination;
 		private readonly ISource m_Source;
 
+		[NotNull]
 		public IRoom Room { get { return m_Room; } }
+
+		[NotNull]
 		public IDestinationBase Destination { get { return m_Destination; } }
+
+		[NotNull]
 		public ISource Source { get { return m_Source; } }
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="room"></param>
+		/// <param name="destination"></param>
+		/// <param name="source"></param>
 		public RouteListItem(IRoom room, IDestinationBase destination, ISource source)
 		{
+			if (room == null)
+				throw new ArgumentNullException("room");
+
+			if (destination == null)
+				throw new ArgumentNullException("destination");
+
+			if (source == null)
+				throw new ArgumentNullException("source");
+
 			m_Room = room;
 			m_Destination = destination;
 			m_Source = source;
