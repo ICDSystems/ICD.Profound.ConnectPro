@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
+using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.IO;
 using ICD.Common.Utils.Services;
@@ -13,6 +14,7 @@ using ICD.Connect.API.Nodes;
 using ICD.Connect.Partitioning.Controls;
 using ICD.Connect.Partitioning.Extensions;
 using ICD.Connect.Partitioning.PartitionManagers;
+using ICD.Connect.Partitioning.Partitions;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings;
 using ICD.Connect.Settings.Cores;
@@ -32,6 +34,16 @@ namespace ICD.Profound.ConnectPRO.Themes
 	public sealed class ConnectProTheme : AbstractTheme<ConnectProThemeSettings>
 	{
 		public event EventHandler OnCueBackgroundChanged;
+
+		/// <summary>
+		/// Raised when starting to combine rooms.
+		/// </summary>
+		public event EventHandler OnStartRoomCombine;
+
+		/// <summary>
+		/// Raised when ending combining rooms.
+		/// </summary>
+		public event EventHandler<GenericEventArgs<Exception>> OnEndRoomCombine;
 
 		public const string LOGO_DEFAULT = "Logo.png";
 
@@ -132,8 +144,16 @@ namespace ICD.Profound.ConnectPRO.Themes
 			Core.Originators.OnChildrenChanged += OriginatorsOnChildrenChanged;
 		}
 
+		/// <summary>
+		/// Release resources.
+		/// </summary>
+		/// <param name="disposing"></param>
 		protected override void DisposeFinal(bool disposing)
 		{
+			OnCueBackgroundChanged = null;
+			OnStartRoomCombine = null;
+			OnEndRoomCombine = null;
+
 			base.DisposeFinal(disposing);
 
 			Core.Originators.OnChildrenChanged -= OriginatorsOnChildrenChanged;
@@ -256,7 +276,55 @@ namespace ICD.Profound.ConnectPRO.Themes
 				m_UiFactoriesSection.Leave();
 			}
 		}
-		
+
+		/// <summary>
+		/// Combine rooms based on the given control being open or closed.
+		/// </summary>
+		/// <param name="control"></param>
+		/// <param name="open"></param>
+		private void CombineRooms(IPartitionDeviceControl control, bool open)
+		{
+			if (control == null)
+				throw new ArgumentNullException("control");
+
+			IEnumerable<IPartition> partitions = m_SubscribedPartitionManager.Partitions.GetPartitions(control);
+
+			if (open)
+				CombineRooms(partitions, Enumerable.Empty<IPartition>());
+			else
+				CombineRooms(Enumerable.Empty<IPartition>(), partitions);
+		}
+
+		/// <summary>
+		/// Opens and closes the given partitions to update the comine spaces.
+		/// </summary>
+		/// <param name="open"></param>
+		/// <param name="close"></param>
+		public void CombineRooms(IEnumerable<IPartition> open, IEnumerable<IPartition> close)
+		{
+			if (open == null)
+				throw new ArgumentNullException("open");
+
+			if (close == null)
+				throw new ArgumentNullException("closed");
+
+			OnStartRoomCombine.Raise(this);
+
+			try
+			{
+				m_SubscribedPartitionManager.CombineRooms(open, close, () => new ConnectProCombineRoom());
+			}
+			catch (Exception e)
+			{
+				Log(eSeverity.Error, e, "Failed to combine rooms - " + e.Message);
+
+				OnEndRoomCombine.Raise(this, new GenericEventArgs<Exception>(e));
+				return;
+			}
+
+			OnEndRoomCombine.Raise(this, new GenericEventArgs<Exception>(null));
+		}
+
 		/// <summary>
 		/// Reassigns rooms to the existing user interfaces.
 		/// </summary>
@@ -340,7 +408,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 			if (manager == null)
 				return;
 
-			manager.OnPartitionOpenStateChange += ManagerOnPartitionOpenStateChange;
+			manager.OnPartitionControlOpenStateChange += ManagerOnPartitionControlOpenStateChange;
 		}
 
 		private void Unsubscribe(IPartitionManager manager)
@@ -348,12 +416,12 @@ namespace ICD.Profound.ConnectPRO.Themes
 			if (manager == null)
 				return;
 
-			manager.OnPartitionOpenStateChange -= ManagerOnPartitionOpenStateChange;
+			manager.OnPartitionControlOpenStateChange -= ManagerOnPartitionControlOpenStateChange;
 		}
 
-		private void ManagerOnPartitionOpenStateChange(IPartitionDeviceControl control, bool open)
+		private void ManagerOnPartitionControlOpenStateChange(IPartitionDeviceControl control, bool open)
 		{
-			m_SubscribedPartitionManager.SetPartition<ConnectProCombineRoom>(control, open);
+			CombineRooms(control, open);
 		}
 
 		#endregion

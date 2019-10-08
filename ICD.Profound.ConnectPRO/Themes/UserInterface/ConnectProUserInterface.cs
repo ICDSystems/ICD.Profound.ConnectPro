@@ -72,6 +72,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		private readonly ConnectProVisibilityTree m_VisibilityTree;
 		private readonly IPanelDevice m_Panel;
+		private readonly ConnectProTheme m_Theme;
 		private readonly IConnectProNavigationController m_NavigationController;
 		private readonly SafeTimer m_SourceSelectionTimeout;
 
@@ -100,19 +101,27 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="theme"></param>
 		public ConnectProUserInterface(IPanelDevice panel, ConnectProTheme theme)
 		{
-			m_RoutingSection = new SafeCriticalSection();
+			if (panel == null)
+				throw new ArgumentNullException("panel");
+
+			if (theme == null)
+				throw new ArgumentNullException("theme");
 
 			m_Panel = panel;
+			m_Theme = theme;
+
+			m_RoutingSection = new SafeCriticalSection();
+
 			UpdatePanelOfflineJoin();
 
 			m_SourceSelectionTimeout = SafeTimer.Stopped(() => SetSelectedSource(null));
 
 			IUiViewFactory viewFactory = new ConnectProUiViewFactory(panel, theme);
 			m_NavigationController = new ConnectProNavigationController(viewFactory, theme);
-
 			m_VisibilityTree = new ConnectProVisibilityTree(m_NavigationController);
 
 			SubscribePresenters();
+			Subscribe(m_Theme);
 		}
 
 		/// <summary>
@@ -121,6 +130,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		public override void Dispose()
 		{
 			UnsubscribePresenters();
+			Unsubscribe(m_Theme);
 
 			SetRoom(null);
 
@@ -685,6 +695,56 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
+		}
+
+		#endregion
+
+		#region Theme Callbacks
+
+		/// <summary>
+		/// Subscribe to the theme events.
+		/// </summary>
+		/// <param name="theme"></param>
+		private void Subscribe(ConnectProTheme theme)
+		{
+			theme.OnStartRoomCombine += ThemeOnStartRoomCombine;
+			theme.OnEndRoomCombine += ThemeOnEndRoomCombine;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the theme events.
+		/// </summary>
+		/// <param name="theme"></param>
+		private void Unsubscribe(ConnectProTheme theme)
+		{
+			theme.OnStartRoomCombine -= ThemeOnStartRoomCombine;
+			theme.OnEndRoomCombine -= ThemeOnEndRoomCombine;
+		}
+
+		/// <summary>
+		/// Called when the theme starts combining rooms.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ThemeOnStartRoomCombine(object sender, EventArgs eventArgs)
+		{
+			m_NavigationController.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>()
+			                      .ShowView("Combining Rooms");
+		}
+
+		/// <summary>
+		/// Called when the theme finishes combining rooms.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ThemeOnEndRoomCombine(object sender, GenericEventArgs<Exception> eventArgs)
+		{
+			if (eventArgs.Data == null)
+				m_NavigationController.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>()
+				                      .ShowView(false);
+			else
+				m_NavigationController.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>()
+				                      .TimeOut("Failed to complete operation - " + eventArgs.Data.Message);
 		}
 
 		#endregion

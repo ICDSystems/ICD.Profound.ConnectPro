@@ -5,17 +5,14 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
-using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Partitioning.Cells;
 using ICD.Connect.Partitioning.Controls;
 using ICD.Connect.Partitioning.PartitionManagers;
 using ICD.Connect.Partitioning.Partitions;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Attributes;
-using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Rooms;
-using ICD.Profound.ConnectPRO.Rooms.Combine;
 using ICD.Profound.ConnectPRO.SettingsTree.RoomCombine;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.RoomCombine;
@@ -213,7 +210,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			if (partitionManager == null)
 				return;
 
-			partitionManager.OnPartitionOpenStateChange += PartitionManagerOnPartitionOpenStateChange;
+			partitionManager.OnPartitionControlOpenStateChange += PartitionControlManagerOnPartitionControlOpenStateChange;
 		}
 
 		private void Unsubscribe(IPartitionManager partitionManager)
@@ -221,10 +218,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			if (partitionManager == null)
 				return;
 
-			partitionManager.OnPartitionOpenStateChange -= PartitionManagerOnPartitionOpenStateChange;
+			partitionManager.OnPartitionControlOpenStateChange -= PartitionControlManagerOnPartitionControlOpenStateChange;
 		}
 
-		private void PartitionManagerOnPartitionOpenStateChange(IPartitionDeviceControl control, bool open)
+		private void PartitionControlManagerOnPartitionControlOpenStateChange(IPartitionDeviceControl control, bool open)
 		{
 			var partitions = m_SubscribedPartitionManager.Partitions.GetPartitions(control).ToList();
 
@@ -287,7 +284,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		{
 			m_PartitionSection.Enter();
 
-
 			try
 			{
 				IcdHashSet<IPartition> open = m_SelectedPartitionStates
@@ -295,23 +291,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				IcdHashSet<IPartition> closed = m_SelectedPartitionStates
 					.Where(kvp => !kvp.Value).Select(kvp => kvp.Key).ToIcdHashSet();
 
-				Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView("Combining Rooms");
-
-				m_SubscribedPartitionManager.CombineRooms(open, closed, () => new ConnectProCombineRoom());
 				m_SelectedPartitionStates.Clear();
-			}
-			catch (Exception e)
-			{
-				Room.Logger.AddEntry(eSeverity.Error, e, "Failed to combine rooms - " + e.Message);
 
-				Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>()
-				          .TimeOut("Failed to complete operation - " + e.Message);
+				Theme.CombineRooms(open, closed);
 			}
 			finally
 			{
 				m_PartitionSection.Leave();
-
-				Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView(false);
 			}
 
 			RefreshIfVisible();
