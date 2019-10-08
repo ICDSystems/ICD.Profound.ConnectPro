@@ -26,8 +26,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 	/// </summary>
 	public sealed class ConnectProVisibilityTree
 	{
+// ReSharper disable PrivateFieldCanBeConvertedToLocalVariable
 		private readonly IVisibilityNode m_RootVisibility;
+// ReSharper restore PrivateFieldCanBeConvertedToLocalVariable
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="navigationController"></param>
 		public ConnectProVisibilityTree(INavigationController navigationController)
 		{
 			// Only allow one of the start/end buttons to be visible at any given time
@@ -78,6 +84,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			meetingVisibility.AddPresenter(navigationController.LazyLoadPresenter<ICableTvPresenter>());
 			meetingVisibility.AddPresenter(navigationController.LazyLoadPresenter<IWebConferencingAlertPresenter>());
 			meetingVisibility.AddPresenter(navigationController.LazyLoadPresenter<IWebConferencingStepPresenter>());
+			meetingVisibility.AddPresenter(navigationController.LazyLoadPresenter<IMenuRouteSummaryPresenter>());
 
 			m_RootVisibility.AddNode(meetingVisibility);
 
