@@ -17,7 +17,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 	{
 		private const eDisplayColor DEFAULT_COLOR = eDisplayColor.White;
 		private const string DEFAULT_LINE_1 = "ALL DISPLAYS";
-		private const string DEFAULT_LINE_2 = "";
 		private const string DEFAULT_SOURCE_NAME = "Mixed Sources";
 		private const string DEFAULT_ICON = "";
 
@@ -27,7 +26,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private readonly SafeTimer m_DisplayGaugeRefreshTimer;
 
-
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="nav"></param>
+		/// <param name="views"></param>
+		/// <param name="theme"></param>
 		public MenuCombinedSimpleModePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
@@ -39,38 +43,33 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			base.Refresh(view);
 
 			m_RefreshSection.Enter();
+
 			try
 			{
 				view.SetAdvancedModeEnabled(true);
 
-				// TODO
-
+				// Color
 				eDisplayColor color;
-				string icon;
-				string line1;
-				string line2;
-				string sourceName;
-
 				if (!Displays.Select(d => d.Color).Unanimous(out color))
 					color = DEFAULT_COLOR;
 				string textColor = Colors.DisplayColorToTextColor(color);
 
+				// Icon
+				string icon;
 				if (!Displays.Select(d => d.Icon).Unanimous(out icon))
-					icon = Icons.GetDisplayIcon(DEFAULT_ICON, eDisplayColor.White);
+					icon = Icons.GetDisplayIcon(DEFAULT_ICON, color);
 
-				if (!Displays.Select(d => d.Line1).Unanimous(out line1))
-					line1 = HtmlUtils.FormatColoredText(DEFAULT_LINE_1, textColor);
+				// Label
+				string line1 = HtmlUtils.FormatColoredText(DEFAULT_LINE_1, textColor);
 
-				if (!Displays.Select(d => d.Line2).Unanimous(out line2))
-					line2 = HtmlUtils.FormatColoredText(DEFAULT_LINE_2, textColor);
-				
+				// Source name
+				string sourceName;
 				if (!Displays.Select(d => d.SourceName).Unanimous(out sourceName))
 					sourceName = HtmlUtils.FormatColoredText(DEFAULT_SOURCE_NAME, textColor);
 
 				view.SetDisplayColor(color);
 				view.SetDisplayIcon(icon);
 				view.SetDisplayLine1Text(line1);
-				view.SetDisplayLine2Text(line2);
 				view.SetDisplaySourceText(sourceName);
 				view.SetDisplaySpeakerButtonActive(Displays.Any(d => d.AudioActive));
 
