@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Connect.Partitioning.Rooms;
@@ -62,12 +63,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			IEnumerable<RouteListItem> models =
 				Room == null
 					? Enumerable.Empty<RouteListItem>()
-					: routing.SelectMany(kvp => kvp.Value.Select(s => GetListItem(kvp.Key, s)))
+					: routing.Where(kvp => kvp.Value.Count > 0)
+					         .Select(kvp => GetListItem(kvp.Key, GetSource(kvp.Value)))
 					         .OrderBy(i => i.Room.GetName(true))
 					         .ThenBy(i => i.Destination.GetName(true));
 
 			m_PresenterFactory.BuildChildren(models);
 			RefreshIfVisible();
+		}
+
+		[NotNull]
+		private static ISource GetSource(IEnumerable<ISource> sources)
+		{
+			if (sources == null)
+				throw new ArgumentNullException("sources");
+
+			return sources.OrderBy(s => s.Order)
+			              .ThenBy(s => s.Id)
+			              .First();
 		}
 
 		private RouteListItem GetListItem(IDestinationBase destination, ISource source)
