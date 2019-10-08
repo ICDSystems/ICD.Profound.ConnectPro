@@ -135,7 +135,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 			Subscribe(m_Destination);
 
+			// Update has control
+			UpdateHasControl();
+
+			// Update the color
+			UpdateColor();
+
+			// Update icon
+			UpdateIcon();
+
+			// Update the labels
 			UpdateLabels();
+
+			// Update show speaker
+			UpdateShowSpeaker();
 		}
 
 		#region Methods
