@@ -1,6 +1,9 @@
-﻿using System;
+﻿using System.Linq;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Timers;
+using ICD.Connect.Panels.Devices;
+using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
@@ -52,7 +55,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
-				string roomName = Room == null ? null : Room.Name;
+				IRoom room = GetRoomForPanel();
+				string roomName = room == null ? null : room.Name;
+				if (room != null && room.CombineState)
+					roomName += " (Combined)";
+
 				view.SetRoomName(roomName);
 
 				RefreshTime();
@@ -83,6 +90,27 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		/// <summary>
+		/// Gets the room for the current panel.
+		/// </summary>
+		/// <returns></returns>
+		[CanBeNull]
+		private IRoom GetRoomForPanel()
+		{
+			if (Room == null)
+				return null;
+
+			IPanelDevice panel = ViewFactory.Panel;
+
+			// Is the panel immediately in this room?
+			if (Room.Originators.Contains(panel.Id))
+				return Room;
+
+			// Is the panel in one of our child rooms?
+			return Room.GetRooms()
+			           .FirstOrDefault(room => room.Originators.Contains(panel.Id));
 		}
 	}
 }
