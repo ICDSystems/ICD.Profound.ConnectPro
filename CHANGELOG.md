@@ -7,14 +7,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Added
  - Showing a confirmation dialog when a remote Zoom participant requests microphone mute
- - Added warming/cooling status gauges for displays
+ - Added warming/cooling status labels for displays
+ - Room combine dialog is shown on all panels when combining/uncombining rooms
+ - Better support for multiple OSDs in a single room
+ - Showing a "No Contacts Selected" label when no zoom contacts are selected
 
 ### Changed
  - Prevent users from pressing Start My Meeting button when no booking is selected
  - Privacy mute is turned off between calls
  - Using short date format for Start Meeting splash page
  - Generic Alert subpage now supports multiple buttons
- - Fixed gauges in theme after ICD.Connect.UI rename
+ - Panel header text shows the original room for the panel
+ - Fixed a bug where display icons would be incorrectly set
+ - Combined simple mode display shows "All Displays" as label
+ - Fixed various null reference exceptions when combining/uncombining rooms
+ - Routing feedback improvements, particularly for processing states
+ - Fixed bug with Zoom contact filtering using the new generic keyboard
+ - Selected Zoom contacts are removed from the contacts list
+ - Better logic for getting the room for a given source, destination or panel 
 
 ## [10.0.0] - 2019-09-16
 ### Added
