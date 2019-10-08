@@ -1,10 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Attributes;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -57,7 +59,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			{
 				IRoom room = GetRoomForPanel();
 				string roomName = room == null ? null : room.Name;
-				if (room != null && room.CombineState)
+
+				if (Room != null && Room.IsCombineRoom())
 					roomName += " (Combined)";
 
 				view.SetRoomName(roomName);
@@ -112,5 +115,47 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			return Room.GetRooms()
 			           .FirstOrDefault(room => room.Originators.Contains(panel.Id));
 		}
+
+		#region Room Callbacks
+
+		/// <summary>
+		/// Subscribe to the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Subscribe(IConnectProRoom room)
+		{
+			base.Subscribe(room);
+
+			if (room == null)
+				return;
+
+			room.Originators.OnChildrenChanged += OriginatorsOnChildrenChanged;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Unsubscribe(IConnectProRoom room)
+		{
+			base.Unsubscribe(room);
+
+			if (room == null)
+				return;
+
+			room.Originators.OnChildrenChanged -= OriginatorsOnChildrenChanged;
+		}
+
+		/// <summary>
+		/// Called when the room contents change.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void OriginatorsOnChildrenChanged(object sender, EventArgs eventArgs)
+		{
+			Refresh();
+		}
+
+		#endregion
 	}
 }
