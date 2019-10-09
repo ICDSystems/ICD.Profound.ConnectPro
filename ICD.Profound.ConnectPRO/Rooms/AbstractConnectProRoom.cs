@@ -22,7 +22,7 @@ using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Devices;
-using ICD.Connect.Devices.Extensions;
+using ICD.Connect.Devices.Points;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Partitioning.Rooms;
@@ -164,13 +164,13 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		[CanBeNull]
 		public IVolumeDeviceControl GetVolumeControl()
 		{
-			IVolumePoint volumePoint = Originators.GetInstance<IVolumePoint>();
+			IVolumePoint volumePoint = Originators.GetInstanceRecursive<IVolumePoint>();
 			if (volumePoint == null)
 				return null;
 
 			try
 			{
-				return Core.GetControl<IVolumeDeviceControl>(volumePoint.DeviceId, volumePoint.ControlId);
+				return volumePoint.GetControl<IVolumeDeviceControl>();
 			}
 			catch (Exception)
 			{
@@ -311,7 +311,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			// Power off the panels
 			Originators.GetInstancesRecursive<IPanelDevice>()
-		   .ForEach(p => Routing.PowerDevice(p, false));
+			           .ForEach(p => Routing.PowerDevice(p, false));
 		}
 		/// <summary>
 		/// Called when the meeting state is changed

@@ -18,13 +18,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displa
 		private readonly IDestinationBase m_Destination;
 		private readonly ISource m_Source;
 
-		[NotNull]
 		public IRoom Room { get { return m_Room; } }
-
-		[NotNull]
 		public IDestinationBase Destination { get { return m_Destination; } }
-
-		[NotNull]
 		public ISource Source { get { return m_Source; } }
 
 		/// <summary>
