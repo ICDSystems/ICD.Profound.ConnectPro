@@ -39,6 +39,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			// Only allow one of the start/end buttons to be visible at any given time
 			m_RootVisibility = new DefaultVisibilityNode(navigationController.LazyLoadPresenter<IStartMeetingPresenter>());
 
+			// Popups
+			IVisibilityNode popupsVisibility = new SingleVisibilityNode();
+			popupsVisibility.AddPresenter(navigationController.LazyLoadPresenter<IConfirmEndMeetingPresenter>());
+			popupsVisibility.AddPresenter(navigationController.LazyLoadPresenter<IConfirmLeaveCallPresenter>());
+			popupsVisibility.AddPresenter(navigationController.LazyLoadPresenter<IConfirmSplashPowerPresenter>());
+			popupsVisibility.AddPresenter(navigationController.LazyLoadPresenter<IVolumePresenter>());
+
+			m_RootVisibility.AddNode(popupsVisibility);
+
+			// Displays
 			IVisibilityNode displaysVisibility = new SingleVisibilityNode();
 			displaysVisibility.AddPresenter(navigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>());
 			displaysVisibility.AddPresenter(navigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>());
