@@ -70,7 +70,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				{typeof(ITvTunerControl), new List<Type> {typeof(ICableTvPresenter)}}
 			};
 
+// ReSharper disable NotAccessedField.Local
 		private readonly ConnectProVisibilityTree m_VisibilityTree;
+// ReSharper restore NotAccessedField.Local
+
 		private readonly IPanelDevice m_Panel;
 		private readonly ConnectProTheme m_Theme;
 		private readonly IConnectProNavigationController m_NavigationController;
@@ -274,7 +277,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			{
 				// Show the context menu before routing for UX
 				ConnectProRoom.FocusSource = source;
-				ShowSourceContextualMenu(source);
 				m_Room.Routing.RouteAtc(source);
 			}
 			// Typical case - continue routing
@@ -755,12 +757,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private void SubscribePresenters()
 		{
 			Subscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>());
+
 			Subscribe(m_NavigationController.LazyLoadPresenter<IMenu2DisplaysPresenter>());
 			Subscribe(m_NavigationController.LazyLoadPresenter<IMenu3PlusDisplaysPresenter>());
-
-			Subscribe(m_NavigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>());
-			Subscribe(m_NavigationController.LazyLoadPresenter<IAtcIncomingCallPresenter>());
-
 			Subscribe(m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>());
 			Subscribe(m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>());
 		}
@@ -771,12 +770,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private void UnsubscribePresenters()
 		{
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<ISourceSelectPresenter>());
+
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<IMenu2DisplaysPresenter>());
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<IMenu3PlusDisplaysPresenter>());
-
-			Unsubscribe(m_NavigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>());
-			Unsubscribe(m_NavigationController.LazyLoadPresenter<IAtcIncomingCallPresenter>());
-
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<IMenuCombinedAdvancedModePresenter>());
 			Unsubscribe(m_NavigationController.LazyLoadPresenter<IMenuCombinedSimpleModePresenter>());
 		}
@@ -854,70 +850,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private void Unsubscribe(IMenu3PlusDisplaysPresenter presenter)
 		{
 			presenter.OnDestinationPressed -= DisplaysPresenterOnDestinationPressed;
-		}
-
-		#endregion
-
-		#region Incoming Video Call Presenter Callbacks
-
-		private void Subscribe(IVtcIncomingCallPresenter presenter)
-		{
-			presenter.OnCallAnswered += VtcIncomingCallPresenterOnCallAnswered;
-		}
-
-		private void Unsubscribe(IVtcIncomingCallPresenter presenter)
-		{
-			presenter.OnCallAnswered -= VtcIncomingCallPresenterOnCallAnswered;
-		}
-
-		private void VtcIncomingCallPresenterOnCallAnswered(object sender, GenericEventArgs<IConferenceDeviceControl> e)
-		{
-			if (m_Room == null)
-				return;
-
-			IConferenceDeviceControl videoDialer = e.Data;
-			IDeviceBase device = videoDialer == null ? null : videoDialer.Parent;
-
-			if (device == null)
-				return;
-
-			ISource source = m_Room.Originators.GetInstancesRecursive<ISource>(s => s.Device == device.Id).FirstOrDefault();
-			if (source == null)
-				return;
-
-			HandleSelectedSource(source);
-		}
-
-		#endregion
-
-		#region Incoming Audio Call Presenter Callbacks
-
-		private void Subscribe(IAtcIncomingCallPresenter presenter)
-		{
-			presenter.OnCallAnswered += AtcIncomingCallPresenterOnCallAnswered;
-		}
-
-		private void Unsubscribe(IAtcIncomingCallPresenter presenter)
-		{
-			presenter.OnCallAnswered -= AtcIncomingCallPresenterOnCallAnswered;
-		}
-
-		private void AtcIncomingCallPresenterOnCallAnswered(object sender, GenericEventArgs<IConferenceDeviceControl> e)
-		{
-			if (m_Room == null)
-				return;
-
-			IConferenceDeviceControl audioDialer = e.Data;
-			IDeviceBase device = audioDialer == null ? null : audioDialer.Parent;
-
-			if (device == null)
-				return;
-
-			ISource source = m_Room.Originators.GetInstancesRecursive<ISource>(s => s.Device == device.Id).FirstOrDefault();
-			if (source == null)
-				return;
-
-			HandleSelectedSource(source);
 		}
 
 		#endregion

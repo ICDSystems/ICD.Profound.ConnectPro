@@ -20,11 +20,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 	[PresenterBinding(typeof(IAtcIncomingCallPresenter))]
 	public sealed class AtcIncomingCallPresenter : AbstractUiPresenter<IAtcIncomingCallView>, IAtcIncomingCallPresenter
 	{
-		/// <summary>
-		/// Raised when the user answers the incoming call.
-		/// </summary>
-		public event EventHandler<GenericEventArgs<IConferenceDeviceControl>>  OnCallAnswered;
-
 		private readonly Dictionary<IIncomingCall, IConferenceDeviceControl> m_IncomingCalls;
 		private readonly SafeCriticalSection m_IncomingCallsSection;
 		private readonly SafeCriticalSection m_RefreshSection;
@@ -52,16 +47,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		}
 
 		/// <summary>
-		/// Release resources.
-		/// </summary>
-		public override void Dispose()
-		{
-			OnCallAnswered = null;
-
-			base.Dispose();
-		}
-
-		/// <summary>
 		/// Updates the view.
 		/// </summary>
 		/// <param name="view"></param>
@@ -85,6 +70,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 				m_RefreshSection.Leave();
 			}
 		}
+
+		#region Private Methods
 
 		private static string GetCallerInfo(IIncomingCall call)
 		{
@@ -118,70 +105,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 			return room.ConferenceManager
 			           .GetDialingProviders(eCallType.Audio)
 			           .Except(room.ConferenceManager.GetDialingProviders(eCallType.Video));
-		}
-
-		#region Room Callbacks
-
-		/// <summary>
-		/// Subscribe to the room events.
-		/// </summary>
-		/// <param name="room"></param>
-		protected override void Subscribe(IConnectProRoom room)
-		{
-			base.Subscribe(room);
-
-			m_SubscribedAudioDialers = room == null
-				                           ? Enumerable.Empty<IConferenceDeviceControl>().ToList()
-				                           : GetAudioDialers(room).ToList();
-
-			foreach (var dialer in m_SubscribedAudioDialers)
-			{
-				dialer.OnIncomingCallAdded += AudioDialerOnIncomingCallAdded;
-				dialer.OnIncomingCallRemoved += AudioDialerOnIncomingCallRemoved;
-			}
-		}
-
-		/// <summary>
-		/// Unsubscribe from the room events.
-		/// </summary>
-		/// <param name="room"></param>
-		protected override void Unsubscribe(IConnectProRoom room)
-		{
-			base.Unsubscribe(room);
-
-			if (m_SubscribedAudioDialers == null)
-				return;
-
-			foreach (var dialer in m_SubscribedAudioDialers)
-			{
-				dialer.OnIncomingCallAdded -= AudioDialerOnIncomingCallAdded;
-				dialer.OnIncomingCallRemoved -= AudioDialerOnIncomingCallRemoved;
-			}
-
-			m_SubscribedAudioDialers = null;
-		}
-
-		/// <summary>
-		/// Called when a new call is detected.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		private void AudioDialerOnIncomingCallAdded(object sender, GenericEventArgs<IIncomingCall> args)
-		{
-			IIncomingCall call = args.Data;
-			if (call.GetIsRingingIncomingCall())
-				AddIncomingCall(call, sender as IConferenceDeviceControl);
-		}
-
-		/// <summary>
-		/// Called when a new call is detected.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		private void AudioDialerOnIncomingCallRemoved(object sender, GenericEventArgs<IIncomingCall> args)
-		{
-			IIncomingCall call = args.Data;
-			RemoveIncomingCall(call);
 		}
 
 		/// <summary>
@@ -235,6 +158,85 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 
 		#endregion
 
+		#region Room Callbacks
+
+		/// <summary>
+		/// Subscribe to the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Subscribe(IConnectProRoom room)
+		{
+			base.Subscribe(room);
+
+			if (room == null)
+				return;
+
+			room.OnIncomingCallAnswered += RoomOnIncomingCallAnswered;
+
+			m_SubscribedAudioDialers = GetAudioDialers(room).ToList();
+
+			foreach (var dialer in m_SubscribedAudioDialers)
+			{
+				dialer.OnIncomingCallAdded += AudioDialerOnIncomingCallAdded;
+				dialer.OnIncomingCallRemoved += AudioDialerOnIncomingCallRemoved;
+			}
+		}
+
+		/// <summary>
+		/// Unsubscribe from the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Unsubscribe(IConnectProRoom room)
+		{
+			base.Unsubscribe(room);
+
+			if (room == null)
+				return;
+
+			room.OnIncomingCallAnswered -= RoomOnIncomingCallAnswered;
+
+			if (m_SubscribedAudioDialers == null)
+				return;
+
+			foreach (var dialer in m_SubscribedAudioDialers)
+			{
+				dialer.OnIncomingCallAdded -= AudioDialerOnIncomingCallAdded;
+				dialer.OnIncomingCallRemoved -= AudioDialerOnIncomingCallRemoved;
+			}
+
+			m_SubscribedAudioDialers = null;
+		}
+
+		private void RoomOnIncomingCallAnswered(object sender, GenericEventArgs<IIncomingCall> eventArgs)
+		{
+			RemoveIncomingCall(eventArgs.Data);
+		}
+
+		/// <summary>
+		/// Called when a new call is detected.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void AudioDialerOnIncomingCallAdded(object sender, GenericEventArgs<IIncomingCall> args)
+		{
+			IIncomingCall call = args.Data;
+			if (call.GetIsRingingIncomingCall())
+				AddIncomingCall(call, sender as IConferenceDeviceControl);
+		}
+
+		/// <summary>
+		/// Called when a new call is detected.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void AudioDialerOnIncomingCallRemoved(object sender, GenericEventArgs<IIncomingCall> args)
+		{
+			IIncomingCall call = args.Data;
+			RemoveIncomingCall(call);
+		}
+
+		#endregion
+
 		#region Incoming Call Callbacks
 
 		/// <summary>
@@ -266,7 +268,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		/// <param name="args"></param>
 		private void CallOnAnswerStateChanged(object sender, IncomingCallAnswerStateEventArgs args)
 		{
-			var source = sender as IIncomingCall;
+			IIncomingCall source = sender as IIncomingCall;
 			if (sender == null)
 				return;
 
@@ -345,27 +347,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		private void ViewOnAnswerButtonPressed(object sender, EventArgs e)
 		{
 			IIncomingCall call = GetFirstSource();
-			IConferenceDeviceControl control = null;
+			IConferenceDeviceControl control =
+				call == null
+					? null
+					: m_IncomingCallsSection.Execute(() => m_IncomingCalls.GetDefault(call));
 
-			m_IncomingCallsSection.Enter();
-			try
-			{
-				if (m_IncomingCalls.ContainsKey(call))
-					control = m_IncomingCalls[call];
-			}
-			finally
-			{
-				m_IncomingCallsSection.Leave();
-			}
-
-			if (call != null)
-				call.Answer();
-
-			if (Room != null)
-				Room.StartMeeting(false);
-			OnCallAnswered.Raise(this, new GenericEventArgs<IConferenceDeviceControl>(control));
+			if (call != null && Room != null)
+				Room.AnswerIncomingCall(control, call);
 
 			ShowView(false);
+		}
+
+		protected override void ViewOnPreVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			base.ViewOnPreVisibilityChanged(sender, args);
+
+			GetView().PlayRingtone(false);
 		}
 
 		#endregion

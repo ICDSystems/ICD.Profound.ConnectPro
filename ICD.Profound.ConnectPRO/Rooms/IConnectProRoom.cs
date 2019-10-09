@@ -4,6 +4,8 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.Controls;
+using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.EventArguments;
 using ICD.Connect.Partitioning.Commercial.Rooms;
@@ -22,6 +24,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// Raised when the source that is currently the primary focus of the room (i.e. VTC) changes.
 		/// </summary>
 		event EventHandler<SourceEventArgs> OnFocusSourceChanged;
+
+		/// <summary>
+		/// Raised when an incoming call is answered.
+		/// </summary>
+		event EventHandler<GenericEventArgs<IIncomingCall>> OnIncomingCallAnswered;
 
 		#region Properties
 
@@ -106,6 +113,13 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// Shuts down the room.
 		/// </summary>
 		void Sleep();
+
+		/// <summary>
+		/// Answers the incoming call and focuses on the given conference call.
+		/// </summary>
+		/// <param name="control"></param>
+		/// <param name="call"></param>
+		void AnswerIncomingCall(IConferenceDeviceControl control, IIncomingCall call);
 
 		#endregion
 	}

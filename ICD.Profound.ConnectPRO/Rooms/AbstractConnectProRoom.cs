@@ -21,6 +21,7 @@ using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Points;
 using ICD.Connect.Panels.Devices;
@@ -45,6 +46,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// Raised when the source that is currently the primary focus of the room (i.e. VTC) changes.
 		/// </summary>
 		public event EventHandler<SourceEventArgs> OnFocusSourceChanged;
+
+		/// <summary>
+		/// Raised when an incoming call is answered.
+		/// </summary>
+		public event EventHandler<GenericEventArgs<IIncomingCall>> OnIncomingCallAnswered;
 
 		/// <summary>
 		/// Automatically end the meeting after this many milliseconds without any sources being routed
@@ -147,6 +153,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		{
 			OnIsInMeetingChanged = null;
 			OnFocusSourceChanged = null;
+			OnIncomingCallAnswered = null;
 
 			base.DisposeFinal(disposing);
 
@@ -313,6 +320,35 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			Originators.GetInstancesRecursive<IPanelDevice>()
 			           .ForEach(p => Routing.PowerDevice(p, false));
 		}
+
+		/// <summary>
+		/// Answers the incoming call and focuses on the given conference call.
+		/// </summary>
+		/// <param name="control"></param>
+		/// <param name="call"></param>
+		public void AnswerIncomingCall(IConferenceDeviceControl control, IIncomingCall call)
+		{
+			if (call == null)
+				throw new ArgumentNullException("call");
+
+			call.Answer();
+
+			StartMeeting(false);
+
+			// Focus on the dialer source
+			IDeviceBase device = control == null ? null : control.Parent;
+			ISource source = device == null ? null : Originators.GetInstanceRecursive<ISource>(s => s.Device == device.Id);
+
+			FocusSource = source;
+
+			if (control != null && control.Supports.HasFlag(eCallType.Video))
+				Routing.RouteVtc(source);
+			else if (control != null && control.Supports.HasFlag(eCallType.Audio))
+				Routing.RouteAtc(source);
+
+			OnIncomingCallAnswered.Raise(this, new GenericEventArgs<IIncomingCall>(call));
+		}
+
 		/// <summary>
 		/// Called when the meeting state is changed
 		/// </summary>

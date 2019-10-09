@@ -20,11 +20,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 	[PresenterBinding(typeof(IVtcIncomingCallPresenter))]
 	public sealed class VtcIncomingCallPresenter : AbstractUiPresenter<IVtcIncomingCallView>, IVtcIncomingCallPresenter
 	{
-		/// <summary>
-		/// Raised when the user answers the incoming call.
-		/// </summary>
-		public event EventHandler<GenericEventArgs<IConferenceDeviceControl>> OnCallAnswered;
-
 		private readonly Dictionary<IIncomingCall, IConferenceDeviceControl> m_IncomingCalls;
 		private readonly SafeCriticalSection m_IncomingCallsSection;
 		private readonly SafeCriticalSection m_RefreshSection;
@@ -52,16 +47,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		}
 
 		/// <summary>
-		/// Release resources.
-		/// </summary>
-		public override void Dispose()
-		{
-			OnCallAnswered = null;
-
-			base.Dispose();
-		}
-
-		/// <summary>
 		/// Updates the view.
 		/// </summary>
 		/// <param name="view"></param>
@@ -85,6 +70,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				m_RefreshSection.Leave();
 			}
 		}
+
+		#region Private Methods
 
 		private static string GetCallerInfo(IIncomingCall source)
 		{
@@ -116,70 +103,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private static IEnumerable<IConferenceDeviceControl> GetVideoDialers(IConnectProRoom room)
 		{
 			return room.ConferenceManager.GetDialingProviders(eCallType.Video);
-		}
-
-		#region Room Callbacks
-
-		/// <summary>
-		/// Subscribe to the room events.
-		/// </summary>
-		/// <param name="room"></param>
-		protected override void Subscribe(IConnectProRoom room)
-		{
-			base.Subscribe(room);
-
-			m_SubscribedVideoDialers = room == null
-				                           ? Enumerable.Empty<IConferenceDeviceControl>().ToList()
-				                           : GetVideoDialers(room).ToList();
-
-			foreach (var dialer in m_SubscribedVideoDialers)
-			{
-				dialer.OnIncomingCallAdded += VideoDialerOnIncomingCallAdded;
-				dialer.OnIncomingCallRemoved += VideoDialerOnIncomingCallRemoved;
-			}
-		}
-
-		/// <summary>
-		/// Unsubscribe from the room events.
-		/// </summary>
-		/// <param name="room"></param>
-		protected override void Unsubscribe(IConnectProRoom room)
-		{
-			base.Unsubscribe(room);
-
-			if (m_SubscribedVideoDialers == null)
-				return;
-
-			foreach (var dialer in m_SubscribedVideoDialers)
-			{
-				dialer.OnIncomingCallAdded -= VideoDialerOnIncomingCallAdded;
-				dialer.OnIncomingCallRemoved -= VideoDialerOnIncomingCallRemoved;
-			}
-
-			m_SubscribedVideoDialers = null;
-		}
-
-		/// <summary>
-		/// Called when a new incoming call is added.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		private void VideoDialerOnIncomingCallAdded(object sender, GenericEventArgs<IIncomingCall> args)
-		{
-			var call = args.Data;
-			if (call.GetIsRingingIncomingCall())
-				AddIncomingCall(call, sender as IConferenceDeviceControl);
-		}
-
-		/// <summary>
-		/// Called when an incoming call is removed.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		private void VideoDialerOnIncomingCallRemoved(object sender, GenericEventArgs<IIncomingCall> args)
-		{
-			var call = args.Data;
-			RemoveIncomingCall(call);
 		}
 
 		/// <summary>
@@ -229,6 +152,85 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			Refresh();
 			ShowView(IncomingCallCount > 0);
+		}
+
+		#endregion
+
+		#region Room Callbacks
+
+		/// <summary>
+		/// Subscribe to the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Subscribe(IConnectProRoom room)
+		{
+			base.Subscribe(room);
+
+			if (room == null)
+				return;
+
+			room.OnIncomingCallAnswered += RoomOnIncomingCallAnswered;
+
+			m_SubscribedVideoDialers = GetVideoDialers(room).ToList();
+
+			foreach (var dialer in m_SubscribedVideoDialers)
+			{
+				dialer.OnIncomingCallAdded += VideoDialerOnIncomingCallAdded;
+				dialer.OnIncomingCallRemoved += VideoDialerOnIncomingCallRemoved;
+			}
+		}
+
+		/// <summary>
+		/// Unsubscribe from the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Unsubscribe(IConnectProRoom room)
+		{
+			base.Unsubscribe(room);
+
+			if (room == null)
+				return;
+
+			room.OnIncomingCallAnswered -= RoomOnIncomingCallAnswered;
+
+			if (m_SubscribedVideoDialers == null)
+				return;
+
+			foreach (var dialer in m_SubscribedVideoDialers)
+			{
+				dialer.OnIncomingCallAdded -= VideoDialerOnIncomingCallAdded;
+				dialer.OnIncomingCallRemoved -= VideoDialerOnIncomingCallRemoved;
+			}
+
+			m_SubscribedVideoDialers = null;
+		}
+
+		private void RoomOnIncomingCallAnswered(object sender, GenericEventArgs<IIncomingCall> eventArgs)
+		{
+			RemoveIncomingCall(eventArgs.Data);
+		}
+
+		/// <summary>
+		/// Called when a new incoming call is added.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void VideoDialerOnIncomingCallAdded(object sender, GenericEventArgs<IIncomingCall> args)
+		{
+			var call = args.Data;
+			if (call.GetIsRingingIncomingCall())
+				AddIncomingCall(call, sender as IConferenceDeviceControl);
+		}
+
+		/// <summary>
+		/// Called when an incoming call is removed.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void VideoDialerOnIncomingCallRemoved(object sender, GenericEventArgs<IIncomingCall> args)
+		{
+			var call = args.Data;
+			RemoveIncomingCall(call);
 		}
 
 		#endregion
@@ -343,26 +345,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private void ViewOnAnswerButtonPressed(object sender, EventArgs e)
 		{
 			IIncomingCall call = GetFirstSource();
-			IConferenceDeviceControl control = null;
+			IConferenceDeviceControl control =
+				call == null
+					? null
+					: m_IncomingCallsSection.Execute(() => m_IncomingCalls.GetDefault(call));
 
-			m_IncomingCallsSection.Enter();
-			try
-			{
-				if (m_IncomingCalls.ContainsKey(call))
-					control = m_IncomingCalls[call];
-			}
-			finally
-			{
-				m_IncomingCallsSection.Leave();
-			}
-
-			if (call != null)
-				call.Answer();
-
-			if (Room != null)
-				Room.StartMeeting(false);
-
-			OnCallAnswered.Raise(this, new GenericEventArgs<IConferenceDeviceControl>(control));
+			if (call != null && Room != null)
+				Room.AnswerIncomingCall(control, call);
 
 			ShowView(false);
 		}
