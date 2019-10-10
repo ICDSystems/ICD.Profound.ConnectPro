@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [10.1.1] - 2019-10-10
+### Changed
+ - Fixed a bug where volume control was not available in a combined space
+ - Fixed a bug where the shutdown confirmation page was not hiding the volume page
+ - Incoming call answering and dismissal is better synchronized in rooms with multiple panels
+
 ## [10.1.0] - 2019-10-08
 ### Added
  - Showing a confirmation dialog when a remote Zoom participant requests microphone mute
