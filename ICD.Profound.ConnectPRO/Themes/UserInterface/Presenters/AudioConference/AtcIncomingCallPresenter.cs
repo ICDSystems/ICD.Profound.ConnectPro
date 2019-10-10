@@ -172,6 +172,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 				return;
 
 			room.OnIncomingCallAnswered += RoomOnIncomingCallAnswered;
+			room.OnIncomingCallRejected += RoomOnIncomingCallRejected;
 
 			m_SubscribedAudioDialers = GetAudioDialers(room).ToList();
 
@@ -194,6 +195,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 				return;
 
 			room.OnIncomingCallAnswered -= RoomOnIncomingCallAnswered;
+			room.OnIncomingCallRejected -= RoomOnIncomingCallRejected;
 
 			if (m_SubscribedAudioDialers == null)
 				return;
@@ -208,6 +210,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		}
 
 		private void RoomOnIncomingCallAnswered(object sender, GenericEventArgs<IIncomingCall> eventArgs)
+		{
+			RemoveIncomingCall(eventArgs.Data);
+		}
+
+		private void RoomOnIncomingCallRejected(object sender, GenericEventArgs<IIncomingCall> eventArgs)
 		{
 			RemoveIncomingCall(eventArgs.Data);
 		}
@@ -333,8 +340,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		{
 			IIncomingCall call = GetFirstSource();
 
-			if (call != null)
-				call.Reject();
+			if (call != null && Room != null)
+				Room.RejectIncomingCall(call);
 
 			ShowView(false);
 		}

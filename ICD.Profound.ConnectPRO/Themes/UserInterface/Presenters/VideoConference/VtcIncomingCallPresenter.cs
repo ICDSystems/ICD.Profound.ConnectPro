@@ -170,6 +170,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				return;
 
 			room.OnIncomingCallAnswered += RoomOnIncomingCallAnswered;
+			room.OnIncomingCallRejected += RoomOnIncomingCallRejected;
 
 			m_SubscribedVideoDialers = GetVideoDialers(room).ToList();
 
@@ -192,6 +193,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				return;
 
 			room.OnIncomingCallAnswered -= RoomOnIncomingCallAnswered;
+			room.OnIncomingCallRejected -= RoomOnIncomingCallRejected;
 
 			if (m_SubscribedVideoDialers == null)
 				return;
@@ -206,6 +208,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		}
 
 		private void RoomOnIncomingCallAnswered(object sender, GenericEventArgs<IIncomingCall> eventArgs)
+		{
+			RemoveIncomingCall(eventArgs.Data);
+		}
+
+		private void RoomOnIncomingCallRejected(object sender, GenericEventArgs<IIncomingCall> eventArgs)
 		{
 			RemoveIncomingCall(eventArgs.Data);
 		}
@@ -331,8 +338,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			IIncomingCall call = GetFirstSource();
 
-			if (call != null)
-				call.Reject();
+			if (call != null && Room != null)
+				Room.RejectIncomingCall(call);
 
 			ShowView(false);
 		}

@@ -53,6 +53,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		public event EventHandler<GenericEventArgs<IIncomingCall>> OnIncomingCallAnswered;
 
 		/// <summary>
+		/// Raised when an incoming call is rejected.
+		/// </summary>
+		public event EventHandler<GenericEventArgs<IIncomingCall>> OnIncomingCallRejected;
+
+		/// <summary>
 		/// Automatically end the meeting after this many milliseconds without any sources being routed
 		/// </summary>
 		private const int MEETING_TIMEOUT = 1000 * 60 * 10;
@@ -154,6 +159,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			OnIsInMeetingChanged = null;
 			OnFocusSourceChanged = null;
 			OnIncomingCallAnswered = null;
+			OnIncomingCallRejected = null;
 
 			base.DisposeFinal(disposing);
 
@@ -347,6 +353,20 @@ namespace ICD.Profound.ConnectPRO.Rooms
 				Routing.RouteAtc(source);
 
 			OnIncomingCallAnswered.Raise(this, new GenericEventArgs<IIncomingCall>(call));
+		}
+
+		/// <summary>
+		/// Rejects the incoming call.
+		/// </summary>
+		/// <param name="call"></param>
+		public void RejectIncomingCall(IIncomingCall call)
+		{
+			if (call == null)
+				throw new ArgumentNullException("call");
+
+			call.Reject();
+
+			OnIncomingCallRejected.Raise(this, new GenericEventArgs<IIncomingCall>(call));
 		}
 
 		/// <summary>

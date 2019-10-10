@@ -30,6 +30,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		event EventHandler<GenericEventArgs<IIncomingCall>> OnIncomingCallAnswered;
 
+		/// <summary>
+		/// Raised when an incoming call is rejected.
+		/// </summary>
+		event EventHandler<GenericEventArgs<IIncomingCall>> OnIncomingCallRejected;
+
 		#region Properties
 
 		bool IsInMeeting { get; }
@@ -120,6 +125,12 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <param name="control"></param>
 		/// <param name="call"></param>
 		void AnswerIncomingCall(IConferenceDeviceControl control, IIncomingCall call);
+
+		/// <summary>
+		/// Rejects the incoming call.
+		/// </summary>
+		/// <param name="call"></param>
+		void RejectIncomingCall(IIncomingCall call);
 
 		#endregion
 	}
