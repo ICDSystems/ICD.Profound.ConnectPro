@@ -22,7 +22,6 @@ using ICD.Connect.Themes.UserInterfaces;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Connect.UI.Mvp.VisibilityTree;
 using ICD.Profound.ConnectPRO.Rooms;
-using ICD.Profound.ConnectPRO.Rooms.Single;
 using ICD.Profound.ConnectPRO.Routing;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
@@ -77,6 +76,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 			m_NavigationController = new ConnectProTouchDisplayNavigationController(viewFactory, theme);
 
 			BuildVisibilityTree();
+			SubscribePresenters();
 		}
 
 		/// <summary>
@@ -84,8 +84,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 		/// </summary>
 		public override void Dispose()
 		{
+			UnsubscribePresenters();
 			SetRoom(null);
-
 			m_NavigationController.Dispose();
 		}
 
@@ -103,21 +103,17 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 		private void BuildVisibilityTree()
 		{
 			//// Show "hello" when no notifications are visible
-			//m_DefaultNotification = new NotificationVisibilityNode(m_NavigationController.LazyLoadPresenter<IOsdHelloPresenter>());
 			//m_DefaultNotification.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdIncomingCallPresenter>());
 			//m_DefaultNotification.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdMutePresenter>());
 
 			//// show "welcome" when no other main page is visible
 			m_MainPageVisibility = new SingleVisibilityNode();
-			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ISchedulePresenter>());
-			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IDeviceDrawerPresenter>());
-			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IStartConferencePresenter>());
-
-			//// these presenters are initially visible
-			//m_NavigationController.NavigateTo<IOsdHelloPresenter>();
-
+			foreach (var presenter in m_NavigationController.LazyLoadPresenters<IMainPagePresenter>())
+				m_MainPageVisibility.AddPresenter(presenter);
+			
 			// always visible
 			m_NavigationController.NavigateTo<IHeaderPresenter>();
+			m_NavigationController.NavigateTo<IHelloPresenter>();
 			m_NavigationController.LazyLoadPresenter<IBackgroundPresenter>();
 
 			UpdateVisibility();
@@ -294,6 +290,18 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 
 		#endregion
 
+		private void SubscribePresenters()
+		{
+			// subscribe to source selection
+			Subscribe(m_NavigationController.LazyLoadPresenter<IDeviceDrawerPresenter>());
+		}
+
+		private void UnsubscribePresenters()
+		{
+			// unsubscribe from source selection
+			Unsubscribe(m_NavigationController.LazyLoadPresenter<IDeviceDrawerPresenter>());
+		}
+
 		#region Room Callbacks
 
 		/// <summary>
@@ -369,6 +377,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 				m_NavigationController.NavigateTo<IDeviceDrawerPresenter>();
 			else if (m_Room.CalendarControl != null)
 				m_NavigationController.NavigateTo<ISchedulePresenter>();
+
+			m_NavigationController.LazyLoadPresenter<IHelloPresenter>().Refresh();
 		}
 
 		/// <summary>

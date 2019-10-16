@@ -27,7 +27,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.DeviceDrawe
 				IndirectTextJoin = 201
 			};
 
-			m_SourceList = new VtProSubpageReferenceList(200, panel as IPanelDevice, m_Subpage)
+			m_SourceList = new VtProSubpageReferenceList(6, panel as IPanelDevice, m_Subpage)
 			{
 				DigitalJoinIncrement = 2,
 				SerialJoinIncrement = 3,

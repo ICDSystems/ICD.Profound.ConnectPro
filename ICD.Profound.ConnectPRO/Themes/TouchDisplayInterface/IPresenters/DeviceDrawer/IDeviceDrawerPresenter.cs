@@ -7,7 +7,7 @@ using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.DeviceDrawer;
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.DeviceDrawer
 {
-    public interface IDeviceDrawerPresenter : ITouchDisplayPresenter<IDeviceDrawerView>
+    public interface IDeviceDrawerPresenter : ITouchDisplayPresenter<IDeviceDrawerView>, IMainPagePresenter
     {
 	    event EventHandler<SourceEventArgs> OnSourcePressed;
 

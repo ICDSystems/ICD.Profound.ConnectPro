@@ -1,6 +1,6 @@
 ﻿using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Settings;
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings
 {

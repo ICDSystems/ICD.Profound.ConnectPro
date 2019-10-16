@@ -18,7 +18,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Schedule
         private VtProSimpleLabel m_CurrentBookingTimeLabel;
         private VtProSimpleLabel m_CurrentBookingNameLabel;
         private VtProSimpleLabel m_RoomAvailabilityLabel;
-        private VtProButton m_StartBookingButton;
+        private VtProAdvancedButton m_StartBookingButton;
+		private VtProButton m_CloseBookingButton;
 
         private VtProSubpageReferenceList m_ScheduleList;
 
@@ -46,19 +47,28 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Schedule
 
             m_RoomAvailabilityLabel = new VtProSimpleLabel(panel, m_Subpage)
             {
-                IndirectTextJoin = 105
+                IndirectTextJoin = 105,
+				DigitalVisibilityJoin = 105
             };
 
-            m_StartBookingButton = new VtProButton(panel, m_Subpage)
+            m_StartBookingButton = new VtProAdvancedButton(panel, m_Subpage)
             {
                 DigitalPressJoin = 101,
-                DigitalEnableJoin = 102
+                DigitalEnableJoin = 102,
+				AnalogModeJoin = 101
+            };
+
+            m_CloseBookingButton = new VtProButton(panel, m_Subpage)
+            {
+	            DigitalPressJoin = 103,
+	            DigitalVisibilityJoin = 104
             };
 
             m_ScheduleList = new VtProSubpageReferenceList(5, panel as IPanelDevice, m_Subpage)
             {
-                MaxSize = 6,
-                SerialJoinIncrement = 2
+                MaxSize = 100,
+                SerialJoinIncrement = 2,
+				DigitalJoinIncrement = 2
             };
         }
 
@@ -70,6 +80,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Schedule
             yield return m_CurrentBookingNameLabel;
             yield return m_RoomAvailabilityLabel;
             yield return m_StartBookingButton;
+            yield return m_CloseBookingButton;
 
             yield return m_ScheduleList;
         }

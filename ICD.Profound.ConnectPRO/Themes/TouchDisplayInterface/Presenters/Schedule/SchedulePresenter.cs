@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Calendaring;
 using ICD.Connect.Calendaring.Booking;
@@ -10,6 +11,7 @@ using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Attributes;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.Shared.Models;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
@@ -22,11 +24,14 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 	[PresenterBinding(typeof(ISchedulePresenter))]
 	public sealed class SchedulePresenter : AbstractTouchDisplayPresenter<IScheduleView>, ISchedulePresenter
 	{
-		private const int DEFAULT_REFRESH_TIME = 15 * 60 * 1000;
+		public event EventHandler OnRefreshed;
+
+		private const int DEFAULT_CACHE_TIME = 15 * 60 * 1000;
 		private readonly ReferencedBookingPresenterFactory m_ChildrenFactory;
 
 		private readonly SafeCriticalSection m_RefreshSection;
-		private readonly SafeTimer m_RefreshTimer;
+		private readonly List<IBooking> m_CachedBookings;
+		private readonly SafeTimer m_CacheTimer;
 
 		private ICalendarControl m_CalendarControl;
 		private IReferencedBookingPresenter m_SelectedBooking;
@@ -44,7 +49,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 			m_RefreshSection = new SafeCriticalSection();
 			m_ChildrenFactory = new ReferencedBookingPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
 
-			m_RefreshTimer = new SafeTimer(RefreshIfVisible, DEFAULT_REFRESH_TIME);
+			m_CachedBookings = new List<IBooking>();
+			m_CacheTimer = new SafeTimer(CacheBookings, DEFAULT_CACHE_TIME);
 			theme.DateFormatting.OnFormatChanged += DateFormattingOnFormatChanged;
 		}
 
@@ -56,56 +62,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 
 			try
 			{
-				if (m_CalendarControl == null)
-					return;
-
-				var now = IcdEnvironment.GetLocalTime();
-				var tomorrow = now.AddDays(1);
-
-				var bookings =
-					m_CalendarControl.GetBookings()
-						.Where(b => b.EndTime > now && b.StartTime < tomorrow)
-						.OrderBy(b => b.StartTime)
-						.ToList();
-
 				var roomName = Room == null ? string.Empty : Room.Name;
 
-				var upcomingBookingsAndAvailability = new List<IBooking>();
-
-				var firstBooking = bookings.FirstOrDefault();
-				// find out if room is currently available
-				if (firstBooking != null && firstBooking.StartTime - now > TimeSpan.FromMinutes(15))
-					upcomingBookingsAndAvailability.Add(new EmptyBooking
-					{
-						StartTime = DateTime.MinValue,
-						EndTime = firstBooking.StartTime
-					});
-				// build list of bookings and available times
-				for (var i = 0; i < bookings.Count && upcomingBookingsAndAvailability.Count < 7; i++)
-				{
-					if (bookings[i] == null)
-						continue;
-
-					upcomingBookingsAndAvailability.Add(bookings[i]);
-
-					if (i + 1 >= bookings.Count)
-						upcomingBookingsAndAvailability.Add(new EmptyBooking
-						{
-							StartTime = bookings[i].EndTime,
-							EndTime = DateTime.MaxValue
-						});
-
-					// calculate availability between this booking and next
-					else if (bookings[i + 1].StartTime - bookings[i].EndTime >= TimeSpan.FromMinutes(30))
-						upcomingBookingsAndAvailability.Add(new EmptyBooking
-						{
-							StartTime = bookings[i].EndTime,
-							EndTime = bookings[i + 1].StartTime
-						});
-				}
-
 				// build presenters
-				foreach (var presenter in m_ChildrenFactory.BuildChildren(upcomingBookingsAndAvailability.Skip(1)))
+				foreach (var presenter in m_ChildrenFactory.BuildChildren(m_CachedBookings.Skip(1)))
 				{
 					presenter.ShowView(true);
 					presenter.SetSelected(presenter == m_SelectedBooking);
@@ -113,8 +73,31 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 				}
 
 				// display current room status
-				var currentBooking = upcomingBookingsAndAvailability.FirstOrDefault();
-				if (currentBooking != null && !(currentBooking is EmptyBooking))
+				IBooking currentBooking = 
+					m_SelectedBooking != null && m_SelectedBooking.Booking != null 
+						? m_SelectedBooking.Booking 
+						: m_CachedBookings.FirstOrDefault();
+				
+				if (currentBooking == null || currentBooking is EmptyBooking)
+				{
+					view.SetCurrentBookingIcon("thumbsUp");
+					view.SetAvailabilityText("AVAILABLE");
+					view.SetAvailabilityVisible(true);
+					view.SetColorMode(eScheduleViewColorMode.Blue);
+					view.SetCurrentBookingSubject(roomName);
+
+					if (currentBooking != null)
+					{
+						view.SetCurrentBookingTime(string.Format("Now - {0}",
+							FormatTime(currentBooking.EndTime)));
+					}
+					else
+					{
+						view.SetCurrentBookingTime(" ");
+						m_CacheTimer.Reset(DEFAULT_CACHE_TIME);
+					}
+				}
+				else
 				{
 					view.SetCurrentBookingIcon(GetBookingIcon(currentBooking));
 
@@ -125,25 +108,19 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 						FormatTime(currentBooking.StartTime),
 						FormatTime(currentBooking.EndTime)));
 					view.SetAvailabilityText("RESERVED");
-					m_RefreshTimer.Reset((long) (currentBooking.EndTime - now).TotalMilliseconds + 1000);
-				}
-				else
-				{
-					view.SetCurrentBookingIcon("thumbsUp");
-					view.SetAvailabilityText("AVAILABLE");
-					view.SetCurrentBookingSubject(roomName);
+					view.SetAvailabilityVisible(true);
 
-					if (currentBooking != null)
+					if (m_SelectedBooking != null && m_SelectedBooking.Booking == currentBooking)
 					{
-						view.SetCurrentBookingTime(string.Format("Now - {0}",
-							FormatTime(currentBooking.EndTime)));
-						m_RefreshTimer.Reset((long) (currentBooking.EndTime - now - TimeSpan.FromMinutes(15))
-						                     .TotalMilliseconds + 1000);
+						view.SetColorMode(eScheduleViewColorMode.Green);
+						view.SetAvailabilityVisible(false);
+						view.SetCloseButtonVisible(true);
 					}
 					else
 					{
-						view.SetCurrentBookingTime(" ");
-						m_RefreshTimer.Reset(DEFAULT_REFRESH_TIME);
+						view.SetColorMode(eScheduleViewColorMode.Red);
+						view.SetAvailabilityVisible(true);
+						view.SetCloseButtonVisible(false);
 					}
 				}
 			}
@@ -151,6 +128,69 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 			{
 				m_RefreshSection.Leave();
 			}
+
+			OnRefreshed.Raise(this);
+		}
+
+		private void CacheBookings()
+		{
+			// clear current contents
+			m_CachedBookings.Clear();
+
+			if (m_CalendarControl == null)
+				return;
+
+			var now = IcdEnvironment.GetLocalTime();
+			var tomorrow = now.AddDays(1);
+
+			var bookings =
+				m_CalendarControl.GetBookings()
+					.Where(b => b.EndTime > now && b.StartTime < tomorrow)
+					.OrderBy(b => b.StartTime)
+					.ToList();
+			
+			var firstBooking = bookings.FirstOrDefault();
+			// find out if room is currently available
+			if (firstBooking != null && firstBooking.StartTime - now > TimeSpan.FromMinutes(15))
+				m_CachedBookings.Add(new EmptyBooking
+				{
+					StartTime = DateTime.MinValue,
+					EndTime = firstBooking.StartTime
+				});
+			// build list of bookings and available times
+			for (var i = 0; i < bookings.Count; i++)
+			{
+				if (bookings[i] == null)
+					continue;
+
+				m_CachedBookings.Add(bookings[i]);
+
+				if (i + 1 >= bookings.Count)
+					m_CachedBookings.Add(new EmptyBooking
+					{
+						StartTime = bookings[i].EndTime,
+						EndTime = DateTime.MaxValue
+					});
+
+				// calculate availability between this booking and next
+				else if (bookings[i + 1].StartTime - bookings[i].EndTime >= TimeSpan.FromMinutes(30))
+					m_CachedBookings.Add(new EmptyBooking
+					{
+						StartTime = bookings[i].EndTime,
+						EndTime = bookings[i + 1].StartTime
+					});
+			}
+
+			IBooking currentBooking = m_CachedBookings.FirstOrDefault();
+			if (currentBooking == null)
+				m_CacheTimer.Reset(DEFAULT_CACHE_TIME);
+			else if (currentBooking is EmptyBooking)
+				m_CacheTimer.Reset((long) (currentBooking.EndTime - now - TimeSpan.FromMinutes(15)).TotalMilliseconds + 1000);
+			else
+				m_CacheTimer.Reset((long) (currentBooking.EndTime - now).TotalMilliseconds + 1000);
+
+			m_SelectedBooking = null;
+			Refresh();
 		}
 
 		private string GetBookingIcon(IBooking booking)
@@ -173,6 +213,35 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 		}
 
 		#region View Callbacks
+
+		protected override void Subscribe(IScheduleView view)
+		{
+			base.Subscribe(view);
+
+			view.OnCloseButtonPressed += ViewOnCloseButtonPressed;
+			view.OnStartBookingButtonPressed += ViewOnStartBookingPressed;
+		}
+
+		protected override void Unsubscribe(IScheduleView view)
+		{
+			base.Subscribe(view);
+
+			view.OnCloseButtonPressed -= ViewOnCloseButtonPressed;
+			view.OnStartBookingButtonPressed -= ViewOnStartBookingPressed;
+		}
+
+		private void ViewOnStartBookingPressed(object sender, EventArgs e)
+		{
+			if (m_SelectedBooking == null || m_SelectedBooking.Booking == null)
+				return;
+
+			Room.StartMeeting(m_SelectedBooking.Booking);
+		}
+
+		private void ViewOnCloseButtonPressed(object sender, EventArgs e)
+		{
+			m_SelectedBooking = null;
+		}
 
 		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
 		{
@@ -226,7 +295,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 
 		private void ControlOnBookingsChanged(object sender, EventArgs e)
 		{
-			RefreshIfVisible();
+			CacheBookings();
 		}
 
 		#endregion
@@ -258,7 +327,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 			if (presenter == null)
 				return;
 
-			m_SelectedBooking = presenter;
+			m_SelectedBooking = m_SelectedBooking == presenter ? null : presenter;
 			RefreshIfVisible();
 		}
 
