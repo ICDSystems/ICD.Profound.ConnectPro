@@ -27,7 +27,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 
 			m_ButtonList = new VtProDynamicButtonList(629, panel as IPanelDevice, m_Subpage)
 			{
-				MaxSize = 2
+				MaxSize = 3
 			};
 		}
 
