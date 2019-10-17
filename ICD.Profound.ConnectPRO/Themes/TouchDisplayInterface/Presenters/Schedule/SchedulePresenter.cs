@@ -280,7 +280,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 			if (m_CalendarControl != null)
 				Subscribe(m_CalendarControl);
 
-			Refresh();
+			CacheBookings();
 		}
 
 		private void Subscribe(ICalendarControl control)

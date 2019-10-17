@@ -16,9 +16,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		protected AbstractTouchDisplayView(ISigInputOutput panel, ConnectProTheme theme) : base(panel)
+		protected AbstractTouchDisplayView(ISigInputOutput panel, ConnectProTheme theme) 
+			: this(panel, theme, null, 0)
 		{
-			Theme = theme;
 		}
 
 		/// <summary>
