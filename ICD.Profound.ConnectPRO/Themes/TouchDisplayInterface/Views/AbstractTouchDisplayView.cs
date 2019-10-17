@@ -7,7 +7,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views
 {
 	public abstract class AbstractTouchDisplayView : AbstractView, ITouchDisplayView
 	{
-		public ConnectProTheme Theme { get; }
+		public ConnectProTheme Theme { get; private set; }
 
 		#region Constructors
 

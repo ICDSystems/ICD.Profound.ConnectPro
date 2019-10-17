@@ -121,13 +121,13 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 
 		#region Properties
 
-		public IPanelDevice Panel { get; }
+		public IPanelDevice Panel { get; private set; }
 
 		public override IRoom Room { get { return ConnectProRoom; } }
 
 		public IConnectProRoom ConnectProRoom { get { return m_Room; } }
 
-		public override object Target => Panel;
+		public override object Target { get { return Panel; } }
 
 		#endregion
 

@@ -35,12 +35,12 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 		/// <summary>
 		///     Gets the parent theme.
 		/// </summary>
-		protected ConnectProTheme Theme { get; }
+		protected ConnectProTheme Theme { get; private set; }
 
 		/// <summary>
 		///     Returns true if this presenter is part of a collection of components.
 		/// </summary>
-		public override bool IsComponent => false;
+		public override bool IsComponent { get { return false; } }
 
 		#region Methods
 

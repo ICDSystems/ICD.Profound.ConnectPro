@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.DialContexts;
@@ -30,12 +31,14 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			m_RefreshSection = new SafeCriticalSection();
 		}
 
-		private bool IsInConference =>
-			ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConference() != null;
+		private bool IsInConference
+		{
+			get { return ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConference() != null; }
+		}
 
 		public IWebConferenceDeviceControl ActiveConferenceControl
 		{
-			get => m_ActiveConferenceControl;
+			get { return m_ActiveConferenceControl; }
 			set
 			{
 				if (value == m_ActiveConferenceControl)
