@@ -22,7 +22,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views
 
 		protected override T InstantiateView<T>(ISmartObject smartObject, IVtProParent parent, ushort index)
 		{
-			return InstantiateView<T>(Panel, m_Theme, parent, index);
+			return InstantiateView<T>(smartObject, m_Theme, parent, index);
 		}
 	}
 }
