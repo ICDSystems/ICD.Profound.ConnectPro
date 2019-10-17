@@ -66,6 +66,7 @@
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Devices\ConnectProEventMessages.cs" />
     <Compile Include="Devices\ConnectProEventServerDevice.cs" />
     <Compile Include="Devices\ConnectProEventServerDeviceSettings.cs" />
     <Compile Include="KrangPlugin.cs" />
@@ -118,6 +119,8 @@
     <Compile Include="Themes\ConnectProDateFormatting.cs" />
     <Compile Include="Themes\ConnectProTheme.cs" />
     <Compile Include="Themes\ConnectProThemeSettings.cs" />
+    <Compile Include="Themes\EventServerUserInterface\ConnectProEventServerUserInterface.cs" />
+    <Compile Include="Themes\EventServerUserInterface\ConnectProEventServerUserInterfaceFactory.cs" />
     <Compile Include="Themes\ShureMicrophoneInterface\ConnectProShureMicrophoneInterface.cs" />
     <Compile Include="Themes\ShureMicrophoneInterface\ConnectProShureMicrophoneInterfaceFactory.cs" />
     <Compile Include="Themes\Mpc3201UserInterface\ConnectProMpc3201Interface.cs" />
