@@ -213,7 +213,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 			if (partitionManager == null)
 				return;
 
-			partitionManager.OnPartitionOpenStateChange += PartitionManagerOnPartitionOpenStateChange;
+			partitionManager.OnPartitionControlOpenStateChange += PartitionManagerOnPartitionOpenStateChange;
 		}
 
 		private void Unsubscribe(IPartitionManager partitionManager)
@@ -221,7 +221,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 			if (partitionManager == null)
 				return;
 
-			partitionManager.OnPartitionOpenStateChange -= PartitionManagerOnPartitionOpenStateChange;
+			partitionManager.OnPartitionControlOpenStateChange -= PartitionManagerOnPartitionOpenStateChange;
 		}
 
 		private void PartitionManagerOnPartitionOpenStateChange(IPartitionDeviceControl control, bool open)

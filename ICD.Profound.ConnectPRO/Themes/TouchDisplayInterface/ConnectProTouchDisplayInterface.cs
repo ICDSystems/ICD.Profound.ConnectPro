@@ -206,10 +206,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 
 			IDeviceBase device = m_Room.Core.Originators.GetChild<IDeviceBase>(source.Device);
 			IConferenceDeviceControl dialer = device.Controls.GetControl<IConferenceDeviceControl>();
-
-			if (!m_Room.Routing.State.GetIsRoutedCached(source, eConnectionType.Video))
-				m_Room.Routing.State.SetProcessingSource(source);
-
+			
 			// Edge case - route the codec to both displays and open the context menu
 			if (dialer != null && dialer.Supports.HasFlag(eCallType.Video))
 			{
@@ -230,7 +227,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 			{
 				// Show the context menu before routing for UX
 				ShowSourceContextualMenu(source);
-				m_Room.Routing.RouteAllDisplays(source);
+				m_Room.Routing.RouteToAllDisplays(source);
 			}
 			
 		}
