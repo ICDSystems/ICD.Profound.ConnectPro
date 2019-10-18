@@ -7,9 +7,13 @@ using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.Controls.Routing;
+using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Conferencing.Zoom.Components.Camera;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.Routing.Connections;
+using ICD.Connect.Routing.Controls;
+using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Settings.Originators;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
@@ -63,14 +67,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		}
 
 		/// <summary>
-		/// Release resources.
-		/// </summary>
-		public override void Dispose()
-		{
-			base.Dispose();
-		}
-
-		/// <summary>
 		/// Sets the room for this presenter to represent.
 		/// </summary>
 		/// <param name="room"></param>
@@ -79,6 +75,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			base.SetRoom(room);
 
 			CacheCameraList();
+
             RefreshIfVisible();
 		}
 
@@ -106,26 +103,47 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 		private void CacheCameraList()
 		{
-			if (ZoomMode)
-			{
-				CameraComponent cameraComponent = GetZoomCameraComponent();
-				IEnumerable<CameraInfo> cameras = cameraComponent == null
-					? Enumerable.Empty<CameraInfo>()
-					: cameraComponent.GetCameras();
+			// Zoom cameras
+			IEnumerable<CameraInfo> zoomCameras = GetZoomCameras();
+			m_ZoomCameras.Clear();
+			m_ZoomCameras.AddRange(zoomCameras);
 
-				m_ZoomCameras.Clear();
-				m_ZoomCameras.AddRange(cameras);
-				m_SelectedZoomCamera = cameraComponent == null ? null : cameraComponent.ActiveCamera;
-			}
-			else 
-			{
-				IEnumerable<ICameraDevice> cameras = Room == null 
-					? Enumerable.Empty<ICameraDevice>() 
-					: Room.Originators.GetInstancesRecursive<ICameraDevice>();
+			// Camera devices
+			IEnumerable<ICameraDevice> cameras = GetCameras();
+			m_Cameras.Clear();
+			m_Cameras.AddRange(cameras);
 
-				m_Cameras.Clear();
-				m_Cameras.AddRange(cameras);
-			}
+			// Clear the zoom camera selection
+			CameraComponent cameraComponent = GetZoomCameraComponent();
+			m_SelectedZoomCamera = cameraComponent == null ? null : cameraComponent.ActiveCamera;
+		}
+
+		private IEnumerable<CameraInfo> GetZoomCameras()
+		{
+			CameraComponent cameraComponent = GetZoomCameraComponent();
+			return cameraComponent == null
+				       ? Enumerable.Empty<CameraInfo>()
+				       : cameraComponent.GetCameras();
+		}
+
+		private IEnumerable<ICameraDevice> GetCameras()
+		{
+			if (Room == null || m_VtcDestinationControl == null)
+				return Enumerable.Empty<ICameraDevice>();
+
+			EndpointInfo[] inputs =
+				m_VtcDestinationControl.GetCodecInputs(eCodecInputType.Camera)
+				                       .Select(i => m_VtcDestinationControl.GetInputEndpointInfo(i))
+				                       .ToArray();
+
+			// Get cameras that can be routed to the VTC camera inputs.
+			return Room.Originators
+			           .GetInstancesRecursive<ICameraDevice>()
+					   .Where(c =>
+					          {
+						          IRouteSourceControl sourceControl = c.Controls.GetControl<IRouteSourceControl>();
+						          return sourceControl != null && inputs.Any(d => Room.Routing.HasPath(sourceControl, d, eConnectionType.Video));
+					          });
 		}
 
 		/// <summary>

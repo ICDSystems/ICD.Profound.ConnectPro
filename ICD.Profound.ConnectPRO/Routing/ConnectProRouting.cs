@@ -547,6 +547,25 @@ namespace ICD.Profound.ConnectPRO.Routing
 		}
 
 		/// <summary>
+		/// Returns true if there is a path from the source control to the destination endpoint.
+		/// </summary>
+		/// <param name="sourceControl"></param>
+		/// <param name="destinationEndpoint"></param>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public bool HasPath(IRouteSourceControl sourceControl, EndpointInfo destinationEndpoint, eConnectionType type)
+		{
+			if (sourceControl == null)
+				throw new ArgumentNullException("sourceControl");
+
+			return PathBuilder.FindPaths()
+							  .From(sourceControl)
+							  .To(destinationEndpoint)
+							  .OfType(type)
+							  .HasPaths(m_PathFinder);
+		}
+
+		/// <summary>
 		/// Returns true if the given source has a path to any of the room audio destinations.
 		/// </summary>
 		/// <param name="source"></param>
