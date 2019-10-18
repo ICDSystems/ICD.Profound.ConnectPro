@@ -17,7 +17,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 	public sealed class FloatingActionCameraPresenter : AbstractFloatingActionPresenter<IFloatingActionCameraView>, IFloatingActionCameraPresenter
 	{
 		private readonly ICameraControlPresenter m_CameraControl;
-        private readonly ICameraActivePresenter m_CameraActive;
+		private readonly ICameraActivePresenter m_CameraActive;
 
 		private IConferenceManager m_SubscribedConferenceManager;
 
@@ -33,8 +33,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			m_CameraControl = Navigation.LazyLoadPresenter<ICameraControlPresenter>();
 			Subscribe(m_CameraControl);
 
-            m_CameraActive = Navigation.LazyLoadPresenter<ICameraActivePresenter>();
-            Subscribe(m_CameraActive);
+			m_CameraActive = Navigation.LazyLoadPresenter<ICameraActivePresenter>();
+			Subscribe(m_CameraActive);
 		}
 
 		/// <summary>
@@ -45,7 +45,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			base.Dispose();
 
 			Unsubscribe(m_CameraControl);
-            Unsubscribe(m_CameraActive);
+			Unsubscribe(m_CameraActive);
 		}
 
 		/// <summary>
@@ -66,15 +66,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// <param name="eventArgs"></param>
 		protected override void ViewOnButtonPressed(object sender, EventArgs eventArgs)
 		{
-            if (m_CameraControl.IsViewVisible || m_CameraActive.IsViewVisible)
-            {
-			    m_CameraControl.ShowView(false);
-                m_CameraActive.ShowView(false);
-            }
-            else if (m_CameraControl.CameraCount > 0)
-                m_CameraControl.ShowView(true);
-            else if (m_CameraActive.CameraCount > 1)
-                m_CameraActive.ShowView(true);
+			if (m_CameraControl.IsViewVisible || m_CameraActive.IsViewVisible)
+			{
+				m_CameraControl.ShowView(false);
+				m_CameraActive.ShowView(false);
+			}
+			else if (m_CameraControl.CameraCount > 0)
+				m_CameraControl.ShowView(true);
+			else if (m_CameraActive.CameraCount > 1)
+				m_CameraActive.ShowView(true);
 		}
 
 		/// <summary>
@@ -87,10 +87,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			base.ViewOnVisibilityChanged(sender, args);
 
 			if (!args.Data)
-            {
+			{
 				m_CameraControl.ShowView(false);
-                m_CameraActive.ShowView(false);
-            }
+				m_CameraActive.ShowView(false);
+			}
 		}
 
 		#endregion
@@ -114,8 +114,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		{
 			menu.OnViewVisibilityChanged -= MenuOnViewVisibilityChanged;
 		}
-        
-        /// <summary>
+
+		/// <summary>
 		/// Subscribe to the camera active menu events.
 		/// </summary>
 		/// <param name="menu"></param>
@@ -159,6 +159,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 				return;
 
 			m_SubscribedConferenceManager = room.ConferenceManager;
+			if (m_SubscribedConferenceManager == null)
+				return;
+
 			m_SubscribedConferenceManager.OnInCallChanged += SubscribedConferenceManagerOnInCallChanged;
 		}
 
