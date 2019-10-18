@@ -57,6 +57,22 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 			get { return false; }
 		}
 
+		/// <summary>
+		/// Returns true if the booking is checked in.
+		/// </summary>
+		public bool CheckedIn
+		{
+			get { return false; }
+		}
+
+		/// <summary>
+		/// Returns true if the booking is checked out.
+		/// </summary>
+		public bool CheckedOut
+		{
+			get { return false; }
+		}
+
 		public IEnumerable<IDialContext> GetBookingNumbers()
 		{
 			yield break;
