@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+ - Only showing cameras that can be routed to the current VTC
+
 ## [10.1.2] - 2019-10-17
 ### Changed
  - Fixed a bug where DTMF was not available in video calls
