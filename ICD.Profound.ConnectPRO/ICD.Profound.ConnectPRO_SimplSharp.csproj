@@ -181,6 +181,8 @@
     <Compile Include="Themes\OsdInterface\Views\Welcome\OsdWelcomeView.generated.cs" />
     <Compile Include="Themes\OsdInterface\Views\Welcome\ReferencedScheduleView.cs" />
     <Compile Include="Themes\OsdInterface\Views\Welcome\ReferencedScheduleView.generated.cs" />
+    <Compile Include="Themes\ShureMx396Interface\ConnectProShureMx396Interface.cs" />
+    <Compile Include="Themes\ShureMx396Interface\ConnectProShureMx396InterfaceFactory.cs" />
     <Compile Include="Themes\UserInterface\ConnectProVisibilityTree.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\AudioConference\IAtcBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\AudioConference\IAtcIncomingCallPresenter.cs" />

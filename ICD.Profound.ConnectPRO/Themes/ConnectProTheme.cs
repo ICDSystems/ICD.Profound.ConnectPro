@@ -26,6 +26,7 @@ using ICD.Profound.ConnectPRO.Themes.Ccrm4000UserInterface;
 using ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface;
 using ICD.Profound.ConnectPRO.Themes.ShureMicrophoneInterface;
+using ICD.Profound.ConnectPRO.Themes.ShureMx396Interface;
 using ICD.Profound.ConnectPRO.Themes.UserInterface;
 using ICD.Profound.ConnectPRO.WebConferencing;
 
@@ -136,6 +137,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 				new ConnectProMpc3201InterfaceFactory(this),
 				new ConnectProOsdInterfaceFactory(this),
 				new ConnectProShureMicrophoneInterfaceFactory(this),
+				new ConnectProShureMx396InterfaceFactory(this),
 				new ConnectProUserInterfaceFactory(this)
 			};
 
