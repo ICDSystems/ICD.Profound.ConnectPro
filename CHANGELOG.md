@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [10.1.3] - 2019-10-25
 ### Changed
  - Only showing cameras that can be routed to the current VTC
 
