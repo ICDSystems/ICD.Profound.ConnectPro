@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ICD.Common.Utils.Services;
 using ICD.Connect.Audio.Shure;
+using ICD.Connect.Audio.Shure.Devices.MXA;
 using ICD.Connect.Panels.Mock;
 using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Partitioning.PartitionManagers;

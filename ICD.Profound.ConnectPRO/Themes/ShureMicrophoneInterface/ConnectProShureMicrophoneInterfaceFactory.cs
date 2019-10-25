@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Connect.Audio.Shure;
+using ICD.Connect.Audio.Shure.Devices.MXA;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Profound.ConnectPRO.Rooms;
 
