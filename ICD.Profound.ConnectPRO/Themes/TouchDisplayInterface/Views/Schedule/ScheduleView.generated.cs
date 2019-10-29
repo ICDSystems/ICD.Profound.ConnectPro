@@ -54,7 +54,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Schedule
             m_StartBookingButton = new VtProAdvancedButton(panel, m_Subpage)
             {
                 DigitalPressJoin = 101,
-                DigitalEnableJoin = 102,
+                DigitalVisibilityJoin = 102,
+				IndirectTextJoin = 101,
 				AnalogModeJoin = 101
             };
 

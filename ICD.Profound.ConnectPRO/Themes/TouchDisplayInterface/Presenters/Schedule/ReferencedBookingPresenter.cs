@@ -15,9 +15,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 	public sealed class ReferencedBookingPresenter : AbstractTouchDisplayComponentPresenter<IReferencedBookingView>,
 		IReferencedBookingPresenter
 	{
-		private const string TIME_HTML_FORMAT = "<span style=\"color: {0}\">{1}</span>";
+		private const string HTML_COLOR_FORMAT = "<span style=\"color: {0}\">{1}</span>";
 		private const string AVAILABLE_COLOR = "#67FCF1";
-		private const string RESERVED_COLOR = "#F0544F";
+		private const string RESERVED_TIME_COLOR = "#F0544F";
+		private const string RESERVED_NAME_COLOR = "#2998B0";
+		private const string SELECTED_COLOR = "#FFFFFF";
 
 		private readonly SafeCriticalSection m_RefreshSection;
 
@@ -52,7 +54,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 
 			try
 			{
-				var color = Booking is EmptyBooking ? AVAILABLE_COLOR : RESERVED_COLOR;
+
+				var timeColor = !m_Selected ? (Booking is EmptyBooking ? AVAILABLE_COLOR : RESERVED_TIME_COLOR) : SELECTED_COLOR;
+				var nameColor = m_Selected || Booking is EmptyBooking ? SELECTED_COLOR : RESERVED_NAME_COLOR;
 
 				var timeString =
 					Booking.EndTime == DateTime.MaxValue
@@ -60,9 +64,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 						: string.Format("{0} - {1}", FormatTime(Booking.StartTime), FormatTime(Booking.EndTime));
 
 				// TODO: can't use css to change color on android
-				view.SetTimeLabel(string.Format(TIME_HTML_FORMAT, color, timeString));
+				view.SetTimeLabel(string.Format(HTML_COLOR_FORMAT, timeColor, timeString));
 
-				view.SetSubjectLabel(Booking.IsPrivate ? "Private Meeting" : Booking.MeetingName);
+				var subjectString = Booking.IsPrivate ? "Private Meeting" : Booking.MeetingName;
+				view.SetSubjectLabel(string.Format(HTML_COLOR_FORMAT, nameColor, subjectString));
 
 				view.SetButtonEnabled(!(Booking is EmptyBooking));
 				view.SetButtonSelected(m_Selected);
@@ -101,6 +106,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 
 		private void ViewOnPressed(object sender, EventArgs e)
 		{
+			if (Booking is EmptyBooking)
+				return;
 			OnBookingPressed.Raise(this);
 		}
 

@@ -27,6 +27,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Schedule
 
 		void SetCloseButtonVisible(bool visible);
 
+		void SetStartBookingButtonVisible(bool visible);
+		void SetStartBookingButtonSelected(bool selected);
+		void SetStartBookingButtonText(string text);
+
 		/// <summary>
 		///     Returns child views for list items.
 		/// </summary>

@@ -80,22 +80,18 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 				
 				if (currentBooking == null || currentBooking is EmptyBooking)
 				{
-					view.SetCurrentBookingIcon("thumbsUp");
+					view.SetCurrentBookingIcon(TouchCueIcons.GetIcon("thumbsUp"));
 					view.SetAvailabilityText("AVAILABLE");
 					view.SetAvailabilityVisible(true);
 					view.SetColorMode(eScheduleViewColorMode.Blue);
 					view.SetCurrentBookingSubject(roomName);
+					view.SetCloseButtonVisible(false);
+					view.SetStartBookingButtonVisible(false);
 
 					if (currentBooking != null)
-					{
-						view.SetCurrentBookingTime(string.Format("Now - {0}",
-							FormatTime(currentBooking.EndTime)));
-					}
+						view.SetCurrentBookingTime(string.Format("Now - {0}", FormatTime(currentBooking.EndTime)));
 					else
-					{
-						view.SetCurrentBookingTime(" ");
-						m_CacheTimer.Reset(DEFAULT_CACHE_TIME);
-					}
+						view.SetCurrentBookingTime("");
 				}
 				else
 				{
@@ -107,20 +103,22 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 					view.SetCurrentBookingTime(string.Format("{0} - {1}",
 						FormatTime(currentBooking.StartTime),
 						FormatTime(currentBooking.EndTime)));
-					view.SetAvailabilityText("RESERVED");
-					view.SetAvailabilityVisible(true);
+					view.SetAvailabilityVisible(false);
+					view.SetStartBookingButtonVisible(true);
 
 					if (m_SelectedBooking != null && m_SelectedBooking.Booking == currentBooking)
 					{
 						view.SetColorMode(eScheduleViewColorMode.Green);
-						view.SetAvailabilityVisible(false);
 						view.SetCloseButtonVisible(true);
+						view.SetStartBookingButtonSelected(false);
+						view.SetStartBookingButtonText("START THIS MEETING EARLY");
 					}
 					else
 					{
 						view.SetColorMode(eScheduleViewColorMode.Red);
-						view.SetAvailabilityVisible(true);
 						view.SetCloseButtonVisible(false);
+						view.SetStartBookingButtonSelected(true);
+						view.SetStartBookingButtonText("START RESERVED MEETING");
 					}
 				}
 			}
@@ -200,16 +198,18 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 					? Enumerable.Empty<IConferenceDeviceControl>()
 					: Room.GetControlsRecursive<IConferenceDeviceControl>();
 
+			string icon = "display";
 			switch (ConferencingBookingUtils.GetMeetingType(booking, dialers))
 			{
 				case eMeetingType.VideoConference:
-					return "videoConference";
+					icon = "videoConference";
+					break;
 				case eMeetingType.AudioConference:
-					return "audioConference";
-				case eMeetingType.Presentation:
-				default:
-					return "display";
+					icon = "audioConference";
+					break;
 			}
+
+			return TouchCueIcons.GetIcon(icon);
 		}
 
 		#region View Callbacks
@@ -232,15 +232,21 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 
 		private void ViewOnStartBookingPressed(object sender, EventArgs e)
 		{
-			if (m_SelectedBooking == null || m_SelectedBooking.Booking == null)
+			if (m_SelectedBooking != null && m_SelectedBooking.Booking != null)
+			{
+				Room.StartMeeting(m_SelectedBooking.Booking);
 				return;
+			}
 
-			Room.StartMeeting(m_SelectedBooking.Booking);
+			var currentBooking = m_CachedBookings.FirstOrDefault();
+			if (currentBooking != null && !(currentBooking is EmptyBooking))
+				Room.StartMeeting(currentBooking);
 		}
 
 		private void ViewOnCloseButtonPressed(object sender, EventArgs e)
 		{
 			m_SelectedBooking = null;
+			RefreshIfVisible();
 		}
 
 		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
