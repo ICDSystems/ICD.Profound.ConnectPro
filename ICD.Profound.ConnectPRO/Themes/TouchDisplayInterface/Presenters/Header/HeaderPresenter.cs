@@ -3,8 +3,10 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.UI.Attributes;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.DeviceDrawer;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Header;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Header;
@@ -59,9 +61,15 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 			{
 				var roomName = Room == null ? string.Empty : Room.Name;
 				view.SetRoomName(roomName);
-				view.SetStartEndMeetingButtonMode(Room != null && Room.IsInMeeting
-					? eStartEndMeetingMode.EndMeeting
-					: eStartEndMeetingMode.StartMeeting);
+
+				string icon = Room != null && Room.IsInMeeting
+					? "devicedrawer"
+					: "instantmeeting";
+				view.SetCenterButtonIcon(TouchCueIcons.GetIcon(icon));
+				string text = Room != null && Room.IsInMeeting
+					? "Device Drawer"
+					: "Instant Meeting";
+				view.SetCenterButtonText(text);
 
 				RefreshTime();
 			}
@@ -137,22 +145,25 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 		{
 			base.Subscribe(view);
 
-			view.OnStartEndMeetingPressed += ViewOnStartEndMeetingPressed;
+			view.OnCenterButtonPressed += ViewOnStartEndMeetingPressed;
 		}
 
 		protected override void Unsubscribe(IHeaderView view)
 		{
 			base.Unsubscribe(view);
 
-			view.OnStartEndMeetingPressed -= ViewOnStartEndMeetingPressed;
+			view.OnCenterButtonPressed -= ViewOnStartEndMeetingPressed;
 		}
 
 		private void ViewOnStartEndMeetingPressed(object sender, EventArgs e)
 		{
-			if (Room.IsInMeeting)
-				Room.EndMeeting();
-			else
+			if (!Room.IsInMeeting)
 				Room.StartMeeting();
+			else
+			{
+				var deviceDrawer = Navigation.LazyLoadPresenter<IDeviceDrawerPresenter>();
+				deviceDrawer.ShowView(!deviceDrawer.IsViewVisible);
+			}
 		}
 
 		#endregion

@@ -2,6 +2,7 @@
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
+using ICD.Connect.UI.Controls.Images;
 using ICD.Connect.UI.Controls.TextControls;
 using ICD.Connect.UI.Controls.Pages;
 
@@ -12,7 +13,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 		private VtProSubpage m_Subpage;
 		private VtProSimpleLabel m_RoomName;
 		private VtProSimpleLabel m_TimeLabel;
-        private VtProAdvancedButton m_StartEndMeetingButton;
+        private VtProAdvancedButton m_CenterButton;
+        private VtProDynamicIconObject m_CenterButtonIcon;
 
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
@@ -28,11 +30,16 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 				IndirectTextJoin = 9
 			};
 
-            m_StartEndMeetingButton = new VtProAdvancedButton(panel, m_Subpage)
+            m_CenterButton = new VtProAdvancedButton(panel, m_Subpage)
             {
-                AnalogModeJoin = 11,
                 DigitalPressJoin = 11,
-                IndirectTextJoin = 11
+                IndirectTextJoin = 11,
+				
+            };
+
+            m_CenterButtonIcon = new VtProDynamicIconObject(panel, m_Subpage)
+            {
+	            DynamicIconSerialJoin = 12
             };
 		}
 
@@ -41,7 +48,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 			yield return m_Subpage;
 			yield return m_RoomName;
 			yield return m_TimeLabel;
-            yield return m_StartEndMeetingButton;
-        }
+            yield return m_CenterButton;
+            yield return m_CenterButtonIcon;
+		}
 	}
 }

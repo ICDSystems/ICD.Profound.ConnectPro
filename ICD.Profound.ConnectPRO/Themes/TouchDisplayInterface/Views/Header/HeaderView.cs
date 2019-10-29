@@ -9,12 +9,12 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 	[ViewBinding(typeof(IHeaderView))]
 	public sealed partial class HeaderView : AbstractTouchDisplayView, IHeaderView
 	{
+		public event EventHandler OnCenterButtonPressed;
+
 		public HeaderView(ISigInputOutput panel, ConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}
-
-		public event EventHandler OnStartEndMeetingPressed;
 
 		public void SetRoomName(string name)
 		{
@@ -26,9 +26,14 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 			m_TimeLabel.SetLabelText(time);
 		}
 
-		public void SetStartEndMeetingButtonMode(eStartEndMeetingMode mode)
+		public void SetCenterButtonIcon(string icon)
 		{
-			m_StartEndMeetingButton.SetMode((ushort) mode);
+			m_CenterButtonIcon.SetIcon(icon);
+		}
+
+		public void SetCenterButtonText(string text)
+		{
+			m_CenterButton.SetLabelText(text);
 		}
 
 		#region Control Callbacks
@@ -37,19 +42,19 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 		{
 			base.SubscribeControls();
 
-			m_StartEndMeetingButton.OnPressed += StartEndMeetingButtonOnPressed;
+			m_CenterButton.OnPressed += StartEndMeetingButtonOnPressed;
 		}
 
 		protected override void UnsubscribeControls()
 		{
 			base.UnsubscribeControls();
 
-			m_StartEndMeetingButton.OnPressed -= StartEndMeetingButtonOnPressed;
+			m_CenterButton.OnPressed -= StartEndMeetingButtonOnPressed;
 		}
 
 		private void StartEndMeetingButtonOnPressed(object sender, EventArgs e)
 		{
-			OnStartEndMeetingPressed.Raise(this);
+			OnCenterButtonPressed.Raise(this);
 		}
 
 		#endregion
