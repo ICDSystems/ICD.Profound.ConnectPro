@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Linq;
 using ICD.Common.Utils;
+using ICD.Connect.Routing.EventArguments;
 using ICD.Connect.UI.Attributes;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Background;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews;
@@ -35,11 +38,26 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Backgr
 			m_RefreshSection.Enter();
 			try
 			{
-				view.SetBackgroundMode(Theme.CueBackground);
+				if (Room != null && Room.Routing.State.GetRealActiveVideoSources().SelectMany(s => s.Value).Any())
+					view.SetBackgroundMode(eTouchCueBackgroundMode.HdmiInput);
+				else
+					view.SetBackgroundMode(ConvertCueBackgroundMode(Theme.CueBackground));
 			}
 			finally
 			{
 				m_RefreshSection.Leave();
+			}
+		}
+
+		private eTouchCueBackgroundMode ConvertCueBackgroundMode(eCueBackgroundMode mode)
+		{
+			switch (mode)
+			{
+				case eCueBackgroundMode.Monthly:
+					return eTouchCueBackgroundMode.Monthly;
+				case eCueBackgroundMode.Neutral:
+				default:
+					return eTouchCueBackgroundMode.Neutral;
 			}
 		}
 
@@ -56,6 +74,35 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Backgr
 		}
 
 		private void ThemeOnCueBackgroundChanged(object sender, EventArgs e)
+		{
+			RefreshIfVisible();
+		}
+
+		#endregion
+
+		#region Room Callbacks
+
+		protected override void Subscribe(IConnectProRoom room)
+		{
+			base.Subscribe(room);
+			
+			if (room == null)
+				return;
+
+			room.Routing.State.OnSourceRoutedChanged += RoomRoutingStateOnSourceRoutedChanged;
+		}
+
+		protected override void Unsubscribe(IConnectProRoom room)
+		{
+			base.Unsubscribe(room);
+
+			if (room == null)
+				return;
+
+			room.Routing.State.OnSourceRoutedChanged -= RoomRoutingStateOnSourceRoutedChanged;
+		}
+
+		private void RoomRoutingStateOnSourceRoutedChanged(object sender, EventArgs e)
 		{
 			RefreshIfVisible();
 		}

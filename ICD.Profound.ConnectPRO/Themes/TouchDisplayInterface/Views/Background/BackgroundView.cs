@@ -11,7 +11,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Background
 		{
 		}
 
-		public void SetBackgroundMode(eCueBackgroundMode mode)
+		public void SetBackgroundMode(eTouchCueBackgroundMode mode)
 		{
 			m_Background.SetMode((ushort) mode);
 		}
