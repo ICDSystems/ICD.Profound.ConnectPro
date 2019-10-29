@@ -7,6 +7,7 @@ using ICD.Connect.Settings.Originators;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Connect.UI.Mvp.Views;
+using ICD.Profound.ConnectPRO.Routing;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.DeviceDrawer;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.DeviceDrawer;
@@ -22,6 +23,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 
 		public ISource Source { get; set; }
 
+		public eSourceState SourceState { get; set; }
+
 		public ReferencedSourcePresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
@@ -36,19 +39,37 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 			{
 				ConnectProSource connectProSource = Source as ConnectProSource;
 				if (connectProSource != null && connectProSource.Icon != null)
-					view.SetIcon(connectProSource.Icon);
+					view.SetIcon(TouchCueIcons.GetIcon(connectProSource.Icon));
 				else
-					view.SetIcon("laptop");
+					view.SetIcon(TouchCueIcons.GetIcon("laptop"));
 
 				string sourceName = Source.GetName(Room.IsCombineRoom()) ?? string.Empty;
 				view.SetNameText(sourceName);
 
 				string description = Source.Description ?? string.Empty;
 				view.SetDescriptionText(description);
+
+				view.SetButtonMode(GetButtonMode(SourceState));
+				view.SetButtonEnabled(true);
 			}
 			finally
 			{
 				m_RefreshSection.Leave();
+			}
+		}
+
+		private static eDeviceButtonMode GetButtonMode(eSourceState state)
+		{
+			switch (state)
+			{
+				case eSourceState.Active:
+					return eDeviceButtonMode.Active;
+				case eSourceState.Processing:
+				case eSourceState.Masked:
+					return eDeviceButtonMode.Processing;
+				case eSourceState.Inactive:
+				default:
+					return eDeviceButtonMode.Inactive;
 			}
 		}
 		

@@ -14,7 +14,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.DeviceDrawe
 		private VtProDynamicIconObject m_Icon;
 		private VtProSimpleLabel m_Name;
 		private VtProSimpleLabel m_Description;
-		private VtProButton m_Button;
+		private VtProAdvancedButton m_Button;
 
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
@@ -35,10 +35,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.DeviceDrawe
 				IndirectTextJoin = 3
 			};
 
-			m_Button = new VtProButton(panel, m_Subpage)
+			m_Button = new VtProAdvancedButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 1,
-				DigitalEnableJoin = 2
+				DigitalEnableJoin = 2,
+				AnalogModeJoin = 1
 			};
 		}
 

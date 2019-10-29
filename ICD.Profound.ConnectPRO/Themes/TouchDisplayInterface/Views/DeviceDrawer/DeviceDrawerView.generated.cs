@@ -2,7 +2,6 @@
 using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.UI.Controls;
-using ICD.Connect.UI.Controls.Images;
 using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Connect.UI.Controls.TextControls;
@@ -12,7 +11,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.DeviceDrawe
 	public sealed partial class DeviceDrawerView
 	{
 		private VtProSubpage m_Subpage;
-		private VtProSimpleLabel m_RoomLabel;
 		private VtProSubpageReferenceList m_SourceList;
 		
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
@@ -22,15 +20,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.DeviceDrawe
 				DigitalVisibilityJoin = 200
 			};
 
-			m_RoomLabel = new VtProSimpleLabel(panel, m_Subpage)
-			{
-				IndirectTextJoin = 201
-			};
-
 			m_SourceList = new VtProSubpageReferenceList(6, panel as IPanelDevice, m_Subpage)
 			{
 				DigitalJoinIncrement = 2,
 				SerialJoinIncrement = 3,
+				AnalogJoinIncrement = 1,
 				MaxSize = 100
 			};
 		}
@@ -38,7 +32,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.DeviceDrawe
 		protected override IEnumerable<IVtProControl> GetChildren()
 		{
 			yield return m_Subpage;
-			yield return m_RoomLabel;
 			yield return m_SourceList;
 		}
 	}

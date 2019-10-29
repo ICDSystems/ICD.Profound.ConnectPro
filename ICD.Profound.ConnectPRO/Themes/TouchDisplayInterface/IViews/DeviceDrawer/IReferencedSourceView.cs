@@ -11,5 +11,16 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.DeviceDraw
 		void SetNameText(string name);
 
 		void SetDescriptionText(string description);
+
+		void SetButtonMode(eDeviceButtonMode mode);
+
+		void SetButtonEnabled(bool enabled);
+	}
+
+	public enum eDeviceButtonMode : ushort
+	{
+		Inactive = 0,
+		Processing = 1,
+		Active = 2
 	}
 }

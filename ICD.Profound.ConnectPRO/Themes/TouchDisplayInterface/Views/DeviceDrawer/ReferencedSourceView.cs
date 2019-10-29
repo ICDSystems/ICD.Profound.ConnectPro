@@ -31,6 +31,16 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.DeviceDrawe
 		{
 			m_Description.SetLabelText(description);
 		}
+
+		public void SetButtonMode(eDeviceButtonMode mode)
+		{
+			m_Button.SetMode((ushort)mode);
+		}
+
+		public void SetButtonEnabled(bool enabled)
+		{
+			m_Button.Enable(enabled);
+		}
 		
 		#region Control Callbacks
 

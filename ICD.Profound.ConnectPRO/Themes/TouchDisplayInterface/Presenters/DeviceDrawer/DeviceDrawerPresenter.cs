@@ -22,6 +22,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 
 		private readonly ReferencedSourcePresenterFactory m_SourceFactory;
 		private readonly SafeCriticalSection m_RefreshSection;
+		private readonly Dictionary<ISource, eSourceState> m_CachedSourceStates;
 
 		/// <summary>
 		/// Constructor.
@@ -34,6 +35,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 		{
 			m_RefreshSection = new SafeCriticalSection();
 			m_SourceFactory = new ReferencedSourcePresenterFactory(nav, ItemFactory, SubscribeChild, UnsubscribeChild);
+			m_CachedSourceStates = new Dictionary<ISource, eSourceState>();
 		}
 
 		protected override void Refresh(IDeviceDrawerView view)
@@ -44,9 +46,13 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 			try
 			{
 				IEnumerable<ISource> sources = GetSources();
-				foreach (var source in m_SourceFactory.BuildChildren(sources))
+				foreach (var presenter in m_SourceFactory.BuildChildren(sources))
 				{
-					source.Refresh();
+					presenter.SourceState = m_CachedSourceStates.ContainsKey(presenter.Source) 
+						? m_CachedSourceStates[presenter.Source] 
+						: eSourceState.Inactive;
+					presenter.ShowView(true);
+					presenter.Refresh();
 				}
 			}
 			finally
@@ -57,8 +63,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 
 		public void SetRoutedSources(Dictionary<ISource, eSourceState> sources)
 		{
-			// TODO
-			//throw new NotImplementedException();
+			m_CachedSourceStates.Clear();
+			m_CachedSourceStates.AddRange(sources);
+
+			RefreshIfVisible();
 		}
 
 		private IEnumerable<IReferencedSourceView> ItemFactory(ushort count)
@@ -103,8 +111,15 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 			IReferencedSourcePresenter presenter = sender as IReferencedSourcePresenter;
 			if (presenter == null || presenter.Source == null)
 				return;
-			
+
+			//if (!m_CachedSourceStates.ContainsKey(presenter.Source))
+			//	m_CachedSourceStates[presenter.Source] = eSourceState.Processing;
+			//else
+			//	m_CachedSourceStates[presenter.Source] = CycleSourceState(m_CachedSourceStates[presenter.Source]);
+
+			//TODO uncommment
 			OnSourcePressed.Raise(this, new SourceEventArgs(presenter.Source));
+			RefreshIfVisible();
 		}
 
 		#endregion

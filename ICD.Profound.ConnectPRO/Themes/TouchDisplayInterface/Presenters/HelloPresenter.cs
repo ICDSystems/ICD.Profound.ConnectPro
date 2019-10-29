@@ -50,7 +50,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 			try
 			{
 				bool mainPageVisible = Navigation.LazyLoadPresenters<IMainPagePresenter>()
-					.Except(Navigation.LazyLoadPresenter<IDeviceDrawerPresenter>())
 					.Any(p => p.IsViewVisible);
 				view.SetMainPageView(!mainPageVisible);
 
