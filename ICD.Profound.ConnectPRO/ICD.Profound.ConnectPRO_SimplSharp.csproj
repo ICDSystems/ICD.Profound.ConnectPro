@@ -113,6 +113,7 @@
     <Compile Include="SettingsTree\RootSettingsNode.cs" />
     <Compile Include="SettingsTree\SettingsTreeIcons.cs" />
     <Compile Include="SettingsTree\SettingsTreeImages.cs" />
+    <Compile Include="SettingsTree\Zoom\ZoomSettingsLeaf.cs" />
     <Compile Include="Themes\AbstractConnectProUserInterfaceFactory.cs" />
     <Compile Include="Themes\Ccrm4000UserInterface\ConnectProCcrm4000UserInterface.cs" />
     <Compile Include="Themes\Ccrm4000UserInterface\ConnectProCcrm4000UserInterfaceFactory.cs" />

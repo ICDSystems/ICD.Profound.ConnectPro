@@ -6,6 +6,7 @@ using ICD.Profound.ConnectPRO.SettingsTree.Administrative;
 using ICD.Profound.ConnectPRO.SettingsTree.Conferencing;
 using ICD.Profound.ConnectPRO.SettingsTree.CUE;
 using ICD.Profound.ConnectPRO.SettingsTree.RoomCombine;
+using ICD.Profound.ConnectPRO.SettingsTree.Zoom;
 
 namespace ICD.Profound.ConnectPRO.SettingsTree
 {
@@ -31,6 +32,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 			yield return new ConferencingSettingsNode(Room);
 			yield return new CueSettingsNode(Room);
 			yield return new RoomCombineSettingsNode(Room);
+			yield return new ZoomSettingsLeaf(Room);
 		}
 
 		/// <summary>

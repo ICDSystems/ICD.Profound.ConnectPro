@@ -42,8 +42,6 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 			                                 now.Millisecond);
 
 			IcdEnvironment.SetLocalTime(dateTime);
-
-			SetDirty(true);
 		}
 
 		/// <summary>
