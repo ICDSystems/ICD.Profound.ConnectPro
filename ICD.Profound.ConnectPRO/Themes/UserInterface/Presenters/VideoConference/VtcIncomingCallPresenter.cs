@@ -21,7 +21,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 	public sealed class VtcIncomingCallPresenter : AbstractUiPresenter<IVtcIncomingCallView>, IVtcIncomingCallPresenter
 	{
 		private readonly Dictionary<IIncomingCall, IConferenceDeviceControl> m_IncomingCalls;
-		private readonly List<IConferenceDeviceControl> m_SubscribedConferenceControls;
 		private readonly SafeCriticalSection m_IncomingCallsSection;
 		private readonly SafeCriticalSection m_RefreshSection;
 
@@ -40,7 +39,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			: base(nav, views, theme)
 		{
 			m_IncomingCalls = new Dictionary<IIncomingCall, IConferenceDeviceControl>();
-			m_SubscribedConferenceControls = new List<IConferenceDeviceControl>();
 			m_IncomingCallsSection = new SafeCriticalSection();
 			m_RefreshSection = new SafeCriticalSection();
 		}
@@ -93,15 +91,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private IIncomingCall GetFirstIncomingCall()
 		{
 			return m_IncomingCallsSection.Execute(() => m_IncomingCalls.Select(kvp => kvp.Key).FirstOrDefault());
-		}
-
-		/// <summary>
-		/// Gets the conference controls.
-		/// </summary>
-		/// <returns></returns>
-		private static IEnumerable<IConferenceDeviceControl> GetConferenceControls(IConnectProRoom room)
-		{
-			return room.ConferenceManager.GetDialingProviders();
 		}
 
 		/// <summary>
@@ -172,15 +161,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			room.OnIncomingCallAnswered += RoomOnIncomingCallAnswered;
 			room.OnIncomingCallRejected += RoomOnIncomingCallRejected;
 
-			m_SubscribedConferenceControls.Clear();
+			if (room.ConferenceManager == null)
+				return;
 
-			foreach (IConferenceDeviceControl dialer in GetConferenceControls(room))
-			{
-				m_SubscribedConferenceControls.Add(dialer);
-
-				dialer.OnIncomingCallAdded += VideoDialerOnIncomingCallAdded;
-				dialer.OnIncomingCallRemoved += VideoDialerOnIncomingCallRemoved;
-			}
+			room.ConferenceManager.OnIncomingCallAdded += ConferenceManagerOnIncomingCallAdded;
+			room.ConferenceManager.OnIncomingCallRemoved += ConferenceManagerOnIncomingCallRemoved;
 		}
 
 		/// <summary>
@@ -197,20 +182,28 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			room.OnIncomingCallAnswered -= RoomOnIncomingCallAnswered;
 			room.OnIncomingCallRejected -= RoomOnIncomingCallRejected;
 
-			foreach (IConferenceDeviceControl dialer in m_SubscribedConferenceControls)
-			{
-				dialer.OnIncomingCallAdded -= VideoDialerOnIncomingCallAdded;
-				dialer.OnIncomingCallRemoved -= VideoDialerOnIncomingCallRemoved;
-			}
+			if (room.ConferenceManager == null)
+				return;
 
-			m_SubscribedConferenceControls.Clear();
+			room.ConferenceManager.OnIncomingCallAdded -= ConferenceManagerOnIncomingCallAdded;
+			room.ConferenceManager.OnIncomingCallRemoved -= ConferenceManagerOnIncomingCallRemoved;
 		}
 
+		/// <summary>
+		/// Called when the room answers the incoming call.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void RoomOnIncomingCallAnswered(object sender, GenericEventArgs<IIncomingCall> eventArgs)
 		{
 			RemoveIncomingCall(eventArgs.Data);
 		}
 
+		/// <summary>
+		/// Called when the room rejects the incoming call.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void RoomOnIncomingCallRejected(object sender, GenericEventArgs<IIncomingCall> eventArgs)
 		{
 			RemoveIncomingCall(eventArgs.Data);
@@ -220,22 +213,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Called when a new incoming call is added.
 		/// </summary>
 		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		private void VideoDialerOnIncomingCallAdded(object sender, GenericEventArgs<IIncomingCall> args)
+		/// <param name="eventArgs"></param>
+		private void ConferenceManagerOnIncomingCallAdded(object sender, ConferenceControlIncomingCallEventArgs eventArgs)
 		{
-			IIncomingCall call = args.Data;
+			IIncomingCall call = eventArgs.IncomingCall;
 			if (call.GetIsRingingIncomingCall())
-				AddIncomingCall(call, sender as IConferenceDeviceControl);
+				AddIncomingCall(call, eventArgs.Control);
 		}
 
 		/// <summary>
 		/// Called when an incoming call is removed.
 		/// </summary>
 		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		private void VideoDialerOnIncomingCallRemoved(object sender, GenericEventArgs<IIncomingCall> args)
+		/// <param name="eventArgs"></param>
+		private void ConferenceManagerOnIncomingCallRemoved(object sender, ConferenceControlIncomingCallEventArgs eventArgs)
 		{
-			RemoveIncomingCall(args.Data);
+			RemoveIncomingCall(eventArgs.IncomingCall);
 		}
 
 		#endregion
@@ -248,9 +241,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="call"></param>
 		private void Subscribe(IIncomingCall call)
 		{
-			call.OnNameChanged += SourceOnNameChanged;
-			call.OnNumberChanged += SourceOnNumberChanged;
-			call.OnAnswerStateChanged += SourceOnStatusChanged;
+			call.OnNameChanged += CallOnNameChanged;
+			call.OnNumberChanged += CallOnNumberChanged;
+			call.OnAnswerStateChanged += CallOnStatusChanged;
 		}
 
 		/// <summary>
@@ -259,9 +252,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="call"></param>
 		private void Unsubscribe(IIncomingCall call)
 		{
-			call.OnNameChanged -= SourceOnNameChanged;
-			call.OnNumberChanged -= SourceOnNumberChanged;
-			call.OnAnswerStateChanged -= SourceOnStatusChanged;
+			call.OnNameChanged -= CallOnNameChanged;
+			call.OnNumberChanged -= CallOnNumberChanged;
+			call.OnAnswerStateChanged -= CallOnStatusChanged;
 		}
 
 		/// <summary>
@@ -269,7 +262,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		private void SourceOnStatusChanged(object sender, IncomingCallAnswerStateEventArgs args)
+		private void CallOnStatusChanged(object sender, IncomingCallAnswerStateEventArgs args)
 		{
 			IIncomingCall call = sender as IIncomingCall;
 			if (call == null)
@@ -284,7 +277,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		private void SourceOnNumberChanged(object sender, StringEventArgs args)
+		private void CallOnNumberChanged(object sender, StringEventArgs args)
 		{
 			RefreshIfVisible();
 		}
@@ -294,7 +287,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		private void SourceOnNameChanged(object sender, StringEventArgs args)
+		private void CallOnNameChanged(object sender, StringEventArgs args)
 		{
 			RefreshIfVisible();
 		}
