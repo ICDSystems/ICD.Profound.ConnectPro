@@ -21,11 +21,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 	public sealed class VtcIncomingCallPresenter : AbstractUiPresenter<IVtcIncomingCallView>, IVtcIncomingCallPresenter
 	{
 		private readonly Dictionary<IIncomingCall, IConferenceDeviceControl> m_IncomingCalls;
+		private readonly List<IConferenceDeviceControl> m_SubscribedConferenceControls;
 		private readonly SafeCriticalSection m_IncomingCallsSection;
 		private readonly SafeCriticalSection m_RefreshSection;
-
-		[CanBeNull]
-		private List<IConferenceDeviceControl> m_SubscribedVideoDialers;
 
 		/// <summary>
 		/// Gets the number of incoming sources.
@@ -42,6 +40,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			: base(nav, views, theme)
 		{
 			m_IncomingCalls = new Dictionary<IIncomingCall, IConferenceDeviceControl>();
+			m_SubscribedConferenceControls = new List<IConferenceDeviceControl>();
 			m_IncomingCallsSection = new SafeCriticalSection();
 			m_RefreshSection = new SafeCriticalSection();
 		}
@@ -58,12 +57,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			try
 			{
-				IIncomingCall source = GetFirstSource();
-				string info = GetCallerInfo(source);
+				IIncomingCall incomingCall = GetFirstIncomingCall();
+				string info = GetCallerInfo(incomingCall);
 
 				view.SetCallerInfo(info);
 
-				view.PlayRingtone(source != null);
+				view.PlayRingtone(incomingCall != null);
 			}
 			finally
 			{
@@ -73,15 +72,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		#region Private Methods
 
-		private static string GetCallerInfo(IIncomingCall source)
+		private static string GetCallerInfo(IIncomingCall incomingCall)
 		{
 			string output = string.Empty;
 
-			if (source == null)
+			if (incomingCall == null)
 				return output;
 
-			string name = string.IsNullOrEmpty(source.Name) ? "Unknown" : source.Name.Trim();
-			string number = string.IsNullOrEmpty(source.Number) ? "Unknown" : source.Number.Trim();
+			string name = string.IsNullOrEmpty(incomingCall.Name) ? "Unknown" : incomingCall.Name.Trim();
+			string number = string.IsNullOrEmpty(incomingCall.Number) ? "Unknown" : incomingCall.Number.Trim();
 
 			return number == name ? name : string.Format("{0} - {1}", name, number);
 		}
@@ -91,18 +90,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		/// <returns></returns>
 		[CanBeNull]
-		private IIncomingCall GetFirstSource()
+		private IIncomingCall GetFirstIncomingCall()
 		{
-			return m_IncomingCallsSection.Execute(() => m_IncomingCalls.Select(p => p.Key).FirstOrDefault());
+			return m_IncomingCallsSection.Execute(() => m_IncomingCalls.Select(kvp => kvp.Key).FirstOrDefault());
 		}
 
 		/// <summary>
-		/// Gets the video dialer to monitor for incoming calls.
+		/// Gets the conference controls.
 		/// </summary>
 		/// <returns></returns>
-		private static IEnumerable<IConferenceDeviceControl> GetVideoDialers(IConnectProRoom room)
+		private static IEnumerable<IConferenceDeviceControl> GetConferenceControls(IConnectProRoom room)
 		{
-			return room.ConferenceManager.GetDialingProviders(eCallType.Video);
+			return room.ConferenceManager.GetDialingProviders();
 		}
 
 		/// <summary>
@@ -138,6 +137,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private void RemoveIncomingCall(IIncomingCall call)
 		{
 			m_IncomingCallsSection.Enter();
+
 			try
 			{
 				if (!m_IncomingCalls.Remove(call))
@@ -172,10 +172,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			room.OnIncomingCallAnswered += RoomOnIncomingCallAnswered;
 			room.OnIncomingCallRejected += RoomOnIncomingCallRejected;
 
-			m_SubscribedVideoDialers = GetVideoDialers(room).ToList();
+			m_SubscribedConferenceControls.Clear();
 
-			foreach (var dialer in m_SubscribedVideoDialers)
+			foreach (IConferenceDeviceControl dialer in GetConferenceControls(room))
 			{
+				m_SubscribedConferenceControls.Add(dialer);
+
 				dialer.OnIncomingCallAdded += VideoDialerOnIncomingCallAdded;
 				dialer.OnIncomingCallRemoved += VideoDialerOnIncomingCallRemoved;
 			}
@@ -195,16 +197,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			room.OnIncomingCallAnswered -= RoomOnIncomingCallAnswered;
 			room.OnIncomingCallRejected -= RoomOnIncomingCallRejected;
 
-			if (m_SubscribedVideoDialers == null)
-				return;
-
-			foreach (var dialer in m_SubscribedVideoDialers)
+			foreach (IConferenceDeviceControl dialer in m_SubscribedConferenceControls)
 			{
 				dialer.OnIncomingCallAdded -= VideoDialerOnIncomingCallAdded;
 				dialer.OnIncomingCallRemoved -= VideoDialerOnIncomingCallRemoved;
 			}
 
-			m_SubscribedVideoDialers = null;
+			m_SubscribedConferenceControls.Clear();
 		}
 
 		private void RoomOnIncomingCallAnswered(object sender, GenericEventArgs<IIncomingCall> eventArgs)
@@ -224,7 +223,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="args"></param>
 		private void VideoDialerOnIncomingCallAdded(object sender, GenericEventArgs<IIncomingCall> args)
 		{
-			var call = args.Data;
+			IIncomingCall call = args.Data;
 			if (call.GetIsRingingIncomingCall())
 				AddIncomingCall(call, sender as IConferenceDeviceControl);
 		}
@@ -236,8 +235,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="args"></param>
 		private void VideoDialerOnIncomingCallRemoved(object sender, GenericEventArgs<IIncomingCall> args)
 		{
-			var call = args.Data;
-			RemoveIncomingCall(call);
+			RemoveIncomingCall(args.Data);
 		}
 
 		#endregion
@@ -273,7 +271,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="args"></param>
 		private void SourceOnStatusChanged(object sender, IncomingCallAnswerStateEventArgs args)
 		{
-			var call = sender as IIncomingCall;
+			IIncomingCall call = sender as IIncomingCall;
 			if (call == null)
 				return;
 
@@ -336,7 +334,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="e"></param>
 		private void ViewOnIgnoreButtonPressed(object sender, EventArgs e)
 		{
-			IIncomingCall call = GetFirstSource();
+			IIncomingCall call = GetFirstIncomingCall();
 
 			if (call != null && Room != null)
 				Room.RejectIncomingCall(call);
@@ -351,7 +349,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="e"></param>
 		private void ViewOnAnswerButtonPressed(object sender, EventArgs e)
 		{
-			IIncomingCall call = GetFirstSource();
+			IIncomingCall call = GetFirstIncomingCall();
 			IConferenceDeviceControl control =
 				call == null
 					? null

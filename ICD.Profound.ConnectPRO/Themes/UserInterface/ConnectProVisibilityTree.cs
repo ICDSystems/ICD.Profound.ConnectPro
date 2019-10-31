@@ -130,7 +130,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			navigationController.LazyLoadPresenter<IFloatingActionCameraPresenter>();
 			navigationController.LazyLoadPresenter<IVtcCallListTogglePresenter>();
 			navigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>();
-			navigationController.LazyLoadPresenter<IAtcIncomingCallPresenter>();
 		}
 	}
 }

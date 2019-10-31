@@ -185,7 +185,6 @@
     <Compile Include="Themes\ShureMx396Interface\ConnectProShureMx396InterfaceFactory.cs" />
     <Compile Include="Themes\UserInterface\ConnectProVisibilityTree.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\AudioConference\IAtcBasePresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\AudioConference\IAtcIncomingCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IMenu2DisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IMenu3PlusDisplaysPresenter.cs" />
@@ -270,7 +269,6 @@
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\IWtcSharePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\IWtcStartMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IViews\AudioConference\IAtcBaseView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\AudioConference\IAtcIncomingCallView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Colors.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Displays\IMenu2DisplaysView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Displays\IMenu3PlusDisplaysView.cs" />
@@ -354,7 +352,6 @@
     <Compile Include="Themes\UserInterface\Presenters\AbstractUiListItemFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractUiPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AudioConference\AtcBasePresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\AudioConference\AtcIncomingCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\CameraActivePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\CameraControlPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmEndMeetingPresenter.cs" />
@@ -455,8 +452,6 @@
     <Compile Include="Themes\UserInterface\Views\AbstractUiView.cs" />
     <Compile Include="Themes\UserInterface\Views\AudioConference\AtcBaseView.cs" />
     <Compile Include="Themes\UserInterface\Views\AudioConference\AtcBaseView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\AudioConference\AtcIncomingCallView.cs" />
-    <Compile Include="Themes\UserInterface\Views\AudioConference\AtcIncomingCallView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\CameraActiveView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\CameraActiveView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\CameraControlView.cs" />
