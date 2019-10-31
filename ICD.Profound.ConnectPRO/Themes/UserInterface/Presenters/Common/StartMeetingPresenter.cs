@@ -86,7 +86,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				{
 					presenter.SetSelected(presenter == m_SelectedBooking);
 					presenter.ShowView(true);
-					presenter.Refresh();
 				}
 
 				view.SetLogoPath(Theme.LogoAbsolutePath);
