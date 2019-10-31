@@ -154,7 +154,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 						ConferenceManager == null
 							? Enumerable.Empty<ModelPresenterTypeInfo>()
 							: ConferenceManager
-								.GetRecentSources()
+								.GetRecentParticipants()
 								.Reverse()
 								.Distinct()
 								.Select(c => new ModelPresenterTypeInfo(ModelPresenterTypeInfo.ePresenterType.Recent, c));
