@@ -23,7 +23,10 @@ using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Devices;
+using ICD.Connect.Devices.Controls;
+using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.Devices.Points;
+using ICD.Connect.Displays.Devices;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Partitioning.Rooms;
@@ -68,7 +71,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		private bool m_IsInMeeting;
 		private ISource m_FocusSource;
 
-		private List<IPresentationControl> m_SubscribedPresentationControls;
+		private readonly List<IPresentationControl> m_SubscribedPresentationControls;
+		private readonly List<IPowerDeviceControl> m_SubscribedDisplayPowerControls;
 
 		#region Properties
 
@@ -146,6 +150,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		{
 			m_Routing = new ConnectProRouting(this);
 			m_SubscribedPresentationControls = new List<IPresentationControl>();
+			m_SubscribedDisplayPowerControls = new List<IPowerDeviceControl>();
 			m_MeetingTimeoutTimer = SafeTimer.Stopped(MeetingTimeout);
 
 			Subscribe(m_Routing);
@@ -395,17 +400,28 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			EndMeeting(false);
 		}
 
+		/// <summary>
+		/// Called when the contents of the room change.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		protected override void OriginatorsOnChildrenChanged(object sender, EventArgs args)
 		{
 			base.OriginatorsOnChildrenChanged(sender, args);
 
-			foreach (var presentationControl in m_SubscribedPresentationControls)
-				Unsubscribe(presentationControl);
-			
-			m_SubscribedPresentationControls = this.GetControlsRecursive<IPresentationControl>().ToList();
+			IEnumerable<IPresentationControl> presentationControls =
+				Routing.Sources
+				       .GetRoomSources()
+				       .SelectMany(s => s.GetDevices())
+				       .SelectMany(s => s.Controls.GetControls<IPresentationControl>());
+			SetPresentationControls(presentationControls);
 
-			foreach (var presentationControl in m_SubscribedPresentationControls)
-				Subscribe(presentationControl);
+			IEnumerable<IPowerDeviceControl> displayPowerControls =
+				Routing.Destinations
+				       .GetVideoDestinations()
+				       .SelectMany(d => d.GetDevices())
+				       .SelectMany(d => d.Controls.GetControls<IPowerDeviceControl>());
+			SetDisplayPowerControls(displayPowerControls);
 		}
 
 		#endregion
@@ -585,6 +601,21 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 		#region Presentation Control Callbacks 
 
+		private void SetPresentationControls([NotNull] IEnumerable<IPresentationControl> presentationControls)
+		{
+			if (presentationControls == null)
+				throw new ArgumentNullException("presentationControls");
+
+			foreach (var presentationControl in m_SubscribedPresentationControls)
+				Unsubscribe(presentationControl);
+
+			m_SubscribedPresentationControls.Clear();
+			m_SubscribedPresentationControls.AddRange(presentationControls);
+
+			foreach (var presentationControl in m_SubscribedPresentationControls)
+				Subscribe(presentationControl);
+		}
+
 		private void Subscribe(IPresentationControl presentationControl)
 		{
 			presentationControl.OnPresentationActiveChanged += PresentationControlOnPresentationActiveChanged;
@@ -610,6 +641,40 @@ namespace ICD.Profound.ConnectPRO.Rooms
 				return;
 			
 			Routing.RouteVtc(conferenceSource);
+		}
+
+		#endregion
+
+		#region Display PowerControl Callbacks
+
+		private void SetDisplayPowerControls(IEnumerable<IPowerDeviceControl> displayPowerControls)
+		{
+			if (displayPowerControls == null)
+				throw new ArgumentNullException("displayPowerControls");
+
+			foreach (var displayPowerControl in m_SubscribedDisplayPowerControls)
+				Unsubscribe(displayPowerControl);
+
+			m_SubscribedDisplayPowerControls.Clear();
+			m_SubscribedDisplayPowerControls.AddRange(displayPowerControls);
+
+			foreach (var displayPowerControl in m_SubscribedDisplayPowerControls)
+				Subscribe(displayPowerControl);
+		}
+
+		private void Subscribe(IPowerDeviceControl displayPowerControl)
+		{
+			displayPowerControl.OnPowerStateChanged += DisplayPowerControlOnPowerStateChanged;
+		}
+
+		private void Unsubscribe(IPowerDeviceControl displayPowerControl)
+		{
+			displayPowerControl.OnPowerStateChanged -= DisplayPowerControlOnPowerStateChanged;
+		}
+
+		private void DisplayPowerControlOnPowerStateChanged(object sender, PowerDeviceControlPowerStateApiEventArgs e)
+		{
+			IsAwake = m_SubscribedDisplayPowerControls.Any(p => p.PowerState == ePowerState.PowerOn);
 		}
 
 		#endregion

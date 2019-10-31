@@ -30,7 +30,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 		private VtProSimpleLabel m_SleepHourLabel;
 		private VtProSimpleLabel m_SleepMinuteLabel;
 
-		private VtProButton m_DisplayPowerToggleButton;
+		private VtProButton m_IsAwakeToggleButton;
 		private VtProButton m_EnableToggleButton;
 
 		/// <summary>
@@ -108,7 +108,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 				IndirectTextJoin = 813
 			};
 
-			m_DisplayPowerToggleButton = new VtProButton(panel, m_Subpage)
+			m_IsAwakeToggleButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 408
 			};
@@ -145,7 +145,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 			yield return m_SleepHourLabel;
 			yield return m_SleepMinuteLabel;
 
-			yield return m_DisplayPowerToggleButton;
+			yield return m_IsAwakeToggleButton;
 			yield return m_EnableToggleButton;
 		}
 	}
