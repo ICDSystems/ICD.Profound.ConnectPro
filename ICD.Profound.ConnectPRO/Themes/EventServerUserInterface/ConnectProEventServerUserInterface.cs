@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Themes.UserInterfaces;
@@ -20,6 +22,7 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 	{
 		private readonly ConnectProEventServerDevice m_Device;
 		private readonly SafeCriticalSection m_RefreshSection;
+		private readonly IcdHashSet<IIncomingCall> m_IncomingCalls;
 
 		private IConferenceManager m_SubscribedConferenceManager;
 
@@ -28,7 +31,6 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 		private bool m_IsDisposed;
 
 		private bool m_RoomCombined;
-		private bool m_IncomingCall;
 		private bool m_IsInCall;
 		private bool m_IsAwake;
 		private bool m_IsInMeeting;
@@ -52,20 +54,6 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 					return;
 
 				m_RoomCombined = value;
-
-				Refresh();
-			}
-		}
-
-		private bool IncomingCall
-		{
-			get { return m_IncomingCall; }
-			set
-			{
-				if (value == m_IncomingCall)
-					return;
-
-				m_IncomingCall = value;
 
 				Refresh();
 			}
@@ -139,6 +127,7 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 			if (device == null)
 				throw new ArgumentNullException("device");
 
+			m_IncomingCalls = new IcdHashSet<IIncomingCall>();
 			m_RefreshSection = new SafeCriticalSection();
 
 			m_Device = device;
@@ -220,7 +209,7 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 						: ConnectProEventMessages.MESSAGE_OUT_OF_CALL;
 
 				string messageIncomingCall =
-					IncomingCall
+					m_IncomingCalls.Count > 0
 						? ConnectProEventMessages.MESSAGE_INCOMING_CALL
 						: ConnectProEventMessages.MESSAGE_NO_INCOMING_CALL;
 
@@ -304,6 +293,10 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 				// IsInCall
 				m_SubscribedConferenceManager.OnInCallChanged += ConferenceManagerOnInCallChanged;
 
+				// Incoming Call
+				m_SubscribedConferenceManager.OnIncomingCallAdded += ConferenceManagerOnIncomingCallAdded;
+				m_SubscribedConferenceManager.OnIncomingCallRemoved += ConferenceManagerOnIncomingCallRemoved;
+
 				// Privacy Mute
 				m_SubscribedConferenceManager.OnPrivacyMuteStatusChange += ConferenceManagerOnPrivacyMuteStatusChange;
 			}
@@ -337,6 +330,10 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 
 				// Privacy Mute
 				m_SubscribedConferenceManager.OnPrivacyMuteStatusChange -= ConferenceManagerOnPrivacyMuteStatusChange;
+
+				// Incoming Call
+				m_SubscribedConferenceManager.OnIncomingCallAdded -= ConferenceManagerOnIncomingCallAdded;
+				m_SubscribedConferenceManager.OnIncomingCallRemoved += ConferenceManagerOnIncomingCallRemoved;
 			}
 			m_SubscribedConferenceManager = null;
 		}
@@ -394,6 +391,28 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 		private void ConferenceManagerOnInCallChanged(object sender, InCallEventArgs args)
 		{
 			IsInCall = args.Data != eInCall.None;
+		}
+
+		/// <summary>
+		/// Called when an incoming call starts.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ConferenceManagerOnIncomingCallAdded(object sender, ConferenceControlIncomingCallEventArgs e)
+		{
+			m_IncomingCalls.Add(e.IncomingCall);
+			Refresh();
+		}
+
+		/// <summary>
+		/// Called when an incoming call stops.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ConferenceManagerOnIncomingCallRemoved(object sender, ConferenceControlIncomingCallEventArgs e)
+		{
+			m_IncomingCalls.Remove(e.IncomingCall);
+			Refresh();
 		}
 
 		#endregion
