@@ -365,12 +365,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			// Otherwise, the user needs to have selected a booking before starting the meeting
 			IBooking booking = m_SelectedBooking == null ? null : m_SelectedBooking.Booking;
-			if (booking == null)
-				return;
-
 			m_SelectedBooking = null;
 
-			Room.StartMeeting(booking);
+			if (booking != null)
+				Room.StartMeeting(booking);
 		}
 
 		/// <summary>

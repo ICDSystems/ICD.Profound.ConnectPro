@@ -116,7 +116,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <summary>
 		/// Gets the selected OBTP booking.
 		/// </summary>
-		public IBooking CurrentBooking { get; set; }
+		public IBooking CurrentBooking { get; private set; }
 
 		/// <summary>
 		/// Gets/sets the source that is currently the primary focus of the room (i.e. VTC).
@@ -201,15 +201,22 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			StartMeeting(true);
 		}
 
-		public void StartMeeting(IBooking booking)
+		/// <summary>
+		/// Starts a meeting for the given booking.
+		/// </summary>
+		/// <param name="booking"></param>
+		public void StartMeeting([NotNull] IBooking booking)
 		{
+			if (booking == null)
+				throw new ArgumentNullException("booking");
+
 			StartMeeting(false);
-			CurrentBooking = booking;
+			CheckIn(booking);
 
 			IEnumerable<IConferenceDeviceControl> dialers =
 				ConferenceManager == null
-				? Enumerable.Empty<IConferenceDeviceControl>()
-				: ConferenceManager.GetDialingProviders();
+					? Enumerable.Empty<IConferenceDeviceControl>()
+					: ConferenceManager.GetDialingProviders();
 
 			// Build map of dialer to best number
 			IDialContext dialContext;
@@ -243,7 +250,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		public void StartMeeting(bool resetRouting)
 		{
 			// Change meeting state before any routing for UX
-			CurrentBooking = null;
+			CheckOut();
 			IsInMeeting = true;
 
 			if (resetRouting)
@@ -271,7 +278,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			EndAllConferences();
 
 			// Change meeting state before any routing for UX
-			CurrentBooking = null;
+			CheckOut();
 			IsInMeeting = false;
 
 			// Reset all routing
@@ -290,7 +297,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		public override void Wake()
 		{
 			// Change meeting state before any routing for UX
-			CurrentBooking = null;
+			CheckOut();
 			IsInMeeting = false;
 
 			// Reset all routing
@@ -309,7 +316,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			EndAllConferences();
 
 			// Change meeting state before any routing for UX
-			CurrentBooking = null;
+			CheckOut();
 			IsInMeeting = false;
 
 			// Reset all routing
@@ -404,6 +411,41 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		#endregion
 
 		#region Private Methods
+
+		/// <summary>
+		/// Checks in to the given booking.
+		/// </summary>
+		/// <param name="booking"></param>
+		private void CheckIn([NotNull] IBooking booking)
+		{
+			if (booking == null)
+				throw new ArgumentNullException("booking");
+
+			if (CalendarControl == null)
+				throw new InvalidOperationException("Room has no calendar");
+
+			if (CalendarControl.CanCheckIn(booking))
+				CalendarControl.CheckIn(booking);
+
+			CurrentBooking = booking;
+		}
+
+		/// <summary>
+		/// Checks out of the given booking.
+		/// </summary>
+		private void CheckOut()
+		{
+			if (CurrentBooking == null)
+				return;
+
+			if (CalendarControl == null)
+				throw new InvalidOperationException("Room has no calendar");
+
+			if (CalendarControl.CanCheckOut(CurrentBooking))
+				CalendarControl.CheckOut(CurrentBooking);
+
+			CurrentBooking = null;
+		}
 
 		/// <summary>
 		/// Sets the mute state on the room volume point.
