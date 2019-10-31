@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
@@ -8,10 +9,10 @@ using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Themes.UserInterfaces;
 using ICD.Profound.ConnectPRO.Devices;
 using ICD.Profound.ConnectPRO.Rooms;
-using ICD.Profound.ConnectPRO.Routing;
 
 namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 {
@@ -22,11 +23,11 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 
 		private IConferenceManager m_SubscribedConferenceManager;
 
+		[CanBeNull]
 		private IConnectProRoom m_Room;
 		private bool m_IsDisposed;
 
 		private bool m_RoomCombined;
-		private bool m_SourceRouted;
 		private bool m_IncomingCall;
 		private bool m_IsInCall;
 		private bool m_IsAwake;
@@ -51,20 +52,6 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 					return;
 
 				m_RoomCombined = value;
-
-				Refresh();
-			}
-		}
-
-		private bool SourceRouted
-		{
-			get { return m_SourceRouted; }
-			set
-			{
-				if (value == m_SourceRouted)
-					return;
-
-				m_SourceRouted = value;
 
 				Refresh();
 			}
@@ -237,11 +224,6 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 						? ConnectProEventMessages.MESSAGE_INCOMING_CALL
 						: ConnectProEventMessages.MESSAGE_NO_INCOMING_CALL;
 
-				string messageSourceRouted =
-					SourceRouted
-						? ConnectProEventMessages.MESSAGE_SOURCE_ROUTED
-						: ConnectProEventMessages.MESSAGE_SOURCE_UNROUTED;
-
 				string messageRoomCombined =
 					RoomCombined
 						? ConnectProEventMessages.MESSAGE_ROOM_COMBINED
@@ -256,9 +238,36 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 				m_Device.SendMessage(ConnectProEventMessages.KEY_WAKE, messageIsAwake);
 				m_Device.SendMessage(ConnectProEventMessages.KEY_CALL, messageInCall);
 				m_Device.SendMessage(ConnectProEventMessages.KEY_INCOMING_CALL, messageIncomingCall);
-				m_Device.SendMessage(ConnectProEventMessages.KEY_SOURCE_ROUTED, messageSourceRouted);
 				m_Device.SendMessage(ConnectProEventMessages.KEY_ROOM_COMBINED, messageRoomCombined);
 				m_Device.SendMessage(ConnectProEventMessages.KEY_PRIVACY_MUTE, messagePrivacyMuted);
+
+				// Video routing
+				List<ISource> videoSources =
+					m_Room == null
+						? new List<ISource>()
+						: m_Room.Routing.State.GetFakeActiveVideoSources().SelectMany(kvp => kvp.Value).ToList();
+
+				string videoMessage =
+					videoSources.Count == 0
+						? "No sources routed for video"
+						: string.Format("Sources routed for video {0}",
+						                StringUtils.ArrayFormat(videoSources.Select(s => s.Name)));
+
+				m_Device.SendMessage(ConnectProEventMessages.KEY_VIDEO_SOURCES, videoMessage);
+
+				// Audio routing
+				List<ISource> audioSources =
+					m_Room == null
+						? new List<ISource>()
+						: m_Room.Routing.State.GetCachedActiveAudioSources().ToList();
+
+				string audioMessage =
+					audioSources.Count == 0
+						? "No sources routed for audio"
+						: string.Format("Sources routed for audio {0}",
+						                StringUtils.ArrayFormat(audioSources.Select(s => s.Name)));
+
+				m_Device.SendMessage(ConnectProEventMessages.KEY_AUDIO_SOURCES, audioMessage);
 			}
 			finally
 			{
@@ -277,7 +286,10 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 			if (room == null)
 				return;
 
-			// Combine State
+			// Awake state
+			room.OnIsAwakeStateChanged -= RoomOnIsAwakeStateChanged;
+
+			// Combine state
 			room.OnCombineStateChanged += RoomOnCombineStateChanged;
 
 			// Is in meeting
@@ -306,7 +318,10 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 			if (room == null)
 				return;
 
-			// Combine State
+			// Awake state
+			room.OnIsAwakeStateChanged -= RoomOnIsAwakeStateChanged;
+
+			// Combine state
 			room.OnCombineStateChanged -= RoomOnCombineStateChanged;
 
 			// Is in meeting
@@ -324,6 +339,16 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 				m_SubscribedConferenceManager.OnPrivacyMuteStatusChange -= ConferenceManagerOnPrivacyMuteStatusChange;
 			}
 			m_SubscribedConferenceManager = null;
+		}
+
+		/// <summary>
+		/// Called when the room wakes or goes to sleep.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void RoomOnIsAwakeStateChanged(object sender, BoolEventArgs eventArgs)
+		{
+			IsAwake = eventArgs.Data;
 		}
 
 		/// <summary>
@@ -348,13 +373,7 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 
 		private void RoomRoutingStateOnSourceRoutedChanged(object sender, EventArgs eventArgs)
 		{
-			SourceRouted =
-				m_Room != null &&
-				m_Room.Routing
-				      .State
-				      .GetSourceRoutedStates()
-				      .Select(kvp => kvp.Value)
-				      .Any(p => p == eSourceState.Active);
+			Refresh();
 		}
 
 		/// <summary>

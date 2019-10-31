@@ -24,11 +24,6 @@
 		public const string MESSAGE_INCOMING_CALL = "incoming call";
 		public const string MESSAGE_NO_INCOMING_CALL = "no incoming call";
 
-		// Source routed
-		public const string KEY_SOURCE_ROUTED = "source routed";
-		public const string MESSAGE_SOURCE_ROUTED = "source routed";
-		public const string MESSAGE_SOURCE_UNROUTED = "source unrouted";
-
 		// Room combine
 		public const string KEY_ROOM_COMBINED = "room combined";
 		public const string MESSAGE_ROOM_COMBINED = "room combined";
@@ -38,5 +33,8 @@
 		public const string KEY_PRIVACY_MUTE = "privacy mute";
 		public const string MESSAGE_PRIVACY_MUTED = "privacy muted";
 		public const string MESSAGE_PRIVACY_UNMUTED = "privacy unmuted";
+
+		public const string KEY_AUDIO_SOURCES = "audio sources";
+		public const string KEY_VIDEO_SOURCES = "video sources";
 	}
 }
