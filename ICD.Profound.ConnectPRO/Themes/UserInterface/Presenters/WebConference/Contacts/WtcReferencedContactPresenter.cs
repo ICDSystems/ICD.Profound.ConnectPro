@@ -16,15 +16,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 	[PresenterBinding(typeof(IWtcReferencedContactPresenter))]
 	public sealed class WtcReferencedContactPresenter : AbstractUiComponentPresenter<IWtcReferencedContactView>, IWtcReferencedContactPresenter
 	{
+		/// <summary>
+		/// Raised when the user presses the contact.
+		/// </summary>
 		public event EventHandler OnPressed;
 
 		private readonly SafeCriticalSection m_RefreshSection;
-
 		private IContact m_Contact;
-		private bool m_Selected;
 
 		#region Properties
 
+		/// <summary>
+		/// Gets/sets the contact for this presenter.
+		/// </summary>
 		[CanBeNull]
 		public IContact Contact
 		{
@@ -42,28 +46,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			}
 		}
 
-		public bool Selected
-		{
-			get { return m_Selected; }
-			set
-			{
-				if (value == m_Selected)
-					return;
-
-				m_Selected = value;
-
-				RefreshIfVisible();
-			}
-		}
-
 		#endregion
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="nav"></param>
+		/// <param name="views"></param>
+		/// <param name="theme"></param>
 		public WtcReferencedContactPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
 		}
 
+		/// <summary>
+		/// Release resources.
+		/// </summary>
 		public override void Dispose()
 		{
 			OnPressed = null;
@@ -71,6 +70,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			base.Dispose();
 		}
 
+		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Refresh(IWtcReferencedContactView view)
 		{
 			base.Refresh(view);
@@ -81,16 +84,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			{
 				view.SetContactName(Contact == null ? "Missing Contact Name" : Contact.Name);
 
-				var onlineContact = Contact as IContactWithOnlineState;
-				view.SetOnlineStateMode(onlineContact == null
-					                        ? eOnlineState.Offline
-					                        : onlineContact.OnlineState);
+				// Online state indicator
+				IContactWithOnlineState onlineContact = Contact as IContactWithOnlineState;
+				view.SetOnlineStateMode(onlineContact == null ? eOnlineState.Offline : onlineContact.OnlineState);
 
-				var zoomContact = Contact as ZoomContact;
-				view.SetAvatarImageVisibility(zoomContact != null &&
-				                              !string.IsNullOrEmpty(zoomContact.AvatarUrl));
+				// Avatar
+				ZoomContact zoomContact = Contact as ZoomContact;
+				view.SetAvatarImageVisibility(zoomContact != null && !string.IsNullOrEmpty(zoomContact.AvatarUrl));
 				view.SetAvatarImagePath(zoomContact == null ? null : zoomContact.AvatarUrl);
-				view.SetButtonSelected(Selected);
+
+				// Favorite state
+				bool isFavorite = false;
+				view.SetFavoriteButtonSelected(isFavorite);
 			}
 			finally
 			{
@@ -100,21 +105,34 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		#region Contact Callbacks 
 
+		/// <summary>
+		/// Subscribe to the contact events.
+		/// </summary>
+		/// <param name="item"></param>
 		private void Subscribe(IContact item)
 		{
-			var contact = item as IContactWithOnlineState;
+			IContactWithOnlineState contact = item as IContactWithOnlineState;
 			if (contact != null)
-				contact.OnOnlineStateChanged += ContactOnOnOnlineStateChanged;
+				contact.OnOnlineStateChanged += ContactOnOnlineStateChanged;
 		}
 
+		/// <summary>
+		/// Unsubscribe from the contact events.
+		/// </summary>
+		/// <param name="item"></param>
 		private void Unsubscribe(IContact item)
 		{
-			var contact = item as IContactWithOnlineState;
+			IContactWithOnlineState contact = item as IContactWithOnlineState;
 			if (contact != null)
-				contact.OnOnlineStateChanged -= ContactOnOnOnlineStateChanged;
+				contact.OnOnlineStateChanged -= ContactOnOnlineStateChanged;
 		}
 
-		private void ContactOnOnOnlineStateChanged(object sender, OnlineStateEventArgs e)
+		/// <summary>
+		/// Called when the contact online state changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ContactOnOnlineStateChanged(object sender, OnlineStateEventArgs e)
 		{
 			RefreshIfVisible();
 		}
@@ -123,23 +141,48 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		#region View Callbacks
 
+		/// <summary>
+		/// Subscribe to the view events.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Subscribe(IWtcReferencedContactView view)
 		{
 			base.Subscribe(view);
 
 			view.OnContactPressed += ViewOnContactPressed;
+			view.OnFavoriteButtonPressed += ViewOnFavoriteButtonPressed;
 		}
 
+		/// <summary>
+		/// Unsubscribe from the view events.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Unsubscribe(IWtcReferencedContactView view)
 		{
 			base.Unsubscribe(view);
 
 			view.OnContactPressed -= ViewOnContactPressed;
+			view.OnFavoriteButtonPressed -= ViewOnFavoriteButtonPressed;
 		}
 
+		/// <summary>
+		/// Called when the user presses the contact.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void ViewOnContactPressed(object sender, EventArgs eventArgs)
 		{
 			OnPressed.Raise(this);
+		}
+
+		/// <summary>
+		/// Called when the user presses the favorite button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ViewOnFavoriteButtonPressed(object sender, EventArgs eventArgs)
+		{
+			throw new NotImplementedException();
 		}
 
 		#endregion
