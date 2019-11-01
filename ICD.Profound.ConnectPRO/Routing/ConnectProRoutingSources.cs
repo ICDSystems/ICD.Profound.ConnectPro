@@ -258,8 +258,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 				case eControlOverride.Default:
 
 					IDeviceControl dialer =
-						GetDeviceControl(device, eControlOverride.Vtc) ??
 						GetDeviceControl(device, eControlOverride.WebConference) ??
+						GetDeviceControl(device, eControlOverride.Vtc) ??
 						GetDeviceControl(device, eControlOverride.Atc);
 
 					if (dialer != null)
