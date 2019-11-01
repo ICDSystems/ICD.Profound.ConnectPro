@@ -7,6 +7,7 @@ using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Participants;
+using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Conferencing.Zoom.Components.Call;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
@@ -73,7 +74,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 					? Enumerable.Empty<IWebParticipant>().ToList()
 					: activeConference.GetParticipants().ToList();
 
-				// show "no participants" and invite button if there are no participants
+				// Show "no participants" and invite button if there are no participants
 				view.SetNoParticipantsLabelVisibility(!participants.Any());
 				view.SetInviteButtonVisibility(!participants.Any());
 
@@ -85,21 +86,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 					presenter.Refresh();
 				}
 
-				// this may change if other web conferences have meeting info to display
-				var zoomConference = activeConference as CallComponent; 
-				view.SetMeetingNumberLabelVisibility(zoomConference != null);
-				view.SetMeetingNumberLabelText(zoomConference != null
-					? string.Format("Meeting #: {0}", zoomConference.Number)
+				// This may change if other web conferences have meeting info to display
+				ZoomRoom zoomRoom = ActiveConferenceControl == null ? null : ActiveConferenceControl.Parent as ZoomRoom;
+				CallComponent component = zoomRoom == null ? null : zoomRoom.Components.GetComponent<CallComponent>();
+				view.SetMeetingNumberLabelVisibility(component != null);
+				view.SetMeetingNumberLabelText(component != null
+					? string.Format("Meeting #: {0}", component.MeetingId)
 					: string.Empty);
 
-				// only hosts can kick/mute people
-				bool isHost = zoomConference == null ? activeConference != null : zoomConference.AmIHost;
+				// Only hosts can kick/mute people
+				bool isHost = component == null ? activeConference != null : component.AmIHost;
 				bool isNotSelf = SelectedParticipant != null && SelectedParticipant.Participant != null && !SelectedParticipant.Participant.IsSelf;
 				bool kickMuteEnabled = isHost && isNotSelf;
 				m_ParticipantControls.ShowView(kickMuteEnabled);
 
-				// only hosts can end meeting for everyone
-				view.SetEndMeetingButtonEnabled(zoomConference != null && zoomConference.AmIHost);
+				// Only hosts can end meeting for everyone
+				view.SetEndMeetingButtonEnabled(component != null && component.AmIHost);
 			}
 			finally
 			{

@@ -5,6 +5,7 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Conferencing.Zoom.Components.Call;
+using ICD.Connect.Conferencing.Zoom.Controls.Conferencing;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.ActiveMeeting;
@@ -82,7 +83,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				view.SetButtonSelected(Selected);
 				view.SetMuteIconVisibility(Participant != null && Participant.IsMuted);
 
-				var zoomParticipant = Participant as ZoomParticipant;
+				var zoomParticipant = Participant as ZoomWebParticipant;
 				view.SetAvatarImageVisibility(zoomParticipant != null && !string.IsNullOrEmpty(zoomParticipant.AvatarUrl));
 				view.SetAvatarImagePath(zoomParticipant == null ? null : zoomParticipant.AvatarUrl);
 			}

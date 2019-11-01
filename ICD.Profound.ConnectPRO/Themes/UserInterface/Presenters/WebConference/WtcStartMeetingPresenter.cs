@@ -8,6 +8,7 @@ using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Zoom.Controls;
+using ICD.Connect.Conferencing.Zoom.Controls.Conferencing;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
@@ -143,10 +144,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		private void ViewOnOnMeetNowButtonPressed(object sender, EventArgs eventArgs)
 		{
-			// TODO make generic if other web conference platforms support personal meeting
-			var zoomControl = ActiveConferenceControl as ZoomRoomConferenceControl;
-			if(zoomControl != null)
-				zoomControl.StartPersonalMeeting();
+			ActiveConferenceControl.StartPersonalMeeting();
 		}
 
 		private void ViewOnJoinByIdButtonPressed(object sender, EventArgs eventArgs)

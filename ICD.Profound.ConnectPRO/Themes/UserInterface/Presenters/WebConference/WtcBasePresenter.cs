@@ -9,7 +9,8 @@ using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
-using ICD.Connect.Conferencing.Zoom.Controls;
+using ICD.Connect.Conferencing.Zoom.Components.Call;
+using ICD.Connect.Conferencing.Zoom.Controls.Conferencing;
 using ICD.Connect.Conferencing.Zoom.EventArguments;
 using ICD.Connect.Conferencing.Zoom.Responses;
 using ICD.Connect.Devices;
@@ -222,13 +223,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			foreach (var conference in control.GetConferences())
 				Subscribe(conference);
 
-			var zoomControl = control as ZoomRoomConferenceControl;
-			if (zoomControl != null)
+			ZoomRoomConferenceControl zoomControl = control as ZoomRoomConferenceControl;
+			CallComponent zoomCallComponent =
+				zoomControl == null ? null : zoomControl.Parent.Components.GetComponent<CallComponent>();
+			if (zoomCallComponent != null)
 			{
-				zoomControl.OnCallError += ZoomControlOnCallError;
-				zoomControl.OnPasswordRequired += ZoomControlOnPasswordRequired;
-				zoomControl.OnMicrophoneMuteRequested += ZoomControlOnMicrophoneMuteRequested;
-				zoomControl.OnVideoUnMuteRequested += ZoomControlOnVideoUnMuteRequested;
+				zoomCallComponent.OnCallError += ZoomControlOnCallError;
+				zoomCallComponent.OnPasswordRequired += ZoomControlOnPasswordRequired;
+				zoomCallComponent.OnFarEndRequestedMicrophoneMute += ZoomControlOnMicrophoneMuteRequested;
+				zoomCallComponent.OnFarEndRequestedVideoUnMute += ZoomControlOnVideoUnMuteRequested;
 			}
 
 			UpdateVisibility();
@@ -255,13 +258,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			foreach (var conference in control.GetConferences())
 				Unsubscribe(conference);
 
-			var zoomControl = control as ZoomRoomConferenceControl;
-			if (zoomControl != null)
+			ZoomRoomConferenceControl zoomControl = control as ZoomRoomConferenceControl;
+			CallComponent zoomCallComponent =
+				zoomControl == null ? null : zoomControl.Parent.Components.GetComponent<CallComponent>();
+			if (zoomCallComponent != null)
 			{
-				zoomControl.OnCallError -= ZoomControlOnCallError;
-				zoomControl.OnPasswordRequired -= ZoomControlOnPasswordRequired;
-				zoomControl.OnMicrophoneMuteRequested -= ZoomControlOnMicrophoneMuteRequested;
-				zoomControl.OnVideoUnMuteRequested -= ZoomControlOnVideoUnMuteRequested;
+				zoomCallComponent.OnCallError -= ZoomControlOnCallError;
+				zoomCallComponent.OnPasswordRequired -= ZoomControlOnPasswordRequired;
+				zoomCallComponent.OnFarEndRequestedMicrophoneMute -= ZoomControlOnMicrophoneMuteRequested;
+				zoomCallComponent.OnFarEndRequestedVideoUnMute -= ZoomControlOnVideoUnMuteRequested;
 			}
 
 			UpdateVisibility();
@@ -349,22 +354,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			                GenericAlertPresenterButton.Dismiss);
 		}
 
-		private void ZoomControlOnVideoUnMuteRequested(object sender, BoolEventArgs args)
+		private void ZoomControlOnVideoUnMuteRequested(object sender, EventArgs eventArgs)
 		{
 			if (Room == null)
 				return;
 
 			var zoomControl = ActiveConferenceControl as ZoomRoomConferenceControl;
-
 			if (zoomControl == null)
 				return;
 
-			string message = "The far end is requesting that you Unmute your video";
+			const string message = "The far end is requesting that you Unmute your video";
 
 			Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
 			          .Show(message, new GenericAlertPresenterButton
 			                {
-				                Label = args.Data ? "Unmute" : "Mute",
+				                Label = "Unmute",
 				                Enabled = true,
 				                Visible = true,
 				                PressCallback = p => zoomControl.SetCameraEnabled(true)
