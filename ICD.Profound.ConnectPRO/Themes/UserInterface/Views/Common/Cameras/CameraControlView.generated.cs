@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using ICD.Common.Utils.Collections;
-using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.UI.Controls;
@@ -10,7 +9,7 @@ using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Connect.UI.Controls.TextControls;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 {
 	public sealed partial class CameraControlView
 	{
@@ -27,7 +26,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		private VtProButton m_PresetButton5;
 		private VtProSimpleLabel m_PresetStoredLabel;
 		private VtProDynamicButtonList m_CameraList;
-		private VtProTabButton m_Tabs;
 
 		private BiDictionary<ushort, VtProButton> m_PresetButtons;
 
@@ -109,11 +107,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			{
 				MaxSize = 10
 			};
-
-			m_Tabs = new VtProTabButton(9, panel as IPanelDevice, m_Subpage)
-			{
-				DigitalVisibilityJoin = 638
-			};
 		}
 
 		/// <summary>
@@ -133,7 +126,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			yield return m_PresetButton5;
 			yield return m_PresetStoredLabel;
 			yield return m_CameraList;
-			yield return m_Tabs;
 		}
 	}
 }

@@ -3,6 +3,7 @@ using ICD.Connect.UI.Mvp.VisibilityTree;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.AudioConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Cameras;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.FloatingActions;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Administrative;
@@ -100,8 +101,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			// Camera visibility
 			IVisibilityNode cameraVisibility = new SingleVisibilityNode();
-			cameraVisibility.AddPresenter(navigationController.LazyLoadPresenter<ICameraControlPresenter>());
-			cameraVisibility.AddPresenter(navigationController.LazyLoadPresenter<ICameraActivePresenter>());
+			cameraVisibility.AddPresenter(navigationController.LazyLoadPresenter<ICameraButtonsPresenter>());
 			cameraVisibility.AddPresenter(navigationController.LazyLoadPresenter<IWtcLeftMenuPresenter>());
 			cameraVisibility.AddPresenter(navigationController.LazyLoadPresenter<IVtcButtonListPresenter>());
 			cameraVisibility.AddPresenter(navigationController.LazyLoadPresenter<IVtcContactsNormalPresenter>());

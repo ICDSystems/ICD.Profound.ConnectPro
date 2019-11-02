@@ -1,8 +1,8 @@
-﻿using ICD.Common.Utils.EventArguments;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using ICD.Common.Utils.EventArguments;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Cameras
 {
 	public interface ICameraActiveView : IUiView
 	{
@@ -12,11 +12,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 		/// Raised when a camera button is pressed.
 		/// </summary>
 		event EventHandler<UShortEventArgs> OnCameraButtonPressed;
-
-		/// <summary>
-		/// Raised when a tab button is pressed.
-		/// </summary>
-		event EventHandler<UShortEventArgs> OnTabButtonPressed;
 
 		#endregion
 		
@@ -32,18 +27,5 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 		/// <param name="index"></param>
 		/// <param name="selected"></param>
 		void SetCameraSelected(ushort index, bool selected);
-
-		/// <summary>
-		/// Sets the selected state of a tab button.
-		/// </summary>
-		/// <param name="index"></param>
-		/// <param name="selected"></param>
-		void SetTabSelected(ushort index, bool selected);
-
-		/// <summary>
-		/// Sets the visibility of the tab button
-		/// </summary>
-		/// <param name="visible"></param>
-		void SetTabVisibility(bool visible);
 	}
 }

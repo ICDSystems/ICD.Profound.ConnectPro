@@ -2,41 +2,33 @@
 using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.UI.Controls;
-using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.Pages;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 {
-	public partial class CameraActiveView
+	public sealed partial class CameraButtonsView
 	{
 		private VtProSubpage m_Subpage;
-		private VtProTabButton m_Tabs;
-		private VtProDynamicButtonList m_CameraList;
+		private VtProDynamicButtonList m_CameraConfigurationButtonList;
 
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 136
+				DigitalVisibilityJoin = 130
 			};
 
-			m_Tabs = new VtProTabButton(8, panel as IPanelDevice, m_Subpage)
+			m_CameraConfigurationButtonList = new VtProDynamicButtonList(9, panel as IPanelDevice, m_Subpage)
 			{
-				DigitalVisibilityJoin = 637
-			};
-
-			m_CameraList = new VtProDynamicButtonList(17, panel as IPanelDevice, m_Subpage)
-			{
-				MaxSize = 10
+				MaxSize = 3
 			};
 		}
-		
+
 		protected override IEnumerable<IVtProControl> GetChildren()
 		{
 			yield return m_Subpage;
-			yield return m_Tabs;
-			yield return m_CameraList;
+			yield return m_CameraConfigurationButtonList;
 		}
 	}
 }

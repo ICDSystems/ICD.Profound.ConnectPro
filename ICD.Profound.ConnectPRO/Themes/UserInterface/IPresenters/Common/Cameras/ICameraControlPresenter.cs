@@ -1,6 +1,6 @@
-﻿using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
+﻿using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Cameras;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Cameras
 {
 	public interface ICameraControlPresenter : IUiPresenter<ICameraControlView>
 	{

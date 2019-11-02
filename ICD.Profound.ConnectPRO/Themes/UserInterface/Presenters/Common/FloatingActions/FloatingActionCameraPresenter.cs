@@ -6,7 +6,7 @@ using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Cameras;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.FloatingActions;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.FloatingActions;
@@ -16,8 +16,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 	[PresenterBinding(typeof(IFloatingActionCameraPresenter))]
 	public sealed class FloatingActionCameraPresenter : AbstractFloatingActionPresenter<IFloatingActionCameraView>, IFloatingActionCameraPresenter
 	{
-		private readonly ICameraControlPresenter m_CameraControl;
-		private readonly ICameraActivePresenter m_CameraActive;
+		private readonly ICameraButtonsPresenter m_Buttons;
 
 		private IConferenceManager m_SubscribedConferenceManager;
 
@@ -30,22 +29,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		public FloatingActionCameraPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
-			m_CameraControl = Navigation.LazyLoadPresenter<ICameraControlPresenter>();
-			Subscribe(m_CameraControl);
-
-			m_CameraActive = Navigation.LazyLoadPresenter<ICameraActivePresenter>();
-			Subscribe(m_CameraActive);
-		}
-
-		/// <summary>
-		/// Release resources.
-		/// </summary>
-		public override void Dispose()
-		{
-			base.Dispose();
-
-			Unsubscribe(m_CameraControl);
-			Unsubscribe(m_CameraActive);
+			m_Buttons = Navigation.LazyLoadPresenter<ICameraButtonsPresenter>();
 		}
 
 		/// <summary>
@@ -54,7 +38,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// <returns></returns>
 		protected override bool GetActive()
 		{
-			return m_CameraControl.IsViewVisible || m_CameraActive.IsViewVisible;
+			return m_Buttons.IsViewVisible;
 		}
 
 		#region View Callbacks
@@ -66,15 +50,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// <param name="eventArgs"></param>
 		protected override void ViewOnButtonPressed(object sender, EventArgs eventArgs)
 		{
-			if (m_CameraControl.IsViewVisible || m_CameraActive.IsViewVisible)
-			{
-				m_CameraControl.ShowView(false);
-				m_CameraActive.ShowView(false);
-			}
-			else if (m_CameraControl.CameraCount > 0)
-				m_CameraControl.ShowView(true);
-			else if (m_CameraActive.CameraCount > 1)
-				m_CameraActive.ShowView(true);
+			m_Buttons.ShowView(!m_Buttons.IsViewVisible);
 		}
 
 		/// <summary>
@@ -87,60 +63,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			base.ViewOnVisibilityChanged(sender, args);
 
 			if (!args.Data)
-			{
-				m_CameraControl.ShowView(false);
-				m_CameraActive.ShowView(false);
-			}
-		}
-
-		#endregion
-
-		#region Navigation Callbacks
-
-		/// <summary>
-		/// Subscribe to the camera control menu events.
-		/// </summary>
-		/// <param name="menu"></param>
-		private void Subscribe(ICameraControlPresenter menu)
-		{
-			menu.OnViewVisibilityChanged += MenuOnViewVisibilityChanged;
-		}
-
-		/// <summary>
-		/// Unsubscribe from the camera control menu events.
-		/// </summary>
-		/// <param name="menu"></param>
-		private void Unsubscribe(ICameraControlPresenter menu)
-		{
-			menu.OnViewVisibilityChanged -= MenuOnViewVisibilityChanged;
-		}
-
-		/// <summary>
-		/// Subscribe to the camera active menu events.
-		/// </summary>
-		/// <param name="menu"></param>
-		private void Subscribe(ICameraActivePresenter menu)
-		{
-			menu.OnViewVisibilityChanged += MenuOnViewVisibilityChanged;
-		}
-
-		/// <summary>
-		/// Unsubscribe from the camera active menu events.
-		/// </summary>
-		/// <param name="menu"></param>
-		private void Unsubscribe(ICameraActivePresenter menu)
-		{
-			menu.OnViewVisibilityChanged -= MenuOnViewVisibilityChanged;
-		}
-
-		/// <summary>
-		/// Called when the menu visibility changes.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="boolEventArgs"></param>
-		private void MenuOnViewVisibilityChanged(object sender, BoolEventArgs boolEventArgs)
-		{
-			RefreshIfVisible();
+				m_Buttons.ShowView(false);
 		}
 
 		#endregion
@@ -181,7 +104,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 
 		private void SubscribedConferenceManagerOnInCallChanged(object sender, InCallEventArgs callEventArgs)
 		{
-			ShowView(callEventArgs.Data == eInCall.Video && (m_CameraControl.CameraCount > 0 || m_CameraActive.CameraCount > 1));
+			ShowView(callEventArgs.Data == eInCall.Video);
 		}
 
 		#endregion

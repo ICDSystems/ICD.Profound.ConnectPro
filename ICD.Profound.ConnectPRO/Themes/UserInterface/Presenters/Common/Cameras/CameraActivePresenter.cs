@@ -16,20 +16,17 @@ using ICD.Connect.Routing.Controls;
 using ICD.Connect.Routing.Endpoints;
 using ICD.Connect.Settings.Originators;
 using ICD.Connect.UI.Attributes;
-using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Cameras;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Cameras;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 {
 	[PresenterBinding(typeof(ICameraActivePresenter))]
 	public sealed class CameraActivePresenter : AbstractUiPresenter<ICameraActiveView>, ICameraActivePresenter
 	{
-		private const ushort ACTIVE_TAB_INDEX = 0;
-
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private readonly List<ICameraDevice> m_Cameras;
@@ -160,9 +157,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			{
 				bool combine = Room != null && Room.IsCombineRoom();
 
-				view.SetTabSelected(0, true);
-				view.SetTabSelected(1, false);
-
 				// Cameras
 				IEnumerable<string> cameraLabels = ZoomMode ? m_ZoomCameras.Select(z => z.Name) : m_Cameras.Select(c => c.GetName(combine));
 				view.SetCameraLabels(cameraLabels);
@@ -173,9 +167,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				else
 					for (ushort index = 0; index < m_Cameras.Count; index++)
 						view.SetCameraSelected(index, m_SelectedCamera == m_Cameras[index]);
-
-				var controlPresenter = Navigation.LazyLoadPresenter<ICameraControlPresenter>();
-				view.SetTabVisibility(controlPresenter.CameraCount > 0);
 			}
 			finally
 			{
@@ -252,7 +243,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			base.Subscribe(view);
 			
 			view.OnCameraButtonPressed += ViewOnCameraButtonPressed;
-			view.OnTabButtonPressed += ViewOnTabButtonPressed;
 		}
 
 		/// <summary>
@@ -264,7 +254,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			base.Unsubscribe(view);
 
 			view.OnCameraButtonPressed -= ViewOnCameraButtonPressed;
-			view.OnTabButtonPressed -= ViewOnTabButtonPressed;
 		}
 
 		private void ViewOnCameraButtonPressed(object sender, UShortEventArgs args)
@@ -292,12 +281,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			{
 				m_RefreshSection.Leave();
 			}
-		}
-
-		private void ViewOnTabButtonPressed(object sender, UShortEventArgs args)
-		{
-			if (args.Data != ACTIVE_TAB_INDEX)
-				Navigation.NavigateTo<ICameraControlPresenter>();
 		}
 
 		/// <summary>

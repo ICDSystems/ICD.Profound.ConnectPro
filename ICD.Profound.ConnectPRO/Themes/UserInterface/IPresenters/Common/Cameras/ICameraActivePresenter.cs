@@ -1,7 +1,7 @@
 ﻿using ICD.Connect.Conferencing.Controls.Routing;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Cameras;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Cameras
 {
 	public interface ICameraActivePresenter : IUiPresenter<ICameraActiveView>
 	{

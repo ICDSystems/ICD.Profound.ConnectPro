@@ -6,6 +6,7 @@ using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.Controls.Layout;
 using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
@@ -20,6 +21,7 @@ using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Cameras;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
@@ -31,8 +33,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 	public sealed class WtcBasePresenter : AbstractPopupPresenter<IWtcBaseView>, IWtcBasePresenter
 	{
 		private readonly IWtcLeftMenuPresenter m_LeftMenuPresenter;
-		private readonly ICameraControlPresenter m_CameraControlPresenter;
+		private readonly ICameraButtonsPresenter m_CameraButtonsPresenter;
 		private readonly ICameraActivePresenter m_CameraActivePresenter;
+		private readonly ICameraLayoutPresenter m_CameraLayoutPresenter;
 		private readonly List<IWtcPresenter> m_WtcPresenters;
 		private readonly SafeTimer m_ConnectingTimer;
 
@@ -40,8 +43,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		private IWebConferenceDeviceControl m_SubscribedConferenceControl;
 
 		private bool m_IsInCall;
-		private bool m_AboutToShowActiveCamera;
-		private bool m_AboutToShowControlCamera;
+		private bool m_AboutToShowCameraButtons;
 
 		public IWebConferenceDeviceControl ActiveConferenceControl
 		{
@@ -88,11 +90,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		{
 			m_LeftMenuPresenter = nav.LazyLoadPresenter<IWtcLeftMenuPresenter>();
 
-			m_CameraControlPresenter = nav.LazyLoadPresenter<ICameraControlPresenter>();
-			Subscribe(m_CameraControlPresenter);
+			m_CameraButtonsPresenter = nav.LazyLoadPresenter<ICameraButtonsPresenter>();
+			Subscribe(m_CameraButtonsPresenter);
 
 			m_CameraActivePresenter = nav.LazyLoadPresenter<ICameraActivePresenter>();
-			Subscribe(m_CameraActivePresenter);
+			m_CameraLayoutPresenter = nav.LazyLoadPresenter<ICameraLayoutPresenter>();
 
 			m_WtcPresenters = nav.LazyLoadPresenters<IWtcPresenter>().ToList();
 
@@ -107,8 +109,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		{
 			base.Dispose();
 
-			Unsubscribe(m_CameraControlPresenter);
-			Unsubscribe(m_CameraActivePresenter);
+			Unsubscribe(m_CameraButtonsPresenter);
 		}
 
 		#region Methods
@@ -186,6 +187,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			m_CameraActivePresenter.SetVtcDestinationControl(value == null
 				                                                  ? null
 				                                                  : value.Parent.Controls.GetControl<IVideoConferenceRouteControl>());
+
+			m_CameraLayoutPresenter.SetDestinationControl(value == null
+				                                              ? null
+				                                              : value.Parent.Controls.GetControl<IConferenceLayoutControl>());
+
 		}
 
 		private void SubmitZoomPassword(string meetingNumber, string password)
@@ -446,17 +452,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		protected override void ViewOnCloseButtonPressed(object sender, EventArgs eventArgs)
 		{
 			// If the camera subpage is open close that instead
-			if (m_CameraControlPresenter.IsViewVisible && IsViewVisible)
+			if (m_CameraButtonsPresenter.IsViewVisible && IsViewVisible)
 			{
-				m_CameraControlPresenter.ShowView(false);
-				m_LeftMenuPresenter.ShowView(true);
-				return;
-			}
-
-            // If the camera subpage is open close that instead
-			if (m_CameraActivePresenter.IsViewVisible && IsViewVisible)
-			{
-				m_CameraActivePresenter.ShowView(false);
+				m_CameraButtonsPresenter.ShowView(false);
 				m_LeftMenuPresenter.ShowView(true);
 				return;
 			}
@@ -519,60 +517,36 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		#region Subpage Callbacks
 
-		private void Subscribe(ICameraControlPresenter cameraControl)
+		private void Subscribe(ICameraButtonsPresenter cameraButtons)
 		{
-			cameraControl.OnViewPreVisibilityChanged += CameraControlPresenterOnViewPreVisibilityChanged;
-			cameraControl.OnViewVisibilityChanged += CameraPresenterOnViewVisibilityChanged;
+			cameraButtons.OnViewPreVisibilityChanged += CameraButtonsOnViewPreVisibilityChanged;
+			cameraButtons.OnViewVisibilityChanged += CameraPresenterOnViewVisibilityChanged;
 		}
 
-		private void Unsubscribe(ICameraControlPresenter cameraControl)
+		private void Unsubscribe(ICameraButtonsPresenter cameraButtons)
 		{
-			cameraControl.OnViewPreVisibilityChanged -= CameraControlPresenterOnViewPreVisibilityChanged;
-			cameraControl.OnViewVisibilityChanged -= CameraPresenterOnViewVisibilityChanged;
-		}
-
-		private void Subscribe(ICameraActivePresenter cameraActive)
-		{
-			cameraActive.OnViewPreVisibilityChanged += CameraActivePresenterOnViewPreVisibilityChanged;
-			cameraActive.OnViewVisibilityChanged += CameraPresenterOnViewVisibilityChanged;
-		}
-
-		private void Unsubscribe(ICameraActivePresenter cameraActive)
-		{
-			cameraActive.OnViewPreVisibilityChanged -= CameraActivePresenterOnViewPreVisibilityChanged;
-			cameraActive.OnViewVisibilityChanged -= CameraPresenterOnViewVisibilityChanged;
+			cameraButtons.OnViewPreVisibilityChanged -= CameraButtonsOnViewPreVisibilityChanged;
+			cameraButtons.OnViewVisibilityChanged -= CameraPresenterOnViewVisibilityChanged;
 		}
 
 		/// <summary>
-		/// Checking if the view is about to change to the camera control view.
+		/// Checking if the view is about to change to the camera buttons view.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private void CameraControlPresenterOnViewPreVisibilityChanged(object sender, BoolEventArgs e)
+		private void CameraButtonsOnViewPreVisibilityChanged(object sender, BoolEventArgs e)
 		{
-			m_AboutToShowControlCamera = e.Data;
+			m_AboutToShowCameraButtons = e.Data;
 		}
 
 		/// <summary>
-		/// Checking if the view is about to change to the camera active view.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void CameraActivePresenterOnViewPreVisibilityChanged(object sender, BoolEventArgs e)
-		{
-			m_AboutToShowActiveCamera = e.Data;
-		}
-
-		/// <summary>
-		/// If the view is about to change the the camera active or camera control view, don't show the left menu view.
+		/// If the view is about to change to the camera buttons view, don't show the left menu view.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		private void CameraPresenterOnViewVisibilityChanged(object sender, BoolEventArgs e)
 		{
-			bool aboutToShow = m_AboutToShowActiveCamera || m_AboutToShowControlCamera;
-
-			if (!aboutToShow && !m_CameraActivePresenter.IsViewVisible && !m_CameraControlPresenter.IsViewVisible && IsViewVisible)
+			if (!m_AboutToShowCameraButtons && !m_CameraButtonsPresenter.IsViewVisible && IsViewVisible)
 				m_LeftMenuPresenter.ShowView(true);
 		}
 
