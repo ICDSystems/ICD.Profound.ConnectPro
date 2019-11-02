@@ -13,9 +13,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 	{
 		private VtProSubpage m_Subpage;
 		private VtProSimpleKeypad m_Keypad;
-		private VtProTextEntry m_TextEntry;
+		private VtProFormattedText m_TextEntry;
 		private VtProButton m_CallButton;
-		private VtProButton m_HangupButton;
+		private VtProButton m_BackButton;
+		private VtProButton m_ClearButton;
 
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
@@ -24,28 +25,33 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 				DigitalVisibilityJoin = 744
 			};
 
-			m_Keypad = new VtProSimpleKeypad(702, panel as IPanelDevice, m_Subpage)
+			m_Keypad = new VtProSimpleKeypad(709, panel as IPanelDevice, m_Subpage)
 			{
 				MiscButtonOneChar = '*',
 				MiscButtonTwoChar = '#'
 			};
 
-			m_TextEntry = new VtProTextEntry(panel, m_Subpage)
+			m_TextEntry = new VtProFormattedText(panel, m_Subpage)
 			{
-				IndirectTextJoin = 3031,
-				SerialOutputJoin = 3031
+				IndirectTextJoin = 3034
 			};
 
 			m_CallButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 709,
-				DigitalEnableJoin = 710
+				IndirectTextJoin = 3035,
+				DigitalPressJoin = 817,
 			};
 
-			m_HangupButton = new VtProButton(panel, m_Subpage)
+			m_BackButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 711,
-				DigitalEnableJoin = 712
+				DigitalPressJoin = 818,
+				DigitalEnableJoin = 820
+			};
+
+			m_ClearButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 819,
+				DigitalEnableJoin = 821
 			};
 		}
 
@@ -55,7 +61,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 			yield return m_Keypad;
 			yield return m_TextEntry;
 			yield return m_CallButton;
-			yield return m_HangupButton;
+			yield return m_BackButton;
+			yield return m_ClearButton;
 		}
 	}
 }

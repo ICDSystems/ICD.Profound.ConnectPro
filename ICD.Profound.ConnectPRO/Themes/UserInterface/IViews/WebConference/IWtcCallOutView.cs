@@ -6,19 +6,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference
 	public interface IWtcCallOutView : IUiView
 	{
 		/// <summary>
-		/// Raised when the text in the text entry changes.
-		/// </summary>
-		event EventHandler<StringEventArgs> OnTextEntered;
-
-		/// <summary>
 		/// Raised when the Call button is pressed.
 		/// </summary>
 		event EventHandler OnCallButtonPressed;
 
 		/// <summary>
-		/// Raised then the Hangup button is pressed.
+		/// Raised when the clear button is pressed.
 		/// </summary>
-		event EventHandler OnHangupButtonPressed;
+		event EventHandler OnClearButtonPressed;
+
+		/// <summary>
+		/// Raised when the back button is pressed.
+		/// </summary>
+		event EventHandler OnBackButtonPressed;
 
 		/// <summary>
 		/// Raised when a keypad button is pressed.
@@ -32,15 +32,27 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference
 		void SetText(string text);
 
 		/// <summary>
-		/// Sets the enabled state of the Call button.
+		/// Sets the enabled state of the clear button.
 		/// </summary>
 		/// <param name="enabled"></param>
-		void SetCallButtonEnabled(bool enabled);
+		void SetClearButtonEnabled(bool enabled);
 
 		/// <summary>
-		/// Sets the enabled state of the Hangup button.
+		/// Sets the enabled state of the back button.
 		/// </summary>
 		/// <param name="enabled"></param>
-		void SetHangupButtonEnabled(bool enabled);
+		void SetBackButtonEnabled(bool enabled);
+
+		/// <summary>
+		/// Sets the selected state of the call button;
+		/// </summary>
+		/// <param name="selected"></param>
+		void SetCallButtonSelected(bool selected);
+
+		/// <summary>
+		/// Sets the label text for the call button.
+		/// </summary>
+		/// <param name="label"></param>
+		void SetCallButtonLabel(string label);
 	}
 }
