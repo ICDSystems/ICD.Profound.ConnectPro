@@ -27,6 +27,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Acti
 		event EventHandler OnInviteButtonPressed;
 
 		/// <summary>
+		/// Raised when the lock button is pressed.
+		/// </summary>
+		event EventHandler OnLockButtonPressed;
+
+		/// <summary>
 		/// Returns child views for list items.
 		/// </summary>
 		/// <param name="factory"></param>
@@ -47,5 +52,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Acti
 		void SetMeetingNumberLabelText(string text);
 
 		void SetShowHideCameraButtonState(bool cameraEnabled);
+
+		/// <summary>
+		/// Sets the selected (locked) state of the lock button.
+		/// </summary>
+		/// <param name="selected"></param>
+		void SetlockButtonSelected(bool selected);
 	}
 }

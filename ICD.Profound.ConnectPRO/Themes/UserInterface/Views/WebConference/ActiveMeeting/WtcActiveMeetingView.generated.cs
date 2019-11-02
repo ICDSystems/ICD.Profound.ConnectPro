@@ -19,6 +19,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 		private VtProSimpleLabel m_MeetingNumberLabel;
 		private VtProSimpleLabel m_NoParticipantsLabel;
 		private VtProButton m_InviteButton;
+		private VtProButton m_LockButton;
 
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
@@ -68,6 +69,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 				DigitalPressJoin = 761,
 				DigitalVisibilityJoin = 762
 			};
+
+			m_LockButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 746
+			};
 		}
 
 		protected override IEnumerable<IVtProControl> GetChildren()
@@ -79,6 +85,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 			yield return m_LeaveMeetingButton;
 			yield return m_MeetingNumberLabel;
 			yield return m_NoParticipantsLabel;
+			yield return m_InviteButton;
+			yield return m_LockButton;
 		}
 	}
 }

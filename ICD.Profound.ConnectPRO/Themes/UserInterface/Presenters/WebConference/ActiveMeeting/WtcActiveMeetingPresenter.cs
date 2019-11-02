@@ -28,7 +28,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private IWtcReferencedParticipantPresenter m_SelectedParticipant;
 
-		public WtcActiveMeetingPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="nav"></param>
+		/// <param name="views"></param>
+		/// <param name="theme"></param>
+		public WtcActiveMeetingPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
 			m_PresenterFactory = new WtcReferencedParticipantPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
@@ -61,6 +68,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			base.Refresh(view);
 
 			m_RefreshSection.Enter();
+
 			try
 			{
 				var activeConference = ActiveConferenceControl == null
@@ -70,21 +78,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				view.SetShowHideCameraButtonState(ActiveConferenceControl != null && ActiveConferenceControl.CameraEnabled);
 				view.SetLeaveMeetingButtonEnabled(activeConference != null);
 
-				var participants = activeConference == null
-					? Enumerable.Empty<IWebParticipant>().ToList()
-					: activeConference.GetParticipants().ToList();
+				List<IWebParticipant> sortedParticipants =
+					activeConference == null
+						? new List<IWebParticipant>()
+						: activeConference.GetParticipants()
+						                  .OrderByDescending(p => p.IsHost)
+						                  .ThenByDescending(p => p.IsSelf)
+						                  .ThenBy(p => p.Name)
+						                  .ToList();
 
-				// Show "no participants" and invite button if there are no participants
-				view.SetNoParticipantsLabelVisibility(!participants.Any());
-				view.SetInviteButtonVisibility(!participants.Any());
-
-				var sortedParticipants = participants.OrderByDescending(p => p.IsHost).ThenByDescending(p => p.IsSelf).ThenBy(p => p.Name).ToList();
-				foreach (var presenter in m_PresenterFactory.BuildChildren(sortedParticipants))
+				foreach (IWtcReferencedParticipantPresenter presenter in m_PresenterFactory.BuildChildren(sortedParticipants))
 				{
 					presenter.Selected = presenter == SelectedParticipant;
-					presenter.ShowView(presenter.Participant != null);
 					presenter.Refresh();
 				}
+
+				// Show "no participants" and invite button if there are no participants
+				view.SetNoParticipantsLabelVisibility(sortedParticipants.Count == 0);
+				view.SetInviteButtonVisibility(sortedParticipants.Count == 0);
 
 				// This may change if other web conferences have meeting info to display
 				ZoomRoom zoomRoom = ActiveConferenceControl == null ? null : ActiveConferenceControl.Parent as ZoomRoom;
@@ -95,13 +106,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 					: string.Empty);
 
 				// Only hosts can kick/mute people
-				bool isHost = component == null ? activeConference != null : component.AmIHost;
+				bool isHost = ActiveConferenceControl != null && ActiveConferenceControl.AmIHost;
 				bool isNotSelf = SelectedParticipant != null && SelectedParticipant.Participant != null && !SelectedParticipant.Participant.IsSelf;
 				bool kickMuteEnabled = isHost && isNotSelf;
 				m_ParticipantControls.ShowView(kickMuteEnabled);
 
 				// Only hosts can end meeting for everyone
 				view.SetEndMeetingButtonEnabled(component != null && component.AmIHost);
+
+				// Call lock
+				bool locked = ActiveConferenceControl != null && ActiveConferenceControl.CallLock;
+				view.SetlockButtonSelected(locked);
 			}
 			finally
 			{
@@ -167,11 +182,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			if (control == null)
 				return;
 
-			control.OnConferenceAdded += ControlOnOnConferenceAdded;
-			control.OnConferenceRemoved += ControlOnOnConferenceRemoved;
+			control.OnConferenceAdded += ControlOnConferenceAdded;
+			control.OnConferenceRemoved += ControlOnConferenceRemoved;
 			control.OnCameraEnabledChanged += ControlOnCameraEnabledChanged;
+			control.OnAmIHostChanged += ControlOnOnAmIHostChanged;
+			control.OnCallLockChanged += ControlOnCallLockChanged;
 
-			foreach (var conference in control.GetConferences())
+			foreach (IWebConference conference in control.GetConferences())
 				Subscribe(conference);
 		}
 
@@ -182,21 +199,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			if (control == null)
 				return;
 
-			control.OnConferenceAdded -= ControlOnOnConferenceAdded;
-			control.OnConferenceRemoved -= ControlOnOnConferenceRemoved;
+			control.OnConferenceAdded -= ControlOnConferenceAdded;
+			control.OnConferenceRemoved -= ControlOnConferenceRemoved;
 			control.OnCameraEnabledChanged -= ControlOnCameraEnabledChanged;
+			control.OnAmIHostChanged -= ControlOnOnAmIHostChanged;
+			control.OnCallLockChanged -= ControlOnCallLockChanged;
 			
-			foreach (var conference in control.GetConferences())
+			foreach (IWebConference conference in control.GetConferences())
 				Unsubscribe(conference);
 		}
 
-		private void ControlOnOnConferenceRemoved(object sender, ConferenceEventArgs args)
+		private void ControlOnConferenceRemoved(object sender, ConferenceEventArgs args)
 		{
 			Unsubscribe(args.Data as IWebConference);
 			RefreshIfVisible();
 		}
 
-		private void ControlOnOnConferenceAdded(object sender, ConferenceEventArgs args)
+		private void ControlOnConferenceAdded(object sender, ConferenceEventArgs args)
 		{
 			Subscribe(args.Data as IWebConference);
 			RefreshIfVisible();
@@ -207,35 +226,45 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			RefreshIfVisible();
 		}
 
+		private void ControlOnCallLockChanged(object sender, BoolEventArgs boolEventArgs)
+		{
+			RefreshIfVisible();
+		}
+
+		private void ControlOnOnAmIHostChanged(object sender, BoolEventArgs boolEventArgs)
+		{
+			RefreshIfVisible();
+		}
+
 		#endregion
 
 		#region Conference Callbacks
 
 		private void Subscribe(IWebConference conference)
 		{
-			conference.OnParticipantAdded += ConferenceOnOnParticipantAdded;
-			conference.OnParticipantRemoved += ConferenceOnOnParticipantRemoved;
-			conference.OnStatusChanged += ConferenceOnOnStatusChanged;
+			conference.OnParticipantAdded += ConferenceOnParticipantAdded;
+			conference.OnParticipantRemoved += ConferenceOnParticipantRemoved;
+			conference.OnStatusChanged += ConferenceOnStatusChanged;
 		}
 
 		private void Unsubscribe(IWebConference conference)
 		{
-			conference.OnParticipantAdded -= ConferenceOnOnParticipantAdded;
-			conference.OnParticipantRemoved -= ConferenceOnOnParticipantRemoved;
-			conference.OnStatusChanged -= ConferenceOnOnStatusChanged;
+			conference.OnParticipantAdded -= ConferenceOnParticipantAdded;
+			conference.OnParticipantRemoved -= ConferenceOnParticipantRemoved;
+			conference.OnStatusChanged -= ConferenceOnStatusChanged;
 		}
 
-		private void ConferenceOnOnStatusChanged(object sender, ConferenceStatusEventArgs args)
+		private void ConferenceOnStatusChanged(object sender, ConferenceStatusEventArgs args)
 		{
 			RefreshIfVisible();
 		}
 
-		private void ConferenceOnOnParticipantAdded(object sender, ParticipantEventArgs participantEventArgs)
+		private void ConferenceOnParticipantAdded(object sender, ParticipantEventArgs participantEventArgs)
 		{
 			RefreshIfVisible();
 		}
 
-		private void ConferenceOnOnParticipantRemoved(object sender, ParticipantEventArgs participantEventArgs)
+		private void ConferenceOnParticipantRemoved(object sender, ParticipantEventArgs participantEventArgs)
 		{
 			RefreshIfVisible();
 		}
@@ -248,28 +277,30 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		{
 			base.Subscribe(view);
 
-			view.OnEndMeetingButtonPressed += ViewOnOnEndMeetingButtonPressed;
-			view.OnLeaveMeetingButtonPressed += ViewOnOnLeaveMeetingButtonPressed;
-			view.OnShowHideCameraButtonPressed += ViewOnOnShowHideCameraButtonPressed;
-			view.OnInviteButtonPressed += ViewOnOnInviteButtonPressed;
+			view.OnEndMeetingButtonPressed += ViewOnEndMeetingButtonPressed;
+			view.OnLeaveMeetingButtonPressed += ViewOnLeaveMeetingButtonPressed;
+			view.OnShowHideCameraButtonPressed += ViewOnShowHideCameraButtonPressed;
+			view.OnInviteButtonPressed += ViewOnInviteButtonPressed;
+			view.OnLockButtonPressed += ViewOnLockButtonPressed;
 		}
 
 		protected override void Unsubscribe(IWtcActiveMeetingView view)
 		{
 			base.Unsubscribe(view);
 
-			view.OnEndMeetingButtonPressed -= ViewOnOnEndMeetingButtonPressed;
-			view.OnLeaveMeetingButtonPressed -= ViewOnOnLeaveMeetingButtonPressed;
-			view.OnShowHideCameraButtonPressed -= ViewOnOnShowHideCameraButtonPressed;
-			view.OnInviteButtonPressed -= ViewOnOnInviteButtonPressed;
+			view.OnEndMeetingButtonPressed -= ViewOnEndMeetingButtonPressed;
+			view.OnLeaveMeetingButtonPressed -= ViewOnLeaveMeetingButtonPressed;
+			view.OnShowHideCameraButtonPressed -= ViewOnShowHideCameraButtonPressed;
+			view.OnInviteButtonPressed -= ViewOnInviteButtonPressed;
+			view.OnLockButtonPressed -= ViewOnLockButtonPressed;
 		}
 
-		private void ViewOnOnShowHideCameraButtonPressed(object sender, EventArgs eventArgs)
+		private void ViewOnShowHideCameraButtonPressed(object sender, EventArgs eventArgs)
 		{
 			ActiveConferenceControl.SetCameraEnabled(!ActiveConferenceControl.CameraEnabled);
 		}
 
-		private void ViewOnOnLeaveMeetingButtonPressed(object sender, EventArgs eventArgs)
+		private void ViewOnLeaveMeetingButtonPressed(object sender, EventArgs eventArgs)
 		{
 			if (ActiveConferenceControl == null)
 				return;
@@ -282,7 +313,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			SelectedParticipant = null;
 		}
 
-		private void ViewOnOnEndMeetingButtonPressed(object sender, EventArgs eventArgs)
+		private void ViewOnEndMeetingButtonPressed(object sender, EventArgs eventArgs)
 		{
 			if (ActiveConferenceControl == null)
 				return;
@@ -295,9 +326,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			SelectedParticipant = null;
 		}
 
-		private void ViewOnOnInviteButtonPressed(object sender, EventArgs e)
+		private void ViewOnInviteButtonPressed(object sender, EventArgs e)
 		{
 			Navigation.NavigateTo<IWtcContactListPresenter>();
+		}
+
+		private void ViewOnLockButtonPressed(object sender, EventArgs eventArgs)
+		{
+			if (ActiveConferenceControl == null)
+				return;
+
+			ActiveConferenceControl.EnableCallLock(!ActiveConferenceControl.CallLock);
 		}
 
 		protected override void ViewOnPreVisibilityChanged(object sender, BoolEventArgs args)

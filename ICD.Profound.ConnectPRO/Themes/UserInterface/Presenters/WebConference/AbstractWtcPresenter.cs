@@ -5,16 +5,17 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 {
-	public class AbstractWtcPresenter<T> : AbstractUiPresenter<T>, IWtcPresenter<T> where T : class, IUiView
+	public abstract class AbstractWtcPresenter<T> : AbstractUiPresenter<T>, IWtcPresenter<T>
+		where T : class, IUiView
 	{
-		public AbstractWtcPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
-		{
-		}
-
 		private IWebConferenceDeviceControl m_ConferenceControl;
+
+		/// <summary>
+		/// Gets/sets the active conference control for this presenter.
+		/// </summary>
 		public IWebConferenceDeviceControl ActiveConferenceControl
 		{
-			protected get { return m_ConferenceControl; }
+			get { return m_ConferenceControl; }
 			set
 			{
 				if (m_ConferenceControl == value)
@@ -28,14 +29,31 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			}
 		}
 
-		protected virtual void Subscribe(IWebConferenceDeviceControl control)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="nav"></param>
+		/// <param name="views"></param>
+		/// <param name="theme"></param>
+		protected AbstractWtcPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+			: base(nav, views, theme)
 		{
-			
 		}
 
+		/// <summary>
+		/// Subscribe to the conference control events.
+		/// </summary>
+		/// <param name="control"></param>
+		protected virtual void Subscribe(IWebConferenceDeviceControl control)
+		{
+		}
+
+		/// <summary>
+		/// Unsusbcribe from the conference control events.
+		/// </summary>
+		/// <param name="control"></param>
 		protected virtual void Unsubscribe(IWebConferenceDeviceControl control)
 		{
-			
 		}
 	}
 }
