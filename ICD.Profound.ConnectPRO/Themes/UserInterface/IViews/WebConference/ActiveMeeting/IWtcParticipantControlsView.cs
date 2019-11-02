@@ -5,6 +5,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Acti
 {
 	public interface IWtcParticipantControlsView : IUiView
 	{
+		/// <summary>
+		/// Raised when the user presses a button.
+		/// </summary>
 		event EventHandler<UShortEventArgs> OnButtonPressed;
 
 		/// <summary>

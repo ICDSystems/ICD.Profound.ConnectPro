@@ -12,6 +12,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 		private VtProSubpage m_Subpage;
 		private VtProDynamicButtonList m_ButtonList;
 
+		/// <summary>
+		/// Instantiates the view controls.
+		/// </summary>
+		/// <param name="panel"></param>
+		/// <param name="parent"></param>
+		/// <param name="index"></param>
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
 			m_Subpage = new VtProSubpage(panel, parent)
@@ -22,6 +28,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 			m_ButtonList = new VtProDynamicButtonList(704, panel as IPanelDevice, m_Subpage);
 		}
 
+		/// <summary>
+		/// Gets the child controls.
+		/// </summary>
+		/// <returns></returns>
 		protected override IEnumerable<IVtProControl> GetChildren()
 		{
 			yield return m_Subpage;
