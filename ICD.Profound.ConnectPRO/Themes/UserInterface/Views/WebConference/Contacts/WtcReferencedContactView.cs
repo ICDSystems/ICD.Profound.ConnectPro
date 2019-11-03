@@ -156,7 +156,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 		/// <param name="eventArgs"></param>
 		private void FavoriteButtonOnPressed(object sender, EventArgs eventArgs)
 		{
-			
+			OnFavoriteButtonPressed.Raise(this);
 		}
 
 		#endregion
