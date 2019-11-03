@@ -277,7 +277,6 @@
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\IWtcCallOutPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\IWtcLeftMenuPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\IWtcPresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\WebConference\IWtcRecordingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\IWtcSharePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\IWtcStartMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IViews\AudioConference\IAtcBaseView.cs" />
@@ -363,7 +362,6 @@
     <Compile Include="Themes\UserInterface\IViews\WebConference\IWtcBaseView.cs" />
     <Compile Include="Themes\UserInterface\IViews\WebConference\IWtcCallOutView.cs" />
     <Compile Include="Themes\UserInterface\IViews\WebConference\IWtcLeftMenuView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\WebConference\IWtcRecordingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\WebConference\IWtcShareView.cs" />
     <Compile Include="Themes\UserInterface\IViews\WebConference\IWtcStartMeetingView.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractUiComponentPresenter.cs" />
@@ -468,7 +466,6 @@
     <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcCallOutPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcLeftMenuPresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcRecordingPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcSharePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcStartMeetingPresenter.cs" />
     <Compile Include="Routing\ProcessingSourceInfo.cs" />
@@ -622,8 +619,6 @@
     <Compile Include="Themes\UserInterface\Views\WebConference\WtcCallOutView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\WebConference\WtcLeftMenuView.cs" />
     <Compile Include="Themes\UserInterface\Views\WebConference\WtcLeftMenuView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\WebConference\WtcRecordingView.cs" />
-    <Compile Include="Themes\UserInterface\Views\WebConference\WtcRecordingView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\WebConference\WtcShareView.cs" />
     <Compile Include="Themes\UserInterface\Views\WebConference\WtcShareView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\WebConference\WtcStartMeetingView.cs" />

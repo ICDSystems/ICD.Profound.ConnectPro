@@ -71,7 +71,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			webConferencingVisibility.AddPresenter(navigationController.LazyLoadPresenter<IWtcCallOutPresenter>());
 			webConferencingVisibility.AddPresenter(navigationController.LazyLoadPresenter<IWtcSharePresenter>());
 			webConferencingVisibility.AddPresenter(navigationController.LazyLoadPresenter<IWtcContactListPresenter>());
-			webConferencingVisibility.AddPresenter(navigationController.LazyLoadPresenter<IWtcRecordingPresenter>());
 			webConferencingVisibility.AddPresenter(navigationController.LazyLoadPresenter<IWtcActiveMeetingPresenter>());
 			webConferencingVisibility.AddPresenter(navigationController.LazyLoadPresenter<IWtcStartMeetingPresenter>());
 
