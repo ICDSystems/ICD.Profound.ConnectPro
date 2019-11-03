@@ -19,6 +19,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.D
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.ActiveMeeting;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.Contacts;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.LeftMenu;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 {

@@ -41,6 +41,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 			m_SelectedContactViewList = new List<IWtcReferencedSelectedContactView>();
 		}
 
+		/// <summary>
+		/// Release resources.
+		/// </summary>
 		public override void Dispose()
 		{
 			OnInviteParticipantButtonPressed = null;
