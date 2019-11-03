@@ -14,6 +14,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 		private VtProSubpage m_Subpage;
 		private VtProSubpageReferenceList m_ContactList;
 		private VtProSubpageReferenceList m_SelectedContactList;
+		private VtProButton m_FavoritesButton;
 		private VtProButton m_SearchButton;
 		private VtProButton m_InviteParticipantButton;
 		private VtProSimpleLabel m_ContactListLabel;
@@ -40,6 +41,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 				DigitalJoinIncrement = 2,
 				AnalogJoinIncrement = 0,
 				SerialJoinIncrement = 2
+			};
+
+			m_FavoritesButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 751
 			};
 
 			m_SearchButton = new VtProButton(panel, m_Subpage)
@@ -71,6 +77,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 			yield return m_ContactList;
 			yield return m_SelectedContactList;
 			yield return m_InviteParticipantButton;
+			yield return m_FavoritesButton;
 			yield return m_SearchButton;
 			yield return m_ContactListLabel;
 			yield return m_NoContactsSelectedLabel;

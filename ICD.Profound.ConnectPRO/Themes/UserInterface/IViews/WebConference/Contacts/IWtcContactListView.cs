@@ -17,6 +17,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Cont
 		event EventHandler OnSearchButtonPressed;
 
 		/// <summary>
+		/// Raised when the Favorites button is pressed.
+		/// </summary>
+		event EventHandler OnFavoritesButtonPressed;
+
+		/// <summary>
 		/// Sets the enabled state of the Invite Participant button.
 		/// </summary>
 		/// <param name="enabled"></param>

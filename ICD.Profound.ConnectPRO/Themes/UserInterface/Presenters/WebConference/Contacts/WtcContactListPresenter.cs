@@ -8,9 +8,9 @@ using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.Contacts;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Directory;
+using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.Directory;
 using ICD.Connect.Conferencing.Directory.Tree;
-using ICD.Connect.Devices;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -94,6 +94,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			base.Dispose();
 		}
 
+		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Refresh(IWtcContactListView view)
 		{
 			base.Refresh(view);
@@ -322,6 +326,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		#region Control Callbacks
 
+		/// <summary>
+		/// Subscribe to the conference control events.
+		/// </summary>
+		/// <param name="control"></param>
 		protected override void Subscribe(IWebConferenceDeviceControl control)
 		{
 			base.Subscribe(control);
@@ -329,8 +337,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			if (control == null)
 				return;
 
-			var device = control.Parent as IDevice;
-			var directoryControl = device == null ? null : device.Controls.GetControl<IDirectoryControl>();
+			IDirectoryControl directoryControl = control.Parent.Controls.GetControl<IDirectoryControl>();
 			if (directoryControl == null)
 				return;
 
@@ -340,6 +347,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			RebuildContacts();
 		}
 
+		/// <summary>
+		/// Unsusbcribe from the conference control events.
+		/// </summary>
+		/// <param name="control"></param>
 		protected override void Unsubscribe(IWebConferenceDeviceControl control)
 		{
 			base.Unsubscribe(control);
@@ -373,22 +384,37 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		#region View Callbacks
 
+		/// <summary>
+		/// Subscribe to the view events.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Subscribe(IWtcContactListView view)
 		{
 			base.Subscribe(view);
 
 			view.OnInviteParticipantButtonPressed += ViewOnInviteParticipantButtonPressed;
 			view.OnSearchButtonPressed += ViewOnSearchButtonPressed;
+			view.OnFavoritesButtonPressed += ViewOnFavoritesButtonPressed;
 		}
 
+		/// <summary>
+		/// Unsubscribe from the view events.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Unsubscribe(IWtcContactListView view)
 		{
 			base.Unsubscribe(view);
 
 			view.OnInviteParticipantButtonPressed -= ViewOnInviteParticipantButtonPressed;
 			view.OnSearchButtonPressed -= ViewOnSearchButtonPressed;
+			view.OnFavoritesButtonPressed -= ViewOnFavoritesButtonPressed;
 		}
 
+		/// <summary>
+		/// Called when the user presses the invite participants button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ViewOnInviteParticipantButtonPressed(object sender, EventArgs e)
 		{
 			if (ActiveConferenceControl == null)
@@ -398,14 +424,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			if (contacts.Length == 0)
 				return;
 
-			foreach (var contact in contacts)
+			foreach (IContact contact in contacts)
 			{
-				if (contact == null || !contact.GetDialContexts().Any())
-					continue;
+				IDialContext bestDialContext =
+					contact.GetDialContexts()
+					       .OrderByDescending(d => ActiveConferenceControl.CanDial(d))
+					       .FirstOrDefault();
 
-				var bestDialContext = contact.GetDialContexts()
-				                             .OrderByDescending(d => ActiveConferenceControl.CanDial(d))
-				                             .FirstOrDefault();
 				if (bestDialContext == null ||
 				    ActiveConferenceControl.CanDial(bestDialContext) == eDialContextSupport.Unsupported)
 					continue;
@@ -420,6 +445,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			RefreshIfVisible();
 		}
 
+		/// <summary>
+		/// Called when the user presses the search button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ViewOnSearchButtonPressed(object sender, EventArgs e)
 		{
 			Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>()
@@ -427,6 +457,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			                    KeyboardOnStringChanged);
 		}
 
+		/// <summary>
+		/// Called when the user presses the favorites button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ViewOnFavoritesButtonPressed(object sender, EventArgs eventArgs)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Called when the view visibility changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
 		{
 			base.ViewOnVisibilityChanged(sender, args);
