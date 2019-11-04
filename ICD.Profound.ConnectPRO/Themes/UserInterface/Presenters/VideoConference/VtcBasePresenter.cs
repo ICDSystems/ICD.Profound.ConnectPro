@@ -33,7 +33,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private readonly IVtcContactsPolycomPresenter m_ContactsPolycomPresenter;
 		private readonly IVtcButtonListPresenter m_ButtonListPresenter;
 		private readonly ICameraButtonsPresenter m_CameraButtonsPresenter;
-		private readonly ICameraActivePresenter m_CameraActivePresenter;
 		private readonly IGenericKeyboardPresenter m_KeyboardPresenter;
 		private readonly List<IVtcPresenter> m_VtcPresenters;
 
@@ -101,9 +100,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			m_CameraButtonsPresenter = nav.LazyLoadPresenter<ICameraButtonsPresenter>();
 			m_CameraButtonsPresenter.OnViewVisibilityChanged += CameraPresenterOnOnViewVisibilityChanged;
-
-			m_CameraActivePresenter = nav.LazyLoadPresenter<ICameraActivePresenter>();
-			m_CameraActivePresenter.OnViewVisibilityChanged += CameraPresenterOnOnViewVisibilityChanged;
 
 			m_KeyboardPresenter = nav.LazyLoadPresenter<IGenericKeyboardPresenter>();
 
@@ -209,9 +205,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			foreach (IVtcPresenter presenter in m_VtcPresenters)
 				presenter.ActiveConferenceControl = value;
 
-			m_CameraActivePresenter.SetVtcDestinationControl(value == null
-				                                                  ? null
-				                                                  : value.Parent.Controls.GetControl<IVideoConferenceRouteControl>());
+			m_CameraButtonsPresenter.SetActiveConferenceControl(value);
 		}
 
 		private void UpdateVisibility()

@@ -3,6 +3,9 @@ using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
+using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.Controls.Layout;
+using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -28,6 +31,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 
 		private readonly ICameraActivePresenter m_CameraActivePresenter;
 		private readonly ICameraControlPresenter m_CameraControlPresenter;
+		private readonly ICameraLayoutPresenter m_CameraLayoutPresenter;
 
 		private readonly SafeCriticalSection m_RefreshSection;
 
@@ -40,6 +44,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 
 			m_CameraActivePresenter = Navigation.LazyLoadPresenter<ICameraActivePresenter>();
 			m_CameraControlPresenter = Navigation.LazyLoadPresenter<ICameraControlPresenter>();
+			m_CameraLayoutPresenter = Navigation.LazyLoadPresenter<ICameraLayoutPresenter>();
 		}
 
 		protected override void Refresh(ICameraButtonsView view)
@@ -65,6 +70,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			{
 				m_RefreshSection.Leave();
 			}
+
+		}
+
+		/// <summary>
+		/// Sets the conference control that is currently active.
+		/// </summary>
+		/// <param name="value"></param>
+		public void SetActiveConferenceControl(IConferenceDeviceControl value)
+		{
+			m_CameraActivePresenter.SetVtcDestinationControl(value == null
+				                                                 ? null
+				                                                 : value.Parent.Controls
+				                                                        .GetControl<IVideoConferenceRouteControl>());
+			m_CameraLayoutPresenter.SetDestinationControl(value == null
+				                                              ? null
+				                                              : value.Parent.Controls
+				                                                     .GetControl<IConferenceLayoutControl>());
 
 		}
 

@@ -159,7 +159,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				bool state = State == true;
 				bool hasState = State != null;
 
-				icon = Icons.GetSourceIcon(icon, eSourceColor.White);
+				icon = Icons.GetIcon(icon, eIconColor.White);
 
 				view.SetIcon(icon);
 				view.SetLabelText(label);

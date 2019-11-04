@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
-using ICD.Connect.Conferencing.Controls.Layout;
-using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Zoom.Components.Call;
@@ -35,9 +31,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 	{
 		private readonly IWtcLeftMenuPresenter m_LeftMenuPresenter;
 		private readonly ICameraButtonsPresenter m_CameraButtonsPresenter;
-		private readonly ICameraActivePresenter m_CameraActivePresenter;
-		private readonly ICameraLayoutPresenter m_CameraLayoutPresenter;
-		private readonly List<IWtcPresenter> m_WtcPresenters;
 		private readonly SafeTimer m_ConnectingTimer;
 
 		private IPowerDeviceControl m_SubscribedPowerControl;
@@ -93,11 +86,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			m_CameraButtonsPresenter = nav.LazyLoadPresenter<ICameraButtonsPresenter>();
 			Subscribe(m_CameraButtonsPresenter);
-
-			m_CameraActivePresenter = nav.LazyLoadPresenter<ICameraActivePresenter>();
-			m_CameraLayoutPresenter = nav.LazyLoadPresenter<ICameraLayoutPresenter>();
-
-			m_WtcPresenters = nav.LazyLoadPresenters<IWtcPresenter>().ToList();
 
 			m_ConnectingTimer =
 				SafeTimer.Stopped(() => Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView(false));
@@ -173,7 +161,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				Room.Routing.PowerDevice(m_SubscribedPowerControl.Parent, false);
 		}
 
-		private void UpdateVisibility()
+		private void UpdateIsInCall()
 		{
 			IsInCall =
 				m_SubscribedConferenceControl != null &&
@@ -182,17 +170,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		private void SetWtcPresenterConferenceControls(IWebConferenceDeviceControl value)
 		{
-			foreach (IWtcPresenter presenter in m_WtcPresenters)
+			foreach (IWtcPresenter presenter in Navigation.LazyLoadPresenters<IWtcPresenter>())
 				presenter.ActiveConferenceControl = value;
 
-			m_CameraActivePresenter.SetVtcDestinationControl(value == null
-				                                                  ? null
-				                                                  : value.Parent.Controls.GetControl<IVideoConferenceRouteControl>());
-
-			m_CameraLayoutPresenter.SetDestinationControl(value == null
-				                                              ? null
-				                                              : value.Parent.Controls.GetControl<IConferenceLayoutControl>());
-
+			m_CameraButtonsPresenter.SetActiveConferenceControl(value);
 		}
 
 		private void SubmitZoomPassword(string meetingNumber, string password)
@@ -241,7 +222,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				zoomCallComponent.OnFarEndRequestedVideoUnMute += ZoomControlOnVideoUnMuteRequested;
 			}
 
-			UpdateVisibility();
+			UpdateIsInCall();
 
 			m_SubscribedPowerControl = GetWtcPowerControl(m_SubscribedConferenceControl);
 			if (m_SubscribedPowerControl == null)
@@ -276,7 +257,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				zoomCallComponent.OnFarEndRequestedVideoUnMute -= ZoomControlOnVideoUnMuteRequested;
 			}
 
-			UpdateVisibility();
+			UpdateIsInCall();
 
 			if (m_SubscribedPowerControl == null)
 				return;
@@ -293,7 +274,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		private void ControlOnConferenceAdded(object sender, ConferenceEventArgs args)
 		{
 			Subscribe(args.Data);
-			UpdateVisibility();
+			UpdateIsInCall();
 		}
 
 		/// <summary>
@@ -304,7 +285,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		private void ControlOnConferenceRemoved(object sender, ConferenceEventArgs args)
 		{
 			Unsubscribe(args.Data);
-			UpdateVisibility();
+			UpdateIsInCall();
 		}
 
 		/// <summary>
@@ -383,6 +364,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			                GenericAlertPresenterButton.Dismiss);
 
 		}
+
 		/// <summary>
 		/// Called when the codec awake state changes.
 		/// </summary>
@@ -438,7 +420,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 					break;
 			}
 
-			UpdateVisibility();
+			UpdateIsInCall();
 		}
 
 		#endregion
@@ -489,21 +471,31 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			
 			// View became visible
 			if (args.Data)
-			{
 				m_LeftMenuPresenter.ShowView(true);
-			}
+
+			UpdateCodecAwakeState(true);
+		}
+
+		protected override void ViewOnPreVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			base.ViewOnPreVisibilityChanged(sender, args);
+
 			// View became hidden
-			else
+			if (!args.Data)
 			{
 				m_LeftMenuPresenter.ShowView(false);
 
+				// Hangup
 				if (ActiveConferenceControl != null)
 				{
 					var active = ActiveConferenceControl.GetActiveConference() as ITraditionalConference;
-
 					if (active != null)
 						active.Hangup();
 				}
+
+				// Hide all of the WTC presenters
+				foreach (IWtcPresenter presenter in Navigation.LazyLoadPresenters<IWtcPresenter>())
+					presenter.ShowView(false);
 
 				Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>().ShowView(false);
 

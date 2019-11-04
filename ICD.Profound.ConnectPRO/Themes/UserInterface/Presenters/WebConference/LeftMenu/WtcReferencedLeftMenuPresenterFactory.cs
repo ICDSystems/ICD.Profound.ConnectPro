@@ -1,7 +1,6 @@
 ﻿using System;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.LeftMenu;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.LeftMenu.Buttons;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.LeftMenu;
 

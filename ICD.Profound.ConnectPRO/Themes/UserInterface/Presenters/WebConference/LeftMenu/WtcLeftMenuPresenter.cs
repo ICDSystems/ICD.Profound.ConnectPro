@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
+using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.UI.Attributes;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.ActiveMeeting;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.LeftMenu;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.LeftMenu.Buttons;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -17,13 +21,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 	[PresenterBinding(typeof(IWtcLeftMenuPresenter))]
 	public sealed class WtcLeftMenuPresenter : AbstractWtcPresenter<IWtcLeftMenuView>, IWtcLeftMenuPresenter
 	{
-		private enum eMode
-		{
-			Default,
-			WebConference,
-			CallOut
-		}
-
 		private readonly Type[] m_DefaultButtons =
 		{
 			typeof(IStartJoinMeetingWtcReferencedLeftMenuPresenter),
@@ -50,11 +47,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private readonly WtcReferencedLeftMenuPresenterFactory m_ChildFactory;
 
 		private Type[] m_Buttons;
-		private eMode m_Mode;
+		private eMode? m_Mode;
+		private bool m_IsInWebConference;
 
-		private eMode Mode
+		public eMode Mode
 		{
-			get { return m_Mode; }
+			get { return m_Mode ?? eMode.Default; }
 			set
 			{
 				if (value == m_Mode)
@@ -63,7 +61,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				m_Mode = value;
 				m_Buttons = GetButtonPresenterTypes().ToArray();
 
+				ShowDefaultPresenterForMode();
+
 				RefreshIfVisible();
+			}
+		}
+
+		private bool IsInWebConference
+		{
+			get { return m_IsInWebConference; }
+			set
+			{
+				if (value == m_IsInWebConference)
+					return;
+
+				m_IsInWebConference = value;
+
+				Mode = eMode.WebConference;
 			}
 		}
 
@@ -146,6 +160,31 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			return GetView().GetChildViews(ViewFactory, count);
 		}
 
+		private void UpdateIsInWebConference()
+		{
+			IsInWebConference =
+				ActiveConferenceControl != null &&
+				ActiveConferenceControl.GetActiveConference() != null;
+		}
+
+		private void ShowDefaultPresenterForMode()
+		{
+			switch (m_Mode)
+			{
+				case eMode.Default:
+					Navigation.NavigateTo<IWtcStartMeetingPresenter>();
+					break;
+
+				case eMode.WebConference:
+					Navigation.NavigateTo<IWtcActiveMeetingPresenter>();
+					break;
+
+				case eMode.CallOut:
+					Navigation.NavigateTo<IWtcCallOutPresenter>();
+					break;
+			}
+		}
+
 		#endregion
 
 		#region Control Callbacks
@@ -166,10 +205,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 			foreach (IWebConference conference in control.GetConferences())
 				Subscribe(conference);
+
+			UpdateIsInWebConference();
 		}
 
 		/// <summary>
-		/// Unsusbcribe from the conference control events.
+		/// Unsubscribe from the conference control events.
 		/// </summary>
 		/// <param name="control"></param>
 		protected override void Unsubscribe(IWebConferenceDeviceControl control)
@@ -189,15 +230,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private void ControlOnConferenceRemoved(object sender, ConferenceEventArgs args)
 		{
 			Unsubscribe(args.Data as IWebConference);
-
-			RefreshIfVisible();
+			UpdateIsInWebConference();
 		}
 
 		private void ControlOnConferenceAdded(object sender, ConferenceEventArgs args)
 		{
 			Subscribe(args.Data as IWebConference);
-
-			RefreshIfVisible();
+			UpdateIsInWebConference();
 		}
 
 		#endregion
@@ -220,17 +259,34 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private void ConferenceOnStatusChanged(object sender, ConferenceStatusEventArgs args)
 		{
-			RefreshIfVisible();
+			UpdateIsInWebConference();
 		}
 
 		private void ConferenceOnParticipantAdded(object sender, ParticipantEventArgs participantEventArgs)
 		{
-			RefreshIfVisible();
+			UpdateIsInWebConference();
 		}
 
 		private void ConferenceOnParticipantRemoved(object sender, ParticipantEventArgs participantEventArgs)
 		{
-			RefreshIfVisible();
+			UpdateIsInWebConference();
+		}
+
+		#endregion
+
+		#region View Callbacks
+
+		/// <summary>
+		/// Called when the view visibility changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			base.ViewOnVisibilityChanged(sender, args);
+
+			if (args.Data)
+				ShowDefaultPresenterForMode();
 		}
 
 		#endregion

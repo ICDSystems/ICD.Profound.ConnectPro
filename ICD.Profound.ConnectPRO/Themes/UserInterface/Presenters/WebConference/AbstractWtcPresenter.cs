@@ -49,7 +49,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		}
 
 		/// <summary>
-		/// Unsusbcribe from the conference control events.
+		/// Unsubscribe from the conference control events.
 		/// </summary>
 		/// <param name="control"></param>
 		protected virtual void Unsubscribe(IWebConferenceDeviceControl control)
