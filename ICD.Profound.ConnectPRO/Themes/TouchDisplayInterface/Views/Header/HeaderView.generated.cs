@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using ICD.Connect.Panels;
+using ICD.Connect.Panels.Devices;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Images;
+using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.TextControls;
 using ICD.Connect.UI.Controls.Pages;
 
@@ -15,10 +17,15 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 		private VtProSimpleLabel m_TimeLabel;
         private VtProAdvancedButton m_CenterButton;
         private VtProDynamicIconObject m_CenterButtonIcon;
+        private VtProSubpageReferenceList m_LeftButtonList;
+        private VtProSubpageReferenceList m_RightButtonList;
 
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
-			m_Subpage = new VtProSubpage(panel, parent);
+			m_Subpage = new VtProSubpage(panel, parent)
+			{
+				DigitalVisibilityJoin = 50
+			};
 
 			m_RoomName = new VtProSimpleLabel(panel, m_Subpage)
 			{
@@ -40,6 +47,22 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
             m_CenterButtonIcon = new VtProDynamicIconObject(panel, m_Subpage)
             {
 	            DynamicIconSerialJoin = 12
+            };
+
+            m_LeftButtonList = new VtProSubpageReferenceList(11, panel as IPanelDevice, m_Subpage)
+            {
+				AnalogJoinIncrement = 1,
+				DigitalJoinIncrement = 2,
+				SerialJoinIncrement = 2,
+				MaxSize = 10
+            };
+
+            m_RightButtonList = new VtProSubpageReferenceList(12, panel as IPanelDevice, m_Subpage)
+            {
+	            AnalogJoinIncrement = 1,
+	            DigitalJoinIncrement = 2,
+	            SerialJoinIncrement = 2,
+	            MaxSize = 10
             };
 		}
 

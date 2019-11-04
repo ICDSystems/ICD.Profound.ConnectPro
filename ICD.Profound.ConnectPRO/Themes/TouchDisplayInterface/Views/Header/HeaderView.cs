@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Header;
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
@@ -11,9 +13,14 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 	{
 		public event EventHandler OnCenterButtonPressed;
 
+		private readonly List<IReferencedHeaderButtonView> m_LeftButtonViewList;
+		private readonly List<IReferencedHeaderButtonView> m_RightButtonViewList;
+
 		public HeaderView(ISigInputOutput panel, ConnectProTheme theme)
 			: base(panel, theme)
 		{
+			m_LeftButtonViewList = new List<IReferencedHeaderButtonView>();
+			m_RightButtonViewList = new List<IReferencedHeaderButtonView>();
 		}
 
 		public void SetRoomName(string name)
@@ -34,6 +41,16 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 		public void SetCenterButtonText(string text)
 		{
 			m_CenterButton.SetLabelText(text);
+		}
+
+		public IEnumerable<IReferencedHeaderButtonView> GetLeftButtonViews(ITouchDisplayViewFactory factory, ushort count)
+		{
+			return GetChildViews(factory, m_LeftButtonList, m_LeftButtonViewList, count);
+		}
+
+		public IEnumerable<IReferencedHeaderButtonView> GetRightButtonViews(ITouchDisplayViewFactory factory, ushort count)
+		{
+			return GetChildViews(factory, m_RightButtonList, m_RightButtonViewList, count);
 		}
 
 		#region Control Callbacks
