@@ -4,5 +4,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference
 {
 	public interface IWtcReferencedLeftMenuPresenter : IUiPresenter<IWtcReferencedLeftMenuView>
 	{
+		/// <summary>
+		/// Gets/sets the model for this child item.
+		/// </summary>
+		IWtcLeftMenuButtonModel ButtonModel { get; set; }
 	}
 }

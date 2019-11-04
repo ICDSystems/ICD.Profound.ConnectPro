@@ -278,6 +278,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\IWtcPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\IWtcSharePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\IWtcStartMeetingPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\WebConference\LeftMenu\IWtcLeftMenuButtonModel.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\LeftMenu\IWtcLeftMenuPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\WebConference\LeftMenu\IWtcReferencedLeftMenuPresenter.cs" />
     <Compile Include="Themes\UserInterface\IViews\AudioConference\IAtcBaseView.cs" />
@@ -465,6 +466,9 @@
     <Compile Include="Themes\UserInterface\Presenters\WebConference\Contacts\WtcReferencedContactPresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\Contacts\WtcReferencedSelectedContactPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\Contacts\WtcReferencedSelectedContactPresenterFactory.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\WebConference\LeftMenu\WtcLeftMenuPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\WebConference\LeftMenu\WtcReferencedLeftMenuPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\WebConference\LeftMenu\WtcReferencedLeftMenuPresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcCallOutPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\WebConference\WtcSharePresenter.cs" />
