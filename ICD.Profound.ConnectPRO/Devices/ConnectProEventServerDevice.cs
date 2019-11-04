@@ -13,6 +13,8 @@ namespace ICD.Profound.ConnectPRO.Devices
 {
 	public sealed class ConnectProEventServerDevice : AbstractDevice<ConnectProEventServerDeviceSettings>
 	{
+		public const ushort DEFAULT_PORT = 8888;
+
 		private const string DELIMITER = "\xFF";
 
 		private readonly IcdTcpServer m_Server;
@@ -204,7 +206,7 @@ namespace ICD.Profound.ConnectPRO.Devices
 
 			base.ClearSettingsFinal();
 
-			Port = 0;
+			Port = DEFAULT_PORT;
 		}
 
 		/// <summary>

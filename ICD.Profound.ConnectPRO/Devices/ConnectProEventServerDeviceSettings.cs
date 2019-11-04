@@ -30,7 +30,7 @@ namespace ICD.Profound.ConnectPRO.Devices
 		{
 			base.ParseXml(xml);
 
-			Port = XmlUtils.TryReadChildElementContentAsUShort(xml, PORT_ELEMENT) ?? 0;
+			Port = XmlUtils.TryReadChildElementContentAsUShort(xml, PORT_ELEMENT) ?? ConnectProEventServerDevice.DEFAULT_PORT;
 		}
 	}
 }
