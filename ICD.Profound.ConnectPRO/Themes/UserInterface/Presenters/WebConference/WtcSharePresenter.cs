@@ -9,7 +9,6 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.EventArguments;
-using ICD.Connect.Conferencing.Participants.EventHelpers;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing;
 using ICD.Connect.Routing.Connections;
@@ -35,7 +34,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private readonly IcdHashSet<ISource> m_RoutedSources;
-		private readonly WebParticipantEventHelper m_ParticipantEventHelper;
 
 		private ISource[] m_Sources;
 		private ISource m_Selected;

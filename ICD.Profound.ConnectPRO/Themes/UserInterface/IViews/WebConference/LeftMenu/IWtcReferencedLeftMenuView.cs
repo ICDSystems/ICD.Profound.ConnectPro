@@ -32,5 +32,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Left
 		/// </summary>
 		/// <param name="state"></param>
 		void SetStatusLightState(bool state);
+
+		/// <summary>
+		/// Sets the selected state of the button.
+		/// </summary>
+		/// <param name="selected"></param>
+		void SetButtonSelected(bool selected);
 	}
 }

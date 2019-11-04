@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Connect.Conferencing.Conferences;
@@ -7,6 +8,7 @@ using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.LeftMenu;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.LeftMenu.Buttons;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.LeftMenu;
 
@@ -15,10 +17,55 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 	[PresenterBinding(typeof(IWtcLeftMenuPresenter))]
 	public sealed class WtcLeftMenuPresenter : AbstractWtcPresenter<IWtcLeftMenuView>, IWtcLeftMenuPresenter
 	{
+		private enum eMode
+		{
+			Default,
+			WebConference,
+			CallOut
+		}
+
+		private readonly Type[] m_DefaultButtons =
+		{
+			typeof(IStartJoinMeetingWtcReferencedLeftMenuPresenter),
+			typeof(IContactsWtcReferencedLeftMenuPresenter),
+			typeof(ICallOutWtcReferencedLeftMenuPresenter)
+		};
+
+		private readonly Type[] m_WebConferenceButtons =
+		{
+			typeof(IStartJoinMeetingWtcReferencedLeftMenuPresenter),
+			typeof(IContactsWtcReferencedLeftMenuPresenter),
+			typeof(IShareWtcReferencedLeftMenuPresenter),
+			typeof(IRecordWtcReferencedLeftMenuPresenter)
+		};
+
+		private readonly Type[] m_CallOutButtons =
+		{
+			typeof(IStartJoinMeetingWtcReferencedLeftMenuPresenter),
+			typeof(IContactsWtcReferencedLeftMenuPresenter),
+			typeof(ICallOutWtcReferencedLeftMenuPresenter)
+		};
+
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly WtcReferencedLeftMenuPresenterFactory m_ChildFactory;
 
-		private IWtcLeftMenuButtonModel[] m_Buttons;
+		private Type[] m_Buttons;
+		private eMode m_Mode;
+
+		private eMode Mode
+		{
+			get { return m_Mode; }
+			set
+			{
+				if (value == m_Mode)
+					return;
+
+				m_Mode = value;
+				m_Buttons = GetButtonPresenterTypes().ToArray();
+
+				RefreshIfVisible();
+			}
+		}
 
 		/// <summary>
 		/// Constructor.
@@ -31,6 +78,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		{
 			m_RefreshSection = new SafeCriticalSection();
 			m_ChildFactory = new WtcReferencedLeftMenuPresenterFactory(nav, ChildItemFactory, p => { }, p => { });
+
+			Mode = eMode.Default;
 		}
 
 		/// <summary>
@@ -55,12 +104,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 			try
 			{
-				m_Buttons = BuildButtons().ToArray();
 				foreach (IWtcReferencedLeftMenuPresenter presenter in m_ChildFactory.BuildChildren(m_Buttons))
-				{
 					presenter.ShowView(true);
-					presenter.SetViewEnabled(presenter.ButtonModel.Enabled);
-				}
 			}
 			finally
 			{
@@ -76,9 +121,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// Audio Call = Start/Join (Disabled) + Contacts (Disabled) + Call Out
 		/// </summary>
 		/// <returns></returns>
-		private IEnumerable<IWtcLeftMenuButtonModel> BuildButtons()
+		private IEnumerable<Type> GetButtonPresenterTypes()
 		{
-			throw new System.NotImplementedException();
+			switch (Mode)
+			{
+				case eMode.Default:
+					return m_DefaultButtons;
+				case eMode.WebConference:
+					return m_WebConferenceButtons;
+				case eMode.CallOut:
+					return m_CallOutButtons;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
 		}
 
 		/// <summary>

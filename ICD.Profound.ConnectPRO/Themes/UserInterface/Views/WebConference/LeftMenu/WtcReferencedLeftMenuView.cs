@@ -78,6 +78,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.LeftM
 			m_StatusButton.SetMode(state ? MODE_ON : MODE_OFF);
 		}
 
+		/// <summary>
+		/// Sets the selected state of the button.
+		/// </summary>
+		/// <param name="selected"></param>
+		public void SetButtonSelected(bool selected)
+		{
+			m_Button.SetSelected(selected);
+		}
+
 		#endregion
 
 		#region Control Callbacks
