@@ -1,4 +1,5 @@
-﻿using ICD.Common.Utils;
+﻿using System;
+using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.SettingsTree.Zoom;
@@ -80,6 +81,42 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		private void SettingsOnMuteAllParticipantsAtMeetingStartChanged(object sender, BoolEventArgs boolEventArgs)
 		{
 			RefreshIfVisible();
+		}
+
+		#endregion
+
+		#region View Callbacks
+
+		/// <summary>
+		/// Subscribe to the view events.
+		/// </summary>
+		/// <param name="view"></param>
+		protected override void Subscribe(ISettingsZoomGeneralView view)
+		{
+			base.Subscribe(view);
+
+			view.OnMuteAllParticipantsButtonPressed += ViewOnMuteAllParticipantsButtonPressed;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the view events.
+		/// </summary>
+		/// <param name="view"></param>
+		protected override void Unsubscribe(ISettingsZoomGeneralView view)
+		{
+			base.Unsubscribe(view);
+
+			view.OnMuteAllParticipantsButtonPressed -= ViewOnMuteAllParticipantsButtonPressed;
+		}
+
+		/// <summary>
+		/// Called when the user presses the mute all button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ViewOnMuteAllParticipantsButtonPressed(object sender, EventArgs e)
+		{
+			Settings.SetMuteAllParticipantsAtMeetingStart(!Settings.MuteAllParticipantsAtMeetingStart);
 		}
 
 		#endregion

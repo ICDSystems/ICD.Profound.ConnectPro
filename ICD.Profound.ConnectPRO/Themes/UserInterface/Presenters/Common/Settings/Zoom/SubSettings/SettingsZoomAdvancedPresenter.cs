@@ -1,4 +1,5 @@
-﻿using ICD.Common.Utils;
+﻿using System;
+using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.SettingsTree.Zoom;
@@ -90,6 +91,44 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		private void SettingsOnAudioProcessingChanged(object sender, BoolEventArgs boolEventArgs)
 		{
 			RefreshIfVisible();
+		}
+
+		#endregion
+
+		#region View Callbacks
+
+		/// <summary>
+		/// Subscribe to the view events.
+		/// </summary>
+		/// <param name="view"></param>
+		protected override void Subscribe(ISettingsZoomAdvancedView view)
+		{
+			base.Subscribe(view);
+
+			view.OnAudioProcessingButtonPressed += ViewOnAudioProcessingButtonPressed;
+			view.OnAudioReverbButtonPressed += ViewOnAudioReverbButtonPressed;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the view events.
+		/// </summary>
+		/// <param name="view"></param>
+		protected override void Unsubscribe(ISettingsZoomAdvancedView view)
+		{
+			base.Unsubscribe(view);
+
+			view.OnAudioProcessingButtonPressed -= ViewOnAudioProcessingButtonPressed;
+			view.OnAudioReverbButtonPressed -= ViewOnAudioReverbButtonPressed;
+		}
+
+		private void ViewOnAudioReverbButtonPressed(object sender, EventArgs e)
+		{
+			Settings.SetReduceAudioReverb(!Settings.ReduceAudioReverb);
+		}
+
+		private void ViewOnAudioProcessingButtonPressed(object sender, EventArgs e)
+		{
+			Settings.SetAudioProcessing(!Settings.AudioProcessing);
 		}
 
 		#endregion
