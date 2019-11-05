@@ -26,17 +26,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			get { return ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConference() != null; }
 		}
 
-		public WtcStartMeetingPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="nav"></param>
+		/// <param name="views"></param>
+		/// <param name="theme"></param>
+		public WtcStartMeetingPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+			: base(nav, views, theme)
 		{
 			m_Builder = new StringBuilder();
 			m_RefreshSection = new SafeCriticalSection();
 		}
 
+		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Refresh(IWtcStartMeetingView view)
 		{
 			base.Refresh(view);
 
 			m_RefreshSection.Enter();
+
 			try
 			{
 				bool inConference = IsInConference;
@@ -116,6 +128,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		#region View Callbacks
 
+		/// <summary>
+		/// Subscribe to the view events.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Subscribe(IWtcStartMeetingView view)
 		{
 			base.Subscribe(view);
@@ -128,6 +144,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			view.OnKeypadButtonPressed += ViewOnKeypadButtonPressed;
 		}
 
+		/// <summary>
+		/// Unsubscribe from the view events.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Unsubscribe(IWtcStartMeetingView view)
 		{
 			base.Unsubscribe(view);

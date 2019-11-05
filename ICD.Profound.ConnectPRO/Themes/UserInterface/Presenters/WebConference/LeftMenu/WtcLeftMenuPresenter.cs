@@ -61,7 +61,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				m_Mode = value;
 				m_Buttons = GetButtonPresenterTypes().ToArray();
 
-				ShowDefaultPresenterForMode();
+				if (IsViewVisible)
+					ShowDefaultPresenterForMode();
 
 				RefreshIfVisible();
 			}
