@@ -5,12 +5,14 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
+using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Contacts;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Directory;
 using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.Directory;
 using ICD.Connect.Conferencing.Directory.Tree;
+using ICD.Connect.Conferencing.Favorites;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -41,6 +43,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// </summary>
 		private string m_ConfirmedFilter;
 
+		private bool m_ShowFavorites;
+
 		/// <summary>
 		/// Gets/sets the active contact filter.
 		/// </summary>
@@ -53,6 +57,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 					return;
 
 				m_Filter = value;
+
+				RebuildContacts();
+			}
+		}
+
+		/// <summary>
+		/// When true show the favorites, otherwise show directory.
+		/// </summary>
+		private bool ShowFavorites
+		{
+			get { return m_ShowFavorites; }
+			set
+			{
+				if (value == m_ShowFavorites)
+					return;
+
+				m_ShowFavorites = value;
 
 				RebuildContacts();
 			}
@@ -107,12 +128,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			try
 			{
 				string label =
-					string.IsNullOrEmpty(Filter)
-						? "Contact List"
-						: string.Format("Contact List - Filter: \"{0}\"", Filter);
+					!string.IsNullOrEmpty(Filter)
+						? string.Format("Contact List - Filter: \"{0}\"", Filter)
+						: ShowFavorites
+							? "Favorite List"
+							: "Contact list";
 
 				view.SetContactListLabelText(label);
 				view.SetSearchButtonEnabled(true);
+				view.SetFavoritesButtonSelected(string.IsNullOrEmpty(Filter) && ShowFavorites);
 
 				IContact[] contacts = m_Contacts.Except(m_SelectedContacts).ToArray();
 
@@ -207,6 +231,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private IEnumerable<IContact> GetContacts()
 		{
+			if (Room == null)
+				return Enumerable.Empty<IContact>();
+
 			if (m_DirectoryBrowser == null)
 				return Enumerable.Empty<IContact>();
 
@@ -214,24 +241,44 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			if (current == null)
 				return Enumerable.Empty<IContact>();
 
-			if (string.IsNullOrEmpty(Filter))
+			// Search
+			if (!string.IsNullOrEmpty(Filter))
+			{
+				var nameScoringMethod = GetWeightedTokenSearchFunc(Filter);
 				return current.GetContacts()
-				              .OrderBy(c =>
-				              {
-					              var onlineContact = c as IContactWithOnlineState;
-					              if (onlineContact == null || onlineContact.OnlineState == eOnlineState.Unknown)
-						              return eOnlineState.Offline;
-					              return onlineContact.OnlineState;
-				              })
-				              .ThenBy(c => c.Name);
+				              .GroupBy(c => nameScoringMethod(c.Name)) // group so we can filter low scores
+				              .Where(g => g.Key > 0) // filter out non-matches
+				              .OrderByDescending(g => g.Key)
+				              .SelectMany(g => g) // ungroup
+				              .OrderBy(c => c.Name);
+			}
 
-			var nameScoringMethod = GetWeightedTokenSearchFunc(Filter);
+			// Favorites
+			if (ShowFavorites)
+			{
+				IConferenceManager manager = Room.ConferenceManager;
+				IFavorites favorites = manager == null ? null : manager.Favorites;
+				if (favorites == null)
+					return Enumerable.Empty<IContact>();
+
+				IEnumerable<Favorite> zoomContacts = favorites.GetFavoritesByProtocol(eDialProtocol.ZoomContact);
+				IEnumerable<Favorite> zoom = favorites.GetFavoritesByProtocol(eDialProtocol.Zoom);
+
+				return zoomContacts.Concat(zoom)
+				                   .OrderBy(c => c.Name)
+				                   .Cast<IContact>();
+			}
+
+			// Directory
 			return current.GetContacts()
-			              .GroupBy(c => nameScoringMethod(c.Name)) // group so we can filter low scores
-			              .Where(g => g.Key > 0) // filter out non-matches
-			              .OrderByDescending(g => g.Key)
-						  .SelectMany(g => g) // ungroup
-						  .OrderBy(c => c.Name);
+			              .OrderBy(c =>
+			                       {
+				                       var onlineContact = c as IContactWithOnlineState;
+				                       if (onlineContact == null || onlineContact.OnlineState == eOnlineState.Unknown)
+					                       return eOnlineState.Offline;
+				                       return onlineContact.OnlineState;
+			                       })
+			              .ThenBy(c => c.Name);
 		}
 
 		private static Func<string, double> GetWeightedTokenSearchFunc(string searchString)
@@ -464,7 +511,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// <param name="eventArgs"></param>
 		private void ViewOnFavoritesButtonPressed(object sender, EventArgs eventArgs)
 		{
-			throw new NotImplementedException();
+			ShowFavorites = !ShowFavorites;
 		}
 
 		/// <summary>
@@ -477,6 +524,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			base.ViewOnVisibilityChanged(sender, args);
 
 			Filter = null;
+			ShowFavorites = false;
 			m_ConfirmedFilter = null;
 			m_SelectedContacts.Clear();
 

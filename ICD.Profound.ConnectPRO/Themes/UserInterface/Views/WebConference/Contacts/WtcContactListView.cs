@@ -77,6 +77,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 		}
 
 		/// <summary>
+		/// Sets the selected state of the favorite button.
+		/// </summary>
+		/// <param name="selected"></param>
+		public void SetFavoritesButtonSelected(bool selected)
+		{
+			m_FavoritesButton.SetSelected(selected);
+		}
+
+		/// <summary>
 		/// Sets the enabled state of the Search button.
 		/// </summary>
 		/// <param name="enabled"></param>

@@ -21,14 +21,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 	[PresenterBinding(typeof(IWtcLeftMenuPresenter))]
 	public sealed class WtcLeftMenuPresenter : AbstractWtcPresenter<IWtcLeftMenuView>, IWtcLeftMenuPresenter
 	{
-		private readonly Type[] m_DefaultButtons =
+		private static readonly Type[] s_DefaultButtons =
 		{
 			typeof(IStartJoinMeetingWtcReferencedLeftMenuPresenter),
 			typeof(IContactsWtcReferencedLeftMenuPresenter),
 			typeof(ICallOutWtcReferencedLeftMenuPresenter)
 		};
 
-		private readonly Type[] m_WebConferenceButtons =
+		private static readonly Type[] s_WebConferenceButtons =
 		{
 			typeof(IStartJoinMeetingWtcReferencedLeftMenuPresenter),
 			typeof(IContactsWtcReferencedLeftMenuPresenter),
@@ -36,7 +36,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			typeof(IRecordWtcReferencedLeftMenuPresenter)
 		};
 
-		private readonly Type[] m_CallOutButtons =
+		private static readonly Type[] s_CallOutButtons =
 		{
 			typeof(IStartJoinMeetingWtcReferencedLeftMenuPresenter),
 			typeof(IContactsWtcReferencedLeftMenuPresenter),
@@ -148,11 +148,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			switch (Mode)
 			{
 				case eMode.Default:
-					return m_DefaultButtons;
+					return s_DefaultButtons;
 				case eMode.WebConference:
-					return m_WebConferenceButtons;
+					return s_WebConferenceButtons;
 				case eMode.CallOut:
-					return m_CallOutButtons;
+					return s_CallOutButtons;
 				default:
 					throw new ArgumentOutOfRangeException();
 			}

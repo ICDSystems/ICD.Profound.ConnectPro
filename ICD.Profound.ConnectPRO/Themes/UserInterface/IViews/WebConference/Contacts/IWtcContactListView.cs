@@ -60,5 +60,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Cont
 		/// <param name="count"></param>
 		/// <returns></returns>
 		IEnumerable<IWtcReferencedSelectedContactView> GetSelectedContactViews(IViewFactory factory, ushort count);
+
+		/// <summary>
+		/// Sets the selected state of the favorite button.
+		/// </summary>
+		/// <param name="selected"></param>
+		void SetFavoritesButtonSelected(bool selected);
 	}
 }
