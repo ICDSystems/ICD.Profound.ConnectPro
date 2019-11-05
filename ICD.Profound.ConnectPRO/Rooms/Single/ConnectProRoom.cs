@@ -96,7 +96,7 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 			base.ApplySettingsFinal(settings, factory);
 
 			// Favorites
-			string path = PathUtils.GetProgramConfigPath("favorites");
+			string path = PathUtils.GetProgramDataPath("favorites");
 			if (ConferenceManager != null)
 				ConferenceManager.Favorites = new SqLiteFavorites(path);
 
