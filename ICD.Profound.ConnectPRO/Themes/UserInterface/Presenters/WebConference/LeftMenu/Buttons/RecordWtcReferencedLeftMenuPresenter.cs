@@ -1,4 +1,5 @@
-﻿using ICD.Common.Utils.EventArguments;
+﻿using ICD.Common.Utils;
+using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Zoom.Components.Call;
 using ICD.Connect.Conferencing.Zoom.Controls.Conferencing;
@@ -107,9 +108,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// <param name="eventArgs"></param>
 		private void ZoomControlOnCallRecordErrorState(object sender, StringEventArgs eventArgs)
 		{
-			string message = eventArgs.Data;
-			if (message == null)
-				return;
+			string message = "Failed to Start Recording";
+			if (!string.IsNullOrEmpty(eventArgs.Data))
+				message = string.Format("{0}{1}{2}", message, IcdEnvironment.NewLine, eventArgs.Data);
 
 			// Hide the error message after 8 seconds.
 			const long timeout = 8 * 1000;
