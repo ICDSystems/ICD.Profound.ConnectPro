@@ -1,4 +1,5 @@
-﻿using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
+﻿using ICD.Connect.UI.Mvp.Presenters;
+using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
@@ -9,14 +10,9 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 	/// Components are often recycled between use so we don't want to automatically take views from the factory.
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public abstract class AbstractOsdComponentPresenter<T> : AbstractOsdPresenter<T>
+	public abstract class AbstractOsdComponentPresenter<T> : AbstractOsdPresenter<T>, IComponentPresenter
 		where T : class, IOsdView
 	{
-		/// <summary>
-		/// Returns true if this presenter is part of a collection of components.
-		/// </summary>
-		public override bool IsComponent { get { return true; } }
-
 		/// <summary>
 		/// Constructor.
 		/// </summary>

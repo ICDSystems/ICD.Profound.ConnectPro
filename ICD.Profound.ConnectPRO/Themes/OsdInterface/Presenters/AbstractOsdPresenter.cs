@@ -28,11 +28,6 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 		/// </summary>
 		protected ConnectProTheme Theme { get { return m_Theme; } }
 
-		/// <summary>
-		/// Returns true if this presenter is part of a collection of components.
-		/// </summary>
-		public override bool IsComponent { get { return false; } }
-
 		#endregion
 
 		/// <summary>

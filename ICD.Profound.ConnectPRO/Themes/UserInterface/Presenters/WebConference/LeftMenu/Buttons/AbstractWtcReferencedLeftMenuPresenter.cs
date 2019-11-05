@@ -37,27 +37,27 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		}
 
 		/// <summary>
-		/// Gets the label for the button.
+		/// Gets/sets the label for the button.
 		/// </summary>
 		protected string Label { get; set; }
 
 		/// <summary>
-		/// Gets the icon for the button.
+		/// Gets/sets the icon for the button.
 		/// </summary>
 		protected string Icon { get; set; }
 
 		/// <summary>
-		/// Gets the feedback state for the light.
+		/// Gets/sets the feedback state for the light.
 		/// </summary>
 		protected bool? State { get; set; }
 
 		/// <summary>
-		/// Returns true if the button should be selected.
+		/// Gets/sets the selected state for the button.
 		/// </summary>
-		public bool Selected { get; set; }
+		protected bool Selected { get; set; }
 
 		/// <summary>
-		/// Returns true if the button should be enabled.
+		/// Gets/sets the enabled state for the entire subpage.
 		/// </summary>
 		protected bool Enabled { get; set; }
 

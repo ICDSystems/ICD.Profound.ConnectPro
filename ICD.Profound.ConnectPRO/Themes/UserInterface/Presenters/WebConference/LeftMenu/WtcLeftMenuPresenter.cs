@@ -123,7 +123,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			try
 			{
 				foreach (IWtcReferencedLeftMenuPresenter presenter in m_ChildFactory.BuildChildren(m_Buttons))
+				{
+					presenter.ActiveConferenceControl = ActiveConferenceControl;
 					presenter.ShowView(true);
+				}
 			}
 			finally
 			{
