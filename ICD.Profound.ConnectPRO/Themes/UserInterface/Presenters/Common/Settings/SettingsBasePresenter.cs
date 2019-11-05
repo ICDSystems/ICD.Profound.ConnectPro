@@ -130,7 +130,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			try
 			{
 				// Show the back button
-				view.SetBackButtonVisible(ParentNode != null);
+				bool backButton = m_MenuPath.Count >= 2;
+
+				// Edge case - don't show back button for leaves on the root
+				if (CurrentNode is ISettingsLeaf && ParentNode == m_SettingsRoot)
+					backButton = false;
+
+				view.SetBackButtonVisible(backButton);
 
 				// Set the title
 				ISettingsNode currentOrParentNode = CurrentNode as ISettingsNode ?? ParentNode;
