@@ -1,5 +1,4 @@
-﻿using System;
-using ICD.Common.Utils.EventArguments;
+﻿using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
@@ -10,6 +9,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.ActiveMeeting;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.LeftMenu.Buttons;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.LeftMenu;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.LeftMenu.Buttons
 {
@@ -19,20 +19,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 	{
 		private readonly IWtcStartMeetingPresenter m_StartMeetingPresenter;
 		private readonly IWtcActiveMeetingPresenter m_ActiveMeetingPresenter;
-		private bool? m_IsInWebConference;
 
 		private bool IsInWebConference
 		{
-			get { return m_IsInWebConference ?? false; }
-			set
+			get
 			{
-				if (value == m_IsInWebConference)
-					return;
-
-				m_IsInWebConference = value;
-
-				Label = m_IsInWebConference.Value ? "Active Meeting" : "Start/Join Meeting";
-				State = m_IsInWebConference.Value;
+				return
+					ActiveConferenceControl != null &&
+					ActiveConferenceControl.GetActiveConference() != null;
 			}
 		}
 
@@ -51,14 +45,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 			m_ActiveMeetingPresenter = Navigation.LazyLoadPresenter<IWtcActiveMeetingPresenter>();
 			Subscribe(m_ActiveMeetingPresenter);
-
-			Icon = "videoconference";
-			Enabled = true;
-
-			UpdateIsInWebConference();
-			UpdateIsSelected();
 		}
 
+		/// <summary>
+		/// Release resources.
+		/// </summary>
 		public override void Dispose()
 		{
 			base.Dispose();
@@ -67,17 +58,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			Unsubscribe(m_ActiveMeetingPresenter);
 		}
 
-		private void UpdateIsInWebConference()
+		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
+		protected override void Refresh(IWtcReferencedLeftMenuView view)
 		{
-			IsInWebConference =
-				ActiveConferenceControl != null &&
-				ActiveConferenceControl.GetActiveConference() != null;
+			Icon = "videoConference";
+			Enabled = true;
+			Selected = m_StartMeetingPresenter.IsViewVisible || m_ActiveMeetingPresenter.IsViewVisible;
+			Label = IsInWebConference ? "Active Meeting" : "Start/Join Meeting";
+			State = IsInWebConference;
+
+			base.Refresh(view);
 		}
 
-		private void UpdateIsSelected()
-		{
-			Selected = m_StartMeetingPresenter.IsViewVisible || m_ActiveMeetingPresenter.IsViewVisible;
-		}
+		#region ActiveMeetingPresenter Callbacks
 
 		private void Subscribe(IWtcActiveMeetingPresenter activeMeetingPresenter)
 		{
@@ -91,8 +87,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private void ActiveMeetingPresenterOnViewVisibilityChanged(object sender, BoolEventArgs e)
 		{
-			UpdateIsSelected();
+			RefreshIfVisible();
 		}
+
+		#endregion
+
+		#region StartMeetingPresenter Callbacks
 
 		private void Subscribe(IWtcStartMeetingPresenter startMeetingPresenter)
 		{
@@ -106,8 +106,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private void StartMeetingPresenterOnViewVisibilityChanged(object sender, BoolEventArgs e)
 		{
-			UpdateIsSelected();
+			RefreshIfVisible();
 		}
+
+		#endregion
 
 		#region Control Callbacks
 
@@ -127,12 +129,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 			foreach (IWebConference conference in control.GetConferences())
 				Subscribe(conference);
-
-			UpdateIsInWebConference();
 		}
 
 		/// <summary>
-		/// Unsusbcribe from the conference control events.
+		/// Unsubscribe from the conference control events.
 		/// </summary>
 		/// <param name="control"></param>
 		protected override void Unsubscribe(IWebConferenceDeviceControl control)
@@ -152,13 +152,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private void ControlOnConferenceRemoved(object sender, ConferenceEventArgs args)
 		{
 			Unsubscribe(args.Data as IWebConference);
-			UpdateIsInWebConference();
+			RefreshIfVisible();
 		}
 
 		private void ControlOnConferenceAdded(object sender, ConferenceEventArgs args)
 		{
 			Subscribe(args.Data as IWebConference);
-			UpdateIsInWebConference();
+			RefreshIfVisible();
 		}
 
 		#endregion
@@ -181,17 +181,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private void ConferenceOnStatusChanged(object sender, ConferenceStatusEventArgs args)
 		{
-			UpdateIsInWebConference();
+			RefreshIfVisible();
 		}
 
 		private void ConferenceOnParticipantAdded(object sender, ParticipantEventArgs participantEventArgs)
 		{
-			UpdateIsInWebConference();
+			RefreshIfVisible();
 		}
 
 		private void ConferenceOnParticipantRemoved(object sender, ParticipantEventArgs participantEventArgs)
 		{
-			UpdateIsInWebConference();
+			RefreshIfVisible();
 		}
 
 		#endregion

@@ -77,7 +77,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 				m_IsInWebConference = value;
 
-				Mode = eMode.WebConference;
+				// Flip to the new mode when entering/leaving a web conference
+				if (Mode == eMode.WebConference || Mode == eMode.Default)
+					Mode = m_IsInWebConference
+						? eMode.WebConference
+						: eMode.Default;
 			}
 		}
 

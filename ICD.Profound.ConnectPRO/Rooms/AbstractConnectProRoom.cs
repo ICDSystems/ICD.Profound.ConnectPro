@@ -26,7 +26,6 @@ using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.Devices.Points;
-using ICD.Connect.Displays.Devices;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Partitioning.Rooms;

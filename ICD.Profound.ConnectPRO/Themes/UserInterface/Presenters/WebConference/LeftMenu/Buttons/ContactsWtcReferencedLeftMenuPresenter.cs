@@ -1,14 +1,11 @@
-﻿using System;
-using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Conferencing.Conferences;
-using ICD.Connect.Conferencing.Controls.Dialing;
-using ICD.Connect.Conferencing.EventArguments;
+﻿using ICD.Common.Utils.EventArguments;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.LeftMenu.Buttons;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.LeftMenu;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.LeftMenu.Buttons
 {
@@ -16,7 +13,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 	public sealed class ContactsWtcReferencedLeftMenuPresenter : AbstractWtcReferencedLeftMenuPresenter,
 	                                                             IContactsWtcReferencedLeftMenuPresenter
 	{
-		private IWtcContactListPresenter m_ContactListPresenter;
+		private readonly IWtcContactListPresenter m_ContactListPresenter;
 
 		/// <summary>
 		/// Constructor.
@@ -30,18 +27,31 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		{
 			m_ContactListPresenter = Navigation.LazyLoadPresenter<IWtcContactListPresenter>();
 			Subscribe(m_ContactListPresenter);
-
-			Icon = "list";
-			Label = "Contacts";
-			State = null;
-			Enabled = true;
 		}
 
+		/// <summary>
+		/// Release resources.
+		/// </summary>
 		public override void Dispose()
 		{
 			base.Dispose();
 
 			Unsubscribe(m_ContactListPresenter);
+		}
+
+		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
+		protected override void Refresh(IWtcReferencedLeftMenuView view)
+		{
+			Icon = "list";
+			Label = "Contacts";
+			State = null;
+			Enabled = true;
+			Selected = m_ContactListPresenter.IsViewVisible;
+
+			base.Refresh(view);
 		}
 
 		#region Presenter Callbacks
@@ -58,39 +68,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private void ContactListPresenterOnViewVisibilityChanged(object sender, BoolEventArgs e)
 		{
-			Selected = m_ContactListPresenter.IsViewVisible;
+			RefreshIfVisible();
 		}
 
 		#endregion
-
-		//#region Conference Control Callbacks
-
-		//protected override void Subscribe(IWebConferenceDeviceControl control)
-		//{
-		//	if (control == null)
-		//		return;
-
-		//	base.Subscribe(control);
-
-		//	control.OnConferenceAdded += ControlOnConferenceAdded;
-		//}
-
-		//protected override void Unsubscribe(IWebConferenceDeviceControl control)
-		//{
-		//	if (control == null)
-		//		return;
-
-		//	base.Unsubscribe(control);
-
-		//	control.OnConferenceAdded -= ControlOnConferenceAdded;
-		//}
-
-		//private void ControlOnConferenceAdded(object sender, ConferenceEventArgs e)
-		//{
-		//	Enabled = e.Data.Status == eConferenceStatus.Connected;
-		//}
-
-		//#endregion
 
 		/// <summary>
 		/// Override to handle what happens when the button is pressed.

@@ -1,5 +1,4 @@
-﻿using System;
-using ICD.Common.Utils.EventArguments;
+﻿using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Zoom.Components.Call;
 using ICD.Connect.Conferencing.Zoom.Controls.Conferencing;
@@ -8,6 +7,7 @@ using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.LeftMenu.Buttons;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.LeftMenu;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.LeftMenu.Buttons
 {
@@ -15,6 +15,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 	public sealed class RecordWtcReferencedLeftMenuPresenter : AbstractWtcReferencedLeftMenuPresenter,
 	                                                           IRecordWtcReferencedLeftMenuPresenter
 	{
+		private const string LABEL_RECORD = "Record";
+		private const string LABEL_STOP_RECORDING = "Stop Recording";
+
+		private CallComponent m_SubscribedCallComponent;
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -28,69 +33,86 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		}
 
 		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
+		protected override void Refresh(IWtcReferencedLeftMenuView view)
+		{
+			Label = m_SubscribedCallComponent == null || !m_SubscribedCallComponent.CallRecord ? LABEL_RECORD : LABEL_STOP_RECORDING;
+			Icon = "tcRecord";
+			Enabled = m_SubscribedCallComponent != null;
+			State = m_SubscribedCallComponent == null ? (bool?)null : m_SubscribedCallComponent.CallRecord;
+
+			base.Refresh(view);
+		}
+
+		/// <summary>
 		/// Override to handle what happens when the button is pressed.
 		/// </summary>
 		protected override void HandleButtonPress()
 		{
-			var zoomControl = ActiveConferenceControl as ZoomRoomConferenceControl;
-			if (zoomControl == null)
-				return;
-
-			var zoomCallComponent = zoomControl.Parent.Components.GetComponent<CallComponent>();
-			if (zoomCallComponent == null)
-				return;
-
-			zoomCallComponent.EnableCallRecord(!zoomCallComponent.CallRecord);
+			if (m_SubscribedCallComponent != null)
+				m_SubscribedCallComponent.EnableCallRecord(!m_SubscribedCallComponent.CallRecord);
 		}
 
+		#region Conference Control Callbacks
+
+		/// <summary>
+		/// Subscribe to the conference control events.
+		/// </summary>
+		/// <param name="control"></param>
 		protected override void Subscribe(IWebConferenceDeviceControl control)
 		{
 			base.Subscribe(control);
 
 			var zoomControl = control as ZoomRoomConferenceControl;
-
-			// Hack to set the enabled state of the button
-			Enabled = zoomControl != null;
-
-			CallComponent zoomCallComponent =
+			m_SubscribedCallComponent =
 				zoomControl == null ? null : zoomControl.Parent.Components.GetComponent<CallComponent>();
+			if (m_SubscribedCallComponent == null)
+				return;
 
-			if (zoomCallComponent != null)
-			{
-				zoomCallComponent.OnCallRecordErrorState += ZoomControlOnCallRecordErrorState;
-			}
+			m_SubscribedCallComponent.OnCallRecordChanged += ZoomCallComponentOnCallRecordChanged;
+			m_SubscribedCallComponent.OnCallRecordErrorState += ZoomControlOnCallRecordErrorState;
 		}
 
+		/// <summary>
+		/// Unsubscribe from the conference control events.
+		/// </summary>
+		/// <param name="control"></param>
 		protected override void Unsubscribe(IWebConferenceDeviceControl control)
 		{
 			base.Unsubscribe(control);
 
-			var zoomControl = control as ZoomRoomConferenceControl;
+			if (m_SubscribedCallComponent == null)
+				return;
 
-			CallComponent zoomCallComponent =
-				zoomControl == null ? null : zoomControl.Parent.Components.GetComponent<CallComponent>();
-
-			if (zoomCallComponent != null)
-			{
-				zoomCallComponent.OnCallRecordErrorState -= ZoomControlOnCallRecordErrorState;
-			}
+			m_SubscribedCallComponent.OnCallRecordChanged -= ZoomCallComponentOnCallRecordChanged;
+			m_SubscribedCallComponent.OnCallRecordErrorState -= ZoomControlOnCallRecordErrorState;
 		}
 
+		/// <summary>
+		/// Called when zoom starts/stops recording the call.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ZoomCallComponentOnCallRecordChanged(object sender, BoolEventArgs e)
+		{
+			RefreshIfVisible();
+		}
+
+		/// <summary>
+		/// Called when we get a zoom error for call record.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void ZoomControlOnCallRecordErrorState(object sender, StringEventArgs eventArgs)
 		{
-			if (Room == null)
-				return;
-
-			var zoomControl = ActiveConferenceControl as ZoomRoomConferenceControl;
-			if (zoomControl == null)
-				return;
-
-			var message = eventArgs.Data;
+			string message = eventArgs.Data;
 			if (message == null)
 				return;
 
-			//Hide the error message after 8 seconds.
-			const long timeout = 8000;
+			// Hide the error message after 8 seconds.
+			const long timeout = 8 * 1000;
 
 			Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
 			          .Show(message, timeout, new GenericAlertPresenterButton
@@ -99,5 +121,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				          Enabled = false
 			          }, GenericAlertPresenterButton.Dismiss);
 		}
+
+		#endregion
 	}
 }

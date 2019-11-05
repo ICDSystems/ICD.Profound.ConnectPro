@@ -13,12 +13,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private string m_Label;
-		private string m_Icon;
-		private bool? m_State;
-		private bool m_Selected;
-		private bool m_Enabled;
-
 		private IWebConferenceDeviceControl m_ConferenceControl;
 
 		#region Properties
@@ -45,87 +39,27 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// <summary>
 		/// Gets the label for the button.
 		/// </summary>
-		protected string Label
-		{
-			get { return m_Label; }
-			set
-			{
-				if (value == m_Label)
-					return;
-
-				m_Label = value;
-
-				RefreshIfVisible();
-			}
-		}
+		protected string Label { get; set; }
 
 		/// <summary>
 		/// Gets the icon for the button.
 		/// </summary>
-		protected string Icon
-		{
-			get { return m_Icon; }
-			set
-			{
-				if (value == m_Label)
-					return;
-
-				m_Icon = value;
-
-				RefreshIfVisible();
-			}
-		}
+		protected string Icon { get; set; }
 
 		/// <summary>
 		/// Gets the feedback state for the light.
 		/// </summary>
-		protected bool? State
-		{
-			get { return m_State; }
-			set
-			{
-				if (value == m_State)
-					return;
-
-				m_State = value;
-
-				RefreshIfVisible();
-			}
-		}
+		protected bool? State { get; set; }
 
 		/// <summary>
 		/// Returns true if the button should be selected.
 		/// </summary>
-		public bool Selected
-		{
-			get { return m_Selected; }
-			set
-			{
-				if (value == m_Selected)
-					return;
-
-				m_Selected = value;
-
-				RefreshIfVisible();
-			}
-		}
+		public bool Selected { get; set; }
 
 		/// <summary>
 		/// Returns true if the button should be enabled.
 		/// </summary>
-		protected bool Enabled
-		{
-			get { return m_Enabled; }
-			set
-			{
-				if (value == m_Enabled)
-					return;
-
-				m_Enabled = value;
-
-				RefreshIfVisible();
-			}
-		}
+		protected bool Enabled { get; set; }
 
 		#endregion
 
@@ -135,7 +69,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public AbstractWtcReferencedLeftMenuPresenter(IConnectProNavigationController nav, IUiViewFactory views,
+		protected AbstractWtcReferencedLeftMenuPresenter(IConnectProNavigationController nav, IUiViewFactory views,
 		                                              ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
@@ -228,7 +162,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		}
 
 		/// <summary>
-		/// Unsusbcribe from the conference control events.
+		/// Unsubscribe from the conference control events.
 		/// </summary>
 		/// <param name="control"></param>
 		protected virtual void Unsubscribe(IWebConferenceDeviceControl control)
