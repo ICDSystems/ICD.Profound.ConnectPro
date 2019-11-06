@@ -126,7 +126,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 		/// <param name="audioProcessing"></param>
 		public void SetAudioProcessing(bool audioProcessing)
 		{
-			m_AudioComponents.ForEach(c => c.SetSapDisabled(audioProcessing));
+			m_AudioComponents.ForEach(c => c.SetSapDisabled(!audioProcessing));
 		}
 
 		/// <summary>
