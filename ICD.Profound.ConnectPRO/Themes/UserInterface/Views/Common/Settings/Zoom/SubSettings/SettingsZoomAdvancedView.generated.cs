@@ -27,14 +27,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoo
 
 			m_AudioProcessingButton = new VtProButton(panel, m_Subpage)
 			{
-				// TODO - Duplicate join
-				DigitalPressJoin = 408
+				DigitalPressJoin = 411
 			};
 
 			m_AudioReverbButton = new VtProButton(panel, m_Subpage)
 			{
-				// TODO - Duplicate join
-				DigitalPressJoin = 406
+				DigitalPressJoin = 412
 			};
 		}
 

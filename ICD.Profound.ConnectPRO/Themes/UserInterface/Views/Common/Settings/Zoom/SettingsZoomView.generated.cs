@@ -25,7 +25,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoo
 				DigitalVisibilityJoin = 950
 			};
 
-			m_TabButtons = new VtProTabButton(403, panel as IPanelDevice, m_Subpage);
+			m_TabButtons = new VtProTabButton(404, panel as IPanelDevice, m_Subpage);
 		}
 
 		/// <summary>
