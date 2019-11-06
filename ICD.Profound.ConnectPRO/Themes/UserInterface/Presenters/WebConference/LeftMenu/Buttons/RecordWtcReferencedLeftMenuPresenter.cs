@@ -47,6 +47,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			base.Refresh(view);
 		}
 
+		public override void HideSubpages()
+		{
+		}
+
 		/// <summary>
 		/// Override to handle what happens when the button is pressed.
 		/// </summary>

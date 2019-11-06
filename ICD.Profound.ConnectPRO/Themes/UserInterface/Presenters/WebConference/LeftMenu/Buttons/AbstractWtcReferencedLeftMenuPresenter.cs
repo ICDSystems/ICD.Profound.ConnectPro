@@ -109,6 +109,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			}
 		}
 
+		/// <summary>
+		/// Hides the child subpage/s managed by this button.
+		/// </summary>
+		public abstract void HideSubpages();
+
 		#region View Callbacks
 
 		/// <summary>

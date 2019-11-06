@@ -297,6 +297,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				ShowDefaultPresenterForMode();
 		}
 
+		protected override void ViewOnPreVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			base.ViewOnPreVisibilityChanged(sender, args);
+
+			// If the Parent will be hidden, hide all the children first.
+			if (!args.Data)
+			{
+				foreach (IWtcReferencedLeftMenuPresenter child in m_ChildFactory)
+					child.HideSubpages();
+			}
+		}
+
 		#endregion
 	}
 }

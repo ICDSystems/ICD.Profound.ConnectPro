@@ -45,6 +45,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			base.Refresh(view);
 		}
 
+		public override void HideSubpages()
+		{
+			m_CallOutPresenter.ShowView(false);
+		}
+
 		/// <summary>
 		/// Release resources.
 		/// </summary>

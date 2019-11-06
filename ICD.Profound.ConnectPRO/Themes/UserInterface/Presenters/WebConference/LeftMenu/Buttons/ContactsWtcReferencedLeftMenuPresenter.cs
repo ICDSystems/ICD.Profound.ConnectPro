@@ -54,6 +54,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			base.Refresh(view);
 		}
 
+		public override void HideSubpages()
+		{
+			m_ContactListPresenter.ShowView(false);
+		}
+
 		#region Presenter Callbacks
 
 		private void Subscribe(IWtcContactListPresenter contactListPresenter)

@@ -73,6 +73,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			base.Refresh(view);
 		}
 
+		public override void HideSubpages()
+		{
+			m_StartMeetingPresenter.ShowView(false);
+			m_ActiveMeetingPresenter.ShowView(false);
+		}
+
 		#region ActiveMeetingPresenter Callbacks
 
 		private void Subscribe(IWtcActiveMeetingPresenter activeMeetingPresenter)

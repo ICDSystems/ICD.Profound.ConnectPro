@@ -4,5 +4,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference
 {
 	public interface IWtcReferencedLeftMenuPresenter : IWtcPresenter<IWtcReferencedLeftMenuView>
 	{
+		/// <summary>
+		/// Hides the child subpage/s managed by this button.
+		/// </summary>
+		void HideSubpages();
 	}
 }
