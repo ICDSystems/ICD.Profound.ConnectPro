@@ -266,12 +266,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			try
 			{
+				// Don't back out of the root
 				if (m_MenuPath.Count <= 1)
 					return;
 
 				// We want to back out of the current leaf AND the parent node
 				if (CurrentNode is ISettingsLeaf)
+				{
 					m_MenuPath.RemoveAt(m_MenuPath.Count - 1);
+					Back();
+					return;
+				}
 
 				m_MenuPath.RemoveAt(m_MenuPath.Count - 1);
 
