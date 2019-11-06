@@ -17,9 +17,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common
 		IBooking Booking { get; set; }
 
 		/// <summary>
-		/// Sets the
+		/// Sets the selected state.
 		/// </summary>
-		/// <param name="selected"></param>
-		void SetSelected(bool selected);
+		/// <value></value>
+		bool Selected { get; set; }
 	}
 }

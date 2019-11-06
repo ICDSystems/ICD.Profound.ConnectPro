@@ -51,6 +51,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			}
 		}
 
+		/// <summary>
+		/// Sets the selected state.
+		/// </summary>
+		/// <value></value>
+		public bool Selected
+		{
+			get { return m_Selected; }
+			set
+			{
+				if (value == m_Selected)
+					return;
+
+				m_Selected = value;
+
+				RefreshIfVisible();
+			}
+		}
+
 		#endregion
 
 		/// <summary>
@@ -78,11 +96,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		}
 
 		#region Methods
-
-		public void SetSelected(bool selected)
-		{
-			m_Selected = selected;
-		}
 
 		/// <summary>
 		/// Updates the view.

@@ -84,7 +84,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			{
 				foreach (IReferencedSchedulePresenter presenter in m_ChildrenFactory.BuildChildren(m_Bookings))
 				{
-					presenter.SetSelected(presenter == m_SelectedBooking);
+					presenter.Selected = presenter == m_SelectedBooking;
 					presenter.ShowView(true);
 				}
 
@@ -208,21 +208,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 					return;
 
 				if (m_SelectedBooking != null)
-					m_SelectedBooking.SetSelected(false);
+					m_SelectedBooking.Selected = false;
 
 				m_SelectedBooking = presenter;
 
 				if (m_SelectedBooking != null)
-					m_SelectedBooking.SetSelected(true);
+					m_SelectedBooking.Selected = true;
 			}
 			finally
 			{
 				m_RefreshSection.Leave();
 			}
 
-			RefreshIfVisible();
-
 			m_BookingSelectionTimeout.Reset(BOOKING_SELECTION_TIMEOUT);
+
+			RefreshIfVisible();
 		}
 
 		private void BookingSelectionTimeout()
