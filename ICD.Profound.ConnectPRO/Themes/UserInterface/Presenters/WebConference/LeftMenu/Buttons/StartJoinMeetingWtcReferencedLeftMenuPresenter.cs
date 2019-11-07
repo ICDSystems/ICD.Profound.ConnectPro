@@ -167,6 +167,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 			callOut.OnConferenceAdded += TraditionalControlOnConferenceAdded;
 			callOut.OnConferenceRemoved += TraditionalControlOnConferenceRemoved;
+
+			foreach (ITraditionalConference conference in callOut.GetConferences())
+				Subscribe(conference);
 		}
 
 		/// <summary>
@@ -192,27 +195,32 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 			callOut.OnConferenceAdded -= TraditionalControlOnConferenceAdded;
 			callOut.OnConferenceRemoved -= TraditionalControlOnConferenceRemoved;
+
+			foreach (ITraditionalConference conference in callOut.GetConferences())
+				Unsubscribe(conference);
 		}
 
 		private void ControlOnConferenceRemoved(object sender, ConferenceEventArgs args)
 		{
-			Unsubscribe(args.Data as IWebConference);
+			Unsubscribe(args.Data);
 			RefreshIfVisible();
 		}
 
 		private void ControlOnConferenceAdded(object sender, ConferenceEventArgs args)
 		{
-			Subscribe(args.Data as IWebConference);
+			Subscribe(args.Data);
 			RefreshIfVisible();
 		}
 
-		private void TraditionalControlOnConferenceAdded(object sender, ConferenceEventArgs e)
+		private void TraditionalControlOnConferenceAdded(object sender, ConferenceEventArgs args)
 		{
+			Subscribe(args.Data);
 			RefreshIfVisible();
 		}
 
-		private void TraditionalControlOnConferenceRemoved(object sender, ConferenceEventArgs e)
+		private void TraditionalControlOnConferenceRemoved(object sender, ConferenceEventArgs args)
 		{
+			Unsubscribe(args.Data);
 			RefreshIfVisible();
 		}
 
@@ -220,14 +228,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		#region Conference Callbacks
 
-		private void Subscribe(IWebConference conference)
+		private void Subscribe(IConference conference)
 		{
 			conference.OnParticipantAdded += ConferenceOnParticipantAdded;
 			conference.OnParticipantRemoved += ConferenceOnParticipantRemoved;
 			conference.OnStatusChanged += ConferenceOnStatusChanged;
 		}
 
-		private void Unsubscribe(IWebConference conference)
+		private void Unsubscribe(IConference conference)
 		{
 			conference.OnParticipantAdded -= ConferenceOnParticipantAdded;
 			conference.OnParticipantRemoved -= ConferenceOnParticipantRemoved;

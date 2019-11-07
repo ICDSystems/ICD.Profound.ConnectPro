@@ -1,5 +1,6 @@
 ﻿using ICD.Common.Properties;
 using ICD.Common.Utils.EventArguments;
+using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Zoom;
@@ -115,12 +116,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		{
 			base.Subscribe(control);
 
+			if (control == null)
+				return;
+
+			control.OnConferenceAdded += ControlOnConferenceAdded;
+			control.OnConferenceRemoved += ControlOnConferenceRemoved;
+
+			foreach (IWebConference conference in control.GetConferences())
+				Subscribe(conference);
+
 			ZoomRoomTraditionalConferenceControl callOut = GetTraditionalConferenceControl(control);
 			if (callOut == null)
 				return;
 
 			callOut.OnConferenceAdded += TraditionalControlOnConferenceAdded;
 			callOut.OnConferenceRemoved += TraditionalControlOnConferenceRemoved;
+
+			foreach (ITraditionalConference conference in callOut.GetConferences())
+				Subscribe(conference);
 		}
 
 		/// <summary>
@@ -131,20 +144,79 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		{
 			base.Unsubscribe(control);
 
+			if (control == null)
+				return;
+
+			control.OnConferenceAdded -= ControlOnConferenceAdded;
+			control.OnConferenceRemoved -= ControlOnConferenceRemoved;
+
+			foreach (IWebConference conference in control.GetConferences())
+				Unsubscribe(conference);
+
 			ZoomRoomTraditionalConferenceControl callOut = GetTraditionalConferenceControl(control);
 			if (callOut == null)
 				return;
 
 			callOut.OnConferenceAdded -= TraditionalControlOnConferenceAdded;
 			callOut.OnConferenceRemoved -= TraditionalControlOnConferenceRemoved;
+
+			foreach (ITraditionalConference conference in callOut.GetConferences())
+				Unsubscribe(conference);
 		}
 
-		private void TraditionalControlOnConferenceAdded(object sender, ConferenceEventArgs e)
+		private void ControlOnConferenceRemoved(object sender, ConferenceEventArgs args)
+		{
+			Unsubscribe(args.Data);
+			RefreshIfVisible();
+		}
+
+		private void ControlOnConferenceAdded(object sender, ConferenceEventArgs args)
+		{
+			Subscribe(args.Data);
+			RefreshIfVisible();
+		}
+
+		private void TraditionalControlOnConferenceAdded(object sender, ConferenceEventArgs args)
+		{
+			Subscribe(args.Data);
+			RefreshIfVisible();
+		}
+
+		private void TraditionalControlOnConferenceRemoved(object sender, ConferenceEventArgs args)
+		{
+			Unsubscribe(args.Data);
+			RefreshIfVisible();
+		}
+
+		#endregion
+
+		#region Conference Callbacks
+
+		private void Subscribe(IConference conference)
+		{
+			conference.OnParticipantAdded += ConferenceOnParticipantAdded;
+			conference.OnParticipantRemoved += ConferenceOnParticipantRemoved;
+			conference.OnStatusChanged += ConferenceOnStatusChanged;
+		}
+
+		private void Unsubscribe(IConference conference)
+		{
+			conference.OnParticipantAdded -= ConferenceOnParticipantAdded;
+			conference.OnParticipantRemoved -= ConferenceOnParticipantRemoved;
+			conference.OnStatusChanged -= ConferenceOnStatusChanged;
+		}
+
+		private void ConferenceOnStatusChanged(object sender, ConferenceStatusEventArgs args)
 		{
 			RefreshIfVisible();
 		}
 
-		private void TraditionalControlOnConferenceRemoved(object sender, ConferenceEventArgs e)
+		private void ConferenceOnParticipantAdded(object sender, ParticipantEventArgs participantEventArgs)
+		{
+			RefreshIfVisible();
+		}
+
+		private void ConferenceOnParticipantRemoved(object sender, ParticipantEventArgs participantEventArgs)
 		{
 			RefreshIfVisible();
 		}

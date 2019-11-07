@@ -2,8 +2,12 @@
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
+using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Conferencing.Zoom.Controls.Conferencing;
 using ICD.Connect.UI.Attributes;
@@ -24,9 +28,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// <summary>
 		/// Gets the zoom traditional control for call out.
 		/// </summary>
-		public ZoomRoomTraditionalConferenceControl TraditionalControl
+		[CanBeNull]
+		private ZoomRoomTraditionalConferenceControl TraditionalControl
 		{
 			get { return GetTraditionalConferenceControl(ActiveConferenceControl); }
+		}
+
+		private ITraditionalConference ActiveConference
+		{
+			get
+			{
+				return TraditionalControl == null
+					? null
+					: TraditionalControl.GetActiveConference() as ITraditionalConference;
+			}
 		}
 
 		/// <summary>
@@ -52,14 +67,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			try
 			{
+				ITraditionalConference active = ActiveConference;
+				bool isInCall = active != null;
+
 				string dialText = m_StringBuilder.ToString();
-				string callLabel = "CALL";
-				bool backEnabled = dialText.Length > 0;
-				bool callSelected = false;
-				bool clearEnabled = dialText.Length > 0;
+				string callLabel = isInCall ? "END CALL" : "CALL";
+				string callStatusLabel = StringUtils.NiceName(active == null ? eConferenceStatus.Disconnected : active.Status);
+				bool backEnabled = active == null && dialText.Length > 0;
+				bool clearEnabled = active == null && dialText.Length > 0;
+				bool callSelected = isInCall;
 
 				view.SetBackButtonEnabled(backEnabled);
 				view.SetCallButtonLabel(callLabel);
+				view.SetCallStatusLabel(callStatusLabel);
 				view.SetCallButtonSelected(callSelected);
 				view.SetClearButtonEnabled(clearEnabled);
 				view.SetText(dialText);
@@ -108,48 +128,109 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		{
 			base.Subscribe(control);
 
-			ZoomRoomTraditionalConferenceControl traditionalControl = GetTraditionalConferenceControl(control);
-			if (traditionalControl == null)
+			if (control == null)
 				return;
 
-			traditionalControl.OnConferenceAdded += TraditionalControlOnConferenceAdded;
-			traditionalControl.OnConferenceRemoved += TraditionalControlOnConferenceRemoved;
+			control.OnConferenceAdded += ControlOnConferenceAdded;
+			control.OnConferenceRemoved += ControlOnConferenceRemoved;
+
+			foreach (IWebConference conference in control.GetConferences())
+				Subscribe(conference);
+
+			ZoomRoomTraditionalConferenceControl callOut = GetTraditionalConferenceControl(control);
+			if (callOut == null)
+				return;
+
+			callOut.OnConferenceAdded += TraditionalControlOnConferenceAdded;
+			callOut.OnConferenceRemoved += TraditionalControlOnConferenceRemoved;
+
+			foreach (ITraditionalConference conference in callOut.GetConferences())
+				Subscribe(conference);
 		}
 
 		/// <summary>
-		/// Unsusbcribe from the conference control events.
+		/// Unsubscribe from the conference control events.
 		/// </summary>
 		/// <param name="control"></param>
 		protected override void Unsubscribe(IWebConferenceDeviceControl control)
 		{
 			base.Unsubscribe(control);
 
-			ZoomRoomTraditionalConferenceControl traditionalControl = GetTraditionalConferenceControl(control);
-			if (traditionalControl == null)
+			if (control == null)
 				return;
 
-			traditionalControl.OnConferenceAdded -= TraditionalControlOnConferenceAdded;
-			traditionalControl.OnConferenceRemoved -= TraditionalControlOnConferenceRemoved;
+			control.OnConferenceAdded -= ControlOnConferenceAdded;
+			control.OnConferenceRemoved -= ControlOnConferenceRemoved;
+
+			foreach (IWebConference conference in control.GetConferences())
+				Unsubscribe(conference);
+
+			ZoomRoomTraditionalConferenceControl callOut = GetTraditionalConferenceControl(control);
+			if (callOut == null)
+				return;
+
+			callOut.OnConferenceAdded -= TraditionalControlOnConferenceAdded;
+			callOut.OnConferenceRemoved -= TraditionalControlOnConferenceRemoved;
+
+			foreach (ITraditionalConference conference in callOut.GetConferences())
+				Unsubscribe(conference);
 		}
 
-		/// <summary>
-		/// Called when an active conference starts.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="conferenceEventArgs"></param>
-		private void TraditionalControlOnConferenceAdded(object sender, ConferenceEventArgs conferenceEventArgs)
+		private void ControlOnConferenceRemoved(object sender, ConferenceEventArgs args)
 		{
-			throw new NotImplementedException();
+			Unsubscribe(args.Data);
+			RefreshIfVisible();
 		}
 
-		/// <summary>
-		/// Called when the active conference ends.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="conferenceEventArgs"></param>
-		private void TraditionalControlOnConferenceRemoved(object sender, ConferenceEventArgs conferenceEventArgs)
+		private void ControlOnConferenceAdded(object sender, ConferenceEventArgs args)
 		{
-			throw new NotImplementedException();
+			Subscribe(args.Data);
+			RefreshIfVisible();
+		}
+
+		private void TraditionalControlOnConferenceAdded(object sender, ConferenceEventArgs args)
+		{
+			Subscribe(args.Data);
+			RefreshIfVisible();
+		}
+
+		private void TraditionalControlOnConferenceRemoved(object sender, ConferenceEventArgs args)
+		{
+			Unsubscribe(args.Data);
+			RefreshIfVisible();
+		}
+
+		#endregion
+
+		#region Conference Callbacks
+
+		private void Subscribe(IConference conference)
+		{
+			conference.OnParticipantAdded += ConferenceOnParticipantAdded;
+			conference.OnParticipantRemoved += ConferenceOnParticipantRemoved;
+			conference.OnStatusChanged += ConferenceOnStatusChanged;
+		}
+
+		private void Unsubscribe(IConference conference)
+		{
+			conference.OnParticipantAdded -= ConferenceOnParticipantAdded;
+			conference.OnParticipantRemoved -= ConferenceOnParticipantRemoved;
+			conference.OnStatusChanged -= ConferenceOnStatusChanged;
+		}
+
+		private void ConferenceOnStatusChanged(object sender, ConferenceStatusEventArgs args)
+		{
+			RefreshIfVisible();
+		}
+
+		private void ConferenceOnParticipantAdded(object sender, ParticipantEventArgs participantEventArgs)
+		{
+			RefreshIfVisible();
+		}
+
+		private void ConferenceOnParticipantRemoved(object sender, ParticipantEventArgs participantEventArgs)
+		{
+			RefreshIfVisible();
 		}
 
 		#endregion
@@ -191,7 +272,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// <param name="charEventArgs"></param>
 		private void ViewOnKeypadButtonPressed(object sender, CharEventArgs charEventArgs)
 		{
-			m_StringBuilder.AppendCharacter(charEventArgs.Data);
+			if (ActiveConference == null)
+				m_StringBuilder.AppendCharacter(charEventArgs.Data);
+			else
+				ActiveConference.GetParticipants().ForEach(p => p.SendDtmf(charEventArgs.Data));
 		}
 
 		/// <summary>
@@ -201,7 +285,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// <param name="eventArgs"></param>
 		private void ViewOnClearButtonPressed(object sender, EventArgs eventArgs)
 		{
-			m_StringBuilder.Clear();
+			if (ActiveConference == null)
+				m_StringBuilder.Clear();
 		}
 
 		/// <summary>
@@ -211,7 +296,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// <param name="eventArgs"></param>
 		private void ViewOnCallButtonPressed(object sender, EventArgs eventArgs)
 		{
-			throw new NotImplementedException();
+			ZoomRoomTraditionalConferenceControl control = TraditionalControl;
+			if (control == null)
+				return;
+
+			// Hang up
+			ITraditionalConference active = control.GetActiveConference() as ITraditionalConference;
+			if (active != null)
+			{
+				active.Hangup();
+				return;
+			}
+
+			// Call
+			IDialContext dialContext = new PstnDialContext()
+			{
+				CallType = eCallType.Audio,
+				DialString = m_StringBuilder.ToString()
+			};
+			control.Dial(dialContext);
 		}
 
 		/// <summary>
