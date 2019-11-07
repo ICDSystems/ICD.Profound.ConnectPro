@@ -4,7 +4,6 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Participants;
-using ICD.Connect.Conferencing.Zoom.Components.Call;
 using ICD.Connect.Conferencing.Zoom.Controls.Conferencing;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -22,6 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private IWebParticipant m_Participant;
+		private bool m_Selected;
 
 		[CanBeNull]
 		public IWebParticipant Participant
@@ -44,8 +44,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			}
 		}
 
-		public bool Selected { get; set; }
+		public bool Selected
+		{
+			get { return m_Selected; }
+			set
+			{
+				if (value == m_Selected)
+					return;
 
+				m_Selected = value;
+
+				RefreshIfVisible();
+			}
+		}
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="nav"></param>
+		/// <param name="views"></param>
+		/// <param name="theme"></param>
 		public WtcReferencedParticipantPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
@@ -97,15 +115,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private void Subscribe(IWebParticipant participant)
 		{
-			participant.OnIsMutedChanged += ParticipantOnOnIsMutedChanged;
+			participant.OnIsMutedChanged += ParticipantOnIsMutedChanged;
 		}
 
 		private void Unsubscribe(IWebParticipant participant)
 		{
-			participant.OnIsMutedChanged -= ParticipantOnOnIsMutedChanged;
+			participant.OnIsMutedChanged -= ParticipantOnIsMutedChanged;
 		}
 
-		private void ParticipantOnOnIsMutedChanged(object sender, BoolEventArgs e)
+		private void ParticipantOnIsMutedChanged(object sender, BoolEventArgs e)
 		{
 			RefreshIfVisible();
 		}

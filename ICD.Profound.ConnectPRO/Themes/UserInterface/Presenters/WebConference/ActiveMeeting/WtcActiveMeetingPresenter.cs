@@ -90,7 +90,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				foreach (IWtcReferencedParticipantPresenter presenter in m_PresenterFactory.BuildChildren(sortedParticipants))
 				{
 					presenter.Selected = presenter == SelectedParticipant;
-					presenter.Refresh();
+					presenter.ShowView(true);
 				}
 
 				// Show "no participants" and invite button if there are no participants
