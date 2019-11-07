@@ -104,17 +104,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		{
 			base.Subscribe(view);
 
-			view.OnButtonPressed += ViewOnOnButtonPressed;
+			view.OnButtonPressed += ViewOnButtonPressed;
 		}
 
 		protected override void Unsubscribe(IWtcParticipantControlsView view)
 		{
 			base.Unsubscribe(view);
 
-			view.OnButtonPressed -= ViewOnOnButtonPressed;
+			view.OnButtonPressed -= ViewOnButtonPressed;
 		}
 
-		private void ViewOnOnButtonPressed(object sender, UShortEventArgs e)
+		private void ViewOnButtonPressed(object sender, UShortEventArgs e)
 		{
 			if (Participant == null)
 				return;
@@ -126,6 +126,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 					break;
 				case INDEX_MUTE:
 					Participant.Mute(!Participant.IsMuted);
+					break;
+				case INDEX_RECORD:
+					ZoomWebParticipant zoomParticipant = Participant as ZoomWebParticipant;
+					if (zoomParticipant != null)
+						zoomParticipant.AllowParticipantRecord(!zoomParticipant.CanRecord);
 					break;
 			}
 		}
