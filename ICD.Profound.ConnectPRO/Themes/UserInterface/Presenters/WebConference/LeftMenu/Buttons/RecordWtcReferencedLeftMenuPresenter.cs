@@ -1,4 +1,5 @@
 ﻿using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Zoom.Components.Call;
 using ICD.Connect.Conferencing.Zoom.Controls.Conferencing;
@@ -18,6 +19,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private const string LABEL_RECORD = "Record";
 		private const string LABEL_STOP_RECORDING = "Stop Recording";
 
+		private const long BLINK_INTERVAL = 1000 / 2;
+
+		private readonly SafeTimer m_BlinkTimer;
+		private bool m_BlinkState;
+
 		private CallComponent m_SubscribedCallComponent;
 
 		/// <summary>
@@ -30,6 +36,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		                                            ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
+			m_BlinkTimer = SafeTimer.Stopped(UpdateState);
 		}
 
 		/// <summary>
@@ -41,9 +48,32 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			Label = m_SubscribedCallComponent == null || !m_SubscribedCallComponent.CallRecord ? LABEL_RECORD : LABEL_STOP_RECORDING;
 			Icon = "tcRecord";
 			Enabled = m_SubscribedCallComponent != null;
-			State = m_SubscribedCallComponent == null ? (bool?)null : m_SubscribedCallComponent.CallRecord;
+			State = GetState();
 
 			base.Refresh(view);
+		}
+
+		private void UpdateState()
+		{
+			if (m_SubscribedCallComponent != null && m_SubscribedCallComponent.CallRecord)
+				m_BlinkTimer.Reset(BLINK_INTERVAL, BLINK_INTERVAL);
+			else
+				m_BlinkTimer.Stop();
+
+			m_BlinkState = !m_BlinkState;
+
+			RefreshIfVisible();
+		}
+
+		private eLightState? GetState()
+		{
+			return m_SubscribedCallComponent == null
+				? (eLightState?)null
+				: m_SubscribedCallComponent.CallRecord
+					? m_BlinkState
+						? eLightState.Green
+						: eLightState.Red
+					: eLightState.None;
 		}
 
 		public override void HideSubpages()
@@ -101,7 +131,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// <param name="e"></param>
 		private void ZoomCallComponentOnCallRecordChanged(object sender, BoolEventArgs e)
 		{
-			RefreshIfVisible();
+			UpdateState();
 		}
 
 		/// <summary>

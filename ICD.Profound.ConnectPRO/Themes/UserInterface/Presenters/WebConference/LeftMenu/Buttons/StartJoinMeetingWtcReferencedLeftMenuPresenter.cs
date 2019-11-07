@@ -79,7 +79,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			Enabled = TraditionalControl == null || TraditionalControl.GetActiveConference() == null;
 			Selected = m_StartMeetingPresenter.IsViewVisible || m_ActiveMeetingPresenter.IsViewVisible;
 			Label = IsInWebConference ? "Active Meeting" : "Start/Join Meeting";
-			State = IsInWebConference;
+			State = IsInWebConference ? eLightState.Green : eLightState.None;
 
 			base.Refresh(view);
 		}

@@ -11,6 +11,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 	public abstract class AbstractWtcReferencedLeftMenuPresenter : AbstractUiComponentPresenter<IWtcReferencedLeftMenuView>,
 	                                                               IWtcReferencedLeftMenuPresenter
 	{
+		protected enum eLightState
+		{
+			None = 0,
+			Green = 1,
+			Red = 2
+		}
+
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private IWebConferenceDeviceControl m_ConferenceControl;
@@ -49,7 +56,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// <summary>
 		/// Gets/sets the feedback state for the light.
 		/// </summary>
-		protected bool? State { get; set; }
+		protected eLightState? State { get; set; }
 
 		/// <summary>
 		/// Gets/sets the selected state for the button.
@@ -90,14 +97,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			{
 				string icon = Icon ?? string.Empty;
 				string label = Label ?? string.Empty;
-				bool state = State == true;
+				ushort mode = (ushort)(State ?? eLightState.None);
 				bool hasState = State != null;
 
 				icon = Icons.GetIcon(icon, eIconColor.White);
 
 				view.SetIcon(icon);
 				view.SetLabelText(label);
-				view.SetStatusLightState(state);
+				view.SetStatusLightMode(mode);
 				view.SetStatusLightVisible(hasState);
 				view.SetButtonSelected(Selected);
 

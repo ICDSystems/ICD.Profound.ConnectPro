@@ -10,9 +10,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.LeftM
 	[ViewBinding(typeof(IWtcReferencedLeftMenuView))]
 	public sealed partial class WtcReferencedLeftMenuView : AbstractComponentView, IWtcReferencedLeftMenuView
 	{
-		private const ushort MODE_OFF = 0;
-		private const ushort MODE_ON = 1;
-
 		/// <summary>
 		/// Raised when the user presses the button.
 		/// </summary>
@@ -70,12 +67,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.LeftM
 		}
 
 		/// <summary>
-		/// Sets the status light state.
+		/// Sets the status light mode.
 		/// </summary>
-		/// <param name="state"></param>
-		public void SetStatusLightState(bool state)
+		/// <param name="mode"></param>
+		public void SetStatusLightMode(ushort mode)
 		{
-			m_StatusButton.SetMode(state ? MODE_ON : MODE_OFF);
+			m_StatusButton.SetMode(mode);
 		}
 
 		/// <summary>

@@ -28,10 +28,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Left
 		void SetIcon(string icon);
 
 		/// <summary>
-		/// Sets the status light state.
+		/// Sets the status light mode.
 		/// </summary>
-		/// <param name="state"></param>
-		void SetStatusLightState(bool state);
+		/// <param name="mode"></param>
+		void SetStatusLightMode(ushort mode);
 
 		/// <summary>
 		/// Sets the selected state of the button.
