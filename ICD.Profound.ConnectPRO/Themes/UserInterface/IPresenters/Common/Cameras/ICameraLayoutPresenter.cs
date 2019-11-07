@@ -9,6 +9,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Camera
 		/// Sets the rooms layout control.
 		/// </summary>
 		/// <param name="value"></param>
-		void SetDestinationControl(IConferenceLayoutControl value);
+		void SetDestinationLayoutControl(IConferenceLayoutControl value);
 	}
 }

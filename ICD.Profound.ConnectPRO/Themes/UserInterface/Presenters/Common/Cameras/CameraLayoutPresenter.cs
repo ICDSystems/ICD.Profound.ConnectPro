@@ -53,7 +53,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			Unsubscribe(m_SubscribedZoomLayoutComponent);
 		}
 
-		public void SetDestinationControl(IConferenceLayoutControl value)
+		public void SetDestinationLayoutControl(IConferenceLayoutControl value)
 		{
 			if (value == m_ConferenceLayoutControl)
 				return;
@@ -84,10 +84,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 				view.SetLayoutSelfViewListEnable(true);
 				view.SetLayoutPositionListEnable(true);
 			}
-
-			//Set size selected
-			for (ushort i = 0; i <= 4; i++)
-				view.SetLayoutSizeControlButtonSelected(i, i == m_SizeIndex);
+			//If in strip mode disable the size configuration.
+			if (m_StyleIndex == 2)
+			{
+				view.SetLayoutSizeListEnabled(false);
+				for (ushort i = 0; i <= 3; i++)
+					view.SetLayoutSizeControlButtonSelected(i, false);
+			}
+			//Set size selected as normal if we aren't in strip mode
+			else
+				for (ushort i = 0; i <= 3; i++)
+					view.SetLayoutSizeControlButtonSelected(i, i == m_SizeIndex);
 			//Set style selected
 			for (ushort i = 0; i <= 3; i++)
 				view.SetLayoutStyleControlButtonSelected(i, i == m_StyleIndex);

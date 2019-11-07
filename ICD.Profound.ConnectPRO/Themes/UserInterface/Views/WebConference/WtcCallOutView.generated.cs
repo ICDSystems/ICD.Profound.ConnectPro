@@ -17,6 +17,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 		private VtProButton m_CallButton;
 		private VtProButton m_BackButton;
 		private VtProButton m_ClearButton;
+		protected VtProFormattedText m_CallStatus;
 
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
@@ -53,6 +54,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 				DigitalPressJoin = 819,
 				DigitalEnableJoin = 821
 			};
+
+			m_CallStatus = new VtProFormattedText(panel, m_Subpage);
+			m_CallStatus.SerialLabelJoins.Add(653);
 		}
 
 		protected override IEnumerable<IVtProControl> GetChildren()
@@ -63,6 +67,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 			yield return m_CallButton;
 			yield return m_BackButton;
 			yield return m_ClearButton;
+			yield return m_CallStatus;
 		}
 	}
 }

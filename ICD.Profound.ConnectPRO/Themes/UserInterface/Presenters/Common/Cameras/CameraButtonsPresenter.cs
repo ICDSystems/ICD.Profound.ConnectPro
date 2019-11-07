@@ -83,7 +83,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 				                                                 ? null
 				                                                 : value.Parent.Controls
 				                                                        .GetControl<IVideoConferenceRouteControl>());
-			m_CameraLayoutPresenter.SetDestinationControl(value == null
+			m_CameraLayoutPresenter.SetDestinationLayoutControl(value == null
 				                                              ? null
 				                                              : value.Parent.Controls
 				                                                     .GetControl<IConferenceLayoutControl>());

@@ -54,5 +54,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference
 		/// </summary>
 		/// <param name="label"></param>
 		void SetCallButtonLabel(string label);
+
+		/// <summary>
+		/// Sets the label text for the call status
+		/// </summary>
+		/// <param name="label"></param>
+		void SetCallStatusLabel(string label);
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
@@ -99,6 +100,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 		public void SetCallButtonLabel(string label)
 		{
 			m_CallButton.SetLabelText(label);
+		}
+
+		/// <summary>
+		/// Sets the label text for the call status
+		/// </summary>
+		/// <param name="label"></param>
+		public void SetCallStatusLabel(string label)
+		{
+			m_CallStatus.SetLabelTextAtJoin(m_CallStatus.SerialLabelJoins.First(), label);
 		}
 
 		#endregion
