@@ -141,9 +141,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// <param name="eventArgs"></param>
 		private void ZoomControlOnCallRecordErrorState(object sender, StringEventArgs eventArgs)
 		{
-			string message = "Failed to Start Recording";
-			if (!string.IsNullOrEmpty(eventArgs.Data))
-				message = string.Format("{0}\r{1}", message, eventArgs.Data);
+			string message = "Recording is only supported for meetings booked via Zoom software.\n\n" +
+			                 "To record this session please grant recording permission to an attendee in the participant list.";
 
 			// Hide the error message after 8 seconds.
 			const long timeout = 8 * 1000;
