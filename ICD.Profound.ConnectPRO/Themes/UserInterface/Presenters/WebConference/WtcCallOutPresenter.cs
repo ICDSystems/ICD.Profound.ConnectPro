@@ -11,6 +11,7 @@ using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Conferencing.Zoom.Controls.Conferencing;
 using ICD.Connect.UI.Attributes;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
@@ -70,9 +71,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				ITraditionalConference active = ActiveConference;
 				bool isInCall = active != null;
 
+				if (isInCall)
+					Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView(false);
+
 				string dialText = m_StringBuilder.ToString();
 				string callLabel = isInCall ? "END CALL" : "CALL";
-				string callStatusLabel = StringUtils.NiceName(active == null ? eConferenceStatus.Disconnected : active.Status);
+				string callStatusLabel =
+					StringUtils.NiceName(active == null ? eConferenceStatus.Disconnected : active.Status);
 				bool backEnabled = active == null && dialText.Length > 0;
 				bool clearEnabled = active == null && dialText.Length > 0;
 				bool callSelected = isInCall;
@@ -196,6 +201,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		private void TraditionalControlOnConferenceRemoved(object sender, ConferenceEventArgs args)
 		{
+			if (ActiveConference == null)
+				m_StringBuilder.Clear();
+
 			Unsubscribe(args.Data);
 			RefreshIfVisible();
 		}
@@ -220,6 +228,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		private void ConferenceOnStatusChanged(object sender, ConferenceStatusEventArgs args)
 		{
+			if (ActiveConference == null)
+				m_StringBuilder.Clear();
+
 			RefreshIfVisible();
 		}
 
@@ -230,6 +241,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		private void ConferenceOnParticipantRemoved(object sender, ParticipantEventArgs participantEventArgs)
 		{
+			if (ActiveConference == null)
+				m_StringBuilder.Clear();
+
 			RefreshIfVisible();
 		}
 
@@ -272,9 +286,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// <param name="charEventArgs"></param>
 		private void ViewOnKeypadButtonPressed(object sender, CharEventArgs charEventArgs)
 		{
-			if (ActiveConference == null)
-				m_StringBuilder.AppendCharacter(charEventArgs.Data);
-			else
+			m_StringBuilder.AppendCharacter(charEventArgs.Data);
+
+			// DTMF
+			if (ActiveConference != null)
 				ActiveConference.GetParticipants().ForEach(p => p.SendDtmf(charEventArgs.Data));
 		}
 
@@ -307,6 +322,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				active.Hangup();
 				return;
 			}
+
+			Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>()
+			          .ShowView("Starting Zoom Audio Call", 10 * 1000);
 
 			// Call
 			IDialContext dialContext = new PstnDialContext()
