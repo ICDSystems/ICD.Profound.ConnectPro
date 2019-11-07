@@ -113,9 +113,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			if (ActiveConferenceControl != null)
 			{
+				// Web Conference
 				var conference = ActiveConferenceControl.GetActiveConference() as IWebConference;
 				if (conference != null)
 					conference.LeaveConference();
+
+				// Call Out
+				ZoomRoomTraditionalConferenceControl callOut =
+					ActiveConferenceControl.Parent.Controls.GetControl<ZoomRoomTraditionalConferenceControl>();
+				var traditional = callOut == null ? null : callOut.GetActiveConference() as ITraditionalConference;
+				if (traditional != null)
+					traditional.Hangup();
 			}
 
 			ActiveConferenceControl = null;
