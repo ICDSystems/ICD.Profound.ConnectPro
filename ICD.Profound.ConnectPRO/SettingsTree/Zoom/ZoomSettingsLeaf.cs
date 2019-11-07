@@ -5,7 +5,7 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Conferencing.Zoom.Components.Audio;
-using ICD.Connect.Conferencing.Zoom.Components.Call;
+using ICD.Connect.Conferencing.Zoom.Controls.Conferencing;
 using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
@@ -17,7 +17,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 		public event EventHandler<BoolEventArgs> OnMuteAllParticipantsAtMeetingStartChanged;
 
 		private List<AudioComponent> m_AudioComponents;
-		private List<CallComponent> m_CallComponents; 
+		private List<ZoomRoomConferenceControl> m_ConferenceControls; 
 
 		private bool m_ReduceAudioReverb;
 		private bool m_AudioProcessing;
@@ -135,7 +135,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 		/// <param name="muteAll"></param>
 		public void SetMuteAllParticipantsAtMeetingStart(bool muteAll)
 		{
-			m_CallComponents.ForEach(c => c.EnableMuteUserOnEntry(muteAll));
+			m_ConferenceControls.ForEach(c => c.MuteUserOnEntry = muteAll);
 		}
 
 		#endregion
@@ -161,7 +161,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 
 		private void UpdateMuteAllParticipants()
 		{
-			MuteAllParticipantsAtMeetingStart = m_CallComponents.All(c => c.MuteUserOnEntry);
+			MuteAllParticipantsAtMeetingStart = m_ConferenceControls.All(c => c.MuteUserOnEntry);
 		}
 
 		#endregion
@@ -184,16 +184,16 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 					      .Select(z => z.Components.GetComponent<AudioComponent>())
 					      .ToList();
 
-			m_CallComponents =
+			m_ConferenceControls =
 				room == null
-					? new List<CallComponent>()
+					? new List<ZoomRoomConferenceControl>()
 					: room.Originators
 					      .GetInstancesRecursive<ZoomRoom>()
-					      .Select(z => z.Components.GetComponent<CallComponent>())
+					      .Select(z => z.Controls.GetControl<ZoomRoomConferenceControl>())
 					      .ToList();
 
 			m_AudioComponents.ForEach(Subscribe);
-			m_CallComponents.ForEach(Subscribe);
+			m_ConferenceControls.ForEach(Subscribe);
 
 			Update();
 		}
@@ -210,9 +210,9 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 				m_AudioComponents.ForEach(Unsubscribe);
 			m_AudioComponents = null;
 
-			if (m_CallComponents != null)
-				m_CallComponents.ForEach(Unsubscribe);
-			m_CallComponents = null;
+			if (m_ConferenceControls != null)
+				m_ConferenceControls.ForEach(Unsubscribe);
+			m_ConferenceControls = null;
 
 			Update();
 		}
@@ -266,19 +266,19 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 		#region CallComponent Callbacks
 
 		/// <summary>
-		/// Subscribe to the call component events.
+		/// Subscribe to the conference control events.
 		/// </summary>
 		/// <param name="callComponent"></param>
-		private void Subscribe(CallComponent callComponent)
+		private void Subscribe(ZoomRoomConferenceControl callComponent)
 		{
 			callComponent.OnMuteUserOnEntryChanged += CallComponentOnMuteUserOnEntryChanged;
 		}
 
 		/// <summary>
-		/// Unsubscribe from the call component events.
+		/// Unsubscribe from the conference control events.
 		/// </summary>
 		/// <param name="callComponent"></param>
-		private void Unsubscribe(CallComponent callComponent)
+		private void Unsubscribe(ZoomRoomConferenceControl callComponent)
 		{
 			callComponent.OnMuteUserOnEntryChanged -= CallComponentOnMuteUserOnEntryChanged;
 		}
