@@ -235,7 +235,6 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\Sources\IReferencedSourceSelectPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Sources\ISourceSelectPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IContextualControlPresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\IDisabledAlertPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IGenericAlertPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IGenericKeyboardPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IGenericLoadingSpinnerPresenter.cs" />
@@ -323,7 +322,6 @@
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\Zoom\ISettingsZoomView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\Zoom\SubSettings\ISettingsZoomSubView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Icons.cs" />
-    <Compile Include="Themes\UserInterface\IViews\IDisabledAlertView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IGenericAlertView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IGenericKeyboardView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IGenericLoadingSpinnerView.cs" />
@@ -425,7 +423,6 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\StartMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\VolumePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\ConnectProNavigationController.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\DisabledAlertPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\GenericAlertPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\GenericKeyboardPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\GenericLoadingSpinnerPresenter.cs" />
@@ -570,8 +567,6 @@
     <Compile Include="Themes\UserInterface\Views\GenericKeyboardView.cs" />
     <Compile Include="Themes\UserInterface\Views\GenericKeyboardView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\GenericLoadingSpinnerView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\DisabledAlertView.cs" />
-    <Compile Include="Themes\UserInterface\Views\DisabledAlertView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\GenericAlertView.cs" />
     <Compile Include="Themes\UserInterface\Views\GenericAlertView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\GenericLoadingSpinnerView.cs" />

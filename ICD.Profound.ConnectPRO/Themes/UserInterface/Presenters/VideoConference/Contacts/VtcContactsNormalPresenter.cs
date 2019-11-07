@@ -187,7 +187,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="eventArgs"></param>
 		private void ViewOnSearchButtonPressed(object sender, EventArgs eventArgs)
 		{
-			Navigation.NavigateTo<IDisabledAlertPresenter>();
+			Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
+			          .Show("This function is currently disabled.", 2 * 1000, GenericAlertPresenterButton.Dismiss);
 		}
 
 		/// <summary>
