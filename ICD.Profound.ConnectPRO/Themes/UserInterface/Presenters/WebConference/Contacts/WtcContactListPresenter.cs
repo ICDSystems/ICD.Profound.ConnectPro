@@ -316,7 +316,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				// if it matches the beginning of the name, decent points
 				if (matches[0] == 0)
 					score += 0.5;
-					// else if it matches the beginning of any name token, small points
+				// else if it matches the beginning of any name token, small points
 				else if (matches.Any(i => i == 0))
 					score += 0.25;
 			}
@@ -511,6 +511,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// <param name="eventArgs"></param>
 		private void ViewOnFavoritesButtonPressed(object sender, EventArgs eventArgs)
 		{
+			// Clear the filter - Skip the property to avoid a second refresh
+			m_Filter = null;
+			m_ConfirmedFilter = null;
+
 			ShowFavorites = !ShowFavorites;
 		}
 
