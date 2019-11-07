@@ -1,10 +1,13 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using ICD.Common.Utils;
 using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.ConferencePoints;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Favorites.SqLite;
+using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Devices;
 using ICD.Connect.Partitioning;
 using ICD.Connect.Partitioning.Commercial;
@@ -121,43 +124,79 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 		/// <summary>
 		/// We need to automatically generate conference points for sources with conferencing controls
 		/// that do not already have conference points.
-		/// 
-		/// TODO - This assumes each device has only one conference control
 		/// </summary>
 		/// <param name="factory"></param>
 		private void GenerateConferencePoints(IDeviceFactory factory)
 		{
+			if (factory == null)
+				throw new ArgumentNullException("factory");
+
 			foreach (ISource source in Originators.GetInstances<ISource>())
 			{
 				// Does the source have a conference control?
 				IDeviceBase device = Core.Originators.GetChild<IDeviceBase>(source.Device);
-				IConferenceDeviceControl control = device.Controls.GetControl<IConferenceDeviceControl>();
-				if (control == null)
+				
+				// Skip devices with multiple conference controls that already have conference points.
+				// DSPs should be configured properly in DeployAV
+				bool alreadyConfigured =
+					Originators.GetInstances<IConferencePoint>().Any(p => p.DeviceId == device.Id);
+
+				// DeployAV doesn't support controls on non-DSP devices, so there's no way
+				// for users to make a conference point for the Zoom call out feature
+				bool isZoom = device is ZoomRoom;
+				if (alreadyConfigured && !isZoom)
 					continue;
 
-				// Does the control have a conference point?
-				if (Originators.GetInstances<IConferencePoint>().Any(c => c.DeviceId == device.Id))
-					continue;
-
-				int id = IdUtils.GetNewId(Core.Originators.GetChildrenIds().Concat(factory.GetOriginatorIds()),
-				                          IdUtils.GetSubsystemId(IdUtils.SUBSYSTEM_POINTS),
-				                          Id);
-				eCombineMode combineMode = Originators.GetCombineMode(source.Id);
-
-				ConferencePoint point = new ConferencePoint
+				IEnumerable<IConferenceDeviceControl>
+					controls = device.Controls.GetControls<IConferenceDeviceControl>();
+				
+				foreach (IConferenceDeviceControl control in controls)
 				{
-					Id = id,
-					Name = control.Name,
-					DeviceId = device.Id,
-					ControlId = control.Id,
-					Type = control.Supports
-				};
+					// Does the control already have a conference point?
+					if (ControlHasConferencePoint(control))
+						continue;
 
-				Core.Originators.AddChild(point);
-				Originators.Add(id, combineMode);
+					int id = IdUtils.GetNewId(Core.Originators.GetChildrenIds().Concat(factory.GetOriginatorIds()),
+					                          IdUtils.GetSubsystemId(IdUtils.SUBSYSTEM_POINTS),
+					                          Id);
+					eCombineMode combineMode = Originators.GetCombineMode(source.Id);
 
-				ConferenceManager.RegisterDialingProvider(point);
+					ConferencePoint point = new ConferencePoint
+					{
+						Id = id,
+						Name = control.Name,
+						DeviceId = device.Id,
+						ControlId = control.Id,
+						Type = control.Supports
+					};
+
+					Core.Originators.AddChild(point);
+					Originators.Add(id, combineMode);
+
+					ConferenceManager.RegisterDialingProvider(point);
+				}
 			}
+		}
+
+		private bool ControlHasConferencePoint(IConferenceDeviceControl control)
+		{
+			if (control == null)
+				throw new ArgumentNullException("control");
+
+			List<IConferencePoint> conferencePointsForDevice =
+				Originators.GetInstances<IConferencePoint>()
+				           .Where(c => c.DeviceId == control.Parent.Id)
+				           .ToList();
+
+			// Edge case - Id 0 refers to the first control of a given type
+			bool hasLookupId = conferencePointsForDevice.Any(p => p.ControlId == 0);
+			bool isFirstControl =
+				control == control.Parent.Controls.GetControls<IConferenceDeviceControl>().FirstOrDefault();
+			if (hasLookupId && isFirstControl)
+				return true;
+
+			// Simple case - The control has a conference point that refers to it directly
+			return conferencePointsForDevice.Any(p => p.ControlId == control.Id);
 		}
 
 		#endregion
