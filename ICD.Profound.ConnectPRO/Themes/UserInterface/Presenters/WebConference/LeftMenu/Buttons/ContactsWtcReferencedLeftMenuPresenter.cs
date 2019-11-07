@@ -1,4 +1,9 @@
-﻿using ICD.Common.Utils.EventArguments;
+﻿using ICD.Common.Properties;
+using ICD.Common.Utils.EventArguments;
+using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Zoom;
+using ICD.Connect.Conferencing.Zoom.Controls.Conferencing;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -14,6 +19,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 	                                                             IContactsWtcReferencedLeftMenuPresenter
 	{
 		private readonly IWtcContactListPresenter m_ContactListPresenter;
+
+		/// <summary>
+		/// Gets the zoom traditional control for call out.
+		/// </summary>
+		private ZoomRoomTraditionalConferenceControl TraditionalControl
+		{
+			get { return GetTraditionalConferenceControl(ActiveConferenceControl); }
+		}
 
 		/// <summary>
 		/// Constructor.
@@ -48,7 +61,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			Icon = "list";
 			Label = "Contacts";
 			State = null;
-			Enabled = true;
+			Enabled = TraditionalControl == null || TraditionalControl.GetActiveConference() == null;
 			Selected = m_ContactListPresenter.IsViewVisible;
 
 			base.Refresh(view);
@@ -57,6 +70,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		public override void HideSubpages()
 		{
 			m_ContactListPresenter.ShowView(false);
+		}
+
+		/// <summary>
+		/// Gets the zoom traditional control for call out from the given conference control.
+		/// </summary>
+		[CanBeNull]
+		private static ZoomRoomTraditionalConferenceControl GetTraditionalConferenceControl(
+			[CanBeNull] IWebConferenceDeviceControl control)
+		{
+			if (control == null)
+				return null;
+
+			ZoomRoom device = control.Parent as ZoomRoom;
+			return device == null ? null : device.Controls.GetControl<ZoomRoomTraditionalConferenceControl>();
 		}
 
 		#region Presenter Callbacks
@@ -72,6 +99,52 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		}
 
 		private void ContactListPresenterOnViewVisibilityChanged(object sender, BoolEventArgs e)
+		{
+			RefreshIfVisible();
+		}
+
+		#endregion
+
+		#region Control Callbacks
+
+		/// <summary>
+		/// Subscribe to the conference control events.
+		/// </summary>
+		/// <param name="control"></param>
+		protected override void Subscribe(IWebConferenceDeviceControl control)
+		{
+			base.Subscribe(control);
+
+			ZoomRoomTraditionalConferenceControl callOut = GetTraditionalConferenceControl(control);
+			if (callOut == null)
+				return;
+
+			callOut.OnConferenceAdded += TraditionalControlOnConferenceAdded;
+			callOut.OnConferenceRemoved += TraditionalControlOnConferenceRemoved;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the conference control events.
+		/// </summary>
+		/// <param name="control"></param>
+		protected override void Unsubscribe(IWebConferenceDeviceControl control)
+		{
+			base.Unsubscribe(control);
+
+			ZoomRoomTraditionalConferenceControl callOut = GetTraditionalConferenceControl(control);
+			if (callOut == null)
+				return;
+
+			callOut.OnConferenceAdded -= TraditionalControlOnConferenceAdded;
+			callOut.OnConferenceRemoved -= TraditionalControlOnConferenceRemoved;
+		}
+
+		private void TraditionalControlOnConferenceAdded(object sender, ConferenceEventArgs e)
+		{
+			RefreshIfVisible();
+		}
+
+		private void TraditionalControlOnConferenceRemoved(object sender, ConferenceEventArgs e)
 		{
 			RefreshIfVisible();
 		}
