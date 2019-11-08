@@ -44,6 +44,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 			m_Routing = routing;
 			m_CacheSection = new SafeCriticalSection();
+
+			m_Routing.Room.Originators.OnChildrenChanged += OriginatorsOnChildrenChanged;
 		}
 
 		#region Methods
@@ -156,6 +158,26 @@ namespace ICD.Profound.ConnectPRO.Routing
 			return groups.Concat(destinations.Cast<IDestinationBase>())
 			             .OrderBy(d => d.Order)
 			             .ThenBy(d => d.GetName(combine));
+		}
+
+		/// <summary>
+		/// Called when the room contents change.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void OriginatorsOnChildrenChanged(object sender, EventArgs eventArgs)
+		{
+			m_CacheSection.Enter();
+
+			try
+			{
+				m_VideoDestinations.Clear();
+				m_AudioDestinations.Clear();
+			}
+			finally
+			{
+				m_CacheSection.Leave();
+			}
 		}
 
 		#endregion
