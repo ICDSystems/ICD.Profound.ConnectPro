@@ -29,7 +29,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 
 			m_ContactList = new VtProSubpageReferenceList(705, panel as IPanelDevice, m_Subpage)
 			{
-				MaxSize = 20,
+				MaxSize = 50,
 				DigitalJoinIncrement = 4,
 				AnalogJoinIncrement = 1,
 				SerialJoinIncrement = 2

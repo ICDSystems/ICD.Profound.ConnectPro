@@ -3,6 +3,7 @@ using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Zoom.Components.Call;
 using ICD.Connect.Conferencing.Zoom.Controls.Conferencing;
+using ICD.Connect.Conferencing.Zoom.Responses;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -23,6 +24,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private readonly SafeTimer m_BlinkTimer;
 		private bool m_BlinkState;
+
+		private bool m_CanRecord;
 
 		private CallComponent m_SubscribedCallComponent;
 
@@ -47,7 +50,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		{
 			Label = m_SubscribedCallComponent == null || !m_SubscribedCallComponent.CallRecord ? LABEL_RECORD : LABEL_STOP_RECORDING;
 			Icon = "tcRecord";
-			Enabled = m_SubscribedCallComponent != null;
+			Enabled = m_CanRecord;
 			State = GetState();
 
 			base.Refresh(view);
@@ -74,6 +77,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 						? eLightState.Green
 						: eLightState.Red
 					: eLightState.None;
+		}
+
+		private void UpdateCanRecord()
+		{
+			m_CanRecord = m_SubscribedCallComponent != null && m_CanRecord ||
+			              m_SubscribedCallComponent != null && m_SubscribedCallComponent.AmIHost;
+
+			RefreshIfVisible();
 		}
 
 		public override void HideSubpages()
@@ -107,6 +118,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 			m_SubscribedCallComponent.OnCallRecordChanged += ZoomCallComponentOnCallRecordChanged;
 			m_SubscribedCallComponent.OnCallRecordErrorState += ZoomControlOnCallRecordErrorState;
+			m_SubscribedCallComponent.OnUpdatedCallRecordInfo += ZoomCallComponentOnUpdatedCallRecordInfo;
+			m_SubscribedCallComponent.OnAmIHostChanged += ZoomCallComponentOnAmIHostChanged;
 		}
 
 		/// <summary>
@@ -122,6 +135,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 			m_SubscribedCallComponent.OnCallRecordChanged -= ZoomCallComponentOnCallRecordChanged;
 			m_SubscribedCallComponent.OnCallRecordErrorState -= ZoomControlOnCallRecordErrorState;
+			m_SubscribedCallComponent.OnUpdatedCallRecordInfo -= ZoomCallComponentOnUpdatedCallRecordInfo;
+			m_SubscribedCallComponent.OnAmIHostChanged -= ZoomCallComponentOnAmIHostChanged;
 		}
 
 		/// <summary>
@@ -153,6 +168,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				          Visible = false,
 				          Enabled = false
 			          }, GenericAlertPresenterButton.Dismiss);
+		}
+
+		private void ZoomCallComponentOnUpdatedCallRecordInfo(object sender, GenericEventArgs<UpdateCallRecordInfoEvent> e)
+		{
+			m_CanRecord = e.Data.CanRecord;
+
+			UpdateCanRecord();
+		}
+
+		private void ZoomCallComponentOnAmIHostChanged(object sender, BoolEventArgs e)
+		{
+			UpdateCanRecord();
 		}
 
 		#endregion

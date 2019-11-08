@@ -116,14 +116,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private void Subscribe(IWebParticipant participant)
 		{
 			participant.OnIsMutedChanged += ParticipantOnIsMutedChanged;
+			participant.OnIsHostChanged += ParticipantOnIsHostChanged;
 		}
 
 		private void Unsubscribe(IWebParticipant participant)
 		{
 			participant.OnIsMutedChanged -= ParticipantOnIsMutedChanged;
+			participant.OnIsHostChanged -= ParticipantOnIsHostChanged;
 		}
 
 		private void ParticipantOnIsMutedChanged(object sender, BoolEventArgs e)
+		{
+			RefreshIfVisible();
+		}
+
+		private void ParticipantOnIsHostChanged(object sender, BoolEventArgs e)
 		{
 			RefreshIfVisible();
 		}

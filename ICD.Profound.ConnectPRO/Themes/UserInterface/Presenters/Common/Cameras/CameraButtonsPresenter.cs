@@ -6,6 +6,7 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Layout;
 using ICD.Connect.Conferencing.Controls.Routing;
+using ICD.Connect.Conferencing.Zoom.Controls.Conferencing;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -37,6 +38,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 
 		private ushort m_Index;
 
+		private bool m_ZoomMode;
+
 		public CameraButtonsPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
@@ -57,7 +60,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			{
 				view.SetCameraConfigurationButtonEnabled(0, CameraActiveEnabled());
 				view.SetCameraConfigurationButtonEnabled(1, CameraControlEnabled());
-				view.SetCameraConfigurationButtonEnabled(2, true);
+				view.SetCameraConfigurationButtonEnabled(2, m_ZoomMode);
 
 				foreach (ushort index in s_IndexToPresenterType.Keys.Where(k => k != m_Index))
 				{
@@ -83,11 +86,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 				                                                 ? null
 				                                                 : value.Parent.Controls
 				                                                        .GetControl<IVideoConferenceRouteControl>());
-			m_CameraLayoutPresenter.SetDestinationLayoutControl(value == null
-				                                              ? null
-				                                              : value.Parent.Controls
-				                                                     .GetControl<IConferenceLayoutControl>());
 
+			if (!(value is ZoomRoomConferenceControl))
+				return;
+
+			m_CameraLayoutPresenter.SetDestinationLayoutControl(value == null
+				                                                    ? null
+				                                                    : value.Parent.Controls
+				                                                           .GetControl<IConferenceLayoutControl
+				                                                           >());
+			m_ZoomMode = true;
 		}
 
 		#region Private Methods
@@ -190,8 +198,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 					m_Index = 0;
 				else if (CameraControlEnabled())
 					m_Index = 1;
-				else
+				else if(m_ZoomMode)
 					m_Index = 2;
+				else
+				{
+					ShowView(false);
+					return;
+				}
 
 				NavigateTo(m_Index);
 			}

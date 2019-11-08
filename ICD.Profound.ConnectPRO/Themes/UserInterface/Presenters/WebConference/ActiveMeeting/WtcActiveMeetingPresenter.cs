@@ -141,22 +141,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				presenter.OnPressed += PresenterOnOnPressed;
 		}
 
-		private void SubscribeSelected(IWtcReferencedParticipantPresenter presenter)
-		{
-			if (presenter != null && presenter.Participant != null)
-				presenter.Participant.OnIsMutedChanged += ParticipantOnOnIsMutedChanged;
-		}
-
 		private void Unsubscribe(IWtcReferencedParticipantPresenter presenter)
 		{
 			if (presenter != null)
 				presenter.OnPressed -= PresenterOnOnPressed;
-		}
-
-		private void UnsubscribeSelected(IWtcReferencedParticipantPresenter presenter)
-		{
-			if (presenter != null && presenter.Participant != null)
-				presenter.Participant.OnIsMutedChanged -= ParticipantOnOnIsMutedChanged;
 		}
 
 		private void PresenterOnOnPressed(object sender, EventArgs eventArgs)
@@ -166,9 +154,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			RefreshIfVisible();
 		}
 
-		private void ParticipantOnOnIsMutedChanged(object sender, BoolEventArgs e)
+		#endregion
+
+		#region Selected Participant Callbacks
+
+		private void SubscribeSelected(IWtcReferencedParticipantPresenter presenter)
 		{
-			RefreshIfVisible();
+		}
+
+		private void UnsubscribeSelected(IWtcReferencedParticipantPresenter presenter)
+		{
 		}
 
 		#endregion
