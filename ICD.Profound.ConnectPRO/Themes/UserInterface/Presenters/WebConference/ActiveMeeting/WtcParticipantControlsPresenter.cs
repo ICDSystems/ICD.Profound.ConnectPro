@@ -89,7 +89,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				// Record
 				ZoomWebParticipant zoomParticipant = Participant as ZoomWebParticipant;
 				bool canRecord = zoomParticipant != null && zoomParticipant.CanRecord;
-				view.SetButtonIcon(INDEX_RECORD, canRecord ? "icon_tcRecord_white" : s_ButtonIcons[INDEX_RECORD]);
+				view.SetButtonIcon(INDEX_RECORD, canRecord ? s_ButtonIcons[INDEX_RECORD] : "icon_tcRecord_white");
 				view.SetButtonLabel(INDEX_RECORD, canRecord ? "Disallow Recording" : s_ButtonLabels[INDEX_RECORD]);
 			}
 			finally
