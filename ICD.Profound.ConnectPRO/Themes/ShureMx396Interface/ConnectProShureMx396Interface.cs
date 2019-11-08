@@ -5,6 +5,8 @@ using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Audio.Shure.Devices.MX;
 using ICD.Connect.Conferencing.ConferenceManagers;
+using ICD.Connect.Conferencing.Conferences;
+using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Themes.UserInterfaces;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -46,6 +48,8 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMx396Interface
 			m_Theme = theme;
 			m_RefreshSection = new SafeCriticalSection();
 		}
+
+		#region Methods
 
 		/// <summary>
 		/// Release resources.
@@ -97,6 +101,8 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMx396Interface
 			UpdateMicrophoneLeds();
 		}
 
+		#endregion
+
 		#region Room Callbacks
 
 		/// <summary>
@@ -112,6 +118,8 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMx396Interface
 			if (m_SubscribedConferenceManager == null)
 				return;
 
+			m_SubscribedConferenceManager.OnInCallChanged += ConferenceManagerOnInCallChanged;
+			m_SubscribedConferenceManager.OnActiveConferenceStatusChanged += ConferenceManagerOnActiveConferenceStatusChanged;
 			m_SubscribedConferenceManager.OnPrivacyMuteStatusChange += ConferenceManagerOnPrivacyMuteStatusChange;
 		}
 
@@ -124,9 +132,21 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMx396Interface
 			if (m_SubscribedConferenceManager == null)
 				return;
 
+			m_SubscribedConferenceManager.OnInCallChanged -= ConferenceManagerOnInCallChanged;
+			m_SubscribedConferenceManager.OnActiveConferenceStatusChanged -= ConferenceManagerOnActiveConferenceStatusChanged;
 			m_SubscribedConferenceManager.OnPrivacyMuteStatusChange -= ConferenceManagerOnPrivacyMuteStatusChange;
 
 			m_SubscribedConferenceManager = null;
+		}
+
+		/// <summary>
+		/// Called when the active conference changes status.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void ConferenceManagerOnActiveConferenceStatusChanged(object sender, ConferenceStatusEventArgs args)
+		{
+			UpdateMicrophoneLeds();
 		}
 
 		/// <summary>
@@ -140,10 +160,19 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMx396Interface
 		}
 
 		/// <summary>
-		/// Not in a call - LED Off
-		/// In a call, On Hold - LED Yellow
-		/// In a call, not on hold, muted - LED Red
-		/// In a call, not on hold, not muted - LED Green
+		/// Called when we enter a call, or leave all calls.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void ConferenceManagerOnInCallChanged(object sender, InCallEventArgs args)
+		{
+			UpdateMicrophoneLeds();
+		}
+
+		/// <summary>
+		/// Not in a call - LED Green
+		/// In a call, muted - LED Red
+		/// In a call, not muted - LED Green
 		/// </summary>
 		private void UpdateMicrophoneLeds()
 		{
@@ -151,8 +180,10 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMx396Interface
 
 			try
 			{
-				bool green = m_SubscribedConferenceManager != null &&
-				             !m_SubscribedConferenceManager.PrivacyMuted;
+				bool inCall = m_SubscribedConferenceManager != null && m_SubscribedConferenceManager.IsInCall != eInCall.None;
+				bool privacyMuted = m_SubscribedConferenceManager != null && m_SubscribedConferenceManager.PrivacyMuted;
+
+				bool green = !inCall || !privacyMuted;
 
 				m_Microphone.SetLedState(green);
 			}
@@ -188,10 +219,14 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMx396Interface
 		/// Called when the mute button is pressed/released.
 		/// </summary>
 		/// <param name="sender"></param>
-		/// <param name="boolEventArgs"></param>
-		private void MicrophoneOnButtonPressedChanged(object sender, BoolEventArgs boolEventArgs)
+		/// <param name="eventArgs"></param>
+		private void MicrophoneOnButtonPressedChanged(object sender, BoolEventArgs eventArgs)
 		{
-			if (boolEventArgs.Data && m_SubscribedConferenceManager != null)
+			// Prevent the user from toggling privacy mute while outside of a call
+			if (m_SubscribedConferenceManager == null || m_SubscribedConferenceManager.IsInCall == eInCall.None)
+				return;
+
+			if (eventArgs.Data)
 				m_SubscribedConferenceManager.TogglePrivacyMute();
 		}
 
