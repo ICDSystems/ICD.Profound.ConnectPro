@@ -29,7 +29,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private static readonly Dictionary<ushort, string> s_ButtonIcons = new Dictionary<ushort, string>
 		{
 			{INDEX_KICK, "icon_exit_white"},
-			{INDEX_MUTE, "icon_volumeMute_white"},
+			{INDEX_MUTE, "icon_volumeMute_red"},
 			{INDEX_RECORD, "icon_tcRecord_red"},
 		};
 
