@@ -172,8 +172,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private void ZoomCallComponentOnUpdatedCallRecordInfo(object sender, GenericEventArgs<UpdateCallRecordInfoEvent> e)
 		{
-			m_CanRecord = e.Data.CanRecord;
-
 			UpdateCanRecord();
 		}
 

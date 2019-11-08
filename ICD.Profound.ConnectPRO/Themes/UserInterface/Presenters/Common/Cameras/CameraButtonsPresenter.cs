@@ -88,7 +88,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 				                                                        .GetControl<IVideoConferenceRouteControl>());
 
 			if (!(value is ZoomRoomConferenceControl))
+			{
+				m_ZoomMode = false;
 				return;
+			}
 
 			m_CameraLayoutPresenter.SetDestinationLayoutControl(value == null
 				                                                    ? null
