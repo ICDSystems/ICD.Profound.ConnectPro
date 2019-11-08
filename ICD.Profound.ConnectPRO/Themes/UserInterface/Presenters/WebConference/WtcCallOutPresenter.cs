@@ -1,5 +1,4 @@
 ﻿using System;
-using ICD.Common.Logging.Loggers;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
@@ -353,7 +352,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			          .ShowView("Starting Zoom Audio Call", 10 * 1000);
 
 			// Call
-			IDialContext dialContext = new PstnDialContext()
+			IDialContext dialContext = new PstnDialContext
 			{
 				CallType = eCallType.Audio,
 				DialString = m_StringBuilder.ToString()
