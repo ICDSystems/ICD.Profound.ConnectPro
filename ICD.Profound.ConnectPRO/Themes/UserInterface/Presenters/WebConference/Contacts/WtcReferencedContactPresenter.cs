@@ -1,9 +1,12 @@
 ﻿using System;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
+using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
+using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Contacts;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Favorites;
 using ICD.Connect.Conferencing.Zoom.Components.Directory;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -21,8 +24,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// </summary>
 		public event EventHandler OnPressed;
 
+		/// <summary>
+		/// Raised when the contact is stored/removed from favorites.
+		/// </summary>
+		public event EventHandler<BoolEventArgs> OnIsFavoritedStateChanged;
+
 		private readonly SafeCriticalSection m_RefreshSection;
 		private IContact m_Contact;
+		private bool m_IsFavorite;
 
 		#region Properties
 
@@ -42,6 +51,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				m_Contact = value;
 				Subscribe(m_Contact);
 
+				// Avoid the IsFavorite setter to avoid expensive refreshing
+				m_IsFavorite = GetIsFavorite();
+
+				RefreshIfVisible();
+			}
+		}
+
+		/// <summary>
+		/// Gets the IsFavorite state.
+		/// </summary>
+		public bool IsFavorite
+		{
+			get { return m_IsFavorite; }
+			private set
+			{
+				if (value == m_IsFavorite)
+					return;
+
+				m_IsFavorite = value;
+
+				// Raise the event before refreshing because the contact browser may remove this referenced contact
+				OnIsFavoritedStateChanged.Raise(this, new BoolEventArgs(m_IsFavorite));
+
 				RefreshIfVisible();
 			}
 		}
@@ -60,12 +92,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			m_RefreshSection = new SafeCriticalSection();
 		}
 
+		#region Methods
+
 		/// <summary>
 		/// Release resources.
 		/// </summary>
 		public override void Dispose()
 		{
 			OnPressed = null;
+			OnIsFavoritedStateChanged = null;
 
 			base.Dispose();
 		}
@@ -94,14 +129,53 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				view.SetAvatarImagePath(zoomContact == null ? null : zoomContact.AvatarUrl);
 
 				// Favorite state
-				bool isFavorite = false;
-				view.SetFavoriteButtonSelected(isFavorite);
+				view.SetFavoriteButtonSelected(IsFavorite);
 			}
 			finally
 			{
 				m_RefreshSection.Leave();
 			}
 		}
+
+		#endregion
+
+		#region Private Methods
+
+		/// <summary>
+		/// Adds the contact as a favorite if not already a favorite, otherwise
+		/// removes the contact from favorites.
+		/// </summary>
+		private void ToggleFavorite()
+		{
+			if (Contact == null)
+				return;
+
+			IConferenceManager conferenceManager = Room == null ? null : Room.ConferenceManager;
+			IFavorites favorites = conferenceManager == null ? null : conferenceManager.Favorites;
+			if (favorites == null)
+				return;
+
+			IsFavorite = favorites.ToggleFavorite(Contact);
+		}
+
+		/// <summary>
+		/// Returns true if the current contact is stored as a favorite.
+		/// </summary>
+		/// <returns></returns>
+		private bool GetIsFavorite()
+		{
+			if (Contact == null)
+				return false;
+
+			IConferenceManager conferenceManager = Room == null ? null : Room.ConferenceManager;
+			IFavorites favorites = conferenceManager == null ? null : conferenceManager.Favorites;
+			if (favorites == null)
+				return false;
+
+			return favorites.ContainsFavorite(Contact);
+		}
+
+		#endregion
 
 		#region Contact Callbacks 
 
@@ -182,7 +256,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// <param name="eventArgs"></param>
 		private void ViewOnFavoriteButtonPressed(object sender, EventArgs eventArgs)
 		{
-			throw new NotImplementedException();
+			if (Contact == null)
+				return;
+
+			ToggleFavorite();
 		}
 
 		#endregion

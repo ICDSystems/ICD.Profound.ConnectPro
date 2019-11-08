@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
@@ -138,7 +139,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				view.SetSearchButtonEnabled(true);
 				view.SetFavoritesButtonSelected(string.IsNullOrEmpty(Filter) && ShowFavorites);
 
-				IContact[] contacts = m_Contacts.Except(m_SelectedContacts).ToArray();
+				IContact[] contacts = ExceptSelectedContacts(m_Contacts).ToArray();
 
 				view.ShowNoContactsSelectedLabel(m_SelectedContacts.Count == 0);
 				view.SetInviteParticipantButtonEnabled(m_SelectedContacts.Count > 0);
@@ -153,6 +154,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		/// <summary>
+		/// Filters selected contacts out of the given sequence.
+		/// </summary>
+		/// <param name="contacts"></param>
+		/// <returns></returns>
+		private IEnumerable<IContact> ExceptSelectedContacts([NotNull] IEnumerable<IContact> contacts)
+		{
+			return contacts.Where(c => !m_SelectedContacts.ContainsSorted(c, other => other.Name));
 		}
 
 		#region Private Methods
@@ -330,11 +341,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private void Subscribe(IWtcReferencedContactPresenter presenter)
 		{
 			presenter.OnPressed += ContactOnPressed;
+			presenter.OnIsFavoritedStateChanged += ContactOnIsFavoritedStateChanged;
 		}
 
 		private void Unsubscribe(IWtcReferencedContactPresenter presenter)
 		{
 			presenter.OnPressed -= ContactOnPressed;
+			presenter.OnIsFavoritedStateChanged -= ContactOnIsFavoritedStateChanged;
 		}
 
 		private void ContactOnPressed(object sender, EventArgs eventArgs)
@@ -344,6 +357,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				return;
 
 			AddSelectedContact(presenter.Contact);
+		}
+
+		private void ContactOnIsFavoritedStateChanged(object sender, BoolEventArgs e)
+		{
+			if (ShowFavorites)
+				RebuildContacts();
 		}
 
 		#endregion
