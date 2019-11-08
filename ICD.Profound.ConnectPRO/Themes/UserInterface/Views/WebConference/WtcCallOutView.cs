@@ -85,6 +85,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 		}
 
 		/// <summary>
+		/// Sets the enabled state of the call button.
+		/// </summary>
+		/// <param name="enabled"></param>
+		public void SetCallButtonEnabled(bool enabled)
+		{
+			m_CallButton.Enable(enabled);
+		}
+
+		/// <summary>
 		/// Sets the selected state of the call button;
 		/// </summary>
 		/// <param name="selected"></param>

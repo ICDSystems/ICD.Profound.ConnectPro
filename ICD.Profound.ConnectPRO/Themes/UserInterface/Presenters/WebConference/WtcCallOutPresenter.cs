@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Common.Logging.Loggers;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
@@ -9,6 +10,7 @@ using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Conferencing.Zoom;
+using ICD.Connect.Conferencing.Zoom.Components.TraditionalCall;
 using ICD.Connect.Conferencing.Zoom.Controls.Conferencing;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
@@ -80,11 +82,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 					StringUtils.NiceName(active == null ? eConferenceStatus.Disconnected : active.Status);
 				bool backEnabled = active == null && dialText.Length > 0;
 				bool clearEnabled = active == null && dialText.Length > 0;
+				bool callEnabled = dialText.Length > 0;
 				bool callSelected = isInCall;
 
 				view.SetBackButtonEnabled(backEnabled);
 				view.SetCallButtonLabel(callLabel);
 				view.SetCallStatusLabel(callStatusLabel);
+				view.SetCallButtonEnabled(callEnabled);
 				view.SetCallButtonSelected(callSelected);
 				view.SetClearButtonEnabled(clearEnabled);
 				view.SetText(dialText);
@@ -148,6 +152,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			callOut.OnConferenceAdded += TraditionalControlOnConferenceAdded;
 			callOut.OnConferenceRemoved += TraditionalControlOnConferenceRemoved;
+			callOut.OnCallOutFailed += TraditionalControlOnCallOutFailed;
 
 			foreach (ITraditionalConference conference in callOut.GetConferences())
 				Subscribe(conference);
@@ -176,6 +181,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			callOut.OnConferenceAdded -= TraditionalControlOnConferenceAdded;
 			callOut.OnConferenceRemoved -= TraditionalControlOnConferenceRemoved;
+			callOut.OnCallOutFailed -= TraditionalControlOnCallOutFailed;
 
 			foreach (ITraditionalConference conference in callOut.GetConferences())
 				Unsubscribe(conference);
@@ -206,6 +212,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			Unsubscribe(args.Data);
 			RefreshIfVisible();
+		}
+
+		private void TraditionalControlOnCallOutFailed(object sender, GenericEventArgs<TraditionalZoomPhoneCallInfo> e)
+		{
+			// Hide the call out loading spinner.
+			Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView(false);
+
+			// Clear the failed call out string as we show it to the user.
+			string message = string.Format("Call Out to: {0} Failed", m_StringBuilder.Pop());
+
+			// Hide the error message after 8 seconds.
+			const long timeout = 8 * 1000;
+
+			Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
+			          .Show(message, timeout, new GenericAlertPresenterButton
+			          {
+				          Visible = false,
+				          Enabled = false
+			          }, GenericAlertPresenterButton.Dismiss);
 		}
 
 		#endregion
@@ -286,7 +311,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// <param name="charEventArgs"></param>
 		private void ViewOnKeypadButtonPressed(object sender, CharEventArgs charEventArgs)
 		{
-			m_StringBuilder.AppendCharacter(charEventArgs.Data);
+			if (ActiveConference == null && !(charEventArgs.Data == '#' || charEventArgs.Data == '*'))
+				m_StringBuilder.AppendCharacter(charEventArgs.Data);
 
 			// DTMF
 			if (ActiveConference != null)
@@ -332,7 +358,30 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				CallType = eCallType.Audio,
 				DialString = m_StringBuilder.ToString()
 			};
-			control.Dial(dialContext);
+			try
+			{
+				control.Dial(dialContext);
+			}
+
+			// If an empty dial string or a dial string containing # OR * is dialed
+			// Zoom fails but doesn't give useful feedback.
+			// So we catch the exception here and display useful info on the UI.
+			catch (ArgumentOutOfRangeException)
+			{
+				Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>()
+				          .ShowView(false);
+
+				string message = string.Format("Call Out to {0} Failed! Please enter a valid dial string.",
+				                               m_StringBuilder.Pop());
+
+				Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
+				          .Show(message, 8 * 1000,
+				                new GenericAlertPresenterButton
+				                {
+					                Visible = false,
+					                Enabled = false
+				                }, GenericAlertPresenterButton.Dismiss);
+			}
 		}
 
 		/// <summary>

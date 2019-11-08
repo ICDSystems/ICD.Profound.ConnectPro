@@ -44,6 +44,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference
 		void SetBackButtonEnabled(bool enabled);
 
 		/// <summary>
+		/// Sets the enabled state of the call button.
+		/// </summary>
+		/// <param name="enabled"></param>
+		void SetCallButtonEnabled(bool enabled);
+
+		/// <summary>
 		/// Sets the selected state of the call button;
 		/// </summary>
 		/// <param name="selected"></param>

@@ -41,6 +41,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 			{
 				IndirectTextJoin = 3035,
 				DigitalPressJoin = 817,
+				DigitalEnableJoin = 822
 			};
 
 			m_BackButton = new VtProButton(panel, m_Subpage)
