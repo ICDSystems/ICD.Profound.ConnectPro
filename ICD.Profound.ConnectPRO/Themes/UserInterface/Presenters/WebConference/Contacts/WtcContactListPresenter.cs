@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
-using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Contacts;
@@ -34,7 +34,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private readonly WtcReferencedSelectedContactPresenterFactory m_SelectedContactFactory;
 		private readonly DirectoryControlBrowser m_DirectoryBrowser;
 		private readonly List<IContact> m_Contacts;
-		private readonly List<IContact> m_SelectedContacts;
+		private readonly IcdOrderedDictionary<string, IContact> m_SelectedContacts;
 		private readonly SafeTimer m_DebounceTimer;
 
 		private string m_Filter;
@@ -96,7 +96,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			m_SelectedContactFactory = new WtcReferencedSelectedContactPresenterFactory(nav, SelectedContactItemFactory, Subscribe, Unsubscribe);
 			
 			m_Contacts = new List<IContact>();
-			m_SelectedContacts = new List<IContact>();
+			m_SelectedContacts = new IcdOrderedDictionary<string, IContact>();
 
 			m_DirectoryBrowser = new DirectoryControlBrowser();
 			m_DirectoryBrowser.OnPathContentsChanged += DirectoryBrowserOnPathContentsChanged;
@@ -147,7 +147,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				foreach (IWtcReferencedContactPresenter presenter in m_ContactFactory.BuildChildren(contacts))
 					presenter.ShowView(true);
 
-				foreach (IWtcReferencedSelectedContactPresenter presenter in m_SelectedContactFactory.BuildChildren(m_SelectedContacts))
+				foreach (IWtcReferencedSelectedContactPresenter presenter in m_SelectedContactFactory.BuildChildren(m_SelectedContacts.Values))
 					presenter.ShowView(true);
 			}
 			finally
@@ -163,7 +163,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// <returns></returns>
 		private IEnumerable<IContact> ExceptSelectedContacts([NotNull] IEnumerable<IContact> contacts)
 		{
-			return contacts.Where(c => !m_SelectedContacts.ContainsSorted(c, other => other.Name));
+			if (contacts == null)
+				throw new ArgumentNullException("contacts");
+
+			return contacts.Where(c => !m_SelectedContacts.ContainsKey(c.Name));
 		}
 
 		#region Private Methods
@@ -180,21 +183,46 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private IEnumerable<IContact> GetSelectedContacts()
 		{
-			return m_ContactSection.Execute(() => m_SelectedContacts.ToArray());
+			return m_ContactSection.Execute(() => m_SelectedContacts.Values.ToArray());
 		}
 
 		private void AddSelectedContact(IContact contact)
 		{
-			if (m_ContactSection.Execute(() => m_SelectedContacts.AddSorted(contact, c => c.Name)))
-				RefreshIfVisible();
+			if (contact == null)
+				throw new ArgumentNullException("contact");
+
+			m_ContactSection.Execute(() => m_SelectedContacts[contact.Name] = contact);
+			RefreshIfVisible();
 		}
 
 		private void RemoveSelectedContact(IContact contact)
 		{
-			if (m_ContactSection.Execute(() => m_SelectedContacts.RemoveSorted(contact, c => c.Name)))
+			if (contact == null)
+				throw new ArgumentNullException("contact");
+
+			if (m_ContactSection.Execute(() => m_SelectedContacts.Remove(contact.Name)))
 				RefreshIfVisible();
 		}
-		
+
+		private void ClearSelectedContacts()
+		{
+			m_ContactSection.Enter();
+
+			try
+			{
+				if (m_SelectedContacts.Count == 0)
+					return;
+
+				m_SelectedContacts.Clear();
+			}
+			finally
+			{
+				m_ContactSection.Leave();
+			}
+
+			RefreshIfVisible();
+		}
+
 		private void ConfirmFilter(string filter)
 		{
 			m_ConfirmedFilter = filter;
@@ -283,12 +311,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			// Directory
 			return current.GetContacts()
 			              .OrderBy(c =>
-			                       {
-				                       var onlineContact = c as IContactWithOnlineState;
-				                       if (onlineContact == null || onlineContact.OnlineState == eOnlineState.Unknown)
-					                       return eOnlineState.Offline;
-				                       return onlineContact.OnlineState;
-			                       })
+			              {
+				              var onlineContact = c as IContactWithOnlineState;
+				              if (onlineContact == null || onlineContact.OnlineState == eOnlineState.Unknown)
+					              return eOnlineState.Offline;
+				              return onlineContact.OnlineState;
+			              })
 			              .ThenBy(c => c.Name);
 		}
 
@@ -495,15 +523,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				IDialContext bestDialContext =
 					contact.GetDialContexts()
 					       .OrderByDescending(d => ActiveConferenceControl.CanDial(d))
-					       .FirstOrDefault();
+					       .FirstOrDefault(d => ActiveConferenceControl.CanDial(d) != eDialContextSupport.Unsupported);
 
-				if (bestDialContext == null ||
-				    ActiveConferenceControl.CanDial(bestDialContext) == eDialContextSupport.Unsupported)
-					continue;
-
-				ActiveConferenceControl.Dial(bestDialContext);
-				RemoveSelectedContact(contact);
+				if (bestDialContext != null)
+					ActiveConferenceControl.Dial(bestDialContext);
 			}
+
+			ClearSelectedContacts();
 
 			Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
 			          .Show("Invitation sent.", 1000);
