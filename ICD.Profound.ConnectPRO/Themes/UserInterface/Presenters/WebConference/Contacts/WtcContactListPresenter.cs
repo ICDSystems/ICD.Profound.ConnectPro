@@ -17,6 +17,7 @@ using ICD.Connect.Conferencing.Favorites;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.ActiveMeeting;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts;
@@ -533,6 +534,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 			Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
 			          .Show("Invitation sent.", 1000);
+
+			// If we're in a meeting navigate back to the active meeting page
+			if (ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConference() != null)
+				Navigation.NavigateTo<IWtcActiveMeetingPresenter>();
 
 			RefreshIfVisible();
 		}
