@@ -16,8 +16,8 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 		public event EventHandler<BoolEventArgs> OnAudioProcessingChanged;
 		public event EventHandler<BoolEventArgs> OnMuteAllParticipantsAtMeetingStartChanged;
 
-		private List<AudioComponent> m_AudioComponents;
-		private List<ZoomRoomConferenceControl> m_ConferenceControls; 
+		private readonly List<AudioComponent> m_AudioComponents;
+		private readonly List<ZoomRoomConferenceControl> m_ConferenceControls; 
 
 		private bool m_ReduceAudioReverb;
 		private bool m_AudioProcessing;
@@ -93,6 +93,9 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 		public ZoomSettingsLeaf(IConnectProRoom room)
 			: base(room)
 		{
+			m_AudioComponents = new List<AudioComponent>();
+			m_ConferenceControls = new List<ZoomRoomConferenceControl>();
+
 			Name = "Zoom";
 			Icon = SettingsTreeIcons.ICON_ZOOM;
 		}
@@ -176,23 +179,26 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 		{
 			base.Subscribe(room);
 
-			m_AudioComponents =
+			IEnumerable<AudioComponent> audioComponents =
 				room == null
-					? new List<AudioComponent>()
+					? Enumerable.Empty<AudioComponent>()
 					: room.Originators
 					      .GetInstancesRecursive<ZoomRoom>()
-					      .Select(z => z.Components.GetComponent<AudioComponent>())
-					      .ToList();
+					      .Select(z => z.Components.GetComponent<AudioComponent>());
 
-			m_ConferenceControls =
-				room == null
-					? new List<ZoomRoomConferenceControl>()
-					: room.Originators
-					      .GetInstancesRecursive<ZoomRoom>()
-					      .Select(z => z.Controls.GetControl<ZoomRoomConferenceControl>())
-					      .ToList();
-
+			m_AudioComponents.Clear();
+			m_AudioComponents.AddRange(audioComponents);
 			m_AudioComponents.ForEach(Subscribe);
+
+			IEnumerable<ZoomRoomConferenceControl> conferenceControls =
+				room == null
+					? Enumerable.Empty<ZoomRoomConferenceControl>()
+					: room.Originators
+					      .GetInstancesRecursive<ZoomRoom>()
+					      .Select(z => z.Controls.GetControl<ZoomRoomConferenceControl>());
+
+			m_ConferenceControls.Clear();
+			m_ConferenceControls.AddRange(conferenceControls);
 			m_ConferenceControls.ForEach(Subscribe);
 
 			Update();
@@ -206,13 +212,11 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 		{
 			base.Unsubscribe(room);
 
-			if (m_AudioComponents != null)
-				m_AudioComponents.ForEach(Unsubscribe);
-			m_AudioComponents = null;
+			m_AudioComponents.ForEach(Unsubscribe);
+			m_AudioComponents.Clear();
 
-			if (m_ConferenceControls != null)
-				m_ConferenceControls.ForEach(Unsubscribe);
-			m_ConferenceControls = null;
+			m_ConferenceControls.ForEach(Unsubscribe);
+			m_ConferenceControls.Clear();
 
 			Update();
 		}
