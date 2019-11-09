@@ -89,7 +89,9 @@
     <Compile Include="Routing\Endpoints\Sources\ConnectProSource.cs" />
     <Compile Include="Routing\Endpoints\Sources\ConnectProSourceSettings.cs" />
     <Compile Include="Routing\Masking\AbstractMaskedSourceInfo.cs" />
-    <Compile Include="Routing\Masking\ConferenceDeviceMaskedSourceInfo.cs" />
+    <Compile Include="Routing\Masking\ConferenceDevice\AbstractConferenceDeviceMaskedSourceInfo.cs" />
+    <Compile Include="Routing\Masking\ConferenceDevice\ConferenceDeviceMaskedSourceInfo.cs" />
+    <Compile Include="Routing\Masking\ConferenceDevice\ZoomConferenceDeviceMaskedSourceInfo.cs" />
     <Compile Include="Routing\Masking\IMaskedSourceInfo.cs" />
     <Compile Include="Routing\Masking\MaskedSourceInfoFactory.cs" />
     <Compile Include="Routing\Masking\ThinMaskedSourceInfo.cs" />
