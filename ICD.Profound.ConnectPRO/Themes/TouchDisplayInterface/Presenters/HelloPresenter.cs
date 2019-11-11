@@ -32,6 +32,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 			m_ConferencePresenter.OnViewVisibilityChanged += ConferencePresenterOnViewVisibilityChanged;
 			m_SchedulePresenter = Navigation.LazyLoadPresenter<ISchedulePresenter>();
 			m_SchedulePresenter.OnRefreshed += SchedulePresenterOnRefreshed;
+			Navigation.LazyLoadPresenter<IDeviceDrawerPresenter>().OnViewVisibilityChanged +=
+				ConferencePresenterOnViewVisibilityChanged;
 		}
 
 		public override void Dispose()
