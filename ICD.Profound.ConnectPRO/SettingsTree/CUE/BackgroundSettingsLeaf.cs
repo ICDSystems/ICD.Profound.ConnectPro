@@ -36,15 +36,10 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="room"></param>
-		public BackgroundSettingsLeaf(IConnectProRoom room)
-			: base(room)
+		public BackgroundSettingsLeaf()
 		{
 			Name = "Background";
 			Icon = SettingsTreeIcons.ICON_BACKGROUNDS;
-
-			m_Theme = Room.Core.Originators.GetChild<ConnectProTheme>();
-			Subscribe(m_Theme);
 		}
 
 		/// <summary>
@@ -55,10 +50,6 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 			OnBackgroundModeChanged = null;
 
 			base.Dispose();
-
-			Unsubscribe(m_Theme);
-
-			m_Theme = null;
 		}
 
 		/// <summary>
@@ -75,6 +66,30 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 			SetDirty(true);
 		}
 
+		/// <summary>
+		/// Subscribe to the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Subscribe(IConnectProRoom room)
+		{
+			base.Subscribe(room);
+
+			m_Theme = room == null ? null : room.Core.Originators.GetChild<ConnectProTheme>();
+			Subscribe(m_Theme);
+		}
+
+		/// <summary>
+		/// Unsubscribe from the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Unsubscribe(IConnectProRoom room)
+		{
+			base.Unsubscribe(room);
+
+			Unsubscribe(m_Theme);
+			m_Theme = null;
+		}
+
 		#region Theme Callbacks
 
 		/// <summary>
@@ -83,6 +98,9 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 		/// <param name="theme"></param>
 		private void Subscribe(ConnectProTheme theme)
 		{
+			if (theme == null)
+				return;
+
 			theme.OnCueBackgroundChanged += ThemeOnCueBackgroundChanged;
 		}
 
@@ -92,6 +110,9 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 		/// <param name="theme"></param>
 		private void Unsubscribe(ConnectProTheme theme)
 		{
+			if (theme == null)
+				return;
+
 			theme.OnCueBackgroundChanged -= ThemeOnCueBackgroundChanged;
 		}
 

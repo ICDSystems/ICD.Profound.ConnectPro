@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ICD.Connect.Settings;
 using ICD.Connect.Settings.Cores;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -17,9 +18,9 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 		/// </summary>
 		/// <param name="room"></param>
 		public RootSettingsNode(IConnectProRoom room)
-			: base(room)
 		{
 			Name = "Settings";
+			Room = room;
 		}
 
 		/// <summary>
@@ -28,11 +29,11 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 		/// <returns></returns>
 		protected override IEnumerable<ISettingsNodeBase> BuildChildren()
 		{
-			yield return new AdministrativeSettingsNode(Room);
-			yield return new ConferencingSettingsNode(Room);
-			yield return new CueSettingsNode(Room);
-			yield return new RoomCombineSettingsNode(Room);
-			yield return new ZoomSettingsLeaf(Room);
+			yield return new AdministrativeSettingsNode();
+			yield return new ConferencingSettingsNode();
+			yield return new CueSettingsNode();
+			yield return new RoomCombineSettingsNode();
+			yield return new ZoomSettingsLeaf();
 		}
 
 		/// <summary>
@@ -40,6 +41,9 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 		/// </summary>
 		public void SaveDirtySettings()
 		{
+			if (Room == null)
+				throw new InvalidOperationException("No room assigned to node");
+
 			if (!Dirty)
 				return;
 

@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using ICD.Connect.Conferencing.Controls.Directory;
 using ICD.Connect.Partitioning.Rooms;
-using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.SettingsTree.Conferencing
 {
@@ -15,9 +14,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Conferencing
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="room"></param>
-		public DirectorySettingsLeaf(IConnectProRoom room)
-			: base(room)
+		public DirectorySettingsLeaf()
 		{
 			Name = "Directory";
 			Icon = SettingsTreeIcons.ICON_DIRECTORY;

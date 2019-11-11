@@ -1,18 +1,31 @@
-﻿using System;
-using ICD.Common.Properties;
+﻿using ICD.Common.Properties;
 using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.SettingsTree
 {
 	public abstract class AbstractSettingsNodeBase : ISettingsNodeBase
 	{
-		private readonly IConnectProRoom m_Room;
+		private IConnectProRoom m_Room;
 
 		/// <summary>
 		/// The room in context for this settings node.
 		/// </summary>
-		[NotNull]
-		public IConnectProRoom Room { get { return m_Room; } }
+		[CanBeNull]
+		public IConnectProRoom Room
+		{
+			get { return m_Room; }
+			set
+			{
+				if (value == m_Room)
+					return;
+
+				Unsubscribe(m_Room);
+				m_Room = value;
+				Subscribe(m_Room);
+
+				Initialize(m_Room);
+			}
+		}
 
 		/// <summary>
 		/// The name of the entry in the settings menu.
@@ -27,7 +40,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 		/// <summary>
 		/// Determines if the node should be visible.
 		/// </summary>
-		public virtual bool Visible { get { return true; } }
+		public virtual bool Visible { get { return Room != null; } }
 
 		/// <summary>
 		/// Returns true if the system has changed and needs to be saved.
@@ -37,15 +50,8 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="room"></param>
-		protected AbstractSettingsNodeBase(IConnectProRoom room)
+		protected AbstractSettingsNodeBase()
 		{
-			if (room == null)
-				throw new ArgumentNullException("room");
-
-			m_Room = room;
-			Subscribe(m_Room);
-
 			Name = "Unnamed";
 			Icon = SettingsTreeIcons.ICON_ADMIN;
 		}
@@ -79,6 +85,14 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 		/// </summary>
 		/// <param name="room"></param>
 		protected virtual void Unsubscribe(IConnectProRoom room)
+		{
+		}
+
+
+		/// <summary>
+		/// Override to initialize the node once a room has been assigned.
+		/// </summary>
+		protected virtual void Initialize(IConnectProRoom room)
 		{
 		}
 

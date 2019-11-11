@@ -81,7 +81,12 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 		/// </summary>
 		public override bool Visible
 		{
-			get { return base.Visible && Room.Originators.GetInstancesRecursive<ZoomRoom>().Any(); }
+			get
+			{
+				return base.Visible &&
+				       Room != null &&
+				       Room.Originators.GetInstancesRecursive<ZoomRoom>().Any();
+			}
 		}
 
 		#endregion
@@ -89,9 +94,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="room"></param>
-		public ZoomSettingsLeaf(IConnectProRoom room)
-			: base(room)
+		public ZoomSettingsLeaf()
 		{
 			m_AudioComponents = new List<AudioComponent>();
 			m_ConferenceControls = new List<ZoomRoomConferenceControl>();

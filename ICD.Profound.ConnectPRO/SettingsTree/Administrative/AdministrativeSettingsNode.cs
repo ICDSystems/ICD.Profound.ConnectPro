@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 {
@@ -8,9 +7,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="room"></param>
-		public AdministrativeSettingsNode(IConnectProRoom room)
-			: base(room)
+		public AdministrativeSettingsNode()
 		{
 			Name = "Administrative";
 			Image = SettingsTreeImages.IMAGE_ADMIN;
@@ -24,9 +21,9 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 		/// <returns></returns>
 		protected override IEnumerable<ISettingsNodeBase> BuildChildren()
 		{
-			yield return new ClockSettingsLeaf(Room);
-			yield return new PinSettingsLeaf(Room);
-			yield return new PowerSettingsLeaf(Room);
+			yield return new ClockSettingsLeaf();
+			yield return new PinSettingsLeaf();
+			yield return new PowerSettingsLeaf();
 		}
 	}
 }

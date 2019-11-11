@@ -2,7 +2,6 @@
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Settings.Localization;
-using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 {
@@ -11,7 +10,17 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 		/// <summary>
 		/// Returns true if the current culture uses a 24 hour time format.
 		/// </summary>
-		public bool Is24HourMode { get { return Room.Core.Localization.CurrentCulture.Uses24HourFormat(); } }
+		public bool Is24HourMode
+		{
+			get
+			{
+				if (Room == null)
+					throw new InvalidOperationException("No room assigned to node");
+
+				return
+					Room.Core.Localization.CurrentCulture.Uses24HourFormat();
+			}
+		}
 
 		/// <summary>
 		/// Gets the current time of day.
@@ -21,9 +30,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="room"></param>
-		public ClockSettingsLeaf(IConnectProRoom room)
-			: base(room)
+		public ClockSettingsLeaf()
 		{
 			Name = "Clock";
 			Icon = SettingsTreeIcons.ICON_CLOCK;
@@ -50,6 +57,9 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 		/// <param name="hour24Mode"></param>
 		public void Set24HourMode(bool hour24Mode)
 		{
+			if (Room == null)
+				throw new InvalidOperationException("No room assigned to node");
+
 			Localization.e24HourOverride mode =
 				hour24Mode
 					? Localization.e24HourOverride.Override24Hour

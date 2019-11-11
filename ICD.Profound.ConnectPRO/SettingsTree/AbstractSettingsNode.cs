@@ -29,8 +29,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		protected AbstractSettingsNode(IConnectProRoom room)
-			: base(room)
+		protected AbstractSettingsNode()
 		{
 			Image = SettingsTreeImages.IMAGE_THINKER;
 			Prompt = "Please choose a settings option from the menu to the left.";
@@ -50,6 +49,17 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 		{
 			foreach (ISettingsNodeBase child in GetChildren())
 				child.SetDirty(dirty);
+		}
+
+		/// <summary>
+		/// Override to initialize the node once a room has been assigned.
+		/// </summary>
+		protected override void Initialize(IConnectProRoom room)
+		{
+			base.Initialize(room);
+
+			foreach (ISettingsNodeBase child in GetChildren())
+				child.Room = room;
 		}
 	}
 }

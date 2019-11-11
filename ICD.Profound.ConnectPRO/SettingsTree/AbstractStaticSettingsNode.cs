@@ -1,20 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.SettingsTree
 {
 	public abstract class AbstractStaticSettingsNode : AbstractSettingsNode
 	{
 		private List<ISettingsNodeBase> m_Children; 
-
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		protected AbstractStaticSettingsNode(IConnectProRoom room)
-			: base(room)
-		{
-		}
 
 		/// <summary>
 		/// Release resources.

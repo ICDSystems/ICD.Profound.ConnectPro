@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.SettingsTree.Conferencing
 {
@@ -8,9 +7,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Conferencing
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="room"></param>
-		public ConferencingSettingsNode(IConnectProRoom room)
-			: base(room)
+		public ConferencingSettingsNode()
 		{
 			Name = "Conferencing";
 			Icon = SettingsTreeIcons.ICON_CONFERENCE;
@@ -22,7 +19,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Conferencing
 		/// <returns></returns>
 		protected override IEnumerable<ISettingsNodeBase> BuildChildren()
 		{
-			yield return new DirectorySettingsLeaf(Room);
+			yield return new DirectorySettingsLeaf();
 		}
 	}
 }

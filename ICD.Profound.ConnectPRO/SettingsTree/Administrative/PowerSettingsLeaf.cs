@@ -20,7 +20,16 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 		/// <summary>
 		/// Gets the wake schedule.
 		/// </summary>
-		public WakeSchedule WakeSchedule { get { return Room.WakeSchedule; } }
+		public WakeSchedule WakeSchedule
+		{
+			get
+			{
+				if (Room == null)
+					throw new InvalidOperationException("No room assigned to node");
+
+				return Room.WakeSchedule;
+			}
+		}
 
 		/// <summary>
 		/// Gets the display power state.
@@ -44,13 +53,10 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="room"></param>
-		public PowerSettingsLeaf(IConnectProRoom room)
-			: base(room)
+		public PowerSettingsLeaf()
 		{
 			Name = "Power";
 			Icon = SettingsTreeIcons.ICON_POWER;
-			IsAwake = room.IsAwake;
 		}
 
 		#region Methods
@@ -70,10 +76,23 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 		/// </summary>
 		public void ToggleIsAwake()
 		{
+			if (Room == null)
+				throw new InvalidOperationException("No room assigned to node");
+
 			if (IsAwake)
 				Room.Sleep();
 			else
 				Room.Wake();
+		}
+
+		/// <summary>
+		/// Override to initialize the node once a room has been assigned.
+		/// </summary>
+		protected override void Initialize(IConnectProRoom room)
+		{
+			base.Initialize(room);
+
+			IsAwake = room != null && room.IsAwake;
 		}
 
 		#endregion
@@ -88,6 +107,9 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 		{
 			base.Subscribe(room);
 
+			if (room == null)
+				return;
+
 			room.OnIsAwakeStateChanged += RoomOnIsAwakeStateChanged;
 		}
 
@@ -99,6 +121,9 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 		{
 			base.Unsubscribe(room);
 
+			if (room == null)
+				return;
+
 			room.OnIsAwakeStateChanged -= RoomOnIsAwakeStateChanged;
 		}
 
@@ -109,6 +134,9 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 		/// <param name="e"></param>
 		private void RoomOnIsAwakeStateChanged(object sender, BoolEventArgs e)
 		{
+			if (Room == null)
+				throw new InvalidOperationException("No room assigned to node");
+
 			IsAwake = Room.IsAwake;
 		}
 

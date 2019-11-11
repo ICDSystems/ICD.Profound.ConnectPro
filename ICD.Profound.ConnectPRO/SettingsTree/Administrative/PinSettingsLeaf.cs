@@ -1,4 +1,4 @@
-﻿using ICD.Profound.ConnectPRO.Rooms;
+﻿using System;
 
 namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 {
@@ -7,9 +7,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="room"></param>
-		public PinSettingsLeaf(IConnectProRoom room)
-			: base(room)
+		public PinSettingsLeaf()
 		{
 			Name = "PIN";
 			Icon = SettingsTreeIcons.ICON_PIN;
@@ -21,6 +19,9 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 		/// <param name="pin"></param>
 		public void SetPin(string pin)
 		{
+			if (Room == null)
+				throw new InvalidOperationException("No room assigned to node");
+
 			if (pin == Room.Passcode)
 				return;
 

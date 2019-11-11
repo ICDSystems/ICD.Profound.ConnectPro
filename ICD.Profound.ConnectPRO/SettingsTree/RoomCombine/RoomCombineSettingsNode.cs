@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.SettingsTree.RoomCombine
 {
@@ -8,9 +7,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.RoomCombine
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="room"></param>
-		public RoomCombineSettingsNode(IConnectProRoom room)
-			: base(room)
+		public RoomCombineSettingsNode()
 		{
 			Name = "Room Combine";
 			Icon = SettingsTreeIcons.ICON_ROOM_COMBINE;
@@ -22,7 +19,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.RoomCombine
 		/// <returns></returns>
 		protected override IEnumerable<ISettingsNodeBase> BuildChildren()
 		{
-			yield return new GridSettingsLeaf(Room);
+			yield return new GridSettingsLeaf();
 		}
 	}
 }

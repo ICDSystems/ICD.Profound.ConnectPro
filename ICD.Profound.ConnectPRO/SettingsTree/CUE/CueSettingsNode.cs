@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 {
@@ -8,9 +7,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="room"></param>
-		public CueSettingsNode(IConnectProRoom room)
-			: base(room)
+		public CueSettingsNode()
 		{
 			Name = "CUE";
 			Icon = SettingsTreeIcons.ICON_CUE;
@@ -22,7 +19,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 		/// <returns></returns>
 		protected override IEnumerable<ISettingsNodeBase> BuildChildren()
 		{
-			yield return new BackgroundSettingsLeaf(Room);
+			yield return new BackgroundSettingsLeaf();
 		}
 	}
 }
