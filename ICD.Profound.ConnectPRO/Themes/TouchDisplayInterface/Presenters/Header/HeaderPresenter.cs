@@ -26,8 +26,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 		private readonly ReferencedHeaderButtonPresenterFactory m_LeftButtonsFactory;
 		private readonly ReferencedHeaderButtonPresenterFactory m_RightButtonsFactory;
 
-		private readonly List<HeaderButtonModel> m_LeftButtons;
-		private readonly List<HeaderButtonModel> m_RightButtons;
+		private readonly IcdOrderedDictionary<HeaderButtonModel, object> m_LeftButtons;
+		private readonly IcdOrderedDictionary<HeaderButtonModel, object> m_RightButtons;
 
 		private readonly HeaderButtonModel m_SettingsButton;
 		private readonly HeaderButtonModel m_EndMeetingButton;
@@ -50,8 +50,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 			m_LeftButtonsFactory = new ReferencedHeaderButtonPresenterFactory(nav, LeftButtonsViewFactory, EmptySub, EmptyUnsub);
 			m_RightButtonsFactory = new ReferencedHeaderButtonPresenterFactory(nav, RightButtonsViewFactory, EmptySub, EmptyUnsub);
 
-			m_LeftButtons = new List<HeaderButtonModel>();
-			m_RightButtons = new List<HeaderButtonModel>();
+			m_LeftButtons = new IcdOrderedDictionary<HeaderButtonModel, object>();
+			m_RightButtons = new IcdOrderedDictionary<HeaderButtonModel, object>();
 
 			m_SettingsButton = new HeaderButtonModel(0, 0, OpenSettings)
 			{
@@ -81,32 +81,42 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 
 		public bool ContainsLeftButton(HeaderButtonModel button)
 		{
-			return m_LeftButtons.ContainsSorted(button);
+			return m_LeftButtons.ContainsKey(button);
 		}
 
 		public void AddLeftButton(HeaderButtonModel button)
 		{
-			m_LeftButtons.AddSorted(button);
+			if (ContainsLeftButton(button))
+				return;
+
+			m_LeftButtons.Add(button, null);
+			Refresh();
 		}
 
 		public void RemoveLeftButton(HeaderButtonModel button)
 		{
-			m_LeftButtons.RemoveSorted(button);
+			if (!ContainsLeftButton(button))
+				return;
+
+			m_LeftButtons.Remove(button);
+			Refresh();
 		}
 
 		public bool ContainsRightButton(HeaderButtonModel button)
 		{
-			return m_RightButtons.ContainsSorted(button);
+			return m_RightButtons.ContainsKey(button);
 		}
 		
 		public void AddRightButton(HeaderButtonModel button)
 		{
-			m_RightButtons.AddSorted(button);
+			m_RightButtons.Add(button, null);
+			Refresh();
 		}
 
 		public void RemoveRightButton(HeaderButtonModel button)
 		{
-			m_RightButtons.RemoveSorted(button);
+			m_RightButtons.Remove(button);
+			Refresh();
 		}
 
 		/// <summary>
@@ -135,12 +145,12 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 
 				RefreshTime();
 
-				foreach (IReferencedHeaderButtonPresenter button in m_LeftButtonsFactory.BuildChildren(m_LeftButtons))
+				foreach (IReferencedHeaderButtonPresenter button in m_LeftButtonsFactory.BuildChildren(m_LeftButtons.Keys))
 				{
 					button.ShowView(true);
 					button.Refresh();
 				}
-				foreach (IReferencedHeaderButtonPresenter button in m_RightButtonsFactory.BuildChildren(m_RightButtons))
+				foreach (IReferencedHeaderButtonPresenter button in m_RightButtonsFactory.BuildChildren(m_RightButtons.Keys))
 				{
 					button.ShowView(true);
 					button.Refresh();

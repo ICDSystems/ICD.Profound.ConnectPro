@@ -40,7 +40,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 			m_RefreshSection.Enter();
 			try
 			{
-				view.SetIcon(Model.Icon);
+				view.SetIcon(Model.Mode == eHeaderButtonMode.Close ? null : Model.Icon);
 				view.SetButtonEnabled(Model.Enabled);
 				view.SetButtonMode(Model.Mode);
 				view.SetLabelText(Model.LabelText);
