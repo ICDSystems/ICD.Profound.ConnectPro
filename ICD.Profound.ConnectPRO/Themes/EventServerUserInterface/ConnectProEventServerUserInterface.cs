@@ -238,8 +238,8 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 
 				string videoMessage =
 					videoSources.Count == 0
-						? "No sources routed for video"
-						: string.Format("Sources routed for video {0}",
+						? "no sources routed for video"
+						: string.Format("sources routed for video {0}",
 						                StringUtils.ArrayFormat(videoSources.Select(s => s.Name)));
 
 				m_Device.SendMessage(ConnectProEventMessages.KEY_VIDEO_SOURCES, videoMessage);
@@ -252,8 +252,8 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 
 				string audioMessage =
 					audioSources.Count == 0
-						? "No sources routed for audio"
-						: string.Format("Sources routed for audio {0}",
+						? "no sources routed for audio"
+						: string.Format("sources routed for audio {0}",
 						                StringUtils.ArrayFormat(audioSources.Select(s => s.Name)));
 
 				m_Device.SendMessage(ConnectProEventMessages.KEY_AUDIO_SOURCES, audioMessage);
