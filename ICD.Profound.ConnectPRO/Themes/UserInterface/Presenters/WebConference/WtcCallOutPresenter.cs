@@ -11,6 +11,7 @@ using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Conferencing.Zoom.Components.TraditionalCall;
 using ICD.Connect.Conferencing.Zoom.Controls.Conferencing;
+using ICD.Connect.Conferencing.Zoom.Responses;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Connect.UI.Utils;
@@ -115,6 +116,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		}
 
 		/// <summary>
+		/// Gets the zoom traditional call component from the given conference control.
+		/// </summary>
+		[CanBeNull]
+		private TraditionalCallComponent GetCallComponent([CanBeNull] ZoomRoomTraditionalConferenceControl control)
+		{
+			return control == null ? null : control.Parent.Components.GetComponent<TraditionalCallComponent>();
+		}
+
+		/// <summary>
 		/// Called when the string builder is updated.
 		/// </summary>
 		/// <param name="sender"></param>
@@ -122,6 +132,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		private void StringBuilderOnStringChanged(object sender, StringEventArgs eventArgs)
 		{
 			RefreshIfVisible();
+		}
+
+		private void ShowCallFailedDialog()
+		{
+			// Hide the call out loading spinner.
+			Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView(false);
+
+			// Clear the failed call out string as we show it to the user.
+			string message = string.Format("Call Out to: {0} Failed", m_StringBuilder.Pop());
+
+			// Hide the error message after 8 seconds.
+			const long timeout = 8 * 1000;
+
+			Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
+			          .Show(message, timeout, new GenericAlertPresenterButton
+			          {
+				          Visible = false,
+				          Enabled = false
+			          }, GenericAlertPresenterButton.Dismiss);
 		}
 
 		#endregion
@@ -155,6 +184,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			foreach (ITraditionalConference conference in callOut.GetConferences())
 				Subscribe(conference);
+
+			TraditionalCallComponent callComponent = GetCallComponent(callOut);
+			if (callComponent != null)
+				callComponent.OnCallTerminated += CallComponentOnCallTerminated;
 		}
 
 		/// <summary>
@@ -184,6 +217,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			foreach (ITraditionalConference conference in callOut.GetConferences())
 				Unsubscribe(conference);
+
+			TraditionalCallComponent callComponent = GetCallComponent(callOut);
+			if (callComponent != null)
+				callComponent.OnCallTerminated -= CallComponentOnCallTerminated;
 		}
 
 		private void ControlOnConferenceRemoved(object sender, ConferenceEventArgs args)
@@ -215,21 +252,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		private void TraditionalControlOnCallOutFailed(object sender, GenericEventArgs<TraditionalZoomPhoneCallInfo> e)
 		{
-			// Hide the call out loading spinner.
-			Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView(false);
+			ShowCallFailedDialog();
+		}
 
-			// Clear the failed call out string as we show it to the user.
-			string message = string.Format("Call Out to: {0} Failed", m_StringBuilder.Pop());
+		private void CallComponentOnCallTerminated(object sender, GenericEventArgs<TraditionalZoomPhoneCallInfo> e)
+		{
+			switch (e.Data.Reason)
+			{
+				case eZoomPhoneCallTerminatedReason.ByLocal:
+				case eZoomPhoneCallTerminatedReason.ByRemote:
+					break;
 
-			// Hide the error message after 8 seconds.
-			const long timeout = 8 * 1000;
-
-			Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
-			          .Show(message, timeout, new GenericAlertPresenterButton
-			          {
-				          Visible = false,
-				          Enabled = false
-			          }, GenericAlertPresenterButton.Dismiss);
+				default:
+					ShowCallFailedDialog();
+					break;
+			}
 		}
 
 		#endregion

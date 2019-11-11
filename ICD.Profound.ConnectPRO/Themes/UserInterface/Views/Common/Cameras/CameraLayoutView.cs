@@ -63,6 +63,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 			base.Dispose();
 		}
 
+		#region Methods
+
 		/// <summary>
 		/// Sets the selected state of a button for the size layout control.
 		/// </summary>
@@ -157,6 +159,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 		{
 			m_PositionLayoutControl.Enable(enabled);
 		}
+
+		#endregion
 
 		#region Control Callbacks
 
