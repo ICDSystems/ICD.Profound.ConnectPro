@@ -8,16 +8,13 @@ using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
-using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Partitioning.Rooms;
-using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.EventArguments;
-using ICD.Connect.Settings.Originators;
 using ICD.Connect.Themes.UserInterfaces;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Connect.UI.Mvp.VisibilityTree;
@@ -354,28 +351,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 		private void UpdateVisibility()
 		{
 			if (Room == null)
-				return; 
-			IEnumerable<ISource> activeSources = m_Room.Routing.State.GetSourceRoutedStates()
-				.Where(kvp => kvp.Value == eSourceState.Masked || kvp.Value == eSourceState.Active)
-				.Select(kvp => kvp.Key).ToList();
-			var zoomRouted = false;
-			foreach (var source in activeSources)
-			{
-				IOriginator child;
-				if (Room.Core.Originators.TryGetChild(source.Device, out child) && child is ZoomRoom)
-				{
-					zoomRouted = true;
-					var control = (child as IDevice).Controls.GetControl<IConferenceDeviceControl>();
-					m_NavigationController.LazyLoadPresenter<IStartConferencePresenter>().ActiveConferenceControl = (IWebConferenceDeviceControl)control;
-					break;
-				}
-			}
+				return;
 
-			if (zoomRouted)
-				m_NavigationController.NavigateTo<IStartConferencePresenter>();
-			else if (m_Room.IsInMeeting)
+			if (m_Room.IsInMeeting && m_Room.Routing.State.GetSourceRoutedStates().All(s => s.Value == eSourceState.Inactive))
 				m_NavigationController.NavigateTo<IDeviceDrawerPresenter>();
-			else if (m_Room.CalendarControl != null)
+			else if (!m_Room.IsInMeeting & m_Room.CalendarControl != null)
 				m_NavigationController.NavigateTo<ISchedulePresenter>();
 
 			m_NavigationController.LazyLoadPresenter<IHelloPresenter>().Refresh();
