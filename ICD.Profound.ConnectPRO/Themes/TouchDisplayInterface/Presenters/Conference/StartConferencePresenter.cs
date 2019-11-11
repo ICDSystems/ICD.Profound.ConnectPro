@@ -2,7 +2,6 @@ using System;
 using System.Text;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
-using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.DialContexts;
@@ -17,12 +16,10 @@ using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Conference;
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Conference
 {
 	[PresenterBinding(typeof(IStartConferencePresenter))]
-	public sealed class StartConferencePresenter : AbstractTouchDisplayPresenter<IStartConferenceView>, IStartConferencePresenter
+	public sealed class StartConferencePresenter : AbstractConferencePresenter<IStartConferenceView>, IStartConferencePresenter
 	{
 		private readonly StringBuilder m_Builder;
 		private readonly SafeCriticalSection m_RefreshSection;
-
-		private IWebConferenceDeviceControl m_ActiveConferenceControl;
 
 		public StartConferencePresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views,
 			ConnectProTheme theme) : base(nav, views, theme)
@@ -34,20 +31,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		private bool IsInConference
 		{
 			get { return ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConference() != null; }
-		}
-
-		public IWebConferenceDeviceControl ActiveConferenceControl
-		{
-			get { return m_ActiveConferenceControl; }
-			set
-			{
-				if (value == m_ActiveConferenceControl)
-					return;
-
-				Unsubscribe(m_ActiveConferenceControl);
-				m_ActiveConferenceControl = value;
-				Subscribe(m_ActiveConferenceControl);
-			}
 		}
 
 		protected override void Refresh(IStartConferenceView view)
@@ -71,8 +54,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 
 		#region Control Callbacks
 
-		private void Subscribe(IWebConferenceDeviceControl control)
+		protected override void Subscribe(IConferenceDeviceControl control)
 		{
+			base.Subscribe(control);
+
 			if (control == null)
 				return;
 
@@ -80,8 +65,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			control.OnConferenceRemoved += ControlOnConferenceRemoved;
 		}
 
-		private void Unsubscribe(IWebConferenceDeviceControl control)
+		protected override void Unsubscribe(IConferenceDeviceControl control)
 		{
+			base.Unsubscribe(control);
+
 			if (control == null)
 				return;
 

@@ -23,32 +23,32 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Conference
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 738
+				DigitalVisibilityJoin = 801
 			};
 
 			m_MeetNowButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 724,
-				DigitalEnableJoin = 748
+				DigitalPressJoin = 802,
+				DigitalEnableJoin = 803
 			};
 
 			m_JoinByIdButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 723,
-				DigitalEnableJoin = 749
+				DigitalPressJoin = 804,
+				DigitalEnableJoin = 805
 			};
 
-			m_Keypad = new VtProSimpleKeypad(706, panel as IPanelDevice, m_Subpage);
+			m_Keypad = new VtProSimpleKeypad(801, panel as IPanelDevice, m_Subpage);
 
 			m_TextEntry = new VtProTextEntry(panel, m_Subpage)
 			{
-				IndirectTextJoin = 3032,
-				SerialOutputJoin = 3032
+				IndirectTextJoin = 801,
+				SerialOutputJoin = 802
 			};
 
 			m_MeetingIdLabel = new VtProSimpleLabel(panel, m_Subpage)
 			{
-				DigitalVisibilityJoin = 722
+				DigitalVisibilityJoin = 806
 			};
 		}
 

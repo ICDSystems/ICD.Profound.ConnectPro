@@ -3,8 +3,7 @@ using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Conference;
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Conference
 {
-	public interface IStartConferencePresenter : ITouchDisplayPresenter<IStartConferenceView>
+	public interface IStartConferencePresenter : ITouchDisplayPresenter<IStartConferenceView>, IConferencePresenter
 	{
-		IWebConferenceDeviceControl ActiveConferenceControl { get; set; }
 	}
 }
