@@ -156,11 +156,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// <param name="eventArgs"></param>
 		private void ZoomControlOnCallRecordErrorState(object sender, StringEventArgs eventArgs)
 		{
-			string message = "Recording is only supported for meetings booked via Zoom software.\n\n" +
+			string message = "Recording is not available: Booking E-Mail does not match the room E-Mail.\n\n" +
 			                 "To record this session please grant recording permission to an attendee in the participant list.";
 
-			// Hide the error message after 8 seconds.
-			const long timeout = 8 * 1000;
+			// Hide the error message after 15 seconds.
+			const long timeout = 15 * 1000;
 
 			Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
 			          .Show(message, timeout, new GenericAlertPresenterButton
