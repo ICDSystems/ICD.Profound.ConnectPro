@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
@@ -23,23 +23,32 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 		private const ushort CAMERA_CONTROL_INDEX = 1;
 		private const ushort CAMERA_LAYOUT_INDEX = 2;
 
-		private static readonly BiDictionary<ushort, Type> s_IndexToPresenterType = new BiDictionary<ushort, Type>
-		{
-			{CAMERA_ACTIVE_INDEX, typeof(ICameraActivePresenter)},
-			{CAMERA_CONTROL_INDEX, typeof(ICameraControlPresenter)},
-			{CAMERA_LAYOUT_INDEX, typeof(ICameraLayoutPresenter)}
-		};
+		private static readonly BiDictionary<ushort, Type> s_IndexToPresenterType =
+			new BiDictionary<ushort, Type>
+			{
+				{CAMERA_ACTIVE_INDEX, typeof(ICameraActivePresenter)},
+				{CAMERA_CONTROL_INDEX, typeof(ICameraControlPresenter)},
+				{CAMERA_LAYOUT_INDEX, typeof(ICameraLayoutPresenter)}
+			};
 
 		private readonly ICameraActivePresenter m_CameraActivePresenter;
 		private readonly ICameraControlPresenter m_CameraControlPresenter;
 		private readonly ICameraLayoutPresenter m_CameraLayoutPresenter;
-
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private ushort m_Index;
-
 		private bool m_ZoomMode;
 
+		private bool CameraActiveEnabled { get { return m_CameraActivePresenter.CameraCount > 1; } }
+
+		private bool CameraControlEnabled { get { return m_CameraControlPresenter.CameraCount > 0; } }
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="nav"></param>
+		/// <param name="views"></param>
+		/// <param name="theme"></param>
 		public CameraButtonsPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
@@ -50,6 +59,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			m_CameraLayoutPresenter = Navigation.LazyLoadPresenter<ICameraLayoutPresenter>();
 		}
 
+		/// <summary>
+		/// Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Refresh(ICameraButtonsView view)
 		{
 			base.Refresh(view);
@@ -58,22 +71,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 
 			try
 			{
-				view.SetCameraConfigurationButtonEnabled(0, CameraActiveEnabled());
-				view.SetCameraConfigurationButtonEnabled(1, CameraControlEnabled());
-				view.SetCameraConfigurationButtonEnabled(2, m_ZoomMode);
+				// Button enabled states
+				view.SetCameraConfigurationButtonEnabled(CAMERA_ACTIVE_INDEX, CameraActiveEnabled);
+				view.SetCameraConfigurationButtonEnabled(CAMERA_CONTROL_INDEX, CameraControlEnabled);
+				view.SetCameraConfigurationButtonEnabled(CAMERA_LAYOUT_INDEX, m_ZoomMode);
 
-				foreach (ushort index in s_IndexToPresenterType.Keys.Where(k => k != m_Index))
-				{
-					view.SetCameraConfigurationButtonSelected(index, false);
-				}
-
-				view.SetCameraConfigurationButtonSelected(m_Index, true);
+				// Button selection states
+				foreach (ushort index in s_IndexToPresenterType.Keys)
+					view.SetCameraConfigurationButtonSelected(index, index == m_Index);
 			}
 			finally
 			{
 				m_RefreshSection.Leave();
 			}
-
 		}
 
 		/// <summary>
@@ -87,31 +97,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 				                                                 : value.Parent.Controls
 				                                                        .GetControl<IVideoConferenceRouteControl>());
 
-			if (!(value is ZoomRoomConferenceControl))
-			{
-				m_ZoomMode = false;
-				return;
-			}
-
 			m_CameraLayoutPresenter.SetDestinationLayoutControl(value == null
 				                                                    ? null
 				                                                    : value.Parent.Controls
 				                                                           .GetControl<IConferenceLayoutControl
 				                                                           >());
-			m_ZoomMode = true;
+
+			m_ZoomMode = value is ZoomRoomConferenceControl;
 		}
 
 		#region Private Methods
-
-		private bool CameraActiveEnabled()
-		{
-			return m_CameraActivePresenter.CameraCount > 1;
-		}
-
-		private bool CameraControlEnabled()
-		{
-			return m_CameraControlPresenter.CameraCount > 0;
-		}
 
 		/// <summary>
 		/// Navigates to the child sub-page based on the given index.
@@ -119,12 +114,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 		/// <param name="index"></param>
 		private void NavigateTo(ushort index)
 		{
+			if (!s_IndexToPresenterType.ContainsKey(index))
+				throw new ArgumentOutOfRangeException("index");
+
 			m_Index = index;
 
-			foreach (Type type in s_IndexToPresenterType.Where(kvp => kvp.Key != m_Index).Select(kvp => kvp.Value))
-				Navigation.LazyLoadPresenter(type).ShowView(false);
-
-			Navigation.LazyLoadPresenter(s_IndexToPresenterType.GetValue(m_Index)).ShowView(true);
+			// Subpage visibility
+			foreach (KeyValuePair<ushort, Type> kvp in s_IndexToPresenterType)
+				Navigation.LazyLoadPresenter(kvp.Value).ShowView(kvp.Key == m_Index);
 
 			RefreshIfVisible();
 		}
@@ -133,6 +130,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 
 		#region View Callbacks
 
+		/// <summary>
+		/// Subscribe to the view events.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Subscribe(ICameraButtonsView view)
 		{
 			base.Subscribe(view);
@@ -140,6 +141,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			view.OnCameraConfigurationButtonPressed += ViewOnCameraConfigurationButtonPressed;
 		}
 
+		/// <summary>
+		/// Unsubscribe from the view events.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Unsubscribe(ICameraButtonsView view)
 		{
 			base.Unsubscribe(view);
@@ -149,23 +154,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 
 		private void ViewOnCameraConfigurationButtonPressed(object sender, UShortEventArgs e)
 		{
-			switch (e.Data)
-			{
-				case 0:
-					NavigateTo(0);
-					break;
-				case 1:
-					NavigateTo(1);
-					break;
-				case 2:
-					NavigateTo(2);
-					break;
-
-				default:
-					throw new ArgumentOutOfRangeException("e");
-			}
-
-			RefreshIfVisible();
+			NavigateTo(e.Data);
 		}
 
 		/// <summary>
@@ -194,23 +183,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 		{
 			base.ViewOnVisibilityChanged(sender, args);
 
-			// When the view becomes visible show the child presenter based on enable state.
-			if (args.Data)
-			{
-				if (CameraActiveEnabled())
-					m_Index = 0;
-				else if (CameraControlEnabled())
-					m_Index = 1;
-				else if(m_ZoomMode)
-					m_Index = 2;
-				else
-				{
-					ShowView(false);
-					return;
-				}
+			if (!args.Data)
+				return;
 
-				NavigateTo(m_Index);
-			}
+			// When the view becomes visible show the child presenter based on enable state.
+			if (CameraControlEnabled)
+				NavigateTo(CAMERA_CONTROL_INDEX);
+			else if (CameraActiveEnabled)
+				NavigateTo(CAMERA_ACTIVE_INDEX);
+			else if(m_ZoomMode)
+				NavigateTo(CAMERA_LAYOUT_INDEX);
+			else
+				ShowView(false);
 		}
 
 		#endregion
