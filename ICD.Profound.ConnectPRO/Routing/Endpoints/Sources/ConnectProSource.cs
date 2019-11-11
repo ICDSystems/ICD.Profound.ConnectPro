@@ -12,6 +12,28 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 		WebConference
 	}
 
+	public enum eConferenceOverride
+	{
+		/// <summary>
+		/// Default behaviour - Privacy Mute and Camera features are available if
+		/// the source is a conferencing device.
+		/// </summary>
+		None,
+
+		/// <summary>
+		/// Hides the Privacy Mute and Camera features even if the source is a
+		/// conferencing device.
+		/// </summary>
+		Hide,
+
+		/// <summary>
+		/// Shows the Privacy Mute and Camera features even if the source is NOT
+		/// a conferencing device. This is especially useful for web conferencing
+		/// devices (i.e. a user plugging in a Laptop).
+		/// </summary>
+		Show
+	}
+
 	public sealed class ConnectProSource : AbstractSource<ConnectProSourceSettings>
 	{
 		/// <summary>
@@ -29,6 +51,14 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 		/// </summary>
 		public eControlOverride ControlOverride { get; set; }
 
+		/// <summary>
+		/// Overrides the availability of privacy mute and camera features while the source is routed.
+		/// </summary>
+		public eConferenceOverride ConferenceOverride { get; set; }
+
+		/// <summary>
+		/// Override to clear the instance settings.
+		/// </summary>
 		protected override void ClearSettingsFinal()
 		{
 			base.ClearSettingsFinal();
@@ -36,8 +66,13 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 			Icon = null;
 			Share = false;
 			ControlOverride = eControlOverride.Default;
+			ConferenceOverride = eConferenceOverride.None;
 		}
 
+		/// <summary>
+		/// Override to apply properties to the settings instance.
+		/// </summary>
+		/// <param name="settings"></param>
 		protected override void CopySettingsFinal(ConnectProSourceSettings settings)
 		{
 			base.CopySettingsFinal(settings);
@@ -45,8 +80,14 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 			settings.Icon = Icon;
 			settings.Share = Share;
 			settings.ControlOverride = ControlOverride;
+			settings.ConferenceOverride = ConferenceOverride;
 		}
 
+		/// <summary>
+		/// Override to apply settings to the instance.
+		/// </summary>
+		/// <param name="settings"></param>
+		/// <param name="factory"></param>
 		protected override void ApplySettingsFinal(ConnectProSourceSettings settings, IDeviceFactory factory)
 		{
 			base.ApplySettingsFinal(settings, factory);
@@ -54,6 +95,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 			Icon = settings.Icon;
 			Share = settings.Share;
 			ControlOverride = settings.ControlOverride;
+			ConferenceOverride = settings.ConferenceOverride;
 		}
 	}
 }

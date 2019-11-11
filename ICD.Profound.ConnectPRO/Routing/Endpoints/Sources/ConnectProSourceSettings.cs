@@ -10,6 +10,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 		private const string ICON_ELEMENT = "Icon";
 		private const string SHARE_ELEMENT = "Share";
 		private const string CONTROL_OVERRIDE_ELEMENT = "ControlOverride";
+		private const string CONFERENCE_OVERRIDE_ELEMENT = "ConferenceOverride";
 
 		#region Properties
 
@@ -28,6 +29,11 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 		/// </summary>
 		public eControlOverride ControlOverride { get; set; }
 
+		/// <summary>
+		/// Overrides the availability of privacy mute and camera features while the source is routed.
+		/// </summary>
+		public eConferenceOverride ConferenceOverride { get; set; }
+
 		#endregion
 
 		/// <summary>
@@ -41,6 +47,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 			writer.WriteElementString(ICON_ELEMENT, Icon);
 			writer.WriteElementString(SHARE_ELEMENT, IcdXmlConvert.ToString(Share));
 			writer.WriteElementString(CONTROL_OVERRIDE_ELEMENT, IcdXmlConvert.ToString(ControlOverride));
+			writer.WriteElementString(CONFERENCE_OVERRIDE_ELEMENT, IcdXmlConvert.ToString(ConferenceOverride));
 		}
 
 		/// <summary>
@@ -55,6 +62,9 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 			Share = XmlUtils.TryReadChildElementContentAsBoolean(xml, SHARE_ELEMENT) ?? false;
 			ControlOverride = XmlUtils.TryReadChildElementContentAsEnum<eControlOverride>(xml, CONTROL_OVERRIDE_ELEMENT, true) ??
 			              eControlOverride.Default;
+			ConferenceOverride =
+				XmlUtils.TryReadChildElementContentAsEnum<eConferenceOverride>(xml, CONFERENCE_OVERRIDE_ELEMENT, true) ??
+				eConferenceOverride.None;
 		}
 	}
 }
