@@ -111,6 +111,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 			foreach (var presenter in m_NavigationController.LazyLoadPresenters<IMainPagePresenter>())
 				m_MainPageVisibility.AddPresenter(presenter);
 			
+			// control their own visibility
+			m_NavigationController.LazyLoadPresenter<IVolumePresenter>();
+
 			// always visible
 			m_NavigationController.NavigateTo<IHeaderPresenter>();
 			m_NavigationController.NavigateTo<IHelloPresenter>();
