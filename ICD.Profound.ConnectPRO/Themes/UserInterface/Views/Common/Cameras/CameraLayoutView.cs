@@ -25,17 +25,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 		/// <summary>
 		/// Raised when a share layout configuration button is pressed.
 		/// </summary>
-		public event EventHandler<UShortEventArgs> OnLayoutShareButtonPressed;
+		public event EventHandler OnContentThumbnailButtonPressed;
 
 		/// <summary>
 		/// Raised when a self-view layout configuration button is pressed.
 		/// </summary>
-		public event EventHandler<UShortEventArgs> OnLayoutSelfViewButtonPressed;
+		public event EventHandler OnSelfviewCameraButtonPressed;
 
 		/// <summary>
 		/// Raised when a position layout configuration button is pressed.
 		/// </summary>
-		public event EventHandler<UShortEventArgs> OnLayoutPositionButtonPressed;
+		public event EventHandler<UShortEventArgs> OnThumbnailPositionButtonPressed;
 
 		#endregion
 
@@ -56,9 +56,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 		{
 			OnLayoutSizeButtonPressed = null;
 			OnLayoutStyleButtonPressed = null;
-			OnLayoutShareButtonPressed = null;
-			OnLayoutSelfViewButtonPressed = null;
-			OnLayoutPositionButtonPressed = null;
+			OnContentThumbnailButtonPressed = null;
+			OnSelfviewCameraButtonPressed = null;
+			OnThumbnailPositionButtonPressed = null;
 
 			base.Dispose();
 		}
@@ -70,9 +70,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 		/// </summary>
 		/// <param name="index"></param>
 		/// <param name="selected"></param>
-		public void SetLayoutSizeControlButtonSelected(ushort index, bool selected)
+		public void SetLayoutSizeButtonSelected(ushort index, bool selected)
 		{
-			m_SizeLayoutControl.SetItemSelected(index, selected);
+			m_LayoutSizeButtonList.SetItemSelected(index, selected);
 		}
 
 		/// <summary>
@@ -80,29 +80,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 		/// </summary>
 		/// <param name="index"></param>
 		/// <param name="selected"></param>
-		public void SetLayoutStyleControlButtonSelected(ushort index, bool selected)
+		public void SetLayoutStyleButtonSelected(ushort index, bool selected)
 		{
-			m_StyleLayoutControl.SetItemSelected(index, selected);
+			m_LayoutStyleButtonList.SetItemSelected(index, selected);
 		}
 
 		/// <summary>
 		/// Sets the selected state of a button for the share layout control.
 		/// </summary>
-		/// <param name="index"></param>
 		/// <param name="selected"></param>
-		public void SetLayoutShareControlButtonSelected(ushort index, bool selected)
+		public void SetContentThumbnailButtonSelected(bool selected)
 		{
-			m_ShareLayoutControl.SetItemSelected(index, selected);
+			// The toggle button style is backwards
+			m_ContentThumbnailButton.SetSelected(!selected);
 		}
 
 		/// <summary>
 		/// Sets the selected state of a button for the self-view layout control.
 		/// </summary>
-		/// <param name="index"></param>
 		/// <param name="selected"></param>
-		public void SetLayoutSelfViewControlButtonSelected(ushort index, bool selected)
+		public void SetSelfviewCameraButtonSelected(bool selected)
 		{
-			m_SelfViewLayoutControl.SetItemSelected(index, selected);
+			// The toggle button style is backwards
+			m_SelfviewCameraButton.SetSelected(!selected);
 		}
 
 		/// <summary>
@@ -110,9 +110,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 		/// </summary>
 		/// <param name="index"></param>
 		/// <param name="selected"></param>
-		public void SetLayoutPositionControlButtonSelected(ushort index, bool selected)
+		public void SetThumbnailPositionButtonSelected(ushort index, bool selected)
 		{
-			m_PositionLayoutControl.SetItemSelected(index, selected);
+			m_ThumbnailPositionButtonList.SetItemSelected(index, selected);
 		}
 
 		/// <summary>
@@ -121,43 +121,43 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 		/// <param name="enabled"></param>
 		public void SetLayoutSizeListEnabled(bool enabled)
 		{
-			m_SizeLayoutControl.Enable(enabled);
+			m_LayoutSizeButtonList.Enable(enabled);
 		}
 
 		/// <summary>
 		/// Sets the enabled state of the style layout controls dynamic button list.
 		/// </summary>
 		/// <param name="enabled"></param>
-		public void SetLayoutStyleListEnable(bool enabled)
+		public void SetLayoutStyleListEnabled(bool enabled)
 		{
-			m_StyleLayoutControl.Enable(enabled);
+			m_LayoutStyleButtonList.Enable(enabled);
 		}
 
 		/// <summary>
 		/// Sets the enabled state of the share layout controls dynamic button list.
 		/// </summary>
 		/// <param name="enabled"></param>
-		public void SetLayoutShareListEnable(bool enabled)
+		public void SetContentThumbnailButtonEnabled(bool enabled)
 		{
-			m_ShareLayoutControl.Enable(enabled);
+			m_ContentThumbnailButton.Enable(enabled);
 		}
 
 		/// <summary>
 		/// Sets the enabled state of the self-view layout controls dynamic button list.
 		/// </summary>
 		/// <param name="enabled"></param>
-		public void SetLayoutSelfViewListEnable(bool enabled)
+		public void SetSelfviewCameraButtonEnabled(bool enabled)
 		{
-			m_SelfViewLayoutControl.Enable(enabled);
+			m_SelfviewCameraButton.Enable(enabled);
 		}
 
 		/// <summary>
 		/// Sets the enabled state of the position layout controls dynamic button list.
 		/// </summary>
 		/// <param name="enabled"></param>
-		public void SetLayoutPositionListEnable(bool enabled)
+		public void SetThumbnailPositionListEnabled(bool enabled)
 		{
-			m_PositionLayoutControl.Enable(enabled);
+			m_ThumbnailPositionButtonList.Enable(enabled);
 		}
 
 		#endregion
@@ -171,11 +171,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 		{
 			base.SubscribeControls();
 			
-			m_SizeLayoutControl.OnButtonClicked += SizeLayoutControlOnButtonClicked;
-			m_StyleLayoutControl.OnButtonClicked += StyleLayoutControlOnButtonClicked;
-			m_ShareLayoutControl.OnButtonClicked += ShareLayoutControlOnButtonClicked;
-			m_SelfViewLayoutControl.OnButtonClicked += SelfViewLayoutControlOnButtonClicked;
-			m_PositionLayoutControl.OnButtonClicked += PositionLayoutControlOnButtonClicked;
+			m_LayoutSizeButtonList.OnButtonClicked += LayoutSizeButtonListOnButtonClicked;
+			m_LayoutStyleButtonList.OnButtonClicked += LayoutStyleButtonListOnButtonClicked;
+			m_ContentThumbnailButton.OnPressed += ContentThumbnailButtonOnPressed;
+			m_SelfviewCameraButton.OnPressed += SelfviewCameraButtonOnPressed;
+			m_ThumbnailPositionButtonList.OnButtonClicked += ThumbnailPositionButtonListOnButtonClicked;
 		}
 
 		/// <summary>
@@ -185,36 +185,36 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 		{
 			base.UnsubscribeControls();
 			
-			m_SizeLayoutControl.OnButtonClicked -= SizeLayoutControlOnButtonClicked;
-			m_StyleLayoutControl.OnButtonClicked -= StyleLayoutControlOnButtonClicked;
-			m_ShareLayoutControl.OnButtonClicked -= ShareLayoutControlOnButtonClicked;
-			m_SelfViewLayoutControl.OnButtonClicked -= SelfViewLayoutControlOnButtonClicked;
-			m_PositionLayoutControl.OnButtonClicked -= PositionLayoutControlOnButtonClicked;
+			m_LayoutSizeButtonList.OnButtonClicked -= LayoutSizeButtonListOnButtonClicked;
+			m_LayoutStyleButtonList.OnButtonClicked -= LayoutStyleButtonListOnButtonClicked;
+			m_ContentThumbnailButton.OnPressed -= ContentThumbnailButtonOnPressed;
+			m_SelfviewCameraButton.OnPressed -= SelfviewCameraButtonOnPressed;
+			m_ThumbnailPositionButtonList.OnButtonClicked -= ThumbnailPositionButtonListOnButtonClicked;
 		}
 
-		private void SizeLayoutControlOnButtonClicked(object sender, UShortEventArgs e)
+		private void LayoutSizeButtonListOnButtonClicked(object sender, UShortEventArgs e)
 		{
 			OnLayoutSizeButtonPressed.Raise(this, new UShortEventArgs(e.Data));
 		}
 
-		private void StyleLayoutControlOnButtonClicked(object sender, UShortEventArgs e)
+		private void LayoutStyleButtonListOnButtonClicked(object sender, UShortEventArgs e)
 		{
 			OnLayoutStyleButtonPressed.Raise(this, new UShortEventArgs(e.Data));
 		}
 
-		private void ShareLayoutControlOnButtonClicked(object sender, UShortEventArgs e)
+		private void ContentThumbnailButtonOnPressed(object sender, EventArgs eventArgs)
 		{
-			OnLayoutShareButtonPressed.Raise(this, new UShortEventArgs(e.Data));
+			OnContentThumbnailButtonPressed.Raise(this);
 		}
 
-		private void SelfViewLayoutControlOnButtonClicked(object sender, UShortEventArgs e)
+		private void SelfviewCameraButtonOnPressed(object sender, EventArgs eventArgs)
 		{
-			OnLayoutSelfViewButtonPressed.Raise(this, new UShortEventArgs(e.Data));
+			OnSelfviewCameraButtonPressed.Raise(this);
 		}
 
-		private void PositionLayoutControlOnButtonClicked(object sender, UShortEventArgs e)
+		private void ThumbnailPositionButtonListOnButtonClicked(object sender, UShortEventArgs e)
 		{
-			OnLayoutPositionButtonPressed.Raise(this, new UShortEventArgs(e.Data));
+			OnThumbnailPositionButtonPressed.Raise(this, new UShortEventArgs(e.Data));
 		}
 
 		#endregion

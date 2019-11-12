@@ -1,6 +1,7 @@
 ﻿using System;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Controls.Layout;
 using ICD.Connect.Conferencing.EventArguments;
@@ -18,17 +19,40 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 	[PresenterBinding(typeof(ICameraLayoutPresenter))]
 	public sealed class CameraLayoutPresenter : AbstractUiPresenter<ICameraLayoutView>, ICameraLayoutPresenter
 	{
+		private static readonly BiDictionary<ushort, eZoomLayoutStyle> s_LayoutStyles =
+			new BiDictionary<ushort, eZoomLayoutStyle>
+			{
+				{0, eZoomLayoutStyle.Gallery},
+				{1, eZoomLayoutStyle.Speaker},
+				{2, eZoomLayoutStyle.Strip},
+				{3, eZoomLayoutStyle.ShareAll}
+			};
+
+		private static readonly BiDictionary<ushort, eZoomLayoutSize> s_LayoutSizes =
+			new BiDictionary<ushort, eZoomLayoutSize>
+			{
+				{0, eZoomLayoutSize.Off},
+				{1, eZoomLayoutSize.Size1},
+				{2, eZoomLayoutSize.Size2},
+				{3, eZoomLayoutSize.Size3}
+			};
+
+		private static readonly BiDictionary<ushort, eZoomLayoutPosition> s_LayoutPositions =
+			new BiDictionary<ushort, eZoomLayoutPosition>
+			{
+				{0, eZoomLayoutPosition.UpLeft},
+				{1, eZoomLayoutPosition.UpRight},
+				{2, eZoomLayoutPosition.DownLeft},
+				{3, eZoomLayoutPosition.DownRight}
+			};
+
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		[CanBeNull] private IConferenceLayoutControl m_ConferenceLayoutControl;
-		[CanBeNull] private LayoutComponent m_SubscribedZoomLayoutComponent;
+		[CanBeNull]
+		private IConferenceLayoutControl m_ConferenceLayoutControl;
 
-		private bool m_ZoomMode;
-		private ushort m_SizeIndex;
-		private ushort m_StyleIndex;
-		private ushort m_ShareThumbIndex;
-		private ushort m_SelfViewIndex;
-		private ushort m_PositionIndex;
+		[CanBeNull]
+		private LayoutComponent m_LayoutComponent;
 
 		/// <summary>
 		/// Constructor.
@@ -43,74 +67,118 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 		}
 
 		/// <summary>
-		/// Release resources.
+		/// Sets the wrapped conference layout control.
 		/// </summary>
-		public override void Dispose()
+		/// <param name="control"></param>
+		public void SetConferenceLayoutControl(IConferenceLayoutControl control)
 		{
-			base.Dispose();
-
-			Unsubscribe(m_ConferenceLayoutControl);
-			Unsubscribe(m_SubscribedZoomLayoutComponent);
-		}
-
-		public void SetDestinationLayoutControl(IConferenceLayoutControl value)
-		{
-			if (value == m_ConferenceLayoutControl)
+			if (control == m_ConferenceLayoutControl)
 				return;
 
-			m_ConferenceLayoutControl = value;
+			Unsubscribe(m_ConferenceLayoutControl);
+			m_ConferenceLayoutControl = control;
 			Subscribe(m_ConferenceLayoutControl);
-			if (m_ConferenceLayoutControl is ZoomRoomLayoutControl)
-			{
-				m_ZoomMode = true;
-				var control = m_ConferenceLayoutControl as ZoomRoomLayoutControl;
-				m_SubscribedZoomLayoutComponent = control
-				                                  .Parent.Components
-				                                  .GetComponent<LayoutComponent>();
 
-				Subscribe(m_SubscribedZoomLayoutComponent);
-			}
+			LayoutComponent component = GetZoomLayoutComponent(control);
+			SetLayoutComponent(component);
+
+			RefreshIfVisible();
+		}
+
+		/// <summary>
+		/// Sets the wrapped Zoom layout component.
+		/// </summary>
+		/// <param name="component"></param>
+		private void SetLayoutComponent(LayoutComponent component)
+		{
+			if (component == m_LayoutComponent)
+				return;
+
+			Unsubscribe(m_LayoutComponent);
+			m_LayoutComponent = component;
+			Subscribe(m_LayoutComponent);
+
+			RefreshIfVisible();
 		}
 
 		protected override void Refresh(ICameraLayoutView view)
 		{
 			base.Refresh(view);
 
-			if (m_ConferenceLayoutControl != null && m_ConferenceLayoutControl.LayoutAvailable && m_ZoomMode)
+			m_RefreshSection.Enter();
+
+			try
 			{
-				view.SetLayoutSizeListEnabled(true);
-				view.SetLayoutStyleListEnable(true);
-				view.SetLayoutShareListEnable(true);
-				view.SetLayoutSelfViewListEnable(true);
-				view.SetLayoutPositionListEnable(true);
+				// Set the selected state of the controls
+				eZoomLayoutStyle style =
+					m_LayoutComponent == null
+						? eZoomLayoutStyle.None
+						: m_LayoutComponent.LayoutStyle;
+				eZoomLayoutSize size =
+					m_LayoutComponent == null
+						? eZoomLayoutSize.None
+						: m_LayoutComponent.LayoutSize;
+				eZoomLayoutPosition position =
+					m_LayoutComponent == null
+						? eZoomLayoutPosition.None
+						: m_LayoutComponent.LayoutPosition;
+				bool selfView = m_LayoutComponent != null && m_LayoutComponent.SelfViewEnabled;
+				bool contentThumbnail = m_LayoutComponent != null && m_LayoutComponent.ShareThumb;
+
+				view.SetSelfviewCameraButtonSelected(selfView);
+				view.SetContentThumbnailButtonSelected(contentThumbnail);
+				foreach (var kvp in s_LayoutPositions)
+					view.SetThumbnailPositionButtonSelected(kvp.Key, kvp.Value == position);
+				foreach (var kvp in s_LayoutSizes)
+					view.SetLayoutSizeButtonSelected(kvp.Key, kvp.Value == size);
+				foreach (var kvp in s_LayoutStyles)
+					view.SetLayoutStyleButtonSelected(kvp.Key, kvp.Value == style);
+
+				// Set the enabled state of the controls
+				bool layoutAvailable = m_ConferenceLayoutControl != null && m_ConferenceLayoutControl.LayoutAvailable;
+
+				bool sizeEnabled = layoutAvailable && style != eZoomLayoutStyle.Strip;
+				bool styleEnabled = layoutAvailable;
+				bool contentThumbnailEnabled = layoutAvailable;
+				bool selfviewCameraEnabled = layoutAvailable;
+				bool thumbnailPositionEnabled = layoutAvailable;
+
+				view.SetLayoutSizeListEnabled(sizeEnabled);
+				view.SetLayoutStyleListEnabled(styleEnabled);
+				view.SetContentThumbnailButtonEnabled(contentThumbnailEnabled);
+				view.SetSelfviewCameraButtonEnabled(selfviewCameraEnabled);
+				view.SetThumbnailPositionListEnabled(thumbnailPositionEnabled);
 			}
-			//If in strip mode disable the size configuration.
-			if (m_StyleIndex == 2)
+			finally
 			{
-				view.SetLayoutSizeListEnabled(false);
-				for (ushort i = 0; i <= 3; i++)
-					view.SetLayoutSizeControlButtonSelected(i, false);
+				m_RefreshSection.Leave();
 			}
-			//Set size selected as normal if we aren't in strip mode
-			else
-				for (ushort i = 0; i <= 3; i++)
-					view.SetLayoutSizeControlButtonSelected(i, i == m_SizeIndex);
-			//Set style selected
-			for (ushort i = 0; i <= 3; i++)
-				view.SetLayoutStyleControlButtonSelected(i, i == m_StyleIndex);
-			//Set share selected
-			for (ushort i = 0; i <= 1; i++)
-				view.SetLayoutShareControlButtonSelected(i, i == m_ShareThumbIndex);
-			//Set self-view selected
-			for (ushort i = 0; i <= 1; i++)
-				view.SetLayoutSelfViewControlButtonSelected(i, i == m_SelfViewIndex);
-			//Set position selected
-			for (ushort i = 0; i <= 3; i++)
-				view.SetLayoutPositionControlButtonSelected(i, i == m_PositionIndex);
 		}
+
+		#region Private Methods
+
+		/// <summary>
+		/// Gets the zoom layout component for the given layout control.
+		/// </summary>
+		/// <param name="control"></param>
+		/// <returns></returns>
+		[CanBeNull]
+		private static LayoutComponent GetZoomLayoutComponent([CanBeNull] IConferenceLayoutControl control)
+		{
+			ZoomRoomLayoutControl zoomLayoutControl = control as ZoomRoomLayoutControl;
+			return zoomLayoutControl == null
+				       ? null
+				       : zoomLayoutControl.Parent.Components.GetComponent<LayoutComponent>();
+		}
+
+		#endregion
 
 		#region Control Callbacks
 
+		/// <summary>
+		/// Subscribe to the conference layout control events.
+		/// </summary>
+		/// <param name="control"></param>
 		private void Subscribe(IConferenceLayoutControl control)
 		{
 			if (control == null)
@@ -121,6 +189,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			control.OnSelfViewFullScreenEnabledChanged += ControlOnSelfViewFullScreenEnabledChanged;
 		}
 
+		/// <summary>
+		/// Unsubscribe from the conference layout control events.
+		/// </summary>
+		/// <param name="control"></param>
 		private void Unsubscribe(IConferenceLayoutControl control)
 		{
 			if (control == null)
@@ -131,18 +203,31 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			control.OnSelfViewFullScreenEnabledChanged -= ControlOnSelfViewFullScreenEnabledChanged;
 		}
 
+		/// <summary>
+		/// Called when the fullscreen enabled state changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ControlOnSelfViewFullScreenEnabledChanged(object sender, ConferenceLayoutSelfViewFullScreenApiEventArgs e)
 		{
 			RefreshIfVisible();
 		}
 
+		/// <summary>
+		/// Called when the selfview enabled state changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ControlOnSelfViewEnabledChanged(object sender, ConferenceLayoutSelfViewApiEventArgs e)
 		{
-			m_SelfViewIndex = e.Data ? (ushort)1 : (ushort)0;
-
 			RefreshIfVisible();
 		}
 
+		/// <summary>
+		/// Called when layout availability changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ControlOnLayoutAvailableChanged(object sender, ConferenceLayoutAvailableApiEventArgs e)
 		{
 			RefreshIfVisible();
@@ -150,8 +235,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 
 		#endregion
 
-		#region ZoomRoom Component Callbacks
+		#region LayoutComponent Callbacks
 
+		/// <summary>
+		/// Subscribe to the layout component events.
+		/// </summary>
+		/// <param name="layoutComponent"></param>
 		private void Subscribe(LayoutComponent layoutComponent)
 		{
 			if (layoutComponent == null)
@@ -163,6 +252,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			layoutComponent.OnStyleChanged += LayoutComponentOnStyleChanged;
 		}
 
+		/// <summary>
+		/// Unsubscribe from the layout component events.
+		/// </summary>
+		/// <param name="layoutComponent"></param>
 		private void Unsubscribe(LayoutComponent layoutComponent)
 		{
 			if (layoutComponent == null)
@@ -174,97 +267,43 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			layoutComponent.OnStyleChanged -= LayoutComponentOnStyleChanged;
 		}
 
+		/// <summary>
+		/// Called when the layout style changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void LayoutComponentOnStyleChanged(object sender, ZoomLayoutStyleEventArgs e)
 		{
-			switch (e.LayoutStyle)
-			{
-				case eZoomLayoutStyle.Gallery:
-					m_StyleIndex = 0;
-					break;
-				case eZoomLayoutStyle.Speaker:
-					m_StyleIndex = 1;
-					break;
-				case eZoomLayoutStyle.Strip:
-					m_StyleIndex = 2;
-					break;
-				case eZoomLayoutStyle.ShareAll:
-					m_StyleIndex = 3;
-					break;
-				case eZoomLayoutStyle.None:
-					m_StyleIndex = 4;
-					break;
-				default:
-					throw new ArgumentOutOfRangeException("e");
-			}
-
 			RefreshIfVisible();
 		}
 
+		/// <summary>
+		/// Called when the layout size changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void LayoutComponentOnSizeChanged(object sender, ZoomLayoutSizeEventArgs e)
 		{
-			switch (e.LayoutSize)
-			{
-				case eZoomLayoutSize.Size1:
-					m_SizeIndex = 1;
-					break;
-				case eZoomLayoutSize.Size2:
-					m_SizeIndex = 2;
-					break;
-				case eZoomLayoutSize.Size3:
-					m_SizeIndex = 3;
-					break;
-				case eZoomLayoutSize.Strip:
-					m_SizeIndex = 4;
-					break;
-				case eZoomLayoutSize.Off:
-					m_SizeIndex = 0;
-					break;
-				case eZoomLayoutSize.None:
-					m_SizeIndex = 5;
-					break;
-				default:
-					throw new ArgumentOutOfRangeException();
-			}
-
 			RefreshIfVisible();
 		}
 
+		/// <summary>
+		/// Called when the layout share thumbnail changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void LayoutComponentOnShareThumbChanged(object sender, BoolEventArgs e)
 		{
-			m_ShareThumbIndex = e.Data ? (ushort)1 : (ushort)0;
-
 			RefreshIfVisible();
 		}
 
+		/// <summary>
+		/// Called when the layout position changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void LayoutComponentOnPositionChanged(object sender, ZoomLayoutPositionEventArgs e)
 		{
-			switch (e.LayoutPosition)
-			{
-				case eZoomLayoutPosition.UpRight:
-					m_PositionIndex = 1;
-					break;
-				case eZoomLayoutPosition.DownRight:
-					m_PositionIndex = 3;
-					break;
-				case eZoomLayoutPosition.UpLeft:
-					m_PositionIndex = 0;
-					break;
-				case eZoomLayoutPosition.DownLeft:
-					m_PositionIndex = 2;
-					break;
-				case eZoomLayoutPosition.None:
-				case eZoomLayoutPosition.Center:
-				case eZoomLayoutPosition.Up:
-				case eZoomLayoutPosition.Right:
-				case eZoomLayoutPosition.Down:
-				case eZoomLayoutPosition.Left:
-					m_PositionIndex = 4;
-					break;
-
-				default:
-					throw new ArgumentOutOfRangeException("e");
-			}
-
 			RefreshIfVisible();
 		}
 
@@ -272,181 +311,107 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 
 		#region View Callbacks
 
+		/// <summary>
+		/// Subscribe to the view events.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Subscribe(ICameraLayoutView view)
 		{
 			base.Subscribe(view);
 			
 			view.OnLayoutSizeButtonPressed += ViewOnLayoutSizeButtonPressed;
 			view.OnLayoutStyleButtonPressed += ViewOnLayoutStyleButtonPressed;
-			view.OnLayoutShareButtonPressed += ViewOnLayoutShareButtonPressed;
-			view.OnLayoutSelfViewButtonPressed += ViewOnLayoutSelfViewButtonPressed;
-			view.OnLayoutPositionButtonPressed += ViewOnLayoutPositionButtonPressed;
+			view.OnContentThumbnailButtonPressed += ViewOnContentThumbnailButtonPressed;
+			view.OnSelfviewCameraButtonPressed += ViewOnSelfviewCameraButtonPressed;
+			view.OnThumbnailPositionButtonPressed += ViewOnThumbnailPositionButtonPressed;
 		}
 
+		/// <summary>
+		/// Unsubscribe from the view events.
+		/// </summary>
+		/// <param name="view"></param>
 		protected override void Unsubscribe(ICameraLayoutView view)
 		{
 			base.Unsubscribe(view);
 			
 			view.OnLayoutSizeButtonPressed -= ViewOnLayoutSizeButtonPressed;
 			view.OnLayoutStyleButtonPressed -= ViewOnLayoutStyleButtonPressed;
-			view.OnLayoutShareButtonPressed -= ViewOnLayoutShareButtonPressed;
-			view.OnLayoutSelfViewButtonPressed -= ViewOnLayoutSelfViewButtonPressed;
-			view.OnLayoutPositionButtonPressed -= ViewOnLayoutPositionButtonPressed;
+			view.OnContentThumbnailButtonPressed -= ViewOnContentThumbnailButtonPressed;
+			view.OnSelfviewCameraButtonPressed -= ViewOnSelfviewCameraButtonPressed;
+			view.OnThumbnailPositionButtonPressed -= ViewOnThumbnailPositionButtonPressed;
 		}
 
+		/// <summary>
+		/// Called when the user presses a layout size button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ViewOnLayoutSizeButtonPressed(object sender, UShortEventArgs e)
 		{
-			m_RefreshSection.Enter();
+			var control = m_ConferenceLayoutControl as ZoomRoomLayoutControl;
+			if (control == null)
+				return;
 
-			try
-			{
-				var control = m_ConferenceLayoutControl as ZoomRoomLayoutControl;
-				if (control == null)
-					return;
-
-				eZoomLayoutSize size;
-				switch (e.Data)
-				{
-					case 0:
-						size = eZoomLayoutSize.Off;
-						break;
-					case 1:
-						size = eZoomLayoutSize.Size1;
-						break;
-					case 2:
-						size = eZoomLayoutSize.Size2;
-						break;
-					case 3:
-						size = eZoomLayoutSize.Size3;
-						break;
-					case 4:
-						size = eZoomLayoutSize.Strip;
-						break;
-
-					default:
-						size = eZoomLayoutSize.None;
-						break;
-				}
-
+			eZoomLayoutSize size;
+			if (s_LayoutSizes.TryGetValue(e.Data, out size))
 				control.SetLayoutSize(size);
-			}
-			finally
-			{
-				m_RefreshSection.Leave();
-			}
 		}
 
+		/// <summary>
+		/// Called when the user presses a layout style button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ViewOnLayoutStyleButtonPressed(object sender, UShortEventArgs e)
 		{
-			m_RefreshSection.Enter();
+			var control = m_ConferenceLayoutControl as ZoomRoomLayoutControl;
+			if (control == null)
+				return;
 
-			try
-			{
-				var control = m_ConferenceLayoutControl as ZoomRoomLayoutControl;
-				if (control == null)
-					return;
-
-				eZoomLayoutStyle style;
-				switch (e.Data)
-				{
-					case 0:
-						style = eZoomLayoutStyle.Gallery;
-						break;
-					case 1:
-						style = eZoomLayoutStyle.Speaker;
-						break;
-					case 2:
-						style = eZoomLayoutStyle.Strip;
-						break;
-					case 3:
-						style = eZoomLayoutStyle.ShareAll;
-						break;
-
-					default:
-						style = eZoomLayoutStyle.None;
-						break;
-				}
-
+			eZoomLayoutStyle style;
+			if (s_LayoutStyles.TryGetValue(e.Data, out style))
 				control.SetStyle(style);
-			}
-			finally
-			{
-				m_RefreshSection.Leave();
-			}
 		}
 
-		private void ViewOnLayoutShareButtonPressed(object sender, UShortEventArgs e)
+		/// <summary>
+		/// Called when the user presses the content thumbnail button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ViewOnContentThumbnailButtonPressed(object sender, EventArgs eventArgs)
 		{
-			m_RefreshSection.Enter();
+			var control = m_ConferenceLayoutControl as ZoomRoomLayoutControl;
+			if (control == null)
+				return;
 
-			try
-			{
-				var control = m_ConferenceLayoutControl as ZoomRoomLayoutControl;
-				if (control == null)
-					return;
-
-				bool enabled = e.Data == 1;
-				control.SetShareThumb(enabled);
-			}
-			finally
-			{
-				m_RefreshSection.Leave();
-			}
+			control.SetShareThumbnailEnabled(!control.ShareThumbnailEnabled);
 		}
 
-		private void ViewOnLayoutSelfViewButtonPressed(object sender, UShortEventArgs e)
+		/// <summary>
+		/// Called when the user presses the selfview camera button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ViewOnSelfviewCameraButtonPressed(object sender, EventArgs eventArgs)
 		{
-			m_RefreshSection.Enter();
-
-			try
-			{
-				bool enabled = e.Data == 1;
-				if (m_ConferenceLayoutControl != null)
-					m_ConferenceLayoutControl.SetSelfViewEnabled(enabled);
-			}
-			finally
-			{
-				m_RefreshSection.Leave();
-			}
+			if (m_ConferenceLayoutControl != null)
+				m_ConferenceLayoutControl.SetSelfViewEnabled(!m_ConferenceLayoutControl.SelfViewEnabled);
 		}
 
-		private void ViewOnLayoutPositionButtonPressed(object sender, UShortEventArgs e)
+		/// <summary>
+		/// Called when the user presses a thumbnail position button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ViewOnThumbnailPositionButtonPressed(object sender, UShortEventArgs e)
 		{
-			m_RefreshSection.Enter();
+			var control = m_ConferenceLayoutControl as ZoomRoomLayoutControl;
+			if (control == null)
+				return;
 
-			try
-			{
-				var control = m_ConferenceLayoutControl as ZoomRoomLayoutControl;
-				if (control == null)
-					return;
-
-				eZoomLayoutPosition position;
-				switch (e.Data)
-				{
-					case 0:
-						position = eZoomLayoutPosition.UpLeft;
-						break;
-					case 1:
-						position = eZoomLayoutPosition.UpRight;
-						break;
-					case 2:
-						position = eZoomLayoutPosition.DownLeft;
-						break;
-					case 3:
-						position = eZoomLayoutPosition.DownRight;
-						break;
-
-					default:
-						position = eZoomLayoutPosition.None;
-						break;
-				}
-
+			eZoomLayoutPosition position;
+			if (s_LayoutPositions.TryGetValue(e.Data, out position))
 				control.SetLayoutPosition(position);
-			}
-			finally
-			{
-				m_RefreshSection.Leave();
-			}
 		}
 
 		#endregion

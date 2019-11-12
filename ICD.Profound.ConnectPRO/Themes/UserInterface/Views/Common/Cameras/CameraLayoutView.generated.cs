@@ -2,6 +2,7 @@
 using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.UI.Controls;
+using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.Pages;
 
@@ -10,11 +11,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 	public sealed partial class CameraLayoutView
 	{
 		private VtProSubpage m_Subpage;
-		private VtProDynamicButtonList m_SizeLayoutControl;
-		private VtProDynamicButtonList m_StyleLayoutControl;
-		private VtProDynamicButtonList m_ShareLayoutControl;
-		private VtProDynamicButtonList m_SelfViewLayoutControl;
-		private VtProDynamicButtonList m_PositionLayoutControl;
+		private VtProDynamicButtonList m_LayoutSizeButtonList;
+		private VtProDynamicButtonList m_LayoutStyleButtonList;
+		private VtProButton m_ContentThumbnailButton;
+		private VtProButton m_SelfviewCameraButton;
+		private VtProDynamicButtonList m_ThumbnailPositionButtonList;
 
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
@@ -23,31 +24,31 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 				DigitalVisibilityJoin = 350
 			};
 
-			m_SizeLayoutControl = new VtProDynamicButtonList(21, panel as IPanelDevice, m_Subpage)
+			m_LayoutSizeButtonList = new VtProDynamicButtonList(21, panel as IPanelDevice, m_Subpage)
 			{
-				MaxSize = 5,
+				MaxSize = 4,
 				DigitalEnableJoin = 661
 			};
 
-			m_StyleLayoutControl = new VtProDynamicButtonList(22, panel as IPanelDevice, m_Subpage)
+			m_LayoutStyleButtonList = new VtProDynamicButtonList(22, panel as IPanelDevice, m_Subpage)
 			{
 				MaxSize = 4,
 				DigitalEnableJoin = 662
 			};
 
-			m_ShareLayoutControl = new VtProDynamicButtonList(23, panel as IPanelDevice, m_Subpage)
+			m_ContentThumbnailButton = new VtProButton(panel, m_Subpage)
 			{
-				MaxSize = 2,
-				DigitalEnableJoin = 663
+				DigitalEnableJoin = 663,
+				DigitalPressJoin = 666
 			};
 
-			m_SelfViewLayoutControl = new VtProDynamicButtonList(24, panel as IPanelDevice, m_Subpage)
+			m_SelfviewCameraButton = new VtProButton(panel, m_Subpage)
 			{
-				MaxSize = 2,
-				DigitalEnableJoin = 664
+				DigitalEnableJoin = 664,
+				DigitalPressJoin = 667
 			};
 
-			m_PositionLayoutControl = new VtProDynamicButtonList(25, panel as IPanelDevice, m_Subpage)
+			m_ThumbnailPositionButtonList = new VtProDynamicButtonList(25, panel as IPanelDevice, m_Subpage)
 			{
 				MaxSize = 2,
 				DigitalEnableJoin = 665
@@ -57,11 +58,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 		protected override IEnumerable<IVtProControl> GetChildren()
 		{
 			yield return m_Subpage;
-			yield return m_SizeLayoutControl;
-			yield return m_StyleLayoutControl;
-			yield return m_ShareLayoutControl;
-			yield return m_SelfViewLayoutControl;
-			yield return m_PositionLayoutControl;
+			yield return m_LayoutSizeButtonList;
+			yield return m_LayoutStyleButtonList;
+			yield return m_ContentThumbnailButton;
+			yield return m_SelfviewCameraButton;
+			yield return m_ThumbnailPositionButtonList;
 		}
 	}
 }

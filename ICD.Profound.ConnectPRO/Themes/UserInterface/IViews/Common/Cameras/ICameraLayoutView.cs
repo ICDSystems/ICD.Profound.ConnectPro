@@ -18,19 +18,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Cameras
 		event EventHandler<UShortEventArgs> OnLayoutStyleButtonPressed;
 
 		/// <summary>
-		/// Raised when a share layout configuration button is pressed.
+		/// Raised when the content thumbnail button is pressed.
 		/// </summary>
-		event EventHandler<UShortEventArgs> OnLayoutShareButtonPressed;
+		event EventHandler OnContentThumbnailButtonPressed;
 
 		/// <summary>
-		/// Raised when a self-view layout configuration button is pressed.
+		/// Raised when the self-view camera button is pressed.
 		/// </summary>
-		event EventHandler<UShortEventArgs> OnLayoutSelfViewButtonPressed;
+		event EventHandler OnSelfviewCameraButtonPressed;
 
 		/// <summary>
 		/// Raised when a position layout configuration button is pressed.
 		/// </summary>
-		event EventHandler<UShortEventArgs> OnLayoutPositionButtonPressed;
+		event EventHandler<UShortEventArgs> OnThumbnailPositionButtonPressed;
 
 		#endregion
 
@@ -41,35 +41,33 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Cameras
 		/// </summary>
 		/// <param name="index"></param>
 		/// <param name="selected"></param>
-		void SetLayoutSizeControlButtonSelected(ushort index, bool selected);
+		void SetLayoutSizeButtonSelected(ushort index, bool selected);
 
 		/// <summary>
 		/// Sets the selected state of a button for the style layout control.
 		/// </summary>
 		/// <param name="index"></param>
 		/// <param name="selected"></param>
-		void SetLayoutStyleControlButtonSelected(ushort index, bool selected);
+		void SetLayoutStyleButtonSelected(ushort index, bool selected);
 
 		/// <summary>
 		/// Sets the selected state of a button for the share layout control.
 		/// </summary>
-		/// <param name="index"></param>
 		/// <param name="selected"></param>
-		void SetLayoutShareControlButtonSelected(ushort index, bool selected);
+		void SetContentThumbnailButtonSelected(bool selected);
 
 		/// <summary>
 		/// Sets the selected state of a button for the self-view layout control.
 		/// </summary>
-		/// <param name="index"></param>
 		/// <param name="selected"></param>
-		void SetLayoutSelfViewControlButtonSelected(ushort index, bool selected);
+		void SetSelfviewCameraButtonSelected(bool selected);
 
 		/// <summary>
 		/// Sets the selected state of a button for the position layout control.
 		/// </summary>
 		/// <param name="index"></param>
 		/// <param name="selected"></param>
-		void SetLayoutPositionControlButtonSelected(ushort index, bool selected);
+		void SetThumbnailPositionButtonSelected(ushort index, bool selected);
 
 		/// <summary>
 		/// Sets the enabled state of the size layout controls dynamic button list.
@@ -81,25 +79,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Cameras
 		/// Sets the enabled state of the style layout controls dynamic button list.
 		/// </summary>
 		/// <param name="enabled"></param>
-		void SetLayoutStyleListEnable(bool enabled);
+		void SetLayoutStyleListEnabled(bool enabled);
 
 		/// <summary>
 		/// Sets the enabled state of the share layout controls dynamic button list.
 		/// </summary>
 		/// <param name="enabled"></param>
-		void SetLayoutShareListEnable(bool enabled);
+		void SetContentThumbnailButtonEnabled(bool enabled);
 
 		/// <summary>
 		/// Sets the enabled state of the self-view layout controls dynamic button list.
 		/// </summary>
 		/// <param name="enabled"></param>
-		void SetLayoutSelfViewListEnable(bool enabled);
+		void SetSelfviewCameraButtonEnabled(bool enabled);
 
 		/// <summary>
 		/// Sets the enabled state of the position layout controls dynamic button list.
 		/// </summary>
 		/// <param name="enabled"></param>
-		void SetLayoutPositionListEnable(bool enabled);
+		void SetThumbnailPositionListEnabled(bool enabled);
 
 		#endregion
 	}
