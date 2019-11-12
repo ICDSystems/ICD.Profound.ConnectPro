@@ -134,7 +134,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 				bool styleEnabled = layoutAvailable;
 				bool contentThumbnailEnabled = layoutAvailable && presentationActive;
 				bool selfviewCameraEnabled = layoutAvailable;
-				bool thumbnailPositionEnabled = layoutAvailable;
+				bool thumbnailPositionEnabled = layoutAvailable && size != eZoomLayoutSize.Off;
 
 				view.SetLayoutSizeListEnabled(sizeEnabled);
 				view.SetLayoutStyleListEnabled(styleEnabled);
