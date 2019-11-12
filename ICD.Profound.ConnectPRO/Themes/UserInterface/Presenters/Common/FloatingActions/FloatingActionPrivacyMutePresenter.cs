@@ -8,6 +8,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.FloatingActions;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.FloatingActions;
+using ICD.Profound.ConnectPRO.Utils;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.FloatingActions
 {
@@ -29,12 +30,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		}
 
 		/// <summary>
+		/// Sets the room for this presenter to represent.
+		/// </summary>
+		/// <param name="room"></param>
+		public override void SetRoom(IConnectProRoom room)
+		{
+			base.SetRoom(room);
+
+			UpdateVisibility();
+		}
+
+		/// <summary>
 		/// Override to get the selected state for the button.
 		/// </summary>
 		/// <returns></returns>
 		protected override bool GetActive()
 		{
-			return Room != null && Room.ConferenceManager.PrivacyMuted;
+			return Room != null &&
+			       Room.ConferenceManager != null &&
+			       Room.ConferenceManager.PrivacyMuted;
 		}
 
 		/// <summary>
@@ -47,7 +61,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			if (Room == null)
 				return;
 
-			Room.ConferenceManager.TogglePrivacyMute();
+			if (Room.ConferenceManager != null)
+				Room.ConferenceManager.TogglePrivacyMute();
+		}
+
+		/// <summary>
+		/// Updates the visibility of this subpage.
+		/// </summary>
+		private void UpdateVisibility()
+		{
+			bool show = Room != null && ConferenceOverrideUtils.ConferenceActionsAvailable(Room, eInCall.Audio);
+			ShowView(show);
 		}
 
 		#region Room Callbacks
@@ -63,7 +87,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			if (room == null)
 				return;
 
+			room.Routing.State.OnSourceRoutedChanged += StateOnSourceRoutedChanged;
+
 			m_SubscribedConferenceManager = room.ConferenceManager;
+			if (m_SubscribedConferenceManager == null)
+				return;
 
 			m_SubscribedConferenceManager.OnPrivacyMuteStatusChange += ConferenceManagerOnPrivacyMuteStatusChange;
 			m_SubscribedConferenceManager.OnInCallChanged += SubscribedConferenceManagerOnInCallChanged;
@@ -77,21 +105,48 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		{
 			base.Unsubscribe(room);
 
+			if (room == null)
+				return;
+
+			room.Routing.State.OnSourceRoutedChanged -= StateOnSourceRoutedChanged;
+
 			if (m_SubscribedConferenceManager == null)
 				return;
 
 			m_SubscribedConferenceManager.OnPrivacyMuteStatusChange -= ConferenceManagerOnPrivacyMuteStatusChange;
 			m_SubscribedConferenceManager.OnInCallChanged -= SubscribedConferenceManagerOnInCallChanged;
+
+			m_SubscribedConferenceManager = null;
 		}
 
+		/// <summary>
+		/// Called when the privacy mute state changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="boolEventArgs"></param>
 		private void ConferenceManagerOnPrivacyMuteStatusChange(object sender, BoolEventArgs boolEventArgs)
 		{
 			RefreshIfVisible(false);
 		}
 
+		/// <summary>
+		/// Called when the room enters/leaves a call.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="inCallEventArgs"></param>
 		private void SubscribedConferenceManagerOnInCallChanged(object sender, InCallEventArgs inCallEventArgs)
 		{
-			ShowView(inCallEventArgs.Data >= eInCall.Audio);
+			UpdateVisibility();
+		}
+
+		/// <summary>
+		/// Called when a source becomes routed/unrouted.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void StateOnSourceRoutedChanged(object sender, EventArgs eventArgs)
+		{
+			UpdateVisibility();
 		}
 
 		#endregion

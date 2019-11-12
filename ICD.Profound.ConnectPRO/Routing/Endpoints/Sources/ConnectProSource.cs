@@ -18,20 +18,20 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 		/// Default behaviour - Privacy Mute and Camera features are available if
 		/// the source is a conferencing device.
 		/// </summary>
-		None,
+		None = 0,
 
 		/// <summary>
 		/// Hides the Privacy Mute and Camera features even if the source is a
 		/// conferencing device.
 		/// </summary>
-		Hide,
+		Hide = 1,
 
 		/// <summary>
 		/// Shows the Privacy Mute and Camera features even if the source is NOT
 		/// a conferencing device. This is especially useful for web conferencing
 		/// devices (i.e. a user plugging in a Laptop).
 		/// </summary>
-		Show
+		Show = 2
 	}
 
 	public sealed class ConnectProSource : AbstractSource<ConnectProSourceSettings>

@@ -27,14 +27,18 @@ namespace ICD.Profound.ConnectPRO.Routing
 {
 	public sealed class ConnectProRoutingSources
 	{
+		[NotNull]
 		private readonly ConnectProRouting m_Routing;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="routing"></param>
-		public ConnectProRoutingSources(ConnectProRouting routing)
+		public ConnectProRoutingSources([NotNull] ConnectProRouting routing)
 		{
+			if (routing == null)
+				throw new ArgumentNullException("routing");
+
 			m_Routing = routing;
 		}
 
@@ -44,6 +48,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// Returns all of the sources available in the core.
 		/// </summary>
 		/// <returns></returns>
+		[NotNull]
 		public IEnumerable<ISource> GetCoreSources()
 		{
 			return m_Routing.Room
@@ -57,6 +62,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// Returns all of the sources available in the room.
 		/// </summary>
 		/// <returns></returns>
+		[NotNull]
 		public IEnumerable<ISource> GetRoomSources()
 		{
 			return m_Routing.Room
@@ -74,6 +80,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		///			- In a room with multiple displays or combined advanced mode the source can not be routed to any destination.
 		/// </summary>
 		/// <returns></returns>
+		[NotNull]
 		public IEnumerable<ISource> GetRoomSourcesForUi()
 		{
 			IDestinationBase[] videoDestinations = m_Routing.Destinations.GetVideoDestinations().ToArray();
@@ -112,7 +119,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		/// <param name="routeControl"></param>
 		/// <returns></returns>
-		public IEnumerable<ISource> GetRoomSourcesForPresentation(IVideoConferenceRouteControl routeControl)
+		[NotNull]
+		public IEnumerable<ISource> GetRoomSourcesForPresentation([NotNull] IVideoConferenceRouteControl routeControl)
 		{
 			if (routeControl == null)
 				throw new ArgumentNullException("routeControl");
@@ -163,7 +171,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <param name="source"></param>
 		/// <returns></returns>
 		[NotNull]
-		public IRoom GetRoomForSource(ISource source)
+		public IRoom GetRoomForSource([NotNull] ISource source)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
@@ -190,7 +198,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		/// <param name="presentationControl"></param>
 		/// <returns></returns>
-		public IEnumerable<ISource> GetVtcPresentationSources(IPresentationControl presentationControl)
+		[NotNull]
+		public IEnumerable<ISource> GetVtcPresentationSources([NotNull] IPresentationControl presentationControl)
 		{
 			if (presentationControl == null)
 				throw new ArgumentNullException("presentationControl");
@@ -215,11 +224,29 @@ namespace ICD.Profound.ConnectPRO.Routing
 		#region Controls
 
 		/// <summary>
+		/// Gets the sources for the given device control.
+		/// </summary>
+		/// <param name="control"></param>
+		/// <returns></returns>
+		[NotNull]
+		public IEnumerable<ISource> GetSources([NotNull] IDeviceControl control)
+		{
+			if (control == null)
+				throw new ArgumentNullException("control");
+
+			return m_Routing.RoutingGraph
+				.Sources
+				.GetChildrenForDevice(control.Parent.Id)
+				.Where(s => GetDeviceControl(s) == control);
+		}
+
+		/// <summary>
 		/// Gets the device for the given source.
 		/// </summary>
 		/// <param name="source"></param>
 		/// <returns></returns>
-		private static IDeviceBase GetDevice(ISource source)
+		[NotNull]
+		private static IDeviceBase GetDevice([NotNull] ISource source)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
@@ -227,7 +254,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			return ServiceProvider.GetService<ICore>().Originators.GetChild<IDeviceBase>(source.Device);
 		}
 
-		public static bool CanControl(ISource source)
+		public static bool CanControl([NotNull] ISource source)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
@@ -239,16 +266,28 @@ namespace ICD.Profound.ConnectPRO.Routing
 			return controlOverride != eControlOverride.Default || GetDeviceControl(source, eControlOverride.Default) != null;
 		}
 
-		public static IDeviceControl GetDeviceControl(ISource source, eControlOverride controlOverride)
+		[CanBeNull]
+		private static IDeviceControl GetDeviceControl([NotNull] ISource source)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			eControlOverride controlOverride = GetControlOverride(source);
+			return GetDeviceControl(source, controlOverride);
+		}
+
+		[CanBeNull]
+		public static IDeviceControl GetDeviceControl([NotNull] ISource source, eControlOverride controlOverride)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
 
 			IDeviceBase device = GetDevice(source);
-			return device == null ? null : GetDeviceControl(device, controlOverride);
+			return GetDeviceControl(device, controlOverride);
 		}
 
-		private static IDeviceControl GetDeviceControl(IDeviceBase device, eControlOverride controlOverride)
+		[CanBeNull]
+		private static IDeviceControl GetDeviceControl([NotNull] IDeviceBase device, eControlOverride controlOverride)
 		{
 			if (device == null)
 				throw new ArgumentNullException("device");
@@ -288,7 +327,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			return null;
 		}
 
-		public static eControlOverride GetControlOverride(ISource source)
+		public static eControlOverride GetControlOverride([NotNull] ISource source)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");

@@ -1,28 +1,27 @@
-﻿using ICD.Common.Properties;
+﻿using System;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Audio.Shure.Devices.MX;
 using ICD.Connect.Conferencing.ConferenceManagers;
-using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Themes.UserInterfaces;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.Utils;
 
 namespace ICD.Profound.ConnectPRO.Themes.ShureMx396Interface
 {
 	public sealed class ConnectProShureMx396Interface : AbstractUserInterface
 	{
-		private bool m_IsDisposed;
-
-		private readonly ConnectProTheme m_Theme;
 		private readonly ShureMx396Device m_Microphone;
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private IConferenceManager m_SubscribedConferenceManager;
 		private IConnectProRoom m_Room;
+		private bool m_IsDisposed;
 
 		#region Properties
 
@@ -39,13 +38,14 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMx396Interface
 		/// Constructor.
 		/// </summary>
 		/// <param name="microphone"></param>
-		/// <param name="theme"></param>
-		public ConnectProShureMx396Interface(ShureMx396Device microphone, ConnectProTheme theme)
+		public ConnectProShureMx396Interface([NotNull] ShureMx396Device microphone)
 		{
+			if (microphone == null)
+				throw new ArgumentNullException("microphone");
+
 			m_Microphone = microphone;
 			Subscribe(m_Microphone);
 
-			m_Theme = theme;
 			m_RefreshSection = new SafeCriticalSection();
 		}
 
@@ -114,12 +114,13 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMx396Interface
 			if (room == null)
 				return;
 
+			room.Routing.State.OnSourceRoutedChanged += StateOnSourceRoutedChanged;
+
 			m_SubscribedConferenceManager = room.ConferenceManager;
 			if (m_SubscribedConferenceManager == null)
 				return;
 
 			m_SubscribedConferenceManager.OnInCallChanged += ConferenceManagerOnInCallChanged;
-			m_SubscribedConferenceManager.OnActiveConferenceStatusChanged += ConferenceManagerOnActiveConferenceStatusChanged;
 			m_SubscribedConferenceManager.OnPrivacyMuteStatusChange += ConferenceManagerOnPrivacyMuteStatusChange;
 		}
 
@@ -129,24 +130,18 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMx396Interface
 		/// <param name="room"></param>
 		private void Unsubscribe(IConnectProRoom room)
 		{
+			if (room == null)
+				return;
+
+			room.Routing.State.OnSourceRoutedChanged -= StateOnSourceRoutedChanged;
+
 			if (m_SubscribedConferenceManager == null)
 				return;
 
 			m_SubscribedConferenceManager.OnInCallChanged -= ConferenceManagerOnInCallChanged;
-			m_SubscribedConferenceManager.OnActiveConferenceStatusChanged -= ConferenceManagerOnActiveConferenceStatusChanged;
 			m_SubscribedConferenceManager.OnPrivacyMuteStatusChange -= ConferenceManagerOnPrivacyMuteStatusChange;
 
 			m_SubscribedConferenceManager = null;
-		}
-
-		/// <summary>
-		/// Called when the active conference changes status.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		private void ConferenceManagerOnActiveConferenceStatusChanged(object sender, ConferenceStatusEventArgs args)
-		{
-			UpdateMicrophoneLeds();
 		}
 
 		/// <summary>
@@ -169,6 +164,17 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMx396Interface
 			UpdateMicrophoneLeds();
 		}
 
+
+		/// <summary>
+		/// Called when a source becomes routed/unrouted.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void StateOnSourceRoutedChanged(object sender, EventArgs eventArgs)
+		{
+			UpdateMicrophoneLeds();
+		}
+
 		/// <summary>
 		/// Not in a call - LED Green
 		/// In a call, muted - LED Red
@@ -180,7 +186,7 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMx396Interface
 
 			try
 			{
-				bool inCall = m_SubscribedConferenceManager != null && m_SubscribedConferenceManager.IsInCall != eInCall.None;
+				bool inCall = ConferenceOverrideUtils.ConferenceActionsAvailable(m_Room, eInCall.Audio);
 				bool privacyMuted = m_SubscribedConferenceManager != null && m_SubscribedConferenceManager.PrivacyMuted;
 
 				bool green = !inCall || !privacyMuted;
@@ -223,7 +229,7 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMx396Interface
 		private void MicrophoneOnButtonPressedChanged(object sender, BoolEventArgs eventArgs)
 		{
 			// Prevent the user from toggling privacy mute while outside of a call
-			if (m_SubscribedConferenceManager == null || m_SubscribedConferenceManager.IsInCall == eInCall.None)
+			if (!ConferenceOverrideUtils.ConferenceActionsAvailable(m_Room, eInCall.Audio))
 				return;
 
 			if (eventArgs.Data)

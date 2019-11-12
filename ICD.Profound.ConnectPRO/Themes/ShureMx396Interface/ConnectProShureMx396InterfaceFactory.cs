@@ -26,7 +26,7 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMx396Interface
 		/// <returns></returns>
 		private ConnectProShureMx396Interface CreateUserInterface(ShureMx396Device originator)
 		{
-			return new ConnectProShureMx396Interface(originator, Theme);
+			return new ConnectProShureMx396Interface(originator);
 		}
 
 		/// <summary>
