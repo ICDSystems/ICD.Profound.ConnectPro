@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
@@ -7,6 +8,7 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Controls.Layout;
 using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Zoom.Components.Call;
 using ICD.Connect.Conferencing.Zoom.Components.Layout;
 using ICD.Connect.Conferencing.Zoom.Controls;
 using ICD.Connect.Conferencing.Zoom.Responses;
@@ -59,6 +61,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 		[CanBeNull]
 		private IPresentationControl m_PresentationControl;
 
+		[CanBeNull]
+		private CallComponent m_CallComponent;
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -84,11 +89,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			m_ConferenceLayoutControl = control;
 			Subscribe(m_ConferenceLayoutControl);
 
-			LayoutComponent component = GetZoomLayoutComponent(control);
-			SetLayoutComponent(component);
+			LayoutComponent layoutComponent = GetZoomLayoutComponent(control);
+			SetLayoutComponent(layoutComponent);
 
 			IPresentationControl presentationControl = GetPresentationControl(control);
 			SetPresentationControl(presentationControl);
+
+			CallComponent callComponent = GetZoomCallComponent(control);
+			SetCallComponent(callComponent);
 
 			RefreshIfVisible();
 		}
@@ -129,11 +137,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 				// Set the enabled state of the controls
 				bool layoutAvailable = m_ConferenceLayoutControl != null && m_ConferenceLayoutControl.LayoutAvailable;
 				bool presentationActive = m_PresentationControl != null && m_PresentationControl.PresentationActive;
+				int participantCount = m_CallComponent == null ? 0 : m_CallComponent.GetParticipants().Count();
 
 				bool sizeEnabled = layoutAvailable && style != eZoomLayoutStyle.Strip;
 				bool styleEnabled = layoutAvailable;
 				bool contentThumbnailEnabled = layoutAvailable && presentationActive;
-				bool selfviewCameraEnabled = layoutAvailable;
+				bool selfviewCameraEnabled = layoutAvailable && participantCount > 1;
 				bool thumbnailPositionEnabled = layoutAvailable && size != eZoomLayoutSize.Off;
 
 				view.SetLayoutSizeListEnabled(sizeEnabled);
@@ -183,6 +192,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 		}
 
 		/// <summary>
+		/// Sets the wrapped Zoom call component.
+		/// </summary>
+		/// <param name="component"></param>
+		private void SetCallComponent(CallComponent component)
+		{
+			if (component == m_CallComponent)
+				return;
+
+			Unsubscribe(m_CallComponent);
+			m_CallComponent = component;
+			Subscribe(m_CallComponent);
+
+			RefreshIfVisible();
+		}
+
+		/// <summary>
 		/// Gets the zoom layout component for the given layout control.
 		/// </summary>
 		/// <param name="control"></param>
@@ -194,6 +219,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			return zoomLayoutControl == null
 				       ? null
 				       : zoomLayoutControl.Parent.Components.GetComponent<LayoutComponent>();
+		}
+
+		/// <summary>
+		/// Gets the zoom call component for the given layout control.
+		/// </summary>
+		/// <param name="control"></param>
+		/// <returns></returns>
+		[CanBeNull]
+		private static CallComponent GetZoomCallComponent([CanBeNull] IConferenceLayoutControl control)
+		{
+			ZoomRoomLayoutControl zoomLayoutControl = control as ZoomRoomLayoutControl;
+			return zoomLayoutControl == null
+				       ? null
+				       : zoomLayoutControl.Parent.Components.GetComponent<CallComponent>();
 		}
 
 		/// <summary>
@@ -339,6 +378,56 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		private void LayoutComponentOnPositionChanged(object sender, ZoomLayoutPositionEventArgs e)
+		{
+			RefreshIfVisible();
+		}
+
+		#endregion
+
+		#region CallComponent Callbacks
+
+		/// <summary>
+		/// Subscribe to the call component events.
+		/// </summary>
+		/// <param name="callComponent"></param>
+		private void Subscribe(CallComponent callComponent)
+		{
+			if (callComponent == null)
+				return;
+
+			callComponent.OnParticipantAdded += CallComponentOnParticipantAdded;
+			callComponent.OnParticipantRemoved += CallComponentOnParticipantRemoved;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the call component events.
+		/// </summary>
+		/// <param name="callComponent"></param>
+		private void Unsubscribe(CallComponent callComponent)
+		{
+			if (callComponent == null)
+				return;
+
+			callComponent.OnParticipantAdded -= CallComponentOnParticipantAdded;
+			callComponent.OnParticipantRemoved -= CallComponentOnParticipantRemoved;
+		}
+
+		/// <summary>
+		/// Called when a participant is removed from the active conference.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="genericEventArgs"></param>
+		private void CallComponentOnParticipantRemoved(object sender, GenericEventArgs<ParticipantInfo> genericEventArgs)
+		{
+			RefreshIfVisible();
+		}
+
+		/// <summary>
+		/// Called when a participant is added to the active conference.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="genericEventArgs"></param>
+		private void CallComponentOnParticipantAdded(object sender, GenericEventArgs<ParticipantInfo> genericEventArgs)
 		{
 			RefreshIfVisible();
 		}
