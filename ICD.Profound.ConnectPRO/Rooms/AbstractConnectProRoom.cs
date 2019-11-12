@@ -358,9 +358,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			FocusSource = source;
 
-			if (control != null && control.Supports.HasFlag(eCallType.Video))
+			if (source != null && control.Supports.HasFlag(eCallType.Video))
 				Routing.RouteVtc(source);
-			else if (control != null && control.Supports.HasFlag(eCallType.Audio))
+			else if (source != null && control.Supports.HasFlag(eCallType.Audio))
 				Routing.RouteAtc(source);
 
 			OnIncomingCallAnswered.Raise(this, new GenericEventArgs<IIncomingCall>(call));
