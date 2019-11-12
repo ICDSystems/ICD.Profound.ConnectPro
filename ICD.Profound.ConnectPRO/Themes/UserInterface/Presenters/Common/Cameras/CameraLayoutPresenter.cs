@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Controls.Layout;
+using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Zoom.Components.Layout;
 using ICD.Connect.Conferencing.Zoom.Controls;
@@ -54,6 +56,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 		[CanBeNull]
 		private LayoutComponent m_LayoutComponent;
 
+		[CanBeNull]
+		private IPresentationControl m_PresentationControl;
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -82,21 +87,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			LayoutComponent component = GetZoomLayoutComponent(control);
 			SetLayoutComponent(component);
 
-			RefreshIfVisible();
-		}
-
-		/// <summary>
-		/// Sets the wrapped Zoom layout component.
-		/// </summary>
-		/// <param name="component"></param>
-		private void SetLayoutComponent(LayoutComponent component)
-		{
-			if (component == m_LayoutComponent)
-				return;
-
-			Unsubscribe(m_LayoutComponent);
-			m_LayoutComponent = component;
-			Subscribe(m_LayoutComponent);
+			IPresentationControl presentationControl = GetPresentationControl(control);
+			SetPresentationControl(presentationControl);
 
 			RefreshIfVisible();
 		}
@@ -127,19 +119,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 
 				view.SetSelfviewCameraButtonSelected(selfView);
 				view.SetContentThumbnailButtonSelected(contentThumbnail);
-				foreach (var kvp in s_LayoutPositions)
+				foreach (KeyValuePair<ushort, eZoomLayoutPosition> kvp in s_LayoutPositions)
 					view.SetThumbnailPositionButtonSelected(kvp.Key, kvp.Value == position);
-				foreach (var kvp in s_LayoutSizes)
+				foreach (KeyValuePair<ushort, eZoomLayoutSize> kvp in s_LayoutSizes)
 					view.SetLayoutSizeButtonSelected(kvp.Key, kvp.Value == size);
-				foreach (var kvp in s_LayoutStyles)
+				foreach (KeyValuePair<ushort, eZoomLayoutStyle> kvp in s_LayoutStyles)
 					view.SetLayoutStyleButtonSelected(kvp.Key, kvp.Value == style);
 
 				// Set the enabled state of the controls
 				bool layoutAvailable = m_ConferenceLayoutControl != null && m_ConferenceLayoutControl.LayoutAvailable;
+				bool presentationActive = m_PresentationControl != null && m_PresentationControl.PresentationActive;
 
 				bool sizeEnabled = layoutAvailable && style != eZoomLayoutStyle.Strip;
 				bool styleEnabled = layoutAvailable;
-				bool contentThumbnailEnabled = layoutAvailable;
+				bool contentThumbnailEnabled = layoutAvailable && presentationActive;
 				bool selfviewCameraEnabled = layoutAvailable;
 				bool thumbnailPositionEnabled = layoutAvailable;
 
@@ -158,6 +151,38 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 		#region Private Methods
 
 		/// <summary>
+		/// Sets the wrapped presentation control.
+		/// </summary>
+		/// <param name="presentationControl"></param>
+		private void SetPresentationControl(IPresentationControl presentationControl)
+		{
+			if (presentationControl == m_PresentationControl)
+				return;
+
+			Unsubscribe(m_PresentationControl);
+			m_PresentationControl = presentationControl;
+			Subscribe(m_PresentationControl);
+
+			RefreshIfVisible();
+		}
+
+		/// <summary>
+		/// Sets the wrapped Zoom layout component.
+		/// </summary>
+		/// <param name="component"></param>
+		private void SetLayoutComponent(LayoutComponent component)
+		{
+			if (component == m_LayoutComponent)
+				return;
+
+			Unsubscribe(m_LayoutComponent);
+			m_LayoutComponent = component;
+			Subscribe(m_LayoutComponent);
+
+			RefreshIfVisible();
+		}
+
+		/// <summary>
 		/// Gets the zoom layout component for the given layout control.
 		/// </summary>
 		/// <param name="control"></param>
@@ -169,6 +194,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			return zoomLayoutControl == null
 				       ? null
 				       : zoomLayoutControl.Parent.Components.GetComponent<LayoutComponent>();
+		}
+
+		/// <summary>
+		/// Gets the presentation control for the given layout control.
+		/// </summary>
+		/// <param name="control"></param>
+		/// <returns></returns>
+		[CanBeNull]
+		private static IPresentationControl GetPresentationControl([CanBeNull] IConferenceLayoutControl control)
+		{
+			return control == null ? null : control.Parent.Controls.GetControl<IPresentationControl>();
 		}
 
 		#endregion
@@ -303,6 +339,44 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		private void LayoutComponentOnPositionChanged(object sender, ZoomLayoutPositionEventArgs e)
+		{
+			RefreshIfVisible();
+		}
+
+		#endregion
+
+		#region PresentationControl Callbacks
+
+		/// <summary>
+		/// Subscribe to the presentation control events.
+		/// </summary>
+		/// <param name="presentationControl"></param>
+		private void Subscribe(IPresentationControl presentationControl)
+		{
+			if (presentationControl == null)
+				return;
+
+			presentationControl.OnPresentationActiveChanged += PresentationControlOnPresentationActiveChanged;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the presentation control events.
+		/// </summary>
+		/// <param name="presentationControl"></param>
+		private void Unsubscribe(IPresentationControl presentationControl)
+		{
+			if (presentationControl == null)
+				return;
+
+			presentationControl.OnPresentationActiveChanged -= PresentationControlOnPresentationActiveChanged;
+		}
+
+		/// <summary>
+		/// Called when the presentation active state changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="presentationActiveApiEventArgs"></param>
+		private void PresentationControlOnPresentationActiveChanged(object sender, PresentationActiveApiEventArgs presentationActiveApiEventArgs)
 		{
 			RefreshIfVisible();
 		}
