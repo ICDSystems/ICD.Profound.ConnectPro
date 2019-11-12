@@ -18,10 +18,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Cameras
 		void SetCameraConfigurationButtonSelected(ushort index, bool selected);
 
 		/// <summary>
-		/// Sets the enabled state of a camera configuration button.
+		/// Sets the visible state of a camera configuration button.
 		/// </summary>
 		/// <param name="index"></param>
-		/// <param name="enabled"></param>
-		void SetCameraConfigurationButtonEnabled(ushort index, bool enabled);
+		/// <param name="visible"></param>
+		void SetCameraConfigurationButtonVisible(ushort index, bool visible);
 	}
 }

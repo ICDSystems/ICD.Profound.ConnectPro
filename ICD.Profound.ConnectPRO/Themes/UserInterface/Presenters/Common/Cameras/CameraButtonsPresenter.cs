@@ -72,9 +72,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			try
 			{
 				// Button enabled states
-				view.SetCameraConfigurationButtonEnabled(CAMERA_ACTIVE_INDEX, CameraActiveEnabled);
-				view.SetCameraConfigurationButtonEnabled(CAMERA_CONTROL_INDEX, CameraControlEnabled);
-				view.SetCameraConfigurationButtonEnabled(CAMERA_LAYOUT_INDEX, m_ZoomMode);
+				view.SetCameraConfigurationButtonVisible(CAMERA_ACTIVE_INDEX, CameraActiveEnabled);
+				view.SetCameraConfigurationButtonVisible(CAMERA_CONTROL_INDEX, CameraControlEnabled);
+				view.SetCameraConfigurationButtonVisible(CAMERA_LAYOUT_INDEX, m_ZoomMode);
 
 				// Button selection states
 				foreach (ushort index in s_IndexToPresenterType.Keys)
