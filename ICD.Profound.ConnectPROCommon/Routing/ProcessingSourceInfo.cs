@@ -7,6 +7,13 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 {
 	public sealed class ProcessingSourceInfo : IDisposable
 	{
+		public enum eProcessingState
+		{
+			None,
+			Routing,
+			Unrouting
+		}
+
 		/// <summary>
 		/// Timeout processing sources after 5 seconds.
 		/// </summary>
@@ -15,10 +22,10 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 		private readonly IDestinationBase m_Destination;
 		private readonly SafeTimer m_Timer;
 
-		private Action<IDestinationBase, ISource> m_Callback;
+		private Action m_Callback;
 
 		/// <summary>
-		/// Gets the source.
+		/// Gets/sets the source.
 		/// </summary>
 		public ISource Source { get; set; }
 
@@ -28,11 +35,16 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 		public IDestinationBase Destination { get { return m_Destination; } }
 
 		/// <summary>
+		/// Gets/sets the state.
+		/// </summary>
+		public eProcessingState State { get; set; }
+
+		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="destination"></param>
 		/// <param name="timerCallback"></param>
-		public ProcessingSourceInfo(IDestinationBase destination, Action<IDestinationBase, ISource> timerCallback)
+		public ProcessingSourceInfo(IDestinationBase destination, Action timerCallback)
 		{
 			if (destination == null)
 				throw new ArgumentNullException("destination");
@@ -64,20 +76,23 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 		}
 
 		/// <summary>
-		/// Stops the timer for the callback.
-		/// </summary>
-		public void StopTimer()
-		{
-			m_Timer.Stop();
-		}
-
-		/// <summary>
 		/// Called when the timer elapses.
 		/// </summary>
 		private void TimerCallback()
 		{
-			if (Source != null)
-				m_Callback(m_Destination, Source);
+			Clear();
+			m_Callback();
+		}
+
+		/// <summary>
+		/// Clears the source, state, and stops the timer.
+		/// </summary>
+		public void Clear()
+		{
+			m_Timer.Stop();
+
+			Source = null;
+			State = eProcessingState.None;
 		}
 	}
 }

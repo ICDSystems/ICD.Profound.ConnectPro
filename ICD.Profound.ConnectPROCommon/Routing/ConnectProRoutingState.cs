@@ -114,7 +114,8 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 
 					// Are we in the middle of routing a new source to the display?
 					ProcessingSourceInfo processing = m_ProcessingSources.GetDefault(display);
-					if (processing != null && processing.Source != null)
+					if (processing != null && processing.Source != null &&
+					    processing.State == ProcessingSourceInfo.eProcessingState.Routing)
 						continue;
 
 					// The display has a source that is being listened to
@@ -137,7 +138,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 		{
 			return
 				m_CacheSection.Execute(() =>
-									   m_VideoRoutingCache.ToDictionary(kvp => kvp.Key, kvp => new IcdHashSet<ISource>(kvp.Value)));
+				                       m_VideoRoutingCache.ToDictionary(kvp => kvp.Key, kvp => new IcdHashSet<ISource>(kvp.Value)));
 		}
 
 		[NotNull]
@@ -151,8 +152,20 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 					m_VideoRoutingCache.ToDictionary(kvp => kvp.Key, kvp => new IcdHashSet<ISource>(kvp.Value));
 
 				// Add the processing sources
-				m_ProcessingSources.Where(kvp => kvp.Value.Source != null)
-				                   .ForEach(kvp => cache.GetOrAddNew(kvp.Key).Add(kvp.Value.Source));
+				foreach (var kvp in m_ProcessingSources.Where(kvp => kvp.Value.Source != null))
+				{
+					IcdHashSet<ISource> destinationCache = cache.GetOrAddNew(kvp.Key);
+
+					switch (kvp.Value.State)
+					{
+						case ProcessingSourceInfo.eProcessingState.Routing:
+							destinationCache.Add(kvp.Value.Source);
+							break;
+						case ProcessingSourceInfo.eProcessingState.Unrouting:
+							destinationCache.Remove(kvp.Value.Source);
+							break;
+					}
+				}
 
 				// Add the masked sources
 				m_MaskedSources.Where(kvp => kvp.Value.Source != null)
@@ -229,7 +242,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 
 			try
 			{
-				foreach (ProcessingSourceInfo processing in m_ProcessingSources.Values)
+				foreach (ProcessingSourceInfo processing in m_ProcessingSources.Values.Where(p => p != null))
 					processing.Dispose();
 				m_ProcessingSources.Clear();
 			}
@@ -244,42 +257,31 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 		}
 
 		/// <summary>
-		/// Clears the processing source for the display destination.
+		/// Sets the source currently routed to the destination as processing unrouted.
 		/// </summary>
-		private void ClearProcessingSource([NotNull] IDestinationBase destination, [NotNull] ISource source)
+		/// <param name="destination"></param>
+		public void SetProcessingDestinationUnrouting(IDestinationBase destination)
 		{
 			if (destination == null)
 				throw new ArgumentNullException("destination");
 
-			if (source == null)
-				throw new ArgumentNullException("source");
+			// Get the first routed source for the destination.
+			// It shouldn't matter which one we pick, the feedback will be the same.
+			ISource routed = m_CacheSection.Execute(() => m_VideoRoutingCache.GetOrAddNew(destination).FirstOrDefault());
+			if (routed == null)
+				return;
 
-			m_CacheSection.Enter();
-
-			try
-			{
-				ProcessingSourceInfo processing = m_ProcessingSources.GetDefault(destination);
-				if (processing == null || source != processing.Source)
-					return;
-
-				processing.Source = null;
-
-				UpdateSourceRoutedStates();
-			}
-			finally
-			{
-				m_CacheSection.Leave();
-			}
-
-			OnDisplaySourceChanged.Raise(this);
+			SetProcessingSource(destination, routed, ProcessingSourceInfo.eProcessingState.Unrouting);
 		}
 
 		/// <summary>
-		/// Sets the processing source for the given destination.
+		/// Sets the processing source for the given display destination.
 		/// </summary>
 		/// <param name="destination"></param>
 		/// <param name="source"></param>
-		public void SetProcessingSource([NotNull] IDestinationBase destination, [NotNull] ISource source)
+		/// <param name="state"></param>
+		public void SetProcessingSource([NotNull] IDestinationBase destination, [NotNull] ISource source,
+		                                ProcessingSourceInfo.eProcessingState state)
 		{
 			if (destination == null)
 				throw new ArgumentNullException("destination");
@@ -292,20 +294,32 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 			try
 			{
 				ProcessingSourceInfo processing =
-					m_ProcessingSources.GetOrAddNew(destination, () => new ProcessingSourceInfo(destination, ClearProcessingSource));
+					m_ProcessingSources.GetOrAddNew(destination, () => new ProcessingSourceInfo(destination, UpdateSourceRoutedStates));
 
 				// No change
-				if (source == processing.Source)
+				if (source == processing.Source && state == processing.State)
 					return;
 
-				// Is the source already routed to the destination?
-				IcdHashSet<ISource> routed;
-				if (m_VideoRoutingCache.TryGetValue(destination, out routed) && routed.Contains(source))
-					return;
+				IcdHashSet<ISource> routed = m_VideoRoutingCache.GetDefault(destination);
 
-				processing.ResetTimer();
+				switch (state)
+				{
+					case ProcessingSourceInfo.eProcessingState.Routing:
+						// Is the source already routed to the destination?
+						if (routed != null && routed.Contains(source))
+							return;
+						break;
+
+					case ProcessingSourceInfo.eProcessingState.Unrouting:
+						// Is the source already unrouted from the destination?
+						if (routed == null || !routed.Contains(source))
+							return;
+						break;
+				}
+
 				processing.Source = source;
-
+				processing.State = state;
+				processing.ResetTimer();
 			}
 			finally
 			{
@@ -313,6 +327,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 			}
 
 			UpdateSourceRoutedStates();
+
 			OnDisplaySourceChanged.Raise(this);
 		}
 
@@ -512,8 +527,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 					if (!kvp.Value.Contains(processing.Source))
 						continue;
 
-					processing.StopTimer();
-					processing.Source = null;
+					processing.Clear();
 				}
 			}
 			finally
@@ -538,16 +552,24 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 				// Build a map of video sources to their routed state
 				Dictionary<ISource, eSourceState> routedSources =
 					m_VideoRoutingCache.Values
-									   .SelectMany(v => v)
-									   .Distinct()
-									   .ToDictionary(s => s, s => eSourceState.Active);
+					                   .SelectMany(v => v)
+					                   .Distinct()
+					                   .ToDictionary(s => s, s => eSourceState.Active);
 
-				// A source may be processing for another display, so we override
-				foreach (ProcessingSourceInfo info in m_ProcessingSources.Values.Where(p => p.Source != null))
+				// Apply the processing state
+				foreach (ProcessingSourceInfo sourceInfo in
+					m_ProcessingSources.Values.Where(p => p != null && p.Source != null))
 				{
-					IcdHashSet<ISource> sources;
-					if (!m_VideoRoutingCache.TryGetValue(info.Destination, out sources) || !sources.Contains(info.Source))
-						routedSources[info.Source] = eSourceState.Processing;
+					switch (sourceInfo.State)
+					{
+						case ProcessingSourceInfo.eProcessingState.Routing:
+							routedSources[sourceInfo.Source] = eSourceState.Processing;
+							break;
+
+						case ProcessingSourceInfo.eProcessingState.Unrouting:
+							routedSources[sourceInfo.Source] = eSourceState.Inactive;
+							break;
+					}
 				}
 
 				// Apply the mask

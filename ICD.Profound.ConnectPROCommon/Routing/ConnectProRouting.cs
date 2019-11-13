@@ -178,7 +178,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 
 			foreach (IDestinationBase destination in destinations)
 			{
-				State.SetProcessingSource(destination, source);
+				State.SetProcessingSource(destination, source, ProcessingSourceInfo.eProcessingState.Routing);
 				Route(source, destination, eConnectionType.Video);
 			}
 
@@ -230,7 +230,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 			if (mask == null)
 				State.ClearMaskedSource(destination);
 
-			State.SetProcessingSource(destination, source);
+			State.SetProcessingSource(destination, source, ProcessingSourceInfo.eProcessingState.Routing);
 			Route(source, destination, eConnectionType.Video);
 
 			if (!source.ConnectionType.HasFlag(eConnectionType.Audio))
@@ -417,6 +417,9 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 
 			foreach (IDestination destination in m_Destinations.GetVideoDestinations().SelectMany(d => d.GetDestinations()))
 			{
+				// Set the destination as unrouting for UX
+				State.SetProcessingDestinationUnrouting(destination);
+
 				ConnectionPath path = null;
 
 				foreach (IRouteSourceControl osd in osds)
