@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Conference
 {
-	public interface IConferenceBasePresenter : IPopupPresenter<IConferenceBaseView>, IContextualControlPresenter, IMainPagePresenter, IConferencePresenter
+	public interface IConferenceBasePresenter : IPopupPresenter<IConferenceBaseView>, IContextualControlPresenter, IMainPagePresenter
 	{
 	}
 }

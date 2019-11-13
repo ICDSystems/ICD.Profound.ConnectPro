@@ -47,7 +47,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 		private static readonly Dictionary<Type, List<Type>> s_ControlToPresenterType =
 			new Dictionary<Type, List<Type>>
 			{
-				{typeof(IConferenceDeviceControl), new List<Type> {typeof(IConferenceBasePresenter)}},
+				{typeof(IWebConferenceDeviceControl), new List<Type> {typeof(IConferenceBasePresenter)}},
 			};
 
 		private readonly ITouchDisplayNavigationController m_NavigationController;

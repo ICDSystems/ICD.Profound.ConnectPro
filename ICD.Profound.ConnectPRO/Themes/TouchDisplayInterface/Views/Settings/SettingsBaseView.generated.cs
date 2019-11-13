@@ -27,7 +27,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 141
+				DigitalVisibilityJoin = 1000
 			};
 
 			m_ItemList = new VtProDynamicButtonList(652, panel as IPanelDevice, m_Subpage)
@@ -37,18 +37,18 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings
 
 			m_CloseButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 160
+				DigitalPressJoin = 1001
 			};
 
 			m_BackButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 158,
-				DigitalVisibilityJoin = 159
+				DigitalPressJoin = 1002,
+				DigitalVisibilityJoin = 1003
 			};
 
 			m_TitleLabel = new VtProSimpleLabel(panel, m_Subpage)
 			{
-				IndirectTextJoin = 403
+				IndirectTextJoin = 1000
 			};
 		}
 

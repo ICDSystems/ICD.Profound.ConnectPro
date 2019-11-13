@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Controls.Dialing;
@@ -23,6 +24,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		private readonly Dictionary<ITouchDisplayPresenter, HeaderButtonModel> m_PresenterButtons;
 		
 		private IConferenceDeviceControl m_SubscribedConferenceControl;
+		private readonly List<IConferencePresenter> m_ConferencePresenters;
+
 		public IConferenceDeviceControl ActiveConferenceControl
 		{
 			get { return m_SubscribedConferenceControl; }
@@ -37,6 +40,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 
 				if (m_SubscribedConferenceControl == null)
 					ShowView(false);
+
+				foreach (var presenter in m_ConferencePresenters)
+					presenter.ActiveConferenceControl = m_SubscribedConferenceControl;
 			}
 		}
 
@@ -45,6 +51,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
+			m_ConferencePresenters = Navigation.LazyLoadPresenters<IConferencePresenter>().ToList();
 			var startMeetingButton = new HeaderButtonModel(0, 0, StartMeetingPressed)
 			{
 				Icon = TouchCueIcons.GetIcon("videoconference"),
@@ -88,7 +95,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 
 		public bool SupportsControl(IDeviceControl control)
 		{
-			return control is IConferenceDeviceControl;
+			return control is IWebConferenceDeviceControl;
 		}
 
 		#region Header Button Callbacks
@@ -129,7 +136,15 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				else
 					header.RemoveRightButton(button.Value);
 
-			if (args.Data) Navigation.NavigateTo<IStartConferencePresenter>();
+			if (!args.Data)
+			{
+				foreach (var presenter in m_ConferencePresenters)
+					presenter.ShowView(false);
+			}
+			else
+				Navigation.NavigateTo<IStartConferencePresenter>();
+
+			Refresh();
 		}
 
 		#endregion

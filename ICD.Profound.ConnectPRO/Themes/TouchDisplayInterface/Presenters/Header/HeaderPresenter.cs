@@ -61,7 +61,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 			};
 			m_EndMeetingButton = new HeaderButtonModel(0, 1, EndMeeting)
 			{
-				Icon = TouchCueIcons.GetIcon("close"),
+				Icon = TouchCueIcons.GetIcon("endmymeeting"),
 				LabelText = "End Meeting",
 				Mode = eHeaderButtonMode.Red
 			};
