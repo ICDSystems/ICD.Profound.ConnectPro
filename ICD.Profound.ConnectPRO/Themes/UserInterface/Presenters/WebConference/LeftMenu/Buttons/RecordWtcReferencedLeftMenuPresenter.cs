@@ -1,4 +1,6 @@
-﻿using ICD.Common.Utils.EventArguments;
+﻿using System.Collections.Generic;
+using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Zoom.Components.Call;
@@ -21,6 +23,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private const string LABEL_STOP_RECORDING = "Stop Recording";
 
 		private const long BLINK_INTERVAL = 1000 / 2;
+
+		private const string DEFAULT_ERROR =
+			"Recording is unavailable.\n\n" +
+			"Your active meeting must be in a Pro Zoom User's personal meeting room, not a Zoom Room's.\n\n" +
+			"To record this session please grant recording permission to an attendee in the participant list.";
+
+		private static readonly Dictionary<string, string> s_ErrorMessages =
+			new Dictionary<string, string>
+			{
+				{
+					"No recording privilege",
+					"Recording is unavailable.\n\n" +
+					"Your active meeting must be in a Pro Zoom User's personal meeting room, not a Basic User's.\n\n"
+				},
+				{"Need email address", DEFAULT_ERROR},
+			};
 
 		private readonly SafeTimer m_BlinkTimer;
 		private bool m_BlinkState;
@@ -48,7 +66,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// <param name="view"></param>
 		protected override void Refresh(IWtcReferencedLeftMenuView view)
 		{
-			Label = m_SubscribedCallComponent == null || !m_SubscribedCallComponent.CallRecord ? LABEL_RECORD : LABEL_STOP_RECORDING;
+			Label = m_SubscribedCallComponent == null || !m_SubscribedCallComponent.CallRecord
+				        ? LABEL_RECORD
+				        : LABEL_STOP_RECORDING;
 			Icon = "tcRecord";
 			Enabled = m_CanRecord;
 			State = GetState();
@@ -71,12 +91,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private eLightState? GetState()
 		{
 			return m_SubscribedCallComponent == null
-				? (eLightState?)null
-				: m_SubscribedCallComponent.CallRecord
-					? m_BlinkState
-						? eLightState.Green
-						: eLightState.Red
-					: eLightState.None;
+				       ? (eLightState?)null
+				       : m_SubscribedCallComponent.CallRecord
+					         ? m_BlinkState
+						           ? eLightState.Green
+						           : eLightState.Red
+					         : eLightState.None;
 		}
 
 		private void UpdateCanRecord()
@@ -156,14 +176,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// <param name="eventArgs"></param>
 		private void ZoomControlOnCallRecordErrorState(object sender, StringEventArgs eventArgs)
 		{
-			string message = "Recording is not available: Booking E-Mail does not match the room E-Mail.\n\n" +
-			                 "To record this session please grant recording permission to an attendee in the participant list.";
+			string errorMessage = s_ErrorMessages.GetDefault(eventArgs.Data, DEFAULT_ERROR);
 
 			// Hide the error message after 15 seconds.
 			const long timeout = 15 * 1000;
 
 			Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
-			          .Show(message, timeout, new GenericAlertPresenterButton
+			          .Show(errorMessage, timeout, new GenericAlertPresenterButton
 			          {
 				          Visible = false,
 				          Enabled = false
