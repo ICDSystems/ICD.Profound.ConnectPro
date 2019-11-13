@@ -22,14 +22,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 
 		#region Methods
 
-		/// <summary>
-		/// Closes the popup.
-		/// </summary>
-		public virtual void Close()
-		{
-			ShowView(false);
-		}
-
 		#endregion
 
 		#region View Callbacks
@@ -63,7 +55,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups
 		/// <param name="eventArgs"></param>
 		protected virtual void ViewOnCloseButtonPressed(object sender, EventArgs eventArgs)
 		{
-			Close();
+			ShowView(false);
 		}
 
 		#endregion

@@ -103,35 +103,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		#region Methods
 
-		/// <summary>
-		/// Closes the popup.
-		/// </summary>
-		public override void Close()
-		{
-			// Close before routing for better UX
-			base.Close();
-
-			if (ActiveConferenceControl != null)
-			{
-				// Web Conference
-				var conference = ActiveConferenceControl.GetActiveConference() as IWebConference;
-				if (conference != null)
-					conference.LeaveConference();
-
-				// Call Out
-				ZoomRoomTraditionalConferenceControl callOut =
-					ActiveConferenceControl.Parent.Controls.GetControl<ZoomRoomTraditionalConferenceControl>();
-				var traditional = callOut == null ? null : callOut.GetActiveConference() as ITraditionalConference;
-				if (traditional != null)
-					traditional.Hangup();
-			}
-
-			ActiveConferenceControl = null;
-
-			if (Room != null)
-				Room.Routing.RouteOsd();
-		}
-		
 		public void SetControl(IDeviceControl control)
 		{
 			ActiveConferenceControl = control as IWebConferenceDeviceControl;
@@ -485,13 +456,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			{
 				m_LeftMenuPresenter.ShowView(false);
 
-				// Hangup
 				if (ActiveConferenceControl != null)
 				{
-					var active = ActiveConferenceControl.GetActiveConference() as ITraditionalConference;
-					if (active != null)
-						active.Hangup();
+					// Web Conference
+					var conference = ActiveConferenceControl.GetActiveConference() as IWebConference;
+					if (conference != null)
+						conference.LeaveConference();
+
+					// Call Out
+					ZoomRoomTraditionalConferenceControl callOut =
+						ActiveConferenceControl.Parent.Controls.GetControl<ZoomRoomTraditionalConferenceControl>();
+					var traditional = callOut == null ? null : callOut.GetActiveConference() as ITraditionalConference;
+					if (traditional != null)
+						traditional.Hangup();
 				}
+
+				ActiveConferenceControl = null;
 
 				// Hide all of the WTC presenters
 				foreach (IWtcPresenter presenter in Navigation.LazyLoadPresenters<IWtcPresenter>())
@@ -500,7 +480,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>().ShowView(false);
 
 				if (Room != null)
+				{
 					Room.FocusSource = null;
+					Room.Routing.RouteOsd();
+				}
 			}
 
 			UpdateCodecAwakeState(true);

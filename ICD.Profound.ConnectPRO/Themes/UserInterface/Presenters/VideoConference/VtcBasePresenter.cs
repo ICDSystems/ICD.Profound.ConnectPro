@@ -117,27 +117,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		}
 
 		/// <summary>
-		/// Closes the popup.
-		/// </summary>
-		public override void Close()
-		{
-			// Close before routing for better UX
-			base.Close();
-
-			if (ActiveConferenceControl != null)
-			{
-				var conference = ActiveConferenceControl.GetActiveConference() as ITraditionalConference;
-				if (conference != null)
-					conference.Hangup();
-			}
-				
-			ActiveConferenceControl = null;
-
-			if (Room != null)
-				Room.Routing.RouteOsd();
-		}
-
-		/// <summary>
 		/// Sets the device control for the presenter.
 		/// </summary>
 		/// <param name="control"></param>
@@ -367,13 +346,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				if (ActiveConferenceControl != null)
 				{
 					var active = ActiveConferenceControl.GetActiveConference() as ITraditionalConference;
-
 					if (active != null)
 						active.Hangup();
 				}
 
+				ActiveConferenceControl = null;
+
 				if (Room != null)
+				{
 					Room.FocusSource = null;
+					Room.Routing.RouteOsd();
+				}
 			}
 
 			UpdateCodecAwakeState(true);

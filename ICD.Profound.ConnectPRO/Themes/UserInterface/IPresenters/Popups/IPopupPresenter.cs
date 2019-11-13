@@ -5,9 +5,5 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups
 	public interface IPopupPresenter<TView> : IUiPresenter<TView>
 		where TView : IPopupView
 	{
-		/// <summary>
-		/// Closes the popup.
-		/// </summary>
-		void Close();
 	}
 }

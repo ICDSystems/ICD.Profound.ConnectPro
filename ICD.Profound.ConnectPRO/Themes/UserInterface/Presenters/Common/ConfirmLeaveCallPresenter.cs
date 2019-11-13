@@ -67,13 +67,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="eventArgs"></param>
 		private void ViewOnYesButtonPressed(object sender, EventArgs eventArgs)
 		{
-			var vtc = Navigation.LazyLoadPresenter<IVtcBasePresenter>();
-			if (vtc.IsViewVisible)
-				vtc.Close();
-
-			var wtc = Navigation.LazyLoadPresenter<IWtcBasePresenter>();
-			if (wtc.IsViewVisible)
-				wtc.Close();
+			Navigation.LazyLoadPresenter<IVtcBasePresenter>().ShowView(false);
+			Navigation.LazyLoadPresenter<IWtcBasePresenter>().ShowView(false);
 
 			ShowView(false);
 		}
