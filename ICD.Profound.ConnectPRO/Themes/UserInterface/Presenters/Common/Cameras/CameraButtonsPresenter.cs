@@ -40,9 +40,28 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 		private ushort m_Index;
 		private bool m_ZoomMode;
 
-		private bool CameraActiveEnabled { get { return m_CameraActivePresenter.CameraCount > 1; } }
+		#region Properties
 
-		private bool CameraControlEnabled { get { return m_CameraControlPresenter.CameraCount > 0; } }
+		private bool CameraActiveVisible { get { return m_CameraActivePresenter.CameraCount > 1; } }
+
+		private bool CameraControlVisible { get { return m_CameraControlPresenter.CameraCount > 0; } }
+
+		private bool CameraLayoutVisible { get { return m_ZoomMode; } }
+
+		/// <summary>
+		/// Returns true if any of the child features (layout, active camera, etc) are currently available.
+		/// </summary>
+		public bool AnyFeaturesAvailable
+		{
+			get
+			{
+				return CameraActiveVisible ||
+				       CameraControlVisible ||
+				       CameraLayoutVisible;
+			}
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Constructor.
@@ -73,9 +92,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			try
 			{
 				// Button enabled states
-				view.SetCameraConfigurationButtonVisible(CAMERA_ACTIVE_INDEX, CameraActiveEnabled);
-				view.SetCameraConfigurationButtonVisible(CAMERA_CONTROL_INDEX, CameraControlEnabled);
-				view.SetCameraConfigurationButtonVisible(CAMERA_LAYOUT_INDEX, m_ZoomMode);
+				view.SetCameraConfigurationButtonVisible(CAMERA_ACTIVE_INDEX, CameraActiveVisible);
+				view.SetCameraConfigurationButtonVisible(CAMERA_CONTROL_INDEX, CameraControlVisible);
+				view.SetCameraConfigurationButtonVisible(CAMERA_LAYOUT_INDEX, CameraLayoutVisible);
 
 				// Button selection states
 				foreach (ushort index in s_IndexToPresenterType.Keys)
@@ -188,9 +207,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 				return;
 
 			// When the view becomes visible show the child presenter based on enable state.
-			if (CameraControlEnabled)
+			if (CameraControlVisible)
 				NavigateTo(CAMERA_CONTROL_INDEX);
-			else if (CameraActiveEnabled)
+			else if (CameraActiveVisible)
 				NavigateTo(CAMERA_ACTIVE_INDEX);
 			else if(m_ZoomMode)
 				NavigateTo(CAMERA_LAYOUT_INDEX);

@@ -87,7 +87,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			if (room == null)
 				return;
 
-			room.Routing.State.OnSourceRoutedChanged += StateOnSourceRoutedChanged;
+			room.Routing.State.OnDisplaySourceChanged += StateOnDisplaySourceChanged;
 
 			m_SubscribedConferenceManager = room.ConferenceManager;
 			if (m_SubscribedConferenceManager == null)
@@ -108,7 +108,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			if (room == null)
 				return;
 
-			room.Routing.State.OnSourceRoutedChanged -= StateOnSourceRoutedChanged;
+			room.Routing.State.OnDisplaySourceChanged -= StateOnDisplaySourceChanged;
 
 			if (m_SubscribedConferenceManager == null)
 				return;
@@ -144,7 +144,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void StateOnSourceRoutedChanged(object sender, EventArgs eventArgs)
+		private void StateOnDisplaySourceChanged(object sender, EventArgs eventArgs)
 		{
 			UpdateVisibility();
 		}

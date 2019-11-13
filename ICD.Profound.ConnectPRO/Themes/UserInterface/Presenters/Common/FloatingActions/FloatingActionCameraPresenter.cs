@@ -10,13 +10,14 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Cameras;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.FloatingActions;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.FloatingActions;
+using ICD.Profound.ConnectPRO.Utils;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.FloatingActions
 {
 	[PresenterBinding(typeof(IFloatingActionCameraPresenter))]
 	public sealed class FloatingActionCameraPresenter : AbstractFloatingActionPresenter<IFloatingActionCameraView>, IFloatingActionCameraPresenter
 	{
-		private readonly ICameraButtonsPresenter m_Buttons;
+		private readonly ICameraButtonsPresenter m_CameraButtons;
 
 		private IConferenceManager m_SubscribedConferenceManager;
 
@@ -29,7 +30,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		public FloatingActionCameraPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
-			m_Buttons = Navigation.LazyLoadPresenter<ICameraButtonsPresenter>();
+			m_CameraButtons = Navigation.LazyLoadPresenter<ICameraButtonsPresenter>();
 		}
 
 		/// <summary>
@@ -38,7 +39,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// <returns></returns>
 		protected override bool GetActive()
 		{
-			return m_Buttons.IsViewVisible;
+			return m_CameraButtons.IsViewVisible;
+		}
+
+		/// <summary>
+		/// Updates the visibility of this subpage.
+		/// </summary>
+		private void UpdateVisibility()
+		{
+			bool show = Room != null &&
+			            ConferenceOverrideUtils.ConferenceActionsAvailable(Room, eInCall.Video) &&
+			            m_CameraButtons.AnyFeaturesAvailable;
+
+			ShowView(show);
 		}
 
 		#region View Callbacks
@@ -50,7 +63,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// <param name="eventArgs"></param>
 		protected override void ViewOnButtonPressed(object sender, EventArgs eventArgs)
 		{
-			m_Buttons.ShowView(!m_Buttons.IsViewVisible);
+			m_CameraButtons.ShowView(!m_CameraButtons.IsViewVisible);
 		}
 
 		/// <summary>
@@ -63,7 +76,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			base.ViewOnVisibilityChanged(sender, args);
 
 			if (!args.Data)
-				m_Buttons.ShowView(false);
+				m_CameraButtons.ShowView(false);
 		}
 
 		#endregion
@@ -81,6 +94,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			if (room == null)
 				return;
 
+			room.Routing.State.OnDisplaySourceChanged += StateOnDisplaySourceChanged;
+
 			m_SubscribedConferenceManager = room.ConferenceManager;
 			if (m_SubscribedConferenceManager == null)
 				return;
@@ -96,15 +111,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		{
 			base.Unsubscribe(room);
 
-			if (m_SubscribedConferenceManager == null)
+			if (room == null)
 				return;
-			
-			m_SubscribedConferenceManager.OnInCallChanged -= SubscribedConferenceManagerOnInCallChanged;
+
+			room.Routing.State.OnDisplaySourceChanged -= StateOnDisplaySourceChanged;
+
+			if (m_SubscribedConferenceManager != null)
+				m_SubscribedConferenceManager.OnInCallChanged -= SubscribedConferenceManagerOnInCallChanged;
+			m_SubscribedConferenceManager = null;
 		}
 
 		private void SubscribedConferenceManagerOnInCallChanged(object sender, InCallEventArgs callEventArgs)
 		{
-			ShowView(callEventArgs.Data == eInCall.Video);
+			UpdateVisibility();
+		}
+
+		/// <summary>
+		/// Called when a source becomes routed/unrouted.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void StateOnDisplaySourceChanged(object sender, EventArgs eventArgs)
+		{
+			UpdateVisibility();
 		}
 
 		#endregion
