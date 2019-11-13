@@ -442,14 +442,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// <param name="eventArgs"></param>
 		protected override void ViewOnCloseButtonPressed(object sender, EventArgs eventArgs)
 		{
-			// If the camera subpage is open close that instead
-			if (m_CameraButtonsPresenter.IsViewVisible && IsViewVisible)
-			{
-				m_CameraButtonsPresenter.ShowView(false);
-				m_LeftMenuPresenter.ShowView(true);
-				return;
-			}
-
 			// If the keyboard subpage is open close that instead
 			var keyboardPresenter = Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>();
 			if (keyboardPresenter.IsViewVisible)

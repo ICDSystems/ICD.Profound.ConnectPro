@@ -7,9 +7,10 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.Contacts
 {
-	public class WtcReferencedContactPresenterFactory : AbstractUiListItemFactory<IContact, IWtcReferencedContactPresenter, IWtcReferencedContactView>
+	public sealed class WtcReferencedContactPresenterFactory :
+		AbstractUiListItemFactory<IContact, IWtcReferencedContactPresenter, IWtcReferencedContactView>
 	{
-		public WtcReferencedContactPresenterFactory(IConnectProNavigationController navigationController, 
+		public WtcReferencedContactPresenterFactory(IConnectProNavigationController navigationController,
 		                                            ListItemFactory<IWtcReferencedContactView> viewFactory,
 		                                            Action<IWtcReferencedContactPresenter> subscribe,
 		                                            Action<IWtcReferencedContactPresenter> unsubscribe)
@@ -17,7 +18,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		{
 		}
 
-		protected override void BindMvpTriad(IContact model, IWtcReferencedContactPresenter presenter, IWtcReferencedContactView view)
+		protected override void BindMvpTriad(IContact model, IWtcReferencedContactPresenter presenter,
+		                                     IWtcReferencedContactView view)
 		{
 			presenter.Contact = model;
 			presenter.SetView(view);

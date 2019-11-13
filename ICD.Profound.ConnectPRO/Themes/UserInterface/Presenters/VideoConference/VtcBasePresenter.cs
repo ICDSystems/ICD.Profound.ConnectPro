@@ -6,7 +6,6 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
-using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Polycom.Devices.Codec.Controls;
 using ICD.Connect.Devices;
@@ -40,6 +39,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private ITraditionalConferenceDeviceControl m_SubscribedConferenceControl;
 
 		private bool m_IsInCall;
+		private bool m_AboutToShowCameraButtons;
 
 		public ITraditionalConferenceDeviceControl ActiveConferenceControl
 		{
@@ -99,13 +99,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_ContactsPolycomPresenter.OnViewVisibilityChanged += ContactsPolycomPresenterOnViewVisibilityChanged;
 
 			m_CameraButtonsPresenter = nav.LazyLoadPresenter<ICameraButtonsPresenter>();
-			m_CameraButtonsPresenter.OnViewVisibilityChanged += CameraPresenterOnOnViewVisibilityChanged;
+			Subscribe(m_CameraButtonsPresenter);
 
 			m_KeyboardPresenter = nav.LazyLoadPresenter<IGenericKeyboardPresenter>();
-
 			m_ButtonListPresenter = nav.LazyLoadPresenter<IVtcButtonListPresenter>();
-
 			m_VtcPresenters = nav.LazyLoadPresenters<IVtcPresenter>().ToList();
+		}
+
+		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			base.Dispose();
+
+			Unsubscribe(m_CameraButtonsPresenter);
 		}
 
 		/// <summary>
@@ -314,14 +322,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="eventArgs"></param>
 		protected override void ViewOnCloseButtonPressed(object sender, EventArgs eventArgs)
 		{
-			// If the camera subpage is open close that instead
-			if (m_CameraButtonsPresenter.IsViewVisible && IsViewVisible)
-			{
-				m_CameraButtonsPresenter.ShowView(false);
-				m_ButtonListPresenter.ShowView(true);
-				return;
-			}
-
 			// If the keyboard subpage is open close that instead
 			if (m_KeyboardPresenter != null && m_KeyboardPresenter.IsViewVisible)
 			{
@@ -383,10 +383,37 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		#region Subpage Callbacks
 
-		private void CameraPresenterOnOnViewVisibilityChanged(object sender, BoolEventArgs e)
+		private void Subscribe(ICameraButtonsPresenter cameraButtons)
 		{
-			if (!m_CameraButtonsPresenter.IsViewVisible)
-				Navigation.NavigateTo<IVtcButtonListPresenter>();
+			cameraButtons.OnViewPreVisibilityChanged += CameraButtonsOnViewPreVisibilityChanged;
+			cameraButtons.OnViewVisibilityChanged += CameraPresenterOnViewVisibilityChanged;
+		}
+
+		private void Unsubscribe(ICameraButtonsPresenter cameraButtons)
+		{
+			cameraButtons.OnViewPreVisibilityChanged -= CameraButtonsOnViewPreVisibilityChanged;
+			cameraButtons.OnViewVisibilityChanged -= CameraPresenterOnViewVisibilityChanged;
+		}
+
+		/// <summary>
+		/// Checking if the view is about to change to the camera buttons view.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void CameraButtonsOnViewPreVisibilityChanged(object sender, BoolEventArgs e)
+		{
+			m_AboutToShowCameraButtons = e.Data;
+		}
+
+		/// <summary>
+		/// If the view is about to change to the camera buttons view, don't show the left menu view.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void CameraPresenterOnViewVisibilityChanged(object sender, BoolEventArgs e)
+		{
+			if (!m_AboutToShowCameraButtons && !m_CameraButtonsPresenter.IsViewVisible && IsViewVisible)
+				m_ButtonListPresenter.ShowView(true);
 		}
 
 		private void CallListTogglePresenterOnButtonPressed(object sender, EventArgs eventArgs)

@@ -2,6 +2,7 @@
 using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.UI.Controls;
+using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.Pages;
 
@@ -11,6 +12,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 	{
 		private VtProSubpage m_Subpage;
 		private VtProDynamicButtonList m_CameraConfigurationButtonList;
+		private VtProButton m_CloseButton;
 
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
@@ -23,12 +25,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 			{
 				MaxSize = 3
 			};
+
+			m_CloseButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 117
+			};
 		}
 
 		protected override IEnumerable<IVtProControl> GetChildren()
 		{
 			yield return m_Subpage;
 			yield return m_CameraConfigurationButtonList;
+			yield return m_CloseButton;
 		}
 	}
 }

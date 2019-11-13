@@ -13,11 +13,12 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Cameras;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Cameras;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 {
 	[PresenterBinding(typeof(ICameraButtonsPresenter))]
-	public sealed class CameraButtonsPresenter : AbstractUiPresenter<ICameraButtonsView>, ICameraButtonsPresenter
+	public sealed class CameraButtonsPresenter : AbstractPopupPresenter<ICameraButtonsView>, ICameraButtonsPresenter
 	{
 		private const ushort CAMERA_ACTIVE_INDEX = 0;
 		private const ushort CAMERA_CONTROL_INDEX = 1;

@@ -1,9 +1,10 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Cameras
 {
-	public interface ICameraButtonsView : IUiView
+	public interface ICameraButtonsView : IPopupView
 	{
 		/// <summary>
 		/// Raised when one of the camera configuration buttons are pressed (Control, Active, or Layout).

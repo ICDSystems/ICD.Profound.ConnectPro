@@ -10,7 +10,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 	[ViewBinding(typeof(ICameraButtonsView))]
 	public sealed partial class CameraButtonsView : AbstractUiView, ICameraButtonsView
 	{
+		/// <summary>
+		/// Raised when one of the camera configuration buttons are pressed (Control, Active, or Layout).
+		/// </summary>
 		public event EventHandler<UShortEventArgs> OnCameraConfigurationButtonPressed;
+
+		public event EventHandler OnCloseButtonPressed;
 
 		/// <summary>
 		/// Constructor.
@@ -28,6 +33,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 		public override void Dispose()
 		{
 			OnCameraConfigurationButtonPressed = null;
+			OnCloseButtonPressed = null;
 
 			base.Dispose();
 		}
@@ -60,6 +66,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 			base.SubscribeControls();
 
 			m_CameraConfigurationButtonList.OnButtonClicked += CameraConfigurationButtonListOnButtonClicked;
+			m_CloseButton.OnPressed += CloseButtonOnPressed;
 		}
 
 		/// <summary>
@@ -70,11 +77,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 			base.UnsubscribeControls();
 
 			m_CameraConfigurationButtonList.OnButtonClicked -= CameraConfigurationButtonListOnButtonClicked;
+			m_CloseButton.OnPressed -= CloseButtonOnPressed;
 		}
 
 		private void CameraConfigurationButtonListOnButtonClicked(object sender, UShortEventArgs e)
 		{
 			OnCameraConfigurationButtonPressed.Raise(this, new UShortEventArgs(e.Data));
+		}
+
+		private void CloseButtonOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnCloseButtonPressed.Raise(this);
 		}
 	}
 }
