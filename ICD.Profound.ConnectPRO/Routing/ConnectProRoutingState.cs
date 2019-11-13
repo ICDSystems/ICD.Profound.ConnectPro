@@ -231,13 +231,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 				foreach (ProcessingSourceInfo processing in m_ProcessingSources.Values)
 					processing.Dispose();
 				m_ProcessingSources.Clear();
-
-				UpdateSourceRoutedStates();
 			}
 			finally
 			{
 				m_CacheSection.Leave();
 			}
+
+			UpdateSourceRoutedStates();
 
 			OnDisplaySourceChanged.Raise(this);
 		}
@@ -305,13 +305,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 				processing.ResetTimer();
 				processing.Source = source;
 
-				UpdateSourceRoutedStates();
 			}
 			finally
 			{
 				m_CacheSection.Leave();
 			}
 
+			UpdateSourceRoutedStates();
 			OnDisplaySourceChanged.Raise(this);
 		}
 
@@ -346,12 +346,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 					return;
 
 				m_MaskedSources[destination] = mask;
-				UpdateSourceRoutedStates();
 			}
 			finally
 			{
 				m_CacheSection.Leave();
 			}
+
+			UpdateSourceRoutedStates();
 
 			OnDisplaySourceChanged.Raise(this);
 		}
@@ -375,13 +376,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 				m_MaskedSources.Remove(destination);
 				maskToRemove.Dispose();
-
-				UpdateSourceRoutedStates();
 			}
 			finally
 			{
 				m_CacheSection.Leave();
 			}
+
+			UpdateSourceRoutedStates();
 
 			OnDisplaySourceChanged.Raise(this);
 		}
@@ -403,13 +404,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 					mask.Dispose();
 
 				m_MaskedSources.Clear();
-
-				UpdateSourceRoutedStates();
 			}
 			finally
 			{
 				m_CacheSection.Leave();
 			}
+
+			UpdateSourceRoutedStates();
 
 			OnDisplaySourceChanged.Raise(this);
 		}
@@ -442,7 +443,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				IcdHashSet<ISource> activeAudio =
 					m_Routing.Destinations
 					         .GetAudioDestinations()
-							 .SelectMany(d => d.GetDestinations())
+					         .SelectMany(d => d.GetDestinations())
 					         .SelectMany(d => m_Routing.RoutingGraph
 					                                   .RoutingCache
 					                                   .GetSourcesForDestination(d, eConnectionType.Audio))
@@ -482,7 +483,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 					                                                        .GetSourcesForDestination(d2, eConnectionType.Video, false,
 					                                                                                  true))
 					                             .ToIcdHashSet());
-				
+
 				bool change = false;
 				foreach (KeyValuePair<IDestinationBase, IcdHashSet<ISource>> kvp in routing)
 				{
@@ -513,13 +514,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 					processing.StopTimer();
 					processing.Source = null;
 				}
-
-				UpdateSourceRoutedStates();
 			}
 			finally
 			{
 				m_CacheSection.Leave();
 			}
+
+			UpdateSourceRoutedStates();
 
 			OnDisplaySourceChanged.Raise(this);
 		}
