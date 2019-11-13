@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using ICD.Common.Properties;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
@@ -61,7 +62,7 @@ namespace ICD.Profound.ConnectPRO.Utils
 				                 .SelectMany(p => room.Routing.Sources.GetSources(p))
 				                 .OfType<ConnectProSource>()
 				                 .Select(s => s.ConferenceOverride)
-								 .Max();
+				                 .MaxOrDefault();
 		}
 	}
 }
