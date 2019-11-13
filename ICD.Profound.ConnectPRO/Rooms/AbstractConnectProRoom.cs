@@ -535,6 +535,14 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			EndMeeting();
 		}
 
+		/// <summary>
+		/// Updates the rooms IsAwake state.
+		/// </summary>
+		private void UpdateIsAwake()
+		{
+			IsAwake = m_SubscribedDisplayPowerControls.Any(p => p.PowerState == ePowerState.PowerOn);
+		}
+
 		#endregion
 
 		#region Routing Callbacks
@@ -659,6 +667,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			foreach (var displayPowerControl in m_SubscribedDisplayPowerControls)
 				Subscribe(displayPowerControl);
+
+			UpdateIsAwake();
 		}
 
 		private void Subscribe(IPowerDeviceControl displayPowerControl)
@@ -673,7 +683,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 		private void DisplayPowerControlOnPowerStateChanged(object sender, PowerDeviceControlPowerStateApiEventArgs e)
 		{
-			IsAwake = m_SubscribedDisplayPowerControls.Any(p => p.PowerState == ePowerState.PowerOn);
+			UpdateIsAwake();
 		}
 
 		#endregion
