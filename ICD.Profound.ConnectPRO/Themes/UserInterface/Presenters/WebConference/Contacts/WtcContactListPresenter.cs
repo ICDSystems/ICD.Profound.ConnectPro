@@ -13,6 +13,7 @@ using ICD.Connect.Conferencing.Controls.Directory;
 using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.Directory;
 using ICD.Connect.Conferencing.Directory.Tree;
+using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Favorites;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
@@ -370,12 +371,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private void Subscribe(IWtcReferencedContactPresenter presenter)
 		{
 			presenter.OnPressed += ContactOnPressed;
+			presenter.OnOnlineStateChanged += ContactOnOnlineStateChanged;
 			presenter.OnIsFavoritedStateChanged += ContactOnIsFavoritedStateChanged;
 		}
 
 		private void Unsubscribe(IWtcReferencedContactPresenter presenter)
 		{
 			presenter.OnPressed -= ContactOnPressed;
+			presenter.OnOnlineStateChanged -= ContactOnOnlineStateChanged;
 			presenter.OnIsFavoritedStateChanged -= ContactOnIsFavoritedStateChanged;
 		}
 
@@ -386,6 +389,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				return;
 
 			AddSelectedContact(presenter.Contact);
+		}
+
+		private void ContactOnOnlineStateChanged(object sender, OnlineStateEventArgs e)
+		{
+			// Rebuild the contacts in the default view to reorder by online state.
+			if (!ShowFavorites && string.IsNullOrEmpty(Filter))
+				RebuildContacts();
 		}
 
 		private void ContactOnIsFavoritedStateChanged(object sender, BoolEventArgs e)

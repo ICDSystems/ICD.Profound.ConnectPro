@@ -1,6 +1,7 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Contacts;
+using ICD.Connect.Conferencing.EventArguments;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.Contacts
@@ -11,6 +12,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference
 		/// Raised when the user presses the contact.
 		/// </summary>
 		event EventHandler OnPressed;
+
+		/// <summary>
+		/// Raised when the online status changes.
+		/// </summary>
+		event EventHandler<OnlineStateEventArgs> OnOnlineStateChanged;
 
 		/// <summary>
 		/// Raised when the contact is stored/removed from favorites.

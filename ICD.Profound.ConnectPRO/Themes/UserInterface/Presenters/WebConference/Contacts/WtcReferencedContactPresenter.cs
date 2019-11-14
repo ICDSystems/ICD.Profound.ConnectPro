@@ -25,6 +25,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		public event EventHandler OnPressed;
 
 		/// <summary>
+		/// Raised when the online status changes.
+		/// </summary>
+		public event EventHandler<OnlineStateEventArgs> OnOnlineStateChanged; 
+
+		/// <summary>
 		/// Raised when the contact is stored/removed from favorites.
 		/// </summary>
 		public event EventHandler<BoolEventArgs> OnIsFavoritedStateChanged;
@@ -32,6 +37,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private readonly SafeCriticalSection m_RefreshSection;
 		private IContact m_Contact;
 		private bool m_IsFavorite;
+		private eOnlineState m_OnlineState;
 
 		#region Properties
 
@@ -51,8 +57,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				m_Contact = value;
 				Subscribe(m_Contact);
 
-				// Avoid the IsFavorite setter to avoid expensive refreshing
-				m_IsFavorite = GetIsFavorite();
+				IsFavorite = GetIsFavorite();
 
 				RefreshIfVisible();
 			}
@@ -71,8 +76,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 				m_IsFavorite = value;
 
-				// Raise the event before refreshing because the contact browser may remove this referenced contact
 				OnIsFavoritedStateChanged.Raise(this, new BoolEventArgs(m_IsFavorite));
+
+				RefreshIfVisible();
+			}
+		}
+
+		/// <summary>
+		/// Gets the online state.
+		/// </summary>
+		public eOnlineState OnlineState
+		{
+			get { return m_OnlineState; }
+			private set
+			{
+				if (value == m_OnlineState)
+					return;
+
+				m_OnlineState = value;
+
+				OnOnlineStateChanged.Raise(this, new OnlineStateEventArgs(m_OnlineState));
 
 				RefreshIfVisible();
 			}
@@ -208,7 +231,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// <param name="e"></param>
 		private void ContactOnOnlineStateChanged(object sender, OnlineStateEventArgs e)
 		{
-			RefreshIfVisible();
+			OnlineState = e.Data;
 		}
 
 		#endregion
