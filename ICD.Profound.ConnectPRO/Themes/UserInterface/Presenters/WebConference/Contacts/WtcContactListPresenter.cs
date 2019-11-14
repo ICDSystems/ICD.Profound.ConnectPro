@@ -302,8 +302,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				if (favorites == null)
 					return Enumerable.Empty<IContact>();
 
-				IEnumerable<Favorite> zoomContacts = favorites.GetFavoritesByProtocol(eDialProtocol.ZoomContact);
-				IEnumerable<Favorite> zoom = favorites.GetFavoritesByProtocol(eDialProtocol.Zoom);
+				IEnumerable<Favorite> zoomContacts = favorites.GetFavorites(eDialProtocol.ZoomContact);
+				IEnumerable<Favorite> zoom = favorites.GetFavorites(eDialProtocol.Zoom);
 
 				return zoomContacts.Concat(zoom)
 				                   .OrderBy(c => c.Name)
@@ -400,7 +400,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private void ContactOnIsFavoritedStateChanged(object sender, BoolEventArgs e)
 		{
-			if (ShowFavorites)
+			// When a favorite is unfavorited from the favorites list we need to rebuild the list of contacts
+			if (!e.Data && ShowFavorites)
 				RebuildContacts();
 		}
 
