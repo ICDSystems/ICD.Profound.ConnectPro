@@ -32,6 +32,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 
 			m_AlertMessageLabel = new VtProSimpleLabel(panel, m_Subpage)
 			{
+				MultilineSupport = true,
 				IndirectTextJoin = 6
 			};
 

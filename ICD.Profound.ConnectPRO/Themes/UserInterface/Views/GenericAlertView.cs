@@ -46,7 +46,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 		/// <param name="text"></param>
 		public void SetAlertText(string text)
 		{
-			text = HtmlUtils.ReplaceNewlines(text);
 			text = HtmlUtils.FormatFontSize(text, 25);
 
 			m_AlertMessageLabel.SetLabelText(text);
