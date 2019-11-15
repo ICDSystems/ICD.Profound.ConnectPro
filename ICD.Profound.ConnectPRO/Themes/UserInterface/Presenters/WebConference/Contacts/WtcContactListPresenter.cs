@@ -5,6 +5,7 @@ using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Contacts;
@@ -17,6 +18,7 @@ using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Favorites;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.ActiveMeeting;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.Contacts;
@@ -32,12 +34,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly SafeCriticalSection m_ContactSection;
+		private readonly SafeTimer m_DebounceTimer;
+
 		private readonly WtcReferencedContactPresenterFactory m_ContactFactory;
 		private readonly WtcReferencedSelectedContactPresenterFactory m_SelectedContactFactory;
 		private readonly DirectoryControlBrowser m_DirectoryBrowser;
+
 		private readonly List<IContact> m_Contacts;
+		private readonly IcdOrderedDictionary<string, IContact> m_Favorites;
 		private readonly IcdOrderedDictionary<string, IContact> m_SelectedContacts;
-		private readonly SafeTimer m_DebounceTimer;
 
 		private string m_Filter;
 
@@ -47,6 +52,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private string m_ConfirmedFilter;
 
 		private bool m_ShowFavorites;
+		private IFavorites m_SubscribedFavorites;
+
+		#region Properties
 
 		/// <summary>
 		/// Gets/sets the active contact filter.
@@ -82,6 +90,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			}
 		}
 
+		#endregion
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -99,6 +109,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			
 			m_Contacts = new List<IContact>();
 			m_SelectedContacts = new IcdOrderedDictionary<string, IContact>();
+			m_Favorites = new IcdOrderedDictionary<string, IContact>();
 
 			m_DirectoryBrowser = new DirectoryControlBrowser();
 			m_DirectoryBrowser.OnPathContentsChanged += DirectoryBrowserOnPathContentsChanged;
@@ -147,7 +158,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				view.SetInviteParticipantButtonEnabled(m_SelectedContacts.Count > 0);
 
 				foreach (IWtcReferencedContactPresenter presenter in m_ContactFactory.BuildChildren(contacts))
+				{
+					presenter.IsFavorite = presenter.Contact != null && m_Favorites.ContainsKey(presenter.Contact.Name);
 					presenter.ShowView(true);
+				}
 
 				foreach (IWtcReferencedSelectedContactPresenter presenter in m_SelectedContactFactory.BuildChildren(m_SelectedContacts.Values))
 					presenter.ShowView(true);
@@ -157,6 +171,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				m_RefreshSection.Leave();
 			}
 		}
+
+		#region Private Methods
 
 		/// <summary>
 		/// Filters selected contacts out of the given sequence.
@@ -170,8 +186,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 			return contacts.Where(c => !m_SelectedContacts.ContainsKey(c.Name));
 		}
-
-		#region Private Methods
 
 		private IEnumerable<IWtcReferencedContactView> ContactItemFactory(ushort count)
 		{
@@ -244,6 +258,66 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		#endregion
 
+		#region Room Callbacks
+
+		/// <summary>
+		/// Subscribe to the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Subscribe(IConnectProRoom room)
+		{
+			base.Subscribe(room);
+
+			IConferenceManager conferenceManager = room == null ? null : room.ConferenceManager;
+			m_SubscribedFavorites = conferenceManager == null ? null : conferenceManager.Favorites;
+
+			if (m_SubscribedFavorites != null)
+				m_SubscribedFavorites.OnFavoritesChanged += FavoritesOnFavoritesChanged;
+
+			UpdateFavorites();
+		}
+
+		/// <summary>
+		/// Unsubscribe from the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Unsubscribe(IConnectProRoom room)
+		{
+			base.Unsubscribe(room);
+
+			if (m_SubscribedFavorites != null)
+				m_SubscribedFavorites.OnFavoritesChanged -= FavoritesOnFavoritesChanged;
+			m_SubscribedFavorites = null;
+		}
+
+		/// <summary>
+		/// Called when the favorites change.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void FavoritesOnFavoritesChanged(object sender, EventArgs e)
+		{
+			UpdateFavorites();
+		}
+
+		/// <summary>
+		/// Updates the cached collection of favorites.
+		/// </summary>
+		private void UpdateFavorites()
+		{
+			IEnumerable<IContact> favorites =
+				m_SubscribedFavorites == null
+					? Enumerable.Empty<IContact>()
+					: m_SubscribedFavorites.GetFavorites(eDialProtocol.ZoomContact).Cast<IContact>();
+
+			m_Favorites.Clear();
+			m_Favorites.AddRange(favorites, f => f.Name);
+
+			RebuildContacts();
+		}
+
+		#endregion
+
 		#region Directory Browser Callbacks
 
 		private void DirectoryBrowserOnPathContentsChanged(object sender, EventArgs e)
@@ -296,19 +370,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 			// Favorites
 			if (ShowFavorites)
-			{
-				IConferenceManager manager = Room.ConferenceManager;
-				IFavorites favorites = manager == null ? null : manager.Favorites;
-				if (favorites == null)
-					return Enumerable.Empty<IContact>();
-
-				IEnumerable<Favorite> zoomContacts = favorites.GetFavorites(eDialProtocol.ZoomContact);
-				IEnumerable<Favorite> zoom = favorites.GetFavorites(eDialProtocol.Zoom);
-
-				return zoomContacts.Concat(zoom)
-				                   .OrderBy(c => c.Name)
-				                   .Cast<IContact>();
-			}
+				return m_Favorites.Values;
 
 			// Directory
 			return current.GetContacts()
@@ -368,20 +430,33 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		#region Contact Callbacks
 
+		/// <summary>
+		/// Subscribe to the child contact presenter events.
+		/// </summary>
+		/// <param name="presenter"></param>
 		private void Subscribe(IWtcReferencedContactPresenter presenter)
 		{
 			presenter.OnPressed += ContactOnPressed;
 			presenter.OnOnlineStateChanged += ContactOnOnlineStateChanged;
-			presenter.OnIsFavoritedStateChanged += ContactOnIsFavoritedStateChanged;
+			presenter.OnFavoriteButtonPressed += ContactOnFavoriteButtonPressed;
 		}
 
+		/// <summary>
+		/// Unsubscribe from the child contact presenter events.
+		/// </summary>
+		/// <param name="presenter"></param>
 		private void Unsubscribe(IWtcReferencedContactPresenter presenter)
 		{
 			presenter.OnPressed -= ContactOnPressed;
 			presenter.OnOnlineStateChanged -= ContactOnOnlineStateChanged;
-			presenter.OnIsFavoritedStateChanged -= ContactOnIsFavoritedStateChanged;
+			presenter.OnFavoriteButtonPressed -= ContactOnFavoriteButtonPressed;
 		}
 
+		/// <summary>
+		/// Called when a contact presenter is pressed.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void ContactOnPressed(object sender, EventArgs eventArgs)
 		{
 			var presenter = sender as IWtcReferencedContactPresenter;
@@ -391,6 +466,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			AddSelectedContact(presenter.Contact);
 		}
 
+		/// <summary>
+		/// Called when a contact's online state changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ContactOnOnlineStateChanged(object sender, OnlineStateEventArgs e)
 		{
 			// Rebuild the contacts in the default view to reorder by online state.
@@ -398,11 +478,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				RebuildContacts();
 		}
 
-		private void ContactOnIsFavoritedStateChanged(object sender, BoolEventArgs e)
+		/// <summary>
+		/// Called when a contact's favorite button is pressed.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ContactOnFavoriteButtonPressed(object sender, EventArgs eventArgs)
 		{
-			// When a favorite is unfavorited from the favorites list we need to rebuild the list of contacts
-			if (!e.Data && ShowFavorites)
-				RebuildContacts();
+			IWtcReferencedContactPresenter presenter = sender as IWtcReferencedContactPresenter;
+			IContact contact = presenter == null ? null : presenter.Contact;
+			if (contact != null)
+				ToggleFavorite(contact);
+		}
+
+		private void ToggleFavorite(IContact contact)
+		{
+			if (contact == null)
+				throw new ArgumentNullException("contact");
+
+			if (m_SubscribedFavorites != null)
+				m_SubscribedFavorites.ToggleFavorite(contact);
 		}
 
 		#endregion
@@ -454,7 +549,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		}
 
 		/// <summary>
-		/// Unsusbcribe from the conference control events.
+		/// Unsubscribe from the conference control events.
 		/// </summary>
 		/// <param name="control"></param>
 		protected override void Unsubscribe(IWebConferenceDeviceControl control)

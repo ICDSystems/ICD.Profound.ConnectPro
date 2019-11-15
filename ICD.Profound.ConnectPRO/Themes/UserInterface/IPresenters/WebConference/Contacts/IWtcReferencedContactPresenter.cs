@@ -19,13 +19,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference
 		event EventHandler<OnlineStateEventArgs> OnOnlineStateChanged;
 
 		/// <summary>
-		/// Raised when the contact is stored/removed from favorites.
+		/// Raised when the favorite button is pressed.
 		/// </summary>
-		event EventHandler<BoolEventArgs> OnIsFavoritedStateChanged;
+		event EventHandler OnFavoriteButtonPressed;
 
 		/// <summary>
 		/// Gets/sets the contact for this presenter.
 		/// </summary>
 		IContact Contact { get; set; }
+
+		/// <summary>
+		/// Gets/sets the favorite state for this contact.
+		/// </summary>
+		bool IsFavorite { get; set; }
 	}
 }
