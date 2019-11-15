@@ -29,6 +29,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			"Your active meeting must be in a Pro Zoom User's personal meeting room, not a Zoom Room's.\n\n" +
 			"To record this session please grant recording permission to an attendee in the participant list.";
 
+		private const string STOP_RECORDING_ERROR =
+			"Unable to stop recording.\n\n" +
+			"The meeting is configured for automatic recording of the session";
+
 		private static readonly Dictionary<string, string> s_ErrorMessages =
 			new Dictionary<string, string>
 			{
@@ -41,11 +45,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			};
 
 		private readonly SafeTimer m_BlinkTimer;
+
 		private bool m_BlinkState;
-
 		private bool m_CanRecord;
-
 		private CallComponent m_SubscribedCallComponent;
+
+		/// <summary>
+		/// Returns true if the meeting is being recorded.
+		/// </summary>
+		private bool IsRecording { get { return m_SubscribedCallComponent != null && m_SubscribedCallComponent.CallRecord; } }
 
 		/// <summary>
 		/// Constructor.
@@ -66,9 +74,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// <param name="view"></param>
 		protected override void Refresh(IWtcReferencedLeftMenuView view)
 		{
-			Label = m_SubscribedCallComponent == null || !m_SubscribedCallComponent.CallRecord
-				        ? LABEL_RECORD
-				        : LABEL_STOP_RECORDING;
+			Label = IsRecording ? LABEL_STOP_RECORDING : LABEL_RECORD;
 			Icon = "tcRecord";
 			Enabled = m_CanRecord;
 			State = GetState();
@@ -78,7 +84,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private void UpdateState()
 		{
-			if (m_SubscribedCallComponent != null && m_SubscribedCallComponent.CallRecord)
+			if (IsRecording)
 				m_BlinkTimer.Reset(BLINK_INTERVAL, BLINK_INTERVAL);
 			else
 				m_BlinkTimer.Stop();
@@ -92,7 +98,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		{
 			return m_SubscribedCallComponent == null
 				       ? (eLightState?)null
-				       : m_SubscribedCallComponent.CallRecord
+				       : IsRecording
 					         ? m_BlinkState
 						           ? eLightState.Green
 						           : eLightState.Red
@@ -117,7 +123,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		protected override void HandleButtonPress()
 		{
 			if (m_SubscribedCallComponent != null)
-				m_SubscribedCallComponent.EnableCallRecord(!m_SubscribedCallComponent.CallRecord);
+				m_SubscribedCallComponent.EnableCallRecord(!IsRecording);
 		}
 
 		#region Conference Control Callbacks
@@ -177,6 +183,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private void ZoomControlOnCallRecordErrorState(object sender, StringEventArgs eventArgs)
 		{
 			string errorMessage = s_ErrorMessages.GetDefault(eventArgs.Data, DEFAULT_ERROR);
+
+			// Hack - A meeting may be set for automatic recording and zoom will not let us stop recording
+			if (IsRecording)
+				errorMessage = STOP_RECORDING_ERROR;
 
 			// Hide the error message after 15 seconds.
 			const long timeout = 15 * 1000;
