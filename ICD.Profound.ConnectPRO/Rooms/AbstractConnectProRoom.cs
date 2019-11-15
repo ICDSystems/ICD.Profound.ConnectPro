@@ -62,7 +62,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <summary>
 		/// Automatically end the meeting after this many milliseconds without any sources being routed
 		/// </summary>
-		private const int MEETING_TIMEOUT = 1000 * 60 * 10;
+		private const int MEETING_TIMEOUT = 10 * 60 * 1000;
 		private readonly SafeTimer m_MeetingTimeoutTimer;
 
 		private readonly ConnectProRouting m_Routing;
@@ -206,48 +206,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		}
 
 		/// <summary>
-		/// Starts a meeting for the given booking.
-		/// </summary>
-		/// <param name="booking"></param>
-		public void StartMeeting([NotNull] IBooking booking)
-		{
-			if (booking == null)
-				throw new ArgumentNullException("booking");
-
-			StartMeeting(false);
-			CheckIn(booking);
-
-			IEnumerable<IConferenceDeviceControl> dialers =
-				ConferenceManager == null
-					? Enumerable.Empty<IConferenceDeviceControl>()
-					: ConferenceManager.GetDialingProviders();
-
-			// Build map of dialer to best number
-			IDialContext dialContext;
-			IConferenceDeviceControl preferredDialer = ConferencingBookingUtils.GetBestDialer(booking, dialers, out dialContext);
-			if (preferredDialer == null)
-				return;
-
-			// Route device to displays and/or audio destination
-			IDeviceBase dialerDevice = preferredDialer.Parent;
-			ISource source = Routing.Sources.GetCoreSources().FirstOrDefault(s => s.Device == dialerDevice.Id);
-			if (source == null)
-				return; // if we can't route a source, don't dial into conference users won't know they're in
-
-			FocusSource = source;
-
-			if (preferredDialer.Supports.HasFlag(eCallType.Video))
-				Routing.RouteVtc(source);
-			else if (preferredDialer.Supports.HasFlag(eCallType.Audio))
-				Routing.RouteAtc(source);
-			else
-				Routing.RouteToAllDisplays(source);
-
-			// Dial booking
-			preferredDialer.Dial(dialContext);
-		}
-
-		/// <summary>
 		/// Enters the meeting state.
 		/// </summary>
 		/// <param name="resetRouting"></param>
@@ -262,6 +220,23 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			// Reset mute state
 			Mute(false);
+
+			UpdateMeetingTimeoutTimer();
+		}
+
+		/// <summary>
+		/// Starts a meeting for the given booking.
+		/// </summary>
+		/// <param name="booking"></param>
+		public void StartMeeting([NotNull] IBooking booking)
+		{
+			if (booking == null)
+				throw new ArgumentNullException("booking");
+
+			StartMeeting(false);
+			CheckIn(booking);
+
+			DialBooking(booking);
 		}
 
 		/// <summary>
@@ -428,6 +403,45 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		#region Private Methods
 
 		/// <summary>
+		/// Dials the given booking and routes the dialer.
+		/// </summary>
+		/// <param name="booking"></param>
+		private void DialBooking([NotNull] IBooking booking)
+		{
+			if (booking == null)
+				throw new ArgumentNullException("booking");
+
+			IEnumerable<IConferenceDeviceControl> dialers =
+				ConferenceManager == null
+					? Enumerable.Empty<IConferenceDeviceControl>()
+					: ConferenceManager.GetDialingProviders();
+
+			// Build map of dialer to best number
+			IDialContext dialContext;
+			IConferenceDeviceControl preferredDialer = ConferencingBookingUtils.GetBestDialer(booking, dialers, out dialContext);
+			if (preferredDialer == null)
+				return;
+
+			// Route device to displays and/or audio destination
+			IDeviceBase dialerDevice = preferredDialer.Parent;
+			ISource source = Routing.Sources.GetCoreSources().FirstOrDefault(s => s.Device == dialerDevice.Id);
+			if (source == null)
+				return; // if we can't route a source, don't dial into conference users won't know they're in
+
+			FocusSource = source;
+
+			if (preferredDialer.Supports.HasFlag(eCallType.Video))
+				Routing.RouteVtc(source);
+			else if (preferredDialer.Supports.HasFlag(eCallType.Audio))
+				Routing.RouteAtc(source);
+			else
+				Routing.RouteToAllDisplays(source);
+
+			// Dial booking
+			preferredDialer.Dial(dialContext);
+		}
+
+		/// <summary>
 		/// Checks in to the given booking.
 		/// </summary>
 		/// <param name="booking"></param>
@@ -525,6 +539,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			return Routing.State.GetRealActiveVideoSources().Any(kvp => kvp.Value.Count > 0);
 		}
 
+		/// <summary>
+		/// Called when the current meeting times out after a duration without activity.
+		/// </summary>
 		private void MeetingTimeout()
 		{
 			if (CombineState)
@@ -547,16 +564,29 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 		#region Routing Callbacks
 
+		/// <summary>
+		/// Subscribe to the routing events.
+		/// </summary>
+		/// <param name="routing"></param>
 		private void Subscribe(ConnectProRouting routing)
 		{
 			routing.State.OnSourceRoutedChanged += StateOnSourceRoutedChanged;
 		}
 
+		/// <summary>
+		/// Unsubscribe from the routing events.
+		/// </summary>
+		/// <param name="routing"></param>
 		private void Unsubscribe(ConnectProRouting routing)
 		{
 			routing.State.OnSourceRoutedChanged -= StateOnSourceRoutedChanged;
 		}
 
+		/// <summary>
+		/// Called when a source becomes routed/unrouted.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void StateOnSourceRoutedChanged(object sender, EventArgs e)
 		{
 			UpdateMeetingTimeoutTimer();
