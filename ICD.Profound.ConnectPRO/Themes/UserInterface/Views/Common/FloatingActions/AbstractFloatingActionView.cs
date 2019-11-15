@@ -6,6 +6,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.FloatingActi
 {
 	public abstract class AbstractFloatingActionView : AbstractUiView, IFloatingActionView
 	{
+		/// <summary>
+		/// Raised when the user presses the option button.
+		/// </summary>
 		public abstract event EventHandler OnButtonPressed;
 
 		/// <summary>
@@ -23,5 +26,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.FloatingActi
 		/// </summary>
 		/// <param name="active"></param>
 		public abstract void SetActive(bool active);
+
+		/// <summary>
+		/// Sets the enabled state of the option.
+		/// </summary>
+		/// <param name="enabled"></param>
+		public abstract void SetEnabled(bool enabled);
 	}
 }

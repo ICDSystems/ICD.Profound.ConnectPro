@@ -41,10 +41,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.FloatingActi
 		}
 
 		/// <summary>
-		/// Sets the enabled state of the button.
+		/// Sets the enabled state of the option.
 		/// </summary>
 		/// <param name="enabled"></param>
-		public void SetButtonEnabled(bool enabled)
+		public override void SetEnabled(bool enabled)
 		{
 			m_Button.Enable(enabled);
 		}

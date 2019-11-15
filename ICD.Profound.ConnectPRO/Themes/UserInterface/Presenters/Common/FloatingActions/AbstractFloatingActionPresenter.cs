@@ -37,7 +37,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			try
 			{
 				bool active = GetActive();
+				bool enabled = GetEnabled();
+
 				view.SetActive(active);
+				view.SetEnabled(enabled);
 			}
 			finally
 			{
@@ -46,10 +49,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		}
 
 		/// <summary>
-		/// Override to get the mode for the button.
+		/// Override to get the selected state for the button.
 		/// </summary>
 		/// <returns></returns>
 		protected abstract bool GetActive();
+
+		/// <summary>
+		/// Override to get the enabled state for the button.
+		/// </summary>
+		/// <returns></returns>
+		protected abstract bool GetEnabled();
 
 		#region View Callbacks
 
@@ -80,7 +89,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		protected abstract void ViewOnButtonPressed(object sender, EventArgs eventArgs);
+		private void ViewOnButtonPressed(object sender, EventArgs eventArgs)
+		{
+			if (GetEnabled())
+				HandleButtonPress();
+		}
+
+		/// <summary>
+		/// Override to handle the button press.
+		/// </summary>
+		protected abstract void HandleButtonPress();
 
 		#endregion
 	}

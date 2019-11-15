@@ -9,6 +9,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.FloatingActi
 	[ViewBinding(typeof(IFloatingActionPrivacyMuteView))]
 	public sealed partial class FloatingActionPrivacyMuteView : AbstractFloatingActionView, IFloatingActionPrivacyMuteView
 	{
+		/// <summary>
+		/// Raised when the user presses the button.
+		/// </summary>
 		public override event EventHandler OnButtonPressed;
 
 		/// <summary>
@@ -38,6 +41,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.FloatingActi
 		public override void SetActive(bool active)
 		{
 			m_Button.SetSelected(active);
+		}
+
+		/// <summary>
+		/// Sets the enabled state of the option.
+		/// </summary>
+		/// <param name="enabled"></param>
+		public override void SetEnabled(bool enabled)
+		{
+			m_Button.Enable(enabled);
 		}
 
 		#region Control Callbacks

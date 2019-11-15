@@ -14,5 +14,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.FloatingAct
 		/// </summary>
 		/// <param name="active"></param>
 		void SetActive(bool active);
+
+		/// <summary>
+		/// Sets the enabled state of the option.
+		/// </summary>
+		/// <param name="enabled"></param>
+		void SetEnabled(bool enabled);
 	}
 }

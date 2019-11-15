@@ -1,5 +1,4 @@
-﻿using System;
-using ICD.Common.Utils.EventArguments;
+﻿using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Audio.Controls.Mute;
 using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.EventArguments;
@@ -16,7 +15,8 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.FloatingActions
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.FloatingActions
 {
 	[PresenterBinding(typeof(IFloatingActionVolumePresenter))]
-	public sealed class FloatingActionVolumePresenter : AbstractFloatingActionPresenter<IFloatingActionVolumeView>, IFloatingActionVolumePresenter
+	public sealed class FloatingActionVolumePresenter : AbstractFloatingActionPresenter<IFloatingActionVolumeView>,
+	                                                    IFloatingActionVolumePresenter
 	{
 		private readonly IVolumePresenter m_Menu;
 
@@ -47,23 +47,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		}
 
 		/// <summary>
-		/// Updates the view.
-		/// </summary>
-		/// <param name="view"></param>
-		protected override void Refresh(IFloatingActionVolumeView view)
-		{
-			base.Refresh(view);
-
-			view.SetButtonEnabled(m_SubscribedVolumeControl == null || m_SubscribedVolumeControl.ControlAvailable);
-		}
-
-		/// <summary>
 		/// Override to get the selected state for the button.
 		/// </summary>
 		/// <returns></returns>
 		protected override bool GetActive()
 		{
 			return m_SubscribedMuteFeedbackControl != null && m_SubscribedMuteFeedbackControl.VolumeIsMuted;
+		}
+
+		/// <summary>
+		/// Override to get the enabled state for the button.
+		/// </summary>
+		/// <returns></returns>
+		protected override bool GetEnabled()
+		{
+			return m_SubscribedVolumeControl == null || m_SubscribedVolumeControl.ControlAvailable;
 		}
 
 		/// <summary>
@@ -91,20 +89,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			return volumeControl.Parent.Controls.GetControl<IVolumeMuteFeedbackDeviceControl>();
 		}
 
-		#region View Callbacks
-
 		/// <summary>
-		/// Called when the user presses the option button.
+		/// Override to handle the button press.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="eventArgs"></param>
-		protected override void ViewOnButtonPressed(object sender, EventArgs eventArgs)
+		protected override void HandleButtonPress()
 		{
 			m_Menu.VolumeControl = m_SubscribedVolumeControl;
 			m_Menu.ShowView(!m_Menu.IsViewVisible);
 		}
-
-		#endregion
 
 		#region Navigation Callbacks
 
@@ -197,7 +189,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			ShowView(eventArgs.Data && m_SubscribedVolumeControl != null);
 		}
 
-		private void SubscribedMuteFeedbackControlOnMuteStateChanged(object sender, MuteDeviceMuteStateChangedApiEventArgs eventArgs)
+		private void SubscribedMuteFeedbackControlOnMuteStateChanged(object sender,
+		                                                             MuteDeviceMuteStateChangedApiEventArgs eventArgs)
 		{
 			RefreshIfVisible();
 		}

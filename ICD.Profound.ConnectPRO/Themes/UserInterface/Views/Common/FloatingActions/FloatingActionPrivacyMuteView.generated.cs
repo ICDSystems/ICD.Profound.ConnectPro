@@ -26,7 +26,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.FloatingActi
 
 			m_Button = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 47
+				DigitalPressJoin = 47,
+				DigitalEnableJoin = 49
 			};
 		}
 

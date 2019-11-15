@@ -43,6 +43,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		}
 
 		/// <summary>
+		/// Override to get the enabled state for the button.
+		/// </summary>
+		/// <returns></returns>
+		protected override bool GetEnabled()
+		{
+			return true;
+		}
+
+		/// <summary>
 		/// Updates the visibility of this subpage.
 		/// </summary>
 		private void UpdateVisibility()
@@ -54,17 +63,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			ShowView(show);
 		}
 
-		#region View Callbacks
-
 		/// <summary>
-		/// Called when the user presses the option button.
+		/// Override to handle the button press.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="eventArgs"></param>
-		protected override void ViewOnButtonPressed(object sender, EventArgs eventArgs)
+		protected override void HandleButtonPress()
 		{
 			m_CameraButtons.ShowView(!m_CameraButtons.IsViewVisible);
 		}
+
+		#region View Callbacks
 
 		/// <summary>
 		/// Called when the view visibility changes.

@@ -13,8 +13,9 @@ using ICD.Profound.ConnectPRO.Utils;
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.FloatingActions
 {
 	[PresenterBinding(typeof(IFloatingActionPrivacyMutePresenter))]
-	public sealed class FloatingActionPrivacyMutePresenter : AbstractFloatingActionPresenter<IFloatingActionPrivacyMuteView>,
-	                                                 IFloatingActionPrivacyMutePresenter
+	public sealed class FloatingActionPrivacyMutePresenter :
+		AbstractFloatingActionPresenter<IFloatingActionPrivacyMuteView>,
+		IFloatingActionPrivacyMutePresenter
 	{
 		private IConferenceManager m_SubscribedConferenceManager;
 
@@ -24,7 +25,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public FloatingActionPrivacyMutePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+		public FloatingActionPrivacyMutePresenter(IConnectProNavigationController nav, IUiViewFactory views,
+		                                          ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 		}
@@ -52,11 +54,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		}
 
 		/// <summary>
-		/// Called when the user presses the option button.
+		/// Override to get the enabled state for the button.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="eventArgs"></param>
-		protected override void ViewOnButtonPressed(object sender, EventArgs eventArgs)
+		/// <returns></returns>
+		protected override bool GetEnabled()
+		{
+			return Room != null;
+		}
+
+		/// <summary>
+		/// Override to handle the button press.
+		/// </summary>
+		protected override void HandleButtonPress()
 		{
 			if (Room == null)
 				return;
