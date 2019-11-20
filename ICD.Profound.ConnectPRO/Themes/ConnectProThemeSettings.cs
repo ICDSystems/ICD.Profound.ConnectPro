@@ -63,15 +63,16 @@ namespace ICD.Profound.ConnectPRO.Themes
 	/// <summary>
 	/// Describes which mode the CUE background should use.
 	/// </summary>
-	public enum eCueBackgroundMode : ushort
+	public enum eCueBackgroundMode
 	{
 		/// <summary>
 		/// Default mode, neutral/business-friendly CUE background, never changes
 		/// </summary>
 		Neutral = 0,
+
 		/// <summary>
 		/// New background each month, themed for month (US themes)
 		/// </summary>
-		Monthly = 1,
+		Monthly = 1
 	}
 }
