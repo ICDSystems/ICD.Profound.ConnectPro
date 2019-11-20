@@ -6,11 +6,34 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [11.0.0] - 2019-11-20
 ### Added
  - Checking in and out of bookings when starting and ending meetings
+ - Added UI for Shure MX396 microphones
+ - Show a generic alert box when a remote ZoomRoom participant asks us to unmute video
+ - Added ConnectProEventServerDevice for feeding meeting, mute, route, etc states to TCP clients
+ - Added ZoomRoom settings pages
+ - Added favorites support for Zoom contacts
+ - Added camera layout features for Zoom
+ - Added call lock button for Zoom
+ - Added call record button for Zoom
+ - Added call record permission button for Zoom participants
+ - Added Zoom call-out page
+ - Showing an error message when conference recording fails
+ - Added "conference override" to ConnectPRO sources, for controlling the visibility of privacy mute and camera features
 
 ### Changed
  - Generic Dial Context has been renamed to Traditional Dial Context in the ATC Base Presenter
+ - SQLite favorites are stored in the Program<slot>Data/Room<id> directory
+ - Fixed a bug where the settings "back" button could leave the settings root!
+ - Fixed a bug where room destinations were not being re-cached when the room contents change
+ - Camera controls are shown as default camera page instead of active camera
+ - Fixed bugs that were preventing the room from completely going to sleep
+ - Zoom contacts list correctly updates when contact avatar and online state changes
+ - Fixed a bug where meetings would not time out unless the user had routed at least once
+
+### Removed
+ - Removed redundant ATC incoming call subpage
 
 ## [10.1.3] - 2019-10-25
 ### Changed
@@ -19,9 +42,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [10.1.2] - 2019-10-17
 ### Changed
  - Fixed a bug where DTMF was not available in video calls
-
-### Added
- - Show a generic alert box when the far end asks a ZoomRoom participant to unmute their video
 
 ## [10.1.1] - 2019-10-10
 ### Changed
