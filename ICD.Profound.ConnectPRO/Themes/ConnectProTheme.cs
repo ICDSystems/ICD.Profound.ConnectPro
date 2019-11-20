@@ -23,6 +23,7 @@ using ICD.Connect.Themes;
 using ICD.Connect.Themes.UserInterfaceFactories;
 using ICD.Profound.ConnectPRO.Rooms.Combine;
 using ICD.Profound.ConnectPRO.Themes.Ccrm4000UserInterface;
+using ICD.Profound.ConnectPRO.Themes.EventServerUserInterface;
 using ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface;
 using ICD.Profound.ConnectPRO.Themes.ShureMicrophoneInterface;
@@ -134,6 +135,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 			m_UiFactories = new IcdHashSet<IUserInterfaceFactory>
 			{
 				new ConnectProCcrm4000UserInterfaceFactory(this),
+				new ConnectProEventServerUserInterfaceFactory(this),
 				new ConnectProMpc3201InterfaceFactory(this),
 				new ConnectProOsdInterfaceFactory(this),
 				new ConnectProShureMicrophoneInterfaceFactory(this),
