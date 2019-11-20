@@ -5,7 +5,6 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
-using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
@@ -46,8 +45,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 		/// <param name="text"></param>
 		public void SetAlertText(string text)
 		{
-			text = HtmlUtils.FormatFontSize(text, 25);
-
 			m_AlertMessageLabel.SetLabelText(text);
 		}
 
