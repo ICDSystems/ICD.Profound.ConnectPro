@@ -527,6 +527,10 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <returns></returns>
 		protected override bool GetIsInActiveMeeting()
 		{
+			// Easy case!
+			if (!IsInMeeting)
+				return false;
+
 			// If the user is currently on a control subpage assume that the room is being used
 			if (FocusSource != null)
 				return true;
@@ -545,6 +549,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		private void MeetingTimeout()
 		{
 			if (CombineState)
+				return;
+
+			if (!GetIsInActiveMeeting())
 				return;
 
 			Log(eSeverity.Informational, "Meeting timeout occurring at {0}", IcdEnvironment.GetLocalTime().ToShortTimeString());
