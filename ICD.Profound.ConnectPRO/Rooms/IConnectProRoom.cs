@@ -5,6 +5,7 @@ using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.EventArguments;
@@ -131,6 +132,17 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		/// <param name="call"></param>
 		void RejectIncomingCall(IIncomingCall call);
+
+		/// <summary>
+		/// Returns true if:
+		/// 
+		/// We are in a conference and the conference source does not use the Hide override.
+		/// OR
+		/// We have a routed source using the Show override.
+		/// </summary>
+		/// <param name="minimumCallType"></param>
+		/// <returns></returns>
+		bool ConferenceActionsAvailable(eInCall minimumCallType);
 
 		#endregion
 	}

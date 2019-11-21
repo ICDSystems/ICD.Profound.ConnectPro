@@ -636,7 +636,6 @@
     <Compile Include="Themes\UserInterface\Views\WebConference\WtcShareView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\WebConference\WtcStartMeetingView.cs" />
     <Compile Include="Themes\UserInterface\Views\WebConference\WtcStartMeetingView.generated.cs" />
-    <Compile Include="Utils\ConferenceOverrideUtils.cs" />
     <Compile Include="VolumePoints\ConnectProVolumePoint.cs" />
     <Compile Include="VolumePoints\ConnectProVolumePointSettings.cs" />
     <Compile Include="WebConferencing\WebConferencingAppInstructions.cs" />

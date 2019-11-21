@@ -33,6 +33,7 @@ using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.EventArguments;
 using ICD.Profound.ConnectPRO.Routing;
+using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 
 namespace ICD.Profound.ConnectPRO.Rooms
 {
@@ -354,6 +355,52 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			OnIncomingCallRejected.Raise(this, new GenericEventArgs<IIncomingCall>(call));
 		}
+
+		/// <summary>
+		/// Returns true if:
+		/// 
+		/// We are in a conference and the conference source does not use the Hide override.
+		/// OR
+		/// We have a routed source using the Show override.
+		/// </summary>
+		/// <param name="minimumCallType"></param>
+		/// <returns></returns>
+		public bool ConferenceActionsAvailable(eInCall minimumCallType)
+		{
+			// Are we in a conference and the source is NOT using the Hide override?
+			if (ConferenceManager != null && ConferenceManager.IsInCall >= minimumCallType)
+				return GetActiveConferenceSourceOverride() != eConferenceOverride.Hide;
+
+			// Is a source routed with the Show override?
+			return
+				Routing.State
+				       .GetFakeActiveVideoSources()
+				       .SelectMany(kvp => kvp.Value)
+				       .OfType<ConnectProSource>()
+				       .Any(s => s.ConferenceOverride == eConferenceOverride.Show);
+		}
+
+		/// <summary>
+		/// Returns the conference override for the active conferences. Show beats Hide.
+		/// </summary>
+		/// <returns></returns>
+		private eConferenceOverride GetActiveConferenceSourceOverride()
+		{
+			if (ConferenceManager == null)
+				return eConferenceOverride.None;
+
+			return
+				ConferenceManager.GetDialingProviders()
+								 .Where(p => p.GetActiveConference() != null)
+								 .SelectMany(p => Routing.Sources.GetSources(p))
+								 .OfType<ConnectProSource>()
+								 .Select(s => s.ConferenceOverride)
+								 .MaxOrDefault();
+		}
+
+		#endregion
+
+		#region Protected Methods
 
 		/// <summary>
 		/// Called when the meeting state is changed

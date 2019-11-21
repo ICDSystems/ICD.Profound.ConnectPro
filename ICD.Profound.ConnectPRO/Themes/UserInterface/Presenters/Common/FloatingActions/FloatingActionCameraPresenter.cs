@@ -10,7 +10,6 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Cameras;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.FloatingActions;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.FloatingActions;
-using ICD.Profound.ConnectPRO.Utils;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.FloatingActions
 {
@@ -57,7 +56,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		private void UpdateVisibility()
 		{
 			bool show = Room != null &&
-			            ConferenceOverrideUtils.ConferenceActionsAvailable(Room, eInCall.Video) &&
+			            Room.ConferenceActionsAvailable(eInCall.Video) &&
 			            m_CameraButtons.AnyFeaturesAvailable;
 
 			ShowView(show);

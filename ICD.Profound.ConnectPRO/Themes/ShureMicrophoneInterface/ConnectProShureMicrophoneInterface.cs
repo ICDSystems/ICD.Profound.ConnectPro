@@ -1,10 +1,10 @@
-﻿using System.Linq;
+﻿using System;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
-using ICD.Connect.Audio.Shure;
 using ICD.Connect.Audio.Shure.Devices;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
@@ -23,7 +23,10 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMicrophoneInterface
 		private readonly IShureMicDevice m_Microphone;
 		private readonly SafeCriticalSection m_RefreshSection;
 
+		[CanBeNull]
 		private IConferenceManager m_SubscribedConferenceManager;
+
+		[CanBeNull]
 		private IConnectProRoom m_Room;
 
 		#region Properties
@@ -112,6 +115,8 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMicrophoneInterface
 			if (room == null)
 				return;
 
+			room.Routing.State.OnSourceRoutedChanged += StateOnSourceRoutedChanged;
+
 			m_SubscribedConferenceManager = room.ConferenceManager;
 			if (m_SubscribedConferenceManager == null)
 				return;
@@ -127,6 +132,11 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMicrophoneInterface
 		/// <param name="room"></param>
 		private void Unsubscribe(IConnectProRoom room)
 		{
+			if (room == null)
+				return;
+
+			room.Routing.State.OnSourceRoutedChanged -= StateOnSourceRoutedChanged;
+
 			if (m_SubscribedConferenceManager == null)
 				return;
 
@@ -135,6 +145,16 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMicrophoneInterface
 			m_SubscribedConferenceManager.OnPrivacyMuteStatusChange -= ConferenceManagerOnPrivacyMuteStatusChange;
 
 			m_SubscribedConferenceManager = null;
+		}
+
+		/// <summary>
+		/// Called when a source becomes routed/unrouted.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void StateOnSourceRoutedChanged(object sender, EventArgs eventArgs)
+		{
+			UpdateMicrophoneLeds();
 		}
 
 		/// <summary>
@@ -175,23 +195,23 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMicrophoneInterface
 		/// </summary>
 		private void UpdateMicrophoneLeds()
 		{
-			eLedBrightness brightness = eLedBrightness.Disabled;
-			eLedColor color = eLedColor.Yellow;
-
 			m_RefreshSection.Enter();
 
 			try
 			{
-				if (m_SubscribedConferenceManager != null && m_SubscribedConferenceManager.IsInCall >= eInCall.Audio)
-				{
-					brightness = eLedBrightness.Default;
+				bool inCall = m_Room != null && m_Room.ConferenceActionsAvailable(eInCall.Audio);
+				bool onHold = m_SubscribedConferenceManager != null &&
+				              m_SubscribedConferenceManager.OnlineConferences.AnyAndAll(c => c.Status == eConferenceStatus.OnHold);
+				bool privacyMuted = m_SubscribedConferenceManager != null && m_SubscribedConferenceManager.PrivacyMuted;
 
-					color = m_SubscribedConferenceManager.OnlineConferences.All(c => c.Status == eConferenceStatus.OnHold)
-								? eLedColor.Yellow
-								: m_SubscribedConferenceManager.PrivacyMuted
-									  ? eLedColor.Red
-									  : eLedColor.Green;
-				}
+				eLedBrightness brightness = inCall ? eLedBrightness.Default : eLedBrightness.Disabled;
+
+				eLedColor color =
+					onHold
+						? eLedColor.Yellow
+						: privacyMuted
+							  ? eLedColor.Red
+							  : eLedColor.Green;
 
 				m_Microphone.SetLedStatus(color, brightness);
 			}
@@ -230,7 +250,14 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMicrophoneInterface
 		/// <param name="boolEventArgs"></param>
 		private void MicrophoneOnMuteButtonStatusChanged(object sender, BoolEventArgs boolEventArgs)
 		{
-			if (boolEventArgs.Data && m_SubscribedConferenceManager != null)
+			if (m_Room == null || m_SubscribedConferenceManager == null)
+				return;
+
+			// Prevent the user from toggling privacy mute while outside of a call
+			if (!m_Room.ConferenceActionsAvailable(eInCall.Audio))
+				return;
+
+			if (boolEventArgs.Data)
 				m_SubscribedConferenceManager.TogglePrivacyMute();
 		}
 

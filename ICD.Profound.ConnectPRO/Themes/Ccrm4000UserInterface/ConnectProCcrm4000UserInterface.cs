@@ -1,4 +1,5 @@
-﻿using ICD.Common.Properties;
+﻿using System;
+using ICD.Common.Properties;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Audio.ClockAudio.Devices.CCRM4000;
@@ -17,7 +18,10 @@ namespace ICD.Profound.ConnectPRO.Themes.Ccrm4000UserInterface
 		private readonly ConnectProTheme m_Theme;
 		private readonly ClockAudioCcrm4000Device m_Microphone;
 
+		[CanBeNull]
 		private IConferenceManager m_SubscribedConferenceManager;
+
+		[CanBeNull]
 		private IConnectProRoom m_Room;
 
 		#region Properties
@@ -101,6 +105,8 @@ namespace ICD.Profound.ConnectPRO.Themes.Ccrm4000UserInterface
 			if (room == null)
 				return;
 
+			room.Routing.State.OnSourceRoutedChanged += StateOnSourceRoutedChanged;
+
 			m_SubscribedConferenceManager = room.ConferenceManager;
 			if (m_SubscribedConferenceManager == null)
 				return;
@@ -114,12 +120,27 @@ namespace ICD.Profound.ConnectPRO.Themes.Ccrm4000UserInterface
 		/// <param name="room"></param>
 		private void Unsubscribe(IConnectProRoom room)
 		{
+			if (room == null)
+				return;
+
+			room.Routing.State.OnSourceRoutedChanged -= StateOnSourceRoutedChanged;
+
 			if (m_SubscribedConferenceManager == null)
 				return;
 
 			m_SubscribedConferenceManager.OnInCallChanged -= ConferenceManagerOnInCallChanged;
 
 			m_SubscribedConferenceManager = null;
+		}
+
+		/// <summary>
+		/// Called when a source becomes routed/unrouted.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void StateOnSourceRoutedChanged(object sender, EventArgs eventArgs)
+		{
+			ActuateMicrophone();
 		}
 
 		/// <summary>
@@ -137,10 +158,9 @@ namespace ICD.Profound.ConnectPRO.Themes.Ccrm4000UserInterface
 		/// </summary>
 		private void ActuateMicrophone()
 		{
-			if (m_SubscribedConferenceManager == null)
-				return;
+			bool inCall = m_Room != null && m_Room.ConferenceActionsAvailable(eInCall.Audio);
 
-			if (m_SubscribedConferenceManager.IsInCall >= eInCall.Audio)
+			if (inCall)
 				m_Microphone.Extend();
 			else
 				m_Microphone.Retract();

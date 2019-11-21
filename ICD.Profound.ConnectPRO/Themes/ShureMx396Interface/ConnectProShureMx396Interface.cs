@@ -10,7 +10,6 @@ using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Themes.UserInterfaces;
 using ICD.Profound.ConnectPRO.Rooms;
-using ICD.Profound.ConnectPRO.Utils;
 
 namespace ICD.Profound.ConnectPRO.Themes.ShureMx396Interface
 {
@@ -19,7 +18,10 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMx396Interface
 		private readonly ShureMx396Device m_Microphone;
 		private readonly SafeCriticalSection m_RefreshSection;
 
+		[CanBeNull]
 		private IConferenceManager m_SubscribedConferenceManager;
+
+		[CanBeNull]
 		private IConnectProRoom m_Room;
 		private bool m_IsDisposed;
 
@@ -186,7 +188,7 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMx396Interface
 
 			try
 			{
-				bool inCall = ConferenceOverrideUtils.ConferenceActionsAvailable(m_Room, eInCall.Audio);
+				bool inCall = m_Room != null && m_Room.ConferenceActionsAvailable(eInCall.Audio);
 				bool privacyMuted = m_SubscribedConferenceManager != null && m_SubscribedConferenceManager.PrivacyMuted;
 
 				bool green = !inCall || !privacyMuted;
@@ -228,8 +230,11 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMx396Interface
 		/// <param name="eventArgs"></param>
 		private void MicrophoneOnButtonPressedChanged(object sender, BoolEventArgs eventArgs)
 		{
+			if (m_Room == null || m_SubscribedConferenceManager == null)
+				return;
+
 			// Prevent the user from toggling privacy mute while outside of a call
-			if (!ConferenceOverrideUtils.ConferenceActionsAvailable(m_Room, eInCall.Audio))
+			if (!m_Room.ConferenceActionsAvailable(eInCall.Audio))
 				return;
 
 			if (eventArgs.Data)

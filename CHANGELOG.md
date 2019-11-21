@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+ - Shure Microphones are available for privacy mute when routing a web conferencing source
+
 ## [11.0.0] - 2019-11-20
 ### Added
  - Checking in and out of bookings when starting and ending meetings
