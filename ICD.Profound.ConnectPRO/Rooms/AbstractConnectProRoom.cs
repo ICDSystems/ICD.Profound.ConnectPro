@@ -569,6 +569,20 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		}
 
 		/// <summary>
+		/// Clears privacy mute if we are between calls.
+		/// </summary>
+		private void UpdatePrivacyMute()
+		{
+			if (ConferenceManager == null)
+				return;
+
+			bool inCall = ConferenceActionsAvailable(eInCall.Audio);
+
+			if (!inCall)
+				ConferenceManager.EnablePrivacyMute(false);
+		}
+
+		/// <summary>
 		/// Returns true if a source is actively routed to a display or we are in a conference.
 		/// </summary>
 		/// <returns></returns>
@@ -644,6 +658,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		private void StateOnSourceRoutedChanged(object sender, EventArgs e)
 		{
 			UpdateMeetingTimeoutTimer();
+			UpdatePrivacyMute();
 		}
 
 		#endregion
@@ -682,10 +697,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		private void ConferenceManagerOnInCallChanged(object sender, InCallEventArgs eventArgs)
 		{
 			UpdateMeetingTimeoutTimer();
-
-			// Turn off privacy mute between calls
-			if (ConferenceManager != null)
-				ConferenceManager.EnablePrivacyMute(false);
+			UpdatePrivacyMute();
 		}
 
 		#endregion
