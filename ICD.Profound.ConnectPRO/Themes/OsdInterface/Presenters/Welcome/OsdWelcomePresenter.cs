@@ -58,51 +58,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 
 			try
 			{
-				DateTime now = IcdEnvironment.GetLocalTime();
-				DateTime tomorrow = now.AddDays(1);
-
-				List<IBooking> bookings =
-					m_CalendarControl == null
-						? new List<IBooking>()
-						: m_CalendarControl.GetBookings()
-						                   .Where(b => b.EndTime > now && b.StartTime < tomorrow)
-						                   .OrderBy(b => b.StartTime)
-						                   .ToList();
-
-				List<IBooking> upcomingBookingsAndAvailability = new List<IBooking>();
-
-				// Add an empty booking (room available) if there isn't a meeting for at least 15 minutes
-				IBooking firstBooking = bookings.FirstOrDefault();
-				if (firstBooking != null && firstBooking.StartTime - now > TimeSpan.FromMinutes(15))
-				{
-					upcomingBookingsAndAvailability.Add(new EmptyBooking
-					{
-						StartTime = DateTime.MinValue,
-						EndTime = firstBooking.StartTime
-					});
-				}
-
-				// Build list of bookings and available times
-				for (int i = 0; i < bookings.Count && upcomingBookingsAndAvailability.Count < 7; i++)
-				{
-					upcomingBookingsAndAvailability.Add(bookings[i]);
-
-					// If we've run out of bookings we add an available slot to the end
-					if (i + 1 >= bookings.Count)
-						upcomingBookingsAndAvailability.Add(new EmptyBooking
-						{
-							StartTime = bookings[i].EndTime,
-							EndTime = DateTime.MaxValue
-						});
-
-					// If there are at least 30 minutes to the next booking insert an available slot
-					else if (bookings[i + 1].StartTime - bookings[i].EndTime >= TimeSpan.FromMinutes(30))
-						upcomingBookingsAndAvailability.Add(new EmptyBooking
-						{
-							StartTime = bookings[i].EndTime,
-							EndTime = bookings[i + 1].StartTime
-						});
-				}
+				IBooking[] upcomingBookingsAndAvailability = GetUpcomingBookingsAndAvailability().ToArray();
 
 				// Build booking presenters
 				foreach (IReferencedSchedulePresenter presenter in
@@ -111,44 +67,107 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 
 				// Display current room status
 				IBooking currentBooking = upcomingBookingsAndAvailability.FirstOrDefault();
-				if (currentBooking != null && !(currentBooking is EmptyBooking))
+				bool isCurrentlyAvailable = currentBooking is EmptyBooking;
+
+				long refreshInterval = DEFAULT_REFRESH_TIME;
+				string currentIcon = "thumbsUp";
+				string currentSubject = Room == null ? string.Empty : Room.Name;
+				string currentTime = " ";
+				string currentAvailability = "AVAILABLE";
+
+				if (currentBooking != null)
 				{
-					view.SetCurrentBookingIcon(GetBookingIcon(currentBooking));
-
-					view.SetCurrentBookingSubject(currentBooking.IsPrivate
-						                              ? "Private Meeting"
-						                              : currentBooking.MeetingName);
-					view.SetCurrentBookingTime(string.Format("{0} - {1}",
-					                                         FormatTime(currentBooking.StartTime),
-					                                         FormatTime(currentBooking.EndTime)));
-					view.SetAvailabilityText("RESERVED");
-					m_RefreshTimer.Reset((long)(currentBooking.EndTime - now).TotalMilliseconds + 1000);
-				}
-				else
-				{
-					view.SetCurrentBookingIcon("thumbsUp");
-					view.SetAvailabilityText("AVAILABLE");
-
-					string roomName = Room == null ? string.Empty : Room.Name;
-					view.SetCurrentBookingSubject(roomName);
-
-					if (currentBooking != null)
+					if (isCurrentlyAvailable)
 					{
-						view.SetCurrentBookingTime(string.Format("Now - {0}",
-						                                         FormatTime(currentBooking.EndTime)));
-						m_RefreshTimer.Reset((long)(currentBooking.EndTime - now - TimeSpan.FromMinutes(15))
-						                     .TotalMilliseconds + 1000);
+						currentTime = string.Format("Now - {0}", FormatTime(currentBooking.EndTime));
+						refreshInterval = (long)(currentBooking.EndTime -
+						                         IcdEnvironment.GetLocalTime() -
+						                         TimeSpan.FromMinutes(15)).TotalMilliseconds + 1000;
 					}
 					else
 					{
-						view.SetCurrentBookingTime(" ");
-						m_RefreshTimer.Reset(DEFAULT_REFRESH_TIME);
+						bool allDay = (currentBooking.EndTime - currentBooking.StartTime).TotalHours >= 23;
+
+						currentIcon = GetBookingIcon(currentBooking);
+						currentSubject = currentBooking.IsPrivate ? "Private Meeting" : currentBooking.MeetingName;
+						currentTime = allDay
+							? "All Day"
+							: string.Format("{0} - {1}", FormatTime(currentBooking.StartTime),
+							                FormatTime(currentBooking.EndTime));
+						currentAvailability = "RESERVED";
+						refreshInterval =
+							(long)(currentBooking.EndTime - IcdEnvironment.GetLocalTime()).TotalMilliseconds +
+							1000;
 					}
 				}
+
+				view.SetCurrentBookingIcon(currentIcon);
+				view.SetCurrentBookingSubject(currentSubject);
+				view.SetCurrentBookingTime(currentTime);
+				view.SetAvailabilityText(currentAvailability);
+
+				// Refresh again when a booking expires
+				m_RefreshTimer.Reset(refreshInterval);
 			}
 			finally
 			{
 				m_RefreshSection.Leave();
+			}
+		}
+
+		private IEnumerable<IBooking> GetUpcomingBookingsAndAvailability()
+		{
+			DateTime now = IcdEnvironment.GetLocalTime();
+			DateTime tomorrow = now.AddDays(1);
+
+			List<IBooking> bookings =
+				m_CalendarControl == null
+					? new List<IBooking>()
+					: m_CalendarControl.GetBookings()
+					                   .Where(b => b.EndTime > now && b.StartTime < tomorrow)
+					                   .OrderBy(b => b.StartTime)
+					                   .ToList();
+
+			int count = 0;
+
+			// Add an empty booking (room available) if there isn't a meeting for at least 15 minutes
+			IBooking firstBooking = bookings.FirstOrDefault();
+			if (firstBooking != null && firstBooking.StartTime - now > TimeSpan.FromMinutes(15))
+			{
+				yield return new EmptyBooking
+				{
+					StartTime = DateTime.MinValue,
+					EndTime = firstBooking.StartTime
+				};
+				count++;
+			}
+
+			// Build list of bookings and available times
+			for (int i = 0; i < bookings.Count && count < 7; i++)
+			{
+				yield return bookings[i];
+				count++;
+
+				// If we've run out of bookings we add an available slot to the end
+				if (i + 1 >= bookings.Count)
+				{
+					yield return new EmptyBooking
+					{
+						StartTime = bookings[i].EndTime,
+						EndTime = DateTime.MaxValue
+					};
+					count++;
+				}
+				// If there are at least 30 minutes to the next booking insert an available slot
+				else if (bookings[i + 1].StartTime - bookings[i].EndTime >= TimeSpan.FromMinutes(30))
+				{
+					yield return new EmptyBooking
+					{
+						StartTime = bookings[i].EndTime,
+						EndTime = bookings[i + 1].StartTime
+					};
+					count++;
+				}
 			}
 		}
 

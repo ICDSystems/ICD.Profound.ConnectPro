@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
  - Privacy mute is turned off when no web conferencing sources are routed and not in a conference
+ - All-day bookings are displayed as "All Day" instead of 12:00a to 12:00a
 
 ## [11.0.0] - 2019-11-20
 ### Added

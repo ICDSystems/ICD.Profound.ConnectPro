@@ -109,9 +109,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
+				bool allDay = (m_Booking.EndTime - m_Booking.StartTime).TotalHours >= 23;
+
+				string startTime = allDay ? "All Day" : GetShortTime(m_Booking.StartTime);
+				string endTime = allDay ? "All Day" : GetShortTime(m_Booking.EndTime);
+
 				view.SetBookingIcon(m_Icon);
-				view.SetStartTimeLabel(GetShortTime(m_Booking.StartTime));
-				view.SetEndTimeLabel(GetShortTime(m_Booking.EndTime));
+				view.SetStartTimeLabel(startTime);
+				view.SetEndTimeLabel(endTime);
 				view.SetSelected(m_Selected);
 				view.SetPresenterNameLabel(m_Booking.OrganizerName);
 
@@ -138,7 +143,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				return null;
 
 			IEnumerable<IConferenceDeviceControl> dialers =
-				Room == null ? Enumerable.Empty<IConferenceDeviceControl>() : Room.GetControlsRecursive<IConferenceDeviceControl>();
+				Room == null
+					? Enumerable.Empty<IConferenceDeviceControl>()
+					: Room.GetControlsRecursive<IConferenceDeviceControl>();
 
 			switch (ConferencingBookingUtils.GetMeetingType(booking, dialers))
 			{

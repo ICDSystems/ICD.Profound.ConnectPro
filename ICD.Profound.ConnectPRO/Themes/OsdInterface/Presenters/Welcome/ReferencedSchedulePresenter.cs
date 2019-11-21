@@ -39,15 +39,19 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 
 		    try
 		    {
-		        string color = Booking is EmptyBooking ? AVAILABLE_COLOR : RESERVED_COLOR;
+			    bool isRemainingTimePlaceholder = Booking is EmptyBooking;
+			    bool allDay = !isRemainingTimePlaceholder && (Booking.EndTime - Booking.StartTime).TotalHours >= 23;
 
-			    string timeString =
-				    Booking.EndTime == DateTime.MaxValue
-					    ? "Remaining Time"
-					    : string.Format("{0} - {1}", FormatTime(Booking.StartTime), FormatTime(Booking.EndTime));
+				string color = Booking is EmptyBooking ? AVAILABLE_COLOR : RESERVED_COLOR;
 
-		        view.SetTimeLabel(string.Format(TIME_HTML_FORMAT, color, timeString));
+				string timeString =
+					isRemainingTimePlaceholder
+						? "Remaining Time"
+						: allDay
+							? "All Day"
+							: string.Format("{0} - {1}", FormatTime(Booking.StartTime), FormatTime(Booking.EndTime));
 
+				view.SetTimeLabel(string.Format(TIME_HTML_FORMAT, color, timeString));
 		        view.SetSubjectLabel(Booking.IsPrivate ? "Private Meeting" : Booking.MeetingName);
 		    }
 		    finally
