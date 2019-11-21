@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
@@ -25,6 +26,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 	[PresenterBinding(typeof(IWtcCallOutPresenter))]
 	public sealed class WtcCallOutPresenter : AbstractWtcPresenter<IWtcCallOutView>, IWtcCallOutPresenter
 	{
+		private const string DEFAULT_FAIL_MESSAGE = "Call Out Failed.";
+
+		private static readonly Dictionary<eZoomPhoneCallTerminatedReason, string> s_CallOutFailedMessages =
+			new Dictionary<eZoomPhoneCallTerminatedReason, string>
+			{
+				{
+					eZoomPhoneCallTerminatedReason.ByInitAudioDeviceFailed,
+					"This Zoom Room is not configured for placing phone calls."
+				}
+			};
+
 		private readonly KeypadStringBuilder m_StringBuilder;
 		private readonly SafeCriticalSection m_RefreshSection;
 
@@ -134,13 +146,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			RefreshIfVisible();
 		}
 
-		private void ShowCallFailedDialog()
+		private void ShowCallFailedDialog(string message)
 		{
 			// Hide the call out loading spinner.
 			Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView(false);
 
 			// Clear the failed call out string as we show it to the user.
-			string message = string.Format("Call Out to: {0} Failed", m_StringBuilder.Pop());
+			message = string.Format("Call Out to: {0} Failed\n\n{1}", m_StringBuilder.Pop(), message);
 
 			// Hide the error message after 8 seconds.
 			const long timeout = 8 * 1000;
@@ -187,7 +199,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			TraditionalCallComponent callComponent = GetCallComponent(callOut);
 			if (callComponent != null)
-				callComponent.OnCallTerminated += CallComponentOnCallTerminated;
+				callComponent.OnCallFailed += CallComponentOnCallFailed;
 		}
 
 		/// <summary>
@@ -220,7 +232,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			TraditionalCallComponent callComponent = GetCallComponent(callOut);
 			if (callComponent != null)
-				callComponent.OnCallTerminated -= CallComponentOnCallTerminated;
+				callComponent.OnCallFailed -= CallComponentOnCallFailed;
 		}
 
 		private void ControlOnConferenceRemoved(object sender, ConferenceEventArgs args)
@@ -250,23 +262,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			RefreshIfVisible();
 		}
 
-		private void TraditionalControlOnCallOutFailed(object sender, GenericEventArgs<TraditionalZoomPhoneCallInfo> e)
+		private void TraditionalControlOnCallOutFailed(object sender, GenericEventArgs<TraditionalZoomPhoneCallInfo> eventArgs)
 		{
-			ShowCallFailedDialog();
+			ShowCallFailedDialog(DEFAULT_FAIL_MESSAGE);
 		}
 
-		private void CallComponentOnCallTerminated(object sender, GenericEventArgs<TraditionalZoomPhoneCallInfo> e)
+		private void CallComponentOnCallFailed(object sender, GenericEventArgs<PhoneCallTerminated> eventArgs)
 		{
-			switch (e.Data.Reason)
-			{
-				case eZoomPhoneCallTerminatedReason.ByLocal:
-				case eZoomPhoneCallTerminatedReason.ByRemote:
-					break;
-
-				default:
-					ShowCallFailedDialog();
-					break;
-			}
+			string message = s_CallOutFailedMessages.GetDefault(eventArgs.Data.Reason, DEFAULT_FAIL_MESSAGE);
+			ShowCallFailedDialog(message);
 		}
 
 		#endregion
