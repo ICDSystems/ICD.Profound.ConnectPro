@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using ICD.Common.Utils.Timers;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Views;

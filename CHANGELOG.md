@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
  - Showing ConnectPRO version on the settings passcode screen
+ - Added plugin page to the settings menu
 
 ### Changed
  - Reworked camera presenters to allow selection and control from a single page

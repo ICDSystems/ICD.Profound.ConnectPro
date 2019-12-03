@@ -95,6 +95,8 @@
     <Compile Include="Routing\Masking\IMaskedSourceInfo.cs" />
     <Compile Include="Routing\Masking\MaskedSourceInfoFactory.cs" />
     <Compile Include="Routing\Masking\ThinMaskedSourceInfo.cs" />
+    <Compile Include="SettingsTree\About\AboutSettingsNode.cs" />
+    <Compile Include="SettingsTree\About\PluginsSettingsLeaf.cs" />
     <Compile Include="SettingsTree\AbstractSettingsLeaf.cs" />
     <Compile Include="SettingsTree\AbstractSettingsNode.cs" />
     <Compile Include="SettingsTree\AbstractSettingsNodeBase.cs" />
@@ -209,6 +211,8 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmSplashPowerPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IEndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IHeaderPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\About\IReferencedSettingsPluginsPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\About\ISettingsPluginsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\ISettingsPasscodePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IReferencedSchedulePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IStartMeetingPresenter.cs" />
@@ -300,6 +304,8 @@
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmLeaveCallView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmEndMeetingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmSplashPowerView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\Settings\About\IReferencedSettingsPluginsView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\Settings\About\ISettingsPluginsView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\ISettingsPasscodeView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IReferencedScheduleView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IStartMeetingView.cs" />
@@ -396,6 +402,9 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\FloatingActions\FloatingActionCameraPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\FloatingActions\FloatingActionPrivacyMutePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\FloatingActions\FloatingActionVolumePresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Settings\About\ReferencedSettingsPluginsPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Settings\About\ReferencedSettingsPluginsPresenterFactory.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Settings\About\SettingsPluginsPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\SettingsPasscodePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ReferencedSchedulePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ReferencedSchedulePresenterFactory.cs" />
@@ -520,6 +529,10 @@
     <Compile Include="Themes\UserInterface\Views\Common\FloatingActions\FloatingActionVolumeView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\FloatingActions\FloatingActionPrivacyMuteView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\FloatingActions\FloatingActionPrivacyMuteView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Settings\About\ReferencedSettingsPluginsView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Settings\About\ReferencedSettingsPluginsView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Settings\About\SettingsPluginsView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Settings\About\SettingsPluginsView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsPasscodeView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsPasscodeView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\ReferencedScheduleView.cs" />

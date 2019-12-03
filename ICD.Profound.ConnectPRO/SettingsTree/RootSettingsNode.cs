@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ICD.Connect.Settings;
 using ICD.Connect.Settings.Cores;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.SettingsTree.About;
 using ICD.Profound.ConnectPRO.SettingsTree.Administrative;
 using ICD.Profound.ConnectPRO.SettingsTree.Conferencing;
 using ICD.Profound.ConnectPRO.SettingsTree.CUE;
@@ -29,6 +30,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 		/// <returns></returns>
 		protected override IEnumerable<ISettingsNodeBase> BuildChildren()
 		{
+			yield return new AboutSettingsNode();
 			yield return new AdministrativeSettingsNode();
 			yield return new ConferencingSettingsNode();
 			yield return new CueSettingsNode();
