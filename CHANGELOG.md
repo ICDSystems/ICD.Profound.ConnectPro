@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+ - Reworked camera presenters to allow selection and control from a single page
+
 ## [11.1.0] - 2019-12-03
 ### Added
  - Shure Microphones are available for privacy mute when routing a web conferencing source
