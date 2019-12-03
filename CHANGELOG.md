@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [11.1.0] - 2019-12-03
 ### Added
  - Shure Microphones are available for privacy mute when routing a web conferencing source
  - Showing an error message when Zoom fails to place a phone call
