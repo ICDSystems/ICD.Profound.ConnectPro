@@ -1,6 +1,7 @@
 ﻿using System;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -14,9 +15,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 	public sealed class SettingsPasscodePresenter : AbstractUiPresenter<ISettingsPasscodeView>, ISettingsPasscodePresenter
 	{
 		private readonly KeypadStringBuilder m_StringBuilder;
+		private readonly SafeCriticalSection m_RefreshSection;
 
 		private Action<ISettingsPasscodePresenter> m_SuccessCallback; 
 		private bool m_ShowError;
+		private string m_InformationalVersion;
+		private Version m_AssemblyVersion;
+
+		#region Properties
+
+		private Version AssemblyVersion
+		{
+			get { return m_AssemblyVersion ?? (m_AssemblyVersion = GetType().GetAssembly().GetName().Version); }
+		}
+
+		private string InformationalVersion
+		{
+			get
+			{
+				return m_InformationalVersion ?? (m_InformationalVersion = GetType().GetAssembly().GetInformationalVersion());
+			}
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Constructor.
@@ -28,6 +49,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			: base(nav, views, theme)
 		{
 			m_StringBuilder = new KeypadStringBuilder();
+			m_RefreshSection = new SafeCriticalSection();
+
 			m_StringBuilder.OnStringChanged += StringBuilderOnStringChanged;
 		}
 
@@ -39,16 +62,38 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		{
 			base.Refresh(view);
 
-			string label = m_ShowError
-				? "Invalid Passcode"
-				: StringUtils.PasswordFormat(m_StringBuilder.ToString());
+			m_RefreshSection.Enter();
 
-			if (string.IsNullOrEmpty(label))
-				label = "Enter Passcode";
+			try
+			{
+				string passcodeLabel = m_ShowError
+					               ? "Invalid Passcode"
+					               : StringUtils.PasswordFormat(m_StringBuilder.ToString());
 
-			view.SetPasscodeLabel(label);
+				if (string.IsNullOrEmpty(passcodeLabel))
+					passcodeLabel = "Enter Passcode";
+
+				string versionLabel = string.Format("ConnectPRO v{0} ({1})", InformationalVersion, AssemblyVersion);
+
+				view.SetPasscodeLabel(passcodeLabel);
+				view.SetVersionLabel(versionLabel);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
 		}
-		
+
+		/// <summary>
+		/// Shows the view and sets the success callback.
+		/// </summary>
+		/// <param name="successCallback"></param>
+		public void ShowView(Action<ISettingsPasscodePresenter> successCallback)
+		{
+			m_SuccessCallback = successCallback;
+			ShowView(true);
+		}
+
 		/// <summary>
 		/// Called when the string builder is updated.
 		/// </summary>
@@ -57,6 +102,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		private void StringBuilderOnStringChanged(object sender, StringEventArgs eventArgs)
 		{
 			RefreshIfVisible();
+		}
+
+		/// <summary>
+		/// Calls the success callback if it has been set.
+		/// </summary>
+		private void HandleSuccess()
+		{
+			if (m_SuccessCallback != null)
+				m_SuccessCallback(this);
 		}
 
 		#region View Callbacks
@@ -155,15 +209,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		}
 
 		/// <summary>
-		/// Calls the success callback if it has been set.
-		/// </summary>
-		private void HandleSuccess()
-		{
-			if (m_SuccessCallback != null)
-				m_SuccessCallback(this);
-		}
-
-		/// <summary>
 		/// Called when the user presses a keypad button.
 		/// </summary>
 		/// <param name="sender"></param>
@@ -193,15 +238,5 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		}
 
 		#endregion
-
-		/// <summary>
-		/// Shows the view and sets the success callback.
-		/// </summary>
-		/// <param name="successCallback"></param>
-		public void ShowView(Action<ISettingsPasscodePresenter> successCallback)
-		{
-			m_SuccessCallback = successCallback;
-			ShowView(true);
-		}
 	}
 }

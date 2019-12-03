@@ -30,5 +30,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings
 		/// </summary>
 		/// <param name="label"></param>
 		void SetPasscodeLabel(string label);
+
+		/// <summary>
+		/// Sets the label text for the version.
+		/// </summary>
+		/// <param name="version"></param>
+		void SetVersionLabel(string version);
 	}
 }

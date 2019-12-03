@@ -64,6 +64,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 			m_PasscodeLabel.SetLabelTextAtJoin(m_PasscodeLabel.SerialLabelJoins.First(), label);
 		}
 
+		/// <summary>
+		/// Sets the label text for the version.
+		/// </summary>
+		/// <param name="version"></param>
+		public void SetVersionLabel(string version)
+		{
+			m_VersionLabel.SetLabelText(version);
+		}
+
 		#region Control Callbacks
 
 		/// <summary>
