@@ -7,9 +7,9 @@ using ICD.Connect.UI.Controls.Keypads;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Connect.UI.Controls.TextControls;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 {
-	public sealed partial class PasscodeView
+	public sealed partial class SettingsPasscodeView
 	{
 		private VtProSubpage m_VtProSubpage;
 		private VtProFormattedText m_PasscodeLabel;

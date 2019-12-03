@@ -5,12 +5,12 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.EventArguments;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 {
-	[ViewBinding(typeof(IPasscodeView))]
-	public sealed partial class PasscodeView : AbstractUiView, IPasscodeView
+	[ViewBinding(typeof(ISettingsPasscodeView))]
+	public sealed partial class SettingsPasscodeView : AbstractUiView, ISettingsPasscodeView
 	{
 		/// <summary>
 		/// Raised when the user presses the cancel button.
@@ -37,7 +37,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public PasscodeView(ISigInputOutput panel, ConnectProTheme theme)
+		public SettingsPasscodeView(ISigInputOutput panel, ConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

@@ -4,18 +4,18 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings
 {
-	[PresenterBinding(typeof(IPasscodePresenter))]
-	public sealed class PasscodePresenter : AbstractUiPresenter<IPasscodeView>, IPasscodePresenter
+	[PresenterBinding(typeof(ISettingsPasscodePresenter))]
+	public sealed class SettingsPasscodePresenter : AbstractUiPresenter<ISettingsPasscodeView>, ISettingsPasscodePresenter
 	{
 		private readonly KeypadStringBuilder m_StringBuilder;
 
-		private Action<IPasscodePresenter> m_SuccessCallback; 
+		private Action<ISettingsPasscodePresenter> m_SuccessCallback; 
 		private bool m_ShowError;
 
 		/// <summary>
@@ -24,7 +24,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public PasscodePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+		public SettingsPasscodePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_StringBuilder = new KeypadStringBuilder();
@@ -35,7 +35,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// Updates the view.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Refresh(IPasscodeView view)
+		protected override void Refresh(ISettingsPasscodeView view)
 		{
 			base.Refresh(view);
 
@@ -65,7 +65,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// Subscribe to the view events.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Subscribe(IPasscodeView view)
+		protected override void Subscribe(ISettingsPasscodeView view)
 		{
 			base.Subscribe(view);
 
@@ -79,7 +79,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// Unsubscribe from the view events.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Unsubscribe(IPasscodeView view)
+		protected override void Unsubscribe(ISettingsPasscodeView view)
 		{
 			base.Unsubscribe(view);
 
@@ -198,7 +198,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// Shows the view and sets the success callback.
 		/// </summary>
 		/// <param name="successCallback"></param>
-		public void ShowView(Action<IPasscodePresenter> successCallback)
+		public void ShowView(Action<ISettingsPasscodePresenter> successCallback)
 		{
 			m_SuccessCallback = successCallback;
 			ShowView(true);

@@ -343,7 +343,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="eventArgs"></param>
 		private void ViewOnSettingsButtonPressed(object sender, EventArgs eventArgs)
 		{
-			Navigation.LazyLoadPresenter<IPasscodePresenter>().ShowView(PasscodeSuccessCallback);
+			Navigation.LazyLoadPresenter<ISettingsPasscodePresenter>().ShowView(PasscodeSuccessCallback);
 		}
 
 		/// <summary>
@@ -386,9 +386,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// Called when the user successfully enters the passcode.
 		/// </summary>
 		/// <param name="sender"></param>
-		private void PasscodeSuccessCallback(IPasscodePresenter sender)
+		private void PasscodeSuccessCallback(ISettingsPasscodePresenter sender)
 		{
-			Navigation.LazyLoadPresenter<IPasscodePresenter>().ShowView(false);
+			Navigation.LazyLoadPresenter<ISettingsPasscodePresenter>().ShowView(false);
 
 			Navigation.NavigateTo<ISettingsBasePresenter>();
 		}

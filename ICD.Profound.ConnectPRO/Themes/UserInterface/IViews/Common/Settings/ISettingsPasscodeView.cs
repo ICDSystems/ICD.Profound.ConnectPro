@@ -1,9 +1,9 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings
 {
-	public interface IPasscodeView : IUiView
+	public interface ISettingsPasscodeView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses the cancel button.
