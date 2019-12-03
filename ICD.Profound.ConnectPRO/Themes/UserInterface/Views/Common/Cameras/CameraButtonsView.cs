@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
@@ -13,8 +15,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 		/// <summary>
 		/// Raised when one of the camera configuration buttons are pressed (Control, Active, or Layout).
 		/// </summary>
-		public event EventHandler<UShortEventArgs> OnCameraConfigurationButtonPressed;
+		public event EventHandler<UShortEventArgs> OnButtonPressed;
 
+		/// <summary>
+		/// Raised when the user presses the close button.
+		/// </summary>
 		public event EventHandler OnCloseButtonPressed;
 
 		/// <summary>
@@ -32,20 +37,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 		/// </summary>
 		public override void Dispose()
 		{
-			OnCameraConfigurationButtonPressed = null;
+			OnButtonPressed = null;
 			OnCloseButtonPressed = null;
 
 			base.Dispose();
 		}
+
+		#region Methods
 
 		/// <summary>
 		/// Sets the selected state of a camera configuration button.
 		/// </summary>
 		/// <param name="index"></param>
 		/// <param name="selected"></param>
-		public void SetCameraConfigurationButtonSelected(ushort index, bool selected)
+		public void SetButtonSelected(ushort index, bool selected)
 		{
-			m_CameraConfigurationButtonList.SetItemSelected(index, selected);
+			m_ButtonList.SetItemSelected(index, selected);
 		}
 
 		/// <summary>
@@ -53,10 +60,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 		/// </summary>
 		/// <param name="index"></param>
 		/// <param name="visible"></param>
-		public void SetCameraConfigurationButtonVisible(ushort index, bool visible)
+		public void SetButtonVisible(ushort index, bool visible)
 		{
-			m_CameraConfigurationButtonList.SetItemVisible(index, visible);
+			m_ButtonList.SetItemVisible(index, visible);
 		}
+
+		/// <summary>
+		/// Sets the labels for the buttons.
+		/// </summary>
+		/// <param name="buttons"></param>
+		public void SetButtons(IEnumerable<string> buttons)
+		{
+			m_ButtonList.SetItemLabels(buttons.ToArray());
+		}
+
+		#endregion
+
+		#region Control Callbacks
 
 		/// <summary>
 		/// Subscribes to the view controls.
@@ -65,7 +85,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 		{
 			base.SubscribeControls();
 
-			m_CameraConfigurationButtonList.OnButtonClicked += CameraConfigurationButtonListOnButtonClicked;
+			m_ButtonList.OnButtonClicked += ButtonListOnButtonClicked;
 			m_CloseButton.OnPressed += CloseButtonOnPressed;
 		}
 
@@ -76,18 +96,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 		{
 			base.UnsubscribeControls();
 
-			m_CameraConfigurationButtonList.OnButtonClicked -= CameraConfigurationButtonListOnButtonClicked;
+			m_ButtonList.OnButtonClicked -= ButtonListOnButtonClicked;
 			m_CloseButton.OnPressed -= CloseButtonOnPressed;
 		}
 
-		private void CameraConfigurationButtonListOnButtonClicked(object sender, UShortEventArgs e)
+		private void ButtonListOnButtonClicked(object sender, UShortEventArgs e)
 		{
-			OnCameraConfigurationButtonPressed.Raise(this, new UShortEventArgs(e.Data));
+			OnButtonPressed.Raise(this, new UShortEventArgs(e.Data));
 		}
 
 		private void CloseButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnCloseButtonPressed.Raise(this);
 		}
+
+		#endregion
 	}
 }

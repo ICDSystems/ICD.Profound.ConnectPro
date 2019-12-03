@@ -14,7 +14,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Camera
 		void SetActiveConferenceControl([CanBeNull] IConferenceDeviceControl value);
 
 		/// <summary>
-		/// Returns true if any of the child features (layout, active camera, etc) are currently available.
+		/// Returns true if any of the child features (layout, etc) are currently available.
 		/// </summary>
 		bool AnyFeaturesAvailable { get; }
 	}

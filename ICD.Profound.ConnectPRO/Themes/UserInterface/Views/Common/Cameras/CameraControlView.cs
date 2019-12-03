@@ -27,6 +27,35 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 		public event EventHandler<UShortEventArgs> OnCameraButtonPressed;
 
 		/// <summary>
+		/// Sets the enabled state of the directional buttons.
+		/// </summary>
+		/// <param name="enabled"></param>
+		public void SetDPadButtonsEnabled(bool enabled)
+		{
+			m_DPad.Enable(enabled);
+		}
+
+		/// <summary>
+		/// Sets the enabled state of the preset buttons.
+		/// </summary>
+		/// <param name="enabled"></param>
+		public void SetPresetButtonsEnabled(bool enabled)
+		{
+			// Preset buttons share the same enable join.
+			m_PresetButton1.Enable(enabled);
+		}
+
+		/// <summary>
+		/// Sets the enabled state of the zoom buttons.
+		/// </summary>
+		/// <param name="enabled"></param>
+		public void SetZoomButtonsEnabled(bool enabled)
+		{
+			// Zoom buttons share the same enable join.
+			m_ZoomInButton.Enable(enabled);
+		}
+
+		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="panel"></param>

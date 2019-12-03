@@ -201,7 +201,6 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IMenuRouteSummaryPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IReferencedDisplayPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IReferencedRouteListItemPresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\Common\Cameras\ICameraActivePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Cameras\ICameraButtonsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Cameras\ICameraControlPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Cameras\ICameraLayoutPresenter.cs" />
@@ -295,7 +294,6 @@
     <Compile Include="Themes\UserInterface\IViews\Common\Displays\IMenuRouteSummaryView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Displays\IReferencedDisplayView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Displays\IReferencedRouteListItemView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\Common\Cameras\ICameraActiveView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Cameras\ICameraButtonsView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Cameras\ICameraControlView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Cameras\ICameraLayoutView.cs" />
@@ -375,7 +373,6 @@
     <Compile Include="Themes\UserInterface\Presenters\AbstractUiListItemFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AbstractUiPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\AudioConference\AtcBasePresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\Common\Cameras\CameraActivePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Cameras\CameraButtonsPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Cameras\CameraControlPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Cameras\CameraLayoutPresenter.cs" />
@@ -486,8 +483,6 @@
     <Compile Include="Themes\UserInterface\Views\AbstractUiView.cs" />
     <Compile Include="Themes\UserInterface\Views\AudioConference\AtcBaseView.cs" />
     <Compile Include="Themes\UserInterface\Views\AudioConference\AtcBaseView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\Common\Cameras\CameraActiveView.cs" />
-    <Compile Include="Themes\UserInterface\Views\Common\Cameras\CameraActiveView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Cameras\CameraButtonsView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Cameras\CameraButtonsView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Cameras\CameraControlView.cs" />

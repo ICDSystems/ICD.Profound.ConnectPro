@@ -42,21 +42,27 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 				DigitalVisibilityJoin = 137
 			};
 
-			m_DPad = new VtProDPad(620, panel as IPanelDevice, m_Subpage);
+			m_DPad = new VtProDPad(620, panel as IPanelDevice, m_Subpage)
+			{
+				DigitalEnableJoin = 625
+			};
 
 			m_ZoomInButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 621
+				DigitalPressJoin = 621,
+				DigitalEnableJoin = 624
 			};
 
 			m_ZoomOutButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 622
+				DigitalPressJoin = 622,
+				DigitalEnableJoin = 624
 			};
 
 			m_PresetButton1 = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 631,
+				DigitalEnableJoin = 626,
 				IndirectTextJoin = 631,
 				HoldDuration = PRESET_HOLD_MILLISECONDS
 			};
@@ -64,6 +70,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 			m_PresetButton2 = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 632,
+				DigitalEnableJoin = 626,
 				IndirectTextJoin = 632,
 				HoldDuration = PRESET_HOLD_MILLISECONDS
 			};
@@ -71,6 +78,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 			m_PresetButton3 = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 633,
+				DigitalEnableJoin = 626,
 				IndirectTextJoin = 633,
 				HoldDuration = PRESET_HOLD_MILLISECONDS
 			};
@@ -78,6 +86,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 			m_PresetButton4 = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 634,
+				DigitalEnableJoin = 626,
 				IndirectTextJoin = 634,
 				HoldDuration = PRESET_HOLD_MILLISECONDS
 			};
@@ -85,6 +94,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 			m_PresetButton5 = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 635,
+				DigitalEnableJoin = 626,
 				IndirectTextJoin = 635,
 				HoldDuration = PRESET_HOLD_MILLISECONDS
 			};

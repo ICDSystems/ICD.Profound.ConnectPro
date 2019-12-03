@@ -60,6 +60,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Cameras
 
 		#endregion
 
+		#region Methods
+
+		/// <summary>
+		/// Sets the enabled state of the directional buttons.
+		/// </summary>
+		/// <param name="enabled"></param>
+		void SetDPadButtonsEnabled(bool enabled);
+
+		/// <summary>
+		/// Sets the enabled state of the preset buttons.
+		/// </summary>
+		/// <param name="enabled"></param>
+		void SetPresetButtonsEnabled(bool enabled);
+
+		/// <summary>
+		/// Sets the enabled state of the zoom buttons.
+		/// </summary>
+		/// <param name="enabled"></param>
+		void SetZoomButtonsEnabled(bool enabled);
+
 		/// <summary>
 		/// Sets the label for the preset button at the given index.
 		/// </summary>
@@ -85,5 +105,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Cameras
 		/// <param name="index"></param>
 		/// <param name="selected"></param>
 		void SetCameraSelected(ushort index, bool selected);
+
+		#endregion
 	}
 }

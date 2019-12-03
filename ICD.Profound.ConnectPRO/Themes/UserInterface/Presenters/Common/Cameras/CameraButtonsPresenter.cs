@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ICD.Common.Utils;
-using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Layout;
-using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.Zoom.Controls.Conferencing;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
@@ -20,46 +20,31 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 	[PresenterBinding(typeof(ICameraButtonsPresenter))]
 	public sealed class CameraButtonsPresenter : AbstractPopupPresenter<ICameraButtonsView>, ICameraButtonsPresenter
 	{
-		private const ushort CAMERA_ACTIVE_INDEX = 0;
-		private const ushort CAMERA_CONTROL_INDEX = 1;
-		private const ushort CAMERA_LAYOUT_INDEX = 2;
+		private sealed class CameraButton
+		{
+			public string Name { get; set; }
+			public IUiPresenter Presenter { get; set; }
+			public Func<bool> VisibleCallback { get; set; }
 
-		private static readonly BiDictionary<ushort, Type> s_IndexToPresenterType =
-			new BiDictionary<ushort, Type>
-			{
-				{CAMERA_ACTIVE_INDEX, typeof(ICameraActivePresenter)},
-				{CAMERA_CONTROL_INDEX, typeof(ICameraControlPresenter)},
-				{CAMERA_LAYOUT_INDEX, typeof(ICameraLayoutPresenter)}
-			};
+			public bool Selected { get { return Presenter != null && Presenter.IsViewVisible; } }
+			public bool Visible { get { return VisibleCallback != null && VisibleCallback(); } }
+		}
 
-		private readonly ICameraActivePresenter m_CameraActivePresenter;
+		private readonly List<CameraButton> m_Buttons;
 		private readonly ICameraControlPresenter m_CameraControlPresenter;
 		private readonly ICameraLayoutPresenter m_CameraLayoutPresenter;
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private ushort m_Index;
-		private bool m_ZoomMode;
-
 		#region Properties
-
-		private bool CameraActiveVisible { get { return m_CameraActivePresenter.CameraCount > 1; } }
 
 		private bool CameraControlVisible { get { return m_CameraControlPresenter.CameraCount > 0; } }
 
-		private bool CameraLayoutVisible { get { return m_ZoomMode; } }
+		private bool CameraLayoutVisible { get; set; }
 
 		/// <summary>
-		/// Returns true if any of the child features (layout, active camera, etc) are currently available.
+		/// Returns true if any of the child features (layout, etc) are currently available.
 		/// </summary>
-		public bool AnyFeaturesAvailable
-		{
-			get
-			{
-				return CameraActiveVisible ||
-				       CameraControlVisible ||
-				       CameraLayoutVisible;
-			}
-		}
+		public bool AnyFeaturesAvailable { get { return CameraControlVisible || CameraLayoutVisible; } }
 
 		#endregion
 
@@ -74,9 +59,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 		{
 			m_RefreshSection = new SafeCriticalSection();
 
-			m_CameraActivePresenter = Navigation.LazyLoadPresenter<ICameraActivePresenter>();
 			m_CameraControlPresenter = Navigation.LazyLoadPresenter<ICameraControlPresenter>();
 			m_CameraLayoutPresenter = Navigation.LazyLoadPresenter<ICameraLayoutPresenter>();
+
+			m_Buttons = new List<CameraButton>
+			{
+				new CameraButton
+				{
+					Name = "Control Camera",
+					VisibleCallback = () => CameraControlVisible,
+					Presenter = m_CameraControlPresenter
+				},
+				new CameraButton
+				{
+					Name = "Camera Layout",
+					VisibleCallback = () => CameraLayoutVisible,
+					Presenter = m_CameraLayoutPresenter
+				}
+			};
 		}
 
 		/// <summary>
@@ -91,14 +91,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 
 			try
 			{
-				// Button enabled states
-				view.SetCameraConfigurationButtonVisible(CAMERA_ACTIVE_INDEX, CameraActiveVisible);
-				view.SetCameraConfigurationButtonVisible(CAMERA_CONTROL_INDEX, CameraControlVisible);
-				view.SetCameraConfigurationButtonVisible(CAMERA_LAYOUT_INDEX, CameraLayoutVisible);
+				view.SetButtons(m_Buttons.Select(b => b.Name));
 
-				// Button selection states
-				foreach (ushort index in s_IndexToPresenterType.Keys)
-					view.SetCameraConfigurationButtonSelected(index, index == m_Index);
+				for (ushort index = 0; index < m_Buttons.Count; index++)
+				{
+					CameraButton button = m_Buttons[index];
+
+					view.SetButtonSelected(index, button.Selected);
+					view.SetButtonVisible(index, button.Visible);
+				}
 			}
 			finally
 			{
@@ -112,18 +113,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 		/// <param name="value"></param>
 		public void SetActiveConferenceControl(IConferenceDeviceControl value)
 		{
-			m_CameraActivePresenter.SetVtcDestinationControl(value == null
-				                                                 ? null
-				                                                 : value.Parent.Controls
-				                                                        .GetControl<IVideoConferenceRouteControl>());
-
 			m_CameraLayoutPresenter.SetConferenceLayoutControl(value == null
-				                                                    ? null
-				                                                    : value.Parent.Controls
-				                                                           .GetControl<IConferenceLayoutControl
-				                                                           >());
+				                                                   ? null
+				                                                   : value.Parent.Controls
+				                                                          .GetControl<IConferenceLayoutControl
+				                                                          >());
 
-			m_ZoomMode = value is ZoomRoomConferenceControl;
+			CameraLayoutVisible = value is ZoomRoomConferenceControl;
 		}
 
 		#region Private Methods
@@ -134,14 +130,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 		/// <param name="index"></param>
 		private void NavigateTo(ushort index)
 		{
-			if (!s_IndexToPresenterType.ContainsKey(index))
+			CameraButton button;
+			if (!m_Buttons.TryElementAt(index, out button))
 				throw new ArgumentOutOfRangeException("index");
 
-			m_Index = index;
+			NavigateTo(button.Presenter);
+		}
 
-			// Subpage visibility
-			foreach (KeyValuePair<ushort, Type> kvp in s_IndexToPresenterType)
-				Navigation.LazyLoadPresenter(kvp.Value).ShowView(kvp.Key == m_Index);
+		private void NavigateTo(IUiPresenter presenter)
+		{
+			// First hide the other presenters
+			foreach (CameraButton button in m_Buttons.Where(b => b.Presenter != presenter))
+				button.Presenter.ShowView(false);
+
+			presenter.ShowView(true);
 
 			RefreshIfVisible();
 		}
@@ -158,7 +160,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 		{
 			base.Subscribe(view);
 
-			view.OnCameraConfigurationButtonPressed += ViewOnCameraConfigurationButtonPressed;
+			view.OnButtonPressed += ViewOnButtonPressed;
 		}
 
 		/// <summary>
@@ -169,10 +171,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 		{
 			base.Unsubscribe(view);
 
-			view.OnCameraConfigurationButtonPressed -= ViewOnCameraConfigurationButtonPressed;
+			view.OnButtonPressed -= ViewOnButtonPressed;
 		}
 
-		private void ViewOnCameraConfigurationButtonPressed(object sender, UShortEventArgs e)
+		private void ViewOnButtonPressed(object sender, UShortEventArgs e)
 		{
 			NavigateTo(e.Data);
 		}
@@ -189,9 +191,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			if (args.Data)
 				return;
 
-			//Hide the children before hiding the parent.
-			foreach (Type presenterType in s_IndexToPresenterType.Values)
-				Navigation.LazyLoadPresenter(presenterType).ShowView(false);
+			// Hide the children before hiding the parent.
+			foreach (CameraButton button in m_Buttons)
+				button.Presenter.ShowView(false);
 		}
 
 		/// <summary>
@@ -208,11 +210,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 
 			// When the view becomes visible show the child presenter based on enable state.
 			if (CameraControlVisible)
-				NavigateTo(CAMERA_CONTROL_INDEX);
-			else if (CameraActiveVisible)
-				NavigateTo(CAMERA_ACTIVE_INDEX);
-			else if(m_ZoomMode)
-				NavigateTo(CAMERA_LAYOUT_INDEX);
+				NavigateTo(m_CameraControlPresenter);
+			else if (CameraLayoutVisible)
+				NavigateTo(m_CameraLayoutPresenter);
 			else
 				ShowView(false);
 		}

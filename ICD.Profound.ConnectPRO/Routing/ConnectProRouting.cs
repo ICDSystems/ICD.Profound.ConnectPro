@@ -427,7 +427,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				Route(sourceControl, endpoint, eConnectionType.Audio);
 
 				// Start the presentation
-				routingControl.SetCameraInput(input);
+				routingControl.SetCameraInput(input, camera.Id);
 				return;
 			}
 

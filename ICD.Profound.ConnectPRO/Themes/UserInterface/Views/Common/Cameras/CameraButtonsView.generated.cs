@@ -11,7 +11,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 	public sealed partial class CameraButtonsView
 	{
 		private VtProSubpage m_Subpage;
-		private VtProDynamicButtonList m_CameraConfigurationButtonList;
+		private VtProDynamicButtonList m_ButtonList;
 		private VtProButton m_CloseButton;
 
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
@@ -21,7 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 				DigitalVisibilityJoin = 130
 			};
 
-			m_CameraConfigurationButtonList = new VtProDynamicButtonList(9, panel as IPanelDevice, m_Subpage)
+			m_ButtonList = new VtProDynamicButtonList(9, panel as IPanelDevice, m_Subpage)
 			{
 				MaxSize = 3
 			};
@@ -35,7 +35,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 		protected override IEnumerable<IVtProControl> GetChildren()
 		{
 			yield return m_Subpage;
-			yield return m_CameraConfigurationButtonList;
+			yield return m_ButtonList;
 			yield return m_CloseButton;
 		}
 	}

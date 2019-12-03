@@ -26,9 +26,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 		private const long PRESET_STORED_VISIBILITY_MILLISECONDS = 1000;
 
 		private readonly SafeCriticalSection m_RefreshSection;
-
 		private readonly List<ICameraDevice> m_Cameras;
-
 		private readonly Dictionary<int, CameraPreset> m_CameraPresets;
 		private readonly SafeTimer m_PresetStoredTimer;
 
@@ -144,6 +142,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 
 					view.SetPresetButtonLabel(index, name);
 				}
+
+				// Enabled states
+				bool hasPanTilt = m_SelectedCamera != null && m_SelectedCamera.Controls.GetControl<IPanTiltControl>() != null;
+				bool hasZoom = m_SelectedCamera != null && m_SelectedCamera.Controls.GetControl<IZoomControl>() != null;
+				bool hasPresets = presetControl != null;
+
+				view.SetDPadButtonsEnabled(hasPanTilt);
+				view.SetPresetButtonsEnabled(hasPresets);
+				view.SetZoomButtonsEnabled(hasZoom);
 			}
 			finally
 			{
