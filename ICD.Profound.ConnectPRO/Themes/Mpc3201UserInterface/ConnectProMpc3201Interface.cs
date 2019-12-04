@@ -199,12 +199,12 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 				// Volume
 				bool volumeEnabled = !volumeOff && m_VolumeControl is IVolumeRampDeviceControl;
 
-				IVolumePositionDeviceControl volumeControl = m_VolumeControl as IVolumePositionDeviceControl;
+				IVolumePercentDeviceControl volumeControl = m_VolumeControl as IVolumePercentDeviceControl;
 				ushort percent =
 					volumeControl == null
 						? (ushort)0
 						: volumeEnabled
-							  ? (ushort)(MathUtils.Clamp(volumeControl.VolumePosition, 0, 1) * ushort.MaxValue)
+							  ? (ushort)(MathUtils.Clamp(volumeControl.VolumePercent, 0, 1) * ushort.MaxValue)
 							  : (ushort)0;
 
 				// Mute
@@ -252,10 +252,10 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 				volumeControlMute.SetVolumeMute(false);
 
 			IVolumeRampDeviceControl volumeRampControl = m_VolumeControl as IVolumeRampDeviceControl;
-			IVolumePositionDeviceControl volumePositionControl = volumeRampControl as IVolumePositionDeviceControl;
+			IVolumePercentDeviceControl volumePercentControl = volumeRampControl as IVolumePercentDeviceControl;
 
-			if (volumePositionControl != null)
-				volumePositionControl.VolumePositionRampUp(RAMP_PERCENTAGE);
+			if (volumePercentControl != null)
+				volumePercentControl.VolumePercentRampUp(RAMP_PERCENTAGE);
 			else if (volumeRampControl != null)
 				volumeRampControl.VolumeRampUp();
 		}
@@ -273,10 +273,10 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 				volumeControlMute.SetVolumeMute(false);
 
 			IVolumeRampDeviceControl volumeRampControl = m_VolumeControl as IVolumeRampDeviceControl;
-			IVolumePositionDeviceControl volumePositionControl = volumeRampControl as IVolumePositionDeviceControl;
+			IVolumePercentDeviceControl volumePercentControl = volumeRampControl as IVolumePercentDeviceControl;
 
-			if (volumePositionControl != null)
-				volumePositionControl.VolumePositionRampDown(RAMP_PERCENTAGE);
+			if (volumePercentControl != null)
+				volumePercentControl.VolumePercentRampDown(RAMP_PERCENTAGE);
 			else if (volumeRampControl != null)
 				volumeRampControl.VolumeRampDown();
 		}
@@ -652,9 +652,9 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		{
 			volumeControl.OnControlAvailableChanged += VolumeControlOnControlAvailableChanged;
 
-			IVolumePositionDeviceControl volumePositionControl = volumeControl as IVolumePositionDeviceControl;
-			if (volumePositionControl != null)
-				volumePositionControl.OnVolumeChanged += VolumeLevelControlOnVolumeChanged;
+			IVolumePercentDeviceControl volumePercentControl = volumeControl as IVolumePercentDeviceControl;
+			if (volumePercentControl != null)
+				volumePercentControl.OnVolumeChanged += VolumeLevelControlOnVolumeChanged;
 
 			IVolumeMuteFeedbackDeviceControl volumeMuteControl = volumeControl as IVolumeMuteFeedbackDeviceControl;
 			if (volumeMuteControl != null)
@@ -669,9 +669,9 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		{
 			volumeControl.OnControlAvailableChanged -= VolumeControlOnControlAvailableChanged;
 
-			IVolumePositionDeviceControl volumePositionControl = volumeControl as IVolumePositionDeviceControl;
-			if (volumePositionControl != null)
-				volumePositionControl.OnVolumeChanged -= VolumeLevelControlOnVolumeChanged;
+			IVolumePercentDeviceControl volumePercentControl = volumeControl as IVolumePercentDeviceControl;
+			if (volumePercentControl != null)
+				volumePercentControl.OnVolumeChanged -= VolumeLevelControlOnVolumeChanged;
 
 			IVolumeMuteFeedbackDeviceControl volumeMuteControl = volumeControl as IVolumeMuteFeedbackDeviceControl;
 			if (volumeMuteControl != null)
