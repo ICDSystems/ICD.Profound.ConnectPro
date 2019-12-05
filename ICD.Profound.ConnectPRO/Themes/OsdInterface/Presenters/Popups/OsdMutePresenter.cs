@@ -1,5 +1,4 @@
-﻿using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Audio.Controls.Mute;
+﻿using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.EventArguments;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -13,8 +12,9 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups
 	[PresenterBinding(typeof(IOsdMutePresenter))]
 	public sealed class OsdMutePresenter : AbstractOsdPresenter<IOsdMuteView>, IOsdMutePresenter
 	{
-		private IVolumeMuteFeedbackDeviceControl m_SubscribedControl;
-		private IVolumeMuteFeedbackDeviceControl MuteControl
+		private IVolumeDeviceControl m_SubscribedControl;
+
+		private IVolumeDeviceControl VolumeControl
 		{
 			get { return m_SubscribedControl; }
 			set
@@ -22,19 +22,22 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups
 				if (m_SubscribedControl == value)
 					return;
 
-				if(m_SubscribedControl != null)
-					Unsubscribe(m_SubscribedControl);
-
+				Unsubscribe(m_SubscribedControl);
 				m_SubscribedControl = value;
-
-				if (m_SubscribedControl != null)
-					Subscribe(m_SubscribedControl);
+				Subscribe(m_SubscribedControl);
 
 				UpdateVisibility();
 			}
 		}
 
-		public OsdMutePresenter(IOsdNavigationController nav, IOsdViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="nav"></param>
+		/// <param name="views"></param>
+		/// <param name="theme"></param>
+		public OsdMutePresenter(IOsdNavigationController nav, IOsdViewFactory views, ConnectProTheme theme)
+			: base(nav, views, theme)
 		{
 		}
 
@@ -42,33 +45,43 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups
 		{
 			base.SetRoom(room);
 
-			if (room == null)
-				return;
-			
-			MuteControl = room.GetVolumeControl() as IVolumeMuteFeedbackDeviceControl;
+			VolumeControl = room == null ? null : room.GetVolumeControl();
 		}
 
 		private void UpdateVisibility()
 		{
-			if (MuteControl != null && MuteControl.VolumeIsMuted)
+			if (VolumeControl != null && VolumeControl.IsMuted)
 				ShowView(true);
 			else
 				ShowView(false);
 		}
 
-		#region Mute Control Callbacks
+		#region Volume Control Callbacks
 
-		private void Subscribe(IVolumeMuteFeedbackDeviceControl control)
+		/// <summary>
+		/// Subscribe to the control events.
+		/// </summary>
+		/// <param name="control"></param>
+		private void Subscribe(IVolumeDeviceControl control)
 		{
-			control.OnMuteStateChanged += ControlOnMuteStateChanged;
+			control.OnIsMutedChanged += ControlOnMuteStateChanged;
 		}
 
-		private void Unsubscribe(IVolumeMuteFeedbackDeviceControl control)
+		/// <summary>
+		/// Unsubscribe from the control events.
+		/// </summary>
+		/// <param name="control"></param>
+		private void Unsubscribe(IVolumeDeviceControl control)
 		{
-			control.OnMuteStateChanged -= ControlOnMuteStateChanged;
+			control.OnIsMutedChanged -= ControlOnMuteStateChanged;
 		}
 		
-		private void ControlOnMuteStateChanged(object sender, MuteDeviceMuteStateChangedApiEventArgs eventArgs)
+		/// <summary>
+		/// Called when the mute state changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ControlOnMuteStateChanged(object sender, VolumeControlIsMutedChangedApiEventArgs eventArgs)
 		{
 			UpdateVisibility();
 		}

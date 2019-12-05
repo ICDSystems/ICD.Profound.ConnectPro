@@ -9,7 +9,6 @@ using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.API.Commands;
 using ICD.Connect.API.Nodes;
-using ICD.Connect.Audio.Controls.Mute;
 using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Calendaring;
@@ -529,9 +528,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <param name="mute"></param>
 		private void Mute(bool mute)
 		{
-			IVolumeMuteDeviceControl muteControl = GetVolumeControl() as IVolumeMuteDeviceControl;
-			if (muteControl != null)
-				muteControl.SetVolumeMute(mute);
+			IVolumeDeviceControl muteControl = GetVolumeControl();
+			if (muteControl != null && muteControl.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.MuteAssignment))
+				muteControl.SetIsMuted(mute);
 		}
 
 		private void EndAllConferences()

@@ -1,5 +1,4 @@
 ﻿using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Audio.Controls.Mute;
 using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.EventArguments;
 using ICD.Connect.Devices.EventArguments;
@@ -21,7 +20,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		private readonly IVolumePresenter m_Menu;
 
 		private IVolumeDeviceControl m_SubscribedVolumeControl;
-		private IVolumeMuteFeedbackDeviceControl m_SubscribedMuteFeedbackControl;
 
 		/// <summary>
 		/// Constructor.
@@ -52,7 +50,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// <returns></returns>
 		protected override bool GetActive()
 		{
-			return m_SubscribedMuteFeedbackControl != null && m_SubscribedMuteFeedbackControl.VolumeIsMuted;
+			return m_SubscribedVolumeControl != null && m_SubscribedVolumeControl.IsMuted;
 		}
 
 		/// <summary>
@@ -71,22 +69,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		private static IVolumeDeviceControl GetVolumeControl(IConnectProRoom room)
 		{
 			return room == null ? null : room.GetVolumeControl();
-		}
-
-		/// <summary>
-		/// Gets the volume control for the current room.
-		/// </summary>
-		/// <returns></returns>
-		private static IVolumeMuteFeedbackDeviceControl GetMuteFeedbackControl(IConnectProRoom room)
-		{
-			IVolumeDeviceControl volumeControl = GetVolumeControl(room);
-			if (volumeControl == null)
-				return null;
-
-			if (volumeControl is IVolumeMuteFeedbackDeviceControl)
-				return volumeControl as IVolumeMuteFeedbackDeviceControl;
-
-			return volumeControl.Parent.Controls.GetControl<IVolumeMuteFeedbackDeviceControl>();
 		}
 
 		/// <summary>
@@ -144,12 +126,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 				return;
 
 			m_SubscribedVolumeControl = GetVolumeControl(room);
-			if (m_SubscribedVolumeControl != null)
-				m_SubscribedVolumeControl.OnControlAvailableChanged += SubscribedVolumeControlOnControlAvailableChanged;
 
-			m_SubscribedMuteFeedbackControl = GetMuteFeedbackControl(room);
-			if (m_SubscribedMuteFeedbackControl != null)
-				m_SubscribedMuteFeedbackControl.OnMuteStateChanged += SubscribedMuteFeedbackControlOnMuteStateChanged;
+			if (m_SubscribedVolumeControl != null)
+			{
+				m_SubscribedVolumeControl.OnControlAvailableChanged += SubscribedVolumeControlOnControlAvailableChanged;
+				m_SubscribedVolumeControl.OnIsMutedChanged += SubscribedVolumeControlOnIsMutedChanged;
+			}
 
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
 		}
@@ -163,12 +145,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			base.Unsubscribe(room);
 
 			if (m_SubscribedVolumeControl != null)
+			{
 				m_SubscribedVolumeControl.OnControlAvailableChanged -= SubscribedVolumeControlOnControlAvailableChanged;
+				m_SubscribedVolumeControl.OnIsMutedChanged -= SubscribedVolumeControlOnIsMutedChanged;
+			}
 			m_SubscribedVolumeControl = null;
-
-			if (m_SubscribedMuteFeedbackControl != null)
-				m_SubscribedMuteFeedbackControl.OnMuteStateChanged -= SubscribedMuteFeedbackControlOnMuteStateChanged;
-			m_SubscribedMuteFeedbackControl = null;
 
 			if (room != null)
 				room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
@@ -189,8 +170,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			ShowView(eventArgs.Data && m_SubscribedVolumeControl != null);
 		}
 
-		private void SubscribedMuteFeedbackControlOnMuteStateChanged(object sender,
-		                                                             MuteDeviceMuteStateChangedApiEventArgs eventArgs)
+		private void SubscribedVolumeControlOnIsMutedChanged(object sender,
+		                                                             VolumeControlIsMutedChangedApiEventArgs eventArgs)
 		{
 			RefreshIfVisible();
 		}
