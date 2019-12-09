@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
@@ -197,10 +197,14 @@
     <Compile Include="Themes\TouchDisplayInterface\ConnectProTouchDisplayInterfaceFactory.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Background\IBackgroundPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\IConferenceBasePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\IConferencePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\IShareConferencePresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\IStartConferencePresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\DeviceDrawer\IDeviceDrawerPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\DeviceDrawer\IReferencedSourcePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Header\HeaderButtonModel.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Header\IHeaderPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Header\IReferencedHeaderButtonPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\IContextualControlPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\IGenericAlertPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\IGenericLoadingSpinnerPresenter.cs" />
@@ -209,6 +213,7 @@
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\IPopupPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\ITouchDisplayNavigationController.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\ITouchDisplayPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\IVolumePresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Schedule\IReferencedBookingPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Schedule\ISchedulePresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Settings\Administrative\ISettingsClockPresenter.cs" />
@@ -224,16 +229,19 @@
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Settings\ISettingsPromptPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Background\IBackgroundView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\IConferenceBaseView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\IShareConferenceView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\IStartConferenceView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\DeviceDrawer\IDeviceDrawerView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\DeviceDrawer\IReferencedSourceView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Header\IHeaderView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Header\IReferencedHeaderButtonView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\IGenericAlertView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\IGenericLoadingSpinnerView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\IHelloView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\IPopupView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\ITouchDisplayView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\ITouchDisplayViewFactory.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\IVolumeView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Schedule\IReferencedBookingView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Schedule\IScheduleView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Settings\Administrative\ISettingsClockView.cs" />
@@ -251,7 +259,9 @@
     <Compile Include="Themes\TouchDisplayInterface\Presenters\AbstractTouchDisplayListItemFactory.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\AbstractTouchDisplayPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Background\BackgroundPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\AbstractConferencePresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\ConferenceBasePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\ShareConferencePresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\StartConferencePresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\ConnectProTouchDisplayNavigationController.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\DeviceDrawer\DeviceDrawerPresenter.cs" />
@@ -260,6 +270,8 @@
     <Compile Include="Themes\TouchDisplayInterface\Presenters\GenericAlertPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\GenericLoadingSpinnerPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Header\HeaderPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Header\ReferencedHeaderButtonPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Header\ReferencedHeaderButtonPresenterFactory.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\HelloPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Schedule\ReferencedBookingPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Schedule\ReferencedBookingPresenterFactory.cs" />
@@ -275,6 +287,8 @@
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Settings\CUE\SettingsCueBackgroundPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Settings\SettingsBasePresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Settings\SettingsPromptPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\TouchCueIcons.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\VolumePresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\AbstractPopupView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\AbstractTouchDisplayComponentView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\AbstractTouchDisplayView.cs" />
@@ -282,6 +296,8 @@
     <Compile Include="Themes\TouchDisplayInterface\Views\Background\BackgroundView.generated.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Conference\ConferenceBaseView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Conference\ConferenceBaseView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\ShareConferenceView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\ShareConferenceView.generated.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Conference\StartConferenceView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Conference\StartConferenceView.generated.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\ConnectProTouchDisplayViewFactory.cs" />
@@ -295,6 +311,8 @@
     <Compile Include="Themes\TouchDisplayInterface\Views\GenericLoadingSpinnerView.generated.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Header\HeaderView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Header\HeaderView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Header\ReferencedHeaderButtonView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Header\ReferencedHeaderButtonView.generated.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\HelloView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\HelloView.generated.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Schedule\ReferencedBookingView.cs" />
@@ -320,6 +338,8 @@
     <Compile Include="Themes\TouchDisplayInterface\Views\Settings\SettingsBaseView.generated.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Settings\SettingsPromptView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Settings\SettingsPromptView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\VolumeView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\VolumeView.generated.cs" />
     <Compile Include="Themes\UserInterface\ConnectProVisibilityTree.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\AudioConference\IAtcBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Displays\IDisplaysPresenter.cs" />
@@ -844,6 +864,10 @@
     <ProjectReference Include="..\..\ICD.Connect.Displays\ICD.Connect.Displays\ICD.Connect.Displays_SimplSharp.csproj">
       <Project>{FCC7D685-B801-43A5-AEB3-774442027A0D}</Project>
       <Name>ICD.Connect.Displays_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Misc\ICD.Connect.Misc.Vibe\ICD.Connect.Misc.Vibe_SimplSharp.csproj">
+      <Project>{AA57A401-310F-4793-AA61-DD7EB0948B5F}</Project>
+      <Name>ICD.Connect.Misc.Vibe_SimplSharp</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ICD.Connect.Lighting\ICD.Connect.Lighting\ICD.Connect.Lighting_SimplSharp.csproj">
       <Project>{A519C705-5801-44BF-97B1-02DEA016380A}</Project>
