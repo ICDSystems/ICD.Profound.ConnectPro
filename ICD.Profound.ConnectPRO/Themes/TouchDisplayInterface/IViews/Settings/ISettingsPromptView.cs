@@ -13,5 +13,11 @@
 		/// </summary>
 		/// <param name="help"></param>
 		void SetHelpText(string help);
+
+		/// <summary>
+		/// Sets the text for the title label.
+		/// </summary>
+		/// <param name="title"></param>
+		void SetTitle(string title);
 	}
 }

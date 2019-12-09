@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Images;
@@ -10,6 +10,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings
 	public sealed partial class SettingsPromptView
 	{
 		private VtProSubpage m_Subpage;
+		private VtProSimpleLabel m_Title;
 		private VtProDynamicIconObject m_Image;
 		private VtProSimpleLabel m_HelpLabel;
 
@@ -26,6 +27,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings
 				DigitalVisibilityJoin = 1010
 			};
 
+			m_Title = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				IndirectTextJoin = 1010
 			};
 
 			m_Image = new VtProDynamicIconObject(panel, m_Subpage)
@@ -46,6 +50,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings
 		protected override IEnumerable<IVtProControl> GetChildren()
 		{
 			yield return m_Subpage;
+			yield return m_Title;
 			yield return m_Image;
 			yield return m_HelpLabel;
 		}

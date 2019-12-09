@@ -32,7 +32,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 		/// <param name="view"></param>
 		protected override void Refresh(ISettingsPromptView view)
 		{
-			base.Refresh(view);
+			base.Refresh(view); 
 
 			m_RefreshSection.Enter();
 
@@ -40,9 +40,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 			{
 				string help = Node == null ? null : Node.Prompt;
 				string image = Node == null ? null : Node.Image;
+				string title = Node == null ? null : Node.Name;
 
 				view.SetHelpText(help);
 				view.SetImage(image);
+				view.SetTitle(title);
 			}
 			finally
 			{

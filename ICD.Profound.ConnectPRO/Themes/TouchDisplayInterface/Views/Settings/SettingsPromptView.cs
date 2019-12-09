@@ -34,5 +34,14 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings
 		{
 			m_HelpLabel.SetLabelText(help);
 		}
+
+		/// <summary>
+		/// Sets the text for the title label.
+		/// </summary>
+		/// <param name="title"></param>
+		public void SetTitle(string title)
+		{
+			m_Title.SetLabelText(title);
+		}
 	}
 }
