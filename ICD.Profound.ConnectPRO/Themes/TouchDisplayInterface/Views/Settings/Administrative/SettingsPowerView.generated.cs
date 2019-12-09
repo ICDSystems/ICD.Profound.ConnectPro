@@ -42,74 +42,74 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings.Ad
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 142
+				DigitalVisibilityJoin = 1050
 			};
 
-			m_DaysButtons = new VtProTabButton(402, panel as IPanelDevice, m_Subpage);
+			m_DaysButtons = new VtProTabButton(1050, panel as IPanelDevice, m_Subpage);
 
 			m_WakeHourIncrementButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 802
+				DigitalPressJoin = 1051
 			};
 
 			m_WakeHourDecrementButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 803
+				DigitalPressJoin = 1052
 			};
 
 			m_WakeMinuteIncrementButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 804
+				DigitalPressJoin = 1053
 			};
 
 			m_WakeMinuteDecrementButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 805
+				DigitalPressJoin = 1054
 			};
 
 			m_SleepHourIncrementButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 806
+				DigitalPressJoin = 1055
 			};
 
 			m_SleepHourDecrementButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 807
+				DigitalPressJoin = 1056
 			};
 
 			m_SleepMinuteIncrementButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 808
+				DigitalPressJoin = 1057
 			};
 
 			m_SleepMinuteDecrementButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 809
+				DigitalPressJoin = 1058
 			};
 
 			m_WakeHourLabel = new VtProSimpleLabel(panel, m_Subpage)
 			{
-				IndirectTextJoin = 810
+				IndirectTextJoin = 1050
 			};
 
 			m_WakeMinuteLabel = new VtProSimpleLabel(panel, m_Subpage)
 			{
-				IndirectTextJoin = 811
+				IndirectTextJoin = 1051
 			};
 
 			m_SleepHourLabel = new VtProSimpleLabel(panel, m_Subpage)
 			{
-				IndirectTextJoin = 812
+				IndirectTextJoin = 1052
 			};
 
 			m_SleepMinuteLabel = new VtProSimpleLabel(panel, m_Subpage)
 			{
-				IndirectTextJoin = 813
+				IndirectTextJoin = 1053
 			};
 
 			m_EnableToggleButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 406
+				DigitalPressJoin = 1059
 			};
 		}
 

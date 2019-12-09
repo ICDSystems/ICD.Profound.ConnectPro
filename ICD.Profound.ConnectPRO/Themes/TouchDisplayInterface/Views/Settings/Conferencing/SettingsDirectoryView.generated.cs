@@ -23,17 +23,17 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings.Co
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 144
+				DigitalVisibilityJoin = 1060
 			};
 
 			m_HelpLabel = new VtProSimpleLabel(panel, m_Subpage)
 			{
-				IndirectTextJoin = 412
+				IndirectTextJoin = 1060
 			};
 
 			m_ClearCacheButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 816
+				DigitalPressJoin = 1061
 			};
 		}
 

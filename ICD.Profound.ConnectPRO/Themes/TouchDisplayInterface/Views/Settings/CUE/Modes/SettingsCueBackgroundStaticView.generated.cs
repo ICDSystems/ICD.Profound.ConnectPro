@@ -20,7 +20,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings.CU
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 154
+				DigitalVisibilityJoin = 1072
 			};
 		}
 

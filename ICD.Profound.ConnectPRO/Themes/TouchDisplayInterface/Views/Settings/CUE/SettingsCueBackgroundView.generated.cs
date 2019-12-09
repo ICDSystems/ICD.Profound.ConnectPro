@@ -23,14 +23,14 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings.CU
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 153
+				DigitalVisibilityJoin = 1070
 			};
 
-			m_ModeButtons = new VtProTabButton(403, panel as IPanelDevice, m_Subpage);
+			m_ModeButtons = new VtProTabButton(1070, panel as IPanelDevice, m_Subpage);
 
 			m_EnabledToggleButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 407
+				DigitalPressJoin = 1071
 			};
 		}
 

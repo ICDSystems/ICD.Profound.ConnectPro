@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Images;
@@ -23,17 +23,19 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 147
+				DigitalVisibilityJoin = 1010
+			};
+
 			};
 
 			m_Image = new VtProDynamicIconObject(panel, m_Subpage)
 			{
-				DynamicIconSerialJoin = 402
+				DynamicIconSerialJoin = 1011
 			};
 
 			m_HelpLabel = new VtProSimpleLabel(panel, m_Subpage)
 			{
-				IndirectTextJoin = 401
+				IndirectTextJoin = 1012
 			};
 		}
 

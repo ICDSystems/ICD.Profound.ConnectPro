@@ -26,20 +26,20 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings.Ad
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 143
+				DigitalVisibilityJoin = 1040
 			};
 
 			m_InstructionLabel = new VtProSimpleLabel(panel, m_Subpage)
 			{
-				IndirectTextJoin = 408
+				IndirectTextJoin = 1040
 			};
 
-			m_PasscodeLabel = new VtProDynamicButtonList(400, panel as IPanelDevice, m_Subpage)
+			m_PasscodeLabel = new VtProDynamicButtonList(1040, panel as IPanelDevice, m_Subpage)
 			{
 				MaxSize = 4
 			};
 
-			m_Keypad = new VtProSimpleKeypad(401, panel as IPanelDevice, m_Subpage);
+			m_Keypad = new VtProSimpleKeypad(1041, panel as IPanelDevice, m_Subpage);
 		}
 
 		/// <summary>
