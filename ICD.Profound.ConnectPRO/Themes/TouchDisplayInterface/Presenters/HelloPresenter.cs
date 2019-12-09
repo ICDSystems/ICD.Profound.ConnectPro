@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
@@ -8,6 +8,7 @@ using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.Routing;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Conference;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.DeviceDrawer;
@@ -65,7 +66,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 						.OrderBy(b => b.StartTime).FirstOrDefault()
 					: null;
 
-				if (Room == null)
+				if (Room == null || Room.Routing.State.GetSourceRoutedStates().Any(s => s.Value != eSourceState.Inactive))
 					view.SetLabelText(string.Empty);
 				else if (m_ConferencePresenter.IsViewVisible)
 					view.SetLabelText("Your conference is about to begin.");

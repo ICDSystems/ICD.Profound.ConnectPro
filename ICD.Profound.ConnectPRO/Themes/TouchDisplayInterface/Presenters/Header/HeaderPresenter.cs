@@ -12,6 +12,7 @@ using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.DeviceDrawer;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Header;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Settings;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Header;
 
@@ -289,7 +290,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 
 		private void OpenSettings()
 		{
-			// open settings presenter
+			Navigation.NavigateTo<ISettingsBasePresenter>();
 		}
 
 		private void EndMeeting()

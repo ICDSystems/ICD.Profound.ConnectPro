@@ -20,7 +20,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 	[PresenterBinding(typeof(IVolumePresenter))]
 	public sealed class VolumePresenter : AbstractTouchDisplayPresenter<IVolumeView>, IVolumePresenter
 	{
-		private const ushort HIDE_TIME = 20 * 1000;
+		private const ushort HIDE_TIME = 5 * 1000;
 		private const float RAMP_PERCENTAGE = 3.0f / 100.0f;
 
 		private readonly SafeCriticalSection m_RefreshSection;
@@ -235,7 +235,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 			if (e.Data)
 				header.AddLeftButton(m_HeaderVolumeButton);
 			else
+			{
 				header.RemoveLeftButton(m_HeaderVolumeButton);
+				ShowView(false);
+			}
 		}
 
 		#endregion
