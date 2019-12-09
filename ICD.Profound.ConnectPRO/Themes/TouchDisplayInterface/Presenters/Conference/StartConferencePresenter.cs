@@ -6,7 +6,7 @@ using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
-using ICD.Connect.Conferencing.Zoom.Controls;
+using ICD.Connect.Conferencing.Zoom.Controls.Conferencing;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Conference;
