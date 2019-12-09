@@ -47,6 +47,12 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 		public bool Share { get; set; }
 
 		/// <summary>
+		/// Gets/sets the name of this source to be displayed on the Cue.
+		/// Only unique names are displayed
+		/// </summary>
+		public string CueName { get; set; }
+
+		/// <summary>
 		/// Gets/sets the type of control to show when selecting the source in the UI.
 		/// </summary>
 		public eControlOverride ControlOverride { get; set; }
@@ -65,6 +71,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 
 			Icon = null;
 			Share = false;
+			CueName = null;
 			ControlOverride = eControlOverride.Default;
 			ConferenceOverride = eConferenceOverride.None;
 		}
@@ -79,6 +86,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 
 			settings.Icon = Icon;
 			settings.Share = Share;
+			settings.CueName = CueName;
 			settings.ControlOverride = ControlOverride;
 			settings.ConferenceOverride = ConferenceOverride;
 		}
@@ -94,6 +102,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 
 			Icon = settings.Icon;
 			Share = settings.Share;
+			CueName = settings.CueName;
 			ControlOverride = settings.ControlOverride;
 			ConferenceOverride = settings.ConferenceOverride;
 		}

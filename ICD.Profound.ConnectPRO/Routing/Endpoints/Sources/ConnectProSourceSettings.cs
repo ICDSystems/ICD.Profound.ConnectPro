@@ -9,6 +9,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 	{
 		private const string ICON_ELEMENT = "Icon";
 		private const string SHARE_ELEMENT = "Share";
+		private const string CUE_NAME_ELEMENT = "CueName";
 		private const string CONTROL_OVERRIDE_ELEMENT = "ControlOverride";
 		private const string CONFERENCE_OVERRIDE_ELEMENT = "ConferenceOverride";
 
@@ -23,6 +24,12 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 		/// Gets/sets if the source can be shared.
 		/// </summary>
 		public bool Share { get; set; }
+
+		/// <summary>
+		/// Gets/sets the name of this source to be displayed on the Cue.
+		/// Only unique names are displayed
+		/// </summary>
+		public string CueName { get; set; }
 
 		/// <summary>
 		/// Gets/sets the type of control to show when selecting the source in the UI.
@@ -46,6 +53,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 
 			writer.WriteElementString(ICON_ELEMENT, Icon);
 			writer.WriteElementString(SHARE_ELEMENT, IcdXmlConvert.ToString(Share));
+			writer.WriteElementString(CUE_NAME_ELEMENT, CueName);
 			writer.WriteElementString(CONTROL_OVERRIDE_ELEMENT, IcdXmlConvert.ToString(ControlOverride));
 			writer.WriteElementString(CONFERENCE_OVERRIDE_ELEMENT, IcdXmlConvert.ToString(ConferenceOverride));
 		}
@@ -60,6 +68,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 
 			Icon = XmlUtils.TryReadChildElementContentAsString(xml, ICON_ELEMENT);
 			Share = XmlUtils.TryReadChildElementContentAsBoolean(xml, SHARE_ELEMENT) ?? false;
+			CueName = XmlUtils.TryReadChildElementContentAsString(xml, CUE_NAME_ELEMENT);
 			ControlOverride = XmlUtils.TryReadChildElementContentAsEnum<eControlOverride>(xml, CONTROL_OVERRIDE_ELEMENT, true) ??
 			              eControlOverride.Default;
 			ConferenceOverride =
