@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Linq;
 using ICD.Common.Utils;
+using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Routing.EventArguments;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.Routing;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Background;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews;
@@ -38,7 +40,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Backgr
 			m_RefreshSection.Enter();
 			try
 			{
-				if (Room != null && Room.Routing.State.GetRealActiveVideoSources().SelectMany(s => s.Value).Any())
+				if (Room != null && Room.IsInMeeting && Room.Routing.State.GetSourceRoutedStates().Any(s => s.Value == eSourceState.Active))
 					view.SetBackgroundMode(eTouchCueBackgroundMode.HdmiInput);
 				else
 					view.SetBackgroundMode(ConvertCueBackgroundMode(Theme.CueBackground));
