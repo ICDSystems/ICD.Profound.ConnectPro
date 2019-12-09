@@ -37,7 +37,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Sources
 			{
 				ConnectProSource proSource = source as ConnectProSource;
 
-				string name = source == null ? string.Empty : source.Name;
+				string name = proSource == null ? string.Empty : proSource.CueName ?? source.Name;
 				string description = proSource == null ? string.Empty : proSource.Description;
 				string icon = proSource == null ? string.Empty : proSource.Icon;
 
