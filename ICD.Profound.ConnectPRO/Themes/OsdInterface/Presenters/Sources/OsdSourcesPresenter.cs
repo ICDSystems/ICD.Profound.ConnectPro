@@ -65,7 +65,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Sources
 			           .Distinct(s =>
 			                     {
 				                     ConnectProSource source = s as ConnectProSource;
-				                     return source == null ? null : source.Icon;
+				                     return source == null ? null : source.CueNameOrIcon;
 			                     });
 		}
 	}
