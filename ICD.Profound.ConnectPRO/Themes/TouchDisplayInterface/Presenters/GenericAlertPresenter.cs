@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Timers;

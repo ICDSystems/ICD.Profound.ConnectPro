@@ -112,12 +112,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 			if (presenter == null || presenter.Source == null)
 				return;
 
-			//if (!m_CachedSourceStates.ContainsKey(presenter.Source))
-			//	m_CachedSourceStates[presenter.Source] = eSourceState.Processing;
-			//else
-			//	m_CachedSourceStates[presenter.Source] = CycleSourceState(m_CachedSourceStates[presenter.Source]);
-
-			//TODO uncommment
 			OnSourcePressed.Raise(this, new SourceEventArgs(presenter.Source));
 			RefreshIfVisible();
 		}
