@@ -38,6 +38,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 		private static readonly Dictionary<eControlOverride, Type> s_OverrideToPresenterType =
 			new Dictionary<eControlOverride, Type>
 			{
+				{eControlOverride.WebConference, typeof(IConferenceBasePresenter)}
 			};
 
 		/// <summary>
@@ -339,23 +340,24 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs eventArgs)
 		{
+			UpdateVisibility();
 			if (m_Room != null)
 			{
 				m_Room.Routing.State.ClearProcessingSources();
 				m_Room.Routing.State.ClearMaskedSources();
 			}
-
-			UpdateVisibility();
 		}
 
 		private void UpdateVisibility()
 		{
 			if (Room == null)
 				return;
+			
+			m_NavigationController.LazyLoadPresenter<IBackgroundPresenter>().Refresh();
 
-			if (m_Room.IsInMeeting && m_Room.Routing.State.GetSourceRoutedStates().All(s => s.Value == eSourceState.Inactive))
+			if (ConnectProRoom.IsInMeeting && ConnectProRoom.Routing.State.GetSourceRoutedStates().All(s => s.Value == eSourceState.Inactive))
 				m_NavigationController.NavigateTo<IDeviceDrawerPresenter>();
-			else if (!m_Room.IsInMeeting & m_Room.CalendarControl != null)
+			else if (!ConnectProRoom.IsInMeeting && ConnectProRoom.CalendarControl != null)
 				m_NavigationController.NavigateTo<ISchedulePresenter>();
 
 			m_NavigationController.LazyLoadPresenter<IHelloPresenter>().Refresh();
@@ -414,7 +416,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 		/// Called when the user presses a source in the presenter.
 		/// </summary>
 		/// <param name="sender"></param>
-		/// <param name="source"></param>
+		/// <param name="args"></param>
 		private void SourceSelectPresenterOnSourcePressed(object sender, SourceEventArgs args)
 		{
 			if (args != null && args.Data != null)
