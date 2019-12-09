@@ -12,7 +12,7 @@ using ICD.Profound.ConnectPRO.SettingsTree.Zoom;
 
 namespace ICD.Profound.ConnectPRO.SettingsTree
 {
-	public sealed class RootSettingsNode : AbstractStaticSettingsNode
+	public abstract class AbstractRootSettingsNode : AbstractStaticSettingsNode, IRootSettingsNode
 	{
 		/// <summary>
 		/// If true, the user must be logged in to access this part of the settings
@@ -23,24 +23,10 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 		/// Constructor.
 		/// </summary>
 		/// <param name="room"></param>
-		public RootSettingsNode(IConnectProRoom room)
+		protected AbstractRootSettingsNode(IConnectProRoom room)
 		{
 			Name = "Settings";
 			Room = room;
-		}
-
-		/// <summary>
-		/// Override to initialize child items.
-		/// </summary>
-		/// <returns></returns>
-		protected override IEnumerable<ISettingsNodeBase> BuildChildren()
-		{
-			yield return new AboutSettingsNode();
-			yield return new AdministrativeSettingsNode();
-			yield return new ConferencingSettingsNode();
-			yield return new CueSettingsNode();
-			yield return new RoomCombineSettingsNode();
-			yield return new ZoomSettingsLeaf();
 		}
 
 		/// <summary>
@@ -59,5 +45,10 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 
 			SetDirty(false);
 		}
+	}
+
+	public interface IRootSettingsNode : ISettingsNode
+	{
+		void SaveDirtySettings();
 	}
 }

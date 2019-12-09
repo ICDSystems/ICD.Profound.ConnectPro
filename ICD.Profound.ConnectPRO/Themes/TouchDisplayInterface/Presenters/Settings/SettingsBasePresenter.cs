@@ -23,7 +23,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		[CanBeNull]
-		private RootSettingsNode m_SettingsRoot;
+		private IRootSettingsNode m_SettingsRoot;
 
 		private ISettingsNodeBasePresenter m_CurrentPresenter;
 
@@ -114,7 +114,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 				if (m_SettingsRoot != null)
 					m_SettingsRoot.Dispose();
 
-				m_SettingsRoot = room == null ? null : new RootSettingsNode(room);
+				m_SettingsRoot = room == null ? null : new TouchDisplayRootSettingsNode(room);
 
 				m_MenuPath.Clear();
 				HideCurrentPresenter();
