@@ -12,10 +12,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings
 	public sealed partial class SettingsBaseView
 	{
 		private VtProSubpage m_Subpage;
-		private VtProDynamicButtonList m_ItemList;
-		private VtProButton m_BackButton;
+		private VtProDynamicButtonList m_PrimaryItemList;
+		private VtProDynamicButtonList m_SecondaryItemList;
 		private VtProButton m_CloseButton;
-		private VtProSimpleLabel m_TitleLabel;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -30,25 +29,20 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings
 				DigitalVisibilityJoin = 1000
 			};
 
-			m_ItemList = new VtProDynamicButtonList(652, panel as IPanelDevice, m_Subpage)
+			m_PrimaryItemList = new VtProDynamicButtonList(1000, panel as IPanelDevice, m_Subpage)
 			{
-				MaxSize = 20
+				MaxSize = 50
+			};
+
+			m_SecondaryItemList = new VtProDynamicButtonList(1001, panel as IPanelDevice, m_Subpage)
+			{
+				MaxSize = 50,
+				DigitalVisibilityJoin = 1001
 			};
 
 			m_CloseButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 1001
-			};
-
-			m_BackButton = new VtProButton(panel, m_Subpage)
-			{
-				DigitalPressJoin = 1002,
-				DigitalVisibilityJoin = 1003
-			};
-
-			m_TitleLabel = new VtProSimpleLabel(panel, m_Subpage)
-			{
-				IndirectTextJoin = 1000
+				DigitalPressJoin = 1002
 			};
 		}
 
@@ -59,10 +53,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings
 		protected override IEnumerable<IVtProControl> GetChildren()
 		{
 			yield return m_Subpage;
-			yield return m_ItemList;
+			yield return m_PrimaryItemList;
+			yield return m_SecondaryItemList;
 			yield return m_CloseButton;
-			yield return m_BackButton;
-			yield return m_TitleLabel;
 		}
 	}
 }

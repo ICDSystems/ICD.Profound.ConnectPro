@@ -57,6 +57,20 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 			}
 		}
 
+		/// <summary>
+		/// Gets the parent settings node item.
+		/// </summary>
+		[CanBeNull]
+		private ISettingsNode ParentParentNode
+		{
+			get
+			{
+				return m_MenuPath.Count <= 2
+					? null
+					: m_MenuPath[m_MenuPath.Count - 3] as ISettingsNode;
+			}
+		}
+
 		#endregion
 
 		/// <summary>
@@ -128,29 +142,43 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 
 			try
 			{
-				// Show the back button
-				view.SetBackButtonVisible(ParentNode != null);
+				if (CurrentNode == null)
+					return;
 
-				// Set the title
-				ISettingsNode currentOrParentNode = CurrentNode as ISettingsNode ?? ParentNode;
-				string title = currentOrParentNode == null ? null : currentOrParentNode.Name;
-				view.SetTitle(title);
+				ISettingsNode primaryNode = ParentNode != null
+					? ParentParentNode != null || CurrentNode is ISettingsLeaf 
+						? ParentParentNode
+						: ParentNode
+					: CurrentNode as ISettingsNode;
 
-				// Populate the buttons
-				ISettingsNodeBase[] children = new ISettingsNodeBase[0];
-
-				if (CurrentNode is ISettingsLeaf && ParentNode != null)
-					children = ParentNode.GetChildren().ToArray();
-				else if (CurrentNode is ISettingsNode)
-					children = (CurrentNode as ISettingsNode).GetChildren().ToArray();
-
-				IEnumerable<KeyValuePair<string, string>> namesAndIcons = children.Select(c => GetNameAndIcon(c));
-
-				view.SetButtonLabels(namesAndIcons);
-				for (ushort index = 0; index < children.Length; index++)
+				ISettingsNode secondaryNode = ParentNode != null 
+					? ParentParentNode != null && CurrentNode is ISettingsLeaf 
+						? ParentNode 
+						: CurrentNode as ISettingsNode 
+					: null;
+				
+				view.SetSecondaryButtonsVisibility(secondaryNode != null);
+				if (secondaryNode != null)
 				{
-					view.SetButtonVisible(index, children[index].Visible);
-					view.SetButtonSelected(index, children[index] == CurrentNode);
+					ISettingsNodeBase[] secondaryChildren = secondaryNode.GetChildren().ToArray();
+					IEnumerable<KeyValuePair<string, string>> secondaryNamesAndIcons =
+						secondaryChildren.Select(c => GetNameAndIcon(c));
+					view.SetSecondaryButtonLabels(secondaryNamesAndIcons);
+					for (ushort index = 0; index < secondaryChildren.Length; index++)
+					{
+						view.SetSecondaryButtonVisible(index, secondaryChildren[index].Visible);
+						view.SetSecondaryButtonSelected(index, secondaryChildren[index] == CurrentNode);
+					}
+				}
+
+				ISettingsNodeBase[] primaryChildren = primaryNode.GetChildren().ToArray();
+				IEnumerable<KeyValuePair<string, string>> primaryNamesAndIcons =
+					primaryChildren.Select(c => GetNameAndIcon(c));
+				view.SetPrimaryButtonLabels(primaryNamesAndIcons);
+				for (ushort index = 0; index < primaryChildren.Length; index++)
+				{
+					view.SetPrimaryButtonVisible(index, primaryChildren[index].Visible);
+					view.SetPrimaryButtonSelected(index, primaryChildren[index] == CurrentNode);
 				}
 			}
 			finally
@@ -166,7 +194,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 		private static KeyValuePair<string, string> GetNameAndIcon(ISettingsNodeBase node)
 		{
 			string name = node.Name;
-			string icon = SettingsTreeIcons.GetIcon(node.Icon, SettingsTreeIcons.eColor.Gray);
+			string icon = TouchCueIcons.GetIcon(node.Icon);
 
 			return new KeyValuePair<string, string>(name, icon);
 		}
@@ -225,9 +253,14 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 				// Prevents flicker when selecting the current node
 				if (node == CurrentNode)
 					return;
+				
 
 				// Remove any leaves from the list
-				while (m_MenuPath.LastOrDefault() is ISettingsLeaf)
+				while (CurrentNode is ISettingsLeaf)
+					m_MenuPath.RemoveAt(m_MenuPath.Count - 1);
+
+				// Remove nodes until we find the node we want
+				while (CurrentNode is ISettingsNode && !(CurrentNode as ISettingsNode).GetChildren().Contains(node))
 					m_MenuPath.RemoveAt(m_MenuPath.Count - 1);
 
 				// Append the new node to the list
@@ -319,8 +352,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 		{
 			base.Subscribe(view);
 
-			view.OnListItemPressed += ViewOnListItemPressed;
-			view.OnBackButtonPressed += ViewOnBackButtonPressed;
+			view.OnPrimaryListItemPressed += ViewOnPrimaryListItemPressed;
+			view.OnSecondaryListItemPressed += ViewOnSecondaryListItemPressed;
 		}
 
 		/// <summary>
@@ -331,18 +364,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 		{
 			base.Unsubscribe(view);
 
-			view.OnListItemPressed -= ViewOnListItemPressed;
-			view.OnBackButtonPressed -= ViewOnBackButtonPressed;
-		}
-
-		/// <summary>
-		/// Called when the user presses the back button.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="eventArgs"></param>
-		private void ViewOnBackButtonPressed(object sender, EventArgs eventArgs)
-		{
-			Back();
+			view.OnPrimaryListItemPressed -= ViewOnPrimaryListItemPressed;
+			view.OnSecondaryListItemPressed -= ViewOnSecondaryListItemPressed;
 		}
 
 		/// <summary>
@@ -350,13 +373,50 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void ViewOnListItemPressed(object sender, UShortEventArgs eventArgs)
+		private void ViewOnPrimaryListItemPressed(object sender, UShortEventArgs eventArgs)
 		{
 			m_RefreshSection.Enter();
 
 			try
 			{
-				ISettingsNode node = CurrentNode as ISettingsNode ?? ParentNode;
+				ISettingsNode node = ParentNode != null
+					? ParentParentNode != null || CurrentNode is ISettingsLeaf 
+						? ParentParentNode
+						: ParentNode
+					: CurrentNode as ISettingsNode;
+				if (node == null)
+					return;
+
+				ISettingsNodeBase child;
+				if (!node.GetChildren().TryElementAt(eventArgs.Data, out child))
+					return;
+
+				NavigateTo(child);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+
+			RefreshIfVisible();
+		}
+
+		/// <summary>
+		/// Called when the user presses a list item button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ViewOnSecondaryListItemPressed(object sender, UShortEventArgs eventArgs)
+		{
+			m_RefreshSection.Enter();
+
+			try
+			{
+				ISettingsNode node = ParentNode != null 
+					? ParentParentNode != null && CurrentNode is ISettingsLeaf 
+						? ParentNode 
+						: CurrentNode as ISettingsNode 
+					: null;
 				if (node == null)
 					return;
 

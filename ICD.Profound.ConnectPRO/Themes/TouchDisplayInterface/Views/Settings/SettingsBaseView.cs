@@ -21,12 +21,12 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings
 		/// <summary>
 		/// Raised when the user presses one of the settings list items.
 		/// </summary>
-		public event EventHandler<UShortEventArgs> OnListItemPressed;
-
+		public event EventHandler<UShortEventArgs> OnPrimaryListItemPressed;
+		
 		/// <summary>
-		/// Raised when the user presses the back button.
+		/// Raised when the user presses one of the settings list items.
 		/// </summary>
-		public event EventHandler OnBackButtonPressed;
+		public event EventHandler<UShortEventArgs> OnSecondaryListItemPressed;
 
 		/// <summary>
 		/// Constructor.
@@ -44,35 +44,26 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings
 		public override void Dispose()
 		{
 			OnCloseButtonPressed = null;
-			OnListItemPressed = null;
-			OnBackButtonPressed = null;
+			OnPrimaryListItemPressed = null;
 
 			base.Dispose();
 		}
 
 		#region Methods
 
-		/// <summary>
-		/// Sets the selected state for the button at the given index.
-		/// </summary>
-		/// <param name="index"></param>
-		/// <param name="selected"></param>
-		public void SetItemSelected(ushort index, bool selected)
-		{
-			m_ItemList.SetItemSelected(index, selected);
-		}
+		#region Primary List
 
 		/// <summary>
 		/// Sets the labels and icons for the buttons in the list.
 		/// </summary>
 		/// <param name="labelsAndIcons"></param>
-		public void SetButtonLabels(IEnumerable<KeyValuePair<string, string>> labelsAndIcons)
+		public void SetPrimaryButtonLabels(IEnumerable<KeyValuePair<string, string>> labelsAndIcons)
 		{
 			if (labelsAndIcons == null)
 				throw new ArgumentNullException("labelsAndIcons");
 
 			ButtonListItem[] items = labelsAndIcons.Select(kvp => new ButtonListItem(kvp.Key, kvp.Value)).ToArray();
-			m_ItemList.SetItems(items);
+			m_PrimaryItemList.SetItems(items);
 		}
 
 		/// <summary>
@@ -80,9 +71,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings
 		/// </summary>
 		/// <param name="index"></param>
 		/// <param name="visible"></param>
-		public void SetButtonVisible(ushort index, bool visible)
+		public void SetPrimaryButtonVisible(ushort index, bool visible)
 		{
-			m_ItemList.SetItemVisible(index, visible);
+			m_PrimaryItemList.SetItemVisible(index, visible);
 		}
 
 		/// <summary>
@@ -90,28 +81,58 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings
 		/// </summary>
 		/// <param name="index"></param>
 		/// <param name="selected"></param>
-		public void SetButtonSelected(ushort index, bool selected)
+		public void SetPrimaryButtonSelected(ushort index, bool selected)
 		{
-			m_ItemList.SetItemSelected(index, selected);
+			m_PrimaryItemList.SetItemSelected(index, selected);
 		}
 
+		#endregion
+
+		#region Secondary List
+
 		/// <summary>
-		/// Sets the visibility of the back button.
+		/// Sets the labels and icons for the buttons in the list.
 		/// </summary>
 		/// <param name="visible"></param>
-		public void SetBackButtonVisible(bool visible)
+		public void SetSecondaryButtonsVisibility(bool visible)
 		{
-			m_BackButton.Show(visible);
+			m_SecondaryItemList.Show(visible);
 		}
 
 		/// <summary>
-		/// Sets the text for the title label.
+		/// Sets the labels and icons for the buttons in the list.
 		/// </summary>
-		/// <param name="title"></param>
-		public void SetTitle(string title)
+		/// <param name="labelsAndIcons"></param>
+		public void SetSecondaryButtonLabels(IEnumerable<KeyValuePair<string, string>> labelsAndIcons)
 		{
-			m_TitleLabel.SetLabelText(title);
+			if (labelsAndIcons == null)
+				throw new ArgumentNullException("labelsAndIcons");
+
+			ButtonListItem[] items = labelsAndIcons.Select(kvp => new ButtonListItem(kvp.Key, kvp.Value)).ToArray();
+			m_SecondaryItemList.SetItems(items);
 		}
+
+		/// <summary>
+		/// Sets the visibility of the button at the given index.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="visible"></param>
+		public void SetSecondaryButtonVisible(ushort index, bool visible)
+		{
+			m_SecondaryItemList.SetItemVisible(index, visible);
+		}
+
+		/// <summary>
+		/// Sets the selection state of the button at the given index.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="selected"></param>
+		public void SetSecondaryButtonSelected(ushort index, bool selected)
+		{
+			m_SecondaryItemList.SetItemSelected(index, selected);
+		}
+
+		#endregion
 
 		#endregion
 
@@ -125,8 +146,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings
 			base.SubscribeControls();
 
 			m_CloseButton.OnPressed += CloseButtonOnPressed;
-			m_ItemList.OnButtonClicked += ItemListOnButtonClicked;
-			m_BackButton.OnPressed += BackButtonOnPressed;
+			m_PrimaryItemList.OnButtonClicked += PrimaryItemListOnButtonClicked;
+			m_SecondaryItemList.OnButtonClicked += SecondaryItemListOnButtonClicked;
 		}
 
 		/// <summary>
@@ -137,8 +158,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings
 			base.UnsubscribeControls();
 
 			m_CloseButton.OnPressed -= CloseButtonOnPressed;
-			m_ItemList.OnButtonClicked -= ItemListOnButtonClicked;
-			m_BackButton.OnPressed -= BackButtonOnPressed;
+			m_PrimaryItemList.OnButtonClicked -= PrimaryItemListOnButtonClicked;
+			m_SecondaryItemList.OnButtonClicked -= SecondaryItemListOnButtonClicked;
 		}
 
 		/// <summary>
@@ -146,9 +167,19 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void ItemListOnButtonClicked(object sender, UShortEventArgs eventArgs)
+		private void PrimaryItemListOnButtonClicked(object sender, UShortEventArgs eventArgs)
 		{
-			OnListItemPressed.Raise(this, new UShortEventArgs(eventArgs.Data));
+			OnPrimaryListItemPressed.Raise(this, new UShortEventArgs(eventArgs.Data));
+		}
+
+		/// <summary>
+		/// Called when the user presses a list item button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void SecondaryItemListOnButtonClicked(object sender, UShortEventArgs eventArgs)
+		{
+			OnSecondaryListItemPressed.Raise(this, new UShortEventArgs(eventArgs.Data));
 		}
 
 		/// <summary>
@@ -159,16 +190,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings
 		private void CloseButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnCloseButtonPressed.Raise(this);
-		}
-
-		/// <summary>
-		/// Called when the user presses the back button.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="eventArgs"></param>
-		private void BackButtonOnPressed(object sender, EventArgs eventArgs)
-		{
-			OnBackButtonPressed.Raise(this);
 		}
 
 		#endregion

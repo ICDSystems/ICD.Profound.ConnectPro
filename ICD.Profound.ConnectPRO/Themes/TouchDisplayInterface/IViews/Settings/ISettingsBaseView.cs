@@ -9,50 +9,57 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Settings
 		/// <summary>
 		/// Raised when the user presses one of the settings list items.
 		/// </summary>
-		event EventHandler<UShortEventArgs> OnListItemPressed;
+		event EventHandler<UShortEventArgs> OnPrimaryListItemPressed;
 
 		/// <summary>
-		/// Raised when the user presses the back button.
+		/// Raised when the user presses one of the settings list items.
 		/// </summary>
-		event EventHandler OnBackButtonPressed;
-
-		/// <summary>
-		/// Sets the selected state for the button at the given index.
-		/// </summary>
-		/// <param name="index"></param>
-		/// <param name="selected"></param>
-		void SetItemSelected(ushort index, bool selected);
+		event EventHandler<UShortEventArgs> OnSecondaryListItemPressed;
 
 		/// <summary>
 		/// Sets the labels and icons for the buttons in the list.
 		/// </summary>
 		/// <param name="labelsAndIcons"></param>
-		void SetButtonLabels(IEnumerable<KeyValuePair<string, string>> labelsAndIcons);
+		void SetPrimaryButtonLabels(IEnumerable<KeyValuePair<string, string>> labelsAndIcons);
 
 		/// <summary>
 		/// Sets the visibility of the button at the given index.
 		/// </summary>
 		/// <param name="index"></param>
 		/// <param name="visible"></param>
-		void SetButtonVisible(ushort index, bool visible);
+		void SetPrimaryButtonVisible(ushort index, bool visible);
 
 		/// <summary>
 		/// Sets the selection state of the button at the given index.
 		/// </summary>
 		/// <param name="index"></param>
 		/// <param name="selected"></param>
-		void SetButtonSelected(ushort index, bool selected);
+		void SetPrimaryButtonSelected(ushort index, bool selected);
 
 		/// <summary>
-		/// Sets the visibility of the back button.
+		/// Sets the visibility of the second list of buttons.
 		/// </summary>
 		/// <param name="visible"></param>
-		void SetBackButtonVisible(bool visible);
+		void SetSecondaryButtonsVisibility(bool visible);
 
 		/// <summary>
-		/// Sets the text for the title label.
+		/// Sets the labels and icons for the buttons in the list.
 		/// </summary>
-		/// <param name="title"></param>
-		void SetTitle(string title);
+		/// <param name="labelsAndIcons"></param>
+		void SetSecondaryButtonLabels(IEnumerable<KeyValuePair<string, string>> labelsAndIcons);
+
+		/// <summary>
+		/// Sets the visibility of the button at the given index.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="visible"></param>
+		void SetSecondaryButtonVisible(ushort index, bool visible);
+
+		/// <summary>
+		/// Sets the selection state of the button at the given index.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="selected"></param>
+		void SetSecondaryButtonSelected(ushort index, bool selected);
 	}
 }
