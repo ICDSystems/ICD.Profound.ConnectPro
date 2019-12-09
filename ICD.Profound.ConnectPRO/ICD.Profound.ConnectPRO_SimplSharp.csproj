@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
@@ -222,7 +222,6 @@
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Settings\ISettingsBasePresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Settings\ISettingsNodeBasePresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Settings\ISettingsPromptPresenter.cs" />
-    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Settings\RoomCombine\ISettingsRoomCombinePresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Background\IBackgroundView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\IConferenceBaseView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\IStartConferenceView.cs" />
@@ -247,7 +246,6 @@
     <Compile Include="Themes\TouchDisplayInterface\IViews\Settings\CUE\Modes\ISettingsCueBackgroundStaticView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Settings\ISettingsBaseView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Settings\ISettingsPromptView.cs" />
-    <Compile Include="Themes\TouchDisplayInterface\IViews\Settings\RoomCombine\ISettingsRoomCombineView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\AbstractPopupPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\AbstractTouchDisplayComponentPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\AbstractTouchDisplayListItemFactory.cs" />
@@ -275,7 +273,6 @@
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Settings\CUE\Modes\SettingsCueBackgroundSeasonalPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Settings\CUE\Modes\SettingsCueBackgroundStaticPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Settings\CUE\SettingsCueBackgroundPresenter.cs" />
-    <Compile Include="Themes\TouchDisplayInterface\Presenters\Settings\RoomCombine\SettingsRoomCombinePresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Settings\SettingsBasePresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Settings\SettingsPromptPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\AbstractPopupView.cs" />
@@ -319,8 +316,6 @@
     <Compile Include="Themes\TouchDisplayInterface\Views\Settings\CUE\Modes\SettingsCueBackgroundStaticView.generated.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Settings\CUE\SettingsCueBackgroundView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Settings\CUE\SettingsCueBackgroundView.generated.cs" />
-    <Compile Include="Themes\TouchDisplayInterface\Views\Settings\RoomCombine\SettingsRoomCombineView.cs" />
-    <Compile Include="Themes\TouchDisplayInterface\Views\Settings\RoomCombine\SettingsRoomCombineView.generated.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Settings\SettingsBaseView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Settings\SettingsBaseView.generated.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Settings\SettingsPromptView.cs" />
