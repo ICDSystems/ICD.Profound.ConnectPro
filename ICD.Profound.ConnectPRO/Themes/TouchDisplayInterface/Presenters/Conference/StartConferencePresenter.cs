@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.DialContexts;
