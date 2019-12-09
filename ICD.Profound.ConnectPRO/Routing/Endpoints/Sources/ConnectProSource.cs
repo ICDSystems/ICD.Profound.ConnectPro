@@ -63,6 +63,12 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 		public eConferenceOverride ConferenceOverride { get; set; }
 
 		/// <summary>
+		/// Returns the CueName, or the Icon string for cue
+		/// Allows using CueName while preserving backwards compataibility
+		/// </summary>
+		public string CueNameOrIcon { get { return CueName ?? Icon; } }
+
+		/// <summary>
 		/// Override to clear the instance settings.
 		/// </summary>
 		protected override void ClearSettingsFinal()
