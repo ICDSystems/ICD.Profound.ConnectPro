@@ -20,11 +20,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 	public sealed class ConferenceBasePresenter : AbstractPopupPresenter<IConferenceBaseView>, IConferenceBasePresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
-
+		private readonly List<IConferencePresenter> m_ConferencePresenters;
 		private readonly Dictionary<ITouchDisplayPresenter, HeaderButtonModel> m_PresenterButtons;
 		
 		private IConferenceDeviceControl m_SubscribedConferenceControl;
-		private readonly List<IConferencePresenter> m_ConferencePresenters;
 
 		public IConferenceDeviceControl ActiveConferenceControl
 		{
@@ -38,11 +37,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				m_SubscribedConferenceControl = value;
 				Subscribe(m_SubscribedConferenceControl);
 
-				if (m_SubscribedConferenceControl == null)
-					ShowView(false);
-
 				foreach (var presenter in m_ConferencePresenters)
 					presenter.ActiveConferenceControl = m_SubscribedConferenceControl;
+
+				if (m_SubscribedConferenceControl == null)
+					ShowView(false);
 			}
 		}
 
@@ -113,7 +112,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 
 		private void Subscribe(IConferenceDeviceControl control)
 		{
-			// todo
+			// todo - replace start conference with active conference when conference is detected
 		}
 
 		private void Unsubscribe(IConferenceDeviceControl control)
@@ -140,6 +139,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			{
 				foreach (var presenter in m_ConferencePresenters)
 					presenter.ShowView(false);
+
+				if (Room != null)
+					Room.FocusSource = null;
 			}
 			else
 				Navigation.NavigateTo<IStartConferencePresenter>();
