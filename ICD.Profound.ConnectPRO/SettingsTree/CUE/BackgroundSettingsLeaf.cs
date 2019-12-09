@@ -2,6 +2,7 @@
 using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils.Extensions;
+using ICD.Connect.Misc.Vibe.Devices.VibeBoard;
 using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Settings.Cores;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -47,7 +48,8 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 			{
 				return base.Visible &&
 				       Room != null &&
-				       Room.Originators.GetInstancesRecursive<OsdPanelDevice>().Any();
+				       (Room.Originators.GetInstancesRecursive<OsdPanelDevice>().Any() 
+				        || Room.Originators.GetInstancesRecursive<VibeBoard>().Any());
 			}
 		}
 
