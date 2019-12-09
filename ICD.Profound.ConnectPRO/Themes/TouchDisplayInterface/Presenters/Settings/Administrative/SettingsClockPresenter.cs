@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
@@ -56,6 +56,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 
 				int minute = m_Time.Minute;
 
+				view.SetDay(day);
+				view.SetMonth(month);
+				view.SetYear(year);
 				view.Set24HourMode(is24HourMode);
 				view.SetAm(am);
 				view.SetHour(hour);
@@ -79,6 +82,42 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 		}
 
 		#region Private Methods
+		
+		private void AddDaysAndWrap(int hours)
+		{
+			if (Node == null)
+				return;
+
+			m_Time = m_Time.AddDaysAndWrap(hours);
+
+			Node.SetClockTime(m_Time);
+
+			RefreshIfVisible();
+		}
+
+		private void AddMonthsAndWrap(int months)
+		{
+			if (Node == null)
+				return;
+
+			m_Time = m_Time.AddMonthsAndWrap(months);
+
+			Node.SetClockTime(m_Time);
+
+			RefreshIfVisible();
+		}
+
+		private void AddYears(int years)
+		{
+			if (Node == null)
+				return;
+
+			m_Time = m_Time.AddYearsAndWrap(years);
+
+			Node.SetClockTime(m_Time);
+
+			RefreshIfVisible();
+		}
 
 		private void AddMinutesAndWrap(int minutes)
 		{
@@ -154,7 +193,13 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 		protected override void Subscribe(ISettingsClockView view)
 		{
 			base.Subscribe(view);
-
+			
+			view.OnDayDownButtonPressed += ViewOnDayDownButtonPressed;
+			view.OnDayUpButtonPressed += ViewOnDayUpButtonPressed;
+			view.OnMonthDownButtonPressed += ViewOnMonthDownButtonPressed;
+			view.OnMonthUpButtonPressed += ViewOnMonthUpButtonPressed;
+			view.OnYearDownButtonPressed += ViewOnYearDownButtonPressed;
+			view.OnYearUpButtonPressed += ViewOnYearUpButtonPressed;
 			view.On24HourTogglePressed += ViewOn24HourTogglePressed;
 			view.OnAmPmTogglePressed += ViewOnAmPmTogglePressed;
 			view.OnHourDownButtonPressed += ViewOnHourDownButtonPressed;
@@ -190,7 +235,37 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 
 			// When the view is about to be shown we update the current date
 			if (args.Data)
-				m_Time = IcdEnvironment.GetLocalTime().TimeOfDay;
+				m_Time = IcdEnvironment.GetLocalTime();
+		}
+
+		private void ViewOnDayUpButtonPressed(object sender, EventArgs eventArgs)
+		{
+			AddDaysAndWrap(1);
+		}
+
+		private void ViewOnDayDownButtonPressed(object sender, EventArgs eventArgs)
+		{
+			AddDaysAndWrap(-1);
+		}
+
+		private void ViewOnMonthUpButtonPressed(object sender, EventArgs eventArgs)
+		{
+			AddMonthsAndWrap(1);
+		}
+
+		private void ViewOnMonthDownButtonPressed(object sender, EventArgs eventArgs)
+		{
+			AddMonthsAndWrap(-1);
+		}
+
+		private void ViewOnYearUpButtonPressed(object sender, EventArgs eventArgs)
+		{
+			AddYears(1);
+		}
+
+		private void ViewOnYearDownButtonPressed(object sender, EventArgs eventArgs)
+		{
+			AddYears(-1);
 		}
 
 		private void ViewOnMinuteUpButtonPressed(object sender, EventArgs eventArgs)
