@@ -17,7 +17,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private bool m_Am;
-		private TimeSpan m_Time;
+		private DateTime m_Time;
 
 		/// <summary>
 		/// Constructor.
@@ -43,14 +43,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			try
 			{
-				int hour = m_Time.Hours;
+				int hour = m_Time.Hour;
 				bool is24HourMode = Node != null && Node.Is24HourMode;
 				bool am = is24HourMode ? hour < 12 : m_Am;
 				
 				if (!is24HourMode)
 					hour = DateTimeUtils.To12Hour(hour);
 
-				int minute = m_Time.Minutes;
+				int minute = m_Time.Minute;
 
 				view.Set24HourMode(is24HourMode);
 				view.SetAm(am);
@@ -71,7 +71,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		{
 			base.NodeChanged(node);
 
-			m_Time = Node == null ? default(TimeSpan) : Node.ClockTime;
+			m_Time = Node == null ? default(DateTime) : Node.ClockTime;
 		}
 
 		#region Private Methods
@@ -113,7 +113,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			Node.Set24HourMode(hours24Mode);
 
-			SetAmMode(m_Time < TimeSpan.FromHours(12));
+			SetAmMode(m_Time.Hour < 12);
 
 			RefreshIfVisible();
 		}
@@ -128,9 +128,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			// Fix the time back into AM/PM
 			if (!Node.Is24HourMode)
 			{
-				if (m_Am && m_Time.Hours >= 12)
+				if (m_Am && m_Time.Hour >= 12)
 					m_Time -= TimeSpan.FromHours(12);
-				else if (!m_Am && m_Time.Hours < 12)
+				else if (!m_Am && m_Time.Hour < 12)
 					m_Time += TimeSpan.FromHours(12);
 			}
 
@@ -186,7 +186,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			// When the view is about to be shown we update the current date
 			if (args.Data)
-				m_Time = IcdEnvironment.GetLocalTime().TimeOfDay;
+				m_Time = IcdEnvironment.GetLocalTime();
 		}
 
 		private void ViewOnMinuteUpButtonPressed(object sender, EventArgs eventArgs)
