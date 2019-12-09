@@ -9,9 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
  - Showing ConnectPRO version on the settings passcode screen
  - Added plugin page to the settings menu
+ - Added CueName property to ConnectProSource
 
 ### Changed
  - Reworked camera presenters to allow selection and control from a single page
+ - Sources on the Cue are distinct based on CueName (if defined) instead of Icon
+ - Sources on the Cue now shown using CueName if defined, otherwise source name
 
 ## [11.1.0] - 2019-12-03
 ### Added
