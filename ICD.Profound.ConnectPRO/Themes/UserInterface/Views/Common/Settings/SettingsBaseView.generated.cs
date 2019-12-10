@@ -15,7 +15,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 		private VtProDynamicButtonList m_ItemList;
 		private VtProButton m_BackButton;
 		private VtProButton m_CloseButton;
-		private VtProSimpleLabel m_TitleLabel;
+		private VtProFormattedText m_TitleLabel;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -46,9 +46,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 				DigitalVisibilityJoin = 159
 			};
 
-			m_TitleLabel = new VtProSimpleLabel(panel, m_Subpage)
+			m_TitleLabel = new VtProFormattedText(panel, m_Subpage)
 			{
-				IndirectTextJoin = 403
+				SerialLabelJoins = { 403, 407}
 			};
 		}
 

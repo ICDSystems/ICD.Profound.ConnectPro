@@ -20,8 +20,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 	[PresenterBinding(typeof(ISettingsBasePresenter))]
 	public sealed class SettingsBasePresenter : AbstractPopupPresenter<ISettingsBaseView>, ISettingsBasePresenter
 	{
-		private const string SETTINGS_TITLE_SEPERATOR = " > ";
-
 		private readonly List<ISettingsNodeBase> m_MenuPath;
 		private readonly SafeCriticalSection m_RefreshSection;
 
@@ -141,7 +139,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				view.SetBackButtonVisible(backButton);
 
 				// Set the title
-				view.SetTitle(GetTitle());
+				SetTitle(view);
 
 				// Populate the buttons
 				ISettingsNodeBase[] children = new ISettingsNodeBase[0];
@@ -319,12 +317,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView(false);
 		}
 
-		private string GetTitle()
+		private void SetTitle(ISettingsBaseView view)
 		{
 			if (m_MenuPath.Count == 0)
-				return "Settings";
+			{
+				view.SetTitle("Settings", "");
+				return;
+			}
 
-			return string.Join(SETTINGS_TITLE_SEPERATOR, m_MenuPath.Select(s => s.Name).ToArray());
+			//If current node isn't a leaf, show it as parent, no leaf
+			if (CurrentNode is ISettingsLeaf)
+			{
+				if (ParentNode != null)
+					view.SetTitle(ParentNode.Name, CurrentNode.Name);
+			}
+			else if (CurrentNode != null)
+				view.SetTitle(CurrentNode.Name, "");
+			else
+				view.SetTitle("Settings", "");
 		}
 
 		#endregion

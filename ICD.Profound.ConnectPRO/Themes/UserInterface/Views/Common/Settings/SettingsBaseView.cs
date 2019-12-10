@@ -108,10 +108,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 		/// <summary>
 		/// Sets the text for the title label.
 		/// </summary>
-		/// <param name="title"></param>
-		public void SetTitle(string title)
+		/// <param name="parent"></param>
+		/// <param name="leaf"></param>
+		public void SetTitle(string parent, string leaf)
 		{
-			m_TitleLabel.SetLabelText(title);
+			m_TitleLabel.SetLabelTextAtJoin(m_TitleLabel.SerialLabelJoins[0], parent);
+			m_TitleLabel.SetLabelTextAtJoin(m_TitleLabel.SerialLabelJoins[1], leaf);
 		}
 
 		#endregion
