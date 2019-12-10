@@ -20,6 +20,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 	[PresenterBinding(typeof(ISettingsBasePresenter))]
 	public sealed class SettingsBasePresenter : AbstractPopupPresenter<ISettingsBaseView>, ISettingsBasePresenter
 	{
+		private const string SETTINGS_TITLE_SEPERATOR = " > ";
+
 		private readonly List<ISettingsNodeBase> m_MenuPath;
 		private readonly SafeCriticalSection m_RefreshSection;
 
@@ -139,9 +141,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				view.SetBackButtonVisible(backButton);
 
 				// Set the title
-				ISettingsNode currentOrParentNode = CurrentNode as ISettingsNode ?? ParentNode;
-				string title = currentOrParentNode == null ? null : currentOrParentNode.Name;
-				view.SetTitle(title);
+				view.SetTitle(GetTitle());
 
 				// Populate the buttons
 				ISettingsNodeBase[] children = new ISettingsNodeBase[0];
@@ -317,6 +317,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView("Saving Settings", 60 * 1000);
 			m_SettingsRoot.SaveDirtySettings();
 			Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView(false);
+		}
+
+		private string GetTitle()
+		{
+			if (m_MenuPath.Count == 0)
+				return "Settings";
+
+			return string.Join(SETTINGS_TITLE_SEPERATOR, m_MenuPath.Select(s => s.Name).ToArray());
 		}
 
 		#endregion
