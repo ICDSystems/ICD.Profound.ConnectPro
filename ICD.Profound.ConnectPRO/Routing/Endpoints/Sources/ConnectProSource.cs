@@ -66,7 +66,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Endpoints.Sources
 		/// Returns the CueName, or the Icon string for cue
 		/// Allows using CueName while preserving backwards compataibility
 		/// </summary>
-		public string CueNameOrIcon { get { return CueName ?? Icon; } }
+		public string CueNameOrIcon { get { return string.IsNullOrEmpty(CueName) ? Icon : CueName ; } }
 
 		/// <summary>
 		/// Override to clear the instance settings.
