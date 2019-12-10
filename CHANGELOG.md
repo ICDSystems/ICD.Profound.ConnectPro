@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Showing ConnectPRO version on the settings passcode screen
  - Added plugin page to the settings menu
  - Added CueName property to ConnectProSource
+ - Added breadcrumbs to settings title, showing current location
 
 ### Changed
  - Reworked camera presenters to allow selection and control from a single page
