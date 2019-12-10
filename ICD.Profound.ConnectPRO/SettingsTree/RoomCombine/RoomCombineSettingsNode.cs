@@ -4,6 +4,13 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.RoomCombine
 {
 	public sealed class RoomCombineSettingsNode : AbstractStaticSettingsNode
 	{
+
+		/// <summary>
+		/// If true, the user must be logged in to access this part of the settings
+		/// </summary>
+		public override bool RequiresLogin { get { return false; } }
+
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>

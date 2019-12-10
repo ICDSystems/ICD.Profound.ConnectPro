@@ -28,6 +28,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 		private ISettingsNodeBasePresenter m_CurrentPresenter;
 
+		/// <summary>
+		/// Node to show upon successfuly password entry
+		/// </summary>
+		private ISettingsNodeBase m_PasscodeSuccessNode;
+
 		#region Properties
 
 		/// <summary>
@@ -57,6 +62,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 					       : m_MenuPath[m_MenuPath.Count - 2] as ISettingsNode;
 			}
 		}
+
+		/// <summary>
+		/// Tracks if the user has logged into the settings pages
+		/// </summary>
+		public bool IsLoggedIn { get; set; }
 
 		#endregion
 
@@ -231,6 +241,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				if (node == CurrentNode)
 					return;
 
+				// Check if node requires login, and if not logged in, prompt for pin
+				if (node.RequiresLogin && !IsLoggedIn)
+				{
+					m_PasscodeSuccessNode = node;
+					Navigation.LazyLoadPresenter<ISettingsPasscodePresenter>().ShowView(PasscodeSuccessCallback);
+					return;
+				}
+
 				// Remove any leaves from the list
 				while (m_MenuPath.LastOrDefault() is ISettingsLeaf)
 					m_MenuPath.RemoveAt(m_MenuPath.Count - 1);
@@ -337,6 +355,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				view.SetTitle("Settings", "");
 		}
 
+		/// <summary>
+		/// Called when the user successfully enters the passcode.
+		/// </summary>
+		/// <param name="sender"></param>
+		private void PasscodeSuccessCallback(ISettingsPasscodePresenter sender)
+		{
+			IsLoggedIn = true;
+
+			Navigation.LazyLoadPresenter<ISettingsPasscodePresenter>().ShowView(false);
+
+			if (m_PasscodeSuccessNode != null)
+				NavigateTo(m_PasscodeSuccessNode);
+			m_PasscodeSuccessNode = null;
+		}
+
 		#endregion
 
 		#region View Callbacks
@@ -433,7 +466,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			if (args.Data)
 				ShowPresenterForCurrentNode();
 			else
+			{
+				IsLoggedIn = false;
 				SaveDirtySettings();
+			}
 		}
 
 		#endregion

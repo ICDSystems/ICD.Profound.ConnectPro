@@ -26,6 +26,11 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 		bool Visible { get; }
 
 		/// <summary>
+		/// If true, the user must be logged in to access this part of the settings
+		/// </summary>
+		bool RequiresLogin { get; }
+
+		/// <summary>
 		/// Returns true if the system has changed and needs to be saved.
 		/// </summary>
 		bool Dirty { get; }

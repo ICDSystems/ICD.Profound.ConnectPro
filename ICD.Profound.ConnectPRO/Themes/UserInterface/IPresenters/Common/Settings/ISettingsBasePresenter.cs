@@ -5,5 +5,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settin
 {
 	public interface ISettingsBasePresenter : IPopupPresenter<ISettingsBaseView>
 	{
+
+		/// <summary>
+		/// Tracks if the user has logged into the settings pages
+		/// </summary>
+		bool IsLoggedIn { get; set; }
 	}
 }

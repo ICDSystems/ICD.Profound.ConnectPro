@@ -43,6 +43,11 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 		public virtual bool Visible { get { return Room != null; } }
 
 		/// <summary>
+		/// If true, the user must be logged in to access this part of the settings
+		/// </summary>
+		public virtual bool RequiresLogin { get { return true; } }
+
+		/// <summary>
 		/// Returns true if the system has changed and needs to be saved.
 		/// </summary>
 		public abstract bool Dirty { get; }
