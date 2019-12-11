@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using ICD.Connect.Settings;
 using ICD.Connect.Settings.Cores;
 using ICD.Profound.ConnectPRO.Rooms;
-using ICD.Profound.ConnectPRO.SettingsTree.About;
-using ICD.Profound.ConnectPRO.SettingsTree.Administrative;
-using ICD.Profound.ConnectPRO.SettingsTree.Conferencing;
-using ICD.Profound.ConnectPRO.SettingsTree.CUE;
-using ICD.Profound.ConnectPRO.SettingsTree.RoomCombine;
-using ICD.Profound.ConnectPRO.SettingsTree.Zoom;
 
 namespace ICD.Profound.ConnectPRO.SettingsTree
 {
@@ -45,10 +38,5 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 
 			SetDirty(false);
 		}
-	}
-
-	public interface IRootSettingsNode : ISettingsNode
-	{
-		void SaveDirtySettings();
 	}
 }
