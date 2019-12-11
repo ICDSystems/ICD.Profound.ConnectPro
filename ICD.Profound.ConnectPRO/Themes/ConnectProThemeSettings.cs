@@ -12,6 +12,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 		private const string TVPRESETS_ELEMENT = "TvPresets";
 		private const string WEB_CONFERENCING_INSTRUCTIONS_ELEMENT = "WebConferencing";
 		private const string CUE_BACKGROUND_ELEMENT = "CueBackground";
+		private const string CUE_MOTION_ELEMENT = "CueMotion";
 
 		public string Logo { get; set; }
 
@@ -22,6 +23,8 @@ namespace ICD.Profound.ConnectPRO.Themes
 		public string WebConferencingInstructions { get; set; }
 
 		public eCueBackgroundMode CueBackground { get; set; }
+
+		public bool CueMotion { get; set; }
 
 		/// <summary>
 		/// Constructor.
@@ -43,6 +46,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 			writer.WriteElementString(TVPRESETS_ELEMENT, TvPresets);
 			writer.WriteElementString(WEB_CONFERENCING_INSTRUCTIONS_ELEMENT, WebConferencingInstructions);
 			writer.WriteElementString(CUE_BACKGROUND_ELEMENT, IcdXmlConvert.ToString(CueBackground));
+			writer.WriteElementString(CUE_MOTION_ELEMENT, IcdXmlConvert.ToString(CueMotion));
 		}
 
 		/// <summary>
@@ -57,6 +61,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 			TvPresets = XmlUtils.TryReadChildElementContentAsString(xml, TVPRESETS_ELEMENT);
 			WebConferencingInstructions = XmlUtils.TryReadChildElementContentAsString(xml, WEB_CONFERENCING_INSTRUCTIONS_ELEMENT);
 			CueBackground = XmlUtils.TryReadChildElementContentAsEnum<eCueBackgroundMode>(xml, CUE_BACKGROUND_ELEMENT, true) ?? eCueBackgroundMode.Neutral;
+			CueMotion = XmlUtils.TryReadChildElementContentAsBoolean(xml, CUE_MOTION_ELEMENT) ?? false;
 		}
 	}
 

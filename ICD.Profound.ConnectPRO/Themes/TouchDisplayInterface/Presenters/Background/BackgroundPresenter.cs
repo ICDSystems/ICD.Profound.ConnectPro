@@ -43,7 +43,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Backgr
 				if (Room != null && Room.IsInMeeting && Room.Routing.State.GetSourceRoutedStates().Any(s => s.Value == eSourceState.Active))
 					view.SetBackgroundMode(eTouchCueBackgroundMode.HdmiInput);
 				else
+				{
 					view.SetBackgroundMode(ConvertCueBackgroundMode(Theme.CueBackground));
+					view.SetBackgroundMotion(Theme.CueMotion);
+				}
+					
 			}
 			finally
 			{

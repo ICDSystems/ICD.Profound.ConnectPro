@@ -3,6 +3,8 @@
 	public interface IBackgroundView : ITouchDisplayView
 	{
 		void SetBackgroundMode(eTouchCueBackgroundMode mode);
+
+		void SetBackgroundMotion(bool motion);
 	}
 
 	public enum eTouchCueBackgroundMode
@@ -15,7 +17,6 @@
 		/// New background each month, themed for month (US themes)
 		/// </summary>
 		Monthly = 1,
-		HdmiInput = 2,
-		App = 3
+		HdmiInput = 2
 	}
 }

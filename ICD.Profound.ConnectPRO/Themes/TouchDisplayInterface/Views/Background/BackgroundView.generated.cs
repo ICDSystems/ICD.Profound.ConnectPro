@@ -17,7 +17,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Background
 
 			m_Background = new VtProAdvancedButton(panel, m_Subpage)
 			{
-				AnalogModeJoin = 15
+				AnalogModeJoin = 15,
+				DigitalEnableJoin = 15
 			};
 		}
 

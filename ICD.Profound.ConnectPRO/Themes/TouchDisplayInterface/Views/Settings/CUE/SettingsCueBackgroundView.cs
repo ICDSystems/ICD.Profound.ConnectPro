@@ -77,7 +77,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings.CU
 		public void SetToggleSelected(bool selected)
 		{
 			// Enable is default
-			m_EnabledToggleButton.SetSelected(!selected);
+			m_EnabledToggleButton.SetSelected(selected);
 		}
 
 		#endregion

@@ -72,6 +72,11 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 			}
 		}
 
+		/// <summary>
+		/// Gets the background motion.
+		/// </summary>
+		public bool BackgroundMotion { get { return m_Theme.CueMotion; } }
+
 		#endregion
 
 		/// <summary>
@@ -108,6 +113,15 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 		#endregion
 
 		#region Room Callbacks
+
+		/// <summary>
+		/// Sets whether to use video backgrounds (true) or image backgrounds (false).
+		/// </summary>
+		/// <param name="video"></param>
+		public void SetBackgroundMotion(bool motion)
+		{
+			m_Theme.CueMotion = motion;
+		}
 
 		/// <summary>
 		/// Subscribe to the room events.

@@ -15,5 +15,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Background
 		{
 			m_Background.SetMode((ushort) mode);
 		}
+
+		public void SetBackgroundMotion(bool motion)
+		{
+			// just using "enabled" state as a bool
+			m_Background.Enable(motion);
+		}
 	}
 }

@@ -17,27 +17,15 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 	public sealed class SettingsCueBackgroundPresenter : AbstractSettingsNodeBasePresenter<ISettingsCueBackgroundView, BackgroundSettingsLeaf>,
 	                                                     ISettingsCueBackgroundPresenter
 	{
-		private const ushort INDEX_STATIC = 0;
-		private const ushort INDEX_SEASONAL = 1;
-
-		private static readonly BiDictionary<ushort, Type> s_IndexToPresenterType =
-			new BiDictionary<ushort, Type>
+		private static readonly BiDictionary<eCueBackgroundMode, Type> s_BackgroundModeToPresenterType =
+			new BiDictionary<eCueBackgroundMode, Type>
 			{
-				{INDEX_STATIC, typeof(ISettingsCueBackgroundStaticPresenter)},
-				{INDEX_SEASONAL, typeof(ISettingsCueBackgroundSeasonalPresenter)}
-			};
-
-		private static readonly BiDictionary<ushort, eCueBackgroundMode> s_IndexToBackgroundMode =
-			new BiDictionary<ushort, eCueBackgroundMode>
-			{
-				{INDEX_STATIC, eCueBackgroundMode.Neutral},
-				{INDEX_SEASONAL, eCueBackgroundMode.Monthly}
+				{eCueBackgroundMode.Neutral, typeof(ISettingsCueBackgroundStaticPresenter)},
+				{eCueBackgroundMode.Monthly, typeof(ISettingsCueBackgroundSeasonalPresenter)}
 			};
 
 		private readonly SafeCriticalSection m_RefreshSection;
-
-		private ushort m_Index;
-
+		
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -74,11 +62,14 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 
 			try
 			{
-				bool enabled = GetEnabledState();
+				if (Node == null)
+					return;
 
-				view.SetSeasonalButtonSelection(m_Index == INDEX_SEASONAL);
-				view.SetStaticButtonSelected(m_Index == INDEX_STATIC);
-				view.SetToggleSelected(enabled);
+				bool motion = Node.BackgroundMotion;
+
+				view.SetSeasonalButtonSelection(Node.BackgroundMode == eCueBackgroundMode.Monthly);
+				view.SetStaticButtonSelected(Node.BackgroundMode == eCueBackgroundMode.Neutral);
+				view.SetToggleSelected(motion);
 			}
 			finally
 			{
@@ -88,52 +79,29 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 
 		#region Private Methods
 
-		private bool GetEnabledState()
-		{
-			if (Node == null)
-				return false;
-
-			return s_IndexToBackgroundMode.GetValue(m_Index) == Node.BackgroundMode;
-		}
-
 		private void ToggleEnabled()
 		{
 			if (Node == null)
 				return;
 
-			bool enabled = GetEnabledState();
-
-			eCueBackgroundMode mode;
-			
-			if (enabled)
-			{
-				// Disable reverts to neutral mode UNLESS we're already on neutral mode,
-				// in which case we go to seasonal mode
-				mode =
-					m_Index == INDEX_STATIC
-						? eCueBackgroundMode.Monthly
-						: eCueBackgroundMode.Neutral;
-			}
-			else
-			{
-				// Enable is easy
-				mode = s_IndexToBackgroundMode.GetValue(m_Index);
-			}
-
-			Node.SetBackground(mode);
+			Node.SetBackgroundMotion(!Node.BackgroundMotion);
+			RefreshIfVisible();
 		}
 
-		private void NavigateTo(ushort index)
+		private void NavigateTo(eCueBackgroundMode mode)
 		{
-			m_Index = index;
+			if (Node == null)
+				return;
+
+			Node.SetBackground(mode);
 
 			// Hide the old subpage
-			foreach (Type type in s_IndexToPresenterType.Where(kvp => kvp.Key != m_Index).Select(kvp => kvp.Value))
+			foreach (Type type in s_BackgroundModeToPresenterType.Where(kvp => kvp.Key != mode).Select(kvp => kvp.Value))
 				Navigation.LazyLoadPresenter(type).ShowView(false);
 
 			// Show the new subpage
-			Navigation.LazyLoadPresenter(s_IndexToPresenterType.GetValue(m_Index)).ShowView(true);
-
+			Navigation.LazyLoadPresenter(s_BackgroundModeToPresenterType.GetValue(mode)).ShowView(true);
+			
 			RefreshIfVisible();
 		}
 
@@ -206,12 +174,12 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 
 		private void ViewOnStaticButtonPressed(object sender, EventArgs eventArgs)
 		{
-			NavigateTo(INDEX_STATIC);
+			NavigateTo(eCueBackgroundMode.Neutral);
 		}
 
 		private void ViewOnSeasonalButtonPressed(object sender, EventArgs eventArgs)
 		{
-			NavigateTo(INDEX_SEASONAL);
+			NavigateTo(eCueBackgroundMode.Monthly);
 		}
 
 		/// <summary>
@@ -227,7 +195,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 				return;
 
 			// Hide all of the subpages before this presenter is hidden
-			foreach (Type presenterType in s_IndexToPresenterType.Values)
+			foreach (Type presenterType in s_BackgroundModeToPresenterType.Values)
 				Navigation.LazyLoadPresenter(presenterType).ShowView(false);
 		}
 
@@ -242,7 +210,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 
 			// When the view becomes visible show the child presenter
 			if (args.Data)
-				NavigateTo(m_Index);
+				NavigateTo(Node.BackgroundMode);
 		}
 
 		#endregion
