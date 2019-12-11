@@ -217,6 +217,7 @@
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\ITouchDisplayNavigationController.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\ITouchDisplayPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\IVolumePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Notifications\IIncomingCallPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Schedule\IReferencedBookingPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Schedule\ISchedulePresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Settings\Administrative\ISettingsClockPresenter.cs" />
@@ -245,6 +246,7 @@
     <Compile Include="Themes\TouchDisplayInterface\IViews\ITouchDisplayView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\ITouchDisplayViewFactory.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\IVolumeView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Notifications\IIncomingCallView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Schedule\IReferencedBookingView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Schedule\IScheduleView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Settings\Administrative\ISettingsClockView.cs" />
@@ -276,6 +278,7 @@
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Header\ReferencedHeaderButtonPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Header\ReferencedHeaderButtonPresenterFactory.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\HelloPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Notifications\IncomingCallPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Schedule\ReferencedBookingPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Schedule\ReferencedBookingPresenterFactory.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Schedule\SchedulePresenter.cs" />
@@ -318,6 +321,8 @@
     <Compile Include="Themes\TouchDisplayInterface\Views\Header\ReferencedHeaderButtonView.generated.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\HelloView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\HelloView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Notifications\IncomingCallView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Notifications\IncomingCallView.generated.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Schedule\ReferencedBookingView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Schedule\ReferencedBookingView.generated.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Schedule\ScheduleView.cs" />

@@ -26,6 +26,7 @@ using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Backgroun
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Conference;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.DeviceDrawer;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Header;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Notifications;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Schedule;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters;
@@ -100,17 +101,12 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 		/// </summary>
 		private void BuildVisibilityTree()
 		{
-			//// Show "hello" when no notifications are visible
-			//m_DefaultNotification.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdIncomingCallPresenter>());
-			//m_DefaultNotification.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdMutePresenter>());
-
-			//// show "welcome" when no other main page is visible
 			m_MainPageVisibility = new SingleVisibilityNode();
 			foreach (var presenter in m_NavigationController.LazyLoadPresenters<IMainPagePresenter>())
 				m_MainPageVisibility.AddPresenter(presenter);
 			
 			// control their own visibility
-			m_NavigationController.LazyLoadPresenter<IVolumePresenter>();
+			m_NavigationController.LazyLoadPresenter<IIncomingCallPresenter>();
 
 			// always visible
 			m_NavigationController.NavigateTo<IHeaderPresenter>();
