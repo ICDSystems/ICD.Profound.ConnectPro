@@ -52,7 +52,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Conference.
 				DigitalVisibilityJoin = 817
 			};
 
-			m_ParticipantList = new VtProSubpageReferenceList(700, panel as IPanelDevice, m_Subpage)
+			m_ParticipantList = new VtProSubpageReferenceList(810, panel as IPanelDevice, m_Subpage)
 			{
 				MaxSize = 50,
 				DigitalJoinIncrement = 3,
