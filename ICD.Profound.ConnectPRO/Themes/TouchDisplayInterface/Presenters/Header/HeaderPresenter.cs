@@ -110,12 +110,18 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 		
 		public void AddRightButton(HeaderButtonModel button)
 		{
+			if (ContainsRightButton(button))
+				return;
+
 			m_RightButtons.Add(button, null);
 			Refresh();
 		}
 
 		public void RemoveRightButton(HeaderButtonModel button)
 		{
+			if (!ContainsRightButton(button))
+				return;
+
 			m_RightButtons.Remove(button);
 			Refresh();
 		}

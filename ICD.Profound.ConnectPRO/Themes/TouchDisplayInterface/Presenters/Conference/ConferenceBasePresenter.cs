@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Conference;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Conference.ActiveConference;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Conference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Header;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Conference;
@@ -21,9 +25,12 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly List<IConferencePresenter> m_ConferencePresenters;
-		private readonly Dictionary<ITouchDisplayPresenter, HeaderButtonModel> m_PresenterButtons;
+		private readonly Dictionary<HeaderButtonModel, ITouchDisplayPresenter> m_PresenterButtons;
+		private readonly List<HeaderButtonModel> m_InCallButtons;
+		private readonly List<HeaderButtonModel> m_OutOfCallButtons;
 		
 		private IConferenceDeviceControl m_SubscribedConferenceControl;
+		private bool m_IsInCall;
 
 		public IConferenceDeviceControl ActiveConferenceControl
 		{
@@ -36,12 +43,29 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				Unsubscribe(m_SubscribedConferenceControl);
 				m_SubscribedConferenceControl = value;
 				Subscribe(m_SubscribedConferenceControl);
-
+				
 				foreach (var presenter in m_ConferencePresenters)
 					presenter.ActiveConferenceControl = m_SubscribedConferenceControl;
 
 				if (m_SubscribedConferenceControl == null)
 					ShowView(false);
+			}
+		}
+
+		private bool IsInCall
+		{
+			get { return m_IsInCall; }
+			set
+			{
+				if (value == m_IsInCall)
+					return;
+
+				m_IsInCall = value;
+
+				if (m_IsInCall)
+					ShowView(true);
+
+				ShowDefaultPresenter();
 			}
 		}
 
@@ -51,16 +75,56 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		{
 			m_RefreshSection = new SafeCriticalSection();
 			m_ConferencePresenters = Navigation.LazyLoadPresenters<IConferencePresenter>().ToList();
-			var startMeetingButton = new HeaderButtonModel(0, 0, StartMeetingPressed)
+
+			m_PresenterButtons = new Dictionary<HeaderButtonModel, ITouchDisplayPresenter>();
+			m_InCallButtons = new List<HeaderButtonModel>();
+			m_OutOfCallButtons = new List<HeaderButtonModel>();
+			InitHeaderButtons();
+		}
+
+		private void ShowDefaultPresenter()
+		{
+			if (IsInCall && IsViewVisible)
+				Navigation.NavigateTo<IActiveConferencePresenter>();
+			else if (!IsInCall && IsViewVisible)
+				Navigation.NavigateTo<IStartConferencePresenter>();
+		}
+
+		private void InitHeaderButtons()
+		{
+			var startConferenceButton = new HeaderButtonModel(0, 0, PresenterButtonPressed<IStartConferencePresenter>)
 			{
 				Icon = TouchCueIcons.GetIcon("videoconference"),
-				LabelText = "Start Meeting"
+				LabelText = "Start Conference"
 			};
 
-			m_PresenterButtons = new Dictionary<ITouchDisplayPresenter, HeaderButtonModel>()
+			var activeConferenceButton = new HeaderButtonModel(0, 1, PresenterButtonPressed<IActiveConferencePresenter>)
 			{
-				{Navigation.LazyLoadPresenter<IStartConferencePresenter>(), startMeetingButton}
+				Icon = TouchCueIcons.GetIcon("videoconference"),
+				LabelText = "Active Conference"
 			};
+			var contactsButton = new HeaderButtonModel(0, 1, PresenterButtonPressed<IContactListPresenter>)
+			{
+				Icon = TouchCueIcons.GetIcon("contact"),
+				LabelText = "Contacts"
+			};
+			var shareButton = new HeaderButtonModel(0, 2, PresenterButtonPressed<IShareConferencePresenter>)
+			{
+				Icon = TouchCueIcons.GetIcon("share"),
+				LabelText = "Share"
+			};
+			// TODO Record button
+
+			m_PresenterButtons.Add(startConferenceButton, Navigation.LazyLoadPresenter<IStartConferencePresenter>());
+			m_PresenterButtons.Add(activeConferenceButton, Navigation.LazyLoadPresenter<IActiveConferencePresenter>());
+			m_PresenterButtons.Add(contactsButton, Navigation.LazyLoadPresenter<IContactListPresenter>());
+			m_PresenterButtons.Add(shareButton, Navigation.LazyLoadPresenter<IShareConferencePresenter>());
+
+			m_OutOfCallButtons.Add(startConferenceButton);
+
+			m_InCallButtons.Add(activeConferenceButton);
+			m_InCallButtons.Add(contactsButton);
+			m_InCallButtons.Add(shareButton);
 		}
 
 		protected override void Refresh(IConferenceBaseView view)
@@ -72,8 +136,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			{
 				foreach (var presenterButton in m_PresenterButtons)
 				{
-					ITouchDisplayPresenter presenter = presenterButton.Key;
-					HeaderButtonModel button = presenterButton.Value;
+					
+					HeaderButtonModel button = presenterButton.Key;
+					ITouchDisplayPresenter presenter = presenterButton.Value;
 					button.Mode = presenter.IsViewVisible ? eHeaderButtonMode.Close : eHeaderButtonMode.Orange;
 				}
 			}
@@ -97,11 +162,70 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			return control is IWebConferenceDeviceControl;
 		}
 
+		private void UpdateIsInCall()
+		{
+			IsInCall =
+				m_SubscribedConferenceControl != null &&
+				m_SubscribedConferenceControl.GetActiveConference() != null;
+			UpdateButtonVisibility();
+		}
+
+		private void UpdateButtonVisibility()
+		{
+			if (!IsViewVisible)
+			{
+				RemoveInCallButtons();
+				RemoveOutOfCallButtons();
+			}
+			else if (IsInCall)
+			{
+				AddInCallButtons();
+				RemoveOutOfCallButtons();
+			}
+			else
+			{
+				AddOutOfCallButtons();
+				RemoveInCallButtons();
+			}
+		}
+
+		private void AddInCallButtons()
+		{
+			var header = Navigation.LazyLoadPresenter<IHeaderPresenter>();
+			foreach (var button in m_InCallButtons)
+				header.AddRightButton(button);
+
+			// todo add privacy mute and camera control buttons
+		}
+
+		private void RemoveInCallButtons()
+		{
+			var header = Navigation.LazyLoadPresenter<IHeaderPresenter>();
+			foreach (var button in m_InCallButtons)
+				header.RemoveRightButton(button);
+
+			// todo remove privacy mute and camera control buttons
+		}
+
+		private void AddOutOfCallButtons()
+		{
+			var header = Navigation.LazyLoadPresenter<IHeaderPresenter>();
+			foreach (var button in m_OutOfCallButtons)
+				header.AddRightButton(button);
+		}
+
+		private void RemoveOutOfCallButtons()
+		{
+			var header = Navigation.LazyLoadPresenter<IHeaderPresenter>();
+			foreach (var button in m_OutOfCallButtons)
+				header.RemoveRightButton(button);
+		}
+
 		#region Header Button Callbacks
 
-		private void StartMeetingPressed()
+		private void PresenterButtonPressed<TPresenter>() where TPresenter : class, ITouchDisplayPresenter
 		{
-			IStartConferencePresenter presenter = Navigation.LazyLoadPresenter<IStartConferencePresenter>();
+			TPresenter presenter = Navigation.LazyLoadPresenter<TPresenter>();
 			presenter.ShowView(!presenter.IsViewVisible);
 			Refresh();
 		}
@@ -112,12 +236,92 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 
 		private void Subscribe(IConferenceDeviceControl control)
 		{
-			// todo - replace start conference with active conference when conference is detected
+			if (control == null)
+				return;
+
+			control.OnConferenceAdded += ControlOnOnConferenceAdded;
+			control.OnConferenceRemoved += ControlOnOnConferenceRemoved;
+
+			foreach (var conference in control.GetConferences())
+				Subscribe(conference);
 		}
 
 		private void Unsubscribe(IConferenceDeviceControl control)
 		{
-			// todo
+			if (control == null)
+				return;
+
+			control.OnConferenceAdded -= ControlOnOnConferenceAdded;
+			control.OnConferenceRemoved -= ControlOnOnConferenceRemoved;
+
+			foreach (var conference in control.GetConferences())
+				Unsubscribe(conference);
+		}
+
+		private void ControlOnOnConferenceAdded(object sender, ConferenceEventArgs args)
+		{
+			Subscribe(args.Data);
+			UpdateIsInCall();
+		}
+
+		private void ControlOnOnConferenceRemoved(object sender, ConferenceEventArgs args)
+		{
+			Unsubscribe(args.Data);
+			UpdateIsInCall();
+		}
+
+		#endregion
+
+		#region Conference Callbacks
+
+		/// <summary>
+		/// Subscribe to the conference events.
+		/// </summary>
+		/// <param name="conference"></param>
+		private void Subscribe(IConference conference)
+		{
+			if (conference == null)
+				return;
+
+			conference.OnStatusChanged += ConferenceOnStatusChanged;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the conference events.
+		/// </summary>
+		/// <param name="conference"></param>
+		private void Unsubscribe(IConference conference)
+		{
+			if (conference == null)
+				return;
+
+			conference.OnStatusChanged -= ConferenceOnStatusChanged;
+		}
+
+		/// <summary>
+		/// Called when a conference status changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void ConferenceOnStatusChanged(object sender, ConferenceStatusEventArgs args)
+		{
+			//IGenericLoadingSpinnerPresenter spinner = Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>();
+
+			//switch (args.Data)
+			//{
+			//	case eConferenceStatus.Connecting:
+			//		spinner.ShowView("Connecting...", 30 * 1000);
+			//		break;
+			//	case eConferenceStatus.Connected:
+			//		m_ConnectingTimer.Reset(1000); // hide connecting page 1 second after connection complete
+			//		Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>().ShowView(false);
+			//		break;
+			//	default:
+			//		spinner.ShowView(false);
+			//		break;
+			//}
+
+			UpdateIsInCall();
 		}
 
 		#endregion
@@ -128,13 +332,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		{
 			base.ViewOnVisibilityChanged(sender, args);
 
-			IHeaderPresenter header = Navigation.LazyLoadPresenter<IHeaderPresenter>();
-			foreach (var button in m_PresenterButtons)
-				if (args.Data)
-					header.AddRightButton(button.Value);
-				else
-					header.RemoveRightButton(button.Value);
-
 			if (!args.Data)
 			{
 				foreach (var presenter in m_ConferencePresenters)
@@ -144,7 +341,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 					Room.FocusSource = null;
 			}
 			else
-				Navigation.NavigateTo<IStartConferencePresenter>();
+				ShowDefaultPresenter();
+
+			UpdateButtonVisibility();
 
 			Refresh();
 		}
