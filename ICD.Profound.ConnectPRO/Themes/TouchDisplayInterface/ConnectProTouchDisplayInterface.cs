@@ -53,10 +53,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 			};
 
 		private readonly ITouchDisplayNavigationController m_NavigationController;
-
-		private IVisibilityNode m_DefaultNotification;
+		
 		private IVisibilityNode m_MainPageVisibility;
-		private IVisibilityNode m_NotificationVisibility;
 		private IVisibilityNode m_ConferenceVisibility;
 
 		private IConnectProRoom m_Room;
@@ -109,8 +107,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 			m_ConferenceVisibility = new SingleVisibilityNode();
 			foreach (var presenter in m_NavigationController.LazyLoadPresenters<IConferencePresenter>())
 				m_ConferenceVisibility.AddPresenter(presenter);
+
 			// control their own visibility
 			m_NavigationController.LazyLoadPresenter<IIncomingCallPresenter>();
+			m_NavigationController.LazyLoadPresenter<IVolumePresenter>();
 
 			// always visible
 			m_NavigationController.NavigateTo<IHeaderPresenter>();
