@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
@@ -95,23 +94,27 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			var startConferenceButton = new HeaderButtonModel(0, 0, PresenterButtonPressed<IStartConferencePresenter>)
 			{
 				Icon = TouchCueIcons.GetIcon("videoconference"),
-				LabelText = "Start Conference"
+				LabelText = "Start/Join",
+				Mode = eHeaderButtonMode.Orange
 			};
 
 			var activeConferenceButton = new HeaderButtonModel(0, 1, PresenterButtonPressed<IActiveConferencePresenter>)
 			{
 				Icon = TouchCueIcons.GetIcon("videoconference"),
-				LabelText = "Active Conference"
+				LabelText = "Participants",
+				Mode = eHeaderButtonMode.Orange
 			};
-			var contactsButton = new HeaderButtonModel(0, 1, PresenterButtonPressed<IContactListPresenter>)
+			var contactsButton = new HeaderButtonModel(0, 2, PresenterButtonPressed<IContactListPresenter>)
 			{
 				Icon = TouchCueIcons.GetIcon("contact"),
-				LabelText = "Contacts"
+				LabelText = "Contacts",
+				Mode = eHeaderButtonMode.Orange
 			};
-			var shareButton = new HeaderButtonModel(0, 2, PresenterButtonPressed<IShareConferencePresenter>)
+			var shareButton = new HeaderButtonModel(0, 3, PresenterButtonPressed<IShareConferencePresenter>)
 			{
 				Icon = TouchCueIcons.GetIcon("share"),
-				LabelText = "Share"
+				LabelText = "Share",
+				Mode = eHeaderButtonMode.Orange
 			};
 			// TODO Record button
 
@@ -136,10 +139,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			{
 				foreach (var presenterButton in m_PresenterButtons)
 				{
-					
 					HeaderButtonModel button = presenterButton.Key;
 					ITouchDisplayPresenter presenter = presenterButton.Value;
-					button.Mode = presenter.IsViewVisible ? eHeaderButtonMode.Close : eHeaderButtonMode.Orange;
+					button.Selected = presenter.IsViewVisible;
 				}
 			}
 			finally

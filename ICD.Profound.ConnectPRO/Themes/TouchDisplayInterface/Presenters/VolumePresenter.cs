@@ -333,10 +333,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 
 			ResetVisibilityTimer();
 			
-			if (args.Data)
-				m_HeaderVolumeButton.Mode = eHeaderButtonMode.Close;
-			else
-				m_HeaderVolumeButton.Mode = eHeaderButtonMode.Green;
+			m_HeaderVolumeButton.Selected = args.Data;
 		}
 
 		#endregion
