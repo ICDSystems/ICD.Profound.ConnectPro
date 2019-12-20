@@ -223,7 +223,7 @@
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\ITouchDisplayNavigationController.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\ITouchDisplayPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\IVolumePresenter.cs" />
-    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Schedule\Notifications\IIncomingCallPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Notifications\IIncomingCallPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Schedule\IReferencedBookingPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Schedule\ISchedulePresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Settings\Administrative\ISettingsClockPresenter.cs" />
