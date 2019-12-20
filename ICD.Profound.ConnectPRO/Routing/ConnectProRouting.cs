@@ -11,6 +11,7 @@ using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
+using ICD.Connect.Misc.Vibe.Devices.VibeBoard;
 using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Connections;
@@ -391,7 +392,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 				{
 					// Power off the destination
 					IDeviceBase destinationDevice = m_Room.Core.Originators.GetChild<IDeviceBase>(destination.Device);
-					PowerDevice(destinationDevice, false);
+					if (!(destinationDevice is VibeBoard))
+						PowerDevice(destinationDevice, false);
 
 					// Unroute the destination
 					m_RoutingGraph.Unroute(destination, eConnectionType.Video, m_Room.Id);
