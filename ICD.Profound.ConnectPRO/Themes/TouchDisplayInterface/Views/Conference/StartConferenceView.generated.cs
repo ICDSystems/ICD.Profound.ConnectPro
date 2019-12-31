@@ -4,6 +4,7 @@ using ICD.Connect.Panels.Devices;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Keypads;
+using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Connect.UI.Controls.TextControls;
 
@@ -13,10 +14,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Conference
 	{
 		private VtProSubpage m_Subpage;
 		private VtProButton m_MeetNowButton;
-		private VtProButton m_ContactsButton;
 		private VtProButton m_JoinByIdButton;
 		private VtProSimpleKeypad m_Keypad;
-		private VtProTextEntry m_TextEntry;
+		private VtProDynamicButtonList m_TextEntry;
 		private VtProSimpleLabel m_MeetingIdLabel;
 
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
@@ -40,10 +40,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Conference
 
 			m_Keypad = new VtProSimpleKeypad(801, panel as IPanelDevice, m_Subpage);
 
-			m_TextEntry = new VtProTextEntry(panel, m_Subpage)
+			m_TextEntry = new VtProDynamicButtonList(802, panel as IPanelDevice, m_Subpage)
 			{
-				IndirectTextJoin = 801,
-				SerialOutputJoin = 802
+				MaxSize = 10
 			};
 
 			m_MeetingIdLabel = new VtProSimpleLabel(panel, m_Subpage)

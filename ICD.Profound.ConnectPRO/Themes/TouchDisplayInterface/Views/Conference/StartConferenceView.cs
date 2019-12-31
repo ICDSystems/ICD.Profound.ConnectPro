@@ -49,7 +49,23 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Conference
 
 		public void SetMeetingIdText(string text)
 		{
-			m_TextEntry.SetLabelText(text);
+			text = text ?? string.Empty;
+			m_TextEntry.SetNumberOfItems(10);
+			for (ushort index = 0; index < 10; index++)
+			{
+				char item;
+
+				if (text.TryElementAt(index, out item))
+				{
+					m_TextEntry.SetItemSelected(index, true);
+					m_TextEntry.SetItemLabel(index, item.ToString());
+				}
+				else
+				{
+					m_TextEntry.SetItemSelected(index, false);
+					m_TextEntry.SetItemLabel(index, "");
+				}
+			}
 		}
 
 		#endregion
@@ -63,7 +79,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Conference
 			m_MeetNowButton.OnPressed += MeetNowButtonOnOnPressed;
 			m_JoinByIdButton.OnPressed += JoinByIdButtonOnOnPressed;
 			m_Keypad.OnButtonPressed += KeypadOnOnButtonPressed;
-			m_TextEntry.OnTextModified += TextEntryOnOnTextModified;
 		}
 
 		protected override void UnsubscribeControls()
@@ -73,7 +88,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Conference
 			m_MeetNowButton.OnPressed -= MeetNowButtonOnOnPressed;
 			m_JoinByIdButton.OnPressed -= JoinByIdButtonOnOnPressed;
 			m_Keypad.OnButtonPressed -= KeypadOnOnButtonPressed;
-			m_TextEntry.OnTextModified -= TextEntryOnOnTextModified;
 		}
 
 		private void JoinByIdButtonOnOnPressed(object sender, EventArgs eventArgs)
