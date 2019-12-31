@@ -10,6 +10,7 @@ using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Routing;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Background;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Conference;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.DeviceDrawer;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Schedule;
@@ -35,6 +36,12 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 			m_SchedulePresenter.OnRefreshed += SchedulePresenterOnRefreshed;
 			Navigation.LazyLoadPresenter<IDeviceDrawerPresenter>().OnViewVisibilityChanged +=
 				ConferencePresenterOnViewVisibilityChanged;
+			Navigation.LazyLoadPresenter<IBackgroundPresenter>().OnViewPreVisibilityChanged += BackgroundOnViewPreVisibilityChanged;
+		}
+
+		private void BackgroundOnViewPreVisibilityChanged(object sender, BoolEventArgs e)
+		{
+			ShowView(e.Data);
 		}
 
 		public override void Dispose()

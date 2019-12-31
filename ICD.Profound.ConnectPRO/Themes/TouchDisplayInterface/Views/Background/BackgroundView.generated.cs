@@ -13,7 +13,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Background
 
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
-			m_Subpage = new VtProSubpage(panel, parent);
+			m_Subpage = new VtProSubpage(panel, parent)
+			{
+				DigitalVisibilityJoin = 16
+			};
 
 			m_Background = new VtProAdvancedButton(panel, m_Subpage)
 			{

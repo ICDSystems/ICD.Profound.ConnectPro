@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
+using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
+using ICD.Connect.Misc.Vibe.Devices.VibeBoard;
+using ICD.Connect.Misc.Vibe.Devices.VibeBoard.Controls;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.EventArguments;
 using ICD.Connect.UI.Attributes;
@@ -20,9 +23,17 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 	{
 		public event EventHandler<SourceEventArgs> OnSourcePressed;
 
+		private static readonly List<eVibeApps> s_Apps = new List<eVibeApps>()
+		{
+			eVibeApps.Chrome,
+			eVibeApps.Youtube,
+			eVibeApps.Slack
+		};
+
 		private readonly ReferencedSourcePresenterFactory m_SourceFactory;
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly Dictionary<ISource, eSourceState> m_CachedSourceStates;
+
 
 		/// <summary>
 		/// Constructor.
@@ -54,6 +65,14 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 					presenter.ShowView(true);
 					presenter.Refresh();
 				}
+				
+				var vibeBoard = Room == null ? null : Room.Originators.GetInstance<VibeBoard>();
+				if (vibeBoard == null)
+					return;
+
+				var appControl = vibeBoard.Controls.GetControl<VibeBoardAppControl>();
+				var packageNames = s_Apps.Select(app => appControl.GetPackageName(app)).ToList();
+				view.SetAppButtonIcons(packageNames);
 			}
 			finally
 			{
@@ -114,6 +133,37 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 
 			OnSourcePressed.Raise(this, new SourceEventArgs(presenter.Source));
 			RefreshIfVisible();
+		}
+
+		#endregion
+
+		#region View Callbacks
+
+		protected override void Subscribe(IDeviceDrawerView view)
+		{
+			base.Subscribe(view);
+
+			view.OnAppButtonPressed += ViewOnOnAppButtonPressed;
+		}
+
+		protected override void Unsubscribe(IDeviceDrawerView view)
+		{
+			base.Unsubscribe(view);
+
+			view.OnAppButtonPressed -= ViewOnOnAppButtonPressed;
+		}
+
+		private void ViewOnOnAppButtonPressed(object sender, UShortEventArgs e)
+		{
+			if (Room == null)
+				return;
+
+			var vibeBoard = Room.Originators.GetInstanceRecursive<VibeBoard>();
+			if (vibeBoard == null)
+				return;
+
+			var appControl = vibeBoard.Controls.GetControl<VibeBoardAppControl>();
+			appControl.LaunchApp(s_Apps[e.Data]);
 		}
 
 		#endregion

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Linq;
 using ICD.Common.Utils;
+using ICD.Common.Utils.EventArguments;
+using ICD.Connect.Misc.Vibe.Devices.VibeBoard;
+using ICD.Connect.Misc.Vibe.Devices.VibeBoard.Controls;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Routing;
@@ -15,6 +18,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Backgr
 	public sealed class BackgroundPresenter : AbstractTouchDisplayPresenter<IBackgroundView>, IBackgroundPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
+
+		private VibeBoardAppControl m_SubscribedAppControl;
 
 		public BackgroundPresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views,
 			ConnectProTheme theme) : base(nav, views, theme)
@@ -93,9 +98,16 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Backgr
 			if (room == null)
 				return;
 
+			room.OnIsInMeetingChanged += RoomOnOnIsInMeetingChanged;
 			room.Routing.State.OnSourceRoutedChanged += RoomRoutingStateOnSourceRoutedChanged;
-		}
 
+			var vibeBoard = Room.Originators.GetInstanceRecursive<VibeBoard>();
+			if (vibeBoard != null)
+				m_SubscribedAppControl = vibeBoard.Controls.GetControl<VibeBoardAppControl>();
+			if (m_SubscribedAppControl != null)
+				m_SubscribedAppControl.OnAppLaunched += SubscribedAppControlOnOnAppLaunched;
+		}
+		
 		protected override void Unsubscribe(IConnectProRoom room)
 		{
 			base.Unsubscribe(room);
@@ -103,14 +115,31 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Backgr
 			if (room == null)
 				return;
 
+			room.OnIsInMeetingChanged -= RoomOnOnIsInMeetingChanged;
 			room.Routing.State.OnSourceRoutedChanged -= RoomRoutingStateOnSourceRoutedChanged;
+
+			if (m_SubscribedAppControl != null)
+				m_SubscribedAppControl.OnAppLaunched -= SubscribedAppControlOnOnAppLaunched;
+			m_SubscribedAppControl = null;
+		}
+
+		private void RoomOnOnIsInMeetingChanged(object sender, BoolEventArgs e)
+		{
+			if (!e.Data)
+				ShowView(true);
 		}
 
 		private void RoomRoutingStateOnSourceRoutedChanged(object sender, EventArgs e)
 		{
-			RefreshIfVisible();
+			ShowView(true);
+			Refresh();
 		}
 
+		private void SubscribedAppControlOnOnAppLaunched(object sender, EventArgs e)
+		{
+			ShowView(false);
+		}
+		
 		#endregion
 	}
 }
