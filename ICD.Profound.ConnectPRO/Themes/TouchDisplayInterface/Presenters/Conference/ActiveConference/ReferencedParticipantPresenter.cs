@@ -103,8 +103,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				view.SetMuteIconVisibility(webParticipant != null && webParticipant.IsMuted);
 
 				var zoomParticipant = webParticipant as ZoomWebParticipant;
-				view.SetAvatarImageVisibility(zoomParticipant != null && !string.IsNullOrEmpty(zoomParticipant.AvatarUrl));
-				view.SetAvatarImagePath(zoomParticipant == null ? null : zoomParticipant.AvatarUrl);
+				view.SetAvatarImageVisibility(true);
+				view.SetAvatarImagePath(zoomParticipant == null || string.IsNullOrEmpty(zoomParticipant.AvatarUrl) 
+					? TouchCueIcons.GetIcon("zoom_participants_head") 
+					: zoomParticipant.AvatarUrl);
 			}
 			finally
 			{
