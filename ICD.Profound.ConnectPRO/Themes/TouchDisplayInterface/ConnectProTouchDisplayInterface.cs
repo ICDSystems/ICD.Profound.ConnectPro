@@ -111,6 +111,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 			// control their own visibility
 			m_NavigationController.LazyLoadPresenter<IIncomingCallPresenter>();
 			m_NavigationController.LazyLoadPresenter<IVolumePresenter>();
+			m_NavigationController.LazyLoadPresenter<IPrivacyMuteConferencePresenter>();
 
 			// always visible
 			m_NavigationController.NavigateTo<IHeaderPresenter>();
