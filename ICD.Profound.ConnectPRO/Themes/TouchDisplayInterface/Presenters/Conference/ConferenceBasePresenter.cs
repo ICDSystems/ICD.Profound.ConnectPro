@@ -2,9 +2,12 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Zoom;
+using ICD.Connect.Conferencing.Zoom.Components.Call;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
@@ -27,6 +30,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		private readonly Dictionary<HeaderButtonModel, ITouchDisplayPresenter> m_PresenterButtons;
 		private readonly List<HeaderButtonModel> m_InCallButtons;
 		private readonly List<HeaderButtonModel> m_OutOfCallButtons;
+
+		private HeaderButtonModel m_HideCameraButton;
+		private HeaderButtonModel m_EndConferenceButton;
 		
 		private IConferenceDeviceControl m_SubscribedConferenceControl;
 		private bool m_IsInCall;
@@ -74,6 +80,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		{
 			m_RefreshSection = new SafeCriticalSection();
 			m_ConferencePresenters = Navigation.LazyLoadPresenters<IConferencePresenter>().ToList();
+			foreach (var presenter in m_ConferencePresenters)
+				Subscribe(presenter);
 
 			m_PresenterButtons = new Dictionary<HeaderButtonModel, ITouchDisplayPresenter>();
 			m_InCallButtons = new List<HeaderButtonModel>();
@@ -106,18 +114,36 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			};
 			var contactsButton = new HeaderButtonModel(0, 2, PresenterButtonPressed<IContactListPresenter>)
 			{
-				Icon = TouchCueIcons.GetIcon("contact"),
+				Icon = TouchCueIcons.GetIcon("audiocall"),
 				LabelText = "Contacts",
 				Mode = eHeaderButtonMode.Orange
 			};
 			var shareButton = new HeaderButtonModel(0, 3, PresenterButtonPressed<IShareConferencePresenter>)
 			{
-				Icon = TouchCueIcons.GetIcon("share"),
+				Icon = TouchCueIcons.GetIcon("share_source"),
 				LabelText = "Share",
 				Mode = eHeaderButtonMode.Orange
 			};
-			// TODO Record button
 
+			m_EndConferenceButton = new HeaderButtonModel(1, 2, EndConferenceCallback)
+			{
+				LabelText = "End Call",
+				Icon = TouchCueIcons.GetIcon("hangup"),
+				Mode = eHeaderButtonMode.Red
+			};
+			var leaveConferenceButton = new HeaderButtonModel(1, 1, LeaveConferenceCallback)
+			{
+				LabelText = "Leave Call",
+				Icon = TouchCueIcons.GetIcon("exit"),
+				Mode = eHeaderButtonMode.Red
+			};
+			m_HideCameraButton = new HeaderButtonModel(1, 0, HideCameraCallback)
+			{
+				LabelText = "Show Camera",
+				Icon = TouchCueIcons.GetIcon("reveal"),
+				Mode = eHeaderButtonMode.Blue
+			};
+			
 			m_PresenterButtons.Add(startConferenceButton, Navigation.LazyLoadPresenter<IStartConferencePresenter>());
 			m_PresenterButtons.Add(activeConferenceButton, Navigation.LazyLoadPresenter<IActiveConferencePresenter>());
 			m_PresenterButtons.Add(contactsButton, Navigation.LazyLoadPresenter<IContactListPresenter>());
@@ -128,6 +154,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			m_InCallButtons.Add(activeConferenceButton);
 			m_InCallButtons.Add(contactsButton);
 			m_InCallButtons.Add(shareButton);
+			m_InCallButtons.Add(m_EndConferenceButton);
+			m_InCallButtons.Add(leaveConferenceButton);
+			m_InCallButtons.Add(m_HideCameraButton);
 		}
 
 		protected override void Refresh(IConferenceBaseView view)
@@ -143,6 +172,17 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 					ITouchDisplayPresenter presenter = presenterButton.Value;
 					button.Selected = presenter.IsViewVisible;
 				}
+				
+				var webConferenceControl = ActiveConferenceControl as IWebConferenceDeviceControl;
+				bool cameraActive = webConferenceControl != null && webConferenceControl.CameraEnabled;
+				m_HideCameraButton.LabelText = cameraActive ? "Hide Camera" : "Show Camera";
+				m_HideCameraButton.Icon = TouchCueIcons.GetIcon(cameraActive ? "hide" : "reveal");
+				
+
+				// Only hosts can end meeting for everyone
+				ZoomRoom zoomRoom = webConferenceControl == null ? null : webConferenceControl.Parent as ZoomRoom;
+				CallComponent component = zoomRoom == null ? null : zoomRoom.Components.GetComponent<CallComponent>();
+				m_EndConferenceButton.Enabled = component != null && component.AmIHost;
 			}
 			finally
 			{
@@ -170,6 +210,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				m_SubscribedConferenceControl != null &&
 				m_SubscribedConferenceControl.GetActiveConference() != null;
 			UpdateButtonVisibility();
+			Refresh();
 		}
 
 		private void UpdateButtonVisibility()
@@ -196,8 +237,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			var header = Navigation.LazyLoadPresenter<IHeaderPresenter>();
 			foreach (var button in m_InCallButtons)
 				header.AddRightButton(button);
-
-			// todo add privacy mute and camera control buttons
 		}
 
 		private void RemoveInCallButtons()
@@ -205,8 +244,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			var header = Navigation.LazyLoadPresenter<IHeaderPresenter>();
 			foreach (var button in m_InCallButtons)
 				header.RemoveRightButton(button);
-
-			// todo remove privacy mute and camera control buttons
 		}
 
 		private void AddOutOfCallButtons()
@@ -232,6 +269,39 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			Refresh();
 		}
 
+		private void HideCameraCallback()
+		{
+			var webConferenceControl = ActiveConferenceControl as IWebConferenceDeviceControl;
+			if (webConferenceControl == null)
+				return;
+
+			webConferenceControl.SetCameraEnabled(!webConferenceControl.CameraEnabled);
+		}
+
+		private void LeaveConferenceCallback()
+		{
+			if (ActiveConferenceControl == null)
+				return;
+
+			var conference = ActiveConferenceControl.GetActiveConference() as IWebConference;
+			if (conference == null)
+				return;
+
+			conference.LeaveConference();
+		}
+
+		private void EndConferenceCallback()
+		{
+			if (ActiveConferenceControl == null)
+				return;
+
+			var conference = ActiveConferenceControl.GetActiveConference() as IWebConference;
+			if (conference == null)
+				return;
+
+			conference.EndConference();
+		}
+
 		#endregion
 
 		#region Conference Control Callbacks
@@ -246,6 +316,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 
 			foreach (var conference in control.GetConferences())
 				Subscribe(conference);
+
+			UpdateIsInCall();
 		}
 
 		private void Unsubscribe(IConferenceDeviceControl control)
@@ -258,6 +330,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 
 			foreach (var conference in control.GetConferences())
 				Unsubscribe(conference);
+
+			UpdateIsInCall();
 		}
 
 		private void ControlOnOnConferenceAdded(object sender, ConferenceEventArgs args)
@@ -324,6 +398,20 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			//}
 
 			UpdateIsInCall();
+		}
+
+		#endregion
+
+		#region Conference Presenter Callbacks
+
+		private void Subscribe(IConferencePresenter presenter)
+		{
+			presenter.OnViewVisibilityChanged += PresenterOnOnViewVisibilityChanged;
+		}
+
+		private void PresenterOnOnViewVisibilityChanged(object sender, BoolEventArgs e)
+		{
+			Refresh();
 		}
 
 		#endregion

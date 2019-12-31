@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
@@ -279,7 +279,7 @@
     <Compile Include="Themes\TouchDisplayInterface\Presenters\AbstractTouchDisplayPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Background\BackgroundPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\AbstractConferencePresenter.cs" />
-    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\ActiveConference\ActiveMeetingPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\ActiveConference\ActiveConferencePresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\ActiveConference\ParticipantControlsPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\ActiveConference\ReferencedParticipantPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\ActiveConference\ReferencedParticipantPresenterFactory.cs" />
