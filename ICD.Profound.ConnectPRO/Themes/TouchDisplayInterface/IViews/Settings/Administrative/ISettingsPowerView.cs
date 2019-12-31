@@ -18,6 +18,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Settings.A
 		event EventHandler OnSleepMinuteDecrementButtonPressed;
 
 		event EventHandler OnEnableTogglePressed;
+		event EventHandler OnSystemPowerPressed;
 
 		void SetWeekdaysButtonSelected();
 		void SetWeekendsButtonSelected();

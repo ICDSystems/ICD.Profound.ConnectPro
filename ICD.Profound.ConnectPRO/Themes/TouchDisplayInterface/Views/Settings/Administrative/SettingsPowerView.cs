@@ -24,6 +24,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings.Ad
 		public event EventHandler OnSleepMinuteIncrementButtonPressed;
 		public event EventHandler OnSleepMinuteDecrementButtonPressed;
 		public event EventHandler OnEnableTogglePressed;
+		public event EventHandler OnSystemPowerPressed;
 
 		/// <summary>
 		/// Constructor.
@@ -50,6 +51,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings.Ad
 			OnSleepHourDecrementButtonPressed = null;
 			OnSleepMinuteIncrementButtonPressed = null;
 			OnSleepMinuteDecrementButtonPressed = null;
+			OnEnableTogglePressed = null;
+			OnSystemPowerPressed = null;
 
 			base.Dispose();
 		}
@@ -118,6 +121,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings.Ad
 			m_SleepMinuteDecrementButton.OnPressed += SleepMinuteDecrementButtonOnPressed;
 
 			m_EnableToggleButton.OnPressed += EnableToggleButtonOnPressed;
+			m_SystemPowerButton.OnPressed += SystemPowerButtonOnOnPressed;
 		}
 
 		/// <summary>
@@ -140,6 +144,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings.Ad
 			m_SleepMinuteDecrementButton.OnPressed -= SleepMinuteDecrementButtonOnPressed;
 
 			m_EnableToggleButton.OnPressed -= EnableToggleButtonOnPressed;
+			m_SystemPowerButton.OnPressed -= SystemPowerButtonOnOnPressed;
 		}
 
 		private void DaysButtonsOnButtonPressed(object sender, UShortEventArgs eventArgs)
@@ -199,6 +204,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings.Ad
 		private void EnableToggleButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnEnableTogglePressed.Raise(this);
+		}
+
+		private void SystemPowerButtonOnOnPressed(object sender, EventArgs e)
+		{
+			OnSystemPowerPressed.Raise(this);
 		}
 
 		#endregion

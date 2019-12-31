@@ -31,6 +31,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings.Ad
 		private VtProSimpleLabel m_SleepMinuteLabel;
 
 		private VtProButton m_EnableToggleButton;
+		private VtProButton m_SystemPowerButton;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -111,6 +112,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings.Ad
 			{
 				DigitalPressJoin = 1059
 			};
+
+			m_SystemPowerButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 1081
+			};
 		}
 
 		/// <summary>
@@ -140,6 +146,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings.Ad
 			yield return m_SleepMinuteLabel;
 
 			yield return m_EnableToggleButton;
+			yield return m_SystemPowerButton;
 		}
 	}
 }

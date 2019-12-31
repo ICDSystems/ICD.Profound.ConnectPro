@@ -3,6 +3,8 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Partitioning.Commercial;
 using ICD.Connect.UI.Attributes;
+using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.Rooms.Single;
 using ICD.Profound.ConnectPRO.SettingsTree.Administrative;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Settings.Administrative;
@@ -211,6 +213,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 			view.OnSleepMinuteDecrementButtonPressed += ViewOnSleepMinuteDecrementButtonPressed;
 
 			view.OnEnableTogglePressed += ViewOnEnableTogglePressed;
+			view.OnSystemPowerPressed += ViewOnSystemPowerPressed;
 		}
 
 		/// <summary>
@@ -235,6 +238,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 			view.OnSleepMinuteDecrementButtonPressed -= ViewOnSleepMinuteDecrementButtonPressed;
 
 			view.OnEnableTogglePressed -= ViewOnEnableTogglePressed;
+			view.OnSystemPowerPressed -= ViewOnSystemPowerPressed;
 		}
 
 		private void ViewOnWeekdaysButtonPressed(object sender, EventArgs eventArgs)
@@ -290,6 +294,14 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 		private void ViewOnEnableTogglePressed(object sender, EventArgs eventArgs)
 		{
 			ToggleEnabled();
+		}
+
+		private void ViewOnSystemPowerPressed(object sender, EventArgs eventArgs)
+		{
+			if (Room == null)
+				return;
+
+			Room.Sleep();
 		}
 
 		#endregion
