@@ -66,7 +66,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings.Ad
 		public void SetPasscodeLabel(string label)
 		{
 			label = label ?? string.Empty;
-
+			m_PasscodeLabel.SetNumberOfItems(4);
 			for (ushort index = 0; index < 4; index++)
 			{
 				char item;
