@@ -18,7 +18,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 		private const string HTML_COLOR_FORMAT = "<span style=\"color: {0}\">{1}</span>";
 		private const string AVAILABLE_COLOR = "#67FCF1";
 		private const string RESERVED_TIME_COLOR = "#F0544F";
-		private const string RESERVED_NAME_COLOR = "#2998B0";
+		private const string RESERVED_NAME_COLOR = "#227385";
 		private const string SELECTED_COLOR = "#FFFFFF";
 
 		private readonly SafeCriticalSection m_RefreshSection;
