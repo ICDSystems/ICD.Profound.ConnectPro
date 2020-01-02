@@ -24,7 +24,6 @@ using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
-using ICD.Connect.Devices.Points;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Partitioning.Rooms;
@@ -175,26 +174,13 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		#region Methods
 
 		/// <summary>
-		/// Gets the volume control matching the configured volume point.
+		/// Gets the room audio volume point.
 		/// </summary>
 		/// <returns></returns>
 		[CanBeNull]
-		public IVolumeDeviceControl GetVolumeControl()
+		public IVolumePoint GetVolumePoint()
 		{
-			IVolumePoint volumePoint = Originators.GetInstanceRecursive<IVolumePoint>();
-			if (volumePoint == null)
-				return null;
-
-			try
-			{
-				return volumePoint.GetControl<IVolumeDeviceControl>();
-			}
-			catch (Exception)
-			{
-				Log(eSeverity.Error, "Failed to find volume control for {0}", volumePoint);
-			}
-
-			return null;
+			return Originators.GetInstanceRecursive<IVolumePoint>();
 		}
 
 		/// <summary>
@@ -528,9 +514,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <param name="mute"></param>
 		private void Mute(bool mute)
 		{
-			IVolumeDeviceControl muteControl = GetVolumeControl();
-			if (muteControl != null && muteControl.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.MuteAssignment))
-				muteControl.SetIsMuted(mute);
+			IVolumePoint volumePoint = GetVolumePoint();
+			IVolumeDeviceControl volumeControl = volumePoint == null ? null : volumePoint.Control;
+
+			if (volumeControl != null && volumeControl.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.MuteAssignment))
+				volumeControl.SetIsMuted(mute);
 		}
 
 		private void EndAllConferences()

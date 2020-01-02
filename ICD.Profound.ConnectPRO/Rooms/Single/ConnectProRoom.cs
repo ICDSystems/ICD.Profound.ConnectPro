@@ -139,7 +139,7 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 				// Skip devices with multiple conference controls that already have conference points.
 				// DSPs should be configured properly in DeployAV
 				bool alreadyConfigured =
-					Originators.GetInstances<IConferencePoint>().Any(p => p.DeviceId == device.Id);
+					Originators.GetInstances<IConferencePoint>().Any(p => p.Control != null && p.Control.Parent == device);
 
 				// DeployAV doesn't support controls on non-DSP devices, so there's no way
 				// for users to make a conference point for the Zoom call out feature
@@ -165,10 +165,9 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 					{
 						Id = id,
 						Name = control.Name,
-						DeviceId = device.Id,
-						ControlId = control.Id,
 						Type = control.Supports
 					};
+					point.SetControl(control);
 
 					Core.Originators.AddChild(point);
 					Originators.Add(id, combineMode);
@@ -183,20 +182,8 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 			if (control == null)
 				throw new ArgumentNullException("control");
 
-			List<IConferencePoint> conferencePointsForDevice =
-				Originators.GetInstances<IConferencePoint>()
-				           .Where(c => c.DeviceId == control.Parent.Id)
-				           .ToList();
-
-			// Edge case - Id 0 refers to the first control of a given type
-			bool hasLookupId = conferencePointsForDevice.Any(p => p.ControlId == 0);
-			bool isFirstControl =
-				control == control.Parent.Controls.GetControls<IConferenceDeviceControl>().FirstOrDefault();
-			if (hasLookupId && isFirstControl)
-				return true;
-
-			// Simple case - The control has a conference point that refers to it directly
-			return conferencePointsForDevice.Any(p => p.ControlId == control.Id);
+			return Originators.GetInstances<IConferencePoint>()
+			                  .Any(p => p.Control == control);
 		}
 
 		#endregion

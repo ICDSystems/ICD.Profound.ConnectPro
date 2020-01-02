@@ -1,7 +1,4 @@
 ﻿using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Audio.Controls.Volume;
-using ICD.Connect.Audio.EventArguments;
-using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -18,8 +15,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 	                                                    IFloatingActionVolumePresenter
 	{
 		private readonly IVolumePresenter m_Menu;
-
-		private IVolumeDeviceControl m_SubscribedVolumeControl;
 
 		/// <summary>
 		/// Constructor.
@@ -50,7 +45,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// <returns></returns>
 		protected override bool GetActive()
 		{
-			return m_SubscribedVolumeControl != null && m_SubscribedVolumeControl.IsMuted;
+			return m_Menu.VolumeControl != null && m_Menu.VolumeControl.IsMuted;
 		}
 
 		/// <summary>
@@ -59,16 +54,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// <returns></returns>
 		protected override bool GetEnabled()
 		{
-			return m_SubscribedVolumeControl == null || m_SubscribedVolumeControl.ControlAvailable;
-		}
-
-		/// <summary>
-		/// Gets the volume control for the current room.
-		/// </summary>
-		/// <returns></returns>
-		private static IVolumeDeviceControl GetVolumeControl(IConnectProRoom room)
-		{
-			return room == null ? null : room.GetVolumeControl();
+			return m_Menu.VolumeControl == null || m_Menu.VolumeControl.ControlAvailable;
 		}
 
 		/// <summary>
@@ -76,7 +62,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// </summary>
 		protected override void HandleButtonPress()
 		{
-			m_Menu.VolumeControl = m_SubscribedVolumeControl;
 			m_Menu.ShowView(!m_Menu.IsViewVisible);
 		}
 
@@ -89,6 +74,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		private void Subscribe(IVolumePresenter menu)
 		{
 			menu.OnViewVisibilityChanged += MenuOnViewVisibilityChanged;
+			menu.OnControlAvailableChanged += MenuOnControlAvailableChanged;
+			menu.OnControlIsMutedChanged += MenuOnControlIsMutedChanged;
 		}
 
 		/// <summary>
@@ -98,6 +85,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		private void Unsubscribe(IVolumePresenter menu)
 		{
 			menu.OnViewVisibilityChanged -= MenuOnViewVisibilityChanged;
+			menu.OnControlAvailableChanged -= MenuOnControlAvailableChanged;
+			menu.OnControlIsMutedChanged -= MenuOnControlIsMutedChanged;
 		}
 
 		/// <summary>
@@ -106,6 +95,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// <param name="sender"></param>
 		/// <param name="boolEventArgs"></param>
 		private void MenuOnViewVisibilityChanged(object sender, BoolEventArgs boolEventArgs)
+		{
+			RefreshIfVisible();
+		}
+
+		/// <summary>
+		/// Called when the volume control availability changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="boolEventArgs"></param>
+		private void MenuOnControlAvailableChanged(object sender, BoolEventArgs boolEventArgs)
+		{
+			RefreshIfVisible();
+		}
+
+		/// <summary>
+		/// Called when the volume control muted state changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="boolEventArgs"></param>
+		private void MenuOnControlIsMutedChanged(object sender, BoolEventArgs boolEventArgs)
 		{
 			RefreshIfVisible();
 		}
@@ -125,14 +134,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			if (room == null)
 				return;
 
-			m_SubscribedVolumeControl = GetVolumeControl(room);
-
-			if (m_SubscribedVolumeControl != null)
-			{
-				m_SubscribedVolumeControl.OnControlAvailableChanged += SubscribedVolumeControlOnControlAvailableChanged;
-				m_SubscribedVolumeControl.OnIsMutedChanged += SubscribedVolumeControlOnIsMutedChanged;
-			}
-
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
 		}
 
@@ -144,20 +145,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		{
 			base.Unsubscribe(room);
 
-			if (m_SubscribedVolumeControl != null)
-			{
-				m_SubscribedVolumeControl.OnControlAvailableChanged -= SubscribedVolumeControlOnControlAvailableChanged;
-				m_SubscribedVolumeControl.OnIsMutedChanged -= SubscribedVolumeControlOnIsMutedChanged;
-			}
-			m_SubscribedVolumeControl = null;
+			if (room == null)
+				return;
 
-			if (room != null)
-				room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
-		}
-
-		private void SubscribedVolumeControlOnControlAvailableChanged(object sender, DeviceControlAvailableApiEventArgs e)
-		{
-			RefreshIfVisible();
+			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
 		}
 
 		/// <summary>
@@ -167,13 +158,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// <param name="eventArgs"></param>
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs eventArgs)
 		{
-			ShowView(eventArgs.Data && m_SubscribedVolumeControl != null);
-		}
-
-		private void SubscribedVolumeControlOnIsMutedChanged(object sender,
-		                                                             VolumeControlIsMutedChangedApiEventArgs eventArgs)
-		{
-			RefreshIfVisible();
+			ShowView(eventArgs.Data && m_Menu.VolumeControl != null);
 		}
 
 		#endregion

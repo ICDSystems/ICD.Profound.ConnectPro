@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ICD.Common.Utils.Services;
+using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Displays.Mock.Devices;
 using ICD.Connect.Panels.Mock;
@@ -54,7 +55,8 @@ namespace ICD.Profound.ConnectPRO.Tests.RoomTypes
 			var mockSourceDevice1 = new MockSourceDevice {Id = 20001604};
 			var mockSourceDevice2 = new MockSourceDevice {Id = 20001606};
 			var sharpDisplay = new MockDisplayWithAudio {Id = 20001661};
-			var connectProVolumePoint = new VolumePoint {Id = 90000045, DeviceId = sharpDisplay.Id};
+			var connectProVolumePoint = new VolumePoint {Id = 90000045};
+			connectProVolumePoint.SetControl(sharpDisplay.Controls.GetControl<IVolumeDeviceControl>());
 
 			// Adding rooms and devices to core Originators
 			m_Core.Originators.AddChild(m_Room);

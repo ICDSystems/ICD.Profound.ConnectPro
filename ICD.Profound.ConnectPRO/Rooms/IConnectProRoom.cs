@@ -1,7 +1,7 @@
 ﻿using System;
 using ICD.Common.Properties;
 using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Audio.Controls.Volume;
+using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Conferencing.Controls.Dialing;
@@ -76,11 +76,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		#region Methods
 
 		/// <summary>
-		/// Gets the volume control matching the configured volume point.
+		/// Gets the room audio volume point.
 		/// </summary>
 		/// <returns></returns>
 		[CanBeNull]
-		IVolumeDeviceControl GetVolumeControl();
+		IVolumePoint GetVolumePoint();
 
 		/// <summary>
 		/// Enters the meeting state.

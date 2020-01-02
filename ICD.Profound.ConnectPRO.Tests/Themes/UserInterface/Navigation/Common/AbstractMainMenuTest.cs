@@ -1,7 +1,6 @@
 ﻿using System.Linq;
+using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.VolumePoints;
-using ICD.Connect.Devices;
-using ICD.Connect.Displays.Devices;
 using ICD.Connect.Panels.Mock;
 using ICD.Connect.Protocol.Sigs;
 using ICD.Connect.Routing.Endpoints.Sources;
@@ -27,7 +26,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 		{
 			using (TRoomType roomType = InstantiateRoomType())
 			{
-				if (roomType.Room.GetVolumeControl() == null)
+				if (roomType.Room.GetVolumePoint() == null)
 					return;
 
 				// Simulate "start meeting" button press
@@ -49,13 +48,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 				Assert.NotNull(volumePoint);
 
 				// Get volume control
-				DisplayVolumeDeviceControl volumeControl =
-					roomType.Room
-						.Core
-						.Originators
-						.GetChild<IDeviceBase>(volumePoint.DeviceId)
-						.Controls
-						.GetControl<DisplayVolumeDeviceControl>(volumePoint.ControlId);
+				IVolumeDeviceControl volumeControl = volumePoint.Control;
 
 				// Check that volume is at zero
 				Assert.AreEqual(0, volumeControl.VolumeLevel);
@@ -78,9 +71,9 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 
 				// mute
 				NavigationHelpers.PressButton(524, roomType.Panel);
-				Assert.IsTrue(volumeControl.VolumeIsMuted);
+				Assert.IsTrue(volumeControl.IsMuted);
 				NavigationHelpers.PressButton(524, roomType.Panel);
-				Assert.IsFalse(volumeControl.VolumeIsMuted);
+				Assert.IsFalse(volumeControl.IsMuted);
 
 				//exit
 				NavigationHelpers.PressButton(46, roomType.Panel);

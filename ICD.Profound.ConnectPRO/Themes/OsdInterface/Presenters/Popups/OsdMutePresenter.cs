@@ -1,5 +1,5 @@
-﻿using ICD.Connect.Audio.Controls.Volume;
-using ICD.Connect.Audio.EventArguments;
+﻿using ICD.Common.Utils.EventArguments;
+using ICD.Connect.Audio.Utils;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
@@ -12,23 +12,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups
 	[PresenterBinding(typeof(IOsdMutePresenter))]
 	public sealed class OsdMutePresenter : AbstractOsdPresenter<IOsdMuteView>, IOsdMutePresenter
 	{
-		private IVolumeDeviceControl m_SubscribedControl;
-
-		private IVolumeDeviceControl VolumeControl
-		{
-			get { return m_SubscribedControl; }
-			set
-			{
-				if (m_SubscribedControl == value)
-					return;
-
-				Unsubscribe(m_SubscribedControl);
-				m_SubscribedControl = value;
-				Subscribe(m_SubscribedControl);
-
-				UpdateVisibility();
-			}
-		}
+		private readonly VolumePointHelper m_VolumePointHelper;
 
 		/// <summary>
 		/// Constructor.
@@ -39,41 +23,46 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups
 		public OsdMutePresenter(IOsdNavigationController nav, IOsdViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
+			m_VolumePointHelper = new VolumePointHelper();
+			Subscribe(m_VolumePointHelper);
+		}
+
+		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			base.Dispose();
+
+			Unsubscribe(m_VolumePointHelper);
+			m_VolumePointHelper.Dispose();
 		}
 
 		public override void SetRoom(IConnectProRoom room)
 		{
 			base.SetRoom(room);
 
-			VolumeControl = room == null ? null : room.GetVolumeControl();
+			m_VolumePointHelper.VolumePoint = room == null ? null : room.GetVolumePoint();
 		}
 
-		private void UpdateVisibility()
-		{
-			if (VolumeControl != null && VolumeControl.IsMuted)
-				ShowView(true);
-			else
-				ShowView(false);
-		}
-
-		#region Volume Control Callbacks
+		#region Volume Point Helper Callbacks
 
 		/// <summary>
-		/// Subscribe to the control events.
+		/// Subscribe to the volume point helper events.
 		/// </summary>
-		/// <param name="control"></param>
-		private void Subscribe(IVolumeDeviceControl control)
+		/// <param name="volumePointHelper"></param>
+		private void Subscribe(VolumePointHelper volumePointHelper)
 		{
-			control.OnIsMutedChanged += ControlOnMuteStateChanged;
+			volumePointHelper.OnVolumeControlIsMutedChanged += VolumePointHelperOnVolumeControlIsMutedChanged;
 		}
 
 		/// <summary>
-		/// Unsubscribe from the control events.
+		/// Unsubscribe from the volume point helper events.
 		/// </summary>
-		/// <param name="control"></param>
-		private void Unsubscribe(IVolumeDeviceControl control)
+		/// <param name="volumePointHelper"></param>
+		private void Unsubscribe(VolumePointHelper volumePointHelper)
 		{
-			control.OnIsMutedChanged -= ControlOnMuteStateChanged;
+			volumePointHelper.OnVolumeControlIsMutedChanged -= VolumePointHelperOnVolumeControlIsMutedChanged;
 		}
 		
 		/// <summary>
@@ -81,9 +70,9 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void ControlOnMuteStateChanged(object sender, VolumeControlIsMutedChangedApiEventArgs eventArgs)
+		private void VolumePointHelperOnVolumeControlIsMutedChanged(object sender, BoolEventArgs eventArgs)
 		{
-			UpdateVisibility();
+			ShowView(m_VolumePointHelper.IsMuted);
 		}
 
 		#endregion

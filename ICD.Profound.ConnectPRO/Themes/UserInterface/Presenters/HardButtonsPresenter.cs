@@ -2,8 +2,6 @@
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Audio.Controls.Volume;
-using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.Panels.Controls;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
@@ -24,21 +22,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		private const int ADDRESS_VOL_DOWN = 5;
 
 		private readonly SafeCriticalSection m_RefreshSection;
-
-		private IVolumePresenter m_CachedVolumePresenter;
-		private readonly IHardButtonBacklightControl m_ButtonsControl;
-		private IVolumeDeviceControl m_VolumeControl;
-
-		/// <summary>
-		/// Gets the popup volume presenter.
-		/// </summary>
-		private IVolumePresenter VolumePresenter
-		{
-			get
-			{
-				return m_CachedVolumePresenter ?? (m_CachedVolumePresenter = Navigation.LazyLoadPresenter<IVolumePresenter>());
-			}
-		}
+        private readonly IHardButtonBacklightControl m_ButtonsControl;
+		private readonly IVolumePresenter m_VolumePresenter;
 
 		/// <summary>
 		/// Constructor.
@@ -52,6 +37,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			m_RefreshSection = new SafeCriticalSection();
 
 			m_ButtonsControl = GetHardButtonBacklightControl(views);
+
+			m_VolumePresenter = Navigation.LazyLoadPresenter<IVolumePresenter>();
+			m_VolumePresenter.OnControlAvailableChanged += VolumePresenterOnControlAvailableChanged;
+		}
+
+		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			m_VolumePresenter.OnControlAvailableChanged -= VolumePresenterOnControlAvailableChanged;
+
+			base.Dispose();
 		}
 
 		/// <summary>
@@ -70,7 +68,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 					return;
 
 				bool isInMeeting = Room != null && Room.IsInMeeting;
-				bool hasVolumeControl = m_VolumeControl != null && m_VolumeControl.ControlAvailable;
+				bool hasVolumeControl = m_VolumePresenter.VolumeControl != null && m_VolumePresenter.VolumeControl.ControlAvailable;
 
 				m_ButtonsControl.SetBacklightEnabled(ADDRESS_POWER, isInMeeting);
 				m_ButtonsControl.SetBacklightEnabled(ADDRESS_HOME, isInMeeting);
@@ -170,9 +168,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="eventArgs"></param>
 		private void ViewOnVolumeUpButtonPressed(object sender, EventArgs eventArgs)
 		{
-			VolumePresenter.VolumeControl = m_VolumeControl;
-			if (VolumePresenter.VolumeControl != null)
-				VolumePresenter.VolumeUp();
+			m_VolumePresenter.VolumeUp();
 		}
 
 		/// <summary>
@@ -182,9 +178,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="eventArgs"></param>
 		private void ViewOnVolumeDownButtonPressed(object sender, EventArgs eventArgs)
 		{
-			VolumePresenter.VolumeControl = m_VolumeControl;
-			if (VolumePresenter.VolumeControl != null)
-				VolumePresenter.VolumeDown();
+			m_VolumePresenter.VolumeDown();
 		}
 
 		/// <summary>
@@ -194,7 +188,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="eventArgs"></param>
 		private void ViewOnVolumeButtonReleased(object sender, EventArgs eventArgs)
 		{
-			VolumePresenter.Release();
+			m_VolumePresenter.Release();
 		}
 
 		#endregion
@@ -213,12 +207,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 				return;
 
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
-
-			m_VolumeControl = room.GetVolumeControl();
-			if (m_VolumeControl == null)
-				return;
-
-			m_VolumeControl.OnControlAvailableChanged += VolumeControlOnControlAvailableChanged;
 		}
 
 		/// <summary>
@@ -233,10 +221,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 				return;
 
 			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
-
-			if (m_VolumeControl != null)
-				m_VolumeControl.OnControlAvailableChanged -= VolumeControlOnControlAvailableChanged;
-			m_VolumeControl = null;
 		}
 
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs boolEventArgs)
@@ -244,7 +228,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			RefreshIfVisible();
 		}
 
-		private void VolumeControlOnControlAvailableChanged(object sender, DeviceControlAvailableApiEventArgs e)
+		private void VolumePresenterOnControlAvailableChanged(object sender, BoolEventArgs eventArgs)
 		{
 			RefreshIfVisible();
 		}

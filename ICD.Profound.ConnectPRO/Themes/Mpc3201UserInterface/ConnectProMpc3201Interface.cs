@@ -10,8 +10,8 @@ using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Audio.Controls.Volume;
-using ICD.Connect.Audio.EventArguments;
-using ICD.Connect.Devices.EventArguments;
+using ICD.Connect.Audio.Repeaters;
+using ICD.Connect.Audio.Utils;
 using ICD.Connect.Misc.Keypads;
 using ICD.Connect.Panels.Crestron.Controls.TouchScreens;
 using ICD.Connect.Partitioning.Rooms;
@@ -26,10 +26,6 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 {
 	public sealed class ConnectProMpc3201Interface : AbstractUserInterface
 	{
-		private const float RAMP_PERCENTAGE = 3.0f / 100.0f;
-		private const long RAMP_INTERVAL = 300;
-		private const long RAMP_TIMEOUT = long.MaxValue;
-
 		private const long POWER_BUTTON_HOLD_MILLISECONDS = (long)(0.5f * 1000);
 
 		private static readonly BiDictionary<int, uint> s_IndexToSourceButton = new BiDictionary<int, uint>
@@ -52,11 +48,11 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private readonly SafeTimer m_HoldTimer;
+		private readonly VolumeRepeater m_VolumeRepeater;
+		private readonly VolumePointHelper m_VolumePointHelper;
 
 		private bool m_IsDisposed;
 
-		[CanBeNull]
-		private IVolumeDeviceControl m_VolumeControl;
 		private ISource[] m_Sources;
 
 		[CanBeNull]
@@ -92,16 +88,17 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			m_SourceRoutedStates = new Dictionary<ISource, eSourceState>();
 			m_ProcessingSources = new Dictionary<IDestinationBase, ISource>();
 			m_RoutingSection = new SafeCriticalSection();
+			m_VolumeRepeater = new VolumeRepeater();
+			m_VolumePointHelper = new VolumePointHelper();
+			m_RefreshSection = new SafeCriticalSection();
+			m_HoldTimer = SafeTimer.Stopped(PowerButtonHeld);
 
 			m_Sources = new ISource[0];
 
 			m_Control = control;
 			m_Theme = theme;
 
-			m_RefreshSection = new SafeCriticalSection();
-
-			m_HoldTimer = SafeTimer.Stopped(PowerButtonHeld);
-
+			Subscribe(m_VolumePointHelper);
 			Subscribe(m_Control);
 
 			Refresh();
@@ -115,8 +112,12 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		public override void Dispose()
 		{
 			m_IsDisposed = true;
+			m_VolumeRepeater.Dispose();
 
 			Unsubscribe(m_Control);
+
+			Unsubscribe(m_VolumePointHelper);
+			m_VolumePointHelper.Dispose();
 
 			SetRoom(null);
 		}
@@ -197,27 +198,13 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 					m_RoutingSection.Leave();
 				}
 
-				// Volume power
-				bool volumeOff = m_VolumeControl != null && !m_VolumeControl.ControlAvailable;
-
 				// Volume
-				bool volumeEnabled = !volumeOff &&
-				                     m_VolumeControl != null &&
-				                     m_VolumeControl.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.Volume);
-				ushort percent =
-					m_VolumeControl == null
-						? (ushort)0
-						: volumeEnabled
-							  ? (ushort)(MathUtils.Clamp(m_VolumeControl.GetVolumePercent(), 0, 1) * ushort.MaxValue)
-							  : (ushort)0;
+				bool volumeEnabled = m_VolumePointHelper.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.Volume);
+				ushort percent = (ushort)(MathUtils.Clamp(m_VolumePointHelper.GetVolumePercent(), 0, 1) * ushort.MaxValue);
 
 				// Mute
-				bool muteEnabled = !volumeOff &&
-				                   m_VolumeControl != null &&
-				                   m_VolumeControl.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.Mute);
-				bool muteActive = muteEnabled &&
-								  m_VolumeControl != null
-								  && m_VolumeControl.IsMuted;
+				bool muteEnabled = m_VolumePointHelper.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.Mute);
+				bool muteActive = m_VolumePointHelper.IsMuted;
 
 				m_Control.SetVolumeBargraph(percent);
 
@@ -238,27 +225,15 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			}
 		}
 
-		public void TogglePower()
-		{
-			if (m_Room != null)
-				m_Room.EndMeeting(false);
-		}
-
 		/// <summary>
 		/// Begins ramping the device volume up.
 		/// </summary>
 		public void VolumeUp()
 		{
-			if (m_VolumeControl == null)
+			if (!m_VolumePointHelper.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.VolumeAssignment))
 				return;
 
-			if (m_VolumeControl.IsMuted)
-				m_VolumeControl.SetIsMuted(false);
-
-			if (m_VolumeControl.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.VolumeAssignment))
-				m_VolumeControl.VolumeRampPercent(RAMP_PERCENTAGE, RAMP_INTERVAL, RAMP_TIMEOUT);
-			else if (m_VolumeControl.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.Volume))
-				m_VolumeControl.VolumeRamp(true, RAMP_INTERVAL, RAMP_TIMEOUT);
+			m_VolumeRepeater.VolumeUpHold(m_VolumePointHelper.VolumePoint);
 		}
 
 		/// <summary>
@@ -266,16 +241,10 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// </summary>
 		public void VolumeDown()
 		{
-			if (m_VolumeControl == null)
+			if (!m_VolumePointHelper.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.VolumeAssignment))
 				return;
 
-			if (m_VolumeControl.IsMuted)
-				m_VolumeControl.SetIsMuted(false);
-
-			if (m_VolumeControl.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.VolumeAssignment))
-				m_VolumeControl.VolumeRampPercent(RAMP_PERCENTAGE * -1, RAMP_INTERVAL, RAMP_TIMEOUT);
-			else if (m_VolumeControl.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.Volume))
-				m_VolumeControl.VolumeRamp(false, RAMP_INTERVAL, RAMP_TIMEOUT);
+			m_VolumeRepeater.VolumeDownHold(m_VolumePointHelper.VolumePoint);
 		}
 
 		/// <summary>
@@ -283,11 +252,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// </summary>
 		public void VolumeRelease()
 		{
-			if (m_VolumeControl == null)
-				return;
-
-			if (m_VolumeControl.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.Volume))
-				m_VolumeControl.VolumeRampStop();
+			m_VolumeRepeater.Release();
 		}
 
 		/// <summary>
@@ -295,11 +260,10 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// </summary>
 		public void ToggleMute()
 		{
-			if (m_VolumeControl == null)
+			if (!m_VolumePointHelper.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.Mute))
 				return;
 
-			if (m_VolumeControl.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.Mute))
-				m_VolumeControl.ToggleIsMuted();
+			m_VolumePointHelper.ToggleIsMuted();
 		}
 
 		#endregion
@@ -463,9 +427,6 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
 			room.Routing.State.OnDisplaySourceChanged += RoutingOnDisplaySourceChanged;
-
-			m_VolumeControl = room.GetVolumeControl();
-			Subscribe(m_VolumeControl);
 		}
 
 		/// <summary>
@@ -479,9 +440,6 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 
 			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
 			room.Routing.State.OnDisplaySourceChanged -= RoutingOnDisplaySourceChanged;
-
-			Unsubscribe(m_VolumeControl);
-			m_VolumeControl = null;
 		}
 
 		/// <summary>
@@ -650,31 +608,31 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		#region Volume Control Callbacks
 
 		/// <summary>
-		/// Subscribe to the volume control events.
+		/// Subscribe to the volume point helper events.
 		/// </summary>
-		/// <param name="volumeControl"></param>
-		private void Subscribe(IVolumeDeviceControl volumeControl)
+		/// <param name="volumePointHelper"></param>
+		private void Subscribe(VolumePointHelper volumePointHelper)
 		{
-			if (volumeControl == null)
+			if (volumePointHelper == null)
 				return;
 
-			volumeControl.OnControlAvailableChanged += VolumeControlOnControlAvailableChanged;
-			volumeControl.OnVolumeChanged += VolumeLevelControlOnVolumeChanged;
-			volumeControl.OnIsMutedChanged += VolumeMuteControlOnIsMutedChanged;
+			volumePointHelper.OnVolumeControlAvailableChanged += VolumePointHelperOnVolumeControlAvailableChanged;
+			volumePointHelper.OnVolumeControlVolumeChanged += VolumePointHelperOnVolumeControlVolumeChanged;
+			volumePointHelper.OnVolumeControlIsMutedChanged += VolumePointHelperOnVolumeControlIsMutedChanged;
 		}
 
 		/// <summary>
-		/// Unsubscribe from the volume control events.
+		/// Unsubscribe from the volume point helper events.
 		/// </summary>
-		/// <param name="volumeControl"></param>
-		private void Unsubscribe(IVolumeDeviceControl volumeControl)
+		/// <param name="volumePointHelper"></param>
+		private void Unsubscribe(VolumePointHelper volumePointHelper)
 		{
-			if (volumeControl == null)
+			if (volumePointHelper == null)
 				return;
 
-			volumeControl.OnControlAvailableChanged -= VolumeControlOnControlAvailableChanged;
-			volumeControl.OnVolumeChanged -= VolumeLevelControlOnVolumeChanged;
-			volumeControl.OnIsMutedChanged -= VolumeMuteControlOnIsMutedChanged;
+			volumePointHelper.OnVolumeControlAvailableChanged -= VolumePointHelperOnVolumeControlAvailableChanged;
+			volumePointHelper.OnVolumeControlVolumeChanged -= VolumePointHelperOnVolumeControlVolumeChanged;
+			volumePointHelper.OnVolumeControlIsMutedChanged -= VolumePointHelperOnVolumeControlIsMutedChanged;
 		}
 
 		/// <summary>
@@ -682,7 +640,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void VolumeMuteControlOnIsMutedChanged(object sender, VolumeControlIsMutedChangedApiEventArgs eventArgs)
+		private void VolumePointHelperOnVolumeControlIsMutedChanged(object sender, BoolEventArgs eventArgs)
 		{
 			Refresh();
 		}
@@ -692,12 +650,17 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void VolumeLevelControlOnVolumeChanged(object sender, VolumeControlVolumeChangedApiEventArgs eventArgs)
+		private void VolumePointHelperOnVolumeControlVolumeChanged(object sender, FloatEventArgs eventArgs)
 		{
 			Refresh();
 		}
 
-		private void VolumeControlOnControlAvailableChanged(object sender, DeviceControlAvailableApiEventArgs e)
+		/// <summary>
+		/// Called when the volume control availability changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void VolumePointHelperOnVolumeControlAvailableChanged(object sender, BoolEventArgs eventArgs)
 		{
 			Refresh();
 		}
