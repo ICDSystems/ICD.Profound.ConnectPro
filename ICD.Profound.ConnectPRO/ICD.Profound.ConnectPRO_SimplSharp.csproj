@@ -206,6 +206,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\Cameras\ICameraButtonsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Cameras\ICameraControlPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Cameras\ICameraLayoutPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\FloatingActions\IFloatingActionListPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmLeaveCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmEndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmSplashPowerPresenter.cs" />
@@ -301,6 +302,7 @@
     <Compile Include="Themes\UserInterface\IViews\Common\Cameras\ICameraButtonsView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Cameras\ICameraControlView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Cameras\ICameraLayoutView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\FloatingActions\IFloatingActionListView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmLeaveCallView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmEndMeetingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmSplashPowerView.cs" />
@@ -397,6 +399,7 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\ReferencedRouteListItemPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\ReferencedRouteListItemPresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\EndMeetingPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\FloatingActions\FloatingActionListPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\HeaderPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\FloatingActions\AbstractFloatingActionPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\FloatingActions\FloatingActionCameraPresenter.cs" />
@@ -520,6 +523,8 @@
     <Compile Include="Themes\UserInterface\Views\Common\Displays\ReferencedRouteListItemView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\EndMeetingView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\EndMeetingView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\FloatingActions\FloatingActionListView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\FloatingActions\FloatingActionListView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\HeaderView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\HeaderView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\FloatingActions\AbstractFloatingActionView.cs" />

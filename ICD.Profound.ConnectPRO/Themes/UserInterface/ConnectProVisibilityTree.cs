@@ -20,6 +20,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.ActiveMeeting;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.LeftMenu;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.FloatingActions;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 {
@@ -90,6 +91,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			meetingVisibility.AddPresenter(navigationController.LazyLoadPresenter<IFloatingActionPrivacyMutePresenter>());
 			meetingVisibility.AddPresenter(navigationController.LazyLoadPresenter<IFloatingActionVolumePresenter>());
 			meetingVisibility.AddPresenter(navigationController.LazyLoadPresenter<IFloatingActionCameraPresenter>());
+			meetingVisibility.AddPresenter(navigationController.LazyLoadPresenter<IFloatingActionListButtonPresenter>());
 			meetingVisibility.AddPresenter(navigationController.LazyLoadPresenter<IVtcBasePresenter>());
 			meetingVisibility.AddPresenter(navigationController.LazyLoadPresenter<IWtcBasePresenter>());
 			meetingVisibility.AddPresenter(navigationController.LazyLoadPresenter<ICableTvPresenter>());
@@ -128,6 +130,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			navigationController.LazyLoadPresenter<IFloatingActionPrivacyMutePresenter>();
 			navigationController.LazyLoadPresenter<IFloatingActionVolumePresenter>();
 			navigationController.LazyLoadPresenter<IFloatingActionCameraPresenter>();
+			navigationController.LazyLoadPresenters<IFloatingActionListButtonPresenter>();
 			navigationController.LazyLoadPresenter<IVtcCallListTogglePresenter>();
 			navigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>();
 		}
