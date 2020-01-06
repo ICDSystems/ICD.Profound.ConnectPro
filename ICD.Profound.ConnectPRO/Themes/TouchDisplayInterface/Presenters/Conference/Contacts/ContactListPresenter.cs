@@ -46,11 +46,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 
 		private string m_Filter;
 
-		/// <summary>
-		/// used to store filter when user hits enter so cancelling can return to old filter.
-		/// </summary>
-		private string m_ConfirmedFilter;
-
 		private bool m_ShowFavorites;
 		private IFavorites m_SubscribedFavorites;
 
@@ -239,12 +234,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			RefreshIfVisible();
 		}
 
-		private void ConfirmFilter(string filter)
-		{
-			m_ConfirmedFilter = filter;
-			Filter = filter;
-		}
-
 		private void PreviewFilter(string filter)
 		{
 			m_DebounceTimer.Reset(KEYBOARD_DEBOUNCE_TIME);
@@ -253,7 +242,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 
 		private void CancelFilter()
 		{
-			Filter = m_ConfirmedFilter;
+			Filter = null;
 		}
 
 		#endregion
@@ -569,12 +558,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				PreviewFilter(text);
 		}
 
-		private void KeyboardOnEnterPressed(string text)
-		{
-			if (IsViewVisible)
-				ConfirmFilter(text);
-		}
-
 		private void KeyboardOnClosePressed(string text)
 		{
 			if (IsViewVisible)
@@ -655,10 +638,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		/// <param name="e"></param>
 		private void ViewOnSearchButtonPressed(object sender, EventArgs e)
 		{
-			// TODO uncomment when keyboard is available
-			//Navigation.LazyLoadPresenter<IConferenceKeyboardPresenter>()
-			//          .ShowView("Filter Contacts", m_ConfirmedFilter, KeyboardOnEnterPressed, KeyboardOnClosePressed,
-			//                    KeyboardOnStringChanged);
+			Navigation.LazyLoadPresenter<IContactsKeyboardPresenter>()
+			          .ShowView("Filter Contacts", string.Empty, KeyboardOnClosePressed,
+			                    KeyboardOnStringChanged);
 		}
 
 		/// <summary>
@@ -670,7 +652,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		{
 			// Clear the filter - Skip the property to avoid a second refresh
 			m_Filter = null;
-			m_ConfirmedFilter = null;
 
 			ShowFavorites = !ShowFavorites;
 		}
@@ -686,11 +667,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 
 			Filter = null;
 			ShowFavorites = false;
-			m_ConfirmedFilter = null;
 			m_SelectedContacts.Clear();
-
-			// TODO when keyboard presenter is available
-			//Navigation.LazyLoadPresenter<IConferenceKeyboardPresenter>().ShowView(false);
+			
+			Navigation.LazyLoadPresenter<IContactsKeyboardPresenter>().ShowView(false);
 		}
 
 		#endregion
