@@ -317,6 +317,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			foreach (var conference in control.GetConferences())
 				Subscribe(conference);
 
+			var webConferenceControl = control as IWebConferenceDeviceControl;
+			if (webConferenceControl != null)
+				webConferenceControl.OnCameraEnabledChanged += WebConferenceControlOnOnCameraEnabledChanged;
+
 			UpdateIsInCall();
 		}
 
@@ -331,6 +335,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			foreach (var conference in control.GetConferences())
 				Unsubscribe(conference);
 
+			var webConferenceControl = control as IWebConferenceDeviceControl;
+			if (webConferenceControl != null)
+				webConferenceControl.OnCameraEnabledChanged -= WebConferenceControlOnOnCameraEnabledChanged;
+
 			UpdateIsInCall();
 		}
 
@@ -344,6 +352,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		{
 			Unsubscribe(args.Data);
 			UpdateIsInCall();
+		}
+		
+		private void WebConferenceControlOnOnCameraEnabledChanged(object sender, BoolEventArgs e)
+		{
+			RefreshIfVisible();
 		}
 
 		#endregion
