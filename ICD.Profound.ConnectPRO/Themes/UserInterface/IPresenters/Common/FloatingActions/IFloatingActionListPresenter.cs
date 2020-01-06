@@ -6,6 +6,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Floati
 {
 	public interface IFloatingActionListPresenter : IUiPresenter<IFloatingActionListView>
 	{
-		void SetChildren(IEnumerable<IFloatingActionListItemPresenter> items);
+		void SetChildren(IEnumerable<IFloatingActionListItem> items);
 	}
 }

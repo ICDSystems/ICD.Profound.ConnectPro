@@ -1,12 +1,14 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.FloatingActions.FloatingActionListItems;
+using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.FloatingActions.FloatingActionListItems
 {
-	public interface IFloatingActionListItemPresenter
+	public interface IFloatingActionListItem
 	{
 		event EventHandler<BoolEventArgs> OnIsAvaliableChanged;
+
+		event EventHandler<BoolEventArgs> OnIsActiveChanged;
 
 		bool IsAvailable { get; }
 		string Label { get; }
@@ -19,10 +21,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Floati
 		/// This method will get called when the button is pressed - also called by the FloatingActionListButtonPresenter if this is the only icon
 		/// </summary>
 		void HandleButtonPressed();
-	}
 
-	public interface IFloatingActionListItemPresenter<T> : IFloatingActionListItemPresenter, IUiPresenter<T> where T : IFloatingActionListItemView
-	{
-		
+		void Subscribe(IConnectProRoom room);
+
+		void Unsubscribe(IConnectProRoom room);
 	}
 }

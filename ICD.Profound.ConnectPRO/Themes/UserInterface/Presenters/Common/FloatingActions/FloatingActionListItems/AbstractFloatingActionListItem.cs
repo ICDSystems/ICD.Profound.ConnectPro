@@ -1,33 +1,53 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
+using ICD.Connect.UI.Mvp.Presenters;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.FloatingActions.FloatingActionListItems;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.FloatingActions.FloatingActionListItems;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.FloatingActions.FloatingActionListItems
 {
-	public abstract class AbstractFloatingActionListItemPresenter<T> : AbstractUiPresenter<T>, IFloatingActionListItemPresenter<T> where T : class, IFloatingActionListItemView
+	public abstract class AbstractFloatingActionListItem : IFloatingActionListItem
 	{
 		private bool m_IsAvaliable;
+
+		private bool m_IsActive;
+
+		private readonly INavigationController m_Navigation;
 
 		/// <summary>
 		/// This is the presenter for the page this list item shows
 		/// </summary>
 		protected abstract IUiPresenter ActionPresenter { get; }
 
+		protected bool IsActive
+		{
+			get { return m_IsActive; }
+			set
+			{
+				if (m_IsActive == value)
+					return;
+
+				m_IsActive = value;
+
+				OnIsActiveChanged.Raise(this, new BoolEventArgs(value));
+			}
+		}
+
+		protected INavigationController Navigation { get { return m_Navigation; } }
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="nav"></param>
-		/// <param name="views"></param>
-		/// <param name="theme"></param>
-		protected AbstractFloatingActionListItemPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		protected AbstractFloatingActionListItem(INavigationController navigation)
 		{
+			m_Navigation = navigation;
 		}
 
 		public event EventHandler<BoolEventArgs> OnIsAvaliableChanged;
+
+		public event EventHandler<BoolEventArgs> OnIsActiveChanged;
 
 		public bool IsAvailable
 		{
@@ -49,7 +69,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 
 		public virtual bool GetActive()
 		{
-			return ActionPresenter != null && ActionPresenter.IsViewVisible;
+			return IsActive;
 		}
 
 		/// <summary>
@@ -60,5 +80,30 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			if (ActionPresenter != null)
 				ActionPresenter.ShowView(!ActionPresenter.IsViewVisible);
 		}
+
+		public virtual void Subscribe(IConnectProRoom room)
+		{
+		}
+
+		public virtual void Unsubscribe(IConnectProRoom room)
+		{
+		}
+
+		#region ActionPresenter Callbacks
+
+		protected virtual void SubscribeActionPresenter(IUiPresenter actionPresenter)
+		{
+			if (actionPresenter == null)
+				return;
+
+			actionPresenter.OnViewVisibilityChanged += ActionPresenterOnViewVisibilityChanged;
+		}
+
+		protected virtual void ActionPresenterOnViewVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			IsActive = args.Data;
+		}
+
+		#endregion
 	}
 }

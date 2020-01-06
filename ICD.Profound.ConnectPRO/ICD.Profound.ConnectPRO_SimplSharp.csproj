@@ -206,6 +206,8 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\Cameras\ICameraButtonsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Cameras\ICameraControlPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Cameras\ICameraLayoutPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\FloatingActions\FloatingActionListItems\IFloatingActionListItem.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\FloatingActions\IFloatingActionListButtonPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\FloatingActions\IFloatingActionListPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmLeaveCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmEndMeetingPresenter.cs" />
@@ -247,6 +249,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\IHardButtonsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IConnectProNavigationController.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IUiPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Lighting\ILightingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Popups\CableTv\IReferencedCableTvPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Popups\IAppleTvPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Popups\CableTv\ICableTvPresenter.cs" />
@@ -302,6 +305,7 @@
     <Compile Include="Themes\UserInterface\IViews\Common\Cameras\ICameraButtonsView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Cameras\ICameraControlView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Cameras\ICameraLayoutView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\FloatingActions\IFloatingActionListButtonView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\FloatingActions\IFloatingActionListView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmLeaveCallView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmEndMeetingView.cs" />
@@ -334,6 +338,7 @@
     <Compile Include="Themes\UserInterface\IViews\IGenericKeyboardView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IGenericLoadingSpinnerView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IHardButtonsView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Lighting\ILightingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Popups\CableTv\IReferencedCableTvView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Popups\IAppleTvView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IEndMeetingView.cs" />
@@ -399,6 +404,9 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\ReferencedRouteListItemPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\ReferencedRouteListItemPresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\EndMeetingPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\FloatingActions\FloatingActionListButtonPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\FloatingActions\FloatingActionListItems\AbstractFloatingActionListItem.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\FloatingActions\FloatingActionListItems\LightsListItem.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\FloatingActions\FloatingActionListPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\HeaderPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\FloatingActions\AbstractFloatingActionPresenter.cs" />
@@ -438,6 +446,7 @@
     <Compile Include="Themes\UserInterface\Presenters\GenericKeyboardPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\GenericLoadingSpinnerPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\HardButtonsPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Lighting\LightingPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\AbstractPopupPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\AppleTvPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\CableTv\CableTvPresenter.cs" />
@@ -523,6 +532,8 @@
     <Compile Include="Themes\UserInterface\Views\Common\Displays\ReferencedRouteListItemView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\EndMeetingView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\EndMeetingView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\FloatingActions\FloatingActionListButtonView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\FloatingActions\FloatingActionListButtonView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\FloatingActions\FloatingActionListView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\FloatingActions\FloatingActionListView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\HeaderView.cs" />
@@ -587,6 +598,8 @@
     <Compile Include="Themes\UserInterface\Views\GenericLoadingSpinnerView.cs" />
     <Compile Include="Themes\UserInterface\Views\HardButtonsView.cs" />
     <Compile Include="Themes\UserInterface\Views\HardButtonsView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Lighting\LightingView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Lighting\LightingView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\AbstractPopupView.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\AppleTvView.cs" />
     <Compile Include="Themes\UserInterface\Views\Popups\AppleTvView.generated.cs" />
@@ -704,6 +717,10 @@
     <ProjectReference Include="..\..\ICD.Connect.Displays\ICD.Connect.Displays\ICD.Connect.Displays_SimplSharp.csproj">
       <Project>{FCC7D685-B801-43A5-AEB3-774442027A0D}</Project>
       <Name>ICD.Connect.Displays_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Lighting\ICD.Connect.Lighting\ICD.Connect.Lighting_SimplSharp.csproj">
+      <Project>{A519C705-5801-44BF-97B1-02DEA016380A}</Project>
+      <Name>ICD.Connect.Lighting_SimplSharp</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ICD.Connect.Misc\ICD.Connect.Misc\ICD.Connect.Misc_SimplSharp.csproj">
       <Project>{3BAE6352-77B5-499A-9DA5-2AB198F53183}</Project>

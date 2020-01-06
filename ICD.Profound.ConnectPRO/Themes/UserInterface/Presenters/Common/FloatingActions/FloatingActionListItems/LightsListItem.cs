@@ -3,12 +3,10 @@ using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Lighting;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.FloatingActions.FloatingActionListItems;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.FloatingActions.FloatingActionListItems
 {
-	public sealed class LightsItemPresenter : AbstractFloatingActionListItemPresenter<ILightsItemView>
+	public sealed class LightsListItem : AbstractFloatingActionListItem
 	{
 		private const string LABEL = "Lights";
 		private const string ICON = "lights";
@@ -27,19 +25,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="nav"></param>
-		/// <param name="views"></param>
-		/// <param name="theme"></param>
-		public LightsItemPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		public LightsListItem(INavigationController navigation): base(navigation)
 		{
 			m_ActionPresenter = Navigation.LazyLoadPresenter<ILightingPresenter>();
+			SubscribeActionPresenter(m_ActionPresenter);
 		}
 
 		/// <summary>
 		/// Subscribe to the room events.
 		/// </summary>
 		/// <param name="room"></param>
-		protected override void Subscribe(IConnectProRoom room)
+		public override void Subscribe(IConnectProRoom room)
 		{
 			base.Subscribe(room);
 
@@ -55,7 +51,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// Unsubscribe from the room events.
 		/// </summary>
 		/// <param name="room"></param>
-		protected override void Unsubscribe(IConnectProRoom room)
+		public override void Unsubscribe(IConnectProRoom room)
 		{
 			base.Unsubscribe(room);
 
