@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Added plugin page to the settings menu
  - Added CueName property to ConnectProSource
  - Added breadcrumbs to settings title, showing current location
+ - Added floating action list button/popup
+ - Added lighting control
 
 ### Changed
  - Reworked camera presenters to allow selection and control from a single page
