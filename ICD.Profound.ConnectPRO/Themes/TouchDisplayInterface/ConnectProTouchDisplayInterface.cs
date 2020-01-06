@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Properties;
@@ -116,7 +116,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 			// always visible
 			m_NavigationController.NavigateTo<IHeaderPresenter>();
 			m_NavigationController.NavigateTo<IHelloPresenter>();
-			m_NavigationController.LazyLoadPresenter<IBackgroundPresenter>();
+			m_NavigationController.NavigateTo<IBackgroundPresenter>();
 
 			UpdateVisibility();
 		}
