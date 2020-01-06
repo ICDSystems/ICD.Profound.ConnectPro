@@ -2,7 +2,6 @@
 {
 	public interface IFloatingActionListButtonView : IFloatingActionView
 	{
-
 		void SetIcon(string icon);
 	}
 }
