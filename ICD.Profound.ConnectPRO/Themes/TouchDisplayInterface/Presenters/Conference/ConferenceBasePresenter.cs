@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
@@ -16,6 +15,7 @@ using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Conferenc
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Conference.ActiveConference;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Conference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Header;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Notifications;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Conference;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Header;
@@ -25,6 +25,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 	[PresenterBinding(typeof(IConferenceBasePresenter))]
 	public sealed class ConferenceBasePresenter : AbstractPopupPresenter<IConferenceBaseView>, IConferenceBasePresenter
 	{
+		private const string DISCONNECTING_TEXT = "Disconnecting... Audio and video may still be live.";
+		private const string CONNECTING_TEXT = "Please wait. Your conference is being connected...";
+
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly List<IConferencePresenter> m_ConferencePresenters;
 		private readonly Dictionary<HeaderButtonModel, ITouchDisplayPresenter> m_PresenterButtons;
@@ -89,6 +92,14 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			InitHeaderButtons();
 		}
 
+		public override void Dispose()
+		{
+			foreach (var presenter in m_ConferencePresenters)
+				Unsubscribe(presenter);
+
+			base.Dispose();
+		}
+
 		private void ShowDefaultPresenter()
 		{
 			if (IsInCall && IsViewVisible)
@@ -150,6 +161,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			m_PresenterButtons.Add(shareButton, Navigation.LazyLoadPresenter<IShareConferencePresenter>());
 
 			m_OutOfCallButtons.Add(startConferenceButton);
+			m_OutOfCallButtons.Add(contactsButton);
 
 			m_InCallButtons.Add(activeConferenceButton);
 			m_InCallButtons.Add(contactsButton);
@@ -172,17 +184,26 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 					ITouchDisplayPresenter presenter = presenterButton.Value;
 					button.Selected = presenter.IsViewVisible;
 				}
-				
+
 				var webConferenceControl = ActiveConferenceControl as IWebConferenceDeviceControl;
 				bool cameraActive = webConferenceControl != null && webConferenceControl.CameraEnabled;
 				m_HideCameraButton.LabelText = cameraActive ? "Hide Camera" : "Show Camera";
 				m_HideCameraButton.Icon = TouchCueIcons.GetIcon(cameraActive ? "hide" : "reveal");
 				
-
 				// Only hosts can end meeting for everyone
 				ZoomRoom zoomRoom = webConferenceControl == null ? null : webConferenceControl.Parent as ZoomRoom;
 				CallComponent component = zoomRoom == null ? null : zoomRoom.Components.GetComponent<CallComponent>();
 				m_EndConferenceButton.Enabled = component != null && component.AmIHost;
+				
+				if (ActiveConferenceControl == null)
+					return;
+				var connectingPresenter = Navigation.LazyLoadPresenter<IConferenceConnectingPresenter>();
+				if (ActiveConferenceControl.GetConferences().Any(c => c.Status == eConferenceStatus.Disconnecting))
+					connectingPresenter.Show(DISCONNECTING_TEXT);
+				else if (ActiveConferenceControl.GetConferences().Any(c => c.Status == eConferenceStatus.Connecting))
+					connectingPresenter.Show(CONNECTING_TEXT);
+				else
+					connectingPresenter.ShowView(false);
 			}
 			finally
 			{
@@ -420,6 +441,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		private void Subscribe(IConferencePresenter presenter)
 		{
 			presenter.OnViewVisibilityChanged += PresenterOnOnViewVisibilityChanged;
+		}
+
+		private void Unsubscribe(IConferencePresenter presenter)
+		{
+			presenter.OnViewVisibilityChanged -= PresenterOnOnViewVisibilityChanged;
 		}
 
 		private void PresenterOnOnViewVisibilityChanged(object sender, BoolEventArgs e)
