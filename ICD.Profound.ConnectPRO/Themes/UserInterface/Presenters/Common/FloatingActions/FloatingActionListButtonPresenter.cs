@@ -165,9 +165,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			return visibility && wasVisible;
 		}
 
-		private static string GetWhiteIconString(string icon)
+		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
 		{
-			return Icons.GetIcon(icon, eIconColor.White);
+			base.Dispose();
+
+			ShortcutAction = null;
+
+			foreach (IFloatingActionListItem item in m_ListItems)
+			{
+				Unsubscribe(item);
+				item.Dispose();
+			}
+
+			m_ListItems.Clear();
 		}
 
 		#region ListItem Callbacks
@@ -268,5 +281,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		}
 
 		#endregion
+
+		private static string GetWhiteIconString(string icon)
+		{
+			return Icons.GetIcon(icon, eIconColor.White);
+		}
 	}
 }

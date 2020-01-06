@@ -105,5 +105,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		}
 
 		#endregion
+
+		/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+		public void Dispose()
+		{
+			OnIsActiveChanged = null;
+			OnIsActiveChanged = null;
+		}
 	}
 }

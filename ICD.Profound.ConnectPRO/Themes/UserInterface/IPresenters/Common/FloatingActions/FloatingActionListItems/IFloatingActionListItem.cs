@@ -4,7 +4,7 @@ using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.FloatingActions.FloatingActionListItems
 {
-	public interface IFloatingActionListItem
+	public interface IFloatingActionListItem: IDisposable
 	{
 		event EventHandler<BoolEventArgs> OnIsAvaliableChanged;
 
