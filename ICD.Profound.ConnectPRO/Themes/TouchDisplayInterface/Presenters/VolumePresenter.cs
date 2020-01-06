@@ -98,7 +98,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 				return;
 
 			ShowView(true);
-			StopVisibilityTimer();
+			ResetVisibilityTimer();
 
 			IVolumeMuteDeviceControl volumeControlMute = VolumeControl as IVolumeMuteDeviceControl;
 			if (volumeControlMute != null)
@@ -122,7 +122,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 				return;
 
 			ShowView(true);
-			StopVisibilityTimer();
+			ResetVisibilityTimer();
 
 			IVolumeMuteDeviceControl volumeControlMute = VolumeControl as IVolumeMuteDeviceControl;
 			if (volumeControlMute != null)
@@ -143,7 +143,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 				return;
 
 			ShowView(true);
-			StopVisibilityTimer();
+			ResetVisibilityTimer();
 
 			IVolumeMuteDeviceControl volumeControlMute = VolumeControl as IVolumeMuteDeviceControl;
 			if (volumeControlMute != null)
@@ -187,14 +187,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 			IVolumeMuteBasicDeviceControl volumeControlMute = VolumeControl as IVolumeMuteBasicDeviceControl;
 			if (volumeControlMute != null)
 				volumeControlMute.VolumeMuteToggle();
-		}
-
-		/// <summary>
-		/// Stops the visibility timer.
-		/// </summary>
-		public void StopVisibilityTimer()
-		{
-			m_VisibilityTimer.Stop();
 		}
 
 		/// <summary>
