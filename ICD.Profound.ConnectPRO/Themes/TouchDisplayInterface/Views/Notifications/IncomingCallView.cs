@@ -27,11 +27,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Notificatio
 			m_Icon.SetImageUrl(icon);
 		}
 
-		public void SetSourceName(string name)
-		{
-			m_SourceNameLabel.SetLabelText(name);
-		}
-
 		public void SetCallerInfo(string number)
 		{
 			m_IncomingCallLabel.SetLabelText(number);

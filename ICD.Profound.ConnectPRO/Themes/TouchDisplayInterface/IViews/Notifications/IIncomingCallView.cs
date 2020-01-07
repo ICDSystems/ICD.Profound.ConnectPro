@@ -10,8 +10,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Notificati
 
 		void SetIcon(string icon);
 
-		void SetSourceName(string name);
-
 		void SetCallerInfo(string number);
 
 		void SetAnswerButtonMode(eIncomingCallAnswerButtonMode number);

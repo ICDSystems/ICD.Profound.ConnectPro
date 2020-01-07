@@ -12,7 +12,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Notificatio
 	public sealed partial class IncomingCallView
 	{
 		private VtProSubpage m_Subpage;
-		private VtProSimpleLabel m_SourceNameLabel;
 		private VtProSimpleLabel m_IncomingCallLabel;
 		private VtProImageObject m_Icon;
 		private VtProAdvancedButton m_AnswerButton;
@@ -30,11 +29,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Notificatio
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
 				DigitalVisibilityJoin = 300
-			};
-
-			m_SourceNameLabel = new VtProSimpleLabel(panel, m_Subpage)
-			{
-				IndirectTextJoin = 302
 			};
 
 			m_IncomingCallLabel = new VtProSimpleLabel(panel, m_Subpage)
@@ -73,7 +67,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Notificatio
 		protected override IEnumerable<IVtProControl> GetChildren()
 		{
 			yield return m_Subpage;
-			yield return m_SourceNameLabel;
 			yield return m_IncomingCallLabel;
 			yield return m_Icon;
 			yield return m_AnswerButton;

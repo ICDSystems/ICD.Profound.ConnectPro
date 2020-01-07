@@ -194,7 +194,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Notifi
 
 		protected override void Unsubscribe(IIncomingCallView view)
 		{
-			base.Subscribe(view);
+			base.Unsubscribe(view);
 
 			view.OnAnswerButtonPressed -= ViewOnAnswerButtonPressed;
 			view.OnRejectButtonPressed -= ViewOnRejectButtonPressed;
