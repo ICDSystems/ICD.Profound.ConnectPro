@@ -33,7 +33,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.DeviceDrawe
 			List<string> packageNamesList = packageNames.ToList();
 			m_AppButtonList.SetNumberOfItems((ushort)packageNamesList.Count);
 			for (ushort i = 0; i < packageNamesList.Count; i++)
+			{
 				m_AppButtonList.SetItemIcon(i, packageNamesList[i]);
+				m_AppButtonList.SetItemVisible(i, true);
+			}
 		}
 
 		protected override void SubscribeControls()
