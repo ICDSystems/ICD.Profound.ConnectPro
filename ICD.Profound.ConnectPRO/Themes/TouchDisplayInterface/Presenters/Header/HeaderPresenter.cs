@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
-using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
+using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.DeviceDrawer;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Header;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Notifications;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Settings;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Header;
@@ -60,7 +60,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 				LabelText = "Settings",
 				Mode = eHeaderButtonMode.Blue
 			};
-			m_EndMeetingButton = new HeaderButtonModel(0, 1, EndMeeting)
+			m_EndMeetingButton = new HeaderButtonModel(0, 1, ConfirmEndMeeting)
 			{
 				Icon = TouchCueIcons.GetIcon("endmymeeting"),
 				LabelText = "End Meeting",
@@ -271,11 +271,20 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 		{
 			if (!Room.IsInMeeting)
 				Room.StartMeeting();
+			else if (Room.ConferenceManager.IsInCall != eInCall.None)
+				Navigation.LazyLoadPresenter<IConfirmEndMeetingPresenter>()
+					.Show("Are you sure you would like to leave your conference?", EndCall);
 			else
 			{
 				var deviceDrawer = Navigation.LazyLoadPresenter<IDeviceDrawerPresenter>();
 				deviceDrawer.ShowView(!deviceDrawer.IsViewVisible);
 			}
+		}
+
+		private void EndCall()
+		{
+			Room.EndAllConferences();
+			Navigation.LazyLoadPresenter<IDeviceDrawerPresenter>().ShowView(true);
 		}
 
 		#endregion
@@ -297,6 +306,12 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 		private void OpenSettings()
 		{
 			Navigation.NavigateTo<ISettingsBasePresenter>();
+		}
+
+		private void ConfirmEndMeeting()
+		{
+			Navigation.LazyLoadPresenter<IConfirmEndMeetingPresenter>()
+				.Show("Are you sure you would like to end your meeting?", EndMeeting);
 		}
 
 		private void EndMeeting()
