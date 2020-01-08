@@ -1,6 +1,5 @@
 ﻿using System;
 using ICD.Common.Utils;
-using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Partitioning.Commercial;
 using ICD.Connect.UI.Attributes;
@@ -16,13 +15,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 	public sealed class SettingsPowerPresenter : AbstractSettingsNodeBasePresenter<ISettingsPowerView, PowerSettingsLeaf>, ISettingsPowerPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
-
-		private TimeSpan m_WeekdayWakeTime;
-		private TimeSpan m_WeekendWakeTime;
-		private TimeSpan m_WeekdaySleepTime;
-		private TimeSpan m_WeekendSleepTime;
-		private bool m_WeekdayEnable;
-		private bool m_WeekendEnable;
 
 		private bool m_Weekend;
 
@@ -50,80 +42,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
-
-			m_WeekendEnable = false;
-			m_WeekdayEnable = false;
-
-			m_WeekdayWakeTime = new TimeSpan(7, 0, 0);
-			m_WeekdaySleepTime = new TimeSpan(19, 0, 0);
-
-			m_WeekendWakeTime = new TimeSpan(7, 0, 0);
-			m_WeekendSleepTime = new TimeSpan(19, 0, 0);
-		}
-
-		/// <summary>
-		/// Called when the wrapped node changes.
-		/// </summary>
-		/// <param name="node"></param>
-		protected override void NodeChanged(PowerSettingsLeaf node)
-		{
-			base.NodeChanged(node);
-
-			if (node == null)
-				return;
-
-			m_RefreshSection.Enter();
-
-			try
-			{
-				WakeSchedule schedule = node.WakeSchedule;
-
-				m_WeekdayEnable = schedule.WeekdayEnable;
-				m_WeekendEnable = schedule.WeekendEnable;
-
-				if (schedule.WeekdayWakeTime.HasValue)
-					m_WeekdayWakeTime = schedule.WeekdayWakeTime.Value;
-				if (schedule.WeekdaySleepTime.HasValue)
-					m_WeekdaySleepTime = schedule.WeekdaySleepTime.Value;
-
-				if (schedule.WeekendWakeTime.HasValue)
-					m_WeekendWakeTime = schedule.WeekendWakeTime.Value;
-				if (schedule.WeekendSleepTime.HasValue)
-					m_WeekendSleepTime = schedule.WeekendSleepTime.Value;
-			}
-			finally
-			{
-				m_RefreshSection.Leave();
-			}
-		}
-
-		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
-		{
-			base.ViewOnVisibilityChanged(sender, args);
-
-			m_RefreshSection.Enter();
-
-			try
-			{
-				// Save when the view is hidden
-				if (args.Data || Node == null)
-					return;
-
-				WakeSchedule schedule = Node.WakeSchedule;
-				schedule.WeekdayEnable = m_WeekdayEnable;
-				schedule.WeekendEnable = m_WeekendEnable;
-
-				schedule.WeekdayWakeTime = m_WeekdayWakeTime;
-				schedule.WeekdaySleepTime = m_WeekdaySleepTime;
-				schedule.WeekendWakeTime = m_WeekendWakeTime;
-				schedule.WeekendSleepTime = m_WeekendSleepTime;
-			}
-			finally
-			{
-				m_RefreshSection.Leave();
-			}
-
-			Node.SetDirty(true);
 		}
 
 		/// <summary>
@@ -138,38 +56,59 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			try
 			{
-				if (Weekend)
-				{
-					view.SetWeekendsButtonSelected();
-
-					view.SetSleepHour((ushort)m_WeekendSleepTime.Hours);
-					view.SetSleepMinute((ushort)m_WeekendSleepTime.Minutes);
-
-					view.SetWakeHour((ushort)m_WeekendWakeTime.Hours);
-					view.SetWakeMinute((ushort)m_WeekendWakeTime.Minutes);
-
-					view.SetEnableToggleSelected(m_WeekendEnable);
-				}
-				else
-				{
-					view.SetWeekdaysButtonSelected();
-
-					view.SetSleepHour((ushort)m_WeekdaySleepTime.Hours);
-					view.SetSleepMinute((ushort)m_WeekdaySleepTime.Minutes);
-
-					view.SetWakeHour((ushort)m_WeekdayWakeTime.Hours);
-					view.SetWakeMinute((ushort)m_WeekdayWakeTime.Minutes);
-
-					view.SetEnableToggleSelected(m_WeekdayEnable);
-				}
-
+				// Power
 				bool isAwake = Node != null && Node.IsAwake;
 				view.SetIsAwakeToggleSelected(isAwake);
+
+				// Schedule
+				WakeSchedule wakeSchedule = Node == null ? null : Node.WakeSchedule;
+
+				TimeSpan? sleepTime =
+					wakeSchedule == null
+						? null
+						: Weekend
+							  ? wakeSchedule.WeekendSleepTime
+							  : wakeSchedule.WeekdaySleepTime;
+				TimeSpan? wakeTime =
+					wakeSchedule == null
+						? null
+						: Weekend
+							  ? wakeSchedule.WeekendWakeTime
+							  : wakeSchedule.WeekdayWakeTime;
+
+				int sleepHour = sleepTime.HasValue ? sleepTime.Value.Hours : 0;
+				int sleepMinute = sleepTime.HasValue ? sleepTime.Value.Minutes : 0;
+				int wakeHour = wakeTime.HasValue ? wakeTime.Value.Hours : 0;
+				int wakeMinute = wakeTime.HasValue ? wakeTime.Value.Minutes : 0;
+
+				view.SetSleepHour(sleepHour);
+				view.SetSleepMinute(sleepMinute);
+				view.SetWakeHour(wakeHour);
+				view.SetWakeMinute(wakeMinute);
+
+				view.SetWeekendsButtonSelected(Weekend);
+				view.SetWeekdaysButtonSelected(!Weekend);
+
+				bool enabled =
+					wakeSchedule != null &&
+					(Weekend
+						? wakeSchedule.WeekendEnable
+						: wakeSchedule.WeekdayEnable);
+
+				view.SetEnableToggleSelected(enabled);
 			}
 			finally
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		#region Private Methods
+
+		private void ToggleIsAwake()
+		{
+			if (Node != null)
+				Node.ToggleIsAwake();
 		}
 
 		private void IncrementWakeHours(int hours)
@@ -178,10 +117,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			try
 			{
+				if (Node == null)
+					return;
+
 				if (Weekend)
-					m_WeekendWakeTime = m_WeekendWakeTime.AddHoursAndWrap(hours);
+				{
+					Node.WakeSchedule.WeekendWakeTime = Node.WakeSchedule.WeekendWakeTime ?? default(TimeSpan);
+					Node.WakeSchedule.WeekendWakeTime = Node.WakeSchedule.WeekendWakeTime.Value.AddHoursAndWrap(hours);
+				}
 				else
-					m_WeekdayWakeTime = m_WeekdayWakeTime.AddHoursAndWrap(hours);
+				{
+					Node.WakeSchedule.WeekdayWakeTime = Node.WakeSchedule.WeekdayWakeTime ?? default(TimeSpan);
+					Node.WakeSchedule.WeekdayWakeTime = Node.WakeSchedule.WeekdayWakeTime.Value.AddHoursAndWrap(hours);
+				}
+
+				Node.SetDirty(true);
 			}
 			finally
 			{
@@ -197,10 +147,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			try
 			{
+				if (Node == null)
+					return;
+
 				if (Weekend)
-					m_WeekendWakeTime = m_WeekendWakeTime.AddMinutesAndWrap(minutes);
+				{
+					Node.WakeSchedule.WeekendWakeTime = Node.WakeSchedule.WeekendWakeTime ?? default(TimeSpan);
+					Node.WakeSchedule.WeekendWakeTime = Node.WakeSchedule.WeekendWakeTime.Value.AddMinutesAndWrap(minutes);
+				}
 				else
-					m_WeekdayWakeTime = m_WeekdayWakeTime.AddMinutesAndWrap(minutes);
+				{
+					Node.WakeSchedule.WeekdayWakeTime = Node.WakeSchedule.WeekdayWakeTime ?? default(TimeSpan);
+					Node.WakeSchedule.WeekdayWakeTime = Node.WakeSchedule.WeekdayWakeTime.Value.AddMinutesAndWrap(minutes);
+				}
+
+				Node.SetDirty(true);
 			}
 			finally
 			{
@@ -216,10 +177,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			try
 			{
+				if (Node == null)
+					return;
+
 				if (Weekend)
-					m_WeekendSleepTime = m_WeekendSleepTime.AddHoursAndWrap(hours);
+				{
+					Node.WakeSchedule.WeekendSleepTime = Node.WakeSchedule.WeekendSleepTime ?? default(TimeSpan);
+					Node.WakeSchedule.WeekendSleepTime = Node.WakeSchedule.WeekendSleepTime.Value.AddHoursAndWrap(hours);
+				}
 				else
-					m_WeekdaySleepTime = m_WeekdaySleepTime.AddHoursAndWrap(hours);
+				{
+					Node.WakeSchedule.WeekdaySleepTime = Node.WakeSchedule.WeekdaySleepTime ?? default(TimeSpan);
+					Node.WakeSchedule.WeekdaySleepTime = Node.WakeSchedule.WeekdaySleepTime.Value.AddHoursAndWrap(hours);
+				}
+
+				Node.SetDirty(true);
 			}
 			finally
 			{
@@ -235,10 +207,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			try
 			{
+				if (Node == null)
+					return;
+
 				if (Weekend)
-					m_WeekendSleepTime = m_WeekendSleepTime.AddMinutesAndWrap(minutes);
+				{
+					Node.WakeSchedule.WeekendSleepTime = Node.WakeSchedule.WeekendSleepTime ?? default(TimeSpan);
+					Node.WakeSchedule.WeekendSleepTime = Node.WakeSchedule.WeekendSleepTime.Value.AddMinutesAndWrap(minutes);
+				}
 				else
-					m_WeekdaySleepTime = m_WeekdaySleepTime.AddMinutesAndWrap(minutes);
+				{
+					Node.WakeSchedule.WeekdaySleepTime = Node.WakeSchedule.WeekdaySleepTime ?? default(TimeSpan);
+					Node.WakeSchedule.WeekdaySleepTime = Node.WakeSchedule.WeekdaySleepTime.Value.AddMinutesAndWrap(minutes);
+				}
+
+				Node.SetDirty(true);
 			}
 			finally
 			{
@@ -248,22 +231,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			RefreshIfVisible();
 		}
 
-		private void ToggleIsAwake()
-		{
-			if (Node != null)
-				Node.ToggleIsAwake();
-		}
-
 		private void ToggleEnabled()
 		{
 			m_RefreshSection.Enter();
 
 			try
 			{
+				if (Node == null)
+					return;
+
 				if (Weekend)
-					m_WeekendEnable = !m_WeekendEnable;
+					Node.WakeSchedule.WeekendEnable = !Node.WakeSchedule.WeekendEnable;
 				else
-					m_WeekdayEnable = !m_WeekdayEnable;
+					Node.WakeSchedule.WeekdayEnable = !Node.WakeSchedule.WeekdayEnable;
+
+				Node.SetDirty(true);
 			}
 			finally
 			{
@@ -272,6 +254,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			Refresh();
 		}
+
+		#endregion
 
 		#region Node Callbacks
 

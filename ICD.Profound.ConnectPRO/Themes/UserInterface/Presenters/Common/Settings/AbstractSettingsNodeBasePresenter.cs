@@ -77,6 +77,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <param name="node"></param>
 		protected virtual void NodeChanged(TNode node)
 		{
+			RefreshIfVisible();
 		}
 
 		#region Node Callbacks

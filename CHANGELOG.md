@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Sources on the Cue now shown using CueName if defined, otherwise source name
  - Changed settings pages to only prompt for PIN code when going to a page that requires it
  - Settings Root and Combine Grid pages don't require login (all other do)
+ - Fixed a bug that was causing settings to be saved when the user visits the power settings without making a change
 
 ## [11.1.0] - 2019-12-03
 ### Added
