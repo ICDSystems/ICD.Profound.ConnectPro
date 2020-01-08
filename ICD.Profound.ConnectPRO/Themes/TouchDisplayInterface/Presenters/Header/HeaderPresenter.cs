@@ -4,7 +4,10 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Timers;
+using ICD.Connect.Conferencing.Conferences;
+using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Devices;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -283,8 +286,19 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 
 		private void EndCall()
 		{
-			Room.EndAllConferences();
-			Navigation.LazyLoadPresenter<IDeviceDrawerPresenter>().ShowView(true);
+			if (Room != null && Room.FocusSource != null)
+			{
+				var device = Room.Core.Originators.GetChild<IDevice>(Room.FocusSource.Device);
+				var conferenceControl = device == null ? null : device.Controls.GetControl<IConferenceDeviceControl>();
+				var activeConference = conferenceControl == null ? null : conferenceControl.GetActiveConference();
+				if (activeConference is IWebConference)
+					(activeConference as IWebConference).LeaveConference();
+				if (activeConference is ITraditionalConference)
+					(activeConference as ITraditionalConference).Hangup();
+			}
+
+			Navigation.LazyLoadPresenter<IConfirmEndMeetingPresenter>().ShowView(false);
+			Navigation.NavigateTo<IDeviceDrawerPresenter>();
 		}
 
 		#endregion
