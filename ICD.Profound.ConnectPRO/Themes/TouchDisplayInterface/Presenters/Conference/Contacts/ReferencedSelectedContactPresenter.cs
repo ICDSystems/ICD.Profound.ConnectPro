@@ -57,8 +57,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				view.SetContactName(Contact == null ? "Missing Contact Name" : Contact.Name);
 				
 				var zoomContact = Contact as ZoomContact;
-				view.SetAvatarImageVisibility(zoomContact != null && !string.IsNullOrEmpty(zoomContact.AvatarUrl));
-				view.SetAvatarImagePath(zoomContact == null || !string.IsNullOrEmpty(zoomContact.AvatarUrl)
+				view.SetAvatarImageVisibility(true);
+				view.SetAvatarImagePath(zoomContact == null || string.IsNullOrEmpty(zoomContact.AvatarUrl)
 					? TouchCueIcons.GetIcon("zoom_participants_head")
 					: zoomContact.AvatarUrl);
 			}
