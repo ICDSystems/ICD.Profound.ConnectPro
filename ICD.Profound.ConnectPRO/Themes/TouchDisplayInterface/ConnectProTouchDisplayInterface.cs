@@ -341,7 +341,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs eventArgs)
 		{
+			if (ConnectProRoom.IsInMeeting && ConnectProRoom.Routing.State.GetSourceRoutedStates().All(s => s.Value == eSourceState.Inactive))
+				m_NavigationController.NavigateTo<IDeviceDrawerPresenter>();
+			
 			UpdateVisibility();
+
 			if (m_Room != null)
 			{
 				m_Room.Routing.State.ClearProcessingSources();
@@ -354,13 +358,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 			if (Room == null)
 				return;
 			
-			m_NavigationController.LazyLoadPresenter<IBackgroundPresenter>().Refresh();
-
-			if (ConnectProRoom.IsInMeeting && ConnectProRoom.Routing.State.GetSourceRoutedStates().All(s => s.Value == eSourceState.Inactive))
-				m_NavigationController.NavigateTo<IDeviceDrawerPresenter>();
-			else if (!ConnectProRoom.IsInMeeting && ConnectProRoom.CalendarControl != null)
+			if (!ConnectProRoom.IsInMeeting && ConnectProRoom.CalendarControl != null)
 				m_NavigationController.NavigateTo<ISchedulePresenter>();
-
+			
+			m_NavigationController.LazyLoadPresenter<IBackgroundPresenter>().Refresh();
 			m_NavigationController.LazyLoadPresenter<IHelloPresenter>().Refresh();
 		}
 
