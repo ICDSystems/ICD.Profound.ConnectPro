@@ -157,7 +157,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 
 		/// <summary>
 		/// Called when a source becomes routed/unrouted.
-		/// </summary>d
+		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
 		private void StateOnDisplaySourceChanged(object sender, EventArgs eventArgs)

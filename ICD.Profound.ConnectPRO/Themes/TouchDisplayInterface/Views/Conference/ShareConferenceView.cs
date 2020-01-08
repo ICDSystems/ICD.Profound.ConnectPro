@@ -39,6 +39,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Conference
 			m_SourceList.SetItemIcon(index, icon);
 		}
 
+		public void SetButtonVisible(ushort index, bool visible)
+		{
+			m_SourceList.SetItemVisible(index, visible);
+		}
+
 		public void SetButtonSelected(ushort index, bool selected)
 		{
 			m_SourceList.SetItemSelected(index, selected);

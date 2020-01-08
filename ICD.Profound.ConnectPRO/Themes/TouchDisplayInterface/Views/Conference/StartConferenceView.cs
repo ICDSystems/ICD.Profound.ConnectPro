@@ -53,8 +53,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Conference
 			m_TextEntry.SetNumberOfItems(10);
 			for (ushort index = 0; index < 10; index++)
 			{
-				char item;
+				m_TextEntry.SetItemVisible(index, true);
 
+				char item;
 				if (text.TryElementAt(index, out item))
 				{
 					m_TextEntry.SetItemSelected(index, true);
@@ -75,7 +76,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Conference
 		protected override void SubscribeControls()
 		{
 			base.SubscribeControls();
-
+			
 			m_MeetNowButton.OnPressed += MeetNowButtonOnOnPressed;
 			m_JoinByIdButton.OnPressed += JoinByIdButtonOnOnPressed;
 			m_Keypad.OnButtonPressed += KeypadOnOnButtonPressed;
@@ -114,11 +115,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Conference
 					OnKeypadButtonPressed.Raise(this, new CharEventArgs(m_Keypad.GetButtonChar(args.Data)));
 					break;
 			}
-		}
-
-		private void TextEntryOnOnTextModified(object sender, StringEventArgs args)
-		{
-			OnTextEntered.Raise(this, new StringEventArgs(args.Data));
 		}
 
 		#endregion

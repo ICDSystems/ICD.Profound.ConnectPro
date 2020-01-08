@@ -99,6 +99,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 					bool select = inPresentation ? m_RoutedSources.Contains(source) : source == m_Selected;
 
 					view.SetButtonSelected(index, select);
+					view.SetButtonVisible(index, true);
 					view.SetButtonIcon(index, icon);
 					view.SetButtonLabel(index, source == null ? null : source.GetName(combine));
 				}

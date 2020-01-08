@@ -23,6 +23,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Conference
 		/// <param name="icon"></param>
 		void SetButtonIcon(ushort index, string icon);
 
+		void SetButtonVisible(ushort index, bool visible);
+
 		/// <summary>
 		/// Sets the selected state of the button at the given index.
 		/// </summary>
