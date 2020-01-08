@@ -4,9 +4,12 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.Controls.Layout;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Conferencing.Zoom.Components.Call;
+using ICD.Connect.Conferencing.Zoom.Controls;
+using ICD.Connect.Conferencing.Zoom.Responses;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
@@ -243,13 +246,13 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			}
 			else if (IsInCall)
 			{
-				AddInCallButtons();
 				RemoveOutOfCallButtons();
+				AddInCallButtons();
 			}
 			else
 			{
-				AddOutOfCallButtons();
 				RemoveInCallButtons();
+				AddOutOfCallButtons();
 			}
 		}
 

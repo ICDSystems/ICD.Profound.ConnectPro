@@ -44,7 +44,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Notifi
 		{
 			base.ViewOnVisibilityChanged(sender, args);
 
-			m_NotificationText = string.Empty;
+			if (!args.Data)
+				m_NotificationText = string.Empty;
 		}
 	}
 }
