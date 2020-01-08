@@ -4,7 +4,6 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
-using ICD.Connect.Conferencing.Controls.Layout;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Conferencing.Zoom.Components.Call;
@@ -197,16 +196,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				ZoomRoom zoomRoom = webConferenceControl == null ? null : webConferenceControl.Parent as ZoomRoom;
 				CallComponent component = zoomRoom == null ? null : zoomRoom.Components.GetComponent<CallComponent>();
 				m_EndConferenceButton.Enabled = component != null && component.AmIHost;
-				
-				if (ActiveConferenceControl == null)
-					return;
-				var connectingPresenter = Navigation.LazyLoadPresenter<IConferenceConnectingPresenter>();
-				if (ActiveConferenceControl.GetConferences().Any(c => c.Status == eConferenceStatus.Disconnecting))
-					connectingPresenter.Show(DISCONNECTING_TEXT);
-				else if (ActiveConferenceControl.GetConferences().Any(c => c.Status == eConferenceStatus.Connecting))
-					connectingPresenter.Show(CONNECTING_TEXT);
-				else
-					connectingPresenter.ShowView(false);
 			}
 			finally
 			{
@@ -420,19 +409,27 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		{
 			//IGenericLoadingSpinnerPresenter spinner = Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>();
 
-			//switch (args.Data)
-			//{
-			//	case eConferenceStatus.Connecting:
-			//		spinner.ShowView("Connecting...", 30 * 1000);
-			//		break;
-			//	case eConferenceStatus.Connected:
-			//		m_ConnectingTimer.Reset(1000); // hide connecting page 1 second after connection complete
-			//		Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>().ShowView(false);
-			//		break;
-			//	default:
-			//		spinner.ShowView(false);
-			//		break;
-			//}
+			switch (args.Data)
+			{
+				case eConferenceStatus.Connecting:
+					Navigation.LazyLoadPresenter<IConferenceConnectingPresenter>().Show(CONNECTING_TEXT);
+					break;
+				case eConferenceStatus.Connected:
+					
+					Navigation.LazyLoadPresenter<IConferenceConnectingPresenter>().ShowView(false);
+					//m_ConnectingTimer.Reset(1000); // hide connecting page 1 second after connection complete
+					//Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>().ShowView(false);
+
+					// TODO temporary fix until we get layout control page
+					ActiveConferenceControl.Parent.Controls.GetControl<ZoomRoomLayoutControl>().SetLayoutPosition(eZoomLayoutPosition.DownRight);
+					break;
+				case eConferenceStatus.Disconnecting:
+					Navigation.LazyLoadPresenter<IConferenceConnectingPresenter>().Show(DISCONNECTING_TEXT);
+					break;
+				default:
+					Navigation.LazyLoadPresenter<IConferenceConnectingPresenter>().ShowView(false);
+					break;
+			}
 
 			UpdateIsInCall();
 		}
