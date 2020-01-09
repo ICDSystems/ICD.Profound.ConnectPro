@@ -25,9 +25,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.FloatingActi
 
 		private BiDictionary<int, VtProButton> m_Buttons;
 
-		private Dictionary<int, VtProSimpleLabel> m_Labels;
+		private VtProSimpleLabel[] m_Labels;
 
-		private Dictionary<int, VtProDynamicIconObject> m_Icons;
+		private VtProDynamicIconObject[] m_Icons;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -43,34 +43,34 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.FloatingActi
 			};
 
 			m_Buttons = new BiDictionary<int, VtProButton>();
-			for (int i = 0;i < NUMBER_OF_ITEMS; i++)
+			for (int i = 0; i < NUMBER_OF_ITEMS; i++)
 			{
 				var button = new VtProButton(panel, parent)
 				{
 					DigitalPressJoin = (ushort)(BUTTON_PRESS_JOIN_START + i),
 					DigitalVisibilityJoin = (ushort)(BUTTON_VISIBILITY_JOIN_START + i)
 				};
-				m_Buttons.Add(i,button);
+				m_Buttons.Add(i, button);
 			}
 
-			m_Icons = new Dictionary<int, VtProDynamicIconObject>(NUMBER_OF_ITEMS);
+			m_Icons = new VtProDynamicIconObject[] { };
 			for (int i = 0; i < NUMBER_OF_ITEMS; i++)
 			{
 				var icon = new VtProDynamicIconObject(panel, parent)
 				{
 					DynamicIconSerialJoin = (ushort)(DYNAMIC_ICON_SERIAL_JOIN_START + i)
 				};
-				m_Icons.Add(i,icon);
+				m_Icons[i] = icon;
 			}
 
-			m_Labels = new Dictionary<int, VtProSimpleLabel>(NUMBER_OF_ITEMS);
+			m_Labels = new VtProSimpleLabel[] { };
 			for (int i = 0; i < NUMBER_OF_ITEMS; i++)
 			{
 				var label = new VtProSimpleLabel(panel, parent)
 				{
-					IndirectTextJoin =  (ushort)(LABEL_INDIRECT_TEXT_JOIN_START + i)
+					IndirectTextJoin = (ushort)(LABEL_INDIRECT_TEXT_JOIN_START + i)
 				};
-				m_Labels.Add(i,label);
+				m_Labels[i] = label;
 			}
 		}
 
@@ -83,9 +83,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.FloatingActi
 			yield return m_Subpage;
 			foreach (VtProButton button in m_Buttons.Values)
 				yield return button;
-			foreach (VtProDynamicIconObject icon in m_Icons.Values)
+			foreach (VtProDynamicIconObject icon in m_Icons)
 				yield return icon;
-			foreach (VtProSimpleLabel label in m_Labels.Values)
+			foreach (VtProSimpleLabel label in m_Labels)
 				yield return label;
 		}
 	}
