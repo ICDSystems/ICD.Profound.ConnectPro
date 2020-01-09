@@ -25,5 +25,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Floati
 		void Subscribe(IConnectProRoom room);
 
 		void Unsubscribe(IConnectProRoom room);
+
+		void SetRoom(IConnectProRoom room);
 	}
 }

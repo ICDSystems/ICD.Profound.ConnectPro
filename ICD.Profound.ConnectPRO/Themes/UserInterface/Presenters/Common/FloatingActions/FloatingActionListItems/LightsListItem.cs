@@ -31,31 +31,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			SubscribeActionPresenter(m_ActionPresenter);
 		}
 
-		/// <summary>
-		/// Subscribe to the room events.
-		/// </summary>
-		/// <param name="room"></param>
-		public override void Subscribe(IConnectProRoom room)
+		public override void SetRoom(IConnectProRoom room)
 		{
-			base.Subscribe(room);
+			base.SetRoom(room);
 
-			if (room == null)
-				return;
-
-
-			ILightingRoomInterfaceDevice lightingInterface = room.Originators.GetInstanceRecursive<ILightingRoomInterfaceDevice>();
-			IsAvailable = lightingInterface != null;
-		}
-
-		/// <summary>
-		/// Unsubscribe from the room events.
-		/// </summary>
-		/// <param name="room"></param>
-		public override void Unsubscribe(IConnectProRoom room)
-		{
-			base.Unsubscribe(room);
-
-			IsAvailable = false;
+			IsAvailable = room != null && room.Originators.GetInstanceRecursive<ILightingRoomInterfaceDevice>() != null;
 		}
 	}
 }

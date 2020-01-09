@@ -236,6 +236,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			UpdateVisibilityAndRefresh();
 		}
 
+		/// <summary>
+		/// Sets the room for this presenter to represent.
+		/// </summary>
+		/// <param name="room"></param>
+		public override void SetRoom(IConnectProRoom room)
+		{
+			base.SetRoom(room);
+
+			m_ListItems.ForEach(i => i.SetRoom(room));
+
+			UpdateVisibilityAndRefresh();
+		}
+
 		#endregion
 
 		#region Shortcut List Item Callbacks

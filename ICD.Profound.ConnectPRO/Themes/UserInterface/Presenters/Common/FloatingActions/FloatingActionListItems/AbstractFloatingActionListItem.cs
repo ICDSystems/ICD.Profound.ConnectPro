@@ -89,6 +89,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		{
 		}
 
+		public virtual void SetRoom(IConnectProRoom room)
+		{
+		}
+
 		#region ActionPresenter Callbacks
 
 		protected virtual void SubscribeActionPresenter(IUiPresenter actionPresenter)
