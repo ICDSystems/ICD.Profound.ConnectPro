@@ -174,21 +174,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Lighting
 
 		#region Room Callbacks
 
-		protected override void Subscribe(IConnectProRoom room)
+		/// <summary>
+		/// Sets the room for this presenter to represent.
+		/// </summary>
+		/// <param name="room"></param>
+		public override void SetRoom(IConnectProRoom room)
 		{
-			base.Subscribe(room);
+			base.SetRoom(room);
 
-			if (room == null)
-				return;
-
-
-			LightingInterface = room.Originators.GetInstanceRecursive<ILightingRoomInterfaceDevice>();
-
-		}
-
-		protected override void Unsubscribe(IConnectProRoom room)
-		{
-			LightingInterface = null;
+			LightingInterface = room == null ? null : room.Originators.GetInstanceRecursive<ILightingRoomInterfaceDevice>();
 		}
 
 		#endregion
