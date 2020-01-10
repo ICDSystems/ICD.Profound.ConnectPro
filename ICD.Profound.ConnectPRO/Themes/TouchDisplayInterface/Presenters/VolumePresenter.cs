@@ -1,11 +1,12 @@
 ﻿using System;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
-using ICD.Connect.Audio.Controls.Mute;
 using ICD.Connect.Audio.Controls.Volume;
-using ICD.Connect.Audio.EventArguments;
-using ICD.Connect.Devices.EventArguments;
+using ICD.Connect.Audio.Repeaters;
+using ICD.Connect.Audio.Utils;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Connect.UI.Mvp.Views;
@@ -21,36 +22,24 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 	public sealed class VolumePresenter : AbstractTouchDisplayPresenter<IVolumeView>, IVolumePresenter
 	{
 		private const ushort HIDE_TIME = 5 * 1000;
-		private const float RAMP_PERCENTAGE = 3.0f / 100.0f;
 
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly HeaderButtonModel m_HeaderVolumeButton;
 		private readonly SafeTimer m_VisibilityTimer;
-
-		private IVolumeDeviceControl m_VolumeControl;
+		private readonly VolumeRepeater m_VolumeRepeater;
+		private readonly VolumePointHelper m_VolumePointHelper;
 
 		/// <summary>
-		/// Gets/sets the volume device.
+		/// Gets the volume device control.
 		/// </summary>
-		public IVolumeDeviceControl VolumeControl
-		{
-			get { return m_VolumeControl; }
-			set
-			{
-				if (value == m_VolumeControl)
-					return;
-
-				Unsubscribe(m_VolumeControl);
-				m_VolumeControl = value;
-				Subscribe(m_VolumeControl);
-
-				RefreshIfVisible();
-			}
-		}
+		[CanBeNull]
+		public IVolumeDeviceControl VolumeControl { get { return m_VolumePointHelper.VolumeControl; } }
 
 		public VolumePresenter(INavigationController nav, IViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
+			m_VolumePointHelper = new VolumePointHelper();
+			m_VolumeRepeater = new VolumeRepeater();
 
 			m_HeaderVolumeButton = new HeaderButtonModel(0, 2, ToggleVolumeVisibility)
 			{
@@ -60,8 +49,31 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 			};
 
 			m_VisibilityTimer = SafeTimer.Stopped(() => ShowView(false));
+
+			Subscribe(m_VolumePointHelper);
 		}
-		
+
+		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			base.Dispose();
+
+			Unsubscribe(m_VolumePointHelper);
+		}
+
+		/// <summary>
+		/// Sets the room for this presenter to represent.
+		/// </summary>
+		/// <param name="room"></param>
+		public override void SetRoom(IConnectProRoom room)
+		{
+			base.SetRoom(room);
+
+			m_VolumePointHelper.VolumePoint = room == null ? null : room.GetVolumePoint();
+		}
+
 		private void ToggleVolumeVisibility()
 		{
 			ShowView(!IsViewVisible);
@@ -72,45 +84,37 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 			base.Refresh(view);
 
 			m_RefreshSection.Enter();
+
 			try
-			{	
-				IVolumeMuteFeedbackDeviceControl volumeControlMute = VolumeControl as IVolumeMuteFeedbackDeviceControl;
-				bool muted = volumeControlMute != null && volumeControlMute.VolumeIsMuted;
-				IVolumePositionDeviceControl volumePositionControl = VolumeControl as IVolumePositionDeviceControl;
-				float volume = volumePositionControl == null ? 0 : volumePositionControl.VolumePosition;
+			{
+				bool muted = m_VolumePointHelper.IsMuted;
+				float volume = m_VolumePointHelper.GetVolumePercent();
+				//bool controlAvailable = m_VolumePointHelper.ControlAvailable;
 
 				view.SetMuted(muted);
 				view.SetVolumePercentage(volume);
-				//view.SetControlsEnabled(m_VolumeControl == null || m_VolumeControl.ControlAvailable);
+				//view.SetControlsEnabled(controlAvailable);
 			}
 			finally
 			{
 				m_RefreshSection.Leave();
 			}
 		}
-		
+
+		#region Methods
+
 		/// <summary>
 		/// Begins ramping the device volume up.
 		/// </summary>
 		public void VolumeUp()
 		{
-			if (VolumeControl == null)
+			if (!m_VolumePointHelper.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.VolumeAssignment))
 				return;
 
 			ShowView(true);
 			ResetVisibilityTimer();
 
-			IVolumeMuteDeviceControl volumeControlMute = VolumeControl as IVolumeMuteDeviceControl;
-			if (volumeControlMute != null)
-				volumeControlMute.SetVolumeMute(false);
-
-			IVolumeRampDeviceControl volumeRampControl = VolumeControl as IVolumeRampDeviceControl;
-			IVolumePositionDeviceControl volumePositionControl = volumeRampControl as IVolumePositionDeviceControl;
-
-			if (volumePositionControl != null)
-				volumePositionControl.VolumePositionRampUp(RAMP_PERCENTAGE);
-			else if (volumeRampControl != null)
-				volumeRampControl.VolumeRampUp();
+			m_VolumeRepeater.VolumeUpHold(m_VolumePointHelper.VolumePoint);
 		}
 
 		/// <summary>
@@ -124,14 +128,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 			ShowView(true);
 			ResetVisibilityTimer();
 
-			IVolumeMuteDeviceControl volumeControlMute = VolumeControl as IVolumeMuteDeviceControl;
-			if (volumeControlMute != null)
-				volumeControlMute.SetVolumeMute(false);
-			
-			IVolumePositionDeviceControl volumePositionControl = VolumeControl as IVolumePositionDeviceControl;
+			if (m_VolumePointHelper.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.MuteAssignment))
+				m_VolumePointHelper.SetIsMuted(false);
 
-			if (volumePositionControl != null)
-				volumePositionControl.SetVolumePosition(percentage);
+			if (m_VolumePointHelper.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.VolumeAssignment))
+				m_VolumePointHelper.SetVolumePercent(percentage);
 		}
 		
 		/// <summary>
@@ -139,23 +140,13 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 		/// </summary>
 		public void VolumeDown()
 		{
-			if (VolumeControl == null)
+			if (!m_VolumePointHelper.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.VolumeAssignment))
 				return;
 
 			ShowView(true);
 			ResetVisibilityTimer();
 
-			IVolumeMuteDeviceControl volumeControlMute = VolumeControl as IVolumeMuteDeviceControl;
-			if (volumeControlMute != null)
-				volumeControlMute.SetVolumeMute(false);
-
-			IVolumeRampDeviceControl volumeRampControl = VolumeControl as IVolumeRampDeviceControl;
-			IVolumePositionDeviceControl volumePositionControl = volumeRampControl as IVolumePositionDeviceControl;
-
-			if (volumePositionControl != null)
-				volumePositionControl.VolumePositionRampDown(RAMP_PERCENTAGE);
-			else if (volumeRampControl != null)
-				volumeRampControl.VolumeRampDown();
+			m_VolumeRepeater.VolumeDownHold(m_VolumePointHelper.VolumePoint);
 		}
 		
 		/// <summary>
@@ -163,14 +154,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 		/// </summary>
 		public void Release()
 		{
-			if (VolumeControl == null)
-				return;
-
 			ResetVisibilityTimer();
-
-			IVolumeRampDeviceControl volumeControlLevel = VolumeControl as IVolumeRampDeviceControl;
-			if (volumeControlLevel != null)
-				volumeControlLevel.VolumeRampStop();
+			m_VolumeRepeater.Release();
 		}
 
 		/// <summary>
@@ -178,15 +163,13 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 		/// </summary>
 		public void ToggleMute()
 		{
-			if (VolumeControl == null)
+			if (!m_VolumePointHelper.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.Mute))
 				return;
 
 			ShowView(true);
 			ResetVisibilityTimer();
 
-			IVolumeMuteBasicDeviceControl volumeControlMute = VolumeControl as IVolumeMuteBasicDeviceControl;
-			if (volumeControlMute != null)
-				volumeControlMute.VolumeMuteToggle();
+			m_VolumePointHelper.ToggleIsMuted();
 		}
 
 		/// <summary>
@@ -196,6 +179,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 		{
 			m_VisibilityTimer.Reset(HIDE_TIME);
 		}
+
+		#endregion
 
 		#region Room Callbacks
 
@@ -207,7 +192,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 				return;
 
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
-			VolumeControl = room.GetVolumeControl();
 		}
 
 		protected override void Unsubscribe(IConnectProRoom room)
@@ -218,7 +202,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 				return;
 
 			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
-			VolumeControl = null;
 		}
 
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs e)
@@ -330,54 +313,32 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 
 		#endregion
 
-		#region Volume Control Callbacks
+		#region VolumePointHelper Callbacks
 		
 		/// <summary>
-		/// Subscribe to the control events.
+		/// Subscribe to the volume point helper events.
 		/// </summary>
-		/// <param name="control"></param>
-		private void Subscribe(IVolumeDeviceControl control)
+		/// <param name="volumePointHelper"></param>
+		private void Subscribe(VolumePointHelper volumePointHelper)
 		{
-			if (control == null)
-				return;
-
-			control.OnControlAvailableChanged += ControlOnControlAvailableChanged;
-
-			IVolumeMuteFeedbackDeviceControl controlMute = control as IVolumeMuteFeedbackDeviceControl;
-			if (controlMute != null)
-				controlMute.OnMuteStateChanged += DeviceOnMuteStateChanged;
-
-			IVolumePositionDeviceControl controlPosition = control as IVolumePositionDeviceControl;
-			if (controlPosition != null)
-				controlPosition.OnVolumeChanged += DeviceOnVolumeChanged;
+			volumePointHelper.OnVolumeControlAvailableChanged += ControlOnControlAvailableChanged;
+			volumePointHelper.OnVolumeControlIsMutedChanged += DeviceOnMuteStateChanged;
+			volumePointHelper.OnVolumeControlVolumeChanged += DeviceOnVolumeChanged;
 		}
 
 		/// <summary>
-		/// Unsubscribe from the device events.
+		/// Unsubscribe from the volume point helper events.
 		/// </summary>
-		/// <param name="control"></param>
-		private void Unsubscribe(IVolumeDeviceControl control)
+		/// <param name="volumePointHelper"></param>
+		private void Unsubscribe(VolumePointHelper volumePointHelper)
 		{
-			if (control == null)
-				return;
-
-			control.OnControlAvailableChanged -= ControlOnControlAvailableChanged;
-
-			IVolumeMuteFeedbackDeviceControl controlMute = control as IVolumeMuteFeedbackDeviceControl;
-			if (controlMute != null)
-				controlMute.OnMuteStateChanged -= DeviceOnMuteStateChanged;
-
-			IVolumePositionDeviceControl controlPosition = control as IVolumePositionDeviceControl;
-			if (controlPosition != null)
-			{
-				controlPosition.VolumeRampStop();
-				controlPosition.OnVolumeChanged -= DeviceOnVolumeChanged;
-			}
+			volumePointHelper.OnVolumeControlAvailableChanged -= ControlOnControlAvailableChanged;
+			volumePointHelper.OnVolumeControlIsMutedChanged -= DeviceOnMuteStateChanged;
+			volumePointHelper.OnVolumeControlVolumeChanged -= DeviceOnVolumeChanged;
 		}
 
-		private void ControlOnControlAvailableChanged(object sender, DeviceControlAvailableApiEventArgs e)
+		private void ControlOnControlAvailableChanged(object sender, BoolEventArgs boolEventArgs)
 		{
-
 			RefreshIfVisible();
 		}
 
@@ -396,7 +357,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		private void DeviceOnMuteStateChanged(object sender, MuteDeviceMuteStateChangedApiEventArgs args)
+		private void DeviceOnMuteStateChanged(object sender, BoolEventArgs args)
 		{
 			RefreshIfVisible();
 		}
