@@ -154,10 +154,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 						ConferenceManager == null
 							? Enumerable.Empty<ModelPresenterTypeInfo>()
 							: ConferenceManager
-								.GetRecentParticipants()
+								.GetRecentCalls()
 								.Reverse()
 								.Distinct()
-								.Select(c => new ModelPresenterTypeInfo(ModelPresenterTypeInfo.ePresenterType.Recent, c));
+								.Select(r => new ModelPresenterTypeInfo(ModelPresenterTypeInfo.ePresenterType.Recent, r));
 
 				default:
 					throw new ArgumentOutOfRangeException("directoryMode");

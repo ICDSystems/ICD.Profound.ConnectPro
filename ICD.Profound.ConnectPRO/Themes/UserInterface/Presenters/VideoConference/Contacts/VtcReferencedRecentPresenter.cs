@@ -1,6 +1,6 @@
 ﻿using ICD.Common.Properties;
+using ICD.Connect.Conferencing.ConferenceManagers.Recents;
 using ICD.Connect.Conferencing.DialContexts;
-using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
@@ -11,10 +11,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 	[PresenterBinding(typeof(IVtcReferencedRecentPresenter))]
 	public sealed class VtcReferencedRecentPresenter : AbstractVtcReferencedContactsPresenterBase, IVtcReferencedRecentPresenter
 	{
-		private ITraditionalParticipant m_Recent;
+		private IRecentCall m_Recent;
 
 		[CanBeNull]
-		public ITraditionalParticipant Recent
+		public IRecentCall Recent
 		{
 			get { return m_Recent; }
 			set
@@ -56,7 +56,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (string.IsNullOrEmpty(name))
 				name = "Unknown";
 
-			return string.Format("{0} - {1}", Recent.End ?? Recent.GetStartOrDialTime(), name);
+			return string.Format("{0} - {1}", Recent.Time, name);
 		}
 
 		/// <summary>
@@ -79,7 +79,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		protected override void SetModel(object model)
 		{
-			Recent = model as ITraditionalParticipant;
+			Recent = model as IRecentCall;
 		}
 
 		protected override void Dial()

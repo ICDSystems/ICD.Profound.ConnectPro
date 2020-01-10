@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Settings Root and Combine Grid pages don't require login (all other do)
  - Fixed a bug that was causing settings to be saved when the user visits the power settings without making a change
  - Using new volume interfaces for ramping
+ - Recent calls lists include unanswered incoming calls
 
 ## [11.1.0] - 2019-12-03
 ### Added

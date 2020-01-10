@@ -1,9 +1,9 @@
-﻿using ICD.Connect.Conferencing.Participants;
+﻿using ICD.Connect.Conferencing.ConferenceManagers.Recents;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts
 {
 	public interface IVtcReferencedRecentPresenter : IVtcReferencedContactsPresenterBase
 	{
-		ITraditionalParticipant Recent { get; set; }
+		IRecentCall Recent { get; set; }
 	}
 }
