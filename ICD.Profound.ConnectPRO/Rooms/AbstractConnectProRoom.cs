@@ -285,7 +285,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			IsInMeeting = false;
 
 			// Reset all routing
-			Routing.RouteOsd();
+			Routing.RouteOsd(false);
 
 			// Power off displays
 			foreach (IDestinationBase destination in Routing.Destinations.GetVideoDestinations())

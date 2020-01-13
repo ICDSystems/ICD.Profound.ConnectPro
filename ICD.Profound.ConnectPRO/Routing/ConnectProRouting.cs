@@ -323,10 +323,11 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// Unroutes audio.
 		/// Routes the OSD to the displays.
 		/// Powers off displays that have no OSD routed.
+		/// Powers on displays that have an OSD routed.
 		/// </summary>
 		public void RouteOsd()
 		{
-			RouteOsd(null);
+			RouteOsd(true);
 		}
 
 		/// <summary>
@@ -334,7 +335,30 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// Routes the OSD to the displays.
 		/// Powers off displays that have no OSD routed.
 		/// </summary>
+		/// <param name="powerOn">If true powers on displays with an OSD routed</param>
+		public void RouteOsd(bool powerOn)
+		{
+			RouteOsd(null, powerOn);
+		}
+
+		/// <summary>
+		/// Unroutes audio.
+		/// Routes the OSD to the displays.
+		/// Powers off displays that have no OSD routed.
+		/// Powers on displays that have an OSD routed.
+		/// </summary>
 		public void RouteOsd([CanBeNull] IMaskedSourceInfo mask)
+		{
+			RouteOsd(mask, true);
+		}
+
+		/// <summary>
+		/// Unroutes audio.
+		/// Routes the OSD to the displays.
+		/// Powers off displays that have no OSD routed.
+		/// <param name="powerOn">If true powers on displays with an OSD routed</param>
+		/// </summary>
+		public void RouteOsd([CanBeNull] IMaskedSourceInfo mask, bool powerOn)
 		{
 			if (mask == null)
 				State.ClearMaskedSources();
@@ -375,7 +399,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				else
 				{
 					// Route the source video and audio to the codec
-					Route(path);
+					Route(path, powerOn);
 				}
 			}
 		}
@@ -748,12 +772,20 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (paths == null)
 				throw new ArgumentNullException("paths");
 
-			IList<ConnectionPath> pathsList = paths as IList<ConnectionPath> ?? paths.ToArray();
-			foreach (ConnectionPath path in pathsList)
-				Route(path);
+			Route(paths, true);
 		}
 
-		private void Route(ConnectionPath path)
+		private void Route(IEnumerable<ConnectionPath> paths, bool powerOn)
+		{
+			if (paths == null)
+				throw new ArgumentNullException("paths");
+
+			IList<ConnectionPath> pathsList = paths as IList<ConnectionPath> ?? paths.ToArray();
+			foreach (ConnectionPath path in pathsList)
+				Route(path, powerOn);
+		}
+
+		private void Route(ConnectionPath path, bool powerOn)
 		{
 			if (path == null)
 				throw new ArgumentNullException("path");
@@ -765,7 +797,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 				m_Room.Core.Originators.GetChild<IDeviceBase>(destination.Device);
 
 			// Power on the destination
-			PowerDevice(destinationDevice, true);
+			if (powerOn)
+				PowerDevice(destinationDevice, true);
 
 			// Set the destination to the correct input
 			int input = destination.Address;

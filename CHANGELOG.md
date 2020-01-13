@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Fixed a bug that was causing settings to be saved when the user visits the power settings without making a change
  - Using new volume interfaces for ramping
  - Recent calls lists include unanswered incoming calls
+ - When the room goes to sleep routing resets will not power on any displays that are already off.
 
 ## [11.1.0] - 2019-12-03
 ### Added
