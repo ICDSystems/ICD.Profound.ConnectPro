@@ -53,7 +53,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.FloatingActi
 				m_Buttons.Add(i, button);
 			}
 
-			m_Icons = new VtProDynamicIconObject[] { };
+			m_Icons = new VtProDynamicIconObject[NUMBER_OF_ITEMS];
 			for (int i = 0; i < NUMBER_OF_ITEMS; i++)
 			{
 				var icon = new VtProDynamicIconObject(panel, parent)
@@ -63,7 +63,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.FloatingActi
 				m_Icons[i] = icon;
 			}
 
-			m_Labels = new VtProSimpleLabel[] { };
+			m_Labels = new VtProSimpleLabel[NUMBER_OF_ITEMS];
 			for (int i = 0; i < NUMBER_OF_ITEMS; i++)
 			{
 				var label = new VtProSimpleLabel(panel, parent)
