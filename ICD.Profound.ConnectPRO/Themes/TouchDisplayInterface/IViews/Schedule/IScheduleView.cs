@@ -9,6 +9,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Schedule
 
 		event EventHandler OnStartBookingButtonPressed;
 
+		void ShowSchedule(bool show);
+
 		/// <summary>
 		///     Sets the text of the availability label.
 		/// </summary>

@@ -62,6 +62,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 
 			try
 			{
+				if (m_CachedBookings.Any())
+					view.ShowSchedule(true);
+				else
+					view.ShowSchedule(false);
+
 				var roomName = Room == null ? string.Empty : Room.Name;
 
 				// build presenters

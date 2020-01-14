@@ -21,6 +21,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Schedule
         private VtProAdvancedButton m_StartBookingButton;
 		private VtProButton m_CloseBookingButton;
 
+		private VtProSimpleLabel m_SchedulePage;
+		private VtProSimpleLabel m_NoMeetingsPage;
         private VtProSubpageReferenceList m_ScheduleList;
 
         protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
@@ -65,6 +67,17 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Schedule
 	            DigitalVisibilityJoin = 104
             };
 
+			
+			m_SchedulePage = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				DigitalVisibilityJoin = 106
+			};
+
+			m_NoMeetingsPage = new VtProSimpleLabel(panel, m_Subpage)
+			{
+				DigitalVisibilityJoin = 107
+			};
+
             m_ScheduleList = new VtProSubpageReferenceList(5, panel as IPanelDevice, m_Subpage)
             {
                 MaxSize = 100,
@@ -82,7 +95,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Schedule
             yield return m_RoomAvailabilityLabel;
             yield return m_StartBookingButton;
             yield return m_CloseBookingButton;
-
+            yield return m_SchedulePage;
+            yield return m_NoMeetingsPage;
             yield return m_ScheduleList;
         }
     }

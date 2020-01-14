@@ -22,6 +22,12 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Schedule
 			m_ChildList = new List<IReferencedBookingView>();
 		}
 
+		public void ShowSchedule(bool show)
+		{
+			m_SchedulePage.Show(show);
+			m_NoMeetingsPage.Show(!show);
+		}
+
 		public void SetAvailabilityText(string text)
 		{
 			m_RoomAvailabilityLabel.SetLabelText(text);
