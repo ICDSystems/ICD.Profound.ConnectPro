@@ -120,7 +120,12 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 		/// <param name="video"></param>
 		public void SetBackgroundMotion(bool motion)
 		{
+			if (motion == m_Theme.CueMotion)
+				return;
+
 			m_Theme.CueMotion = motion;
+
+			SetDirty(true);
 		}
 
 		/// <summary>
