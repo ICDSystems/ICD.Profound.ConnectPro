@@ -78,6 +78,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Notifi
 				view.SetCallerInfo(string.Format("Press to answer incoming call from {0}", info));
 				view.SetAnswerButtonMode(eIncomingCallAnswerButtonMode.Ringing);
 				view.PlayRingtone(true);
+				view.SetRejectButtonVisibility(true);
 			}
 			else if (IncomingCall.AnswerState == eCallAnswerState.Ignored)
 			{
@@ -85,6 +86,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Notifi
 				view.SetCallerInfo(string.Format("Call from {0} was declined", info));
 				view.SetAnswerButtonMode(eIncomingCallAnswerButtonMode.Rejected);
 				view.PlayRingtone(false);
+				view.SetRejectButtonVisibility(false);
 			}
 		}
 
