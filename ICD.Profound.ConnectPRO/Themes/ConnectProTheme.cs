@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
@@ -76,14 +77,27 @@ namespace ICD.Profound.ConnectPRO.Themes
 		/// <summary>
 		/// Gets/sets the absolute path to the configured logo image for the splash screen.
 		/// </summary>
+		[CanBeNull]
 		public string LogoAbsolutePath
 		{
 			get
 			{
-				Uri defaultHost = new IcdUriBuilder {Host = IcdEnvironment.NetworkAddresses.FirstOrDefault()}.Uri;
-				Uri absolute = new Uri(defaultHost, Logo);
+				string host = IcdEnvironment.NetworkAddresses.FirstOrDefault();
+				if (string.IsNullOrEmpty(host))
+					return null;
 
-				return absolute.ToString();
+				try
+				{
+					Uri defaultHost = new IcdUriBuilder { Host = host }.Uri;
+					Uri absolute = new Uri(defaultHost, Logo);
+					return absolute.ToString();
+				}
+				catch (Exception e)
+				{
+					Log(eSeverity.Error, "Failed to get logo path for host {0} and logo {1} - {2}", host, Logo, e.Message);
+				}
+
+				return null;
 			}
 		}
 
