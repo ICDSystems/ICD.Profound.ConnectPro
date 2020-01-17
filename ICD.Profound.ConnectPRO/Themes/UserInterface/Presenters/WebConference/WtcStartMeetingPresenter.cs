@@ -136,7 +136,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		{
 			base.Subscribe(view);
 
-			view.OnMeetNowButtonPressed += ViewOnOnMeetNowButtonPressed;
+			view.OnMeetNowButtonPressed += ViewOnMeetNowButtonPressed;
 			view.OnJoinByIdButtonPressed += ViewOnJoinByIdButtonPressed;
 			view.OnTextEntered += ViewOnTextEntered;
 			view.OnBackButtonPressed += ViewOnBackButtonPressed;
@@ -152,7 +152,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		{
 			base.Unsubscribe(view);
 
-			view.OnMeetNowButtonPressed -= ViewOnOnMeetNowButtonPressed;
+			view.OnMeetNowButtonPressed -= ViewOnMeetNowButtonPressed;
 			view.OnJoinByIdButtonPressed -= ViewOnJoinByIdButtonPressed;
 			view.OnTextEntered -= ViewOnTextEntered;
 			view.OnBackButtonPressed -= ViewOnBackButtonPressed;
@@ -160,9 +160,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			view.OnKeypadButtonPressed -= ViewOnKeypadButtonPressed;
 		}
 
-		private void ViewOnOnMeetNowButtonPressed(object sender, EventArgs eventArgs)
+		private void ViewOnMeetNowButtonPressed(object sender, EventArgs eventArgs)
 		{
-			ActiveConferenceControl.StartPersonalMeeting();
+			if (ActiveConferenceControl != null)
+				ActiveConferenceControl.StartPersonalMeeting();
 		}
 
 		private void ViewOnJoinByIdButtonPressed(object sender, EventArgs eventArgs)

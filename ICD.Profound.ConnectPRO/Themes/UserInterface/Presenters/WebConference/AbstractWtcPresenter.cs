@@ -1,4 +1,5 @@
-﻿using ICD.Connect.Conferencing.Controls.Dialing;
+﻿using ICD.Common.Properties;
+using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -13,6 +14,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// <summary>
 		/// Gets/sets the active conference control for this presenter.
 		/// </summary>
+		[CanBeNull]
 		public IWebConferenceDeviceControl ActiveConferenceControl
 		{
 			get { return m_ConferenceControl; }
