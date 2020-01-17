@@ -21,6 +21,7 @@ using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Notificat
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Conference;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Header;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header;
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Conference
 {
@@ -195,7 +196,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				// Only hosts can end meeting for everyone
 				ZoomRoom zoomRoom = webConferenceControl == null ? null : webConferenceControl.Parent as ZoomRoom;
 				CallComponent component = zoomRoom == null ? null : zoomRoom.Components.GetComponent<CallComponent>();
-				m_EndConferenceButton.Enabled = component != null && component.AmIHost;
+				IHeaderPresenter header = Navigation.LazyLoadPresenter<IHeaderPresenter>();
+				if (component != null && component.AmIHost && IsInCall && IsViewVisible)
+					header.AddRightButton(m_EndConferenceButton);
+				else
+					header.RemoveRightButton(m_EndConferenceButton);
 			}
 			finally
 			{
@@ -332,7 +337,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 
 			var webConferenceControl = control as IWebConferenceDeviceControl;
 			if (webConferenceControl != null)
+			{
 				webConferenceControl.OnCameraEnabledChanged += WebConferenceControlOnOnCameraEnabledChanged;
+				webConferenceControl.OnAmIHostChanged += WebConferenceControlOnOnAmIHostChanged;
+			}
 
 			UpdateIsInCall();
 		}
@@ -350,9 +358,17 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 
 			var webConferenceControl = control as IWebConferenceDeviceControl;
 			if (webConferenceControl != null)
+			{
 				webConferenceControl.OnCameraEnabledChanged -= WebConferenceControlOnOnCameraEnabledChanged;
+				webConferenceControl.OnAmIHostChanged -= WebConferenceControlOnOnAmIHostChanged;
+			}
 
 			UpdateIsInCall();
+		}
+
+		private void WebConferenceControlOnOnAmIHostChanged(object sender, BoolEventArgs e)
+		{
+			Refresh();
 		}
 
 		private void ControlOnOnConferenceAdded(object sender, ConferenceEventArgs args)
