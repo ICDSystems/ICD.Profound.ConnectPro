@@ -423,19 +423,13 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		/// <param name="args"></param>
 		private void ConferenceOnStatusChanged(object sender, ConferenceStatusEventArgs args)
 		{
-			//IGenericLoadingSpinnerPresenter spinner = Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>();
-
 			switch (args.Data)
 			{
 				case eConferenceStatus.Connecting:
 					Navigation.LazyLoadPresenter<IConferenceConnectingPresenter>().Show(CONNECTING_TEXT);
 					break;
 				case eConferenceStatus.Connected:
-					
 					Navigation.LazyLoadPresenter<IConferenceConnectingPresenter>().ShowView(false);
-					//m_ConnectingTimer.Reset(1000); // hide connecting page 1 second after connection complete
-					//Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>().ShowView(false);
-
 					// TODO temporary fix until we get layout control page
 					ActiveConferenceControl.Parent.Controls.GetControl<ZoomRoomLayoutControl>().SetLayoutPosition(eZoomLayoutPosition.DownRight);
 					break;
