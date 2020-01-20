@@ -44,5 +44,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Conference
 		/// <param name="index"></param>
 		/// <param name="selected"></param>
 		void SetButtonSelected(ushort index, bool selected);
+
+		void SetNumberOfItems(ushort numItems);
 	}
 }

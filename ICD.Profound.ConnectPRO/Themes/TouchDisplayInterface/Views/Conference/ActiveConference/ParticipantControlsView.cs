@@ -85,6 +85,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Conference.
 			m_ButtonList.SetItemSelected(index, selected);
 		}
 
+		public void SetNumberOfItems(ushort numItems)
+		{
+			m_ButtonList.SetNumberOfItems(numItems);
+		}
+
 		#region Control Callbacks
 
 		/// <summary>

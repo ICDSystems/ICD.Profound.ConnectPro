@@ -26,13 +26,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			{INDEX_RECORD, "Allow Recording"},
 		};
 
-		private static readonly Dictionary<ushort, string> s_ButtonIcons = new Dictionary<ushort, string>
-		{
-			{INDEX_KICK, "icon_exit_white"},
-			{INDEX_MUTE, "icon_volumeMute_red"},
-			{INDEX_RECORD, "icon_tcRecord_red"},
-		};
-
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private IWebParticipant m_Participant;
@@ -77,20 +70,22 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 
 			try
 			{
+				view.SetNumberOfItems((ushort)s_ButtonLabels.Count);
+
 				// Kick
-				view.SetButtonIcon(INDEX_KICK, s_ButtonIcons[INDEX_KICK]);
 				view.SetButtonLabel(INDEX_KICK, s_ButtonLabels[INDEX_KICK]);
+				view.SetButtonVisible(INDEX_KICK, true);
 
 				// Mute
 				bool isMuted = Participant != null && Participant.IsMuted;
-				view.SetButtonIcon(INDEX_MUTE, isMuted ? "icon_volumeGeneric_white" : s_ButtonIcons[INDEX_MUTE]);
 				view.SetButtonLabel(INDEX_MUTE, isMuted ? "Unmute Participant" : s_ButtonLabels[INDEX_MUTE]);
+				view.SetButtonVisible(INDEX_MUTE, true);
 
 				// Record
 				ZoomWebParticipant zoomParticipant = Participant as ZoomWebParticipant;
 				bool canRecord = zoomParticipant != null && zoomParticipant.CanRecord;
-				view.SetButtonIcon(INDEX_RECORD, canRecord ? s_ButtonIcons[INDEX_RECORD] : "icon_tcRecord_white");
 				view.SetButtonLabel(INDEX_RECORD, canRecord ? "Disallow Recording" : s_ButtonLabels[INDEX_RECORD]);
+				view.SetButtonVisible(INDEX_RECORD, true);
 			}
 			finally
 			{

@@ -16,6 +16,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 	[PresenterBinding(typeof(IReferencedParticipantPresenter))]
 	public sealed class ReferencedParticipantPresenter : AbstractTouchDisplayComponentPresenter<IReferencedParticipantView>, IReferencedParticipantPresenter
 	{
+		private const string NAME_FORMAT = "<span style=\"color: {1}\">{0}</span>";
+		private const string SELECTED_COLOR = "#ffffff";
+		private const string NORMAL_COLOR = "#227385";
+
 		public event EventHandler OnPressed;
 
 		private readonly SafeCriticalSection m_RefreshSection;
@@ -98,7 +102,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				else
 					tags = string.Empty;
 
-				view.SetParticipantName(Participant == null ? string.Empty : Participant.Name + tags);
+				string nameColor = Selected ? SELECTED_COLOR : NORMAL_COLOR;
+				string formattedName = Participant == null
+					? string.Empty
+					: string.Format(NAME_FORMAT, Participant.Name + tags, nameColor);
+				view.SetParticipantName(formattedName);
 				view.SetButtonSelected(Selected);
 				view.SetMuteIconVisibility(webParticipant != null && webParticipant.IsMuted);
 
