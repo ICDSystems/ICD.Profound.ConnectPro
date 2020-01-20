@@ -73,8 +73,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Settings.Ad
 
 		public void SetEnableToggleSelected(bool selected)
 		{
-			// Button graphic defaults to enabled
-			m_EnableToggleButton.SetSelected(!selected);
+			m_EnableToggleButton.SetSelected(selected);
 		}
 
 		public void SetWakeHour(int hour)
