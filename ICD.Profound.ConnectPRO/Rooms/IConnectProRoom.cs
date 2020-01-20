@@ -6,6 +6,7 @@ using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.IncomingCalls;
 using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.EventArguments;
