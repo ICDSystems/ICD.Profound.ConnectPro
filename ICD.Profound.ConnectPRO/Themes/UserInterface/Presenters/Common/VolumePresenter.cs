@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
@@ -7,6 +8,8 @@ using ICD.Common.Utils.Timers;
 using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.Repeaters;
 using ICD.Connect.Audio.Utils;
+using ICD.Connect.Partitioning.Commercial.Rooms;
+using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -124,11 +127,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// Sets the room for this presenter to represent.
 		/// </summary>
 		/// <param name="room"></param>
+
 		public override void SetRoom(IConnectProRoom room)
 		{
 			base.SetRoom(room);
 
-			m_VolumePointHelper.VolumePoint = room == null ? null : room.GetVolumePoint();
+			UpdateVolumePoint();
+		}
+
+		private void UpdateVolumePoint()
+		{
+			m_VolumePointHelper.VolumePoint = Room == null ? null : Room.GetContextualVolumePoints().FirstOrDefault();
 		}
 
 		#region Methods

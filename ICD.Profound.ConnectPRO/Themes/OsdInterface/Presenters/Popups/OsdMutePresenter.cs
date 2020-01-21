@@ -1,5 +1,10 @@
-﻿using ICD.Common.Utils.EventArguments;
+﻿using System;
+using System.Linq;
+using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Audio.Utils;
+using ICD.Connect.Conferencing.ConferenceManagers;
+using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface.IPresenters;
@@ -13,6 +18,8 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups
 	public sealed class OsdMutePresenter : AbstractOsdPresenter<IOsdMuteView>, IOsdMutePresenter
 	{
 		private readonly VolumePointHelper m_VolumePointHelper;
+
+		private IConferenceManager m_SubscribedConferenceManager;
 
 		/// <summary>
 		/// Constructor.
@@ -42,8 +49,70 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups
 		{
 			base.SetRoom(room);
 
-			m_VolumePointHelper.VolumePoint = room == null ? null : room.GetVolumePoint();
+			UpdateVolumePoint();
 		}
+
+		private void UpdateVolumePoint()
+		{
+			m_VolumePointHelper.VolumePoint = Room == null ? null : Room.GetContextualVolumePoints().FirstOrDefault();
+		}
+
+		#region Room Callbacks
+
+		/// <summary>
+		/// Subscribe to the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Subscribe(IConnectProRoom room)
+		{
+			base.Subscribe(room);
+
+			m_SubscribedConferenceManager = room == null ? null : room.ConferenceManager;
+			if (m_SubscribedConferenceManager == null)
+				return;
+
+			m_SubscribedConferenceManager.OnConferenceParticipantAddedOrRemoved += ConferenceManagerOnConferenceParticipantAddedOrRemoved;
+			m_SubscribedConferenceManager.OnInCallChanged += ConferenceManagerOnInCallChanged;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the room events.
+		/// </summary>
+		/// <param name="room"></param>
+		protected override void Unsubscribe(IConnectProRoom room)
+		{
+			base.Unsubscribe(room);
+
+			if (m_SubscribedConferenceManager == null)
+				return;
+
+			m_SubscribedConferenceManager.OnConferenceParticipantAddedOrRemoved -= ConferenceManagerOnConferenceParticipantAddedOrRemoved;
+			m_SubscribedConferenceManager.OnInCallChanged -= ConferenceManagerOnInCallChanged;
+
+			m_SubscribedConferenceManager = null;
+		}
+
+		/// <summary>
+		/// Called when a participant is added to or removed from an active conference.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ConferenceManagerOnConferenceParticipantAddedOrRemoved(object sender, EventArgs eventArgs)
+		{
+			UpdateVolumePoint();
+		}
+
+		/// <summary>
+		/// Called when a call starts/stops.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="inCallEventArgs"></param>
+		private void ConferenceManagerOnInCallChanged(object sender, InCallEventArgs inCallEventArgs)
+		{
+			UpdateVolumePoint();
+		}
+
+		#endregion
 
 		#region Volume Point Helper Callbacks
 

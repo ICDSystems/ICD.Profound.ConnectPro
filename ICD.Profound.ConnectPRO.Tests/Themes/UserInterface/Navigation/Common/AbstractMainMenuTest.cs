@@ -2,6 +2,7 @@
 using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Panels.Mock;
+using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Protocol.Sigs;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Routing;
@@ -26,7 +27,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 		{
 			using (TRoomType roomType = InstantiateRoomType())
 			{
-				if (roomType.Room.GetVolumePoint() == null)
+				if (roomType.Room.GetVolumePoints().FirstOrDefault() == null)
 					return;
 
 				// Simulate "start meeting" button press
