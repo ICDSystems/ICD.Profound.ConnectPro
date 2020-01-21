@@ -25,6 +25,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Recent calls lists include unanswered incoming calls
  - When the room goes to sleep routing resets will not power on any displays that are already off.
 
+## [11.1.1] - 2020-01-20
+### Changed
+ - Fixed a URI parsing issue when determining Logo URI on startup
+ - Fixed a null reference exception related to quickly pressing the Meet Now button
+
 ## [11.1.0] - 2019-12-03
 ### Added
  - Shure Microphones are available for privacy mute when routing a web conferencing source

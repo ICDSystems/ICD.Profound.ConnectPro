@@ -456,6 +456,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			{
 				m_LeftMenuPresenter.ShowView(false);
 
+				// End the active conference
 				if (ActiveConferenceControl != null)
 				{
 					// Web Conference
@@ -470,7 +471,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 					if (traditional != null)
 						traditional.Hangup();
 				}
-
 				ActiveConferenceControl = null;
 
 				// Hide all of the WTC presenters
