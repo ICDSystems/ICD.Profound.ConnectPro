@@ -19,7 +19,8 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 		protected override IEnumerable<ISettingsNodeBase> BuildChildren()
 		{
 			yield return new AdministrativeSettingsNode();
-			yield return new ConferencingSettingsNode();
+			// removed, will be replaced by zoom settings in future
+			// yield return new ConferencingSettingsNode();
 			yield return new CueSettingsNode();
 		}
 	}
