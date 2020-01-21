@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Properties;
@@ -26,6 +26,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 		private IRootSettingsNode m_SettingsRoot;
 
 		private ISettingsNodeBasePresenter m_CurrentPresenter;
+
+		/// <summary>
+		/// Node to show upon successfuly password entry
+		/// </summary>
+		private ISettingsNodeBase m_PasscodeSuccessNode;
 
 		#region Properties
 
@@ -70,6 +75,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 					: m_MenuPath[m_MenuPath.Count - 3] as ISettingsNode;
 			}
 		}
+
+		/// <summary>
+		/// Tracks if the user has logged into the settings pages
+		/// </summary>
+		public bool IsLoggedIn { get; set; }
 
 		#endregion
 
@@ -233,7 +243,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 				m_CurrentPresenter = GetPresenterForNode(CurrentNode);
 
 				m_CurrentPresenter.Node = CurrentNode;
-				m_CurrentPresenter.ShowView(true);
+				m_CurrentPresenter.ShowView(IsViewVisible);
 			}
 			finally
 			{
@@ -254,6 +264,13 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 				if (node == CurrentNode)
 					return;
 				
+				// Check if node requires login, and if not logged in, prompt for pin
+				if (node.RequiresLogin && !IsLoggedIn)
+				{
+					m_PasscodeSuccessNode = node;
+					Navigation.LazyLoadPresenter<ISettingsPasscodePresenter>().ShowView(PasscodeSuccessCallback);
+					return;
+				}
 
 				// Remove any leaves from the list
 				while (CurrentNode is ISettingsLeaf)
@@ -292,12 +309,17 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 
 			try
 			{
+				// Don't back out of the root
 				if (m_MenuPath.Count <= 1)
 					return;
 
 				// We want to back out of the current leaf AND the parent node
 				if (CurrentNode is ISettingsLeaf)
+				{
 					m_MenuPath.RemoveAt(m_MenuPath.Count - 1);
+					Back();
+					return;
+				}
 
 				m_MenuPath.RemoveAt(m_MenuPath.Count - 1);
 
@@ -338,6 +360,21 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 			Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView("Saving Settings", 60 * 1000);
 			m_SettingsRoot.SaveDirtySettings();
 			Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView(false);
+		}
+
+		/// <summary>
+		/// Called when the user successfully enters the passcode.
+		/// </summary>
+		/// <param name="sender"></param>
+		private void PasscodeSuccessCallback(ISettingsPasscodePresenter sender)
+		{
+			IsLoggedIn = true;
+
+			Navigation.LazyLoadPresenter<ISettingsPasscodePresenter>().ShowView(false);
+
+			if (m_PasscodeSuccessNode != null)
+				NavigateTo(m_PasscodeSuccessNode);
+			m_PasscodeSuccessNode = null;
 		}
 
 		#endregion
@@ -463,7 +500,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 			if (args.Data)
 				ShowPresenterForCurrentNode();
 			else
+			{
+				IsLoggedIn = false;
 				SaveDirtySettings();
+			}
 		}
 
 		#endregion
