@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using ICD.Common.Properties;
+using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
-using ICD.Common.Utils.Timers;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Participants;
@@ -17,36 +20,14 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Notifi
 	[PresenterBinding(typeof(IIncomingCallPresenter))]
 	public sealed class IncomingCallPresenter : AbstractTouchDisplayPresenter<IIncomingCallView>, IIncomingCallPresenter
 	{
-		private const long REJECTED_LINGER_TIME_MS = 4 * 1000;
-		private readonly SafeTimer m_CallIgnoredTimer;
+		private readonly Dictionary<IIncomingCall, IConferenceDeviceControl> m_IncomingCalls;
+		private readonly SafeCriticalSection m_IncomingCallsSection;
+		private readonly SafeCriticalSection m_RefreshSection;
 
-		private IEnumerable<IConferenceDeviceControl> m_DialingProviders;
-
-		private IIncomingCall m_IncomingCall;
-
-		private IIncomingCall IncomingCall
-		{
-			get { return m_IncomingCall; }
-			set
-			{
-				if (m_IncomingCall == value)
-					return;
-
-				if (m_IncomingCall != null)
-					Unsubscribe(m_IncomingCall);
-
-				m_IncomingCall = value;
-
-				if (m_IncomingCall != null)
-					Subscribe(m_IncomingCall);
-
-				m_CallIgnoredTimer.Stop();
-
-				ShowView(IncomingCall != null);
-
-				RefreshIfVisible();
-			}
-		}
+		/// <summary>
+		/// Gets the number of incoming sources.
+		/// </summary>
+		private int IncomingCallCount { get { return m_IncomingCallsSection.Execute(() => m_IncomingCalls.Count); } }
 
 		/// <summary>
 		/// Constructor.
@@ -54,9 +35,12 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Notifi
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public IncomingCallPresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		public IncomingCallPresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views,
+		                             ConnectProTheme theme) : base(nav, views, theme)
 		{
-			m_CallIgnoredTimer = new SafeTimer(RemoveSource, -1L);
+			m_IncomingCalls = new Dictionary<IIncomingCall, IConferenceDeviceControl>();
+			m_IncomingCallsSection = new SafeCriticalSection();
+			m_RefreshSection = new SafeCriticalSection();
 		}
 
 		/// <summary>
@@ -67,28 +51,99 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Notifi
 		{
 			base.Refresh(view);
 
-			if (IncomingCall == null)
-				return;
-			
-			string info = IncomingCall.Name == null ? IncomingCall.Number : string.Format("{0} - {1}", IncomingCall.Name, IncomingCall.Number);
+			m_RefreshSection.Enter();
 
-			if (IncomingCall.GetIsRingingIncomingCall())
+			try
 			{
-				view.SetIcon("call");
-				view.SetCallerInfo(string.Format("Press to answer incoming call from {0}", info));
-				view.SetAnswerButtonMode(eIncomingCallAnswerButtonMode.Ringing);
-				view.PlayRingtone(true);
-				view.SetRejectButtonVisibility(true);
+				IIncomingCall incomingCall = GetFirstIncomingCall();
+				string info = GetCallerInfo(incomingCall);
+
+				view.SetCallerInfo(info);
+
+				view.PlayRingtone(incomingCall != null);
 			}
-			else if (IncomingCall.AnswerState == eCallAnswerState.Ignored)
+			finally
 			{
-				view.SetIcon("hangup");
-				view.SetCallerInfo(string.Format("Call from {0} was declined", info));
-				view.SetAnswerButtonMode(eIncomingCallAnswerButtonMode.Rejected);
-				view.PlayRingtone(false);
-				view.SetRejectButtonVisibility(false);
+				m_RefreshSection.Leave();
 			}
 		}
+
+		#region Private Methods
+
+		private static string GetCallerInfo(IIncomingCall incomingCall)
+		{
+			string output = string.Empty;
+
+			if (incomingCall == null)
+				return output;
+
+			string name = string.IsNullOrEmpty(incomingCall.Name) ? "Unknown" : incomingCall.Name.Trim();
+			string number = string.IsNullOrEmpty(incomingCall.Number) ? "Unknown" : incomingCall.Number.Trim();
+
+			return number == name ? name : string.Format("{0} - {1}", name, number);
+		}
+
+		/// <summary>
+		/// Gets the first unanswered call.
+		/// </summary>
+		/// <returns></returns>
+		[CanBeNull]
+		private IIncomingCall GetFirstIncomingCall()
+		{
+			return m_IncomingCallsSection.Execute(() => m_IncomingCalls.Select(kvp => kvp.Key).FirstOrDefault());
+		}
+
+		/// <summary>
+		/// Adds the call to the collection.
+		/// </summary>
+		/// <param name="call"></param>
+		/// <param name="control"></param>
+		private void AddIncomingCall(IIncomingCall call, IConferenceDeviceControl control)
+		{
+			m_IncomingCallsSection.Enter();
+
+			try
+			{
+				if (m_IncomingCalls.ContainsKey(call))
+					return;
+
+				m_IncomingCalls.Add(call, control);
+				Subscribe(call);
+			}
+			finally
+			{
+				m_IncomingCallsSection.Leave();
+			}
+
+			ShowView(IncomingCallCount > 0);
+			RefreshIfVisible();
+		}
+
+		/// <summary>
+		/// Removes the call from the collection.
+		/// </summary>
+		/// <param name="call"></param>
+		private void RemoveIncomingCall(IIncomingCall call)
+		{
+			m_IncomingCallsSection.Enter();
+
+			try
+			{
+				if (!m_IncomingCalls.Remove(call))
+					return;
+
+				Unsubscribe(call);
+			}
+			finally
+			{
+				m_IncomingCallsSection.Leave();
+			}
+
+			Refresh();
+			ShowView(IncomingCallCount > 0);
+		}
+
+		#endregion
 
 		#region Room Callbacks
 
@@ -103,16 +158,14 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Notifi
 			if (room == null)
 				return;
 
-			m_DialingProviders = room.ConferenceManager.GetDialingProviders();
-			
-			if (m_DialingProviders == null)
+			room.OnIncomingCallAnswered += RoomOnIncomingCallAnswered;
+			room.OnIncomingCallRejected += RoomOnIncomingCallRejected;
+
+			if (room.ConferenceManager == null)
 				return;
 
-			foreach (var dialer in m_DialingProviders)
-			{
-				dialer.OnIncomingCallAdded += DialerOnIncomingCallAdded;
-				dialer.OnIncomingCallRemoved += DialerOnIncomingCallRemoved;
-			}
+			room.ConferenceManager.OnIncomingCallAdded += ConferenceManagerOnIncomingCallAdded;
+			room.ConferenceManager.OnIncomingCallRemoved += ConferenceManagerOnIncomingCallRemoved;
 		}
 
 		/// <summary>
@@ -123,62 +176,121 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Notifi
 		{
 			base.Unsubscribe(room);
 
-			if (m_DialingProviders == null)
+			if (room == null)
 				return;
 
-			foreach (var dialer in m_DialingProviders)
-			{
-				dialer.OnIncomingCallAdded -= DialerOnIncomingCallAdded;
-				dialer.OnIncomingCallRemoved -= DialerOnIncomingCallRemoved;
-			}
+			room.OnIncomingCallAnswered -= RoomOnIncomingCallAnswered;
+			room.OnIncomingCallRejected -= RoomOnIncomingCallRejected;
 
-			m_DialingProviders = null;
+			if (room.ConferenceManager == null)
+				return;
+
+			room.ConferenceManager.OnIncomingCallAdded -= ConferenceManagerOnIncomingCallAdded;
+			room.ConferenceManager.OnIncomingCallRemoved -= ConferenceManagerOnIncomingCallRemoved;
 		}
 
-		private void DialerOnIncomingCallAdded(object sender, GenericEventArgs<IIncomingCall> args)
+		/// <summary>
+		/// Called when the room answers the incoming call.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void RoomOnIncomingCallAnswered(object sender, GenericEventArgs<IIncomingCall> eventArgs)
 		{
-			UpdateSource(args.Data);
+			RemoveIncomingCall(eventArgs.Data);
 		}
 
-		private void DialerOnIncomingCallRemoved(object sender, GenericEventArgs<IIncomingCall> args)
+		/// <summary>
+		/// Called when the room rejects the incoming call.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void RoomOnIncomingCallRejected(object sender, GenericEventArgs<IIncomingCall> eventArgs)
 		{
-			if (args.Data == IncomingCall)
-				RemoveSource();
+			RemoveIncomingCall(eventArgs.Data);
 		}
 
-		private void UpdateSource(IIncomingCall source)
+		/// <summary>
+		/// Called when a new incoming call is added.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ConferenceManagerOnIncomingCallAdded(object sender,
+		                                                  ConferenceControlIncomingCallEventArgs eventArgs)
 		{
-			if (source != null && source.GetIsRingingIncomingCall())
-				IncomingCall = source;
+			IIncomingCall call = eventArgs.IncomingCall;
+			if (call.GetIsRingingIncomingCall())
+				AddIncomingCall(call, eventArgs.Control);
 		}
 
-		private void RemoveSource()
+		/// <summary>
+		/// Called when an incoming call is removed.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ConferenceManagerOnIncomingCallRemoved(object sender,
+		                                                    ConferenceControlIncomingCallEventArgs eventArgs)
 		{
-			IncomingCall = null;
+			RemoveIncomingCall(eventArgs.IncomingCall);
 		}
 
 		#endregion
 
 		#region Incoming Call Callbacks
 
-		private void Subscribe(IIncomingCall source)
+		/// <summary>
+		/// Subscribe to the call events.
+		/// </summary>
+		/// <param name="call"></param>
+		private void Subscribe(IIncomingCall call)
 		{
-			source.OnAnswerStateChanged += SourceOnAnswerStateChanged;
+			call.OnNameChanged += CallOnNameChanged;
+			call.OnNumberChanged += CallOnNumberChanged;
+			call.OnAnswerStateChanged += CallOnStatusChanged;
 		}
 
-		private void Unsubscribe(IIncomingCall source)
+		/// <summary>
+		/// Unsubscribe from the call events.
+		/// </summary>
+		/// <param name="call"></param>
+		private void Unsubscribe(IIncomingCall call)
 		{
-			source.OnAnswerStateChanged -= SourceOnAnswerStateChanged;
+			call.OnNameChanged -= CallOnNameChanged;
+			call.OnNumberChanged -= CallOnNumberChanged;
+			call.OnAnswerStateChanged -= CallOnStatusChanged;
 		}
 
-		private void SourceOnAnswerStateChanged(object sender, IncomingCallAnswerStateEventArgs e)
+		/// <summary>
+		/// Called when the call status changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void CallOnStatusChanged(object sender, IncomingCallAnswerStateEventArgs args)
 		{
-			if (IncomingCall.AnswerState == eCallAnswerState.Answered ||
-			    IncomingCall.AnswerState == eCallAnswerState.Autoanswered)
-				RemoveSource();
-			else if (IncomingCall.AnswerState == eCallAnswerState.Ignored)
-				m_CallIgnoredTimer.Reset(REJECTED_LINGER_TIME_MS);
+			IIncomingCall call = sender as IIncomingCall;
+			if (call == null)
+				return;
 
+			if (!call.GetIsRingingIncomingCall())
+				RemoveIncomingCall(call);
+		}
+
+		/// <summary>
+		/// Called when the call number changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void CallOnNumberChanged(object sender, StringEventArgs args)
+		{
+			RefreshIfVisible();
+		}
+
+		/// <summary>
+		/// Called when the call name changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void CallOnNameChanged(object sender, StringEventArgs args)
+		{
 			RefreshIfVisible();
 		}
 
@@ -202,20 +314,45 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Notifi
 			view.OnRejectButtonPressed -= ViewOnRejectButtonPressed;
 		}
 
-		private void ViewOnAnswerButtonPressed(object sender, EventArgs e)
-		{
-			if (IncomingCall == null)
-				return;
-
-			IncomingCall.Answer();
-		}
-
+		/// <summary>
+		/// Called when the user presses the ignore button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ViewOnRejectButtonPressed(object sender, EventArgs e)
 		{
-			if (IncomingCall == null)
-				return;
+			IIncomingCall call = GetFirstIncomingCall();
 
-			IncomingCall.Reject();
+			if (call != null && Room != null)
+				Room.RejectIncomingCall(call);
+
+			ShowView(false);
+		}
+
+		/// <summary>
+		/// Called when the user presses the answer button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ViewOnAnswerButtonPressed(object sender, EventArgs e)
+		{
+			IIncomingCall call = GetFirstIncomingCall();
+			IConferenceDeviceControl control =
+				call == null
+					? null
+					: m_IncomingCallsSection.Execute(() => m_IncomingCalls.GetDefault(call));
+
+			if (call != null && Room != null)
+				Room.AnswerIncomingCall(control, call);
+
+			ShowView(false);
+		}
+
+		protected override void ViewOnPreVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			base.ViewOnPreVisibilityChanged(sender, args);
+
+			GetView().PlayRingtone(false);
 		}
 
 		#endregion
