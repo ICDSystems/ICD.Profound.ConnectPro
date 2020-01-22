@@ -139,13 +139,13 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				Mode = eHeaderButtonMode.Orange
 			};
 
-			m_EndConferenceButton = new HeaderButtonModel(1, 2, EndConferenceCallback)
+			m_EndConferenceButton = new HeaderButtonModel(1, 2, ConfirmEndConference)
 			{
 				LabelText = "End Call",
 				Icon = TouchCueIcons.GetIcon("hangup"),
 				Mode = eHeaderButtonMode.Red
 			};
-			var leaveConferenceButton = new HeaderButtonModel(1, 1, LeaveConferenceCallback)
+			var leaveConferenceButton = new HeaderButtonModel(1, 1, ConfirmLeaveConference)
 			{
 				LabelText = "Leave Call",
 				Icon = TouchCueIcons.GetIcon("exit"),
@@ -294,6 +294,18 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				return;
 
 			webConferenceControl.SetCameraEnabled(!webConferenceControl.CameraEnabled);
+		}
+
+		private void ConfirmLeaveConference()
+		{
+			Navigation.LazyLoadPresenter<IConfirmEndMeetingPresenter>()
+				.Show("Are you sure you would like to leave the conference?", LeaveConferenceCallback);
+		}
+
+		private void ConfirmEndConference()
+		{
+			Navigation.LazyLoadPresenter<IConfirmEndMeetingPresenter>()
+				.Show("Are you sure you would like to end the conference?", EndConferenceCallback);
 		}
 
 		private void LeaveConferenceCallback()
