@@ -177,7 +177,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 					for (ushort index = 0; index < secondaryChildren.Length; index++)
 					{
 						view.SetSecondaryButtonVisible(index, secondaryChildren[index].Visible);
-						view.SetSecondaryButtonSelected(index, secondaryChildren[index] == CurrentNode);
+						view.SetSecondaryButtonSelected(index, IsNodeSelected(secondaryChildren[index]));
 					}
 				}
 
@@ -188,7 +188,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 				for (ushort index = 0; index < primaryChildren.Length; index++)
 				{
 					view.SetPrimaryButtonVisible(index, primaryChildren[index].Visible);
-					view.SetPrimaryButtonSelected(index, primaryChildren[index] == CurrentNode);
+					view.SetPrimaryButtonSelected(index, IsNodeSelected(primaryChildren[index]));
 				}
 			}
 			finally
@@ -227,6 +227,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		private bool IsNodeSelected(ISettingsNodeBase settingsNode)
+		{
+			return m_MenuPath.Contains(settingsNode);
 		}
 
 		private void ShowPresenterForCurrentNode()
