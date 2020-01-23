@@ -36,9 +36,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		private readonly Dictionary<HeaderButtonModel, ITouchDisplayPresenter> m_PresenterButtons;
 		private readonly List<HeaderButtonModel> m_InCallButtons;
 		private readonly List<HeaderButtonModel> m_OutOfCallButtons;
-
 		private HeaderButtonModel m_HideCameraButton;
 		private HeaderButtonModel m_EndConferenceButton;
+		private IHeaderPresenter m_Header;
 		
 		private IConferenceDeviceControl m_SubscribedConferenceControl;
 		private bool m_IsInCall;
@@ -84,6 +84,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
+			m_Header = Navigation.LazyLoadPresenter<IHeaderPresenter>();
 			m_RefreshSection = new SafeCriticalSection();
 			m_ConferencePresenters = Navigation.LazyLoadPresenters<IConferencePresenter>().ToList();
 			foreach (var presenter in m_ConferencePresenters)
@@ -169,7 +170,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			m_InCallButtons.Add(activeConferenceButton);
 			m_InCallButtons.Add(contactsButton);
 			m_InCallButtons.Add(shareButton);
-			m_InCallButtons.Add(m_EndConferenceButton);
 			m_InCallButtons.Add(leaveConferenceButton);
 			m_InCallButtons.Add(m_HideCameraButton);
 		}
@@ -196,11 +196,12 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				// Only hosts can end meeting for everyone
 				ZoomRoom zoomRoom = webConferenceControl == null ? null : webConferenceControl.Parent as ZoomRoom;
 				CallComponent component = zoomRoom == null ? null : zoomRoom.Components.GetComponent<CallComponent>();
-				IHeaderPresenter header = Navigation.LazyLoadPresenter<IHeaderPresenter>();
+				
 				if (component != null && component.AmIHost && IsInCall && IsViewVisible)
-					header.AddRightButton(m_EndConferenceButton);
+					m_Header.AddRightButton(m_EndConferenceButton);
 				else
-					header.RemoveRightButton(m_EndConferenceButton);
+					m_Header.RemoveRightButton(m_EndConferenceButton);
+				m_Header.Refresh();
 			}
 			finally
 			{
@@ -248,34 +249,32 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				RemoveInCallButtons();
 				AddOutOfCallButtons();
 			}
+			
+			m_Header.Refresh();
 		}
 
 		private void AddInCallButtons()
 		{
-			var header = Navigation.LazyLoadPresenter<IHeaderPresenter>();
 			foreach (var button in m_InCallButtons)
-				header.AddRightButton(button);
+				m_Header.AddRightButton(button);
 		}
 
 		private void RemoveInCallButtons()
 		{
-			var header = Navigation.LazyLoadPresenter<IHeaderPresenter>();
 			foreach (var button in m_InCallButtons)
-				header.RemoveRightButton(button);
+				m_Header.RemoveRightButton(button);
 		}
 
 		private void AddOutOfCallButtons()
 		{
-			var header = Navigation.LazyLoadPresenter<IHeaderPresenter>();
 			foreach (var button in m_OutOfCallButtons)
-				header.AddRightButton(button);
+				m_Header.AddRightButton(button);
 		}
 
 		private void RemoveOutOfCallButtons()
 		{
-			var header = Navigation.LazyLoadPresenter<IHeaderPresenter>();
 			foreach (var button in m_OutOfCallButtons)
-				header.RemoveRightButton(button);
+				m_Header.RemoveRightButton(button);
 		}
 
 		#region Header Button Callbacks

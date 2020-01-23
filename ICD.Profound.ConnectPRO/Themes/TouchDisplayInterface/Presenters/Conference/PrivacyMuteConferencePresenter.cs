@@ -88,6 +88,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				header.AddLeftButton(m_HeaderButton);
 			else
 				header.RemoveLeftButton(m_HeaderButton);
+			header.Refresh();
 		}
 
 		#region Room Callbacks

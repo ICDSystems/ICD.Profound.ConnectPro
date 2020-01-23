@@ -94,7 +94,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 				return;
 
 			m_LeftButtons.Add(button, null);
-			Refresh();
 		}
 
 		public void RemoveLeftButton(HeaderButtonModel button)
@@ -103,7 +102,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 				return;
 
 			m_LeftButtons.Remove(button);
-			Refresh();
 		}
 
 		public bool ContainsRightButton(HeaderButtonModel button)
@@ -117,7 +115,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 				return;
 
 			m_RightButtons.Add(button, null);
-			Refresh();
 		}
 
 		public void RemoveRightButton(HeaderButtonModel button)
@@ -126,7 +123,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 				return;
 
 			m_RightButtons.Remove(button);
-			Refresh();
 		}
 
 		/// <summary>

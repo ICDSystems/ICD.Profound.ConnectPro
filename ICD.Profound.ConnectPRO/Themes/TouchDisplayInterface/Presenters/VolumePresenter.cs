@@ -214,6 +214,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 				header.RemoveLeftButton(m_HeaderVolumeButton);
 				ShowView(false);
 			}
+
+			header.Refresh();
 		}
 
 		#endregion
