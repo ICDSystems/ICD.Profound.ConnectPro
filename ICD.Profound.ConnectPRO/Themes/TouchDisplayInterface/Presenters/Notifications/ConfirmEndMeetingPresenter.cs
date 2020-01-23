@@ -139,6 +139,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Notifi
 		{
 			if (m_ConfirmAction != null)
 				m_ConfirmAction();
+
+			ShowView(false);
 		}
 
 		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
