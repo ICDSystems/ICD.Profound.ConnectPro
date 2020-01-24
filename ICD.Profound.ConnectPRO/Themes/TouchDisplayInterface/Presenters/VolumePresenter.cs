@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
@@ -7,6 +8,9 @@ using ICD.Common.Utils.Timers;
 using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.Repeaters;
 using ICD.Connect.Audio.Utils;
+using ICD.Connect.Conferencing.ConferenceManagers;
+using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Connect.UI.Mvp.Views;
@@ -23,11 +27,13 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 	{
 		private const ushort HIDE_TIME = 5 * 1000;
 
-		private readonly SafeCriticalSection m_RefreshSection;
-		private readonly HeaderButtonModel m_HeaderVolumeButton;
 		private readonly SafeTimer m_VisibilityTimer;
+		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly VolumeRepeater m_VolumeRepeater;
 		private readonly VolumePointHelper m_VolumePointHelper;
+		private readonly HeaderButtonModel m_HeaderVolumeButton;
+
+		private IConferenceManager m_SubscribedConferenceManager;
 
 		/// <summary>
 		/// Gets the volume device control.
@@ -60,7 +66,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 		{
 			base.Dispose();
 
+			m_VisibilityTimer.Dispose();
+
 			Unsubscribe(m_VolumePointHelper);
+			m_VolumePointHelper.Dispose();
 		}
 
 		/// <summary>
@@ -71,13 +80,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 		{
 			base.SetRoom(room);
 
-			m_VolumePointHelper.VolumePoint = room == null ? null : room.GetVolumePoint();
+			UpdateVolumePoint();
 		}
 
-		private void ToggleVolumeVisibility()
-		{
-			ShowView(!IsViewVisible);
-		}
+		#region Methods
 
 		protected override void Refresh(IVolumeView view)
 		{
@@ -100,8 +106,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 				m_RefreshSection.Leave();
 			}
 		}
-
-		#region Methods
 
 		/// <summary>
 		/// Begins ramping the device volume up.
@@ -128,11 +132,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 			ShowView(true);
 			ResetVisibilityTimer();
 
-			if (m_VolumePointHelper.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.MuteAssignment))
-				m_VolumePointHelper.SetIsMuted(false);
-
-			if (m_VolumePointHelper.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.VolumeAssignment))
-				m_VolumePointHelper.SetVolumePercent(percentage);
+			m_VolumePointHelper.SetIsMuted(false);
+			m_VolumePointHelper.SetVolumePercent(percentage);
 		}
 		
 		/// <summary>
@@ -182,6 +183,20 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 
 		#endregion
 
+		#region Private Methods
+
+		private void UpdateVolumePoint()
+		{
+			m_VolumePointHelper.VolumePoint = Room == null ? null : Room.GetContextualVolumePoints().FirstOrDefault();
+		}
+
+		private void ToggleVolumeVisibility()
+		{
+			ShowView(!IsViewVisible);
+		}
+
+		#endregion
+
 		#region Room Callbacks
 
 		protected override void Subscribe(IConnectProRoom room)
@@ -192,16 +207,31 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 				return;
 
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
+
+			m_SubscribedConferenceManager = room.ConferenceManager;
+			if (m_SubscribedConferenceManager == null)
+				return;
+			
+			m_SubscribedConferenceManager.OnConferenceParticipantAddedOrRemoved += ConferenceManagerOnConferenceParticipantAddedOrRemoved;
+			m_SubscribedConferenceManager.OnInCallChanged += ConferenceManagerOnInCallChanged;
 		}
 
 		protected override void Unsubscribe(IConnectProRoom room)
 		{
-			base.Subscribe(room);
+			base.Unsubscribe(room);
 
 			if (room == null)
 				return;
 
 			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
+
+			if (m_SubscribedConferenceManager == null)
+				return;
+
+			m_SubscribedConferenceManager.OnConferenceParticipantAddedOrRemoved -= ConferenceManagerOnConferenceParticipantAddedOrRemoved;
+			m_SubscribedConferenceManager.OnInCallChanged -= ConferenceManagerOnInCallChanged;
+
+			m_SubscribedConferenceManager = null;
 		}
 
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs e)
@@ -216,6 +246,16 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 			}
 
 			header.Refresh();
+		}
+
+		private void ConferenceManagerOnInCallChanged(object sender, InCallEventArgs e)
+		{
+			UpdateVolumePoint();
+		}
+
+		private void ConferenceManagerOnConferenceParticipantAddedOrRemoved(object sender, EventArgs e)
+		{
+			UpdateVolumePoint();
 		}
 
 		#endregion
