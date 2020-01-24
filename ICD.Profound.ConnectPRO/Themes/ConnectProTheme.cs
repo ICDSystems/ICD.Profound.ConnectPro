@@ -31,6 +31,7 @@ using ICD.Profound.ConnectPRO.Themes.ShureMicrophoneInterface;
 using ICD.Profound.ConnectPRO.Themes.ShureMx396Interface;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface;
 using ICD.Profound.ConnectPRO.Themes.UserInterface;
+using ICD.Profound.ConnectPRO.Themes.YkupSwitcherInterface;
 using ICD.Profound.ConnectPRO.WebConferencing;
 
 namespace ICD.Profound.ConnectPRO.Themes
@@ -171,7 +172,8 @@ namespace ICD.Profound.ConnectPRO.Themes
 				new ConnectProShureMicrophoneInterfaceFactory(this),
 				new ConnectProShureMx396InterfaceFactory(this),
 				new ConnectProUserInterfaceFactory(this),
-				new ConnectProTouchDisplayInterfaceFactory(this)
+				new ConnectProTouchDisplayInterfaceFactory(this),
+				new ConnectProYkupSwitcherInterfaceFactory(this)
 			};
 
 			m_UiFactoriesSection = new SafeCriticalSection();

@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - ZoomSettings now has options to control "RecordEnable", "DialOutEnable", and "MuteMyCameraOnStart"
  - Added TouchCUE UI
  - Added CueMotion property on ConnectProTheme for whether to use video or image backgrounds for CUEs
+ - Added UI for YKUP USB switcher for automatic switching when Zoom becomes active
 
 ### Changed
  - Reworked camera presenters to allow selection and control from a single page

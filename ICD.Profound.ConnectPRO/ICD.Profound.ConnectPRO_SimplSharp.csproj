@@ -896,6 +896,8 @@
     <Compile Include="Themes\UserInterface\Views\WebConference\WtcShareView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\WebConference\WtcStartMeetingView.cs" />
     <Compile Include="Themes\UserInterface\Views\WebConference\WtcStartMeetingView.generated.cs" />
+    <Compile Include="Themes\YkupSwitcherInterface\ConnectProYkupSwitcherInterface.cs" />
+    <Compile Include="Themes\YkupSwitcherInterface\ConnectProYkupSwitcherInterfaceFactory.cs" />
     <Compile Include="VolumePoints\ConnectProVolumePoint.cs" />
     <Compile Include="VolumePoints\ConnectProVolumePointSettings.cs" />
     <Compile Include="WebConferencing\WebConferencingAppInstructions.cs" />
@@ -959,6 +961,10 @@
     <ProjectReference Include="..\..\ICD.Connect.Lighting\ICD.Connect.Lighting\ICD.Connect.Lighting_SimplSharp.csproj">
       <Project>{A519C705-5801-44BF-97B1-02DEA016380A}</Project>
       <Name>ICD.Connect.Lighting_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Misc\ICD.Connect.Misc.Yepkit\ICD.Connect.Misc.Yepkit_SimplSharp.csproj">
+      <Project>{89489295-B545-4CA0-B9A7-99B87B538A33}</Project>
+      <Name>ICD.Connect.Misc.Yepkit_SimplSharp</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ICD.Connect.Misc\ICD.Connect.Misc\ICD.Connect.Misc_SimplSharp.csproj">
       <Project>{3BAE6352-77B5-499A-9DA5-2AB198F53183}</Project>
