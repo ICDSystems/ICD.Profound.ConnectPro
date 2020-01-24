@@ -33,7 +33,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		{
 			m_HeaderButton = new HeaderButtonModel(0, 3, PrivacyMuteCallback)
 			{
-				Icon = TouchCueIcons.GetIcon("mic"),
+				Icon = TouchCueIcons.GetIcon("privacymuteoff", eTouchCueColor.White),
 				LabelText = "Privacy Mute",
 				Mode = eHeaderButtonMode.Green
 			};
@@ -81,6 +81,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			var muteActive = GetActive();
 			ShowView(muteActive);
 			m_HeaderButton.Mode = muteActive ? eHeaderButtonMode.Red : eHeaderButtonMode.Green;
+			m_HeaderButton.Icon =
+				TouchCueIcons.GetIcon(muteActive ? "privacymuteon" : "privacymuteoff", eTouchCueColor.White);
 
 			var header = Navigation.LazyLoadPresenter<IHeaderPresenter>();
 			bool show = Room != null && Room.ConferenceActionsAvailable(eInCall.Audio);

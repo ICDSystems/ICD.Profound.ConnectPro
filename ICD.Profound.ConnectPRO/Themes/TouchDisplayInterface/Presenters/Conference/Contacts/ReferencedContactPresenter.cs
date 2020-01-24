@@ -144,7 +144,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				ZoomContact zoomContact = Contact as ZoomContact;
 				view.SetAvatarImageVisibility(true);
 				view.SetAvatarImagePath(zoomContact == null || string.IsNullOrEmpty(zoomContact.AvatarUrl) 
-					? TouchCueIcons.GetIcon("zoom_participants_head")
+					? "ic_zoom_participants_head"
 					: zoomContact.AvatarUrl);
 
 				// Favorite state

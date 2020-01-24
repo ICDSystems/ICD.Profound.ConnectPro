@@ -39,9 +39,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 			{
 				ConnectProSource connectProSource = Source as ConnectProSource;
 				if (connectProSource != null && connectProSource.Icon != null)
-					view.SetIcon(TouchCueIcons.GetIcon(connectProSource.Icon));
+					view.SetIcon(TouchCueIcons.GetIcon(connectProSource.Icon, eTouchCueColor.White));
 				else
-					view.SetIcon(TouchCueIcons.GetIcon("laptop"));
+					view.SetIcon(TouchCueIcons.GetIcon("laptop", eTouchCueColor.White));
 
 				string sourceName = Source.GetName(Room.IsCombineRoom()) ?? string.Empty;
 				view.SetNameText(sourceName);

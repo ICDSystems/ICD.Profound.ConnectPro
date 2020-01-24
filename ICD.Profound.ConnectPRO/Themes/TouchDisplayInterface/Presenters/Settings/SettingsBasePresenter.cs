@@ -201,10 +201,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 
 		#region Private Methods
 
-		private static KeyValuePair<string, string> GetNameAndIcon(ISettingsNodeBase node)
+		private KeyValuePair<string, string> GetNameAndIcon(ISettingsNodeBase node)
 		{
 			string name = node.Name;
-			string icon = TouchCueIcons.GetIcon(node.Icon);
+			string icon = TouchCueIcons.GetIcon(node.Icon, IsNodeSelected(node) ? eTouchCueColor.Green : eTouchCueColor.LightBlue);
 
 			return new KeyValuePair<string, string>(name, icon);
 		}

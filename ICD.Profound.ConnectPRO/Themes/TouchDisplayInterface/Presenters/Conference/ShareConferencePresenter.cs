@@ -94,7 +94,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 					string icon =
 						connectProSource == null
 							? null
-							: TouchCueIcons.GetIcon(connectProSource.Icon);
+							: TouchCueIcons.GetIcon(connectProSource.Icon, eTouchCueColor.White);
 
 					bool select = inPresentation ? m_RoutedSources.Contains(source) : source == m_Selected;
 

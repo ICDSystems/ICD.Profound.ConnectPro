@@ -116,26 +116,26 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		{
 			var startConferenceButton = new HeaderButtonModel(0, 0, PresenterButtonPressed<IStartConferencePresenter>)
 			{
-				Icon = TouchCueIcons.GetIcon("videoconference"),
+				Icon = TouchCueIcons.GetIcon("videoconference", eTouchCueColor.White),
 				LabelText = "Start/Join",
 				Mode = eHeaderButtonMode.Orange
 			};
 
 			var activeConferenceButton = new HeaderButtonModel(0, 1, PresenterButtonPressed<IActiveConferencePresenter>)
 			{
-				Icon = TouchCueIcons.GetIcon("videoconference"),
+				Icon = TouchCueIcons.GetIcon("videoconference", eTouchCueColor.White),
 				LabelText = "Participants",
 				Mode = eHeaderButtonMode.Orange
 			};
 			var contactsButton = new HeaderButtonModel(0, 2, PresenterButtonPressed<IContactListPresenter>)
 			{
-				Icon = TouchCueIcons.GetIcon("audiocall"),
+				Icon = TouchCueIcons.GetIcon("audioconference", eTouchCueColor.White),
 				LabelText = "Contacts",
 				Mode = eHeaderButtonMode.Orange
 			};
 			var shareButton = new HeaderButtonModel(0, 3, PresenterButtonPressed<IShareConferencePresenter>)
 			{
-				Icon = TouchCueIcons.GetIcon("share_source"),
+				Icon = TouchCueIcons.GetIcon("share_source", eTouchCueColor.White),
 				LabelText = "Share",
 				Mode = eHeaderButtonMode.Orange
 			};
@@ -143,19 +143,19 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			m_EndConferenceButton = new HeaderButtonModel(1, 2, ConfirmEndConference)
 			{
 				LabelText = "End Call",
-				Icon = TouchCueIcons.GetIcon("hangup"),
+				Icon = TouchCueIcons.GetIcon("hangup", eTouchCueColor.White),
 				Mode = eHeaderButtonMode.Red
 			};
 			var leaveConferenceButton = new HeaderButtonModel(1, 1, ConfirmLeaveConference)
 			{
 				LabelText = "Leave Call",
-				Icon = TouchCueIcons.GetIcon("exit"),
+				Icon = TouchCueIcons.GetIcon("exit", eTouchCueColor.White),
 				Mode = eHeaderButtonMode.Red
 			};
 			m_HideCameraButton = new HeaderButtonModel(1, 0, HideCameraCallback)
 			{
 				LabelText = "Show Camera",
-				Icon = TouchCueIcons.GetIcon("reveal"),
+				Icon = TouchCueIcons.GetIcon("reveal", eTouchCueColor.White),
 				Mode = eHeaderButtonMode.Blue
 			};
 			
@@ -191,7 +191,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				var webConferenceControl = ActiveConferenceControl as IWebConferenceDeviceControl;
 				bool cameraActive = webConferenceControl != null && webConferenceControl.CameraEnabled;
 				m_HideCameraButton.LabelText = cameraActive ? "Hide Camera" : "Show Camera";
-				m_HideCameraButton.Icon = TouchCueIcons.GetIcon(cameraActive ? "hide" : "reveal");
+				m_HideCameraButton.Icon = TouchCueIcons.GetIcon(cameraActive ? "hide" : "reveal", eTouchCueColor.White);
 				
 				// Only hosts can end meeting for everyone
 				ZoomRoom zoomRoom = webConferenceControl == null ? null : webConferenceControl.Parent as ZoomRoom;

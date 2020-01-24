@@ -113,7 +113,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				var zoomParticipant = webParticipant as ZoomWebParticipant;
 				view.SetAvatarImageVisibility(true);
 				view.SetAvatarImagePath(zoomParticipant == null || string.IsNullOrEmpty(zoomParticipant.AvatarUrl) 
-					? TouchCueIcons.GetIcon("zoom_participants_head") 
+					? "ic_zoom_participants_head"
 					: zoomParticipant.AvatarUrl);
 			}
 			finally

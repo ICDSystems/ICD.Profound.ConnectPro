@@ -85,7 +85,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 				
 				if (currentBooking == null || currentBooking is EmptyBooking)
 				{
-					view.SetCurrentBookingIcon(TouchCueIcons.GetIcon("thumbsUp"));
+					view.SetCurrentBookingIcon(TouchCueIcons.GetIcon("thumbsup", eTouchCueColor.White));
 					view.SetAvailabilityText("AVAILABLE");
 					view.SetAvailabilityVisible(true);
 					view.SetColorMode(eScheduleViewColorMode.Blue);
@@ -214,7 +214,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 					break;
 			}
 
-			return TouchCueIcons.GetIcon(icon);
+			return TouchCueIcons.GetIcon(icon, eTouchCueColor.White);
 		}
 
 		#region View Callbacks

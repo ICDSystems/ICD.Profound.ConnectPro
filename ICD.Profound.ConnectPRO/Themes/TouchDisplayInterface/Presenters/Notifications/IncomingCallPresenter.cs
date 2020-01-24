@@ -64,7 +64,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Notifi
 				string info = GetCallerInfo(incomingCall);
 				if (incomingCall.GetIsRingingIncomingCall())
 				{
-					view.SetIcon(TouchCueIcons.GetIcon("call"));
+					view.SetIcon(TouchCueIcons.GetIcon("call", eTouchCueColor.White));
 					view.SetCallerInfo(string.Format("Press to answer incoming call from {0}", info));
 					view.SetAnswerButtonMode(eIncomingCallAnswerButtonMode.Ringing);
 					view.PlayRingtone(true);
@@ -72,7 +72,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Notifi
 				}
 				else if (incomingCall.AnswerState == eCallAnswerState.Ignored)
 				{
-					view.SetIcon(TouchCueIcons.GetIcon("hangup"));
+					view.SetIcon(TouchCueIcons.GetIcon("hangup", eTouchCueColor.White));
 					view.SetCallerInfo(string.Format("Call from {0} was declined", info));
 					view.SetAnswerButtonMode(eIncomingCallAnswerButtonMode.Rejected);
 					view.PlayRingtone(false);
