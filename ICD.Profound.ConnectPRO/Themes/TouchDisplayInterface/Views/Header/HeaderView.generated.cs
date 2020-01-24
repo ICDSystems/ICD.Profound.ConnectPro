@@ -52,7 +52,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
             m_LeftButtonList = new VtProSubpageReferenceList(11, panel as IPanelDevice, m_Subpage)
             {
 				AnalogJoinIncrement = 1,
-				DigitalJoinIncrement = 2,
+				DigitalJoinIncrement = 3,
 				SerialJoinIncrement = 2,
 				MaxSize = 10
             };
@@ -60,7 +60,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
             m_RightButtonList = new VtProSubpageReferenceList(12, panel as IPanelDevice, m_Subpage)
             {
 	            AnalogJoinIncrement = 1,
-	            DigitalJoinIncrement = 2,
+	            DigitalJoinIncrement = 3,
 	            SerialJoinIncrement = 2,
 	            MaxSize = 10
             };

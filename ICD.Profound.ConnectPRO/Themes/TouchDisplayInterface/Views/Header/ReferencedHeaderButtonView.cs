@@ -35,6 +35,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 			m_Button.Enable(enabled);
 		}
 
+		public void SetButtonBackgroundVisible(bool visible)
+		{
+			m_Background.Show(visible);
+		}
+
 		#region Control Callbacks
 
 		protected override void SubscribeControls()

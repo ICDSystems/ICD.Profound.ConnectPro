@@ -5,6 +5,7 @@ using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Images;
 using ICD.Connect.UI.Controls.Pages;
+using ICD.Connect.UI.Controls.TextControls;
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 {
@@ -13,6 +14,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 		private VtProSubpage m_Subpage;
 		private VtProAdvancedButton m_Button;
 		private VtProDynamicIconObject m_Icon;
+		private VtProDynamicIconObject m_Background; //not an icon, just need visibility
 
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
@@ -30,6 +32,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 			{
 				DynamicIconSerialJoin = 1
 			};
+
+			m_Background = new VtProDynamicIconObject(panel, m_Subpage)
+			{
+				DigitalVisibilityJoin = 3
+			};
 		}
 
 		protected override IEnumerable<IVtProControl> GetChildren()
@@ -37,6 +44,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 			yield return m_Subpage;
 			yield return m_Button;
 			yield return m_Icon;
+			yield return m_Background;
 		}
 	}
 }

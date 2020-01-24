@@ -44,6 +44,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 				view.SetButtonEnabled(Model.Enabled);
 				view.SetButtonMode(Model.Selected ? eHeaderButtonMode.Close : Model.Mode);
 				view.SetLabelText(Model.LabelText);
+				view.SetButtonBackgroundVisible(Model.Level > 0);
 			}
 			finally
 			{

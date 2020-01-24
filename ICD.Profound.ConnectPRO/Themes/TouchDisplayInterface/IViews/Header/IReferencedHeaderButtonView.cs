@@ -13,6 +13,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Header
 		void SetButtonMode(eHeaderButtonMode mode);
 
 		void SetButtonEnabled(bool enabled);
+
+		void SetButtonBackgroundVisible(bool visible);
 	}
 	
 	public enum eHeaderButtonMode : ushort

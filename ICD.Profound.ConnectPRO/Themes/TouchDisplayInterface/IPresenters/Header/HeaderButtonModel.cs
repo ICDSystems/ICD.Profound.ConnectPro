@@ -94,6 +94,16 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Heade
 			}
 		}
 
+		public int Order
+		{
+			get { return m_Order; }
+		}
+
+		public int Level
+		{
+			get { return m_Level; }
+		}
+
 		#endregion
 
 		public HeaderButtonModel(int level, int order, HeaderButtonPressedCallback callback)
