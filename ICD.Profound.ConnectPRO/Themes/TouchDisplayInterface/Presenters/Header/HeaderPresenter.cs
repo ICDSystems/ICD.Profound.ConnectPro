@@ -141,12 +141,12 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 				view.SetRoomName(roomName);
 
 				bool selected = Navigation.LazyLoadPresenter<IDeviceDrawerPresenter>().IsViewVisible;
-				bool enabled = true; // todo
+				bool disabled = false; // todo
 				string icon = Room != null && Room.IsInMeeting
 					? "devicedrawer"
 					: "instantmeeting";
 				view.SetCenterButtonIcon(TouchCueIcons.GetIcon(icon,
-					enabled ? eTouchCueColor.Gray : selected ? eTouchCueColor.Green : eTouchCueColor.White
+					disabled ? eTouchCueColor.Gray : selected ? eTouchCueColor.Green : eTouchCueColor.White
 				));
 				string text = Room != null && Room.IsInMeeting
 					? "Device Drawer"
