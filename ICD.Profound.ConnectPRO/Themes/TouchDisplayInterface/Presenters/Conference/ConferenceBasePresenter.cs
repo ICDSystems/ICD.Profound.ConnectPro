@@ -4,6 +4,7 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.Controls.Layout;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Conferencing.Zoom.Components.Call;
@@ -15,6 +16,7 @@ using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Conference;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Conference.ActiveConference;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Conference.Camera;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Conference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Header;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Notifications;
@@ -42,6 +44,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		
 		private IConferenceDeviceControl m_SubscribedConferenceControl;
 		private bool m_IsInCall;
+		private ICameraLayoutPresenter m_CameraLayoutPresenter;
 
 		public IConferenceDeviceControl ActiveConferenceControl
 		{
@@ -57,6 +60,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				
 				foreach (var presenter in m_ConferencePresenters)
 					presenter.ActiveConferenceControl = m_SubscribedConferenceControl;
+				
+				m_CameraLayoutPresenter.SetConferenceLayoutControl(value == null
+					? null
+					: value.Parent.Controls.GetControl<IConferenceLayoutControl>());
 
 				if (m_SubscribedConferenceControl == null)
 					ShowView(false);
@@ -89,6 +96,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			m_ConferencePresenters = Navigation.LazyLoadPresenters<IConferencePresenter>().ToList();
 			foreach (var presenter in m_ConferencePresenters)
 				Subscribe(presenter);
+
+			m_CameraLayoutPresenter = Navigation.LazyLoadPresenter<ICameraLayoutPresenter>();
 
 			m_PresenterButtons = new Dictionary<HeaderButtonModel, ITouchDisplayPresenter>();
 			m_InCallButtons = new List<HeaderButtonModel>();
@@ -135,8 +144,14 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			};
 			var shareButton = new HeaderButtonModel(0, 3, PresenterButtonPressed<IShareConferencePresenter>)
 			{
-				Icon = TouchCueIcons.GetIcon("share_source", eTouchCueColor.White),
+				Icon = TouchCueIcons.GetIcon("share", eTouchCueColor.White),
 				LabelText = "Share",
+				Mode = eHeaderButtonMode.Orange
+			};
+			var layoutButton = new HeaderButtonModel(0, 4, PresenterButtonPressed<ICameraLayoutPresenter>)
+			{
+				Icon = TouchCueIcons.GetIcon("conferencecamera", eTouchCueColor.White),
+				LabelText = "Layout",
 				Mode = eHeaderButtonMode.Orange
 			};
 
@@ -163,6 +178,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			m_PresenterButtons.Add(activeConferenceButton, Navigation.LazyLoadPresenter<IActiveConferencePresenter>());
 			m_PresenterButtons.Add(contactsButton, Navigation.LazyLoadPresenter<IContactListPresenter>());
 			m_PresenterButtons.Add(shareButton, Navigation.LazyLoadPresenter<IShareConferencePresenter>());
+			m_PresenterButtons.Add(layoutButton, Navigation.LazyLoadPresenter<ICameraLayoutPresenter>());
 
 			m_OutOfCallButtons.Add(startConferenceButton);
 			m_OutOfCallButtons.Add(contactsButton);
@@ -172,6 +188,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			m_InCallButtons.Add(shareButton);
 			m_InCallButtons.Add(leaveConferenceButton);
 			m_InCallButtons.Add(m_HideCameraButton);
+			m_InCallButtons.Add(layoutButton);
 		}
 
 		protected override void Refresh(IConferenceBaseView view)
@@ -441,8 +458,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 					break;
 				case eConferenceStatus.Connected:
 					Navigation.LazyLoadPresenter<IConferenceConnectingPresenter>().ShowView(false);
-					// TODO temporary fix until we get layout control page
-					ActiveConferenceControl.Parent.Controls.GetControl<ZoomRoomLayoutControl>().SetLayoutPosition(eZoomLayoutPosition.DownRight);
 					break;
 				case eConferenceStatus.Disconnecting:
 					Navigation.LazyLoadPresenter<IConferenceConnectingPresenter>().Show(DISCONNECTING_TEXT);
