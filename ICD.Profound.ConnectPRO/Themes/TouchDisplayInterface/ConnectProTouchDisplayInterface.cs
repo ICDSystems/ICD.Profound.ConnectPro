@@ -24,6 +24,7 @@ using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Background;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Conference;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Conference.Camera;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.DeviceDrawer;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Header;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Notifications;
@@ -107,6 +108,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 			m_ConferenceVisibility = new SingleVisibilityNode();
 			foreach (var presenter in m_NavigationController.LazyLoadPresenters<IConferencePresenter>())
 				m_ConferenceVisibility.AddPresenter(presenter);
+			m_ConferenceVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ICameraLayoutPresenter>());
 
 			// control their own visibility
 			m_NavigationController.LazyLoadPresenter<IIncomingCallPresenter>();
@@ -341,6 +343,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs eventArgs)
 		{
+			m_NavigationController.LazyLoadPresenter<IBackgroundPresenter>().Refresh();
+
 			if (ConnectProRoom.IsInMeeting && ConnectProRoom.Routing.State.GetSourceRoutedStates().All(s => s.Value == eSourceState.Inactive))
 				m_NavigationController.NavigateTo<IDeviceDrawerPresenter>();
 			
