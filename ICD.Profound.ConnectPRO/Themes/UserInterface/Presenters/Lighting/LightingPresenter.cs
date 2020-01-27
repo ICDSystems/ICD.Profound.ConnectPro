@@ -17,7 +17,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Lighting
 	[PresenterBinding(typeof(ILightingPresenter))]
 	public sealed class LightingPresenter : AbstractUiPresenter<ILightingView> , ILightingPresenter
 	{
-
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private ILightingRoomInterfaceDevice m_LightingInterface;

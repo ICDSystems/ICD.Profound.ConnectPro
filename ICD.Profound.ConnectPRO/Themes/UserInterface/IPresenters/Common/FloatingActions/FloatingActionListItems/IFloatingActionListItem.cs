@@ -14,8 +14,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Floati
 		string Label { get; }
 		string Icon { get; }
 
-		// True if this action is currently showing - used for active state of shortcut button
-		bool GetActive();
+		/// <summary>
+		/// True if this action is currently showing - used for active state of shortcut button
+		/// </summary>
+		/// <returns></returns>
+		bool IsActive { get; }
 
 		/// <summary>
 		/// This method will get called when the button is pressed - also called by the FloatingActionListButtonPresenter if this is the only icon

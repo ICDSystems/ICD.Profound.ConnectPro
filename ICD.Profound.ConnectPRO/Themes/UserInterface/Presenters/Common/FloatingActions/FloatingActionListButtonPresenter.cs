@@ -73,10 +73,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// <returns></returns>
 		protected override bool GetActive()
 		{
-			if (ShortcutAction != null)
-				return ShortcutAction.GetActive();
-
-			return m_ListPresenter.IsViewVisible;
+			return ShortcutAction != null ? ShortcutAction.IsActive : m_ListPresenter.IsViewVisible;
 		}
 
 		/// <summary>

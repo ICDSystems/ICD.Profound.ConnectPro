@@ -10,21 +10,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 {
 	public abstract class AbstractFloatingActionListItem : IFloatingActionListItem
 	{
+		public event EventHandler<BoolEventArgs> OnIsAvaliableChanged;
+
+		public event EventHandler<BoolEventArgs> OnIsActiveChanged;
 		private bool m_IsAvaliable;
 
 		private bool m_IsActive;
 
 		private readonly INavigationController m_Navigation;
 
-		/// <summary>
-		/// This is the presenter for the page this list item shows
-		/// </summary>
-		protected abstract IUiPresenter ActionPresenter { get; }
+		#region Properties
 
-		protected bool IsActive
+		public bool IsActive
 		{
 			get { return m_IsActive; }
-			set
+			private set
 			{
 				if (m_IsActive == value)
 					return;
@@ -36,18 +36,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		}
 
 		protected INavigationController Navigation { get { return m_Navigation; } }
-
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		protected AbstractFloatingActionListItem(INavigationController navigation)
-		{
-			m_Navigation = navigation;
-		}
-
-		public event EventHandler<BoolEventArgs> OnIsAvaliableChanged;
-
-		public event EventHandler<BoolEventArgs> OnIsActiveChanged;
 
 		public bool IsAvailable
 		{
@@ -67,10 +55,31 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 
 		public abstract string Icon { get; }
 
-		public virtual bool GetActive()
+		/// <summary>
+		/// This is the presenter for the page this list item shows
+		/// </summary>
+		protected abstract IUiPresenter ActionPresenter { get; }
+
+		public IConnectProRoom Room { get; private set; }
+
+		#endregion
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		protected AbstractFloatingActionListItem(INavigationController navigation)
 		{
-			return IsActive;
+			m_Navigation = navigation;
 		}
+
+		/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+		public void Dispose()
+		{
+			OnIsActiveChanged = null;
+			OnIsActiveChanged = null;
+		}
+
+		#region Methods
 
 		/// <summary>
 		/// This method will get called when the button is pressed - also called by the FloatingActionListButtonPresenter if this is the only icon
@@ -91,7 +100,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 
 		public virtual void SetRoom(IConnectProRoom room)
 		{
+			Room = room;
 		}
+
+		#endregion
 
 		#region ActionPresenter Callbacks
 
@@ -109,12 +121,5 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		}
 
 		#endregion
-
-		/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
-		public void Dispose()
-		{
-			OnIsActiveChanged = null;
-			OnIsActiveChanged = null;
-		}
 	}
 }
