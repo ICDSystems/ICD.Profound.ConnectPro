@@ -4,8 +4,11 @@ using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
+using ICD.Connect.Calendaring;
+using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.IncomingCalls;
 using ICD.Connect.Devices;
@@ -32,6 +35,7 @@ namespace ICD.Profound.ConnectPRO.Dialing
 		/// <summary>
 		/// Gets/sets the ATC number for dialing into the room.
 		/// </summary>
+		[CanBeNull]
 		public string AtcNumber { get; set; }
 
 		/// <summary>
@@ -49,15 +53,85 @@ namespace ICD.Profound.ConnectPRO.Dialing
 		#region Methods
 
 		/// <summary>
+		/// Dials the given booking and routes the dialer.
+		/// </summary>
+		/// <param name="booking"></param>
+		public void DialBooking([NotNull] IBooking booking)
+		{
+			if (booking == null)
+				throw new ArgumentNullException("booking");
+
+			IEnumerable<IConferenceDeviceControl> dialers =
+				m_Room.ConferenceManager == null
+					? Enumerable.Empty<IConferenceDeviceControl>()
+					: m_Room.ConferenceManager.GetDialingProviders();
+
+			// Build map of dialer to best number
+			IDialContext dialContext;
+			IConferenceDeviceControl preferredDialer = ConferencingBookingUtils.GetBestDialer(booking, dialers, out dialContext);
+			if (preferredDialer == null)
+				return;
+
+			// Route device to displays and/or audio destination
+			IDeviceBase dialerDevice = preferredDialer.Parent;
+			ISource source = m_Room.Routing.Sources.GetCoreSources().FirstOrDefault(s => s.Device == dialerDevice.Id);
+			if (source == null)
+				return; // if we can't route a source, don't dial into conference users won't know they're in
+
+			m_Room.FocusSource = source;
+
+			if (preferredDialer.Supports.HasFlag(eCallType.Video))
+				m_Room.Routing.RouteVtc(source);
+			else if (preferredDialer.Supports.HasFlag(eCallType.Audio))
+				m_Room.Routing.RouteAtc(source);
+			else
+				m_Room.Routing.RouteToAllDisplays(source);
+
+			// Dial booking
+			Dial(preferredDialer, dialContext);
+		}
+
+		/// <summary>
+		/// Dials the context using the given conference control.
+		/// </summary>
+		/// <param name="conferenceControl"></param>
+		/// <param name="context"></param>
+		public void Dial([NotNull] IConferenceDeviceControl conferenceControl, [NotNull] IDialContext context)
+		{
+			if (conferenceControl == null)
+				throw new ArgumentNullException("conferenceControl");
+
+			if (context == null)
+				throw new ArgumentNullException("context");
+
+			// TODO - Route USB
+			conferenceControl.Dial(context);
+		}
+
+		/// <summary>
+		/// Starts a personal meeting using the given web conference control.
+		/// </summary>
+		/// <param name="webConferenceControl"></param>
+		public void StartPersonalMeeting([NotNull] IWebConferenceDeviceControl webConferenceControl)
+		{
+			if (webConferenceControl == null)
+				throw new ArgumentNullException("webConferenceControl");
+
+			// TODO - Route USB
+			webConferenceControl.StartPersonalMeeting();
+		}
+
+		/// <summary>
 		/// Answers the incoming call and focuses on the given conference call.
 		/// </summary>
 		/// <param name="control"></param>
 		/// <param name="call"></param>
-		public void AnswerIncomingCall(IConferenceDeviceControl control, [NotNull] IIncomingCall call)
+		public void AnswerIncomingCall([CanBeNull] IConferenceDeviceControl control, [NotNull] IIncomingCall call)
 		{
 			if (call == null)
 				throw new ArgumentNullException("call");
 
+			// TODO - Route USB
 			call.Answer();
 
 			m_Room.StartMeeting(false);

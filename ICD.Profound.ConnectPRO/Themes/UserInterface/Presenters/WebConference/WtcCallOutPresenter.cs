@@ -377,6 +377,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// <param name="eventArgs"></param>
 		private void ViewOnCallButtonPressed(object sender, EventArgs eventArgs)
 		{
+			if (Room == null)
+				return;
+
 			ZoomRoomTraditionalConferenceControl control = TraditionalControl;
 			if (control == null)
 				return;
@@ -398,11 +401,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				CallType = eCallType.Audio,
 				DialString = m_StringBuilder.ToString()
 			};
+
 			try
 			{
-				control.Dial(dialContext);
+				Room.Dialing.Dial(control, dialContext);
 			}
-
 			// If an empty dial string or a dial string containing # OR * is dialed
 			// Zoom fails but doesn't give useful feedback.
 			// So we catch the exception here and display useful info on the UI.

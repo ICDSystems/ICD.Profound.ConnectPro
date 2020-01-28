@@ -157,6 +157,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		private void SubmitZoomPassword(string meetingNumber, string password)
 		{
+			if (Room == null)
+				return;
+
 			ZoomRoomConferenceControl zoomControl = ActiveConferenceControl as ZoomRoomConferenceControl;
 			if (zoomControl == null)
 				return;
@@ -168,7 +171,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				Password = password
 			};
 
-			zoomControl.Dial(context);
+			Room.Dialing.Dial(zoomControl, context);
 		}
 
 		#endregion

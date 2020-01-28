@@ -162,16 +162,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		private void ViewOnMeetNowButtonPressed(object sender, EventArgs eventArgs)
 		{
+			if (Room == null)
+				return;
+
 			if (ActiveConferenceControl != null)
-				ActiveConferenceControl.StartPersonalMeeting();
+				Room.Dialing.StartPersonalMeeting(ActiveConferenceControl);
 		}
 
 		private void ViewOnJoinByIdButtonPressed(object sender, EventArgs eventArgs)
 		{
-			if (ActiveConferenceControl == null)
+			if (Room == null || ActiveConferenceControl == null)
 				return;
 
-			ActiveConferenceControl.Dial(new ZoomDialContext { DialString = m_Builder.ToString() });
+			Room.Dialing.Dial(ActiveConferenceControl, new ZoomDialContext {DialString = m_Builder.ToString()});
 			RefreshIfVisible();
 		}
 

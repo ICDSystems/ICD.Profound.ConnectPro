@@ -11,14 +11,12 @@ using ICD.Connect.API.Commands;
 using ICD.Connect.API.Nodes;
 using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.VolumePoints;
-using ICD.Connect.Calendaring;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Cameras.Controls;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Presentation;
-using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
@@ -204,7 +202,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			StartMeeting(false);
 			CheckIn(booking);
 
-			DialBooking(booking);
+			Dialing.DialBooking(booking);
 		}
 
 		/// <summary>
@@ -345,45 +343,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		#region Private Methods
 
 		/// <summary>
-		/// Dials the given booking and routes the dialer.
-		/// </summary>
-		/// <param name="booking"></param>
-		private void DialBooking([NotNull] IBooking booking)
-		{
-			if (booking == null)
-				throw new ArgumentNullException("booking");
-
-			IEnumerable<IConferenceDeviceControl> dialers =
-				ConferenceManager == null
-					? Enumerable.Empty<IConferenceDeviceControl>()
-					: ConferenceManager.GetDialingProviders();
-
-			// Build map of dialer to best number
-			IDialContext dialContext;
-			IConferenceDeviceControl preferredDialer = ConferencingBookingUtils.GetBestDialer(booking, dialers, out dialContext);
-			if (preferredDialer == null)
-				return;
-
-			// Route device to displays and/or audio destination
-			IDeviceBase dialerDevice = preferredDialer.Parent;
-			ISource source = Routing.Sources.GetCoreSources().FirstOrDefault(s => s.Device == dialerDevice.Id);
-			if (source == null)
-				return; // if we can't route a source, don't dial into conference users won't know they're in
-
-			FocusSource = source;
-
-			if (preferredDialer.Supports.HasFlag(eCallType.Video))
-				Routing.RouteVtc(source);
-			else if (preferredDialer.Supports.HasFlag(eCallType.Audio))
-				Routing.RouteAtc(source);
-			else
-				Routing.RouteToAllDisplays(source);
-
-			// Dial booking
-			preferredDialer.Dial(dialContext);
-		}
-
-		/// <summary>
 		/// Checks in to the given booking.
 		/// </summary>
 		/// <param name="booking"></param>
@@ -424,7 +383,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <param name="mute"></param>
 		private void Mute(bool mute)
 		{
-			foreach (IVolumePoint volumePoint in this.GetVolumePoints())
+			foreach (IVolumePoint volumePoint in Originators.GetInstancesRecursive<IVolumePoint>())
 			{
 				IVolumeDeviceControl volumeControl = volumePoint.Control;
 				if (volumeControl != null && volumeControl.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.MuteAssignment))

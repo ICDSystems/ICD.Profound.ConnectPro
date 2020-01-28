@@ -344,6 +344,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 
 		private void ViewOnDialButtonPressed(object sender, EventArgs eventArgs)
 		{
+			if (Room == null)
+				return;
+
 			if (ActiveConferenceControl == null)
 				return;
 
@@ -353,7 +356,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 
 			var dialContext = new TraditionalDialContext { DialString = dialString, CallType = eCallType.Audio };
 			if (ActiveConferenceControl.CanDial(dialContext) != eDialContextSupport.Unsupported)
-				ActiveConferenceControl.Dial(dialContext);
+				Room.Dialing.Dial(ActiveConferenceControl, dialContext);
 		}
 
 		private void ViewOnClearButtonPressed(object sender, EventArgs eventArgs)

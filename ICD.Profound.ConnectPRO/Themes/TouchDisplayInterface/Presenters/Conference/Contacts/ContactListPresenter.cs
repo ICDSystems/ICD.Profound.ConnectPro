@@ -594,6 +594,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		/// <param name="e"></param>
 		private void ViewOnInviteParticipantButtonPressed(object sender, EventArgs e)
 		{
+			if (Room == null)
+				return;
+
 			if (ActiveConferenceControl == null)
 				return;
 
@@ -609,7 +612,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 					       .FirstOrDefault(d => ActiveConferenceControl.CanDial(d) != eDialContextSupport.Unsupported);
 
 				if (bestDialContext != null)
-					ActiveConferenceControl.Dial(bestDialContext);
+					Room.Dialing.Dial(ActiveConferenceControl, bestDialContext);
 			}
 
 			ClearSelectedContacts();
