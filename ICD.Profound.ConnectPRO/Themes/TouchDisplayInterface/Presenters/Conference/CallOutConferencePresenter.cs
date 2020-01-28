@@ -154,18 +154,13 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			//Navigation.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>().ShowView(false);
 
 			// Clear the failed call out string as we show it to the user.
-			message = string.Format("Call Out to: {0} Failed\n\n{1}", m_StringBuilder.Pop(), message);
+			message = string.Format("Call Out to {0} Failed\n\n{1}", m_StringBuilder.Pop(), message);
 
 			// Hide the error message after 8 seconds.
 			const long timeout = 8 * 1000;
 
-			// TODO
-			//Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
-			//          .Show(message, timeout, new GenericAlertPresenterButton
-			//          {
-			//	          Visible = false,
-			//	          Enabled = false
-			//          }, GenericAlertPresenterButton.Dismiss);
+			Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
+					  .Show(message, timeout, GenericAlertPresenterButton.Dismiss);
 		}
 
 		#endregion
@@ -413,14 +408,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				string message = string.Format("Call Out to {0} Failed! Please enter a valid dial string.",
 				                               m_StringBuilder.Pop());
 
-				// TODO
-				//Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
-				//          .Show(message, 8 * 1000,
-				//                new GenericAlertPresenterButton
-				//                {
-				//	                Visible = false,
-				//	                Enabled = false
-				//                }, GenericAlertPresenterButton.Dismiss);
+				Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
+						  .Show(message, 8 * 1000, GenericAlertPresenterButton.Dismiss);
 			}
 		}
 

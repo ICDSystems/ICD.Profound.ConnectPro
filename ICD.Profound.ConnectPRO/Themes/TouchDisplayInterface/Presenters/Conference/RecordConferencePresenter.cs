@@ -9,6 +9,7 @@ using ICD.Connect.Conferencing.Zoom.Components.Call;
 using ICD.Connect.Conferencing.Zoom.Controls.Conferencing;
 using ICD.Connect.Conferencing.Zoom.Responses;
 using ICD.Connect.UI.Attributes;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Conference;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews;
@@ -182,14 +183,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 
 			// Hide the error message after 15 seconds.
 			const long timeout = 15 * 1000;
-
-			// TODO
-			//Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
-			//          .Show(errorMessage, timeout, new GenericAlertPresenterButton
-			//          {
-			//	          Visible = false,
-			//	          Enabled = false
-			//          }, GenericAlertPresenterButton.Dismiss);
+			
+			Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
+					  .Show(errorMessage, timeout, GenericAlertPresenterButton.Dismiss);
 		}
 
 		private void ZoomCallComponentOnUpdatedCallRecordInfo(object sender, GenericEventArgs<UpdateCallRecordInfoEvent> e)
