@@ -106,7 +106,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 				m_MainPageVisibility.AddPresenter(presenter);
 
 			m_ConferenceVisibility = new SingleVisibilityNode();
-			foreach (var presenter in m_NavigationController.LazyLoadPresenters<IConferencePresenter>())
+			foreach (var presenter in m_NavigationController.LazyLoadPresenters<IConferencePresenter>()
+															.Except(m_NavigationController.LazyLoadPresenter<IRecordConferencePresenter>()))
 				m_ConferenceVisibility.AddPresenter(presenter);
 			m_ConferenceVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<ICameraLayoutPresenter>());
 

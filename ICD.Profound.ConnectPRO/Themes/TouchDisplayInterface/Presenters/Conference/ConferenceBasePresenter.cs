@@ -154,6 +154,12 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				LabelText = "Layout",
 				Mode = eHeaderButtonMode.Orange
 			};
+			var recordButton = new HeaderButtonModel(0, 5, PresenterButtonPressed<IRecordConferencePresenter>)
+			{
+				LabelText = "Record",
+				Icon = TouchCueIcons.GetIcon("record", eTouchCueColor.White),
+				Mode = eHeaderButtonMode.Orange
+			};
 
 			m_EndConferenceButton = new HeaderButtonModel(1, 2, ConfirmEndConference)
 			{
@@ -179,6 +185,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			m_PresenterButtons.Add(contactsButton, Navigation.LazyLoadPresenter<IContactListPresenter>());
 			m_PresenterButtons.Add(shareButton, Navigation.LazyLoadPresenter<IShareConferencePresenter>());
 			m_PresenterButtons.Add(layoutButton, Navigation.LazyLoadPresenter<ICameraLayoutPresenter>());
+			m_PresenterButtons.Add(recordButton, Navigation.LazyLoadPresenter<IRecordConferencePresenter>());
 
 			m_OutOfCallButtons.Add(startConferenceButton);
 			m_OutOfCallButtons.Add(contactsButton);
@@ -186,9 +193,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			m_InCallButtons.Add(activeConferenceButton);
 			m_InCallButtons.Add(contactsButton);
 			m_InCallButtons.Add(shareButton);
-			m_InCallButtons.Add(leaveConferenceButton);
-			m_InCallButtons.Add(m_HideCameraButton);
 			m_InCallButtons.Add(layoutButton);
+			m_InCallButtons.Add(recordButton);
+			m_InCallButtons.Add(m_HideCameraButton);
+			m_InCallButtons.Add(leaveConferenceButton);
 		}
 
 		protected override void Refresh(IConferenceBaseView view)
