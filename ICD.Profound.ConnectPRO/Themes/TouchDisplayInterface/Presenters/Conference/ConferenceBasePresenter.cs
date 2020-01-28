@@ -129,6 +129,12 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				LabelText = "Start/Join",
 				Mode = eHeaderButtonMode.Orange
 			};
+			var callOutButton = new HeaderButtonModel(0, 3, PresenterButtonPressed<ICallOutConferencePresenter>)
+			{
+				Icon = TouchCueIcons.GetIcon("callout", eTouchCueColor.White),
+				LabelText = "Call Out",
+				Mode = eHeaderButtonMode.Orange
+			};
 
 			var activeConferenceButton = new HeaderButtonModel(0, 1, PresenterButtonPressed<IActiveConferencePresenter>)
 			{
@@ -186,9 +192,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			m_PresenterButtons.Add(shareButton, Navigation.LazyLoadPresenter<IShareConferencePresenter>());
 			m_PresenterButtons.Add(layoutButton, Navigation.LazyLoadPresenter<ICameraLayoutPresenter>());
 			m_PresenterButtons.Add(recordButton, Navigation.LazyLoadPresenter<IRecordConferencePresenter>());
+			m_PresenterButtons.Add(callOutButton, Navigation.LazyLoadPresenter<ICallOutConferencePresenter>());
 
 			m_OutOfCallButtons.Add(startConferenceButton);
 			m_OutOfCallButtons.Add(contactsButton);
+			m_OutOfCallButtons.Add(callOutButton);
 
 			m_InCallButtons.Add(activeConferenceButton);
 			m_InCallButtons.Add(contactsButton);
@@ -509,6 +517,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			{
 				foreach (var presenter in m_ConferencePresenters)
 					presenter.ShowView(false);
+				Navigation.LazyLoadPresenter<ICameraLayoutPresenter>();
 
 				if (Room != null)
 					Room.FocusSource = null;
