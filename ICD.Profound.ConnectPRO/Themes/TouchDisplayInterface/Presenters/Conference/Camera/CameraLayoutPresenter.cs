@@ -131,16 +131,32 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				bool presentationActive = m_PresentationControl != null && m_PresentationControl.PresentationActive;
 				int participantCount = m_CallComponent == null ? 0 : m_CallComponent.GetParticipants().Count();
 
-				bool sizeEnabled = layoutAvailable && style != eZoomLayoutStyle.Strip;
+				bool sizeEnabled = m_LayoutComponent != null && (layoutAvailable && m_LayoutComponent.LayoutAvailability.CanAdjustFloatingVideo);
 				bool styleEnabled = layoutAvailable;
-				bool contentThumbnailEnabled = layoutAvailable && presentationActive;
+				bool contentThumbnailEnabled = m_LayoutComponent != null && (layoutAvailable && presentationActive &&
+				                                                             m_LayoutComponent.LayoutAvailability.CanSwitchFloatingShareContent);
 				bool selfviewCameraEnabled = layoutAvailable && participantCount > 1;
-				bool thumbnailPositionEnabled = layoutAvailable && size != eZoomLayoutSize.Off;
+				bool thumbnailPositionEnabled = m_LayoutComponent != null &&
+				                                (layoutAvailable && size != eZoomLayoutSize.Off && m_LayoutComponent
+				                                                                                   .LayoutAvailability
+				                                                                                   .CanAdjustFloatingVideo
+				                                );
+
+				bool galleryEnabled = layoutAvailable && m_LayoutComponent.LayoutAvailability.CanSwitchWallView;
+				bool speakerEnabled = layoutAvailable && m_LayoutComponent.LayoutAvailability.CanSwitchSpeakerView;
+				bool stripEnabled = layoutAvailable;
+				bool shareAllEnabled =
+					layoutAvailable && m_LayoutComponent.LayoutAvailability.CanSwitchShareOnAllScreens;
 
 				view.SetLayoutSizeListEnabled(sizeEnabled);
 				view.SetLayoutStyleListEnabled(styleEnabled);
 				view.SetContentThumbnailButtonEnabled(contentThumbnailEnabled);
 				view.SetSelfviewCameraButtonEnabled(selfviewCameraEnabled);
+
+				view.SetLayoutStyleGalleryItemEnabled(galleryEnabled);
+				view.SetLayoutStyleSpeakerItemEnabled(speakerEnabled);
+				view.SetLayoutStyleStripItemEnabled(stripEnabled);
+				view.SetLayoutStyleShareAllItemEnabled(shareAllEnabled);
 				
 				view.SetSelfviewCameraButtonSelected(selfView);
 				view.SetContentThumbnailButtonSelected(contentThumbnail);
@@ -325,6 +341,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			layoutComponent.OnShareThumbChanged += LayoutComponentOnShareThumbChanged;
 			layoutComponent.OnSizeChanged += LayoutComponentOnSizeChanged;
 			layoutComponent.OnStyleChanged += LayoutComponentOnStyleChanged;
+			layoutComponent.OnCallLayoutAvailabilityChanged += LayoutComponentOnCallLayoutAvailabilityChanged;
 		}
 
 		/// <summary>
@@ -340,6 +357,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			layoutComponent.OnShareThumbChanged -= LayoutComponentOnShareThumbChanged;
 			layoutComponent.OnSizeChanged -= LayoutComponentOnSizeChanged;
 			layoutComponent.OnStyleChanged -= LayoutComponentOnStyleChanged;
+			layoutComponent.OnCallLayoutAvailabilityChanged -= LayoutComponentOnCallLayoutAvailabilityChanged;
 		}
 
 		/// <summary>
@@ -378,6 +396,16 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		private void LayoutComponentOnPositionChanged(object sender, ZoomLayoutPositionEventArgs e)
+		{
+			RefreshIfVisible();
+		}
+
+		/// <summary>
+		/// Called when then availability of layout features changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void LayoutComponentOnCallLayoutAvailabilityChanged(object sender, GenericEventArgs<ZoomLayoutAvailability> e)
 		{
 			RefreshIfVisible();
 		}

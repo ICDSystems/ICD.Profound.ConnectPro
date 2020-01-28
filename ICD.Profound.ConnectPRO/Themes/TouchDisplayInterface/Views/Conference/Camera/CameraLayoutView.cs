@@ -137,6 +137,38 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Conference.
 				button.Enable(enabled);
 		}
 
+		public void SetLayoutStyleGalleryItemEnabled(bool enabled)
+		{
+			VtProButton button;
+			m_LayoutStyles.TryGetValue(0, out button);
+			if (button != null)
+				button.Enable(enabled);
+		}
+
+		public void SetLayoutStyleSpeakerItemEnabled(bool enabled)
+		{
+			VtProButton button;
+			m_LayoutStyles.TryGetValue(1, out button);
+			if (button != null)
+				button.Enable(enabled);
+		}
+
+		public void SetLayoutStyleStripItemEnabled(bool enabled)
+		{
+			VtProButton button;
+			m_LayoutStyles.TryGetValue(2, out button);
+			if (button != null)
+				button.Enable(enabled);
+		}
+
+		public void SetLayoutStyleShareAllItemEnabled(bool enabled)
+		{
+			VtProButton button;
+			m_LayoutStyles.TryGetValue(3, out button);
+			if (button != null)
+				button.Enable(enabled);
+		}
+
 		public void SetContentThumbnailButtonEnabled(bool enabled)
 		{
 			m_ContentThumbnailButton.Enable(enabled);
