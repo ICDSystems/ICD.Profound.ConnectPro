@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
@@ -85,6 +85,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				view.SetRecordButtonEnabled(m_CanRecord);
 				view.SetStopButtonEnabled(IsRecording);
 				view.SetRecordButtonSelected(GetState());
+				view.SetRecordAnimation(IsRecording);
 			}
 			finally
 			{
