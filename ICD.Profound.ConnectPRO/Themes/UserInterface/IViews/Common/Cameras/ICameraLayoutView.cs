@@ -82,6 +82,30 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Cameras
 		void SetLayoutStyleListEnabled(bool enabled);
 
 		/// <summary>
+		/// Sets the enabled state of the Gallery item in the style layout dynamic button list.
+		/// </summary>
+		/// <param name="enabled"></param>
+		void SetLayoutStyleGalleryItemEnabled(bool enabled);
+
+		/// <summary>
+		/// Sets the enabled state of the Speaker item in the style layout dynamic button list.
+		/// </summary>
+		/// <param name="enabled"></param>
+		void SetLayoutStyleSpeakerItemEnabled(bool enabled);
+
+		/// <summary>
+		/// Sets the enabled state of the Strip item in the style layout dynamic button list.
+		/// </summary>
+		/// <param name="enabled"></param>
+		void SetLayoutStyleStripItemEnabled(bool enabled);
+
+		/// <summary>
+		/// Sets the enabled state of the Share All item in the style layout dynamic button list.
+		/// </summary>
+		/// <param name="enabled"></param>
+		void SetLayoutStyleShareAllItemEnabled(bool enabled);
+
+		/// <summary>
 		/// Sets the enabled state of the share layout controls dynamic button list.
 		/// </summary>
 		/// <param name="enabled"></param>

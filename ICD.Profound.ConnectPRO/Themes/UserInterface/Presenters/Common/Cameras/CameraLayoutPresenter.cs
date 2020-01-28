@@ -139,17 +139,36 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 				bool presentationActive = m_PresentationControl != null && m_PresentationControl.PresentationActive;
 				int participantCount = m_CallComponent == null ? 0 : m_CallComponent.GetParticipants().Count();
 
-				bool sizeEnabled = layoutAvailable && style != eZoomLayoutStyle.Strip;
-				bool styleEnabled = layoutAvailable;
-				bool contentThumbnailEnabled = layoutAvailable && presentationActive;
+				bool sizeEnabled = m_LayoutComponent != null && (layoutAvailable && m_LayoutComponent.LayoutAvailability.CanAdjustFloatingVideo);
+				bool contentThumbnailEnabled = m_LayoutComponent != null &&
+				                               (layoutAvailable && presentationActive && m_LayoutComponent
+				                                                                         .LayoutAvailability
+				                                                                         .CanSwitchFloatingShareContent
+				                               );
 				bool selfviewCameraEnabled = layoutAvailable && participantCount > 1;
-				bool thumbnailPositionEnabled = layoutAvailable && size != eZoomLayoutSize.Off;
+				bool thumbnailPositionEnabled = m_LayoutComponent != null &&
+				                                (layoutAvailable && size != eZoomLayoutSize.Off && m_LayoutComponent
+				                                                                                   .LayoutAvailability
+				                                                                                   .CanAdjustFloatingVideo
+				                                );
+
+				bool styleEnabled = layoutAvailable;
+				bool galleryEnabled = layoutAvailable && m_LayoutComponent.LayoutAvailability.CanSwitchWallView;
+				bool speakerEnabled = layoutAvailable && m_LayoutComponent.LayoutAvailability.CanSwitchSpeakerView;
+				bool stripEnabled = layoutAvailable;
+				bool shareAllEnabled =
+					layoutAvailable && m_LayoutComponent.LayoutAvailability.CanSwitchShareOnAllScreens;
 
 				view.SetLayoutSizeListEnabled(sizeEnabled);
-				view.SetLayoutStyleListEnabled(styleEnabled);
 				view.SetContentThumbnailButtonEnabled(contentThumbnailEnabled);
 				view.SetSelfviewCameraButtonEnabled(selfviewCameraEnabled);
 				view.SetThumbnailPositionListEnabled(thumbnailPositionEnabled);
+				view.SetLayoutStyleListEnabled(styleEnabled);
+
+				view.SetLayoutStyleGalleryItemEnabled(galleryEnabled);
+				view.SetLayoutStyleSpeakerItemEnabled(speakerEnabled);
+				view.SetLayoutStyleStripItemEnabled(stripEnabled);
+				view.SetLayoutStyleShareAllItemEnabled(shareAllEnabled);
 			}
 			finally
 			{
@@ -246,6 +265,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			return control == null ? null : control.Parent.Controls.GetControl<IPresentationControl>();
 		}
 
+		private bool ComputeStyleAvailability()
+		{
+			if (m_LayoutComponent == null)
+				return false;
+
+			bool gallerySupported = m_LayoutComponent.LayoutAvailability.CanSwitchWallView;
+			bool speakerSupported = m_LayoutComponent.LayoutAvailability.CanSwitchSpeakerView;
+			bool shareAllSupported = m_LayoutComponent.LayoutAvailability.CanSwitchShareOnAllScreens;
+
+			return (gallerySupported && (speakerSupported || shareAllSupported)) ||
+			       (!gallerySupported && (speakerSupported && shareAllSupported));
+		}
+
 		#endregion
 
 		#region Control Callbacks
@@ -325,6 +357,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			layoutComponent.OnShareThumbChanged += LayoutComponentOnShareThumbChanged;
 			layoutComponent.OnSizeChanged += LayoutComponentOnSizeChanged;
 			layoutComponent.OnStyleChanged += LayoutComponentOnStyleChanged;
+			layoutComponent.OnCallLayoutAvailabilityChanged += LayoutComponentOnCallLayoutAvailabilityChanged;
 		}
 
 		/// <summary>
@@ -340,6 +373,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			layoutComponent.OnShareThumbChanged -= LayoutComponentOnShareThumbChanged;
 			layoutComponent.OnSizeChanged -= LayoutComponentOnSizeChanged;
 			layoutComponent.OnStyleChanged -= LayoutComponentOnStyleChanged;
+			layoutComponent.OnCallLayoutAvailabilityChanged -= LayoutComponentOnCallLayoutAvailabilityChanged;
 		}
 
 		/// <summary>
@@ -378,6 +412,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		private void LayoutComponentOnPositionChanged(object sender, ZoomLayoutPositionEventArgs e)
+		{
+			RefreshIfVisible();
+		}
+
+		/// <summary>
+		/// Called when then availability of layout features changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void LayoutComponentOnCallLayoutAvailabilityChanged(object sender, GenericEventArgs<ZoomLayoutAvailability> e)
 		{
 			RefreshIfVisible();
 		}
