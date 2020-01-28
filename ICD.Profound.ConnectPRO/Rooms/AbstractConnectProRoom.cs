@@ -166,16 +166,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		#region Methods
 
 		/// <summary>
-		/// Gets the room audio volume point.
-		/// </summary>
-		/// <returns></returns>
-		[CanBeNull]
-		public IVolumePoint GetVolumePoint()
-		{
-			return Originators.GetInstanceRecursive<IVolumePoint>();
-		}
-
-		/// <summary>
 		/// Enters the meeting state.
 		/// </summary>
 		public void StartMeeting()
@@ -434,11 +424,12 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <param name="mute"></param>
 		private void Mute(bool mute)
 		{
-			IVolumePoint volumePoint = GetVolumePoint();
-			IVolumeDeviceControl volumeControl = volumePoint == null ? null : volumePoint.Control;
-
-			if (volumeControl != null && volumeControl.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.MuteAssignment))
-				volumeControl.SetIsMuted(mute);
+			foreach (IVolumePoint volumePoint in this.GetVolumePoints())
+			{
+				IVolumeDeviceControl volumeControl = volumePoint.Control;
+				if (volumeControl != null && volumeControl.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.MuteAssignment))
+					volumeControl.SetIsMuted(mute);
+			}
 		}
 
 		/// <summary>
