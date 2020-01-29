@@ -265,19 +265,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			return control == null ? null : control.Parent.Controls.GetControl<IPresentationControl>();
 		}
 
-		private bool ComputeStyleAvailability()
-		{
-			if (m_LayoutComponent == null)
-				return false;
-
-			bool gallerySupported = m_LayoutComponent.LayoutAvailability.CanSwitchWallView;
-			bool speakerSupported = m_LayoutComponent.LayoutAvailability.CanSwitchSpeakerView;
-			bool shareAllSupported = m_LayoutComponent.LayoutAvailability.CanSwitchShareOnAllScreens;
-
-			return (gallerySupported && (speakerSupported || shareAllSupported)) ||
-			       (!gallerySupported && (speakerSupported && shareAllSupported));
-		}
-
 		#endregion
 
 		#region Control Callbacks
