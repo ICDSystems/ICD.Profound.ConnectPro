@@ -26,7 +26,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 	[PresenterBinding(typeof(ICallOutConferencePresenter))]
 	public sealed class CallOutConferencePresenter : AbstractConferencePresenter<ICallOutConferenceView>, ICallOutConferencePresenter
 	{
-		private const string DEFAULT_FAIL_MESSAGE = "Call Out Failed.";
+		private const string DEFAULT_FAIL_MESSAGE = "Call out failed.";
+		private const string DISCONNECTED_MESSAGE = "Use the keypad below to call out";
 
 		private static readonly Dictionary<eZoomPhoneCallTerminatedReason, string> s_CallOutFailedMessages =
 			new Dictionary<eZoomPhoneCallTerminatedReason, string>
@@ -91,8 +92,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 
 				string dialText = m_StringBuilder.ToString();
 				string callLabel = isInCall ? "END CALL" : "CALL";
-				string callStatusLabel =
-					StringUtils.NiceName(active == null ? eConferenceStatus.Disconnected : active.Status);
+				string callStatusLabel = active == null ? DISCONNECTED_MESSAGE : StringUtils.NiceName(active.Status);
 				bool backEnabled = active == null && dialText.Length > 0;
 				bool clearEnabled = active == null && dialText.Length > 0;
 				bool callEnabled = dialText.Length > 0;
