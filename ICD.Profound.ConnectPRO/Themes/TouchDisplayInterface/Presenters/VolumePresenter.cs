@@ -50,7 +50,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 			m_HeaderVolumeButton = new HeaderButtonModel(0, 2, ToggleVolumeVisibility)
 			{
 				Mode = eHeaderButtonMode.Green,
-				Icon = TouchCueIcons.GetIcon("volumeup", eTouchCueColor.White),
+				Icon = TouchCueIcons.GetIcon(eTouchCueIcon.VolumeUp, eTouchCueColor.White),
 				LabelText = "Volume"
 			};
 

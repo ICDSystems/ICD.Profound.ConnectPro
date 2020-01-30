@@ -152,7 +152,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 			m_ZoomRooms = new List<ZoomRoom>();
 
 			Name = "Zoom";
-			Icon = SettingsTreeIcons.ICON_ZOOM;
+			Icon = eSettingsIcon.Zoom;
 		}
 
 		/// <summary>

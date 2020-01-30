@@ -85,7 +85,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 		public BackgroundSettingsLeaf()
 		{
 			Name = "Background";
-			Icon = SettingsTreeIcons.ICON_BACKGROUNDS;
+			Icon = eSettingsIcon.Backgrounds;
 		}
 
 		/// <summary>

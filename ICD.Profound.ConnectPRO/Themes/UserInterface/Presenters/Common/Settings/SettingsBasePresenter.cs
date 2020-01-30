@@ -239,7 +239,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		private static KeyValuePair<string, string> GetNameAndIcon(ISettingsNodeBase node)
 		{
 			string name = node.Name;
-			string icon = SettingsTreeIcons.GetIcon(node.Icon, SettingsTreeIcons.eColor.Gray);
+			string icon = Icons.GetSettingsIcon(node.Icon, eSettingsColor.Gray);
 
 			return new KeyValuePair<string, string>(name, icon);
 		}

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.SettingsTree.Administrative;
-using ICD.Profound.ConnectPRO.SettingsTree.Conferencing;
 using ICD.Profound.ConnectPRO.SettingsTree.CUE;
 
 namespace ICD.Profound.ConnectPRO.SettingsTree
@@ -21,7 +20,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 			yield return new AdministrativeSettingsNode();
 			// removed, will be replaced by zoom settings in future
 			// yield return new ConferencingSettingsNode();
-			yield return new CueSettingsNode();
+			yield return new TouchCueSettingsNode();
 		}
 	}
 }

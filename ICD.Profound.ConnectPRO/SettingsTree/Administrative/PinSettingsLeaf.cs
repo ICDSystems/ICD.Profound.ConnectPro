@@ -10,7 +10,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 		public PinSettingsLeaf()
 		{
 			Name = "PIN";
-			Icon = SettingsTreeIcons.ICON_PIN;
+			Icon = eSettingsIcon.Pin;
 		}
 
 		/// <summary>

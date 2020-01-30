@@ -86,15 +86,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				for (ushort index = 0; index < m_Sources.Length; index++)
 				{
 					ISource source = m_Sources[index];
-					ConnectProSource connectProSource = source as ConnectProSource;
 
 					IRoom room = Room == null || source == null ? null : Room.Routing.Sources.GetRoomForSource(source);
 					bool combine = room != null && room.CombineState;
 
-					string icon =
-						connectProSource == null
-							? null
-							: TouchCueIcons.GetIcon(connectProSource.Icon, eTouchCueColor.White);
+					string icon = TouchCueIcons.GetSourceIcon(source, eTouchCueColor.White);
 
 					bool select = inPresentation ? m_RoutedSources.Contains(source) : source == m_Selected;
 

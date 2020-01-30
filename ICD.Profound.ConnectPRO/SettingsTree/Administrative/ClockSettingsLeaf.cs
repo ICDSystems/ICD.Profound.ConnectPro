@@ -33,7 +33,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 		public ClockSettingsLeaf()
 		{
 			Name = "Clock";
-			Icon = SettingsTreeIcons.ICON_CLOCK;
+			Icon = eSettingsIcon.Clock;
 		}
 
 		/// <summary>

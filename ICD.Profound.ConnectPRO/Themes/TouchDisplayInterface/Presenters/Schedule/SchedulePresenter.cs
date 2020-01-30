@@ -85,7 +85,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 				
 				if (currentBooking == null || currentBooking is EmptyBooking)
 				{
-					view.SetCurrentBookingIcon(TouchCueIcons.GetIcon("thumbsup", eTouchCueColor.White));
+					view.SetCurrentBookingIcon(TouchCueIcons.GetIcon(eTouchCueIcon.ThumbsUp, eTouchCueColor.White));
 					view.SetAvailabilityText("AVAILABLE");
 					view.SetAvailabilityVisible(true);
 					view.SetColorMode(eScheduleViewColorMode.Blue);
@@ -203,14 +203,14 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 					? Enumerable.Empty<IConferenceDeviceControl>()
 					: Room.GetControlsRecursive<IConferenceDeviceControl>();
 
-			string icon = "display";
+			eTouchCueIcon icon = eTouchCueIcon.Display;
 			switch (ConferencingBookingUtils.GetMeetingType(booking, dialers))
 			{
 				case eMeetingType.VideoConference:
-					icon = "videoConference";
+					icon = eTouchCueIcon.VideoConference;
 					break;
 				case eMeetingType.AudioConference:
-					icon = "audioConference";
+					icon = eTouchCueIcon.AudioConference;
 					break;
 			}
 

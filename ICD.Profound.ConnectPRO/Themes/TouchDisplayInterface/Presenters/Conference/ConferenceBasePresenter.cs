@@ -125,64 +125,64 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		{
 			var startConferenceButton = new HeaderButtonModel(0, 0, PresenterButtonPressed<IStartConferencePresenter>)
 			{
-				Icon = TouchCueIcons.GetIcon("videoconference", eTouchCueColor.White),
+				Icon = TouchCueIcons.GetIcon(eTouchCueIcon.VideoConference, eTouchCueColor.White),
 				LabelText = "Start/Join",
 				Mode = eHeaderButtonMode.Orange
 			};
 			var callOutButton = new HeaderButtonModel(0, 3, PresenterButtonPressed<ICallOutConferencePresenter>)
 			{
-				Icon = TouchCueIcons.GetIcon("callout", eTouchCueColor.White),
+				Icon = TouchCueIcons.GetIcon(eTouchCueIcon.CallOut, eTouchCueColor.White),
 				LabelText = "Call Out",
 				Mode = eHeaderButtonMode.Orange
 			};
 
 			var activeConferenceButton = new HeaderButtonModel(0, 1, PresenterButtonPressed<IActiveConferencePresenter>)
 			{
-				Icon = TouchCueIcons.GetIcon("videoconference", eTouchCueColor.White),
+				Icon = TouchCueIcons.GetIcon(eTouchCueIcon.VideoConference, eTouchCueColor.White),
 				LabelText = "Participants",
 				Mode = eHeaderButtonMode.Orange
 			};
 			var contactsButton = new HeaderButtonModel(0, 2, PresenterButtonPressed<IContactListPresenter>)
 			{
-				Icon = TouchCueIcons.GetIcon("audioconference", eTouchCueColor.White),
+				Icon = TouchCueIcons.GetIcon(eTouchCueIcon.AudioConference, eTouchCueColor.White),
 				LabelText = "Contacts",
 				Mode = eHeaderButtonMode.Orange
 			};
 			var shareButton = new HeaderButtonModel(0, 3, PresenterButtonPressed<IShareConferencePresenter>)
 			{
-				Icon = TouchCueIcons.GetIcon("share", eTouchCueColor.White),
+				Icon = TouchCueIcons.GetIcon(eTouchCueIcon.Share, eTouchCueColor.White),
 				LabelText = "Share",
 				Mode = eHeaderButtonMode.Orange
 			};
 			var layoutButton = new HeaderButtonModel(0, 4, PresenterButtonPressed<ICameraLayoutPresenter>)
 			{
-				Icon = TouchCueIcons.GetIcon("conferencecamera", eTouchCueColor.White),
+				Icon = TouchCueIcons.GetIcon(eTouchCueIcon.ConferenceCamera, eTouchCueColor.White),
 				LabelText = "Layout",
 				Mode = eHeaderButtonMode.Orange
 			};
 			var recordButton = new HeaderButtonModel(0, 5, PresenterButtonPressed<IRecordConferencePresenter>)
 			{
 				LabelText = "Record",
-				Icon = TouchCueIcons.GetIcon("record", eTouchCueColor.White),
+				Icon = TouchCueIcons.GetIcon(eTouchCueIcon.Record, eTouchCueColor.White),
 				Mode = eHeaderButtonMode.Orange
 			};
 
 			m_EndConferenceButton = new HeaderButtonModel(1, 2, ConfirmEndConference)
 			{
 				LabelText = "End Call",
-				Icon = TouchCueIcons.GetIcon("hangup", eTouchCueColor.White),
+				Icon = TouchCueIcons.GetIcon(eTouchCueIcon.HangUp, eTouchCueColor.White),
 				Mode = eHeaderButtonMode.Red
 			};
 			var leaveConferenceButton = new HeaderButtonModel(1, 1, ConfirmLeaveConference)
 			{
 				LabelText = "Leave Call",
-				Icon = TouchCueIcons.GetIcon("exit", eTouchCueColor.White),
+				Icon = TouchCueIcons.GetIcon(eTouchCueIcon.Exit, eTouchCueColor.White),
 				Mode = eHeaderButtonMode.Red
 			};
 			m_HideCameraButton = new HeaderButtonModel(1, 0, HideCameraCallback)
 			{
 				LabelText = "Show Camera",
-				Icon = TouchCueIcons.GetIcon("reveal", eTouchCueColor.White),
+				Icon = TouchCueIcons.GetIcon(eTouchCueIcon.Reveal, eTouchCueColor.White),
 				Mode = eHeaderButtonMode.Blue
 			};
 			
@@ -224,7 +224,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				var webConferenceControl = ActiveConferenceControl as IWebConferenceDeviceControl;
 				bool cameraActive = webConferenceControl != null && webConferenceControl.CameraEnabled;
 				m_HideCameraButton.LabelText = cameraActive ? "Hide Camera" : "Show Camera";
-				m_HideCameraButton.Icon = TouchCueIcons.GetIcon(cameraActive ? "hide" : "reveal", eTouchCueColor.White);
+				m_HideCameraButton.Icon = TouchCueIcons.GetIcon(cameraActive ? eTouchCueIcon.Hide : eTouchCueIcon.Reveal, eTouchCueColor.White);
 				
 				// Only hosts can end meeting for everyone
 				ZoomRoom zoomRoom = webConferenceControl == null ? null : webConferenceControl.Parent as ZoomRoom;

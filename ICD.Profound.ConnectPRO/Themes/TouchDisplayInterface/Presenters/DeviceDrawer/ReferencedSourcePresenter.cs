@@ -2,6 +2,7 @@
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings.Originators;
 using ICD.Connect.UI.Attributes;
@@ -37,11 +38,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 			m_RefreshSection.Enter();
 			try
 			{
-				ConnectProSource connectProSource = Source as ConnectProSource;
-				if (connectProSource != null && connectProSource.Icon != null)
-					view.SetIcon(TouchCueIcons.GetIcon(connectProSource.Icon, eTouchCueColor.White));
-				else
-					view.SetIcon(TouchCueIcons.GetIcon("laptop", eTouchCueColor.White));
+				view.SetIcon(TouchCueIcons.GetSourceIcon(Source, eTouchCueColor.White));
 
 				string sourceName = Source.GetName(Room.IsCombineRoom()) ?? string.Empty;
 				view.SetNameText(sourceName);

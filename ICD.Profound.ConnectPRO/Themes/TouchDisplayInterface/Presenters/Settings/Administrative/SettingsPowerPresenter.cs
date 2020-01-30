@@ -14,7 +14,7 @@ using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Settings.Admin
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settings.Administrative
 {
 	[PresenterBinding(typeof(ISettingsPowerPresenter))]
-	public sealed class SettingsPowerPresenter : AbstractSettingsNodeBasePresenter<ISettingsPowerView, PowerSettingsLeaf>, ISettingsPowerPresenter
+	public sealed class SettingsPowerPresenter : AbstractSettingsNodeBasePresenter<ISettingsPowerView, WakeSleepSettingsLeaf>, ISettingsPowerPresenter
 	{
 		private TimeSpan m_WeekdayWakeTime;
 		private TimeSpan m_WeekendWakeTime;
@@ -62,7 +62,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 		/// Called when the wrapped node changes.
 		/// </summary>
 		/// <param name="node"></param>
-		protected override void NodeChanged(PowerSettingsLeaf node)
+		protected override void NodeChanged(WakeSleepSettingsLeaf node)
 		{
 			base.NodeChanged(node);
 

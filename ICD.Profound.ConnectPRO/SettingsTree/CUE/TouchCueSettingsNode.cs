@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 
-namespace ICD.Profound.ConnectPRO.SettingsTree.About
+namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 {
-	public sealed class AboutSettingsNode : AbstractStaticSettingsNode
+	public sealed class TouchCueSettingsNode : AbstractStaticSettingsNode
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public AboutSettingsNode()
+		public TouchCueSettingsNode()
 		{
-			Name = "About";
-			Icon = eSettingsIcon.Notification;
+			Name = "TouchCUE";
+			Icon = eSettingsIcon.Cue;
 		}
 
 		/// <summary>
@@ -19,7 +19,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.About
 		/// <returns></returns>
 		protected override IEnumerable<ISettingsNodeBase> BuildChildren()
 		{
-			yield return new PluginsSettingsLeaf();
+			yield return new BackgroundSettingsLeaf();
 		}
 	}
 }

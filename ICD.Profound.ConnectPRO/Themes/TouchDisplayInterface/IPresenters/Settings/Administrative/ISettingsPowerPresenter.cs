@@ -3,7 +3,7 @@ using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Settings.Admin
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Settings.Administrative
 {
-	public interface ISettingsPowerPresenter : ISettingsNodeBasePresenter<ISettingsPowerView, PowerSettingsLeaf>
+	public interface ISettingsPowerPresenter : ISettingsNodeBasePresenter<ISettingsPowerView, WakeSleepSettingsLeaf>
 	{
 	}
 }

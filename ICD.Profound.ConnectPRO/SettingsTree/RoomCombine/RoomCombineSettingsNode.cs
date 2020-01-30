@@ -17,7 +17,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.RoomCombine
 		public RoomCombineSettingsNode()
 		{
 			Name = "Room Combine";
-			Icon = SettingsTreeIcons.ICON_ROOM_COMBINE;
+			Icon = eSettingsIcon.RoomCombine;
 		}
 
 		/// <summary>

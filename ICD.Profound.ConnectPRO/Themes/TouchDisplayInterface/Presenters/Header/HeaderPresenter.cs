@@ -59,13 +59,13 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 
 			m_SettingsButton = new HeaderButtonModel(0, 0, OpenSettings)
 			{
-				Icon = TouchCueIcons.GetIcon("settings", eTouchCueColor.White),
+				Icon = TouchCueIcons.GetIcon(eTouchCueIcon.Settings, eTouchCueColor.White),
 				LabelText = "Settings",
 				Mode = eHeaderButtonMode.Blue
 			};
 			m_EndMeetingButton = new HeaderButtonModel(0, 1, ConfirmEndMeeting)
 			{
-				Icon = TouchCueIcons.GetIcon("close", eTouchCueColor.White),
+				Icon = TouchCueIcons.GetIcon(eTouchCueIcon.Close, eTouchCueColor.White),
 				LabelText = "End Meeting",
 				Mode = eHeaderButtonMode.Red
 			};
@@ -142,12 +142,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 
 				bool selected = Navigation.LazyLoadPresenter<IDeviceDrawerPresenter>().IsViewVisible;
 				bool disabled = false; // todo
-				string icon = Room != null && Room.IsInMeeting
-					? "devicedrawer"
-					: "instantmeeting";
-				view.SetCenterButtonIcon(TouchCueIcons.GetIcon(icon,
-					disabled ? eTouchCueColor.Gray : selected ? eTouchCueColor.Green : eTouchCueColor.White
-				));
+				//view.SetCenterButtonMode(Room != null && Room.IsInMeeting ? eCenterButtonMode.DeviceDrawer : eCenterButtonMode.InstantMeeting;
+				//view.SetCenterButtonSelected(selected);
+				//view.SetCenterButtonModeEnabled(!disabled);
 				string text = Room != null && Room.IsInMeeting
 					? "Device Drawer"
 					: "Instant Meeting";

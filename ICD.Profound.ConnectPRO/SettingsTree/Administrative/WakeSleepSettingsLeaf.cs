@@ -6,7 +6,7 @@ using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 {
-	public sealed class PowerSettingsLeaf : AbstractSettingsLeaf
+	public sealed class WakeSleepSettingsLeaf : AbstractSettingsLeaf
 	{
 		/// <summary>
 		/// Raised when the room wakes or goes to sleep.
@@ -53,10 +53,10 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public PowerSettingsLeaf()
+		public WakeSleepSettingsLeaf()
 		{
-			Name = "Power";
-			Icon = SettingsTreeIcons.ICON_POWER;
+			Name = "Wake/Sleep";
+			Icon = eSettingsIcon.WakeSleep;
 		}
 
 		#region Methods

@@ -204,7 +204,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 		private KeyValuePair<string, string> GetNameAndIcon(ISettingsNodeBase node)
 		{
 			string name = node.Name;
-			string icon = TouchCueIcons.GetIcon(node.Icon, IsNodeSelected(node) ? eTouchCueColor.Green : eTouchCueColor.LightBlue);
+			string icon = TouchCueIcons.GetSettingsIcon(node.Icon, IsNodeSelected(node) ? eTouchCueColor.Green : eTouchCueColor.LightBlue);
 
 			return new KeyValuePair<string, string>(name, icon);
 		}
