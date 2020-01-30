@@ -105,12 +105,13 @@
     <Compile Include="SettingsTree\Administrative\AdministrativeSettingsNode.cs" />
     <Compile Include="SettingsTree\Administrative\ClockSettingsLeaf.cs" />
     <Compile Include="SettingsTree\Administrative\PinSettingsLeaf.cs" />
-    <Compile Include="SettingsTree\Administrative\PowerSettingsLeaf.cs" />
+    <Compile Include="SettingsTree\Administrative\WakeSleepSettingsLeaf.cs" />
     <Compile Include="SettingsTree\Conferencing\ConferencingSettingsNode.cs" />
     <Compile Include="SettingsTree\Conferencing\DirectorySettingsLeaf.cs" />
     <Compile Include="SettingsTree\ConnectProRootSettingsNode.cs" />
     <Compile Include="SettingsTree\CUE\BackgroundSettingsLeaf.cs" />
     <Compile Include="SettingsTree\CUE\CueSettingsNode.cs" />
+    <Compile Include="SettingsTree\CUE\TouchCueSettingsNode.cs" />
     <Compile Include="SettingsTree\IRootSettingsNode.cs" />
     <Compile Include="SettingsTree\ISettingsLeaf.cs" />
     <Compile Include="SettingsTree\ISettingsNode.cs" />
@@ -207,6 +208,7 @@
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\Contacts\IContactsKeyboardPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\Contacts\IReferencedContactPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\Contacts\IReferencedSelectedContactPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\ICallOutConferencePresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\IConferenceBasePresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\IConferencePresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\IPrivacyMuteConferencePresenter.cs" />
@@ -253,6 +255,7 @@
     <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\Contacts\IContactsKeyboardView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\Contacts\IReferencedContactView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\Contacts\IReferencedSelectedContactView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\ICallOutConferenceView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\IConferenceBaseView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\IPrivacyMuteConferenceView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\IRecordConferenceView.cs" />
@@ -295,6 +298,7 @@
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\ActiveConference\ParticipantControlsPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\ActiveConference\ReferencedParticipantPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\ActiveConference\ReferencedParticipantPresenterFactory.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\CallOutConferencePresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\Camera\CameraLayoutPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\ConferenceBasePresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\Contacts\ContactListPresenter.cs" />
@@ -348,6 +352,8 @@
     <Compile Include="Themes\TouchDisplayInterface\Views\Conference\ActiveConference\ParticipantControlsView.generated.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Conference\ActiveConference\ReferencedParticipantView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Conference\ActiveConference\ReferencedParticipantView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\CallOutConferenceView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\CallOutConferenceView.generated.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Conference\Camera\CameraLayoutView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Conference\Camera\CameraLayoutView.generated.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Conference\ConferenceBaseView.cs" />
