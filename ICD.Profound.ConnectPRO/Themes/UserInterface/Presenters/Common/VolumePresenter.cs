@@ -8,8 +8,9 @@ using ICD.Common.Utils.Timers;
 using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.Repeaters;
 using ICD.Connect.Audio.Utils;
+using ICD.Connect.Conferencing.ConferenceManagers;
+using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Partitioning.Commercial.Rooms;
-using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -41,6 +42,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 		private bool m_VolumeControlAvailable;
 		private bool m_VolumeControlIsMuted;
+
+		private IConferenceManager m_SubscribedConferenceManager;
 
 		#region Properties
 
@@ -233,6 +236,51 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		public void ResetVisibilityTimer()
 		{
 			m_VisibilityTimer.Reset(HIDE_TIME);
+		}
+
+		#endregion
+
+		#region Room Callbacks
+
+		protected override void Subscribe(IConnectProRoom room)
+		{
+			base.Subscribe(room);
+
+			if (room == null)
+				return;
+
+			m_SubscribedConferenceManager = room.ConferenceManager;
+			if (m_SubscribedConferenceManager == null)
+				return;
+
+			m_SubscribedConferenceManager.OnConferenceParticipantAddedOrRemoved += ConferenceManagerOnConferenceParticipantAddedOrRemoved;
+			m_SubscribedConferenceManager.OnInCallChanged += ConferenceManagerOnInCallChanged;
+		}
+
+		protected override void Unsubscribe(IConnectProRoom room)
+		{
+			base.Unsubscribe(room);
+
+			if (room == null)
+				return;
+
+			if (m_SubscribedConferenceManager == null)
+				return;
+
+			m_SubscribedConferenceManager.OnConferenceParticipantAddedOrRemoved -= ConferenceManagerOnConferenceParticipantAddedOrRemoved;
+			m_SubscribedConferenceManager.OnInCallChanged -= ConferenceManagerOnInCallChanged;
+
+			m_SubscribedConferenceManager = null;
+		}
+
+		private void ConferenceManagerOnInCallChanged(object sender, InCallEventArgs e)
+		{
+			UpdateVolumePoint();
+		}
+
+		private void ConferenceManagerOnConferenceParticipantAddedOrRemoved(object sender, EventArgs e)
+		{
+			UpdateVolumePoint();
 		}
 
 		#endregion

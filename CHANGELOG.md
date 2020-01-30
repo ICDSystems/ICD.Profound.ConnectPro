@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Added breadcrumbs to settings title, showing current location
  - Added floating action list button/popup
  - Added lighting control
+ - Volume presenter will now get volume points contextual
 
 ### Changed
  - Reworked camera presenters to allow selection and control from a single page
