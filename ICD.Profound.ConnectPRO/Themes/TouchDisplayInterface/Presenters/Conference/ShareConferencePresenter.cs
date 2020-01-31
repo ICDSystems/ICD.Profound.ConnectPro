@@ -22,18 +22,16 @@ using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Connect.UI.Mvp.Views;
 using ICD.Profound.ConnectPRO.Rooms;
-using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Conference;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Conference;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Conference
 {
 	[PresenterBinding(typeof(IShareConferencePresenter))]
 	public sealed class ShareConferencePresenter : AbstractConferencePresenter<IShareConferenceView>, IShareConferencePresenter
 	{
-		private const string SHARE_BUTTON_TEXT_NOT_SHARING = "PRESS TO SHARE SELECTED SOURCE";
-		private const string SHARE_BUTTON_TEXT_SHARING = "PRESS TO STOP SHARING";
+		private const string SHARE_BUTTON_TEXT_NOT_SHARING = "START SHARING";
+		private const string SHARE_BUTTON_TEXT_SHARING = "STOP SHARING";
 
 		private readonly SafeCriticalSection m_RefreshSection;
 
@@ -289,14 +287,14 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 
 		private void VideoDialerOnConferenceAdded(object sender, ConferenceEventArgs e)
 		{
-			Subscribe(e.Data as IConference);
+			Subscribe(e.Data);
 
 			UpdateVisibility();
 		}
 
 		private void VideoDialerOnConferenceRemoved(object sender, ConferenceEventArgs e)
 		{
-			Unsubscribe(e.Data as IConference);
+			Unsubscribe(e.Data);
 
 			UpdateVisibility();
 		}
