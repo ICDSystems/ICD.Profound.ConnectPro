@@ -33,9 +33,19 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 			m_TimeLabel.SetLabelText(time);
 		}
 
-		public void SetCenterButtonIcon(string icon)
+		public void SetCenterButtonMode(eCenterButtonMode mode)
 		{
-			m_CenterButtonIcon.SetIcon(icon);
+			m_CenterButton.SetMode((ushort)mode);
+		}
+
+		public void SetCenterButtonSelected(bool selected)
+		{
+			m_CenterButton.SetSelected(selected);
+		}
+
+		public void SetCenterButtonEnabled(bool enabled)
+		{
+			m_CenterButton.Enable(enabled);
 		}
 
 		public void SetCenterButtonText(string text)

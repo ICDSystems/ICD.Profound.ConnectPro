@@ -4,6 +4,7 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Timers;
+using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
@@ -11,10 +12,12 @@ using ICD.Connect.Devices;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.Themes.Shared.Models;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.DeviceDrawer;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Header;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Notifications;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Schedule;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Settings;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Header;
@@ -35,6 +38,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 
 		private readonly HeaderButtonModel m_SettingsButton;
 		private readonly HeaderButtonModel m_EndMeetingButton;
+
+		private IDeviceDrawerPresenter m_DeviceDrawerPresenter;
+		private ISchedulePresenter m_SchedulePresenter;
+		private bool m_BookingSelected;
 		
 		/// <summary>
 		///     Constructor.
@@ -69,6 +76,12 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 				LabelText = "End Meeting",
 				Mode = eHeaderButtonMode.Red
 			};
+
+			m_DeviceDrawerPresenter = Navigation.LazyLoadPresenter<IDeviceDrawerPresenter>();
+			Subscribe(m_DeviceDrawerPresenter);
+
+			m_SchedulePresenter = Navigation.LazyLoadPresenter<ISchedulePresenter>();
+			Subscribe(m_SchedulePresenter);
 			
 			theme.DateFormatting.OnFormatChanged += DateFormattingOnFormatChanged;
 		}
@@ -79,6 +92,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 		public override void Dispose()
 		{
 			m_RefreshTimer.Dispose();
+
+			Unsubscribe(m_DeviceDrawerPresenter);
+			Unsubscribe(m_SchedulePresenter);
 
 			base.Dispose();
 		}
@@ -139,12 +155,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 			{
 				var roomName = Room == null ? string.Empty : Room.Name;
 				view.SetRoomName(roomName);
-
-				bool selected = Navigation.LazyLoadPresenter<IDeviceDrawerPresenter>().IsViewVisible;
-				bool disabled = false; // todo
-				//view.SetCenterButtonMode(Room != null && Room.IsInMeeting ? eCenterButtonMode.DeviceDrawer : eCenterButtonMode.InstantMeeting;
-				//view.SetCenterButtonSelected(selected);
-				//view.SetCenterButtonModeEnabled(!disabled);
+				
+				view.SetCenterButtonMode(Room != null && Room.IsInMeeting ? eCenterButtonMode.DeviceDrawer : eCenterButtonMode.InstantMeeting);
+				view.SetCenterButtonSelected(Navigation.LazyLoadPresenter<IDeviceDrawerPresenter>().IsViewVisible);
+				view.SetCenterButtonEnabled(!m_BookingSelected);
 				string text = Room != null && Room.IsInMeeting
 					? "Device Drawer"
 					: "Instant Meeting";
@@ -331,6 +345,48 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 				return;
 
 			Room.EndMeeting();
+		}
+
+		#endregion
+
+		#region Device Drawer Callbacks
+
+		private void Subscribe(IDeviceDrawerPresenter deviceDrawer)
+		{
+			deviceDrawer.OnViewVisibilityChanged += DeviceDrawerOnViewVisibilityChanged;
+		}
+
+		private void Unsubscribe(IDeviceDrawerPresenter deviceDrawer)
+		{
+			deviceDrawer.OnViewVisibilityChanged -= DeviceDrawerOnViewVisibilityChanged;
+		}
+
+		private void DeviceDrawerOnViewVisibilityChanged(object sender, BoolEventArgs e)
+		{
+			Refresh();
+		}
+
+		#endregion
+
+		#region Schedule Callbacks
+
+		private void Subscribe(ISchedulePresenter schedule)
+		{
+			schedule.OnSelectedBookingChanged += ScheduleOnSelectedBookingChanged;
+		}
+
+		private void Unsubscribe(ISchedulePresenter schedule)
+		{
+			schedule.OnSelectedBookingChanged -= ScheduleOnSelectedBookingChanged;
+		}
+
+		private void ScheduleOnSelectedBookingChanged(object sender, BookingEventArgs e)
+		{
+			if (e.Data == null || e.Data is EmptyBooking)
+				m_BookingSelected = false;
+			else
+				m_BookingSelected = true;
+			Refresh();
 		}
 
 		#endregion

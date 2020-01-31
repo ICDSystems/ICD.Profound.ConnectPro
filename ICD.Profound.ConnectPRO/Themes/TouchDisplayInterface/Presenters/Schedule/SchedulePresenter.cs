@@ -25,6 +25,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 	public sealed class SchedulePresenter : AbstractTouchDisplayPresenter<IScheduleView>, ISchedulePresenter
 	{
 		public event EventHandler OnRefreshed;
+		public event EventHandler<BookingEventArgs> OnSelectedBookingChanged;
 
 		private const int DEFAULT_CACHE_TIME = 15 * 60 * 1000;
 		private readonly ReferencedBookingPresenterFactory m_ChildrenFactory;
@@ -54,6 +55,20 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 			theme.DateFormatting.OnFormatChanged += DateFormattingOnFormatChanged;
 		}
 
+		private IReferencedBookingPresenter SelectedBooking
+		{
+			get { return m_SelectedBooking; }
+			set
+			{
+				if (m_SelectedBooking == value)
+					return;
+
+				m_SelectedBooking = value;
+
+				OnSelectedBookingChanged.Raise(this, new BookingEventArgs(m_SelectedBooking == null ? null : m_SelectedBooking.Booking));
+			}
+		}
+
 		protected override void Refresh(IScheduleView view)
 		{
 			base.Refresh(view);
@@ -73,14 +88,14 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 				foreach (var presenter in m_ChildrenFactory.BuildChildren(m_CachedBookings.Skip(1)))
 				{
 					presenter.ShowView(true);
-					presenter.SetSelected(presenter == m_SelectedBooking);
+					presenter.SetSelected(presenter == SelectedBooking);
 					presenter.Refresh();
 				}
 
 				// display current room status
 				IBooking currentBooking = 
-					m_SelectedBooking != null && m_SelectedBooking.Booking != null 
-						? m_SelectedBooking.Booking 
+					SelectedBooking != null && SelectedBooking.Booking != null 
+						? SelectedBooking.Booking 
 						: m_CachedBookings.FirstOrDefault();
 				
 				if (currentBooking == null || currentBooking is EmptyBooking)
@@ -111,7 +126,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 					view.SetAvailabilityVisible(false);
 					view.SetStartBookingButtonVisible(true);
 
-					if (m_SelectedBooking != null && m_SelectedBooking.Booking == currentBooking)
+					if (SelectedBooking != null && SelectedBooking.Booking == currentBooking)
 					{
 						view.SetColorMode(eScheduleViewColorMode.Green);
 						view.SetCloseButtonVisible(true);
@@ -192,7 +207,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 			else
 				m_CacheTimer.Reset((long) (currentBooking.EndTime - now).TotalMilliseconds + 1000);
 
-			m_SelectedBooking = null;
+			SelectedBooking = null;
 			Refresh();
 		}
 
@@ -237,9 +252,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 
 		private void ViewOnStartBookingPressed(object sender, EventArgs e)
 		{
-			if (m_SelectedBooking != null && m_SelectedBooking.Booking != null)
+			if (SelectedBooking != null && SelectedBooking.Booking != null)
 			{
-				Room.StartMeeting(m_SelectedBooking.Booking);
+				Room.StartMeeting(SelectedBooking.Booking);
 				return;
 			}
 
@@ -250,7 +265,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 
 		private void ViewOnCloseButtonPressed(object sender, EventArgs e)
 		{
-			m_SelectedBooking = null;
+			SelectedBooking = null;
 			RefreshIfVisible();
 		}
 
@@ -258,7 +273,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 		{
 			base.ViewOnVisibilityChanged(sender, args);
 
-			m_SelectedBooking = null;
+			SelectedBooking = null;
 		}
 
 		#endregion
@@ -338,7 +353,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Schedu
 			if (presenter == null)
 				return;
 
-			m_SelectedBooking = m_SelectedBooking == presenter ? null : presenter;
+			SelectedBooking = SelectedBooking == presenter ? null : presenter;
 			RefreshIfVisible();
 		}
 
