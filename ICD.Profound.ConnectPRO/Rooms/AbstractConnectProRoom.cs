@@ -21,7 +21,6 @@ using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.IncomingCalls;
-using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
@@ -364,6 +363,18 @@ namespace ICD.Profound.ConnectPRO.Rooms
 				       .SelectMany(kvp => kvp.Value)
 				       .OfType<ConnectProSource>()
 				       .Any(s => s.ConferenceOverride == eConferenceOverride.Show);
+		}
+
+		/// <summary>
+		/// Gets the ordered volume points for the current context.
+		/// </summary>
+		public IEnumerable<IVolumePoint> GetContextualVolumePoints()
+		{
+			eVolumeType type = GetVolumeTypeForContext();
+
+			return Originators.GetInstancesRecursive<IVolumePoint>()
+			                  .Where(v => EnumUtils.HasAnyFlags(v.VolumeType, type))
+			                  .OrderBy(v => v, new VolumeContextComparer(type));
 		}
 
 		/// <summary>

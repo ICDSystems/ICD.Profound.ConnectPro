@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using ICD.Common.Properties;
 using ICD.Common.Utils.EventArguments;
+using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.IncomingCalls;
-using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.EventArguments;
 using ICD.Connect.Partitioning.Commercial.Rooms;
@@ -136,6 +137,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <param name="minimumCallType"></param>
 		/// <returns></returns>
 		bool ConferenceActionsAvailable(eInCall minimumCallType);
+
+		/// <summary>
+		/// Gets the ordered volume points for the current context.
+		/// </summary>
+		IEnumerable<IVolumePoint> GetContextualVolumePoints();
 
 		#endregion
 	}
