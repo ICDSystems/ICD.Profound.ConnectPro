@@ -158,7 +158,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Ccrm4000UserInterface
 		/// </summary>
 		private void ActuateMicrophone()
 		{
-			bool inCall = m_Room != null && m_Room.ConferenceActionsAvailable(eInCall.Audio);
+			bool inCall = m_Room != null && m_Room.Dialing.ConferenceActionsAvailable(eInCall.Audio);
 
 			if (inCall)
 				m_Microphone.Extend();

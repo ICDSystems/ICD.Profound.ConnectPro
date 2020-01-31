@@ -104,7 +104,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 				IParticipant active = GetActiveSource();
 				eParticipantStatus status = active == null ? eParticipantStatus.Disconnected : active.Status;
 
-				string atcNumber = Room == null ? string.Empty : Room.AtcNumber;
+				string atcNumber = Room == null ? string.Empty : Room.Dialing.AtcNumber;
 				string activeStatus = StringUtils.NiceName(status);
 				string dialString = m_Builder.ToString();
 				bool inACall = active != null;

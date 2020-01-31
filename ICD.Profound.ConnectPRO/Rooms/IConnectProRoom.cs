@@ -5,12 +5,10 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.Controls;
-using ICD.Connect.Conferencing.Controls.Dialing;
-using ICD.Connect.Conferencing.EventArguments;
-using ICD.Connect.Conferencing.IncomingCalls;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.EventArguments;
 using ICD.Connect.Partitioning.Commercial.Rooms;
+using ICD.Profound.ConnectPRO.Dialing;
 using ICD.Profound.ConnectPRO.Routing;
 
 namespace ICD.Profound.ConnectPRO.Rooms
@@ -27,16 +25,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		event EventHandler<SourceEventArgs> OnFocusSourceChanged;
 
-		/// <summary>
-		/// Raised when an incoming call is answered.
-		/// </summary>
-		event EventHandler<GenericEventArgs<IIncomingCall>> OnIncomingCallAnswered;
-
-		/// <summary>
-		/// Raised when an incoming call is rejected.
-		/// </summary>
-		event EventHandler<GenericEventArgs<IIncomingCall>> OnIncomingCallRejected;
-
 		#region Properties
 
 		bool IsInMeeting { get; }
@@ -47,14 +35,14 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		ConnectProRouting Routing { get; }
 
 		/// <summary>
+		/// Gets the dialing features for this room.
+		/// </summary>
+		ConnectProDialing Dialing { get; }
+
+		/// <summary>
 		/// Gets/sets the passcode for the settings page.
 		/// </summary>
 		string Passcode { get; set; }
-
-		/// <summary>
-		/// Gets/sets the ATC number for dialing into the room.
-		/// </summary>
-		string AtcNumber { get; set; }
 
 		/// <summary>
 		/// Gets the CalendarControl for the room.
@@ -113,30 +101,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// Shuts down the room.
 		/// </summary>
 		void Sleep();
-
-		/// <summary>
-		/// Answers the incoming call and focuses on the given conference call.
-		/// </summary>
-		/// <param name="control"></param>
-		/// <param name="call"></param>
-		void AnswerIncomingCall(IConferenceDeviceControl control, IIncomingCall call);
-
-		/// <summary>
-		/// Rejects the incoming call.
-		/// </summary>
-		/// <param name="call"></param>
-		void RejectIncomingCall(IIncomingCall call);
-
-		/// <summary>
-		/// Returns true if:
-		/// 
-		/// We are in a conference and the conference source does not use the Hide override.
-		/// OR
-		/// We have a routed source using the Show override.
-		/// </summary>
-		/// <param name="minimumCallType"></param>
-		/// <returns></returns>
-		bool ConferenceActionsAvailable(eInCall minimumCallType);
 
 		/// <summary>
 		/// Gets the ordered volume points for the current context.

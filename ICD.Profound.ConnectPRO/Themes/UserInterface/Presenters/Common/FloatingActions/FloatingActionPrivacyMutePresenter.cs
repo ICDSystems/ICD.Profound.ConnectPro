@@ -78,7 +78,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// </summary>
 		private void UpdateVisibility()
 		{
-			bool show = Room != null && Room.ConferenceActionsAvailable(eInCall.Audio);
+			bool show = Room != null && Room.Dialing.ConferenceActionsAvailable(eInCall.Audio);
 			ShowView(show);
 		}
 

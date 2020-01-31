@@ -56,7 +56,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		private void UpdateVisibility()
 		{
 			bool show = Room != null &&
-			            Room.ConferenceActionsAvailable(eInCall.Video) &&
+			            Room.Dialing.ConferenceActionsAvailable(eInCall.Video) &&
 			            m_CameraButtons.AnyFeaturesAvailable;
 
 			ShowView(show);

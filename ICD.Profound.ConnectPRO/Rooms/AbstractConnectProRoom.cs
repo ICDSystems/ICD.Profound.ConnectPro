@@ -16,12 +16,10 @@ using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Cameras.Controls;
 using ICD.Connect.Conferencing.ConferenceManagers;
-using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
-using ICD.Connect.Conferencing.IncomingCalls;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
@@ -31,8 +29,8 @@ using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.EventArguments;
+using ICD.Profound.ConnectPRO.Dialing;
 using ICD.Profound.ConnectPRO.Routing;
-using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 
 namespace ICD.Profound.ConnectPRO.Rooms
 {
@@ -50,22 +48,13 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		public event EventHandler<SourceEventArgs> OnFocusSourceChanged;
 
 		/// <summary>
-		/// Raised when an incoming call is answered.
-		/// </summary>
-		public event EventHandler<GenericEventArgs<IIncomingCall>> OnIncomingCallAnswered;
-
-		/// <summary>
-		/// Raised when an incoming call is rejected.
-		/// </summary>
-		public event EventHandler<GenericEventArgs<IIncomingCall>> OnIncomingCallRejected;
-
-		/// <summary>
 		/// Automatically end the meeting after this many milliseconds without any sources being routed
 		/// </summary>
 		private const int MEETING_TIMEOUT = 10 * 60 * 1000;
 		private readonly SafeTimer m_MeetingTimeoutTimer;
 
 		private readonly ConnectProRouting m_Routing;
+		private readonly ConnectProDialing m_Dialing;
 
 		private bool m_IsInMeeting;
 		private ISource m_FocusSource;
@@ -102,14 +91,14 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		public ConnectProRouting Routing { get { return m_Routing; } }
 
 		/// <summary>
+		/// Gets the dialing features for this room.
+		/// </summary>
+		public ConnectProDialing Dialing { get { return m_Dialing; } }
+
+		/// <summary>
 		/// Gets/sets the passcode for the settings page.
 		/// </summary>
 		public abstract string Passcode { get; set; }
-
-		/// <summary>
-		/// Gets/sets the ATC number for dialing into the room.
-		/// </summary>
-		public abstract string AtcNumber { get; set; }
 
 		/// <summary>
 		/// Gets the CalendarControl for the room.
@@ -147,9 +136,12 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		protected AbstractConnectProRoom()
 		{
-			m_Routing = new ConnectProRouting(this);
 			m_SubscribedPresentationControls = new List<IPresentationControl>();
 			m_SubscribedDisplayPowerControls = new List<IPowerDeviceControl>();
+
+			m_Routing = new ConnectProRouting(this);
+			m_Dialing = new ConnectProDialing(this);
+
 			m_MeetingTimeoutTimer = SafeTimer.Stopped(MeetingTimeout);
 
 			Subscribe(m_Routing);
@@ -162,14 +154,13 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		{
 			OnIsInMeetingChanged = null;
 			OnFocusSourceChanged = null;
-			OnIncomingCallAnswered = null;
-			OnIncomingCallRejected = null;
 
 			base.DisposeFinal(disposing);
 
 			m_MeetingTimeoutTimer.Dispose();
 
 			Unsubscribe(m_Routing);
+			m_Routing.Dispose();
 		}
 
 		#region Methods
@@ -241,7 +232,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <param name="shutdown"></param>
 		public void EndMeeting(bool shutdown)
 		{
-			EndAllConferences();
+			Dialing.EndAllConferences();
 
 			// Change meeting state before any routing for UX
 			CheckOut();
@@ -279,7 +270,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public override void Sleep()
 		{
-			EndAllConferences();
+			Dialing.EndAllConferences();
 
 			// Change meeting state before any routing for UX
 			CheckOut();
@@ -301,72 +292,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		}
 
 		/// <summary>
-		/// Answers the incoming call and focuses on the given conference call.
-		/// </summary>
-		/// <param name="control"></param>
-		/// <param name="call"></param>
-		public void AnswerIncomingCall(IConferenceDeviceControl control, IIncomingCall call)
-		{
-			if (call == null)
-				throw new ArgumentNullException("call");
-
-			call.Answer();
-
-			StartMeeting(false);
-
-			// Focus on the dialer source
-			IDeviceBase device = control == null ? null : control.Parent;
-			ISource source = device == null ? null : Originators.GetInstanceRecursive<ISource>(s => s.Device == device.Id);
-
-			FocusSource = source;
-
-			if (source != null && control.Supports.HasFlag(eCallType.Video))
-				Routing.RouteVtc(source);
-			else if (source != null && control.Supports.HasFlag(eCallType.Audio))
-				Routing.RouteAtc(source);
-
-			OnIncomingCallAnswered.Raise(this, new GenericEventArgs<IIncomingCall>(call));
-		}
-
-		/// <summary>
-		/// Rejects the incoming call.
-		/// </summary>
-		/// <param name="call"></param>
-		public void RejectIncomingCall(IIncomingCall call)
-		{
-			if (call == null)
-				throw new ArgumentNullException("call");
-
-			call.Reject();
-
-			OnIncomingCallRejected.Raise(this, new GenericEventArgs<IIncomingCall>(call));
-		}
-
-		/// <summary>
-		/// Returns true if:
-		/// 
-		/// We are in a conference and the conference source does not use the Hide override.
-		/// OR
-		/// We have a routed source using the Show override.
-		/// </summary>
-		/// <param name="minimumCallType"></param>
-		/// <returns></returns>
-		public bool ConferenceActionsAvailable(eInCall minimumCallType)
-		{
-			// Are we in a conference and the source is NOT using the Hide override?
-			if (ConferenceManager != null && ConferenceManager.IsInCall >= minimumCallType)
-				return GetActiveConferenceSourceOverride() != eConferenceOverride.Hide;
-
-			// Is a source routed with the Show override?
-			return
-				Routing.State
-				       .GetFakeActiveVideoSources()
-				       .SelectMany(kvp => kvp.Value)
-				       .OfType<ConnectProSource>()
-				       .Any(s => s.ConferenceOverride == eConferenceOverride.Show);
-		}
-
-		/// <summary>
 		/// Gets the ordered volume points for the current context.
 		/// </summary>
 		public IEnumerable<IVolumePoint> GetContextualVolumePoints()
@@ -376,24 +301,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			return Originators.GetInstancesRecursive<IVolumePoint>()
 			                  .Where(v => EnumUtils.HasAnyFlags(v.VolumeType, type))
 			                  .OrderBy(v => v, new VolumeContextComparer(type));
-		}
-
-		/// <summary>
-		/// Returns the conference override for the active conferences. Show beats Hide.
-		/// </summary>
-		/// <returns></returns>
-		private eConferenceOverride GetActiveConferenceSourceOverride()
-		{
-			if (ConferenceManager == null)
-				return eConferenceOverride.None;
-
-			return
-				ConferenceManager.GetDialingProviders()
-								 .Where(p => p.GetActiveConference() != null)
-								 .SelectMany(p => Routing.Sources.GetSources(p))
-								 .OfType<ConnectProSource>()
-								 .Select(s => s.ConferenceOverride)
-								 .MaxOrDefault();
 		}
 
 		#endregion
@@ -534,29 +441,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 				volumeControl.SetIsMuted(mute);
 		}
 
-		private void EndAllConferences()
-		{
-			List<IConference> activeConferences = 
-				ConferenceManager == null 
-					? new List<IConference>() 
-					: ConferenceManager.OnlineConferences.ToList();
-
-			foreach (IConference activeConference in activeConferences)
-				EndConference(activeConference);
-		}
-
-		private void EndConference(IConference conference)
-		{
-			// TODO - Actually use polymorphism like a good developer
-			var traditional = conference as ITraditionalConference;
-			if (traditional != null)
-				traditional.Hangup();
-
-			var web = conference as IWebConference;
-			if (web != null)
-				web.LeaveConference();
-		}
-
 		/// <summary>
 		/// Stops/resets the delayed sleep timer based on the current meeting state.
 		/// </summary>
@@ -576,7 +460,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			if (ConferenceManager == null)
 				return;
 
-			bool inCall = ConferenceActionsAvailable(eInCall.Audio);
+			bool inCall = Dialing.ConferenceActionsAvailable(eInCall.Audio);
 
 			if (!inCall)
 				ConferenceManager.EnablePrivacyMute(false);

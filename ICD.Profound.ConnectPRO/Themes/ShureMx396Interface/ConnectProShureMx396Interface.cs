@@ -188,7 +188,7 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMx396Interface
 
 			try
 			{
-				bool inCall = m_Room != null && m_Room.ConferenceActionsAvailable(eInCall.Audio);
+				bool inCall = m_Room != null && m_Room.Dialing.ConferenceActionsAvailable(eInCall.Audio);
 				bool privacyMuted = m_SubscribedConferenceManager != null && m_SubscribedConferenceManager.PrivacyMuted;
 
 				bool green = !inCall || !privacyMuted;
@@ -234,7 +234,7 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMx396Interface
 				return;
 
 			// Prevent the user from toggling privacy mute while outside of a call
-			if (!m_Room.ConferenceActionsAvailable(eInCall.Audio))
+			if (!m_Room.Dialing.ConferenceActionsAvailable(eInCall.Audio))
 				return;
 
 			if (eventArgs.Data)

@@ -50,11 +50,13 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			UpdateVisibility();
 		}
 
+		#region Private Methods
+
 		/// <summary>
 		/// Override to get the selected state for the button.
 		/// </summary>
 		/// <returns></returns>
-		protected bool GetActive()
+		private bool GetActive()
 		{
 			return Room != null &&
 			       Room.ConferenceManager != null &&
@@ -64,7 +66,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		/// <summary>
 		/// Override to handle the button press.
 		/// </summary>
-		protected void PrivacyMuteCallback()
+		private void PrivacyMuteCallback()
 		{
 			if (Room == null)
 				return;
@@ -85,13 +87,15 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				TouchCueIcons.GetIcon(muteActive ? eTouchCueIcon.PrivacyMuteOn : eTouchCueIcon.PrivacyMuteOff, eTouchCueColor.White);
 
 			var header = Navigation.LazyLoadPresenter<IHeaderPresenter>();
-			bool show = Room != null && Room.ConferenceActionsAvailable(eInCall.Audio);
+			bool show = Room != null && Room.Dialing.ConferenceActionsAvailable(eInCall.Audio);
 			if (show)
 				header.AddLeftButton(m_HeaderButton);
 			else
 				header.RemoveLeftButton(m_HeaderButton);
 			header.Refresh();
 		}
+
+		#endregion
 
 		#region Room Callbacks
 

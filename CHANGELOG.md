@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Don't power off destination when routing the osd if the display is a VibeBoard
  - Change ClockSettingsLeaf to use DateTime instead of TimeSpan to allow for setting the date as well
  - Background settings leaf should be visible if the system has a VibeBoard
+ - Moved room dialing features into a new ConnectProDialing class
 
 ### Removed
  - No longer sorting Zoom contacts by online state

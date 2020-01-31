@@ -199,7 +199,7 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMicrophoneInterface
 
 			try
 			{
-				bool inCall = m_Room != null && m_Room.ConferenceActionsAvailable(eInCall.Audio);
+				bool inCall = m_Room != null && m_Room.Dialing.ConferenceActionsAvailable(eInCall.Audio);
 				bool onHold = m_SubscribedConferenceManager != null &&
 				              m_SubscribedConferenceManager.OnlineConferences.AnyAndAll(c => c.Status == eConferenceStatus.OnHold);
 				bool privacyMuted = m_SubscribedConferenceManager != null && m_SubscribedConferenceManager.PrivacyMuted;
@@ -254,7 +254,7 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMicrophoneInterface
 				return;
 
 			// Prevent the user from toggling privacy mute while outside of a call
-			if (!m_Room.ConferenceActionsAvailable(eInCall.Audio))
+			if (!m_Room.Dialing.ConferenceActionsAvailable(eInCall.Audio))
 				return;
 
 			if (boolEventArgs.Data)

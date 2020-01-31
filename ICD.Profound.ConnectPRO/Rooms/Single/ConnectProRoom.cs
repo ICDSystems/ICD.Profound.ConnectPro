@@ -29,11 +29,6 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 		public override string Passcode { get; set; }
 
 		/// <summary>
-		/// Gets/sets the ATC number for dialing into the room.
-		/// </summary>
-		public override string AtcNumber { get; set; }
-
-		/// <summary>
 		/// Gets/sets the calendar control for the room.
 		/// </summary>
 		public override ICalendarControl CalendarControl { get { return m_CalendarControl; } }
@@ -84,7 +79,7 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 		{
 			base.ClearSettingsFinal();
 
-			AtcNumber = null;
+			Dialing.AtcNumber = null;
 			Passcode = null;
 			m_CalendarControl = null;
 		}
@@ -104,7 +99,7 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 				ConferenceManager.Favorites = new SqLiteFavorites(path);
 
 			// ATC Number
-			AtcNumber = settings.AtcNumber;
+			Dialing.AtcNumber = settings.AtcNumber;
 
 			// Passcode
 			Passcode = settings.Passcode;
