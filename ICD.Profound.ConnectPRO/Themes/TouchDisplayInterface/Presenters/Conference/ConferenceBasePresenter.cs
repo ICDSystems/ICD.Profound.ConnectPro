@@ -517,7 +517,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			{
 				foreach (var presenter in m_ConferencePresenters)
 					presenter.ShowView(false);
-				Navigation.LazyLoadPresenter<ICameraLayoutPresenter>();
+				Navigation.LazyLoadPresenter<ICameraLayoutPresenter>().ShowView(false);
+				Navigation.LazyLoadPresenter<ICameraControlPresenter>().ShowView(false);
 
 				if (Room != null)
 					Room.FocusSource = null;
