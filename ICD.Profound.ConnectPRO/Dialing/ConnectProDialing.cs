@@ -287,17 +287,17 @@ namespace ICD.Profound.ConnectPRO.Dialing
 		/// </summary>
 		private void RouteUsbForZoom()
 		{
-			bool hasUsb = false;
+			bool routingUsb = false;
 
 			// Hack - Need to figure out a better way of tracking Zoom mic/camera routing
 			foreach (YkupSwitcherDevice switcher in m_Room.Originators.GetInstancesRecursive<YkupSwitcherDevice>())
 			{
-				hasUsb = true;
-				switcher.Route(ConnectProYkupSwitcherInterface.ZOOM_OUTPUT);
+				if (switcher.Route(ConnectProYkupSwitcherInterface.ZOOM_OUTPUT))
+					routingUsb = true;
 			}
 
 			// Hack - Wait several seconds before actually starting the call
-			if (hasUsb)
+			if (routingUsb)
 				m_CallSetupTimer.Reset(ZOOM_USB_SETUP_TIME);
 			else
 				FinishCallSetup();
