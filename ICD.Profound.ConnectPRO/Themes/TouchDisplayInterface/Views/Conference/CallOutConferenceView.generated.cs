@@ -25,7 +25,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Conference
 			{
 				DigitalVisibilityJoin = 950
 			};
-
+			
 			m_Keypad = new VtProSimpleKeypad(950, panel as IPanelDevice, m_Subpage)
 			{
 				MiscButtonOneChar = '*',
