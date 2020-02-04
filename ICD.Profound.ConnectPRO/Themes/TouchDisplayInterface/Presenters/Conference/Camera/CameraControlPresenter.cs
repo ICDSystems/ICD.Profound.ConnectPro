@@ -152,9 +152,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				bool hasZoom = m_SelectedCamera != null && m_SelectedCamera.Controls.GetControl<IZoomControl>() != null;
 				bool hasPresets = presetControl != null;
 
-				view.SetDPadButtonsEnabled(hasPanTilt);
+				//view.SetDPadButtonsEnabled(hasPanTilt);
 				view.SetPresetButtonsVisible(hasPresets);
-				view.SetZoomButtonsEnabled(hasZoom);
+				//view.SetZoomButtonsEnabled(hasZoom);
 			}
 			finally
 			{

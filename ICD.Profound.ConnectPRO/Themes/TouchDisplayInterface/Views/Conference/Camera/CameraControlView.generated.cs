@@ -5,7 +5,6 @@ using ICD.Connect.Panels.Devices;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Keypads;
-using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Connect.UI.Controls.TextControls;
 
@@ -25,7 +24,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Conference.
 		private VtProButton m_PresetButton4;
 		private VtProButton m_PresetButton5;
 		private VtProButton m_PresetButton6;
-		private VtProSimpleLabel m_PresetStoredLabel;
+		private VtProSimpleLabel m_PresetButtonPage;
 
 		private BiDictionary<ushort, VtProButton> m_PresetButtons;
 
@@ -107,9 +106,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Conference.
 				HoldDuration = PRESET_HOLD_MILLISECONDS
 			};
 
-			m_PresetStoredLabel = new VtProSimpleLabel(panel, m_Subpage)
+			m_PresetButtonPage = new VtProSimpleLabel(Panel, m_Subpage)
 			{
-				DigitalVisibilityJoin = 636
+				DigitalVisibilityJoin = 969
 			};
 
 			m_PresetButtons = new BiDictionary<ushort, VtProButton>
@@ -138,7 +137,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Conference.
 			yield return m_PresetButton3;
 			yield return m_PresetButton4;
 			yield return m_PresetButton5;
-			yield return m_PresetStoredLabel;
+			yield return m_PresetButton6;
+			yield return m_PresetButtonPage;
 		}
 	}
 }
