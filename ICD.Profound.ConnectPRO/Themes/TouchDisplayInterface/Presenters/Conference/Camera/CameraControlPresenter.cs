@@ -309,7 +309,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		private void UpdateHeaderButtonVisibility()
 		{
 			bool show = Room != null &&
-			            Room.ConferenceActionsAvailable(eInCall.Video) && m_SelectedCamera != null;
+			            Room.Dialing.ConferenceActionsAvailable(eInCall.Video) && m_SelectedCamera != null;
 			IHeaderPresenter header = Navigation.LazyLoadPresenter<IHeaderPresenter>();
 			if (show)
 				header.AddLeftButton(m_HeaderButton);
