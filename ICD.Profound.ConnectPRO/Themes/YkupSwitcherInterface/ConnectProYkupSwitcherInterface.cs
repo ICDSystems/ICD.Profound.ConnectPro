@@ -14,6 +14,9 @@ namespace ICD.Profound.ConnectPRO.Themes.YkupSwitcherInterface
 {
 	public sealed class ConnectProYkupSwitcherInterface : AbstractUserInterface
 	{
+		public const int VIBE_OUTPUT = 1;
+		public const int ZOOM_OUTPUT = 2;
+
 		private bool m_IsDisposed;
 
 		private readonly ConnectProTheme m_Theme;
@@ -144,7 +147,7 @@ namespace ICD.Profound.ConnectPRO.Themes.YkupSwitcherInterface
 				      .SelectMany(kvp => kvp.Value)
 				      .Any(IsZoom);
 
-			int output = zoomActive ? 2 : 1;
+			int output = zoomActive ? ZOOM_OUTPUT : VIBE_OUTPUT;
 
 			Switcher.Route(output);
 		}

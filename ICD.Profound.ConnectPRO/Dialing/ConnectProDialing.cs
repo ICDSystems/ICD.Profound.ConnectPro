@@ -4,6 +4,7 @@ using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
+using ICD.Common.Utils.Timers;
 using ICD.Connect.Calendaring;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Conferencing.Conferences;
@@ -11,15 +12,20 @@ using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.IncomingCalls;
+using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Devices;
+using ICD.Connect.Misc.Yepkit.Devices.YkupSwitcher;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
+using ICD.Profound.ConnectPRO.Themes.YkupSwitcherInterface;
 
 namespace ICD.Profound.ConnectPRO.Dialing
 {
 	public sealed class ConnectProDialing
 	{
+		private const long ZOOM_USB_SETUP_TIME = 5 * 1000;
+
 		/// <summary>
 		/// Raised when an incoming call is answered.
 		/// </summary>
@@ -31,6 +37,9 @@ namespace ICD.Profound.ConnectPRO.Dialing
 		public event EventHandler<GenericEventArgs<IIncomingCall>> OnIncomingCallRejected;
 
 		private readonly IConnectProRoom m_Room;
+		private readonly SafeTimer m_CallSetupTimer;
+
+		private Action m_StartCall;
 
 		/// <summary>
 		/// Gets/sets the ATC number for dialing into the room.
@@ -48,6 +57,7 @@ namespace ICD.Profound.ConnectPRO.Dialing
 				throw new ArgumentNullException("room");
 
 			m_Room = room;
+			m_CallSetupTimer = SafeTimer.Stopped(FinishCallSetup);
 		}
 
 		#region Methods
@@ -104,8 +114,7 @@ namespace ICD.Profound.ConnectPRO.Dialing
 			if (context == null)
 				throw new ArgumentNullException("context");
 
-			// TODO - Route USB
-			conferenceControl.Dial(context);
+			SetupCall(conferenceControl, () => conferenceControl.Dial(context));
 		}
 
 		/// <summary>
@@ -117,8 +126,7 @@ namespace ICD.Profound.ConnectPRO.Dialing
 			if (webConferenceControl == null)
 				throw new ArgumentNullException("webConferenceControl");
 
-			// TODO - Route USB
-			webConferenceControl.StartPersonalMeeting();
+			SetupCall(webConferenceControl, webConferenceControl.StartPersonalMeeting);
 		}
 
 		/// <summary>
@@ -131,8 +139,7 @@ namespace ICD.Profound.ConnectPRO.Dialing
 			if (call == null)
 				throw new ArgumentNullException("call");
 
-			// TODO - Route USB
-			call.Answer();
+			SetupCall(control, call.Answer);
 
 			m_Room.StartMeeting(false);
 
@@ -239,6 +246,61 @@ namespace ICD.Profound.ConnectPRO.Dialing
 				      .OfType<ConnectProSource>()
 				      .Select(s => s.ConferenceOverride)
 				      .MaxOrDefault();
+		}
+
+		/// <summary>
+		/// Runs the necessary setup for the given conference control before starting the call.
+		/// </summary>
+		/// <param name="control"></param>
+		/// <param name="startCall"></param>
+		private void SetupCall([CanBeNull] IConferenceDeviceControl control, [NotNull] Action startCall)
+		{
+			if (startCall == null)
+				throw new ArgumentNullException("startCall");
+
+			m_StartCall = startCall;
+
+			IDeviceBase parent = control == null ? null : control.Parent;
+
+			if (parent is ZoomRoom)
+			{
+				RouteUsbForZoom();
+				return;
+			}
+
+			FinishCallSetup();
+		}
+
+		/// <summary>
+		/// Performs the final step of call setup.
+		/// </summary>
+		private void FinishCallSetup()
+		{
+			if (m_StartCall == null)
+				throw new InvalidOperationException("No Start Call Action");
+
+			m_StartCall();
+		}
+
+		/// <summary>
+		/// We need to ensure our USB routes are stable before starting a Zoom call.
+		/// </summary>
+		private void RouteUsbForZoom()
+		{
+			bool hasUsb = false;
+
+			// Hack - Need to figure out a better way of tracking Zoom mic/camera routing
+			foreach (YkupSwitcherDevice switcher in m_Room.Originators.GetInstancesRecursive<YkupSwitcherDevice>())
+			{
+				hasUsb = true;
+				switcher.Route(ConnectProYkupSwitcherInterface.ZOOM_OUTPUT);
+			}
+
+			// Hack - Wait several seconds before actually starting the call
+			if (hasUsb)
+				m_CallSetupTimer.Reset(ZOOM_USB_SETUP_TIME);
+			else
+				FinishCallSetup();
 		}
 
 		#endregion
