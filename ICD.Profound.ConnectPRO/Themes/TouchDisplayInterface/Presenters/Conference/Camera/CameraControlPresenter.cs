@@ -36,7 +36,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		private readonly HeaderButtonModel m_HeaderButton;
 
 		[CanBeNull]
-		private ICameraDevice m_SelectedCamera;
+		private ICameraDeviceControl m_SelectedCamera;
 
 		[CanBeNull]
 		private IPresetControl m_SubscribedPresetControl;
@@ -92,10 +92,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 
 			try
 			{
-				IEnumerable<ICameraDevice> cameras =
+				IEnumerable<ICameraDeviceControl> cameras =
 					room == null
-						? Enumerable.Empty<ICameraDevice>()
-						: room.Originators.GetInstancesRecursive<ICameraDevice>();
+						? Enumerable.Empty<ICameraDeviceControl>()
+						: room.GetControlsRecursive<ICameraDeviceControl>();
 
 				SetSelectedCamera(cameras.FirstOrDefault());
 			}
@@ -119,7 +119,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			{
 				// Presets
 				IPresetControl presetControl =
-					m_SelectedCamera == null ? null : m_SelectedCamera.Controls.GetControl<IPresetControl>();
+					m_SelectedCamera == null ? null : m_SelectedCamera.Parent.Controls.GetControl<IPresetControl>();
 
 				IEnumerable<CameraPreset> presets =
 					presetControl == null
@@ -148,8 +148,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				}
 
 				// Enabled states
-				bool hasPanTilt = m_SelectedCamera != null && m_SelectedCamera.Controls.GetControl<IPanTiltControl>() != null;
-				bool hasZoom = m_SelectedCamera != null && m_SelectedCamera.Controls.GetControl<IZoomControl>() != null;
+				bool hasPanTilt = m_SelectedCamera != null && m_SelectedCamera.Parent.Controls.GetControl<IPanTiltControl>() != null;
+				bool hasZoom = m_SelectedCamera != null && m_SelectedCamera.Parent.Controls.GetControl<IZoomControl>() != null;
 				bool hasPresets = presetControl != null;
 
 				//view.SetDPadButtonsEnabled(hasPanTilt);
@@ -167,7 +167,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		/// <summary>
 		/// Gets/sets the current camera control.
 		/// </summary>
-		private void SetSelectedCamera(ICameraDevice camera)
+		private void SetSelectedCamera(ICameraDeviceControl camera)
 		{
 			if (camera == m_SelectedCamera)
 				return;
@@ -193,7 +193,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			if (m_SelectedCamera == null)
 				return;
 
-			IZoomControl zoom = m_SelectedCamera.Controls.GetControl<IZoomControl>();
+			IZoomControl zoom = m_SelectedCamera.Parent.Controls.GetControl<IZoomControl>();
 			if (zoom != null)
 				zoom.Zoom(action);
 		}
@@ -203,7 +203,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			if (m_SelectedCamera == null)
 				return;
 
-			IPanTiltControl panTilt = m_SelectedCamera.Controls.GetControl<IPanTiltControl>();
+			IPanTiltControl panTilt = m_SelectedCamera.Parent.Controls.GetControl<IPanTiltControl>();
 			if (panTilt != null)
 				panTilt.PanTilt(action);
 		}
@@ -216,9 +216,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		/// Subscribe to the camera events.
 		/// </summary>
 		/// <param name="camera"></param>
-		private void Subscribe(ICameraDevice camera)
+		private void Subscribe(ICameraDeviceControl camera)
 		{
-			m_SubscribedPresetControl = camera == null ? null : camera.Controls.GetControl<IPresetControl>();
+			m_SubscribedPresetControl = camera == null ? null : camera.Parent.Controls.GetControl<IPresetControl>();
 			if (m_SubscribedPresetControl != null)
 				m_SubscribedPresetControl.OnPresetsChanged += SubscribedPresetControlOnPresetsChanged;
 		}
@@ -227,7 +227,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		/// Unsubscribe from the camera events.
 		/// </summary>
 		/// <param name="camera"></param>
-		private void Unsubscribe(ICameraDevice camera)
+		private void Unsubscribe(ICameraDeviceControl camera)
 		{
 			if (m_SubscribedPresetControl != null)
 				m_SubscribedPresetControl.OnPresetsChanged -= SubscribedPresetControlOnPresetsChanged;
@@ -400,7 +400,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			if (m_SelectedCamera == null)
 				return;
 
-			IPresetControl cameraControl = m_SelectedCamera.Controls.GetControl<IPresetControl>();
+			IPresetControl cameraControl = m_SelectedCamera.Parent.Controls.GetControl<IPresetControl>();
 			if (cameraControl == null)
 				return;
 
@@ -416,7 +416,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			if (m_SelectedCamera == null)
 				return;
 
-			IPresetControl cameraControl = m_SelectedCamera.Controls.GetControl<IPresetControl>();
+			IPresetControl cameraControl = m_SelectedCamera.Parent.Controls.GetControl<IPresetControl>();
 			if (cameraControl == null)
 				return;
 
