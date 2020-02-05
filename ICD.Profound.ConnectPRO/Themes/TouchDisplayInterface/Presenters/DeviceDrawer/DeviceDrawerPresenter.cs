@@ -28,7 +28,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 			eVibeApps.Chrome,
 			eVibeApps.Youtube,
 			eVibeApps.Slack,
-			eVibeApps.Whiteboard
+			eVibeApps.Whiteboard,
+			eVibeApps.Teams,
+			eVibeApps.WebEx
 		};
 
 		private readonly ReferencedSourcePresenterFactory m_SourceFactory;
