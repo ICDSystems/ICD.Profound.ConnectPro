@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Added lighting control
  - Volume presenter will now get volume points contextual
  - Showing an offline icon for offline Zoom contacts
+ - Added room combine button to the splash page
 
 ### Changed
  - Reworked camera presenters to allow selection and control from a single page

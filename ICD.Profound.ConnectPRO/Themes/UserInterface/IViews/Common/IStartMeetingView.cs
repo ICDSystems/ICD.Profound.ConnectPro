@@ -22,6 +22,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 		event EventHandler OnSettingsButtonPressed;
 
 		/// <summary>
+		/// Raised when the user presses the room combine button.
+		/// </summary>
+		event EventHandler OnRoomCombineButtonPressed;
+
+		/// <summary>
 		/// Sets the enabled state of the start my meeting button.
 		/// </summary>
 		/// <param name="enabled"></param>
@@ -63,6 +68,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common
 		/// </summary>
 		/// <param name="label"></param>
 		void SetSplashTimeLabel(string label);
+
+		/// <summary>
+		/// Sets the visibility of the room combine button.
+		/// </summary>
+		/// <param name="visible"></param>
+		void SetRoomCombineButtonVisible(bool visible);
 
 		/// <summary>
 		/// Returns child views for list items.

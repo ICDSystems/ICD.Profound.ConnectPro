@@ -30,6 +30,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		/// </summary>
 		public event EventHandler OnSettingsButtonPressed;
 
+		/// <summary>
+		/// Raised when the user presses the room combine button.
+		/// </summary>
+		public event EventHandler OnRoomCombineButtonPressed;
+
 		private readonly List<IReferencedScheduleView> m_ChildList;
 
 		/// <summary>
@@ -51,6 +56,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			OnStartMyMeetingButtonPressed = null;
 			OnInstantMeetingButtonPressed = null;
 			OnSettingsButtonPressed = null;
+			OnRoomCombineButtonPressed = null;
 
 			base.Dispose();
 		}
@@ -93,6 +99,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		public void SetSplashTimeLabel(string label)
 		{
 			m_SplashTimeLabel.SetLabelText(label);
+		}
+
+		/// <summary>
+		/// Sets the visibility of the room combine button.
+		/// </summary>
+		/// <param name="visible"></param>
+		public void SetRoomCombineButtonVisible(bool visible)
+		{
+			m_RoomCombineButton.Show(visible);
 		}
 
 		/// <summary>
@@ -165,6 +180,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			m_StartMyMeetingButton.OnPressed += StartMyMeetingButtonOnPressed;
 			m_InstantMeetingButton.OnPressed += InstantMeetingButtonOnPressed;
 			m_SettingsButton.OnPressed += SettingsButtonOnPressed;
+			m_RoomCombineButton.OnPressed += RoomCombineButtonOnPressed;
 		}
 
 		/// <summary>
@@ -177,6 +193,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			m_StartMyMeetingButton.OnPressed -= StartMyMeetingButtonOnPressed;
 			m_InstantMeetingButton.OnPressed -= InstantMeetingButtonOnPressed;
 			m_SettingsButton.OnPressed -= SettingsButtonOnPressed;
+			m_RoomCombineButton.OnPressed -= RoomCombineButtonOnPressed;
+		}
+
+		/// <summary>
+		/// Called when the user presses the room combine button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void RoomCombineButtonOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnRoomCombineButtonPressed.Raise(this);
 		}
 
 		/// <summary>

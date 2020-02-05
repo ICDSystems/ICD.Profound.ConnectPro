@@ -36,6 +36,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		#region Properties
 
 		/// <summary>
+		/// Gets the current root settings node item.
+		/// </summary>
+		[CanBeNull]
+		public RootSettingsNode RootNode { get { return m_SettingsRoot; } }
+
+		/// <summary>
 		/// Gets the current settings node item.
 		/// </summary>
 		[CanBeNull]
@@ -174,6 +180,58 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			}
 		}
 
+		/// <summary>
+		/// Navigates to the given settings node.
+		/// </summary>
+		/// <param name="node"></param>
+		public void NavigateTo([NotNull] ISettingsNodeBase node)
+		{
+			if (node == null)
+				throw new ArgumentNullException("node");
+
+			m_RefreshSection.Enter();
+
+			try
+			{
+				// Prevents flicker when selecting the current node
+				if (node == CurrentNode)
+					return;
+
+				// Check if node requires login, and if not logged in, prompt for pin
+				if (node.RequiresLogin && !IsLoggedIn)
+				{
+					m_PasscodeSuccessNode = node;
+					Navigation.LazyLoadPresenter<ISettingsPasscodePresenter>().ShowView(PasscodeSuccessCallback);
+					return;
+				}
+
+				// Remove any leaves from the list
+				while (m_MenuPath.LastOrDefault() is ISettingsLeaf)
+					m_MenuPath.RemoveAt(m_MenuPath.Count - 1);
+
+				// Append the new node to the list
+				m_MenuPath.Add(node);
+
+				// Keep navigating while node only has one child
+				ISettingsNode parent = node as ISettingsNode;
+				ISettingsNodeBase[] children = parent == null ? null : parent.GetChildren().Where(c => c.Visible).ToArray();
+
+				if (children != null && children.Length == 1)
+				{
+					NavigateTo(children[0]);
+					return;
+				}
+
+				ShowPresenterForCurrentNode();
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+
+			RefreshIfVisible();
+		}
+
 		#endregion
 
 		#region Private Methods
@@ -226,54 +284,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			{
 				m_RefreshSection.Leave();
 			}
-		}
-
-		private void NavigateTo(ISettingsNodeBase node)
-		{
-			if (node == null)
-				throw new ArgumentNullException("node");
-
-			m_RefreshSection.Enter();
-
-			try
-			{
-				// Prevents flicker when selecting the current node
-				if (node == CurrentNode)
-					return;
-
-				// Check if node requires login, and if not logged in, prompt for pin
-				if (node.RequiresLogin && !IsLoggedIn)
-				{
-					m_PasscodeSuccessNode = node;
-					Navigation.LazyLoadPresenter<ISettingsPasscodePresenter>().ShowView(PasscodeSuccessCallback);
-					return;
-				}
-
-				// Remove any leaves from the list
-				while (m_MenuPath.LastOrDefault() is ISettingsLeaf)
-					m_MenuPath.RemoveAt(m_MenuPath.Count - 1);
-
-				// Append the new node to the list
-				m_MenuPath.Add(node);
-
-				// Keep navigating while node only has one child
-				ISettingsNode parent = node as ISettingsNode;
-				ISettingsNodeBase[] children = parent == null ? null : parent.GetChildren().Where(c => c.Visible).ToArray();
-
-				if (children != null && children.Length == 1)
-				{
-					NavigateTo(children[0]);
-					return;
-				}
-
-				ShowPresenterForCurrentNode();
-			}
-			finally
-			{
-				m_RefreshSection.Leave();
-			}
-
-			RefreshIfVisible();
 		}
 
 		private void Back()

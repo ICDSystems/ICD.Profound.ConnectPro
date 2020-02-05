@@ -14,7 +14,6 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 {
 	public sealed class RootSettingsNode : AbstractStaticSettingsNode
 	{
-
 		/// <summary>
 		/// If true, the user must be logged in to access this part of the settings
 		/// </summary>

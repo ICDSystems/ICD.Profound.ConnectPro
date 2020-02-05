@@ -10,6 +10,8 @@ using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPRO.SettingsTree;
+using ICD.Profound.ConnectPRO.SettingsTree.RoomCombine;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
@@ -100,6 +102,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				}
 
 				view.SetBookingsVisible(HasCalendarControl, m_Bookings.Count);
+
+				// Room combine button
+				RootSettingsNode rootSettings = Navigation.LazyLoadPresenter<ISettingsBasePresenter>().RootNode;
+				RoomCombineSettingsNode roomCombineSettings =
+					rootSettings == null
+						? null
+						: rootSettings.GetChildren()
+						              .OfType<RoomCombineSettingsNode>()
+						              .First();
+				bool roomCombineAvailable = roomCombineSettings != null && roomCombineSettings.Visible;
+				view.SetRoomCombineButtonVisible(roomCombineAvailable);
 
 				RefreshTime();
 			}
@@ -321,6 +334,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			view.OnStartMyMeetingButtonPressed += ViewOnStartMyMeetingButtonPressed;
 			view.OnInstantMeetingButtonPressed += ViewOnInstantMeetingButtonPressed;
 			view.OnSettingsButtonPressed += ViewOnSettingsButtonPressed;
+			view.OnRoomCombineButtonPressed += ViewOnRoomCombineButtonPressed;
 		}
 
 		/// <summary>
@@ -334,6 +348,27 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			view.OnStartMyMeetingButtonPressed -= ViewOnStartMyMeetingButtonPressed;
 			view.OnInstantMeetingButtonPressed -= ViewOnInstantMeetingButtonPressed;
 			view.OnSettingsButtonPressed -= ViewOnSettingsButtonPressed;
+			view.OnRoomCombineButtonPressed -= ViewOnRoomCombineButtonPressed;
+		}
+
+		/// <summary>
+		/// Called when the user presses the room combine button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ViewOnRoomCombineButtonPressed(object sender, EventArgs eventArgs)
+		{
+			ISettingsBasePresenter settingsBase = Navigation.NavigateTo<ISettingsBasePresenter>();
+			RootSettingsNode root = settingsBase.RootNode;
+			if (root == null)
+				return;
+
+			RoomCombineSettingsNode roomCombine =
+				root.GetChildren()
+				    .OfType<RoomCombineSettingsNode>()
+				    .First();
+
+			settingsBase.NavigateTo(roomCombine);
 		}
 
 		/// <summary>
