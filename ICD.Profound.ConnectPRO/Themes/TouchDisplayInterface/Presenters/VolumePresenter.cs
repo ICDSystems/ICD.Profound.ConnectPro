@@ -10,7 +10,6 @@ using ICD.Connect.Audio.Repeaters;
 using ICD.Connect.Audio.Utils;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.EventArguments;
-using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Connect.UI.Mvp.Views;
@@ -93,10 +92,12 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 
 			try
 			{
+				bool supportsMute = m_VolumePointHelper.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.Mute);
 				bool muted = m_VolumePointHelper.IsMuted;
 				float volume = m_VolumePointHelper.GetVolumePercent();
 				//bool controlAvailable = m_VolumePointHelper.ControlAvailable;
 
+				view.SetMuteButtonVisible(supportsMute);
 				view.SetMuted(muted);
 				view.SetVolumePercentage(volume);
 				//view.SetControlsEnabled(controlAvailable);

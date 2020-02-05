@@ -11,6 +11,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews
 		event EventHandler OnMuteButtonPressed;
 		event EventHandler<UShortEventArgs> OnVolumeGaugePressed;
 
+		void SetMuteButtonVisible(bool visible);
+
 		void SetMuted(bool muted);
 
 		void SetVolumePercentage(float volume);

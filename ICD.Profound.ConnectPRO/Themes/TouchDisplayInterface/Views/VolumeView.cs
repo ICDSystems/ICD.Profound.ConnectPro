@@ -19,7 +19,12 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views
 		public VolumeView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
 		{
 		}
-		
+
+		public void SetMuteButtonVisible(bool visible)
+		{
+			m_VolumeMuteButton.Show(visible);
+		}
+
 		public void SetMuted(bool muted)
 		{
 			m_VolumeMuteButton.SetSelected(muted);

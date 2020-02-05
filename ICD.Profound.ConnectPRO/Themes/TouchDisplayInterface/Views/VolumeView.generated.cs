@@ -29,8 +29,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views
 
 			m_VolumeMuteButton = new VtProButton(panel, m_Subpage)
 			{
+				DigitalVisibilityJoin = 74,
 				DigitalPressJoin = 76
 			};
+
 			m_VolumeDownButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 77
