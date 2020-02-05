@@ -363,14 +363,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 
 			// Directory
 			return current.GetContacts()
-			              .OrderBy(c =>
-			              {
-				              var onlineContact = c as IContactWithOnlineState;
-				              if (onlineContact == null || onlineContact.OnlineState == eOnlineState.Unknown)
-					              return eOnlineState.Offline;
-				              return onlineContact.OnlineState;
-			              })
-			              .ThenBy(c => c.Name);
+			              .OrderBy(c => c.Name);
 		}
 
 		private static Func<string, double> GetWeightedTokenSearchFunc(string searchString)
