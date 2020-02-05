@@ -4,7 +4,6 @@ using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
-using ICD.Common.Utils.Timers;
 using ICD.Connect.Calendaring;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Conferencing.Conferences;
@@ -12,20 +11,16 @@ using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.IncomingCalls;
-using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Devices;
-using ICD.Connect.Misc.Yepkit.Devices.YkupSwitcher;
 using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Profound.ConnectPRO.Dialing.ConferenceSetup;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
-using ICD.Profound.ConnectPRO.Themes.YkupSwitcherInterface;
 
 namespace ICD.Profound.ConnectPRO.Dialing
 {
 	public sealed class ConnectProDialing
 	{
-		private const long ZOOM_USB_SETUP_TIME = 5 * 1000;
-
 		/// <summary>
 		/// Raised when an incoming call is answered.
 		/// </summary>
@@ -36,16 +31,48 @@ namespace ICD.Profound.ConnectPRO.Dialing
 		/// </summary>
 		public event EventHandler<GenericEventArgs<IIncomingCall>> OnIncomingCallRejected;
 
-		private readonly IConnectProRoom m_Room;
-		private readonly SafeTimer m_CallSetupTimer;
+		/// <summary>
+		/// Raised when a conference setup process starts/stops.
+		/// </summary>
+		public event EventHandler OnConferenceSetupChanged;
 
-		private Action m_StartCall;
+		private readonly IConnectProRoom m_Room;
+
+		private IConferenceSetup m_ConferenceSetup;
+
+		#region Properties
 
 		/// <summary>
 		/// Gets/sets the ATC number for dialing into the room.
 		/// </summary>
 		[CanBeNull]
 		public string AtcNumber { get; set; }
+
+		/// <summary>
+		/// Gets the current conference setup process.
+		/// </summary>
+		[CanBeNull]
+		public IConferenceSetup ConferenceSetup
+		{
+			get { return m_ConferenceSetup; }
+			private set
+			{
+				if (value == m_ConferenceSetup)
+					return;
+
+				Unsubscribe(m_ConferenceSetup);
+
+				if (m_ConferenceSetup != null)
+					m_ConferenceSetup.Dispose();
+
+				m_ConferenceSetup = value;
+				Subscribe(m_ConferenceSetup);
+
+				OnConferenceSetupChanged.Raise(this);
+			}
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Constructor.
@@ -57,7 +84,6 @@ namespace ICD.Profound.ConnectPRO.Dialing
 				throw new ArgumentNullException("room");
 
 			m_Room = room;
-			m_CallSetupTimer = SafeTimer.Stopped(FinishCallSetup);
 		}
 
 		#region Methods
@@ -258,49 +284,52 @@ namespace ICD.Profound.ConnectPRO.Dialing
 			if (startCall == null)
 				throw new ArgumentNullException("startCall");
 
-			m_StartCall = startCall;
+			IConferenceSetup setup =
+				control == null
+					? null
+					: ConferenceSetupFactory.BuildConferenceSetup(m_Room, control, startCall);
 
-			IDeviceBase parent = control == null ? null : control.Parent;
-
-			if (parent is ZoomRoom)
+			// No setup necessary
+			if (setup == null)
 			{
-				RouteUsbForZoom();
+				startCall();
 				return;
 			}
 
-			FinishCallSetup();
+			setup.Start();
+		}
+
+		#endregion
+
+		#region Conference Setup Callbacks
+
+		/// <summary>
+		/// Subscribe to the conference setup events.
+		/// </summary>
+		/// <param name="conferenceSetup"></param>
+		private void Subscribe(IConferenceSetup conferenceSetup)
+		{
+			if (conferenceSetup == null)
+				return;
+
+			conferenceSetup.OnFinished += ConferenceSetupOnFinished;
 		}
 
 		/// <summary>
-		/// Performs the final step of call setup.
+		/// Unsubscribe from the conference setup events.
 		/// </summary>
-		private void FinishCallSetup()
+		/// <param name="conferenceSetup"></param>
+		private void Unsubscribe(IConferenceSetup conferenceSetup)
 		{
-			if (m_StartCall == null)
-				throw new InvalidOperationException("No Start Call Action");
+			if (conferenceSetup == null)
+				return;
 
-			m_StartCall();
+			conferenceSetup.OnFinished -= ConferenceSetupOnFinished;
 		}
 
-		/// <summary>
-		/// We need to ensure our USB routes are stable before starting a Zoom call.
-		/// </summary>
-		private void RouteUsbForZoom()
+		private void ConferenceSetupOnFinished(object sender, EventArgs eventArgs)
 		{
-			bool routingUsb = false;
-
-			// Hack - Need to figure out a better way of tracking Zoom mic/camera routing
-			foreach (YkupSwitcherDevice switcher in m_Room.Originators.GetInstancesRecursive<YkupSwitcherDevice>())
-			{
-				if (switcher.Route(ConnectProYkupSwitcherInterface.ZOOM_OUTPUT))
-					routingUsb = true;
-			}
-
-			// Hack - Wait several seconds before actually starting the call
-			if (routingUsb)
-				m_CallSetupTimer.Reset(ZOOM_USB_SETUP_TIME);
-			else
-				FinishCallSetup();
+			ConferenceSetup = null;
 		}
 
 		#endregion

@@ -69,7 +69,11 @@
     <Compile Include="Devices\ConnectProEventMessages.cs" />
     <Compile Include="Devices\ConnectProEventServerDevice.cs" />
     <Compile Include="Devices\ConnectProEventServerDeviceSettings.cs" />
+    <Compile Include="Dialing\ConferenceSetup\ConferenceSetupFactory.cs" />
     <Compile Include="Dialing\ConnectProDialing.cs" />
+    <Compile Include="Dialing\ConferenceSetup\AbstractConferenceSetup.cs" />
+    <Compile Include="Dialing\ConferenceSetup\IConferenceSetup.cs" />
+    <Compile Include="Dialing\ConferenceSetup\ZoomConferenceSetup.cs" />
     <Compile Include="KrangPlugin.cs" />
     <None Include="ObfuscationSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
