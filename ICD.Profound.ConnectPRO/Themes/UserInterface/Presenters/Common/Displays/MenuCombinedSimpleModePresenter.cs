@@ -46,7 +46,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 			try
 			{
-				view.SetAdvancedModeEnabled(true);
+				// Advanced Mode button
+				bool advancedModeEnabled = Displays.Count > 1;
+				view.SetAdvancedModeEnabled(advancedModeEnabled);
 
 				// Color
 				eDisplayColor color;
@@ -80,6 +82,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				m_RefreshSection.Leave();
 			}
 		}
+
+		#region Private Methods
 
 		private void RefreshDisplayStatusGauge()
 		{
@@ -117,6 +121,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			}
 		}
 
+		#endregion
+
 		#region View Callbacks
 
 		protected override void Subscribe(IMenuCombinedSimpleModeView view)
@@ -139,6 +145,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private void ViewOnAdvancedModeButtonPressed(object sender, EventArgs args)
 		{
+			if (Displays.Count < 2)
+				return;
+
 			OnAdvancedModePressed.Raise(this);
 		}
 

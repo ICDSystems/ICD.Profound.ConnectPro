@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
  - Fixed a bug where combining 2+ rooms with a total of 1 display between them would break the UI
+ - Disabling the Advanced Mode button unless there are at least 2 displays
 
 ## [11.1.1] - 2020-01-20
 ### Changed
