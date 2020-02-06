@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+ - Fixed a bug where combining 2+ rooms with a total of 1 display between them would break the UI
+
 ## [11.1.1] - 2020-01-20
 ### Changed
  - Fixed a URI parsing issue when determining Logo URI on startup

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using ICD.Common.Utils.Timers;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Views;
@@ -10,10 +9,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 	[ViewBinding(typeof(ISourceSelectView))]
 	public sealed partial class SourceSelectView : AbstractUiView, ISourceSelectView
 	{
+		/// <summary>
+		/// Single row of sources along the top half of the panel.
+		/// </summary>
 		private const ushort SUBPAGE_DUAL_DISPLAYS = 112;
+
+		/// <summary>
+		/// Full 4x2 grid of sources.
+		/// </summary>
 		private const ushort SUBPAGE_8 = 101;
+
+		/// <summary>
+		/// 4 sources along the middle of the screen.
+		/// </summary>
 		private const ushort SUBPAGE_4 = 102;
+
+		/// <summary>
+		/// 3 sources along the middle of the screen.
+		/// </summary>
 		private const ushort SUBPAGE_3 = 103;
+
+		/// <summary>
+		/// 2 sources along the middle of the screen.
+		/// </summary>
 		private const ushort SUBPAGE_2 = 104;
 
 		private static readonly ushort[] s_SubpageJoins =
@@ -29,6 +47,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 
 		private ushort m_SourceCount;
 		private ushort m_DisplayCount;
+		private bool m_Combined;
 
 		/// <summary>
 		/// Constructor.
@@ -41,16 +60,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 			m_ChildList = new List<IReferencedSourceSelectView>();
 		}
 
-		/// <summary>
-		/// Returns child views for list items.
-		/// </summary>
-		/// <param name="factory"></param>
-		/// <param name="count"></param>
-		/// <returns></returns>
-		public IEnumerable<IReferencedSourceSelectView> GetChildComponentViews(IViewFactory factory, ushort count)
-		{
-			return GetChildViews(factory, m_SourceList, m_ChildList, count);
-		}
+		#region Methods
 
 		/// <summary>
 		/// Sets the number of sources that are available.
@@ -81,12 +91,40 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		}
 
 		/// <summary>
+		/// Sets the combined state of the room.
+		/// </summary>
+		public void SetCombined(bool combined)
+		{
+			if (combined == m_Combined)
+				return;
+
+			m_Combined = combined;
+
+			UpdateVisibility();
+		}
+
+		/// <summary>
+		/// Returns child views for list items.
+		/// </summary>
+		/// <param name="factory"></param>
+		/// <param name="count"></param>
+		/// <returns></returns>
+		public IEnumerable<IReferencedSourceSelectView> GetChildComponentViews(IViewFactory factory, ushort count)
+		{
+			return GetChildViews(factory, m_SourceList, m_ChildList, count);
+		}
+
+		/// <summary>
 		/// Scrolls back to the first item in the list.
 		/// </summary>
 		public void ResetScrollPosition()
 		{
 			m_SourceList.ScrollToItem(0);
 		}
+
+		#endregion
+
+		#region Private Methods
 
 		/// <summary>
 		/// SourceSelectView is actually controlling the visibility of 5 overlapped
@@ -95,9 +133,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		/// </summary>
 		private void UpdateVisibility()
 		{
+			// Default to top row
 			ushort visible = SUBPAGE_DUAL_DISPLAYS;
 
-			if (m_DisplayCount < 2)
+			// If we're not combined and there are fewer than 2 displays use one of the source subpages
+			if (!m_Combined && m_DisplayCount < 2)
 			{
 				visible = SUBPAGE_8;
 
@@ -117,5 +157,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 			m_LeftArrowButton.Show(m_SourceCount > 4);
 			m_RightArrowButton.Show(m_SourceCount > 4);
 		}
+
+		#endregion
 	}
 }
