@@ -27,6 +27,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - When the room goes to sleep routing resets will not power on any displays that are already off.
  - Zoom camera layout buttons will enable/disable based on availability
 
+## [11.1.2] - 2020-02-06
+### Changed
+ - Fixed a bug where combining 2+ rooms with a total of 1 display between them would break the UI
+ - Disabling the Advanced Mode button unless there are at least 2 displays
+
 ## [11.1.1] - 2020-01-20
 ### Changed
  - Fixed a URI parsing issue when determining Logo URI on startup

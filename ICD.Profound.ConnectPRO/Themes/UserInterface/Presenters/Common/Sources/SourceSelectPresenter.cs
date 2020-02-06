@@ -4,6 +4,7 @@ using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
+using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -107,8 +108,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 							: m_RoutedSources.GetDefault(presenter.Source);
 				}
 
+				bool combined = Room != null && Room.IsCombineRoom();
+
 				view.SetSourceCount((ushort)m_Sources.Length);
 				view.SetDisplayCount(m_DisplayCount);
+				view.SetCombined(combined);
 			}
 			finally
 			{

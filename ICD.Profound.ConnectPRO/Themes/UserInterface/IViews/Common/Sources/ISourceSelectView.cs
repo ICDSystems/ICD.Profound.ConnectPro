@@ -26,6 +26,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources
 		void SetDisplayCount(ushort count);
 
 		/// <summary>
+		/// Sets the combined state of the room.
+		/// </summary>
+		void SetCombined(bool combined);
+
+		/// <summary>
 		/// Scrolls back to the first item in the list.
 		/// </summary>
 		void ResetScrollPosition();
