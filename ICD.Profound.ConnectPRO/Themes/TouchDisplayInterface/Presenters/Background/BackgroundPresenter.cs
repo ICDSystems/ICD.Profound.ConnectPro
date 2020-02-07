@@ -3,14 +3,18 @@ using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Misc.Vibe.Devices.VibeBoard;
+using ICD.Connect.Misc.Vibe.Devices.VibeBoard.Components;
 using ICD.Connect.Misc.Vibe.Devices.VibeBoard.Controls;
 using ICD.Connect.UI.Attributes;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Routing;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Background;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Header;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Background;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Header;
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Background
 {
@@ -18,8 +22,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Backgr
 	public sealed class BackgroundPresenter : AbstractTouchDisplayPresenter<IBackgroundView>, IBackgroundPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
+		private readonly HeaderButtonModel m_AppBackButton;
 
 		private VibeBoardAppControl m_SubscribedAppControl;
+		
 
 		public BackgroundPresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views,
 			ConnectProTheme theme) : base(nav, views, theme)
@@ -27,6 +33,21 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Backgr
 			m_RefreshSection = new SafeCriticalSection();
 
 			Subscribe(theme);
+
+			m_AppBackButton = new HeaderButtonModel(0, 5, AppBackButtonCallback)
+			{
+				Icon = TouchCueIcons.GetIcon(eTouchCueIcon.ArrowLeft, eTouchCueColor.White),
+				Mode = eHeaderButtonMode.Blue,
+				LabelText = "Back (App)"
+			};
+		}
+
+		private void AppBackButtonCallback()
+		{
+			if (m_SubscribedAppControl == null)
+				return;
+
+			m_SubscribedAppControl.PressKey(eVibeKey.Back);
 		}
 
 		public override void Dispose()
@@ -101,9 +122,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Backgr
 			room.OnIsInMeetingChanged += RoomOnOnIsInMeetingChanged;
 			room.Routing.State.OnSourceRoutedChanged += RoomRoutingStateOnSourceRoutedChanged;
 
-			var vibeBoard = Room.Originators.GetInstanceRecursive<VibeBoard>();
-			if (vibeBoard != null)
-				m_SubscribedAppControl = vibeBoard.Controls.GetControl<VibeBoardAppControl>();
+			VibeBoard vibeBoard = Room.Originators.GetInstanceRecursive<VibeBoard>();
+			m_SubscribedAppControl = vibeBoard == null ? null : vibeBoard.Controls.GetControl<VibeBoardAppControl>();
 			if (m_SubscribedAppControl != null)
 				m_SubscribedAppControl.OnAppLaunched += SubscribedAppControlOnOnAppLaunched;
 		}
@@ -138,8 +158,24 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Backgr
 		private void SubscribedAppControlOnOnAppLaunched(object sender, EventArgs e)
 		{
 			ShowView(false);
+
+			var header = Navigation.LazyLoadPresenter<IHeaderPresenter>();
+			header.AddLeftButton(m_AppBackButton);
+			header.Refresh();
 		}
 		
 		#endregion
+
+		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			base.ViewOnVisibilityChanged(sender, args);
+
+			if (args.Data)
+			{
+				var header = Navigation.LazyLoadPresenter<IHeaderPresenter>();
+				header.RemoveLeftButton(m_AppBackButton);
+				header.Refresh();
+			}
+		}
 	}
 }

@@ -33,6 +33,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly Dictionary<int, CameraPreset> m_CameraPresets;
 		private readonly SafeTimer m_PresetStoredTimer;
+		
 		private readonly HeaderButtonModel m_HeaderButton;
 
 		[CanBeNull]

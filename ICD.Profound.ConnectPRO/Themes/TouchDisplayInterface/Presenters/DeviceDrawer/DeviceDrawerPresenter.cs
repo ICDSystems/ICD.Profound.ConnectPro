@@ -9,6 +9,8 @@ using ICD.Connect.Misc.Vibe.Devices.VibeBoard.Controls;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.EventArguments;
 using ICD.Connect.UI.Attributes;
+using ICD.Connect.UI.Mvp.Presenters;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Routing;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
@@ -21,6 +23,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 	[PresenterBinding(typeof(IDeviceDrawerPresenter))]
 	public sealed class DeviceDrawerPresenter : AbstractTouchDisplayPresenter<IDeviceDrawerView>, IDeviceDrawerPresenter
 	{
+		private const long APP_LAUNCH_FAIL_TIMEOUT = 5000L;
+
 		public event EventHandler<SourceEventArgs> OnSourcePressed;
 
 		private static readonly List<eVibeApps> s_Apps = new List<eVibeApps>()
@@ -37,6 +41,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly Dictionary<ISource, eSourceState> m_CachedSourceStates;
 
+		private VibeBoardAppControl m_SubscribedAppControl;
 
 		/// <summary>
 		/// Constructor.
@@ -68,13 +73,12 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 					presenter.ShowView(true);
 					presenter.Refresh();
 				}
-				
-				var vibeBoard = Room == null ? null : Room.Originators.GetInstance<VibeBoard>();
-				if (vibeBoard == null)
-					return;
 
-				var appControl = vibeBoard.Controls.GetControl<VibeBoardAppControl>();
-				var packageNames = s_Apps.Select(app => appControl.GetPackageName(app)).ToList();
+				var packageNames = m_SubscribedAppControl == null
+					? Enumerable.Empty<string>()
+					: s_Apps.Where(app => m_SubscribedAppControl.IsInstalled(app))
+						.Select(app => m_SubscribedAppControl.GetPackageName(app))
+						.ToList();
 				view.SetAppButtonIcons(packageNames);
 			}
 			finally
@@ -89,6 +93,18 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 			m_CachedSourceStates.AddRange(sources);
 
 			RefreshIfVisible();
+		}
+		
+		public override void SetRoom(IConnectProRoom room)
+		{
+			base.SetRoom(room);
+			
+			Unsubscribe(m_SubscribedAppControl);
+
+			var vibeBoard = room == null ? null : room.Originators.GetInstanceRecursive<VibeBoard>();
+			m_SubscribedAppControl = vibeBoard == null ? null : vibeBoard.Controls.GetControl<VibeBoardAppControl>();
+
+			Subscribe(m_SubscribedAppControl);
 		}
 
 		private IEnumerable<IReferencedSourceView> ItemFactory(ushort count)
@@ -140,6 +156,32 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 
 		#endregion
 
+		#region App Callbacks
+
+		private void Subscribe(VibeBoardAppControl control)
+		{
+			if (control == null)
+				return;
+
+			control.OnAppLaunchFailed += AppControlOnAppLaunchFailed;
+		}
+
+		private void Unsubscribe(VibeBoardAppControl control)
+		{
+			if (control == null)
+				return;
+
+			control.OnAppLaunchFailed -= AppControlOnAppLaunchFailed;
+		}
+
+		private void AppControlOnAppLaunchFailed(object sender, EventArgs e)
+		{
+			Navigation.LazyLoadPresenter<IGenericAlertPresenter>().Show("App is either not installed or failed to launch.",
+				APP_LAUNCH_FAIL_TIMEOUT, GenericAlertPresenterButton.Dismiss);
+		}
+
+		#endregion
+
 		#region View Callbacks
 
 		protected override void Subscribe(IDeviceDrawerView view)
@@ -158,15 +200,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 
 		private void ViewOnOnAppButtonPressed(object sender, UShortEventArgs e)
 		{
-			if (Room == null)
+			if (m_SubscribedAppControl == null)
 				return;
 
-			var vibeBoard = Room.Originators.GetInstanceRecursive<VibeBoard>();
-			if (vibeBoard == null)
-				return;
-
-			var appControl = vibeBoard.Controls.GetControl<VibeBoardAppControl>();
-			appControl.LaunchApp(s_Apps[e.Data]);
+			m_SubscribedAppControl.LaunchApp(s_Apps[e.Data]);
 		}
 
 		#endregion
