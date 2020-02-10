@@ -27,7 +27,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 		{
 			using (TRoomType roomType = InstantiateRoomType())
 			{
-				if (roomType.Room.GetVolumePoints().FirstOrDefault() == null)
+				if (roomType.Room.Originators.GetInstances<IVolumePoint>().FirstOrDefault() == null)
 					return;
 
 				// Simulate "start meeting" button press
