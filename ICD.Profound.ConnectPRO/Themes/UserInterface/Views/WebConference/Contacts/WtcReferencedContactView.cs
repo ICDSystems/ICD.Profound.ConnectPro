@@ -11,9 +11,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 	[ViewBinding(typeof(IWtcReferencedContactView))]
 	public sealed partial class WtcReferencedContactView : AbstractComponentView, IWtcReferencedContactView
 	{
-		private const ushort MODE_ONLINE = 0;
-		private const ushort MODE_AWAY = 1;
-		private const ushort MODE_BUSY = 2;
+		private const ushort MODE_OFFLINE = 0;
+		private const ushort MODE_ONLINE = 1;
+		private const ushort MODE_AWAY = 2;
+		private const ushort MODE_BUSY = 3;
 
 		/// <summary>
 		/// Raised when the contact is pressed.
@@ -47,6 +48,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 
 			base.Dispose();
 		}
+
+		#region Methods
 
 		/// <summary>
 		/// Sets the text for the contact's name.
@@ -97,7 +100,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 					m_OnlineStateButton.Show(true);
 					break;
 				case eOnlineState.Offline:
+					m_OnlineStateButton.SetMode(MODE_OFFLINE);
+					m_OnlineStateButton.Show(true);
+					break;
 				case eOnlineState.Unknown:
+					m_OnlineStateButton.SetMode(MODE_OFFLINE);
 					m_OnlineStateButton.Show(false);
 					break;
 
@@ -114,6 +121,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 		{
 			m_FavoriteButton.SetSelected(selected);
 		}
+
+		#endregion
 
 		#region Control Callbacks
 
