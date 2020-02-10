@@ -120,7 +120,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				mode = s_IndexToBackgroundMode.GetValue(m_Index);
 			}
 
-			Node.SetBackground(mode);
+			Node.BackgroundMode = mode;
 		}
 
 		private void NavigateTo(ushort index)

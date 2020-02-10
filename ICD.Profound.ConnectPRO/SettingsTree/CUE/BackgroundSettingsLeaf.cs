@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
+using ICD.Common.Properties;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels.Server.Osd;
+using ICD.Connect.Settings.Cores;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes;
 
@@ -14,22 +16,59 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 		/// </summary>
 		public event EventHandler OnBackgroundModeChanged;
 
+		[CanBeNull]
 		private ConnectProTheme m_Theme;
 
 		#region Properties
+
+		[CanBeNull]
+		private ConnectProTheme Theme
+		{
+			get { return m_Theme; }
+			set
+			{
+				if (value == m_Theme)
+					return;
+
+				Unsubscribe(m_Theme);
+				m_Theme = value;
+				Subscribe(m_Theme);
+
+				UpdateBackgroundMode();
+			}
+		}
 
 		/// <summary>
 		/// Determines if the node should be visible.
 		/// </summary>
 		public override bool Visible
 		{
-			get { return base.Visible && Room.Originators.GetInstancesRecursive<OsdPanelDevice>().Any(); }
+			get
+			{
+				return base.Visible &&
+				       Room != null &&
+				       Room.Originators.GetInstancesRecursive<OsdPanelDevice>().Any();
+			}
 		}
 
 		/// <summary>
 		/// Gets the background mode.
 		/// </summary>
-		public eCueBackgroundMode BackgroundMode { get { return m_Theme.CueBackground; } }
+		public eCueBackgroundMode BackgroundMode
+		{
+			get { return Theme == null ? default(eCueBackgroundMode) : Theme.CueBackground; }
+			set
+			{
+				if (Theme == null || value == Theme.CueBackground)
+					return;
+
+				Theme.CueBackground = value;
+
+				SetDirty(true);
+
+				OnBackgroundModeChanged.Raise(this);
+			}
+		}
 
 		#endregion
 
@@ -52,19 +91,21 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 			base.Dispose();
 		}
 
-		/// <summary>
-		/// Sets the CUE background mode.
-		/// </summary>
-		/// <param name="mode"></param>
-		public void SetBackground(eCueBackgroundMode mode)
+		#region Private Methods
+
+		private void UpdateBackgroundMode()
 		{
-			if (mode == m_Theme.CueBackground)
-				return;
-
-			m_Theme.CueBackground = mode;
-
-			SetDirty(true);
+			BackgroundMode = Theme == null ? default(eCueBackgroundMode) : Theme.CueBackground;
 		}
+
+		private void UpdateTheme()
+		{
+			Theme = Room == null ? null : Room.Core.Originators.GetChildren<ConnectProTheme>().FirstOrDefault();
+		}
+
+		#endregion
+
+		#region Room Callbacks
 
 		/// <summary>
 		/// Subscribe to the room events.
@@ -74,8 +115,14 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 		{
 			base.Subscribe(room);
 
-			m_Theme = room == null ? null : room.Core.Originators.GetChild<ConnectProTheme>();
-			Subscribe(m_Theme);
+			if (room == null)
+				return;
+
+			// The theme may not have loaded yet
+			ICore core = room.Core;
+			core.Originators.OnChildrenChanged += OriginatorsOnChildrenChanged;
+
+			UpdateTheme();
 		}
 
 		/// <summary>
@@ -86,9 +133,22 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 		{
 			base.Unsubscribe(room);
 
-			Unsubscribe(m_Theme);
-			m_Theme = null;
+			if (room == null)
+				return;
+
+			// The theme may not have loaded yet
+			ICore core = room.Core;
+			core.Originators.OnChildrenChanged -= OriginatorsOnChildrenChanged;
+
+			UpdateTheme();
 		}
+
+		private void OriginatorsOnChildrenChanged(object sender, EventArgs e)
+		{
+			UpdateTheme();
+		}
+
+		#endregion
 
 		#region Theme Callbacks
 
@@ -123,7 +183,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 		/// <param name="eventArgs"></param>
 		private void ThemeOnCueBackgroundChanged(object sender, EventArgs eventArgs)
 		{
-			OnBackgroundModeChanged.Raise(this);
+			UpdateBackgroundMode();
 		}
 
 		#endregion

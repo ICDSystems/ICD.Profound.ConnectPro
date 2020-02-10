@@ -93,7 +93,6 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 		{
 		}
 
-
 		/// <summary>
 		/// Override to initialize the node once a room has been assigned.
 		/// </summary>
