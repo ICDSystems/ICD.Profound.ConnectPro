@@ -51,7 +51,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private Type[] m_Buttons;
 		private eMode? m_Mode;
 		private bool m_IsInWebConference;
-		private ZoomRoom m_ActiveConferenceZoomDevice;
+		private ZoomRoom m_ZoomDevice;
+		private bool m_CachedRecordEnabled;
+		private bool m_CachedDialOutEnabled;
 
 		/// <summary>
 		/// Gets/sets the active conference control for this presenter.
@@ -63,23 +65,54 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			{
 				base.ActiveConferenceControl = value;
 
-				ActiveConferenceZoomDevice = value == null ? null : value.Parent as ZoomRoom;
+				ZoomDevice = value == null ? null : value.Parent as ZoomRoom;
 			}
 		}
 
-		private ZoomRoom ActiveConferenceZoomDevice
+		private ZoomRoom ZoomDevice
 		{
-			get { return m_ActiveConferenceZoomDevice; }
+			get { return m_ZoomDevice; }
 			set
 			{
-				if (value == m_ActiveConferenceZoomDevice)
+				if (value == m_ZoomDevice)
 					return;
 
-				Unsubscribe(m_ActiveConferenceZoomDevice);
+				Unsubscribe(m_ZoomDevice);
 
-				m_ActiveConferenceZoomDevice = value;
+				m_ZoomDevice = value;
 
-				Subscribe(m_ActiveConferenceZoomDevice);
+				Subscribe(m_ZoomDevice);
+
+				CachedRecordEnabled = value != null && value.RecordEnabled;
+				CachedDialOutEnabled = value != null && value.DialOutEnabled;
+
+			}
+		}
+
+		public bool CachedRecordEnabled
+		{
+			get { return m_CachedRecordEnabled; }
+			private set
+			{
+				if (value == m_CachedRecordEnabled)
+					return;
+				m_CachedRecordEnabled = value;
+
+				RefreshIfVisible();
+			}
+		}
+
+		public bool CachedDialOutEnabled
+		{
+			get { return m_CachedDialOutEnabled; }
+			private set
+			{
+				if (value == m_CachedDialOutEnabled)
+					return;
+
+				m_CachedDialOutEnabled = value;
+
+				RefreshIfVisible();
 			}
 		}
 
@@ -92,7 +125,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 					return;
 
 				m_Mode = value;
-				m_Buttons = GetButtonPresenterTypes().ToArray();
 
 				if (IsViewVisible)
 					ShowDefaultPresenterForMode();
@@ -156,6 +188,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 			try
 			{
+				m_Buttons = GetButtonPresenterTypes().ToArray();
+
 				foreach (IWtcReferencedLeftMenuPresenter presenter in m_ChildFactory.BuildChildren(m_Buttons))
 				{
 					presenter.ActiveConferenceControl = ActiveConferenceControl;
@@ -195,9 +229,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 					throw new ArgumentOutOfRangeException();
 			}
 
-			if (ActiveConferenceZoomDevice == null || !ActiveConferenceZoomDevice.RecordEnabled)
+			if (!CachedRecordEnabled)
 				buttons = buttons.Except(typeof(IRecordWtcReferencedLeftMenuPresenter));
-			if (ActiveConferenceZoomDevice == null || !ActiveConferenceZoomDevice.DialOutEnabled)
+			if (!CachedDialOutEnabled)
 				buttons = buttons.Except(typeof(ICallOutWtcReferencedLeftMenuPresenter));
 
 			return buttons;
@@ -329,14 +363,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			zoomDevice.OnDialOutEnabledChanged -= ZoomDeviceOnOnDialOutEnabledChanged;
 		}
 
-		private void ZoomDeviceOnOnRecordEnabledChanged(object sender, BoolEventArgs e)
+		private void ZoomDeviceOnOnRecordEnabledChanged(object sender, BoolEventArgs args)
 		{
-			RefreshIfVisible();
+			CachedRecordEnabled = args.Data;
 		}
 
-		private void ZoomDeviceOnOnDialOutEnabledChanged(object sender, BoolEventArgs e)
+		private void ZoomDeviceOnOnDialOutEnabledChanged(object sender, BoolEventArgs args)
 		{
-			RefreshIfVisible();
+			CachedDialOutEnabled = args.Data;
 		}
 
 		#endregion
