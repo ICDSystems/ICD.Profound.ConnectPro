@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -49,6 +51,37 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private Type[] m_Buttons;
 		private eMode? m_Mode;
 		private bool m_IsInWebConference;
+		private ZoomRoom m_ActiveConferenceZoomDevice;
+
+		/// <summary>
+		/// Gets/sets the active conference control for this presenter.
+		/// </summary>
+		public override IWebConferenceDeviceControl ActiveConferenceControl
+		{
+			get { return base.ActiveConferenceControl; }
+			set
+			{
+				base.ActiveConferenceControl = value;
+
+				ActiveConferenceZoomDevice = value == null ? null : value.Parent as ZoomRoom;
+			}
+		}
+
+		private ZoomRoom ActiveConferenceZoomDevice
+		{
+			get { return m_ActiveConferenceZoomDevice; }
+			set
+			{
+				if (value == m_ActiveConferenceZoomDevice)
+					return;
+
+				Unsubscribe(m_ActiveConferenceZoomDevice);
+
+				m_ActiveConferenceZoomDevice = value;
+
+				Subscribe(m_ActiveConferenceZoomDevice);
+			}
+		}
 
 		public eMode Mode
 		{
@@ -145,17 +178,29 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// <returns></returns>
 		private IEnumerable<Type> GetButtonPresenterTypes()
 		{
+			IEnumerable<Type> buttons;
+
 			switch (Mode)
 			{
 				case eMode.Default:
-					return s_DefaultButtons;
+					buttons = s_DefaultButtons;
+					break;
 				case eMode.WebConference:
-					return s_WebConferenceButtons;
+					buttons = s_WebConferenceButtons;
+					break;
 				case eMode.CallOut:
-					return s_CallOutButtons;
+					buttons = s_CallOutButtons;
+					break;
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
+
+			if (ActiveConferenceZoomDevice == null || !ActiveConferenceZoomDevice.RecordEnabled)
+				buttons = buttons.Except(typeof(IRecordWtcReferencedLeftMenuPresenter));
+			if (ActiveConferenceZoomDevice == null || !ActiveConferenceZoomDevice.DialOutEnabled)
+				buttons = buttons.Except(typeof(ICallOutWtcReferencedLeftMenuPresenter));
+
+			return buttons;
 		}
 
 		/// <summary>
@@ -208,6 +253,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			if (control == null)
 				return;
 
+			ZoomRoom zoomDevice = control.Parent as ZoomRoom;
+			if (zoomDevice != null)
+			{
+				zoomDevice.OnRecordEnabledChanged += ZoomDeviceOnOnRecordEnabledChanged;
+				zoomDevice.OnDialOutEnabledChanged += ZoomDeviceOnOnDialOutEnabledChanged;
+			}
+
 			control.OnConferenceAdded += ControlOnConferenceAdded;
 			control.OnConferenceRemoved += ControlOnConferenceRemoved;
 
@@ -228,6 +280,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			if (control == null)
 				return;
 
+			ZoomRoom zoomDevice = control.Parent as ZoomRoom;
+			if (zoomDevice != null)
+			{
+				zoomDevice.OnRecordEnabledChanged -= ZoomDeviceOnOnRecordEnabledChanged;
+				zoomDevice.OnDialOutEnabledChanged -= ZoomDeviceOnOnDialOutEnabledChanged;
+			}
+
 			control.OnConferenceAdded -= ControlOnConferenceAdded;
 			control.OnConferenceRemoved -= ControlOnConferenceRemoved;
 
@@ -245,6 +304,39 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		{
 			Subscribe(args.Data as IWebConference);
 			UpdateIsInWebConference();
+		}
+
+		#endregion
+
+		#region ActiveConferenceZoomDevice Callbacks
+
+		private void Subscribe(ZoomRoom zoomDevice)
+		{
+			if (zoomDevice == null)
+				return;
+
+			zoomDevice.OnRecordEnabledChanged += ZoomDeviceOnOnRecordEnabledChanged;
+			zoomDevice.OnDialOutEnabledChanged += ZoomDeviceOnOnDialOutEnabledChanged;
+
+		}
+
+		private void Unsubscribe(ZoomRoom zoomDevice)
+		{
+			if (zoomDevice == null)
+				return;
+
+			zoomDevice.OnRecordEnabledChanged -= ZoomDeviceOnOnRecordEnabledChanged;
+			zoomDevice.OnDialOutEnabledChanged -= ZoomDeviceOnOnDialOutEnabledChanged;
+		}
+
+		private void ZoomDeviceOnOnRecordEnabledChanged(object sender, BoolEventArgs e)
+		{
+			RefreshIfVisible();
+		}
+
+		private void ZoomDeviceOnOnDialOutEnabledChanged(object sender, BoolEventArgs e)
+		{
+			RefreshIfVisible();
 		}
 
 		#endregion

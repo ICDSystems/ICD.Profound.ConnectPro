@@ -15,7 +15,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// Gets/sets the active conference control for this presenter.
 		/// </summary>
 		[CanBeNull]
-		public IWebConferenceDeviceControl ActiveConferenceControl
+		public virtual IWebConferenceDeviceControl ActiveConferenceControl
 		{
 			get { return m_ConferenceControl; }
 			set
