@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Volume presenter will now get volume points contextual
  - Showing an offline icon for offline Zoom contacts
  - Added room combine button to the splash page
+ - Zoom UI now respects "RecordEnable" and "DialOutEnable" ZoomRoom device settings
 
 ### Changed
  - Reworked camera presenters to allow selection and control from a single page
