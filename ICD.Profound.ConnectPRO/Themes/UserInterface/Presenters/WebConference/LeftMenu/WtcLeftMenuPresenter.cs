@@ -52,8 +52,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private eMode? m_Mode;
 		private bool m_IsInWebConference;
 		private ZoomRoom m_ZoomDevice;
-		private bool m_CachedRecordEnabled;
-		private bool m_CachedDialOutEnabled;
 
 		/// <summary>
 		/// Gets/sets the active conference control for this presenter.
@@ -82,37 +80,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				m_ZoomDevice = value;
 
 				Subscribe(m_ZoomDevice);
-
-				CachedRecordEnabled = value != null && value.RecordEnabled;
-				CachedDialOutEnabled = value != null && value.DialOutEnabled;
-
-			}
-		}
-
-		public bool CachedRecordEnabled
-		{
-			get { return m_CachedRecordEnabled; }
-			private set
-			{
-				if (value == m_CachedRecordEnabled)
-					return;
-				m_CachedRecordEnabled = value;
-
+				
 				RefreshIfVisible();
-			}
-		}
 
-		public bool CachedDialOutEnabled
-		{
-			get { return m_CachedDialOutEnabled; }
-			private set
-			{
-				if (value == m_CachedDialOutEnabled)
-					return;
-
-				m_CachedDialOutEnabled = value;
-
-				RefreshIfVisible();
 			}
 		}
 
@@ -229,9 +199,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 					throw new ArgumentOutOfRangeException();
 			}
 
-			if (!CachedRecordEnabled)
+			if (ZoomDevice == null || !ZoomDevice.DialOutEnabled)
 				buttons = buttons.Except(typeof(IRecordWtcReferencedLeftMenuPresenter));
-			if (!CachedDialOutEnabled)
+			if (ZoomDevice == null || !ZoomDevice.RecordEnabled)
 				buttons = buttons.Except(typeof(ICallOutWtcReferencedLeftMenuPresenter));
 
 			return buttons;
@@ -365,12 +335,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private void ZoomDeviceOnOnRecordEnabledChanged(object sender, BoolEventArgs args)
 		{
-			CachedRecordEnabled = args.Data;
+			RefreshIfVisible();
 		}
 
 		private void ZoomDeviceOnOnDialOutEnabledChanged(object sender, BoolEventArgs args)
 		{
-			CachedDialOutEnabled = args.Data;
+			RefreshIfVisible();
 		}
 
 		#endregion
