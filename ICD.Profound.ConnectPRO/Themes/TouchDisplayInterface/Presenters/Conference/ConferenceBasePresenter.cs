@@ -8,8 +8,6 @@ using ICD.Connect.Conferencing.Controls.Layout;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Conferencing.Zoom.Components.Call;
-using ICD.Connect.Conferencing.Zoom.Controls;
-using ICD.Connect.Conferencing.Zoom.Responses;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
@@ -23,7 +21,6 @@ using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Notificat
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Conference;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Header;
-using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header;
 
 namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Conference
 {

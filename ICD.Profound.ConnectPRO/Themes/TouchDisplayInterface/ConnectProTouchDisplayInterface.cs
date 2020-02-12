@@ -10,6 +10,8 @@ using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
+using ICD.Connect.Misc.Vibe.Devices.VibeBoard;
+using ICD.Connect.Misc.Vibe.Devices.VibeBoard.Controls;
 using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Partitioning.Rooms;
@@ -352,10 +354,18 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 			
 			UpdateVisibility();
 
-			if (m_Room != null)
+			if (m_Room == null)
+				return;
+
+			m_Room.Routing.State.ClearProcessingSources();
+			m_Room.Routing.State.ClearMaskedSources();
+
+			if (!eventArgs.Data)
 			{
-				m_Room.Routing.State.ClearProcessingSources();
-				m_Room.Routing.State.ClearMaskedSources();
+				// if ending the meeting, end the vibe board session to kill all apps and clear caches
+				IEnumerable<VibeBoardAppControl> appControls = m_Room.GetControlsRecursive<VibeBoardAppControl>();
+				foreach (VibeBoardAppControl appControl in appControls)
+					appControl.EndSession();
 			}
 		}
 
