@@ -104,7 +104,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 				view.SetBookingsVisible(HasCalendarControl, m_Bookings.Count);
 
 				// Room combine button
-				RootSettingsNode rootSettings = Navigation.LazyLoadPresenter<ISettingsBasePresenter>().RootNode;
+				IRootSettingsNode rootSettings = Navigation.LazyLoadPresenter<ISettingsBasePresenter>().RootNode;
 				RoomCombineSettingsNode roomCombineSettings =
 					rootSettings == null
 						? null
@@ -359,7 +359,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		private void ViewOnRoomCombineButtonPressed(object sender, EventArgs eventArgs)
 		{
 			ISettingsBasePresenter settingsBase = Navigation.NavigateTo<ISettingsBasePresenter>();
-			RootSettingsNode root = settingsBase.RootNode;
+			IRootSettingsNode root = settingsBase.RootNode;
 			if (root == null)
 				return;
 

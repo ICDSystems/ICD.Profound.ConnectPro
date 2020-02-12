@@ -39,7 +39,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// Gets the current root settings node item.
 		/// </summary>
 		[CanBeNull]
-		public RootSettingsNode RootNode { get { return m_SettingsRoot; } }
+		public IRootSettingsNode RootNode { get { return m_SettingsRoot; } }
 
 		/// <summary>
 		/// Gets the current settings node item.

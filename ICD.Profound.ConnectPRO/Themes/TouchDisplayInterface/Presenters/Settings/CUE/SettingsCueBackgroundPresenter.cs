@@ -84,7 +84,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 			if (Node == null)
 				return;
 
-			Node.SetBackgroundMotion(!Node.BackgroundMotion);
+			Node.BackgroundMotion = !Node.BackgroundMotion;
 			RefreshIfVisible();
 		}
 
@@ -93,7 +93,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Settin
 			if (Node == null)
 				return;
 
-			Node.SetBackground(mode);
+			Node.BackgroundMode = mode;
 
 			// Hide the old subpage
 			foreach (Type type in s_BackgroundModeToPresenterType.Where(kvp => kvp.Key != mode).Select(kvp => kvp.Value))

@@ -36,6 +36,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 				Subscribe(m_Theme);
 
 				UpdateBackgroundMode();
+				UpdateBackgroundMotion();
 			}
 		}
 
@@ -75,7 +76,21 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 		/// <summary>
 		/// Gets the background motion.
 		/// </summary>
-		public bool BackgroundMotion { get { return m_Theme.CueMotion; } }
+		public bool BackgroundMotion
+		{
+			get { return Theme == null ? false : Theme.CueMotion; }
+			set
+			{
+				if (Theme == null || value == Theme.CueMotion)
+					return;
+
+				Theme.CueMotion = value;
+
+				SetDirty(true);
+
+				OnBackgroundModeChanged.Raise(this);
+			}
+		}
 
 		#endregion
 
@@ -105,6 +120,11 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 			BackgroundMode = Theme == null ? default(eCueBackgroundMode) : Theme.CueBackground;
 		}
 
+		private void UpdateBackgroundMotion()
+		{
+			BackgroundMotion = Theme == null ? false : Theme.CueMotion;
+		}
+
 		private void UpdateTheme()
 		{
 			Theme = Room == null ? null : Room.Core.Originators.GetChildren<ConnectProTheme>().FirstOrDefault();
@@ -113,20 +133,6 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 		#endregion
 
 		#region Room Callbacks
-
-		/// <summary>
-		/// Sets whether to use video backgrounds (true) or image backgrounds (false).
-		/// </summary>
-		/// <param name="video"></param>
-		public void SetBackgroundMotion(bool motion)
-		{
-			if (motion == m_Theme.CueMotion)
-				return;
-
-			m_Theme.CueMotion = motion;
-
-			SetDirty(true);
-		}
 
 		/// <summary>
 		/// Subscribe to the room events.
