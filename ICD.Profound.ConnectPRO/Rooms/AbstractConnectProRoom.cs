@@ -371,10 +371,10 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public IEnumerable<IVolumePoint> GetContextualVolumePoints()
 		{
-			eVolumeType type = GetVolumeTypeForContext();
+			eVolumePointContext type = GetVolumeContext();
 
 			return Originators.GetInstancesRecursive<IVolumePoint>()
-			                  .Where(v => EnumUtils.HasAnyFlags(v.VolumeType, type))
+			                  .Where(v => EnumUtils.HasAnyFlags(v.Context, type))
 			                  .OrderBy(v => v, new VolumeContextComparer(type));
 		}
 
