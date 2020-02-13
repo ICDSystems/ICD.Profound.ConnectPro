@@ -124,12 +124,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 			                  {
 				                  ConnectProSource source = s as ConnectProSource;
 				                  return source == null || !source.Hide;
-			                  })
-			           .Distinct(s =>
-			                     {
-				                     ConnectProSource source = s as ConnectProSource;
-				                     return source == null ? null : source.Icon;
-			                     });
+			                  });
 		}
 
 		#region Child Callbacks
