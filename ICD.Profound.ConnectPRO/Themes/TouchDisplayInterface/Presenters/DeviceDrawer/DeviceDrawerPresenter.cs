@@ -163,6 +163,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 			if (control == null)
 				return;
 
+			control.OnAppLaunched += AppControlOnAppLaunched;
 			control.OnAppLaunchFailed += AppControlOnAppLaunchFailed;
 		}
 
@@ -171,7 +172,13 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 			if (control == null)
 				return;
 
+			control.OnAppLaunched -= AppControlOnAppLaunched;
 			control.OnAppLaunchFailed -= AppControlOnAppLaunchFailed;
+		}
+
+		private void AppControlOnAppLaunched(object sender, EventArgs e)
+		{
+			ShowView(false);
 		}
 
 		private void AppControlOnAppLaunchFailed(object sender, EventArgs e)
