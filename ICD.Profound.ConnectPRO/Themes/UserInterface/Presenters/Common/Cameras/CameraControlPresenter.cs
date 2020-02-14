@@ -138,9 +138,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 				}
 
 				// Enabled states
-				bool hasPanTilt = m_SelectedCamera != null && m_SelectedCamera.Controls.GetControl<IPanTiltControl>() != null;
-				bool hasZoom = m_SelectedCamera != null && m_SelectedCamera.Controls.GetControl<IZoomControl>() != null;
-				bool hasPresets = presetControl != null;
+				bool hasPanTilt = m_SelectedCamera != null && m_SelectedCamera.SupportedCameraFeatures.HasFlag(eCameraFeatures.PanTilt);
+				bool hasZoom = m_SelectedCamera != null && m_SelectedCamera.SupportedCameraFeatures.HasFlag(eCameraFeatures.Zoom);
+				bool hasPresets = m_SelectedCamera != null && m_SelectedCamera.SupportedCameraFeatures.HasFlag(eCameraFeatures.Presets);
 
 				view.SetDPadButtonsEnabled(hasPanTilt);
 				view.SetPresetButtonsEnabled(hasPresets);
