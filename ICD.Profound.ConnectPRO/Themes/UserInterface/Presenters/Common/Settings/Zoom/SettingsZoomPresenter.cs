@@ -19,12 +19,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 	{
 		private const ushort INDEX_GENERAL = 0;
 		private const ushort INDEX_ADVANCED = 1;
+        private const ushort INDEX_CAMERAS = 2;
 
 		private static readonly BiDictionary<ushort, Type> s_IndexToPresenterType =
 			new BiDictionary<ushort, Type>
 			{
 				{INDEX_GENERAL, typeof(ISettingsZoomGeneralPresenter)},
-				{INDEX_ADVANCED, typeof(ISettingsZoomAdvancedPresenter)}
+				{INDEX_ADVANCED, typeof(ISettingsZoomAdvancedPresenter)},
+                {INDEX_CAMERAS, typeof(ISettingsZoomCamerasPresenter)}
 			};
 
 		private readonly SafeCriticalSection m_RefreshSection;
@@ -57,6 +59,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			{
 				view.SetGeneralButtonSelected(m_Index == INDEX_GENERAL);
 				view.SetAdvancedButtonSelection(m_Index == INDEX_ADVANCED);
+				view.SetCamerasButtonSelection(m_Index == INDEX_CAMERAS);
 			}
 			finally
 			{
@@ -95,9 +98,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			view.OnAdvancedButtonPressed += ViewOnAdvancedButtonPressed;
 			view.OnGeneralButtonPressed += ViewOnGeneralButtonPressed;
+			view.OnCamerasButtonPressed += ViewOnCamerasButtonPressed;
 		}
 
-		/// <summary>
+        /// <summary>
 		/// Unsubscribe from the view events.
 		/// </summary>
 		/// <param name="view"></param>
@@ -107,7 +111,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			view.OnAdvancedButtonPressed -= ViewOnAdvancedButtonPressed;
 			view.OnGeneralButtonPressed -= ViewOnGeneralButtonPressed;
-		}
+            view.OnCamerasButtonPressed -= ViewOnCamerasButtonPressed;
+        }
 
 		/// <summary>
 		/// Called when the user presses the general button.
@@ -119,7 +124,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			NavigateTo(INDEX_GENERAL);
 		}
 
-		/// <summary>
+        /// <summary>
 		/// Called when the user presses the advanced button.
 		/// </summary>
 		/// <param name="sender"></param>
@@ -130,6 +135,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		}
 
 		/// <summary>
+		/// Called when the user presses the cameras button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+        private void ViewOnCamerasButtonPressed(object sender, EventArgs e)
+        {
+            NavigateTo(INDEX_CAMERAS);
+        }
+
+        /// <summary>
 		/// Called when the view visibility is about to change.
 		/// </summary>
 		/// <param name="sender"></param>

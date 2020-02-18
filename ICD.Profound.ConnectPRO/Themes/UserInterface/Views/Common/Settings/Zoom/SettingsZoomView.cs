@@ -12,6 +12,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoo
 	{
 		private const ushort INDEX_GENERAL = 0;
 		private const ushort INDEX_ADVANCED = 1;
+        private const ushort INDEX_CAMERAS = 2;
 
 		/// <summary>
 		/// Raised when the user presses the general button.
@@ -22,6 +23,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoo
 		/// Raised when the user presses the advanced button.
 		/// </summary>
 		public event EventHandler OnAdvancedButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the cameras button.
+		/// </summary>
+        public event EventHandler OnCamerasButtonPressed;
 
 		/// <summary>
 		/// Constructor.
@@ -40,6 +46,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoo
 		{
 			OnGeneralButtonPressed = null;
 			OnAdvancedButtonPressed = null;
+            OnCamerasButtonPressed = null;
 
 			base.Dispose();
 		}
@@ -63,6 +70,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoo
 		{
 			m_TabButtons.SetItemSelected(INDEX_ADVANCED, selected);
 		}
+
+        /// <summary>
+        /// Sets the selection state of the cameras button.
+        /// </summary>
+        /// <param name="selected"></param>
+        public void SetCamerasButtonSelection(bool selected)
+        {
+			m_TabButtons.SetItemSelected(INDEX_CAMERAS, selected);
+        }
 
 		#endregion
 
@@ -104,6 +120,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoo
 				case INDEX_ADVANCED:
 					OnAdvancedButtonPressed.Raise(this);
 					break;
+
+				case INDEX_CAMERAS:
+					OnCamerasButtonPressed.Raise(this);
+                    break;
 			}
 		}
 

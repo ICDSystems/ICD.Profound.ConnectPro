@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ICD.Common.Properties;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
+using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Conferencing.Zoom.Components.Audio;
+using ICD.Connect.Conferencing.Zoom.Components.Camera;
+using ICD.Connect.Devices;
+using ICD.Connect.Devices.Windows;
 using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
@@ -17,8 +22,11 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 		public event EventHandler<BoolEventArgs> OnMuteMyCameraAtMeetingStartChanged;
 		public event EventHandler<BoolEventArgs> OnEnableRecordingChanged;
 		public event EventHandler<BoolEventArgs> OnEnableDialOutChanged;
+        public event EventHandler<BoolEventArgs> OnUsbCamerasChanged;
+        public event EventHandler<BoolEventArgs> OnUsbIdsChanged;
 
-		private readonly List<ZoomRoom> m_ZoomRooms; 
+        private readonly List<ZoomRoom> m_ZoomRooms;
+        private readonly List<CameraComponent> m_CameraComponents;
 		private readonly List<AudioComponent> m_AudioComponents;
 
 		private bool m_ReduceAudioReverb;
@@ -148,6 +156,8 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 		/// </summary>
 		public ZoomSettingsLeaf()
 		{
+			m_ZoomRooms = new List<ZoomRoom>();
+			m_CameraComponents = new List<CameraComponent>();
 			m_AudioComponents = new List<AudioComponent>();
 			m_ZoomRooms = new List<ZoomRoom>();
 
@@ -163,6 +173,8 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 			OnReduceAudioReverbChanged = null;
 			OnAudioProcessingChanged = null;
 			OnMuteAllParticipantsAtMeetingStartChanged = null;
+            OnUsbCamerasChanged = null;
+            OnUsbIdsChanged = null;
 
 			base.Dispose();
 		}
@@ -219,7 +231,62 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 			SetDirty(true);
 		}
 
-		#endregion
+		/// <summary>
+		/// Sets the Usb Id associated with the camera device.
+		/// </summary>
+		/// <param name="camera"></param>
+		/// <param name="usbInfo"></param>
+        public void SetUsbIdForCamera([NotNull] IDeviceBase camera, WindowsDevicePathInfo? usbInfo)
+        {
+			m_ZoomRooms.ForEach(z => z.SetUsbIdForCamera(camera, usbInfo));
+			SetDirty(true);
+        }
+
+		/// <summary>
+		/// Gets teh Usb Id associated with the camera device.
+		/// </summary>
+		/// <param name="camera"></param>
+		/// <returns></returns>
+        public WindowsDevicePathInfo? GetUsbIdForCamera([NotNull] IDeviceBase camera)
+        {
+            WindowsDevicePathInfo info;
+            bool found = m_ZoomRooms.SelectMany(z => z.GetUsbCameras())
+                                    .Where(kvp => kvp.Key == camera)
+                                    .Select(kvp => kvp.Value)
+                                    .TryFirst(out info);
+
+            return found ? info : (WindowsDevicePathInfo?)null;
+
+        }
+
+        public string GetUsbDeviceName(WindowsDevicePathInfo usbInfo)
+        {
+            CameraInfo info;
+            bool found = m_CameraComponents.SelectMany(cc => cc.GetCameras())
+                                           .Where(c => new WindowsDevicePathInfo(c.UsbId).DeviceId == usbInfo.DeviceId)
+                                           .TryFirst(out info);
+
+            return found ? string.Format("{0} ({1})", info.Name, new WindowsDevicePathInfo(info.UsbId).DeviceId) : null;
+        }
+
+		public IEnumerable<IDeviceBase> GetCameraDevices()
+        {
+            return Room == null
+                       ? Enumerable.Empty<IDeviceBase>()
+                       : Room.Originators
+                             .GetInstancesRecursive<ICameraDevice>();
+        }
+
+        public IEnumerable<WindowsDevicePathInfo> GetUsbIds()
+        {
+            return m_ZoomRooms.SelectMany(z => z.GetUsbCameras())
+                              .Select(kvp => kvp.Value)
+                              .Concat(m_CameraComponents.SelectMany(cc => cc.GetCameras()
+                                                        .Select(i => new WindowsDevicePathInfo(i.UsbId))))
+                              .Distinct(d => d.DeviceId);
+        }
+
+        #endregion
 
 		#region Private Methods
 
@@ -231,6 +298,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 			UpdateMuteMyCamera();
 			UpdateRecordEnable();
 			UpdateDialOutEnable();
+			UpdateUsbCameras();
 		}
 
 		private void UpdateAudioReverb()
@@ -263,6 +331,12 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 			EnableDialOut = m_ZoomRooms.All(z => z.DialOutEnabled);
 		}
 
+        private void UpdateUsbCameras()
+        {
+			OnUsbCamerasChanged.Raise(this, new BoolEventArgs(true));
+			OnUsbIdsChanged.Raise(this, new BoolEventArgs(true));
+        }
+
 		#endregion
 
 		#region Room Callbacks
@@ -284,6 +358,17 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 			m_ZoomRooms.AddRange(zoomRooms);
 			m_ZoomRooms.ForEach(Subscribe);
 
+            IEnumerable<CameraComponent> cameraComponents =
+                room == null
+                    ? Enumerable.Empty<CameraComponent>()
+                    : room.Originators
+                          .GetInstancesRecursive<ZoomRoom>()
+                          .Select(z => z.Components.GetComponent<CameraComponent>());
+
+			m_CameraComponents.Clear();
+			m_CameraComponents.AddRange(cameraComponents);
+			m_CameraComponents.ForEach(Subscribe);
+
 			IEnumerable<AudioComponent> audioComponents =
 				m_ZoomRooms.Select(z => z.Components.GetComponent<AudioComponent>());
 
@@ -302,6 +387,12 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 		{
 			base.Unsubscribe(room);
 
+            m_ZoomRooms.ForEach(Unsubscribe);
+			m_ZoomRooms.Clear();
+
+			m_CameraComponents.ForEach(Unsubscribe);
+			m_CameraComponents.Clear();
+
 			m_AudioComponents.ForEach(Unsubscribe);
 			m_AudioComponents.Clear();
 
@@ -313,7 +404,34 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 
 		#endregion
 
-		#region AudioComponent Callbacks
+        #region Camera Component Callbacks
+
+		/// <summary>
+		/// Subscribe to the camera component events.
+		/// </summary>
+		/// <param name="cameraComponent"></param>
+        private void Subscribe(CameraComponent cameraComponent)
+        {
+			cameraComponent.OnCamerasUpdated += CameraComponentOnCamerasUpdated;
+        }
+
+		/// <summary>
+		/// Unsubscribe from the camera component events.
+		/// </summary>
+		/// <param name="cameraComponent"></param>
+        private void Unsubscribe(CameraComponent cameraComponent)
+        {
+            cameraComponent.OnCamerasUpdated -= CameraComponentOnCamerasUpdated;
+        }
+
+        private void CameraComponentOnCamerasUpdated(object sender, EventArgs e)
+        {
+			UpdateUsbCameras();
+        }
+
+        #endregion
+
+        #region AudioComponent Callbacks
 
 		/// <summary>
 		/// Subscribe to the audio component events.
@@ -369,6 +487,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 			zoomRoom.OnMuteMyCameraOnStartChanged += ZoomRoomOnMuteMyCameraOnStartChanged;
 			zoomRoom.OnRecordEnabledChanged += ZoomRoomOnRecordEnabledChanged;
 			zoomRoom.OnDialOutEnabledChanged += ZoomRoomOnDialOutEnabledChanged;
+            zoomRoom.OnUsbCamerasChanged += ZoomRoomOnUsbCamerasChanged;
 		}
 
 		/// <summary>
@@ -381,6 +500,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 			zoomRoom.OnMuteMyCameraOnStartChanged -= ZoomRoomOnMuteMyCameraOnStartChanged;
 			zoomRoom.OnRecordEnabledChanged -= ZoomRoomOnRecordEnabledChanged;
 			zoomRoom.OnDialOutEnabledChanged -= ZoomRoomOnDialOutEnabledChanged;
+            zoomRoom.OnUsbCamerasChanged -= ZoomRoomOnUsbCamerasChanged;
 		}
 
 		/// <summary>
@@ -407,6 +527,11 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 		{
 			UpdateDialOutEnable();
 		}
+
+        private void ZoomRoomOnUsbCamerasChanged(object sender, EventArgs e)
+        {
+            UpdateUsbCameras();
+        }
 
 		#endregion
 	}
