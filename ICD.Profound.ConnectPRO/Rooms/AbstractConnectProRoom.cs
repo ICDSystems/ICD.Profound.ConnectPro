@@ -354,7 +354,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		public bool ConferenceActionsAvailable(eInCall minimumCallType)
 		{
 			// Are we in a conference and the source is NOT using the Hide override?
-			if (ConferenceManager != null && ConferenceManager.IsInCall >= minimumCallType)
+			if (ConferenceManager != null && ConferenceManager.Dialers.IsInCall >= minimumCallType)
 				return GetActiveConferenceSourceOverride() != eConferenceOverride.Hide;
 
 			// Is a source routed with the Show override?
@@ -388,12 +388,13 @@ namespace ICD.Profound.ConnectPRO.Rooms
 				return eConferenceOverride.None;
 
 			return
-				ConferenceManager.GetDialingProviders()
-								 .Where(p => p.GetActiveConference() != null)
-								 .SelectMany(p => Routing.Sources.GetSources(p))
-								 .OfType<ConnectProSource>()
-								 .Select(s => s.ConferenceOverride)
-								 .MaxOrDefault();
+				ConferenceManager.Dialers
+				                 .GetDialingProviders()
+				                 .Where(p => p.GetActiveConference() != null)
+				                 .SelectMany(p => Routing.Sources.GetSources(p))
+				                 .OfType<ConnectProSource>()
+				                 .Select(s => s.ConferenceOverride)
+				                 .MaxOrDefault();
 		}
 
 		#endregion
@@ -472,7 +473,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			IEnumerable<IConferenceDeviceControl> dialers =
 				ConferenceManager == null
 					? Enumerable.Empty<IConferenceDeviceControl>()
-					: ConferenceManager.GetDialingProviders();
+					: ConferenceManager.Dialers.GetDialingProviders();
 
 			// Build map of dialer to best number
 			IDialContext dialContext;
@@ -551,8 +552,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		{
 			List<IConference> activeConferences = 
 				ConferenceManager == null 
-					? new List<IConference>() 
-					: ConferenceManager.OnlineConferences.ToList();
+					? new List<IConference>()
+					: ConferenceManager.Dialers.OnlineConferences.ToList();
 
 			foreach (IConference activeConference in activeConferences)
 				EndConference(activeConference);
@@ -592,7 +593,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			bool inCall = ConferenceActionsAvailable(eInCall.Audio);
 
 			if (!inCall)
-				ConferenceManager.EnablePrivacyMute(false);
+				ConferenceManager.PrivacyMuted = false;
 		}
 
 		/// <summary>
@@ -620,7 +621,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 				return true;
 
 			// If there is an active conference the room is being used.
-			if (ConferenceManager != null && ConferenceManager.IsInCall != eInCall.None)
+			if (ConferenceManager != null && ConferenceManager.Dialers.IsInCall != eInCall.None)
 				return true;
 
 			// If at least one video destination has a routed source the room is being used.
@@ -697,7 +698,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			if (conferenceManager == null)
 				return;
 
-			conferenceManager.OnInCallChanged += ConferenceManagerOnInCallChanged;
+			conferenceManager.Dialers.OnInCallChanged += ConferenceManagerOnInCallChanged;
 		}
 
 		/// <summary>
@@ -709,7 +710,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			if (conferenceManager == null)
 				return;
 
-			conferenceManager.OnInCallChanged -= ConferenceManagerOnInCallChanged;
+			conferenceManager.Dialers.OnInCallChanged -= ConferenceManagerOnInCallChanged;
 		}
 
 		/// <summary>

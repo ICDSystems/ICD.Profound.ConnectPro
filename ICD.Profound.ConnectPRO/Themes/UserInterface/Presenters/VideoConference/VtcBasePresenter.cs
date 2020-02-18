@@ -311,7 +311,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			// If we are in a call we want to confirm before closing
 			IConferenceManager manager = Room == null ? null : Room.ConferenceManager;
-			bool isInCall = manager != null && manager.IsInCall >= eInCall.Audio;
+			bool isInCall = manager != null && manager.Dialers.IsInCall >= eInCall.Audio;
 			
 			if (isInCall)
 				Navigation.NavigateTo<IConfirmLeaveCallPresenter>();

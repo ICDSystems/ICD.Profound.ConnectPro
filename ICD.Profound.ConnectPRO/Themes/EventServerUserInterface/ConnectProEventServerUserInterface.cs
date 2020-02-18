@@ -332,7 +332,7 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 
 		private void UpdateIsInCall()
 		{
-			IsInCall = m_SubscribedConferenceManager != null && m_SubscribedConferenceManager.IsInCall != eInCall.None;
+			IsInCall = m_SubscribedConferenceManager != null && m_SubscribedConferenceManager.Dialers.IsInCall != eInCall.None;
 		}
 
 		#endregion
@@ -361,11 +361,11 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 			if (m_SubscribedConferenceManager != null)
 			{
 				// IsInCall
-				m_SubscribedConferenceManager.OnInCallChanged += ConferenceManagerOnInCallChanged;
+				m_SubscribedConferenceManager.Dialers.OnInCallChanged += ConferenceManagerOnInCallChanged;
 
 				// Incoming Call
-				m_SubscribedConferenceManager.OnIncomingCallAdded += ConferenceManagerOnIncomingCallAdded;
-				m_SubscribedConferenceManager.OnIncomingCallRemoved += ConferenceManagerOnIncomingCallRemoved;
+				m_SubscribedConferenceManager.Dialers.OnIncomingCallAdded += ConferenceManagerOnIncomingCallAdded;
+				m_SubscribedConferenceManager.Dialers.OnIncomingCallRemoved += ConferenceManagerOnIncomingCallRemoved;
 
 				// Privacy Mute
 				m_SubscribedConferenceManager.OnPrivacyMuteStatusChange += ConferenceManagerOnPrivacyMuteStatusChange;
@@ -393,14 +393,14 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 			if (m_SubscribedConferenceManager != null)
 			{
 				// IsInCall
-				m_SubscribedConferenceManager.OnInCallChanged -= ConferenceManagerOnInCallChanged;
+				m_SubscribedConferenceManager.Dialers.OnInCallChanged -= ConferenceManagerOnInCallChanged;
 
 				// Privacy Mute
 				m_SubscribedConferenceManager.OnPrivacyMuteStatusChange -= ConferenceManagerOnPrivacyMuteStatusChange;
 
 				// Incoming Call
-				m_SubscribedConferenceManager.OnIncomingCallAdded -= ConferenceManagerOnIncomingCallAdded;
-				m_SubscribedConferenceManager.OnIncomingCallRemoved -= ConferenceManagerOnIncomingCallRemoved;
+				m_SubscribedConferenceManager.Dialers.OnIncomingCallAdded -= ConferenceManagerOnIncomingCallAdded;
+				m_SubscribedConferenceManager.Dialers.OnIncomingCallRemoved -= ConferenceManagerOnIncomingCallRemoved;
 			}
 			m_SubscribedConferenceManager = null;
 		}

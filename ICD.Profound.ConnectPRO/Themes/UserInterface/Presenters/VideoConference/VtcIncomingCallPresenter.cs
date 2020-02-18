@@ -8,7 +8,6 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.IncomingCalls;
-using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -165,8 +164,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (room.ConferenceManager == null)
 				return;
 
-			room.ConferenceManager.OnIncomingCallAdded += ConferenceManagerOnIncomingCallAdded;
-			room.ConferenceManager.OnIncomingCallRemoved += ConferenceManagerOnIncomingCallRemoved;
+			room.ConferenceManager.Dialers.OnIncomingCallAdded += ConferenceManagerOnIncomingCallAdded;
+			room.ConferenceManager.Dialers.OnIncomingCallRemoved += ConferenceManagerOnIncomingCallRemoved;
 		}
 
 		/// <summary>
@@ -186,8 +185,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (room.ConferenceManager == null)
 				return;
 
-			room.ConferenceManager.OnIncomingCallAdded -= ConferenceManagerOnIncomingCallAdded;
-			room.ConferenceManager.OnIncomingCallRemoved -= ConferenceManagerOnIncomingCallRemoved;
+			room.ConferenceManager.Dialers.OnIncomingCallAdded -= ConferenceManagerOnIncomingCallAdded;
+			room.ConferenceManager.Dialers.OnIncomingCallRemoved -= ConferenceManagerOnIncomingCallRemoved;
 		}
 
 		/// <summary>

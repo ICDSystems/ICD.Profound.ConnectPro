@@ -316,7 +316,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				                Label = eventArgs.Data ? "Mute" : "Unmute",
 				                Enabled = true,
 				                Visible = true,
-				                PressCallback = p => Room.ConferenceManager.EnablePrivacyMute(eventArgs.Data),
+				                PressCallback = p => Room.ConferenceManager.PrivacyMuted = eventArgs.Data,
 			                },
 			                GenericAlertPresenterButton.Dismiss);
 		}
@@ -423,7 +423,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			// If we are in a call we want to confirm before closing
 			IConferenceManager manager = Room == null ? null : Room.ConferenceManager;
-			bool isInCall = manager != null && manager.IsInCall >= eInCall.Audio;
+			bool isInCall = manager != null && manager.Dialers.IsInCall >= eInCall.Audio;
 
 			if (isInCall)
 				Navigation.NavigateTo<IConfirmLeaveCallPresenter>();
