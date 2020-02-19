@@ -292,12 +292,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 
 		private void ViewOnCameraMoveLeftButtonPressed(object sender, EventArgs eventArgs)
 		{
-			Pan(eCameraPanAction.Left);
+			// Invert left/right
+			Pan(eCameraPanAction.Right);
 		}
 
 		private void ViewOnCameraMoveRightButtonPressed(object sender, EventArgs eventArgs)
 		{
-			Pan(eCameraPanAction.Right);
+			// Invert left/right
+			Pan(eCameraPanAction.Left);
 		}
 
 		private void ViewOnCameraMoveUpButtonPressed(object sender, EventArgs eventArgs)

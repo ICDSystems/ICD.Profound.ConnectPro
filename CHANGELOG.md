@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Recent calls lists include unanswered incoming calls
  - When the room goes to sleep routing resets will not power on any displays that are already off.
  - Zoom camera layout buttons will enable/disable based on availability
+ - Inverted camera pan buttons
 
 ## [11.1.2] - 2020-02-06
 ### Changed
