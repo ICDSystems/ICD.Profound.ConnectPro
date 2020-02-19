@@ -115,7 +115,13 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			if (IsInCall && IsViewVisible)
 				Navigation.NavigateTo<IActiveConferencePresenter>();
 			else if (!IsInCall && IsViewVisible)
+			{
+				// hide record if leaving call
+				Navigation.LazyLoadPresenter<IRecordConferencePresenter>().ShowView(false);
+
 				Navigation.NavigateTo<IStartConferencePresenter>();
+			}
+				
 		}
 
 		private void InitHeaderButtons()
