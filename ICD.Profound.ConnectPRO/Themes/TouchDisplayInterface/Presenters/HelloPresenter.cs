@@ -26,6 +26,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 		private readonly ISchedulePresenter m_SchedulePresenter;
 
 		private ICalendarControl m_CalendarControl;
+		private bool m_BookingSelected;
 
 		public HelloPresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
@@ -34,9 +35,15 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 			m_ConferencePresenter.OnViewVisibilityChanged += ConferencePresenterOnViewVisibilityChanged;
 			m_SchedulePresenter = Navigation.LazyLoadPresenter<ISchedulePresenter>();
 			m_SchedulePresenter.OnRefreshed += SchedulePresenterOnRefreshed;
+			m_SchedulePresenter.OnSelectedBookingChanged += SchedulePresenterOnSelectedBookingChanged;
 			Navigation.LazyLoadPresenter<IDeviceDrawerPresenter>().OnViewVisibilityChanged +=
 				ConferencePresenterOnViewVisibilityChanged;
 			Navigation.LazyLoadPresenter<IBackgroundPresenter>().OnViewPreVisibilityChanged += BackgroundOnViewPreVisibilityChanged;
+		}
+
+		private void SchedulePresenterOnSelectedBookingChanged(object sender, BookingEventArgs e)
+		{
+			m_BookingSelected = e.Data != null;
 		}
 
 		private void BackgroundOnViewPreVisibilityChanged(object sender, BoolEventArgs e)
@@ -76,11 +83,13 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters
 				if (Room == null || Room.Routing.State.GetSourceRoutedStates().Any(s => s.Value != eSourceState.Inactive))
 					view.SetLabelText(string.Empty);
 				else if (m_ConferencePresenter.IsViewVisible)
-					view.SetLabelText("Your conference is about to begin.");
+					view.SetLabelText("Please use the controls above.");
 				else if (Room.IsInMeeting)
-					view.SetLabelText("Select a source from the Device Drawer to begin.");
-				else if (nextBooking == null || nextBooking.StartTime - TimeSpan.FromMinutes(15) > now || Room.IsInMeeting)
-					view.SetLabelText("Welcome to your meeting.");
+					view.SetLabelText("Please choose from the device list above.");
+				else if (m_BookingSelected)
+					view.SetLabelText("Are you here for this meeting?");
+				else if (nextBooking == null || nextBooking.StartTime - TimeSpan.FromMinutes(15) > now)
+					view.SetLabelText("Hello.");
 				else
 					view.SetLabelText("Are you here for your meeting? Let's get started.");
 			}
