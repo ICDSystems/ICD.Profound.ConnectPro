@@ -53,7 +53,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings
 		/// <summary>
 		/// Sets the text for the title label.
 		/// </summary>
-		/// <param name="title"></param>
+		/// <param name="parent"></param>
+		/// <param name="leaf"></param>
 		void SetTitle(string parent, string leaf);
 	}
 }
