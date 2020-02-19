@@ -16,6 +16,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 		private VtProSimpleLabel m_RoomName;
 		private VtProSimpleLabel m_TimeLabel;
         private VtProAdvancedButton m_CenterButton;
+        private VtProButton m_CollapseButton;
         private VtProSubpageReferenceList m_LeftButtonList;
         private VtProSubpageReferenceList m_RightButtonList;
 
@@ -44,6 +45,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 				AnalogModeJoin = 11
             };
 
+            m_CollapseButton = new VtProButton(panel, m_Subpage)
+            {
+	            DigitalPressJoin = 13
+            };
+
             m_LeftButtonList = new VtProSubpageReferenceList(11, panel as IPanelDevice, m_Subpage)
             {
 				AnalogJoinIncrement = 1,
@@ -67,6 +73,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 			yield return m_RoomName;
 			yield return m_TimeLabel;
             yield return m_CenterButton;
+            yield return m_CollapseButton;
             yield return m_LeftButtonList;
             yield return m_RightButtonList;
 		}

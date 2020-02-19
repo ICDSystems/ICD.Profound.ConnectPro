@@ -122,7 +122,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Backgr
 			room.OnIsInMeetingChanged += RoomOnOnIsInMeetingChanged;
 			room.Routing.State.OnSourceRoutedChanged += RoomRoutingStateOnSourceRoutedChanged;
 
-			VibeBoard vibeBoard = Room.Originators.GetInstanceRecursive<VibeBoard>();
+			VibeBoard vibeBoard = room.Originators.GetInstanceRecursive<VibeBoard>();
 			m_SubscribedAppControl = vibeBoard == null ? null : vibeBoard.Controls.GetControl<VibeBoardAppControl>();
 			if (m_SubscribedAppControl != null)
 				m_SubscribedAppControl.OnAppLaunched += SubscribedAppControlOnOnAppLaunched;

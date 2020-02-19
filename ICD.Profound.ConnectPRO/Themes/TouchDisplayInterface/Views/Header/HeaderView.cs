@@ -12,6 +12,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 	public sealed partial class HeaderView : AbstractTouchDisplayView, IHeaderView
 	{
 		public event EventHandler OnCenterButtonPressed;
+		public event EventHandler OnCollapseButtonPressed;
 
 		private readonly List<IReferencedHeaderButtonView> m_LeftButtonViewList;
 		private readonly List<IReferencedHeaderButtonView> m_RightButtonViewList;
@@ -53,6 +54,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 			m_CenterButton.SetLabelText(text);
 		}
 
+		public void SetCollapsed(bool collapsed)
+		{
+			m_CollapseButton.SetSelected(collapsed);
+		}
+
 		public IEnumerable<IReferencedHeaderButtonView> GetLeftButtonViews(ITouchDisplayViewFactory factory, ushort count)
 		{
 			return GetChildViews(factory, m_LeftButtonList, m_LeftButtonViewList, count);
@@ -70,6 +76,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 			base.SubscribeControls();
 
 			m_CenterButton.OnPressed += StartEndMeetingButtonOnPressed;
+			m_CollapseButton.OnPressed += CollapseButtonOnOnPressed;
 		}
 
 		protected override void UnsubscribeControls()
@@ -77,11 +84,17 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.Header
 			base.UnsubscribeControls();
 
 			m_CenterButton.OnPressed -= StartEndMeetingButtonOnPressed;
+			m_CollapseButton.OnPressed -= CollapseButtonOnOnPressed;
 		}
 
 		private void StartEndMeetingButtonOnPressed(object sender, EventArgs e)
 		{
 			OnCenterButtonPressed.Raise(this);
+		}
+
+		private void CollapseButtonOnOnPressed(object sender, EventArgs e)
+		{
+			OnCollapseButtonPressed.Raise(this);
 		}
 
 		#endregion

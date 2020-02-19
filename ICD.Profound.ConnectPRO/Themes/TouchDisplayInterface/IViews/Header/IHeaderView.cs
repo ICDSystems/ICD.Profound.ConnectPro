@@ -6,6 +6,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Header
 	public interface IHeaderView : ITouchDisplayView
 	{
 		event EventHandler OnCenterButtonPressed;
+		event EventHandler OnCollapseButtonPressed;
 
 		void SetRoomName(string name);
 
@@ -18,6 +19,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.Header
 		void SetCenterButtonEnabled(bool enabled);
 
 		void SetCenterButtonText(string text);
+
+		void SetCollapsed(bool collapsed);
 
 		IEnumerable<IReferencedHeaderButtonView> GetLeftButtonViews(ITouchDisplayViewFactory factory, ushort count);
 		IEnumerable<IReferencedHeaderButtonView> GetRightButtonViews(ITouchDisplayViewFactory factory, ushort count);

@@ -2,6 +2,8 @@
 {
 	public interface IHeaderPresenter : ITouchDisplayPresenter
 	{
+		bool Collapsed { get; }
+
 		void AddLeftButton(HeaderButtonModel button);
 		void RemoveLeftButton(HeaderButtonModel button);
 		bool ContainsLeftButton(HeaderButtonModel button);

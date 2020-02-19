@@ -4,16 +4,18 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Timers;
-using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Devices;
+using ICD.Connect.Misc.Vibe.Devices.VibeBoard;
+using ICD.Connect.Misc.Vibe.Devices.VibeBoard.Controls;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.Shared.Models;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Background;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.DeviceDrawer;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Header;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Notifications;
@@ -39,10 +41,28 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 		private readonly HeaderButtonModel m_SettingsButton;
 		private readonly HeaderButtonModel m_EndMeetingButton;
 
-		private IDeviceDrawerPresenter m_DeviceDrawerPresenter;
-		private ISchedulePresenter m_SchedulePresenter;
+		private readonly IDeviceDrawerPresenter m_DeviceDrawerPresenter;
+		private readonly ISchedulePresenter m_SchedulePresenter;
+		private readonly IBackgroundPresenter m_BackgroundPresenter;
+
+		private VibeBoardAppControl m_SubscribedAppControl;
+
 		private bool m_BookingSelected;
-		
+		private bool m_Collapsed;
+
+		public bool Collapsed
+		{
+			get { return m_Collapsed; }
+			private set
+			{
+				if (m_Collapsed == value)
+					return;
+
+				m_Collapsed = value;
+				Refresh();
+			}
+		}
+
 		/// <summary>
 		///     Constructor.
 		/// </summary>
@@ -82,6 +102,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 
 			m_SchedulePresenter = Navigation.LazyLoadPresenter<ISchedulePresenter>();
 			Subscribe(m_SchedulePresenter);
+
+			m_BackgroundPresenter = Navigation.LazyLoadPresenter<IBackgroundPresenter>();
+			Subscribe(m_BackgroundPresenter);
 			
 			theme.DateFormatting.OnFormatChanged += DateFormattingOnFormatChanged;
 		}
@@ -95,9 +118,78 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 
 			Unsubscribe(m_DeviceDrawerPresenter);
 			Unsubscribe(m_SchedulePresenter);
+			Unsubscribe(m_BackgroundPresenter);
 
 			base.Dispose();
 		}
+
+		/// <summary>
+		///     Updates the view.
+		/// </summary>
+		/// <param name="view"></param>
+		protected override void Refresh(IHeaderView view)
+		{
+			base.Refresh(view);
+
+			m_RefreshSection.Enter();
+
+			try
+			{
+				var roomName = Room == null ? string.Empty : Room.Name;
+				view.SetRoomName(roomName);
+				
+				view.SetCenterButtonMode(Room != null && Room.IsInMeeting ? eCenterButtonMode.DeviceDrawer : eCenterButtonMode.InstantMeeting);
+				view.SetCenterButtonSelected(Navigation.LazyLoadPresenter<IDeviceDrawerPresenter>().IsViewVisible);
+				view.SetCenterButtonEnabled(!m_BookingSelected);
+				string text = Room != null && Room.IsInMeeting
+					? "Device Drawer"
+					: "Instant Meeting";
+				view.SetCenterButtonText(text);
+
+				RefreshTime();
+
+				view.SetCollapsed(Collapsed);
+
+				foreach (IReferencedHeaderButtonPresenter button in m_LeftButtonsFactory.BuildChildren(m_LeftButtons.Keys))
+				{
+					button.ShowView(true);
+					button.Refresh();
+				}
+				foreach (IReferencedHeaderButtonPresenter button in m_RightButtonsFactory.BuildChildren(m_RightButtons.Keys))
+				{
+					button.ShowView(true);
+					button.Refresh();
+				}
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+		}
+
+		/// <summary>
+		///     Updates the time label on the header.
+		/// </summary>
+		private void RefreshTime()
+		{
+			var view = GetView();
+			if (view == null)
+				return;
+
+			if (!m_RefreshSection.TryEnter())
+				return;
+
+			try
+			{
+				view.SetTimeLabel(Theme.DateFormatting.ShortTime);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+		}
+
+		#region Button Methods
 
 		public bool ContainsLeftButton(HeaderButtonModel button)
 		{
@@ -141,70 +233,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 			m_RightButtons.Remove(button);
 		}
 
-		/// <summary>
-		///     Updates the view.
-		/// </summary>
-		/// <param name="view"></param>
-		protected override void Refresh(IHeaderView view)
-		{
-			base.Refresh(view);
-
-			m_RefreshSection.Enter();
-
-			try
-			{
-				var roomName = Room == null ? string.Empty : Room.Name;
-				view.SetRoomName(roomName);
-				
-				view.SetCenterButtonMode(Room != null && Room.IsInMeeting ? eCenterButtonMode.DeviceDrawer : eCenterButtonMode.InstantMeeting);
-				view.SetCenterButtonSelected(Navigation.LazyLoadPresenter<IDeviceDrawerPresenter>().IsViewVisible);
-				view.SetCenterButtonEnabled(!m_BookingSelected);
-				string text = Room != null && Room.IsInMeeting
-					? "Device Drawer"
-					: "Instant Meeting";
-				view.SetCenterButtonText(text);
-
-				RefreshTime();
-
-				foreach (IReferencedHeaderButtonPresenter button in m_LeftButtonsFactory.BuildChildren(m_LeftButtons.Keys))
-				{
-					button.ShowView(true);
-					button.Refresh();
-				}
-				foreach (IReferencedHeaderButtonPresenter button in m_RightButtonsFactory.BuildChildren(m_RightButtons.Keys))
-				{
-					button.ShowView(true);
-					button.Refresh();
-				}
-			}
-			finally
-			{
-				m_RefreshSection.Leave();
-			}
-		}
-
-		/// <summary>
-		///     Updates the time label on the header.
-		/// </summary>
-		private void RefreshTime()
-		{
-			var view = GetView();
-			if (view == null)
-				return;
-
-			if (!m_RefreshSection.TryEnter())
-				return;
-
-			try
-			{
-				view.SetTimeLabel(Theme.DateFormatting.ShortTime);
-			}
-			finally
-			{
-				m_RefreshSection.Leave();
-			}
-		}
-
 		private IEnumerable<IReferencedHeaderButtonView> LeftButtonsViewFactory(ushort count)
 		{
 			return GetView().GetLeftButtonViews(ViewFactory as ITouchDisplayViewFactory, count);
@@ -214,6 +242,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 		{
 			return GetView().GetRightButtonViews(ViewFactory as ITouchDisplayViewFactory, count);
 		}
+
+		#endregion
 
 		#region Room Callbacks
 
@@ -226,6 +256,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
 			UpdateButtons();
+
+			VibeBoard vibeBoard = room.Originators.GetInstanceRecursive<VibeBoard>();
+			m_SubscribedAppControl = vibeBoard == null ? null : vibeBoard.Controls.GetControl<VibeBoardAppControl>();
+			if (m_SubscribedAppControl != null)
+				m_SubscribedAppControl.OnAppLaunched += SubscribedAppControlOnOnAppLaunched;
 		}
 
 		protected override void Unsubscribe(IConnectProRoom room)
@@ -236,6 +271,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 				return;
 
 			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
+
+			if (m_SubscribedAppControl != null)
+				m_SubscribedAppControl.OnAppLaunched -= SubscribedAppControlOnOnAppLaunched;
+			m_SubscribedAppControl = null;
 		}
 
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs e)
@@ -252,6 +291,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 				AddLeftButton(Room.IsInMeeting ? m_EndMeetingButton : m_SettingsButton);
 
 			Refresh();
+		}
+
+		private void SubscribedAppControlOnOnAppLaunched(object sender, EventArgs e)
+		{
+			Collapsed = true;
 		}
 
 		#endregion
@@ -272,6 +316,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 			base.Subscribe(view);
 
 			view.OnCenterButtonPressed += ViewOnStartEndMeetingPressed;
+			view.OnCollapseButtonPressed += ViewOnCollapseButtonPressed;
 		}
 
 		protected override void Unsubscribe(IHeaderView view)
@@ -279,6 +324,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 			base.Unsubscribe(view);
 
 			view.OnCenterButtonPressed -= ViewOnStartEndMeetingPressed;
+			view.OnCollapseButtonPressed -= ViewOnCollapseButtonPressed;
 		}
 
 		private void ViewOnStartEndMeetingPressed(object sender, EventArgs e)
@@ -310,6 +356,11 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 
 			Navigation.LazyLoadPresenter<IConfirmEndMeetingPresenter>().ShowView(false);
 			Navigation.NavigateTo<IDeviceDrawerPresenter>();
+		}
+		
+		private void ViewOnCollapseButtonPressed(object sender, EventArgs e)
+		{
+			Collapsed = !Collapsed;
 		}
 
 		#endregion
@@ -372,11 +423,17 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 
 		private void Subscribe(ISchedulePresenter schedule)
 		{
+			if (schedule == null)
+				return;
+
 			schedule.OnSelectedBookingChanged += ScheduleOnSelectedBookingChanged;
 		}
 
 		private void Unsubscribe(ISchedulePresenter schedule)
 		{
+			if (schedule == null)
+				return;
+
 			schedule.OnSelectedBookingChanged -= ScheduleOnSelectedBookingChanged;
 		}
 
@@ -387,6 +444,32 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 			else
 				m_BookingSelected = true;
 			Refresh();
+		}
+
+		#endregion
+
+		#region Background Callbacks
+
+		private void Subscribe(IBackgroundPresenter background)
+		{
+			if (background == null)
+				return;
+
+			background.OnViewVisibilityChanged += BackgroundOnOnViewVisibilityChanged;
+		}
+
+		private void Unsubscribe(IBackgroundPresenter background)
+		{
+			if (background == null)
+				return;
+
+			background.OnViewVisibilityChanged -= BackgroundOnOnViewVisibilityChanged;
+		}
+
+		private void BackgroundOnOnViewVisibilityChanged(object sender, BoolEventArgs e)
+		{
+			if (e.Data)
+				Collapsed = false;
 		}
 
 		#endregion
