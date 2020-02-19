@@ -27,14 +27,14 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 
 		public event EventHandler<SourceEventArgs> OnSourcePressed;
 
-		private static readonly List<eVibeApps> s_Apps = new List<eVibeApps>()
+		private static readonly List<eVibeApp> s_Apps = new List<eVibeApp>()
 		{
-			eVibeApps.Chrome,
-			eVibeApps.Youtube,
-			eVibeApps.Slack,
-			eVibeApps.Whiteboard,
-			eVibeApps.Teams,
-			eVibeApps.WebEx
+			eVibeApp.Chrome,
+			eVibeApp.Youtube,
+			eVibeApp.Slack,
+			eVibeApp.Whiteboard,
+			eVibeApp.Teams,
+			eVibeApp.WebEx
 		};
 
 		private readonly ReferencedSourcePresenterFactory m_SourceFactory;
