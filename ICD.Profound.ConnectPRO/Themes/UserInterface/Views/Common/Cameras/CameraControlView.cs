@@ -14,6 +14,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 	[ViewBinding(typeof(ICameraControlView))]
 	public sealed partial class CameraControlView : AbstractUiView, ICameraControlView
 	{
+		public event EventHandler OnCameraHomeButtonPressed;
 		public event EventHandler OnCameraMoveUpButtonPressed;
 		public event EventHandler OnCameraMoveLeftButtonPressed;
 		public event EventHandler OnCameraMoveRightButtonPressed;
@@ -70,6 +71,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 		/// </summary>
 		public override void Dispose()
 		{
+			OnCameraHomeButtonPressed = null;
 			OnCameraMoveUpButtonPressed = null;
 			OnCameraMoveLeftButtonPressed = null;
 			OnCameraMoveRightButtonPressed = null;
@@ -215,6 +217,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 					OnCameraMoveRightButtonPressed.Raise(this);
 					break;
 				case DPadEventArgs.eDirection.Center:
+					OnCameraHomeButtonPressed.Raise(this);
 					break;
 
 				default:
@@ -224,13 +227,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 
 		private void PresetButtonOnReleased(object sender, EventArgs eventArgs)
 		{
-			ushort index = m_PresetButtons.GetKey(sender as VtProButton);
+			VtProButton button = sender as VtProButton;
+			if (button == null)
+				return;
+
+			ushort index = m_PresetButtons.GetKey(button);
 			OnPresetButtonReleased.Raise(this, new UShortEventArgs(index));
 		}
 
 		private void PresetButtonOnHeld(object sender, EventArgs eventArgs)
 		{
-			ushort index = m_PresetButtons.GetKey(sender as VtProButton);
+			VtProButton button = sender as VtProButton;
+			if (button == null)
+				return;
+
+			ushort index = m_PresetButtons.GetKey(button);
 			OnPresetButtonHeld.Raise(this, new UShortEventArgs(index));
 		}
 

@@ -9,6 +9,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Cameras
 		#region Events
 
 		/// <summary>
+		/// Raised when the center D-Pad button is pressed.
+		/// </summary>
+		event EventHandler OnCameraHomeButtonPressed;
+
+		/// <summary>
 		/// Raised when the up button is pressed.
 		/// </summary>
 		event EventHandler OnCameraMoveUpButtonPressed;

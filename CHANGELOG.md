@@ -31,6 +31,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Zoom camera layout buttons will enable/disable based on availability
  - Inverted camera pan buttons
 
+## [11.2.0] - 2020-02-20
+### Added
+ - The center D-Pad button returns the selected camera to the home position
+ - Cameras will return to their home position when starting a video conference
+
 ## [11.1.2] - 2020-02-06
 ### Changed
  - Fixed a bug where combining 2+ rooms with a total of 1 display between them would break the UI

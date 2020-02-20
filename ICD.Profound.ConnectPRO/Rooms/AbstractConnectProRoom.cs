@@ -14,6 +14,7 @@ using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Calendaring;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.Controls;
+using ICD.Connect.Cameras.Controls;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
@@ -582,6 +583,16 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		}
 
 		/// <summary>
+		/// Returns the cameras in the room to the home position.
+		/// </summary>
+		private void ReturnCamerasToHome()
+		{
+			this.GetControlsRecursive<ICameraDeviceControl>()
+				.Where(c => c.SupportedCameraFeatures.HasFlag(eCameraFeatures.Home))
+				.ForEach(c => c.SendCameraHome());
+		}
+
+		/// <summary>
 		/// Returns true if a source is actively routed to a display or we are in a conference.
 		/// </summary>
 		/// <returns></returns>
@@ -697,6 +708,10 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		{
 			UpdateMeetingTimeoutTimer();
 			UpdatePrivacyMute();
+
+			// Return cameras to home position when entering a video call
+			if (eventArgs.Data.HasFlag(eInCall.Video))
+				ReturnCamerasToHome();
 		}
 
 		#endregion
