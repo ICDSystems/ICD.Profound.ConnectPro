@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+ - The center D-Pad button returns the camera to the home position (where supported)
+
 ## [11.1.2] - 2020-02-06
 ### Changed
  - Fixed a bug where combining 2+ rooms with a total of 1 display between them would break the UI

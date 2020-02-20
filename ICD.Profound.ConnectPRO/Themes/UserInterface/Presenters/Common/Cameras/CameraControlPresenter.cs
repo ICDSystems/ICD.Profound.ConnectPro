@@ -189,6 +189,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 				m_SelectedCamera.Tilt(action);
 		}
 
+		private void Home()
+		{
+			if (m_SelectedCamera != null && m_SelectedCamera.SupportedCameraFeatures.HasFlag(eCameraFeatures.Home))
+				m_SelectedCamera.SendCameraHome();
+		}
+
 		#endregion
 
 		#region Camera Callbacks
@@ -244,6 +250,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			view.OnCameraMoveLeftButtonPressed += ViewOnCameraMoveLeftButtonPressed;
 			view.OnCameraMoveRightButtonPressed += ViewOnCameraMoveRightButtonPressed;
 			view.OnCameraMoveUpButtonPressed += ViewOnCameraMoveUpButtonPressed;
+			view.OnCameraHomeButtonPressed += ViewOnCameraHomeButtonPressed;
 			view.OnCameraZoomInButtonPressed += ViewOnCameraZoomInButtonPressed;
 			view.OnCameraZoomOutButtonPressed += ViewOnCameraZoomOutButtonPressed;
 			view.OnPresetButtonReleased += ViewOnPresetButtonReleased;
@@ -264,6 +271,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			view.OnCameraMoveLeftButtonPressed -= ViewOnCameraMoveLeftButtonPressed;
 			view.OnCameraMoveRightButtonPressed -= ViewOnCameraMoveRightButtonPressed;
 			view.OnCameraMoveUpButtonPressed -= ViewOnCameraMoveUpButtonPressed;
+			view.OnCameraHomeButtonPressed -= ViewOnCameraHomeButtonPressed;
 			view.OnCameraZoomInButtonPressed -= ViewOnCameraZoomInButtonPressed;
 			view.OnCameraZoomOutButtonPressed -= ViewOnCameraZoomOutButtonPressed;
 			view.OnPresetButtonReleased -= ViewOnPresetButtonReleased;
@@ -296,6 +304,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 		private void ViewOnCameraMoveUpButtonPressed(object sender, EventArgs eventArgs)
 		{
 			Tilt(eCameraTiltAction.Up);
+		}
+
+		private void ViewOnCameraHomeButtonPressed(object sender, EventArgs eventArgs)
+		{
+			Home();
 		}
 
 		private void ViewOnCameraZoomInButtonPressed(object sender, EventArgs eventArgs)

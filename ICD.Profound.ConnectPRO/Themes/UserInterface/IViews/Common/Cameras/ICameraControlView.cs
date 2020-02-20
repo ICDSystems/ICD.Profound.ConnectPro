@@ -9,6 +9,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Cameras
 		#region Events
 
 		/// <summary>
+		/// Raised when the center D-Pad button is pressed.
+		/// </summary>
+		event EventHandler OnCameraHomeButtonPressed;
+
+		/// <summary>
 		/// Raised when the up button is pressed.
 		/// </summary>
 		event EventHandler OnCameraMoveUpButtonPressed;
@@ -60,6 +65,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Cameras
 
 		#endregion
 
+		#region Methods
+
 		/// <summary>
 		/// Sets the label for the preset button at the given index.
 		/// </summary>
@@ -85,5 +92,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Cameras
 		/// <param name="index"></param>
 		/// <param name="selected"></param>
 		void SetCameraSelected(ushort index, bool selected);
+
+		#endregion
 	}
 }
