@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [11.2.0] - 2020-02-20
 ### Added
  - The center D-Pad button returns the selected camera to the home position
  - Cameras will return to their home position when starting a video conference
