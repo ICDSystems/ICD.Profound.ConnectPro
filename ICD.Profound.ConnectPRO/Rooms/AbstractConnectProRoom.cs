@@ -589,7 +589,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		{
 			this.GetControlsRecursive<ICameraDeviceControl>()
 				.Where(c => c.SupportedCameraFeatures.HasFlag(eCameraFeatures.Home))
-				.ForEach(c => c.SendCameraHome());
+				.ForEach(c => c.ActivateHome());
 		}
 
 		/// <summary>

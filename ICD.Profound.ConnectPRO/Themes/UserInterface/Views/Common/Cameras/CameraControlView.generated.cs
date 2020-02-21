@@ -44,7 +44,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 
 			m_DPad = new VtProDPad(620, panel as IPanelDevice, m_Subpage)
 			{
-				DigitalEnableJoin = 625
+				DigitalEnableJoin = 625,
+				HoldDuration = PRESET_HOLD_MILLISECONDS
 			};
 
 			m_ZoomInButton = new VtProButton(panel, m_Subpage)

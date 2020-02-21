@@ -14,7 +14,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 	[ViewBinding(typeof(ICameraControlView))]
 	public sealed partial class CameraControlView : AbstractUiView, ICameraControlView
 	{
-		public event EventHandler OnCameraHomeButtonPressed;
+		public event EventHandler OnCameraHomeButtonReleased;
+		public event EventHandler OnCameraHomeButtonHeld;
 		public event EventHandler OnCameraMoveUpButtonPressed;
 		public event EventHandler OnCameraMoveLeftButtonPressed;
 		public event EventHandler OnCameraMoveRightButtonPressed;
@@ -71,7 +72,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 		/// </summary>
 		public override void Dispose()
 		{
-			OnCameraHomeButtonPressed = null;
+			OnCameraHomeButtonReleased = null;
+			OnCameraHomeButtonHeld = null;
 			OnCameraMoveUpButtonPressed = null;
 			OnCameraMoveLeftButtonPressed = null;
 			OnCameraMoveRightButtonPressed = null;
@@ -85,6 +87,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 
 			base.Dispose();
 		}
+
+		#region Methods
 
 		/// <summary>
 		/// Sets the label for the preset button at the given index.
@@ -129,6 +133,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 			m_CameraList.SetItemSelected(index, selected);
 		}
 
+		#endregion
+
 		#region Control Callbacks
 
 		/// <summary>
@@ -140,6 +146,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 
 			m_DPad.OnButtonPressed += DPadOnButtonPressed;
 			m_DPad.OnButtonReleased += DPadOnButtonReleased;
+			m_DPad.OnButtonHeld += DPadOnButtonHeld;
 			m_ZoomInButton.OnPressed += ZoomInButtonOnPressed;
 			m_ZoomInButton.OnReleased += ZoomInButtonOnReleased;
 			m_ZoomOutButton.OnPressed += ZoomOutButtonOnPressed;
@@ -162,6 +169,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 
 			m_DPad.OnButtonPressed -= DPadOnButtonPressed;
 			m_DPad.OnButtonReleased -= DPadOnButtonReleased;
+			m_DPad.OnButtonHeld -= DPadOnButtonHeld;
 			m_ZoomInButton.OnPressed -= ZoomInButtonOnPressed;
 			m_ZoomInButton.OnReleased -= ZoomInButtonOnReleased;
 			m_ZoomOutButton.OnPressed -= ZoomOutButtonOnPressed;
@@ -195,9 +203,31 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 			OnCameraZoomInButtonPressed.Raise(this);
 		}
 
+		private void DPadOnButtonHeld(object sender, DPadEventArgs eventArgs)
+		{
+			switch (eventArgs.Data)
+			{
+				case DPadEventArgs.eDirection.Center:
+					OnCameraHomeButtonHeld.Raise(this);
+					break;
+			}
+		}
+
 		private void DPadOnButtonReleased(object sender, DPadEventArgs eventArgs)
 		{
-			OnCameraPtzButtonReleased.Raise(this);
+			switch (eventArgs.Data)
+			{
+				case DPadEventArgs.eDirection.Up:
+				case DPadEventArgs.eDirection.Down:
+				case DPadEventArgs.eDirection.Left:
+				case DPadEventArgs.eDirection.Right:
+					OnCameraPtzButtonReleased.Raise(this);
+					break;
+
+				case DPadEventArgs.eDirection.Center:
+					OnCameraHomeButtonReleased.Raise(this);
+					break;
+			}
 		}
 
 		private void DPadOnButtonPressed(object sender, DPadEventArgs eventArgs)
@@ -216,12 +246,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 				case DPadEventArgs.eDirection.Right:
 					OnCameraMoveRightButtonPressed.Raise(this);
 					break;
-				case DPadEventArgs.eDirection.Center:
-					OnCameraHomeButtonPressed.Raise(this);
-					break;
-
-				default:
-					throw new ArgumentOutOfRangeException();
 			}
 		}
 
