@@ -15,6 +15,8 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 		public event EventHandler<BoolEventArgs> OnAudioProcessingChanged;
 		public event EventHandler<BoolEventArgs> OnMuteAllParticipantsAtMeetingStartChanged;
 		public event EventHandler<BoolEventArgs> OnMuteMyCameraAtMeetingStartChanged;
+		public event EventHandler<BoolEventArgs> OnEnableRecordingChanged;
+		public event EventHandler<BoolEventArgs> OnEnableDialOutChanged;
 
 		private readonly List<ZoomRoom> m_ZoomRooms; 
 		private readonly List<AudioComponent> m_AudioComponents;
@@ -23,6 +25,9 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 		private bool m_AudioProcessing;
 		private bool m_MuteAllParticipantsAtMeetingStart;
 		private bool m_MuteMyCameraAtMeetingStart;
+		private bool m_EnableRecording;
+		private bool m_EnableDialOut;
+
 
 		#region Properties
 
@@ -93,6 +98,34 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 				OnMuteMyCameraAtMeetingStartChanged.Raise(this, new BoolEventArgs(m_MuteMyCameraAtMeetingStart));
 			}
 
+		}
+
+		public bool EnableRecording
+		{
+			get { return m_EnableRecording; }
+			private set
+			{
+				if (value == m_EnableRecording)
+					return;
+
+				m_EnableRecording = value;
+
+				OnEnableRecordingChanged.Raise(this, new BoolEventArgs(m_EnableRecording));
+			}
+		}
+
+		public bool EnableDialOut
+		{
+			get { return m_EnableDialOut; }
+			private set
+			{
+				if (value == m_EnableDialOut)
+					return;
+
+				m_EnableDialOut = value;
+
+				OnEnableDialOutChanged.Raise(this, new BoolEventArgs(m_EnableDialOut));
+			}
 		}
 
 		/// <summary>
@@ -174,6 +207,18 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 			SetDirty(true);
 		}
 
+		public void SetEnableRecording(bool enableRecording)
+		{
+			m_ZoomRooms.ForEach(z => z.RecordEnabled = enableRecording);
+			SetDirty(true);
+		}
+
+		public void SetEnableDialOut(bool enableDialOut)
+		{
+			m_ZoomRooms.ForEach(z => z.DialOutEnabled = enableDialOut);
+			SetDirty(true);
+		}
+
 		#endregion
 
 		#region Private Methods
@@ -204,6 +249,16 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 		private void UpdateMuteMyCamera()
 		{
 			MuteMyCameraAtMeetingStart = m_ZoomRooms.All(z => z.MuteMyCameraOnStart);
+		}
+
+		private void UpdateRecordEnable()
+		{
+			EnableRecording = m_ZoomRooms.All(z => z.RecordEnabled);
+		}
+
+		private void UpdateDialOutEnable()
+		{
+			EnableDialOut = m_ZoomRooms.All(z => z.DialOutEnabled);
 		}
 
 		#endregion
@@ -300,7 +355,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 
 		#endregion
 
-		#region CallComponent Callbacks
+		#region ZoomRoom Callbacks
 
 		/// <summary>
 		/// Subscribe to the conference control events.
@@ -309,7 +364,9 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 		private void Subscribe(ZoomRoom zoomRoom)
 		{
 			zoomRoom.OnMuteParticipantsOnStartChanged += ZoomRoomOnMuteParticipantOnStartChanged;
-			zoomRoom.OnMuteMyCameraOnStartChanged += CallComponentOnMuteMyCameraOnStartChanged;
+			zoomRoom.OnMuteMyCameraOnStartChanged += ZoomRoomOnMuteMyCameraOnStartChanged;
+			zoomRoom.OnRecordEnabledChanged += ZoomRoomOnRecordEnabledChanged;
+			zoomRoom.OnDialOutEnabledChanged += ZoomRoomOnDialOutEnabledChanged;
 		}
 
 		/// <summary>
@@ -319,7 +376,9 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 		private void Unsubscribe(ZoomRoom zoomRoom)
 		{
 			zoomRoom.OnMuteParticipantsOnStartChanged -= ZoomRoomOnMuteParticipantOnStartChanged;
-			zoomRoom.OnMuteMyCameraOnStartChanged -= CallComponentOnMuteMyCameraOnStartChanged;
+			zoomRoom.OnMuteMyCameraOnStartChanged -= ZoomRoomOnMuteMyCameraOnStartChanged;
+			zoomRoom.OnRecordEnabledChanged -= ZoomRoomOnRecordEnabledChanged;
+			zoomRoom.OnDialOutEnabledChanged -= ZoomRoomOnDialOutEnabledChanged;
 		}
 
 		/// <summary>
@@ -332,9 +391,19 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 			UpdateMuteAllParticipants();
 		}
 
-		private void CallComponentOnMuteMyCameraOnStartChanged(object sender, BoolEventArgs boolEventArgs)
+		private void ZoomRoomOnMuteMyCameraOnStartChanged(object sender, BoolEventArgs boolEventArgs)
 		{
 			UpdateMuteMyCamera();
+		}
+
+		private void ZoomRoomOnRecordEnabledChanged(object sender, BoolEventArgs boolEventArgs)
+		{
+			UpdateRecordEnable();
+		}
+
+		private void ZoomRoomOnDialOutEnabledChanged(object sender, BoolEventArgs boolEventArgs)
+		{
+			UpdateDialOutEnable();
 		}
 
 		#endregion

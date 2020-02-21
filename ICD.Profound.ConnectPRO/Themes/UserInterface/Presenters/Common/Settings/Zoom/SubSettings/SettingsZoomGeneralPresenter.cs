@@ -40,7 +40,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			try
 			{
 				bool muteAll = Settings != null && Settings.MuteAllParticipantsAtMeetingStart;
+				bool muteMyCamera = Settings != null && Settings.MuteMyCameraAtMeetingStart;
+				bool enableDialOut = Settings != null && Settings.EnableDialOut;
+				bool enableRecording = Settings != null && Settings.EnableRecording;
+
 				view.SetMuteAllButtonSelected(muteAll);
+				view.SetMuteMyCameraButtonSelected(muteMyCamera);
+				view.SetDialOutEnableSelected(enableDialOut);
+				view.SetRecordingEnableSelected(enableRecording);
 			}
 			finally
 			{
@@ -63,6 +70,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			settings.OnMuteAllParticipantsAtMeetingStartChanged += SettingsOnMuteAllParticipantsAtMeetingStartChanged;
 			settings.OnMuteMyCameraAtMeetingStartChanged += SettingsOnMuteMyCameraAtMeetingStartChanged;
+			settings.OnEnableRecordingChanged += SettingsOnEnableRecordingChanged;
+			settings.OnEnableDialOutChanged += SettingsOnEnableDialOutChanged;
 		}
 
 		/// <summary>
@@ -78,6 +87,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			settings.OnMuteAllParticipantsAtMeetingStartChanged -= SettingsOnMuteAllParticipantsAtMeetingStartChanged;
 			settings.OnMuteMyCameraAtMeetingStartChanged -= SettingsOnMuteMyCameraAtMeetingStartChanged;
+			settings.OnEnableRecordingChanged -= SettingsOnEnableRecordingChanged;
+			settings.OnEnableDialOutChanged -= SettingsOnEnableDialOutChanged;
 		}
 
 		private void SettingsOnMuteAllParticipantsAtMeetingStartChanged(object sender, BoolEventArgs boolEventArgs)
@@ -86,6 +97,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		}
 
 		private void SettingsOnMuteMyCameraAtMeetingStartChanged(object sender, BoolEventArgs boolEventArgs)
+		{
+			RefreshIfVisible();
+		}
+
+		private void SettingsOnEnableRecordingChanged(object sender, BoolEventArgs boolEventArgs)
+		{
+			RefreshIfVisible();
+		}
+
+		private void SettingsOnEnableDialOutChanged(object sender, BoolEventArgs boolEventArgs)
 		{
 			RefreshIfVisible();
 		}
@@ -104,6 +125,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			view.OnMuteAllParticipantsButtonPressed += ViewOnMuteAllParticipantsButtonPressed;
 			view.OnMuteMyCameraButtonPressed += ViewOnMuteMyCameraButtonPressed;
+			view.OnEnableRecordButtonPressed += ViewOnEnableRecordButtonPressed;
+			view.OnEnableDialOutButtonPressed += ViewOnEnableDialOutButtonPressed;
 		}
 
 		/// <summary>
@@ -116,6 +139,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			view.OnMuteAllParticipantsButtonPressed -= ViewOnMuteAllParticipantsButtonPressed;
 			view.OnMuteMyCameraButtonPressed -= ViewOnMuteMyCameraButtonPressed;
+			view.OnEnableRecordButtonPressed -= ViewOnEnableRecordButtonPressed;
+			view.OnEnableDialOutButtonPressed -= ViewOnEnableDialOutButtonPressed;
 		}
 
 		/// <summary>
@@ -131,6 +156,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		private void ViewOnMuteMyCameraButtonPressed(object sender, EventArgs eventArgs)
 		{
 			Settings.SetMuteMyCameraAtMeetingStart(!Settings.MuteMyCameraAtMeetingStart);
+		}
+
+		private void ViewOnEnableRecordButtonPressed(object sender, EventArgs eventArgs)
+		{
+			Settings.SetEnableRecording(!Settings.EnableRecording);
+		}
+
+		private void ViewOnEnableDialOutButtonPressed(object sender, EventArgs eventArgs)
+		{
+			Settings.SetEnableDialOut(!Settings.EnableDialOut);
 		}
 
 		#endregion

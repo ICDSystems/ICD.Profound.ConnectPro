@@ -11,6 +11,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoo
 		private VtProSubpage m_Subpage;
 		private VtProButton m_MuteParticipantsButton;
 		private VtProButton m_MuteMyCameraButton;
+		private VtProButton m_EnableRecordButton;
+		private VtProButton m_EnableDialOutButton;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -34,6 +36,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoo
 			{
 				DigitalPressJoin = 413
 			};
+
+			m_EnableRecordButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 414
+			};
+
+			m_EnableDialOutButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 415
+			};
 		}
 
 		/// <summary>
@@ -45,6 +57,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoo
 			yield return m_Subpage;
 			yield return m_MuteParticipantsButton;
 			yield return m_MuteMyCameraButton;
+			yield return m_EnableRecordButton;
+			yield return m_EnableDialOutButton;
 		}
 	}
 }
