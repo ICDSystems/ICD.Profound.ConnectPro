@@ -62,6 +62,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				return;
 
 			settings.OnMuteAllParticipantsAtMeetingStartChanged += SettingsOnMuteAllParticipantsAtMeetingStartChanged;
+			settings.OnMuteMyCameraAtMeetingStartChanged += SettingsOnMuteMyCameraAtMeetingStartChanged;
 		}
 
 		/// <summary>
@@ -76,9 +77,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				return;
 
 			settings.OnMuteAllParticipantsAtMeetingStartChanged -= SettingsOnMuteAllParticipantsAtMeetingStartChanged;
+			settings.OnMuteMyCameraAtMeetingStartChanged -= SettingsOnMuteMyCameraAtMeetingStartChanged;
 		}
 
 		private void SettingsOnMuteAllParticipantsAtMeetingStartChanged(object sender, BoolEventArgs boolEventArgs)
+		{
+			RefreshIfVisible();
+		}
+
+		private void SettingsOnMuteMyCameraAtMeetingStartChanged(object sender, BoolEventArgs boolEventArgs)
 		{
 			RefreshIfVisible();
 		}
