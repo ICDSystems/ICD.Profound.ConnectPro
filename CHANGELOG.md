@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [11.3.0] - 2020-02-21
 ### Added
  - Holding the camera home button will store the camera home position
 
