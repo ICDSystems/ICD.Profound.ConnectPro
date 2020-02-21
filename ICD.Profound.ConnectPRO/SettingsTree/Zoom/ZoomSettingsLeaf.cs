@@ -161,6 +161,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 		public void SetMuteAllParticipantsAtMeetingStart(bool muteAll)
 		{
 			m_ZoomRooms.ForEach(z => z.MuteParticipantsOnStart = muteAll);
+			SetDirty(true);
 		}
 
 		/// <summary>
@@ -170,6 +171,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 		public void SetMuteMyCameraAtMeetingStart(bool muteCamera)
 		{
 			m_ZoomRooms.ForEach(z => z.MuteMyCameraOnStart = muteCamera);
+			SetDirty(true);
 		}
 
 		#endregion
