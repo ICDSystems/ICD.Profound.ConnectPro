@@ -96,6 +96,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			base.Subscribe(view);
 
 			view.OnMuteAllParticipantsButtonPressed += ViewOnMuteAllParticipantsButtonPressed;
+			view.OnMuteMyCameraButtonPressed += ViewOnMuteMyCameraButtonPressed;
 		}
 
 		/// <summary>
@@ -107,6 +108,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			base.Unsubscribe(view);
 
 			view.OnMuteAllParticipantsButtonPressed -= ViewOnMuteAllParticipantsButtonPressed;
+			view.OnMuteMyCameraButtonPressed -= ViewOnMuteMyCameraButtonPressed;
 		}
 
 		/// <summary>
@@ -117,6 +119,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		private void ViewOnMuteAllParticipantsButtonPressed(object sender, EventArgs e)
 		{
 			Settings.SetMuteAllParticipantsAtMeetingStart(!Settings.MuteAllParticipantsAtMeetingStart);
+		}
+
+		private void ViewOnMuteMyCameraButtonPressed(object sender, EventArgs eventArgs)
+		{
+			Settings.SetMuteMyCameraAtMeetingStart(!Settings.MuteMyCameraAtMeetingStart);
 		}
 
 		#endregion

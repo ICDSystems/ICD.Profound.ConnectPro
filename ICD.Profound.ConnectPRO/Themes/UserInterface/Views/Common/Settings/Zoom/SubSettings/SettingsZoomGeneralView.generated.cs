@@ -10,6 +10,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoo
 	{
 		private VtProSubpage m_Subpage;
 		private VtProButton m_MuteParticipantsButton;
+		private VtProButton m_MuteMyCameraButton;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -28,6 +29,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoo
 			{
 				DigitalPressJoin = 410
 			};
+
+			m_MuteMyCameraButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 413
+			};
 		}
 
 		/// <summary>
@@ -38,6 +44,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoo
 		{
 			yield return m_Subpage;
 			yield return m_MuteParticipantsButton;
+			yield return m_MuteMyCameraButton;
 		}
 	}
 }

@@ -10,9 +10,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Zo
 		event EventHandler OnMuteAllParticipantsButtonPressed;
 
 		/// <summary>
-		/// Sets the selected state of the mute all button.
+		/// Raised when the user presses the mute my camera on call start button.
+		/// </summary>
+		event EventHandler OnMuteMyCameraButtonPressed;
+
+		/// <summary>
+		/// Sets the selected state of the mute all participants button.
 		/// </summary>
 		/// <param name="selected"></param>
 		void SetMuteAllButtonSelected(bool selected);
+
+		/// <summary>
+		/// Sets the selected state of the mute my camera on call start button.
+		/// </summary>
+		/// <param name="selected"></param>
+		void SetMuteMyCameraButtonSelected(bool selected);
 	}
 }

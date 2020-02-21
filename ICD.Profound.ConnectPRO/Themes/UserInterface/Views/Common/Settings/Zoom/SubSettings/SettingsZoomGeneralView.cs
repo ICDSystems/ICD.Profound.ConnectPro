@@ -15,6 +15,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoo
 		public event EventHandler OnMuteAllParticipantsButtonPressed;
 
 		/// <summary>
+		/// Raised when the user presses the mute my camera on call start button.
+		/// </summary>
+		public event EventHandler OnMuteMyCameraButtonPressed;
+
+		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="panel"></param>
@@ -44,6 +49,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoo
 			m_MuteParticipantsButton.SetSelected(!selected);
 		}
 
+		/// <summary>
+		/// Sets the selected state of the mute my camera on call start button.
+		/// </summary>
+		/// <param name="selected"></param>
+		public void SetMuteMyCameraButtonSelected(bool selected)
+		{
+			// Toggle button feedback is reversed :(
+			m_MuteMyCameraButton.SetSelected(!selected);
+		}
+
 		#region Control Callbacks
 
 		/// <summary>
@@ -54,6 +69,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoo
 			base.SubscribeControls();
 
 			m_MuteParticipantsButton.OnPressed += MuteParticipantsButtonOnPressed;
+			m_MuteMyCameraButton.OnPressed += MuteMyCameraButtonOnPressed;
 		}
 
 		/// <summary>
@@ -64,6 +80,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoo
 			base.UnsubscribeControls();
 
 			m_MuteParticipantsButton.OnPressed -= MuteParticipantsButtonOnPressed;
+			m_MuteMyCameraButton.OnPressed -= MuteMyCameraButtonOnPressed;
 		}
 
 		/// <summary>
@@ -74,6 +91,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoo
 		private void MuteParticipantsButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnMuteAllParticipantsButtonPressed.Raise(this);
+		}
+
+		/// <summary>
+		/// Called when the user presses the mute my camera button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void MuteMyCameraButtonOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnMuteMyCameraButtonPressed.Raise(this);
 		}
 
 		#endregion
