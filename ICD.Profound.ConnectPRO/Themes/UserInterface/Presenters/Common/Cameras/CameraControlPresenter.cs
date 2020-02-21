@@ -192,7 +192,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 		private void Home()
 		{
 			if (m_SelectedCamera != null && m_SelectedCamera.SupportedCameraFeatures.HasFlag(eCameraFeatures.Home))
-				m_SelectedCamera.SendCameraHome();
+				m_SelectedCamera.ActivateHome();
+		}
+
+		private void StoreHome()
+		{
+			if (m_SelectedCamera == null || !m_SelectedCamera.SupportedCameraFeatures.HasFlag(eCameraFeatures.Home))
+				return;
+
+			m_SelectedCamera.StoreHome();
+
+			ShowPresetStoredLabel(true);
+			m_PresetStoredTimer.Reset(PRESET_STORED_VISIBILITY_MILLISECONDS);
 		}
 
 		#endregion
@@ -250,7 +261,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			view.OnCameraMoveLeftButtonPressed += ViewOnCameraMoveLeftButtonPressed;
 			view.OnCameraMoveRightButtonPressed += ViewOnCameraMoveRightButtonPressed;
 			view.OnCameraMoveUpButtonPressed += ViewOnCameraMoveUpButtonPressed;
-			view.OnCameraHomeButtonPressed += ViewOnCameraHomeButtonPressed;
+			view.OnCameraHomeButtonReleased += ViewOnCameraHomeButtonReleased;
+			view.OnCameraHomeButtonHeld += ViewOnCameraHomeButtonHeld;
 			view.OnCameraZoomInButtonPressed += ViewOnCameraZoomInButtonPressed;
 			view.OnCameraZoomOutButtonPressed += ViewOnCameraZoomOutButtonPressed;
 			view.OnPresetButtonReleased += ViewOnPresetButtonReleased;
@@ -271,7 +283,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			view.OnCameraMoveLeftButtonPressed -= ViewOnCameraMoveLeftButtonPressed;
 			view.OnCameraMoveRightButtonPressed -= ViewOnCameraMoveRightButtonPressed;
 			view.OnCameraMoveUpButtonPressed -= ViewOnCameraMoveUpButtonPressed;
-			view.OnCameraHomeButtonPressed -= ViewOnCameraHomeButtonPressed;
+			view.OnCameraHomeButtonReleased -= ViewOnCameraHomeButtonReleased;
+			view.OnCameraHomeButtonHeld -= ViewOnCameraHomeButtonHeld;
 			view.OnCameraZoomInButtonPressed -= ViewOnCameraZoomInButtonPressed;
 			view.OnCameraZoomOutButtonPressed -= ViewOnCameraZoomOutButtonPressed;
 			view.OnPresetButtonReleased -= ViewOnPresetButtonReleased;
@@ -306,9 +319,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			Tilt(eCameraTiltAction.Up);
 		}
 
-		private void ViewOnCameraHomeButtonPressed(object sender, EventArgs eventArgs)
+		private void ViewOnCameraHomeButtonReleased(object sender, EventArgs eventArgs)
 		{
 			Home();
+		}
+
+		private void ViewOnCameraHomeButtonHeld(object sender, EventArgs eventArgs)
+		{
+			StoreHome();
 		}
 
 		private void ViewOnCameraZoomInButtonPressed(object sender, EventArgs eventArgs)

@@ -42,7 +42,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 				DigitalVisibilityJoin = 137
 			};
 
-			m_DPad = new VtProDPad(620, panel as IPanelDevice, m_Subpage);
+			m_DPad = new VtProDPad(620, panel as IPanelDevice, m_Subpage)
+			{
+				HoldDuration = PRESET_HOLD_MILLISECONDS
+			};
 
 			m_ZoomInButton = new VtProButton(panel, m_Subpage)
 			{
