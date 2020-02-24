@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Showing an offline icon for offline Zoom contacts
  - Added room combine button to the splash page
  - Zoom UI now respects "RecordEnable" and "DialOutEnable" ZoomRoom device settings
+ - ZoomSettings now has options to control "RecordEnable", "DialOutEnable", and "MuteMyCameraOnStart"
 
 ### Changed
  - Reworked camera presenters to allow selection and control from a single page
@@ -30,6 +31,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - When the room goes to sleep routing resets will not power on any displays that are already off.
  - Zoom camera layout buttons will enable/disable based on availability
  - Inverted camera pan buttons
+ - ZoomSettings controls "MuteParticipantsOnEntry" on zoom room itself now, and marks settings dirty to save XML
 
 ## [11.3.0] - 2020-02-21
 ### Added
