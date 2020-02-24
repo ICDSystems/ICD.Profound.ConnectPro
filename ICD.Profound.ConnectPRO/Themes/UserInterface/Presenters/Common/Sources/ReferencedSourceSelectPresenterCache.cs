@@ -20,6 +20,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		private string m_Line1Plain;
 		private string m_Line2Plain;
 		private string m_IconPlain;
+		private bool m_Combined;
 
 		#region Properties
 
@@ -46,20 +47,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 
 		#region Methods
 
-		public bool SetSource(IRoom room, ISource source)
+		public bool SetSource(IRoom room, ISource source, bool combined)
 		{
-			if (source == Source && room == m_Room)
+			if (source == Source &&
+			    room == m_Room &&
+			    combined == m_Combined)
 				return false;
 
 			Source = source;
 			m_Room = room;
+			m_Combined = combined;
 
-			bool combine = m_Room != null && m_Room.IsCombineRoom();
 			string sourceName =
 				Source == null
 					? string.Empty
-					: Source.GetName(combine) ?? string.Empty;
-			m_FeedbackPlain = m_Room == null ? string.Empty : m_Room.GetName(combine);
+					: Source.GetName(m_Combined) ?? string.Empty;
+			m_FeedbackPlain = m_Room == null ? string.Empty : m_Room.GetName(m_Combined);
 
 			string text = sourceName.ToUpper();
 

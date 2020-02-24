@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+ - Fixed a bug where sources in combine spaces were not showing their combine names
+
 ## [11.3.1] - 2020-02-24
 ### Changed
  - Fixed a bug preventing the Event Server from working correctly in combined rooms
