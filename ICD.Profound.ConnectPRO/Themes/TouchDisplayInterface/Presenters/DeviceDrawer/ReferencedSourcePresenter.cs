@@ -9,7 +9,6 @@ using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Connect.UI.Mvp.Views;
 using ICD.Profound.ConnectPRO.Routing;
-using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.DeviceDrawer;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.DeviceDrawer;
 
@@ -62,8 +61,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 				case eSourceState.Active:
 					return eDeviceButtonMode.Active;
 				case eSourceState.Processing:
-				case eSourceState.Masked:
 					return eDeviceButtonMode.Processing;
+				case eSourceState.Masked:
 				case eSourceState.Inactive:
 				default:
 					return eDeviceButtonMode.Inactive;
