@@ -52,8 +52,7 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 		/// <returns></returns>
 		protected override bool RoomContainsOriginator(IRoom room, ConnectProEventServerUserInterface ui)
 		{
-			// Use Contains instead of ContainsRecursive because we don't wan't to handle combined spaces
-			return room.Originators.Contains(ui.Device.Id);
+			return room.Originators.ContainsRecursive(ui.Device.Id);
 		}
 	}
 }
