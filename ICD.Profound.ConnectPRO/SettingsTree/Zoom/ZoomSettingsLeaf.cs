@@ -229,6 +229,8 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
 			UpdateAudioProcessing();
 			UpdateMuteAllParticipants();
 			UpdateMuteMyCamera();
+			UpdateRecordEnable();
+			UpdateDialOutEnable();
 		}
 
 		private void UpdateAudioReverb()
