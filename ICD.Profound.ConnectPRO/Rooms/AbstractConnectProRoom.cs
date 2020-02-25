@@ -409,6 +409,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <param name="isInMeeting"></param>
 		protected virtual void HandleIsInMeetingChanged(bool isInMeeting)
 		{
+			// Clear the focus source
+			FocusSource = null;
 		}
 
 		/// <summary>

@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+ - Fixed a bug where the room Focus Source was not being cleared, preventing the same source from being opened again.
+
 ## [11.3.3] - 2020-02-25
 ### Changed
  - Fixed a bug where the Event Server would not properly re-initialize when changing rooms
