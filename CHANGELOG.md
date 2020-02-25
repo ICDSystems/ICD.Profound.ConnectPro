@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Added room combine button to the splash page
  - Zoom UI now respects "RecordEnable" and "DialOutEnable" ZoomRoom device settings
  - ZoomSettings now has options to control "RecordEnable", "DialOutEnable", and "MuteMyCameraOnStart"
+ - ZoomSettings now has options to map Camera Devices to USB IDs
 
 ### Changed
  - Reworked camera presenters to allow selection and control from a single page
