@@ -60,8 +60,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
             try
             {
                 // Update labels
-                view.SetCameraLabels(m_UsbCameras.Select(GetCameraLabel));
-                view.SetUsbIdLabels(m_UsbIds.Select(GetUsbLabel));
+                view.SetCameraLabels(m_UsbCameras.Select(c => GetCameraLabel(c)));
+                view.SetUsbIdLabels(m_UsbIds.Select(u => GetUsbLabel(u)));
 
                 // Set Camera Device selection state.
                 for (ushort index = 0; index < m_UsbCameras.Length; index++)

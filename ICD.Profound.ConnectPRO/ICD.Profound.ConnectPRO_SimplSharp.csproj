@@ -237,6 +237,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\RoomCombine\ISettingsRoomCombinePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\Administrative\ISettingsPowerPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\Zoom\SubSettings\ISettingsZoomAdvancedPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\Zoom\SubSettings\ISettingsZoomCamerasPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\Zoom\SubSettings\ISettingsZoomGeneralPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\Zoom\ISettingsZoomPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\Zoom\SubSettings\ISettingsZoomSubPresenter.cs" />
@@ -330,6 +331,7 @@
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\Administrative\ISettingsPowerView.cs" />
     <Compile Include="Routing\eSourceState.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\Zoom\SubSettings\ISettingsZoomAdvancedView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\Settings\Zoom\SubSettings\ISettingsZoomCamerasView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\Zoom\SubSettings\ISettingsZoomGeneralView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\Zoom\ISettingsZoomView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\Zoom\SubSettings\ISettingsZoomSubView.cs" />
@@ -433,6 +435,7 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\SettingsPromptPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\Zoom\SubSettings\AbstractSettingsZoomSubPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\Zoom\SubSettings\SettingsZoomAdvancedPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Settings\Zoom\SubSettings\SettingsZoomCamerasPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\Zoom\SubSettings\SettingsZoomGeneralPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\Zoom\SettingsZoomPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Sources\ReferencedSourceSelectPresenterCache.cs" />
@@ -579,6 +582,8 @@
     <Compile Include="Themes\UserInterface\Views\Common\Settings\Zoom\SubSettings\AbstractSettingsZoomSubView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\Zoom\SubSettings\SettingsZoomAdvancedView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\Zoom\SubSettings\SettingsZoomAdvancedView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Settings\Zoom\SubSettings\SettingsZoomCamerasView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Settings\Zoom\SubSettings\SettingsZoomCamerasView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\Zoom\SubSettings\SettingsZoomGeneralView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\Zoom\SubSettings\SettingsZoomGeneralView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Sources\ReferencedSourceSelectView.cs" />
