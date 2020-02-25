@@ -343,15 +343,15 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 
 		private void EndCall()
 		{
-			if (Room != null && Room.FocusSource != null)
+			if (Room != null)
 			{
-				var device = Room.Core.Originators.GetChild<IDevice>(Room.FocusSource.Device);
-				var conferenceControl = device == null ? null : device.Controls.GetControl<IConferenceDeviceControl>();
-				var activeConference = conferenceControl == null ? null : conferenceControl.GetActiveConference();
-				if (activeConference is IWebConference)
-					(activeConference as IWebConference).LeaveConference();
-				if (activeConference is ITraditionalConference)
-					(activeConference as ITraditionalConference).Hangup();
+				foreach (var activeConference in Room.ConferenceManager.ActiveConferences)
+				{
+					if (activeConference is IWebConference)
+						(activeConference as IWebConference).LeaveConference();
+					if (activeConference is ITraditionalConference)
+						(activeConference as ITraditionalConference).Hangup();
+				}
 			}
 
 			Navigation.LazyLoadPresenter<IConfirmEndMeetingPresenter>().ShowView(false);
