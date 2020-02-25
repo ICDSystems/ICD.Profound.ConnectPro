@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+ - Fixed a bug where the Event Server would not properly re-initialize when changing rooms
+
 ## [11.3.2] - 2020-02-25
 ### Changed
  - Fixed a bug where sources in combine spaces were not showing their combine names

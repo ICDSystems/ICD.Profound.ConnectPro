@@ -35,6 +35,8 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 		private bool m_IsAwake;
 		private bool m_IsInMeeting;
 		private bool m_PrivacyMuted;
+		private string m_AudioMessage;
+		private string m_VideoMessage;
 
 		#region Properties
 
@@ -115,6 +117,34 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 			}
 		}
 
+		private string VideoMessage
+		{
+			get { return m_VideoMessage; }
+			set
+			{
+				if (value == m_VideoMessage)
+					return;
+
+				m_VideoMessage = value;
+
+				Refresh();
+			}
+		}
+
+		private string AudioMessage
+		{
+			get { return m_AudioMessage; }
+			set
+			{
+				if (value == AudioMessage)
+					return;
+
+				m_AudioMessage = value;
+
+				Refresh();
+			}
+		}
+
 		#endregion
 
 		/// <summary>
@@ -133,8 +163,6 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 			m_Device = device;
 		}
 
-		#region Methods
-
 		/// <summary>
 		/// Release resources.
 		/// </summary>
@@ -144,45 +172,6 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 
 			SetRoom(null);
 		}
-
-		/// <summary>
-		/// Updates the UI to represent the given room.
-		/// </summary>
-		/// <param name="room"></param>
-		public override void SetRoom(IRoom room)
-		{
-			SetRoom(room as IConnectProRoom);
-		}
-
-		/// <summary>
-		/// Sets the room for this interface.
-		/// </summary>
-		/// <param name="room"></param>
-		public void SetRoom(IConnectProRoom room)
-		{
-			if (room == m_Room)
-				return;
-
-			ServiceProvider.GetService<ILoggerService>()
-			               .AddEntry(eSeverity.Informational, "{0} setting room to {1}", this, room);
-
-			Unsubscribe(m_Room);
-			m_Room = room;
-			Subscribe(m_Room);
-
-			if (!m_IsDisposed)
-				Refresh();
-		}
-
-		/// <summary>
-		/// Tells the UI that it should be considered ready to use.
-		/// For example updating the online join on a panel or starting a long-running process that should be delayed.
-		/// </summary>
-		public override void Activate()
-		{
-		}
-
-		#endregion
 
 		/// <summary>
 		/// Updates the device with the current state of the room.
@@ -229,40 +218,123 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 				m_Device.SendMessage(ConnectProEventMessages.KEY_INCOMING_CALL, messageIncomingCall);
 				m_Device.SendMessage(ConnectProEventMessages.KEY_ROOM_COMBINED, messageRoomCombined);
 				m_Device.SendMessage(ConnectProEventMessages.KEY_PRIVACY_MUTE, messagePrivacyMuted);
-
-				// Video routing
-				List<ISource> videoSources =
-					m_Room == null
-						? new List<ISource>()
-						: m_Room.Routing.State.GetFakeActiveVideoSources().SelectMany(kvp => kvp.Value).ToList();
-
-				string videoMessage =
-					videoSources.Count == 0
-						? "no sources routed for video"
-						: string.Format("sources routed for video {0}",
-						                StringUtils.ArrayFormat(videoSources.Select(s => s.Name)));
-
-				m_Device.SendMessage(ConnectProEventMessages.KEY_VIDEO_SOURCES, videoMessage);
-
-				// Audio routing
-				List<ISource> audioSources =
-					m_Room == null
-						? new List<ISource>()
-						: m_Room.Routing.State.GetCachedActiveAudioSources().ToList();
-
-				string audioMessage =
-					audioSources.Count == 0
-						? "no sources routed for audio"
-						: string.Format("sources routed for audio {0}",
-						                StringUtils.ArrayFormat(audioSources.Select(s => s.Name)));
-
-				m_Device.SendMessage(ConnectProEventMessages.KEY_AUDIO_SOURCES, audioMessage);
+				m_Device.SendMessage(ConnectProEventMessages.KEY_VIDEO_SOURCES, VideoMessage);
+				m_Device.SendMessage(ConnectProEventMessages.KEY_AUDIO_SOURCES, AudioMessage);
 			}
 			finally
 			{
 				m_RefreshSection.Leave();
 			}
 		}
+
+		#region Methods
+
+		/// <summary>
+		/// Updates the UI to represent the given room.
+		/// </summary>
+		/// <param name="room"></param>
+		public override void SetRoom(IRoom room)
+		{
+			SetRoom(room as IConnectProRoom);
+		}
+
+		/// <summary>
+		/// Sets the room for this interface.
+		/// </summary>
+		/// <param name="room"></param>
+		public void SetRoom(IConnectProRoom room)
+		{
+			if (room == m_Room)
+				return;
+
+			ServiceProvider.GetService<ILoggerService>()
+			               .AddEntry(eSeverity.Informational, "{0} setting room to {1}", this, room);
+
+			Unsubscribe(m_Room);
+			m_Room = room;
+			Subscribe(m_Room);
+
+			Update();
+
+			if (!m_IsDisposed)
+				Refresh();
+		}
+
+		/// <summary>
+		/// Tells the UI that it should be considered ready to use.
+		/// For example updating the online join on a panel or starting a long-running process that should be delayed.
+		/// </summary>
+		public override void Activate()
+		{
+		}
+
+		#endregion
+
+		#region Private Methods
+
+		private void Update()
+		{
+			UpdateIsAwake();
+			UpdateIsInMeeting();
+			UpdateIsCombined();
+			UpdateRouting();
+			UpdatePrivacyMuted();
+			UpdateIsInCall();
+		}
+
+		private void UpdateIsAwake()
+		{
+			IsAwake = m_Room != null && m_Room.IsAwake;
+		}
+
+		private void UpdateIsInMeeting()
+		{
+			IsInMeeting = m_Room != null && m_Room.IsInMeeting;
+		}
+
+		private void UpdateIsCombined()
+		{
+			RoomCombined = m_Room != null && m_Room.IsCombineRoom();
+		}
+
+		private void UpdateRouting()
+		{
+			// Video routing
+			List<ISource> videoSources =
+				m_Room == null
+					? new List<ISource>()
+					: m_Room.Routing.State.GetFakeActiveVideoSources().SelectMany(kvp => kvp.Value).ToList();
+
+			VideoMessage =
+				videoSources.Count == 0
+					? "no sources routed for video"
+					: string.Format("sources routed for video {0}",
+									StringUtils.ArrayFormat(videoSources.Select(s => s.Name)));
+
+			// Audio routing
+			List<ISource> audioSources =
+				m_Room == null
+					? new List<ISource>()
+					: m_Room.Routing.State.GetCachedActiveAudioSources().ToList();
+
+			AudioMessage =
+				audioSources.Count == 0
+					? "no sources routed for audio"
+					: string.Format("sources routed for audio {0}",
+									StringUtils.ArrayFormat(audioSources.Select(s => s.Name)));
+		}
+
+		private void UpdatePrivacyMuted()
+		{
+			PrivacyMuted = m_SubscribedConferenceManager != null && m_SubscribedConferenceManager.PrivacyMuted;
+		}
+
+		private void UpdateIsInCall()
+		{
+			IsInCall = m_SubscribedConferenceManager != null && m_SubscribedConferenceManager.IsInCall != eInCall.None;
+		}
+
+		#endregion
 
 		#region Room Callbacks
 
@@ -276,10 +348,7 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 				return;
 
 			// Awake state
-			room.OnIsAwakeStateChanged -= RoomOnIsAwakeStateChanged;
-
-			// Combine state
-			room.OnCombineStateChanged += RoomOnCombineStateChanged;
+			room.OnIsAwakeStateChanged += RoomOnIsAwakeStateChanged;
 
 			// Is in meeting
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
@@ -314,9 +383,6 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 			// Awake state
 			room.OnIsAwakeStateChanged -= RoomOnIsAwakeStateChanged;
 
-			// Combine state
-			room.OnCombineStateChanged -= RoomOnCombineStateChanged;
-
 			// Is in meeting
 			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
 
@@ -333,7 +399,7 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 
 				// Incoming Call
 				m_SubscribedConferenceManager.OnIncomingCallAdded -= ConferenceManagerOnIncomingCallAdded;
-				m_SubscribedConferenceManager.OnIncomingCallRemoved += ConferenceManagerOnIncomingCallRemoved;
+				m_SubscribedConferenceManager.OnIncomingCallRemoved -= ConferenceManagerOnIncomingCallRemoved;
 			}
 			m_SubscribedConferenceManager = null;
 		}
@@ -345,7 +411,7 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 		/// <param name="eventArgs"></param>
 		private void RoomOnIsAwakeStateChanged(object sender, BoolEventArgs eventArgs)
 		{
-			IsAwake = eventArgs.Data;
+			UpdateIsAwake();
 		}
 
 		/// <summary>
@@ -355,22 +421,17 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 		/// <param name="eventArgs"></param>
 		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs eventArgs)
 		{
-			IsInMeeting = eventArgs.Data;
+			UpdateIsInMeeting();
 		}
 
 		/// <summary>
-		/// Called when the room enters/leaves combine state.
+		/// Called when a source becomes routed/unrouted.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void RoomOnCombineStateChanged(object sender, BoolEventArgs eventArgs)
-		{
-			RoomCombined = eventArgs.Data;
-		}
-
 		private void RoomRoutingStateOnSourceRoutedChanged(object sender, EventArgs eventArgs)
 		{
-			Refresh();
+			UpdateRouting();
 		}
 
 		/// <summary>
@@ -380,7 +441,7 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 		/// <param name="args"></param>
 		private void ConferenceManagerOnPrivacyMuteStatusChange(object sender, BoolEventArgs args)
 		{
-			PrivacyMuted = args.Data;
+			UpdatePrivacyMuted();
 		}
 
 		/// <summary>
@@ -390,7 +451,7 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 		/// <param name="args"></param>
 		private void ConferenceManagerOnInCallChanged(object sender, InCallEventArgs args)
 		{
-			IsInCall = args.Data != eInCall.None;
+			UpdateIsInCall();
 		}
 
 		/// <summary>
