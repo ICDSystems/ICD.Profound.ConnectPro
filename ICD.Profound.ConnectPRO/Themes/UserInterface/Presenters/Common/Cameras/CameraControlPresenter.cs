@@ -5,10 +5,12 @@ using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
+using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Cameras;
 using ICD.Connect.Cameras.Controls;
 using ICD.Connect.Cameras.Devices;
+using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings.Originators;
 using ICD.Connect.UI.Attributes;
@@ -32,6 +34,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 
 		[CanBeNull]
 		private ICameraDevice m_SelectedCamera;
+
+        [CanBeNull]
+        private IVideoConferenceRouteControl m_VtcDestinationControl;
 
 		/// <summary>
 		/// Gets the number of cameras.
@@ -88,6 +93,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 				m_RefreshSection.Leave();
 			}
 		}
+
+        /// <summary>
+        /// Sets the VTC routing control to route camera video to.
+        /// </summary>
+        /// <param name="value"></param>
+        public void SetVtcDestinationControl(IVideoConferenceRouteControl value)
+        {
+            if (value == m_VtcDestinationControl)
+                return;
+
+            m_VtcDestinationControl = value;
+
+            RouteSelectedCamera();
+        }
 
 		/// <summary>
 		/// Updates the view.
@@ -167,9 +186,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			Subscribe(m_SelectedCamera);
 
 			RefreshIfVisible();
+
+            RouteSelectedCamera();
 		}
 
-		private void ShowPresetStoredLabel(bool visible)
+        private void RouteSelectedCamera()
+        {
+            if (Room == null || m_SelectedCamera == null)
+                return;
+
+            if (m_VtcDestinationControl == null)
+            {
+                Room.Logger.AddEntry(eSeverity.Error, "Unable to route selected camera - No VTC destination assigned");
+                return;
+            }
+
+            Room.Routing.RouteCameraToVtc(m_SelectedCamera, m_VtcDestinationControl);
+        }
+
+        private void ShowPresetStoredLabel(bool visible)
 		{
 			ICameraControlView view = GetView();
 			if (view == null)

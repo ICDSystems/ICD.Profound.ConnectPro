@@ -6,6 +6,7 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Layout;
+using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.Zoom.Controls.Conferencing;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
@@ -116,8 +117,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			m_CameraLayoutPresenter.SetConferenceLayoutControl(value == null
 				                                                   ? null
 				                                                   : value.Parent.Controls
-				                                                          .GetControl<IConferenceLayoutControl
-				                                                          >());
+				                                                          .GetControl<IConferenceLayoutControl>());
+
+            m_CameraControlPresenter.SetVtcDestinationControl(value == null
+                                                                  ? null
+                                                                  : value.Parent.Controls
+                                                                         .GetControl<IVideoConferenceRouteControl>());
 
 			CameraLayoutVisible = value is ZoomRoomConferenceControl;
 		}
