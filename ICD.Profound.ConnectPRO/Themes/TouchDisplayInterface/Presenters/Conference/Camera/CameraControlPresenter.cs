@@ -40,9 +40,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		private ICameraDeviceControl m_SelectedCamera;
 
 		[CanBeNull]
-		private IPresetControl m_SubscribedPresetControl;
-
-		[CanBeNull]
 		private IConferenceManager m_SubscribedConferenceManager;
 
 		/// <summary>
@@ -118,14 +115,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 
 			try
 			{
-				// Presets
-				IPresetControl presetControl =
-					m_SelectedCamera == null ? null : m_SelectedCamera.Parent.Controls.GetControl<IPresetControl>();
-
 				IEnumerable<CameraPreset> presets =
-					presetControl == null
+					m_SelectedCamera == null
 						? Enumerable.Empty<CameraPreset>()
-						: presetControl.GetPresets();
+						: m_SelectedCamera.GetPresets();
 
 				m_CameraPresets.Clear();
 				foreach (CameraPreset preset in presets)
@@ -149,9 +142,10 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 				}
 
 				// Enabled states
-				bool hasPanTilt = m_SelectedCamera != null && m_SelectedCamera.Parent.Controls.GetControl<IPanTiltControl>() != null;
-				bool hasZoom = m_SelectedCamera != null && m_SelectedCamera.Parent.Controls.GetControl<IZoomControl>() != null;
-				bool hasPresets = presetControl != null;
+				eCameraFeatures features = m_SelectedCamera == null ? eCameraFeatures.None : m_SelectedCamera.SupportedCameraFeatures;
+				bool hasPanTilt = features.HasFlag(eCameraFeatures.PanTilt);
+				bool hasZoom = features.HasFlag(eCameraFeatures.Zoom);
+				bool hasPresets = features.HasFlag(eCameraFeatures.Presets);
 
 				//view.SetDPadButtonsEnabled(hasPanTilt);
 				view.SetPresetButtonsVisible(hasPresets);
@@ -191,22 +185,59 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 
 		private void Zoom(eCameraZoomAction action)
 		{
-			if (m_SelectedCamera == null)
+			if (m_SelectedCamera == null || !m_SelectedCamera.SupportedCameraFeatures.HasFlag(eCameraFeatures.Zoom))
 				return;
 
-			IZoomControl zoom = m_SelectedCamera.Parent.Controls.GetControl<IZoomControl>();
-			if (zoom != null)
-				zoom.Zoom(action);
+			switch(action)
+			{
+				case eCameraZoomAction.ZoomIn:
+					m_SelectedCamera.ZoomIn();
+					break;
+				case eCameraZoomAction.ZoomOut:
+					m_SelectedCamera.ZoomOut();
+					break;
+				case eCameraZoomAction.Stop:
+					m_SelectedCamera.ZoomStop();
+					break;
+			}
 		}
 
-		private void PanTilt(eCameraPanTiltAction action)
+		private void Pan(eCameraPanAction action)
 		{
-			if (m_SelectedCamera == null)
+			if (m_SelectedCamera == null || !m_SelectedCamera.SupportedCameraFeatures.HasFlag(eCameraFeatures.Pan))
 				return;
 
-			IPanTiltControl panTilt = m_SelectedCamera.Parent.Controls.GetControl<IPanTiltControl>();
-			if (panTilt != null)
-				panTilt.PanTilt(action);
+			switch(action)
+			{
+				case eCameraPanAction.Left:
+					m_SelectedCamera.PanLeft();
+					break;
+				case eCameraPanAction.Right:
+					m_SelectedCamera.PanRight();
+					break;
+				case eCameraPanAction.Stop:
+					m_SelectedCamera.PanStop();
+					break;
+			}
+		}
+
+		private void Tilt(eCameraTiltAction action)
+		{
+			if (m_SelectedCamera == null || !m_SelectedCamera.SupportedCameraFeatures.HasFlag(eCameraFeatures.Tilt))
+				return;
+
+			switch(action)
+			{
+				case eCameraTiltAction.Up:
+					m_SelectedCamera.TiltUp();
+					break;
+				case eCameraTiltAction.Down:
+					m_SelectedCamera.TiltDown();
+					break;
+				case eCameraTiltAction.Stop:
+					m_SelectedCamera.TiltStop();
+					break;
+			}
 		}
 
 		#endregion
@@ -219,9 +250,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		/// <param name="camera"></param>
 		private void Subscribe(ICameraDeviceControl camera)
 		{
-			m_SubscribedPresetControl = camera == null ? null : camera.Parent.Controls.GetControl<IPresetControl>();
-			if (m_SubscribedPresetControl != null)
-				m_SubscribedPresetControl.OnPresetsChanged += SubscribedPresetControlOnPresetsChanged;
+			if (camera != null)
+				camera.OnPresetsChanged += SubscribedPresetControlOnPresetsChanged;
 		}
 
 		/// <summary>
@@ -230,10 +260,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		/// <param name="camera"></param>
 		private void Unsubscribe(ICameraDeviceControl camera)
 		{
-			if (m_SubscribedPresetControl != null)
-				m_SubscribedPresetControl.OnPresetsChanged -= SubscribedPresetControlOnPresetsChanged;
-
-			m_SubscribedPresetControl = null;
+			if (camera != null)
+				camera.OnPresetsChanged -= SubscribedPresetControlOnPresetsChanged;
 		}
 
 		/// <summary>
@@ -363,27 +391,28 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		private void ViewOnCameraPtzButtonReleased(object sender, EventArgs eventArgs)
 		{
 			Zoom(eCameraZoomAction.Stop);
-			PanTilt(eCameraPanTiltAction.Stop);
+			Pan(eCameraPanAction.Stop);
+			Tilt(eCameraTiltAction.Stop);
 		}
 
 		private void ViewOnCameraMoveDownButtonPressed(object sender, EventArgs eventArgs)
 		{
-			PanTilt(eCameraPanTiltAction.Down);
+			Tilt(eCameraTiltAction.Down);
 		}
 
 		private void ViewOnCameraMoveLeftButtonPressed(object sender, EventArgs eventArgs)
 		{
-			PanTilt(eCameraPanTiltAction.Left);
+			Pan(eCameraPanAction.Left);
 		}
 
 		private void ViewOnCameraMoveRightButtonPressed(object sender, EventArgs eventArgs)
 		{
-			PanTilt(eCameraPanTiltAction.Right);
+			Pan(eCameraPanAction.Right);
 		}
 
 		private void ViewOnCameraMoveUpButtonPressed(object sender, EventArgs eventArgs)
 		{
-			PanTilt(eCameraPanTiltAction.Up);
+			Tilt(eCameraTiltAction.Up);
 		}
 
 		private void ViewOnCameraZoomInButtonPressed(object sender, EventArgs eventArgs)
@@ -398,31 +427,23 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 
 		private void ViewOnPresetButtonReleased(object sender, UShortEventArgs eventArgs)
 		{
-			if (m_SelectedCamera == null)
-				return;
-
-			IPresetControl cameraControl = m_SelectedCamera.Parent.Controls.GetControl<IPresetControl>();
-			if (cameraControl == null)
+			if (m_SelectedCamera == null || !m_SelectedCamera.SupportedCameraFeatures.HasFlag(eCameraFeatures.Presets))
 				return;
 
 			ushort index = (ushort)(eventArgs.Data + 1);
 
 			CameraPreset preset;
 			if (m_CameraPresets.TryGetValue(index, out preset))
-				cameraControl.ActivatePreset(preset.PresetId);
+				m_SelectedCamera.ActivatePreset(preset.PresetId);
 		}
 
 		private void ViewOnPresetButtonHeld(object sender, UShortEventArgs eventArgs)
 		{
-			if (m_SelectedCamera == null)
-				return;
-
-			IPresetControl cameraControl = m_SelectedCamera.Parent.Controls.GetControl<IPresetControl>();
-			if (cameraControl == null)
+			if (m_SelectedCamera == null || !m_SelectedCamera.SupportedCameraFeatures.HasFlag(eCameraFeatures.Presets))
 				return;
 
 			ushort index = (ushort)(eventArgs.Data + 1);
-			cameraControl.StorePreset(index);
+			m_SelectedCamera.StorePreset(index);
 
 			ShowPresetStoredLabel(true);
 			m_PresetStoredTimer.Reset(PRESET_STORED_VISIBILITY_MILLISECONDS);
@@ -438,6 +459,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			base.ViewOnVisibilityChanged(sender, args);
 
 			ShowPresetStoredLabel(false);
+			m_HeaderButton.Selected = args.Data;
 
 			//if (args.Data && m_SelectedCamera == null)
 			//{
