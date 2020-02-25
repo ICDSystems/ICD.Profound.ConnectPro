@@ -8,6 +8,8 @@ using ICD.Connect.Conferencing.Controls.Layout;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Conferencing.Zoom.Components.Call;
+using ICD.Connect.Conferencing.Zoom.Controls;
+using ICD.Connect.Conferencing.Zoom.Responses;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
@@ -476,6 +478,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 					Navigation.LazyLoadPresenter<IConferenceConnectingPresenter>().Show(CONNECTING_TEXT);
 					break;
 				case eConferenceStatus.Connected:
+					ActiveConferenceControl.Parent.Controls.GetControl<ZoomRoomLayoutControl>().SetLayoutPosition(eZoomLayoutPosition.DownRight);
 					Navigation.LazyLoadPresenter<IConferenceConnectingPresenter>().ShowView(false);
 					break;
 				case eConferenceStatus.Disconnecting:
