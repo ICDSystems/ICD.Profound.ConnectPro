@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [11.3.2] - 2020-02-25
 ### Changed
  - Fixed a bug where sources in combine spaces were not showing their combine names
 
