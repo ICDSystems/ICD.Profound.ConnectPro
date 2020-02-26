@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
@@ -16,6 +17,7 @@ using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.Shared.Models;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Background;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Conference;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.DeviceDrawer;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Header;
 using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IPresenters.Notifications;
@@ -59,6 +61,17 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 					return;
 
 				m_Collapsed = value;
+
+				var conferenceBase = Navigation.LazyLoadPresenter<IConferenceBasePresenter>();
+				if (m_Collapsed)
+				{
+					Navigation.LazyLoadPresenter<IDeviceDrawerPresenter>().ShowView(false);
+					Navigation.LazyLoadPresenter<IVolumePresenter>().ShowView(false);
+					conferenceBase.ShowView(false);
+				}
+				else if (Navigation.LazyLoadPresenter<IConferenceBasePresenter>().ActiveConferenceControl.GetActiveConference() != null)
+					conferenceBase.ShowView(true);
+
 				Refresh();
 			}
 		}
