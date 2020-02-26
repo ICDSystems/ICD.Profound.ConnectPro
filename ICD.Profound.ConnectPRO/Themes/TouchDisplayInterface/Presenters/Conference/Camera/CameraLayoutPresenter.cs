@@ -127,7 +127,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 
 
 				// Set the enabled state of the controls
-				bool layoutAvailable = m_ConferenceLayoutControl != null && m_ConferenceLayoutControl.LayoutAvailable;
+				//bool layoutAvailable = m_ConferenceLayoutControl != null && m_ConferenceLayoutControl.LayoutAvailable;
+				bool layoutAvailable = true;
 				bool presentationActive = m_PresentationControl != null && m_PresentationControl.PresentationActive;
 				int participantCount = m_CallComponent == null ? 0 : m_CallComponent.GetParticipants().Count();
 
