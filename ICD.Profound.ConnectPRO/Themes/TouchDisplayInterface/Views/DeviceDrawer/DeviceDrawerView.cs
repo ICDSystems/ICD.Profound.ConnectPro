@@ -39,6 +39,17 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Views.DeviceDrawe
 			}
 		}
 
+		public void SetAppButtonLabels(IEnumerable<string> appNames)
+		{
+			List<string> appNamesList = appNames.ToList();
+			m_AppButtonList.SetNumberOfItems((ushort)appNamesList.Count);
+			for (ushort i = 0; i < appNamesList.Count; i++)
+			{
+				m_AppButtonList.SetItemLabel(i, appNamesList[i]);
+				m_AppButtonList.SetItemVisible(i, true);
+			}
+		}
+
 		protected override void SubscribeControls()
 		{
 			base.SubscribeControls();

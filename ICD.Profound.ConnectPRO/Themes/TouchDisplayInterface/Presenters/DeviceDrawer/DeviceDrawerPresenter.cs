@@ -74,12 +74,17 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 					presenter.Refresh();
 				}
 
-				var packageNames = m_SubscribedAppControl == null
-					? Enumerable.Empty<string>()
-					: s_Apps.Where(app => m_SubscribedAppControl.IsInstalled(app))
-						.Select(app => m_SubscribedAppControl.GetPackageName(app))
+				var installedApps= m_SubscribedAppControl == null
+					? Enumerable.Empty<eVibeApp>().ToList()
+					: s_Apps
+						//.Where(app => m_SubscribedAppControl.IsInstalled(app)) TODO
+						.ToList();
+
+				var packageNames = installedApps.Select(app => m_SubscribedAppControl.GetPackageName(app))
 						.ToList();
 				view.SetAppButtonIcons(packageNames);
+				var appNames = installedApps.Select(a => a.ToString());
+				view.SetAppButtonLabels(appNames);
 			}
 			finally
 			{

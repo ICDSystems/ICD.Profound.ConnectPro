@@ -11,5 +11,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.IViews.DeviceDraw
 	    IEnumerable<IReferencedSourceView> GetChildComponentViews(ITouchDisplayViewFactory views, ushort count);
 
 	    void SetAppButtonIcons(IEnumerable<string> packageNames);
+		
+	    void SetAppButtonLabels(IEnumerable<string> appNames);
     }
 }
