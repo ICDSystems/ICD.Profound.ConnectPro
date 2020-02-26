@@ -69,7 +69,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 					Navigation.LazyLoadPresenter<IVolumePresenter>().ShowView(false);
 					conferenceBase.ShowView(false);
 				}
-				else if (Navigation.LazyLoadPresenter<IConferenceBasePresenter>().ActiveConferenceControl.GetActiveConference() != null)
+				else if (conferenceBase.ActiveConferenceControl != null && conferenceBase.ActiveConferenceControl.GetActiveConference() != null)
 					conferenceBase.ShowView(true);
 
 				Refresh();
