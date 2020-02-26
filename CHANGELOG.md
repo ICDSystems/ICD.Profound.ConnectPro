@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+ - Moved common UI factory features into Themes project
 ## [11.3.4] - 2020-02-25
 ### Changed
  - Fixed a bug where the room Focus Source was not being cleared, preventing the same source from being opened again.

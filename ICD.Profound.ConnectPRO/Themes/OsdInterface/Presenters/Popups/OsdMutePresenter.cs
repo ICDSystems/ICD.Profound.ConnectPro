@@ -1,5 +1,4 @@
-﻿using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Audio.Controls.Mute;
+﻿using ICD.Connect.Audio.Controls.Mute;
 using ICD.Connect.Audio.EventArguments;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;

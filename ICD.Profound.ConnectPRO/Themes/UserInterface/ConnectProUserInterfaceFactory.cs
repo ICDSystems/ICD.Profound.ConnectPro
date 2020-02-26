@@ -4,7 +4,6 @@ using System.Linq;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Partitioning.Rooms;
-using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 {
@@ -20,21 +19,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		}
 
 		/// <summary>
-		/// Instantiates the user interface for the given originator.
-		/// </summary>
-		/// <param name="panel"></param>
-		/// <returns></returns>
-		private ConnectProUserInterface CreateUserInterface(IPanelDevice panel)
-		{
-			return new ConnectProUserInterface(panel, Theme);
-		}
-
-		/// <summary>
 		/// Creates the user interfaces for the given room.
 		/// </summary>
 		/// <param name="room"></param>
 		/// <returns></returns>
-		protected override IEnumerable<ConnectProUserInterface> CreateUserInterfaces(IConnectProRoom room)
+		protected override IEnumerable<ConnectProUserInterface> CreateUserInterfaces(IRoom room)
 		{
 			if (room == null)
 				throw new ArgumentNullException("room");
@@ -42,7 +31,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			return room.Originators
 			           .GetInstancesRecursive<IPanelDevice>()
 			           .Where(o => !(o is OsdPanelDevice))
-			           .Select(o => CreateUserInterface(o));
+			           .Select(o => new ConnectProUserInterface(o, Theme));
 		}
 
 		/// <summary>
@@ -51,7 +40,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <param name="room"></param>
 		/// <param name="ui"></param>
 		/// <returns></returns>
-		protected override bool RoomContainsOriginator(IRoom room, ConnectProUserInterface ui)
+		protected override bool RoomContainsTarget(IRoom room, ConnectProUserInterface ui)
 		{
 			return room.Originators.ContainsRecursive(ui.Panel.Id);
 		}

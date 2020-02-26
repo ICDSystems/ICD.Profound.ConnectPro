@@ -69,8 +69,6 @@ namespace ICD.Profound.ConnectPRO.Themes
 
 		#region Properties
 
-		public ICore Core { get { return ServiceProvider.GetService<ICore>(); } }
-
 		/// <summary>
 		/// Gets/sets the configured relative or absolute path to the logo image for the splash screen.
 		/// </summary>
