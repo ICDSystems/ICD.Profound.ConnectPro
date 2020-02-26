@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [11.4.0] - 2020-02-26
 ### Changed
  - Moved common UI factory features into Themes project
  - Fixed a NullReferenceException in the room combine presenter
