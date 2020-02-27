@@ -425,6 +425,17 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		}
 
 		/// <summary>
+		/// Called before this combine space is destroyed as part of an uncombine operation.
+		/// </summary>
+		public override void HandlePreUncombine()
+		{
+			base.HandlePreUncombine();
+
+			// End the meeting before the room is torn down.
+			EndMeeting(false);
+		}
+
+		/// <summary>
 		/// Called when the contents of the room change.
 		/// </summary>
 		/// <param name="sender"></param>

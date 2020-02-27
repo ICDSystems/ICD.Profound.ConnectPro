@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+ - Fixed a bug where combine spaces were not unrouting when growing/shrinking
+
 ## [11.4.0] - 2020-02-26
 ### Changed
  - Moved common UI factory features into Themes project
