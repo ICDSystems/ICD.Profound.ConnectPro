@@ -270,12 +270,13 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Zoom
         }
 
 		public IEnumerable<IDeviceBase> GetCameraDevices()
-        {
-            return Room == null
-                       ? Enumerable.Empty<IDeviceBase>()
-                       : (IEnumerable<IDeviceBase>)Room.Originators
-                                          .GetInstancesRecursive<ICameraDevice>();
-        }
+		{
+			return Room == null
+				       ? Enumerable.Empty<IDeviceBase>()
+				       : Room.Originators
+				             .GetInstancesRecursive<ICameraDevice>()
+				             .Cast<IDeviceBase>();
+		}
 
         public IEnumerable<WindowsDevicePathInfo> GetUsbIds()
         {
