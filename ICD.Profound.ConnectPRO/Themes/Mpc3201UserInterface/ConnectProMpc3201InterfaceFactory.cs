@@ -4,7 +4,6 @@ using System.Linq;
 using ICD.Connect.Devices;
 using ICD.Connect.Panels.Crestron.Controls.TouchScreens;
 using ICD.Connect.Partitioning.Rooms;
-using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 {
@@ -20,21 +19,11 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		}
 
 		/// <summary>
-		/// Instantiates the user interface for the given originator.
-		/// </summary>
-		/// <param name="control"></param>
-		/// <returns></returns>
-		private ConnectProMpc3201Interface CreateUserInterface(IMPC3x201TouchScreenControl control)
-		{
-			return new ConnectProMpc3201Interface(control, Theme);
-		}
-
-		/// <summary>
 		/// Creates the user interfaces for the given room.
 		/// </summary>
 		/// <param name="room"></param>
 		/// <returns></returns>
-		protected override IEnumerable<ConnectProMpc3201Interface> CreateUserInterfaces(IConnectProRoom room)
+		protected override IEnumerable<ConnectProMpc3201Interface> CreateUserInterfaces(IRoom room)
 		{
 			if (room == null)
 				throw new ArgumentNullException("room");
@@ -42,7 +31,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 			return room.Originators
 					   .GetInstancesRecursive<IDeviceBase>()
 					   .SelectMany(d => d.Controls.GetControls<IMPC3x201TouchScreenControl>())
-					   .Select(o => CreateUserInterface(o));
+					   .Select(o => new ConnectProMpc3201Interface(o, Theme));
 		}
 
 		/// <summary>
@@ -51,7 +40,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		/// <param name="room"></param>
 		/// <param name="ui"></param>
 		/// <returns></returns>
-		protected override bool RoomContainsOriginator(IRoom room, ConnectProMpc3201Interface ui)
+		protected override bool RoomContainsTarget(IRoom room, ConnectProMpc3201Interface ui)
 		{
 			return room.Originators
 			           .GetInstancesRecursive<IDeviceBase>()

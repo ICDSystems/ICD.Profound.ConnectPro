@@ -34,6 +34,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Inverted camera pan buttons
  - ZoomSettings controls "MuteParticipantsOnEntry" on zoom room itself now, and marks settings dirty to save XML
 
+## [11.4.1] - 2020-02-27
+### Changed
+ - Fixed a bug where combine spaces were not unrouting when growing/shrinking
+
+## [11.4.0] - 2020-02-26
+### Changed
+ - Moved common UI factory features into Themes project
+ - Fixed a NullReferenceException in the room combine presenter
+
+## [11.3.4] - 2020-02-25
+### Changed
+ - Fixed a bug where the room Focus Source was not being cleared, preventing the same source from being opened again.
+ - "Combining Rooms" modal says "Uncombining Rooms" when uncombining
+
 ## [11.3.3] - 2020-02-25
 ### Changed
  - Fixed a bug where the Event Server would not properly re-initialize when changing rooms

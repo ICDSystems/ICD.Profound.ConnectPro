@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
@@ -34,6 +35,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// </summary>
 		private readonly Dictionary<IPartition, bool> m_SelectedPartitionStates;
 
+		[CanBeNull]
 		private IPartitionManager m_SubscribedPartitionManager;
 
 		/// <summary>
@@ -223,12 +225,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 		private void PartitionControlManagerOnPartitionControlOpenStateChange(IPartitionDeviceControl control, bool open)
 		{
-			var partitions = m_SubscribedPartitionManager.Partitions.GetPartitions(control).ToList();
+			if (m_SubscribedPartitionManager == null)
+				return;
 
 			m_PartitionSection.Enter();
+
 			try
 			{
-				foreach (var partition in partitions)
+				foreach (IPartition partition in m_SubscribedPartitionManager.Partitions.GetPartitions(control))
 				{
 					if (m_SelectedPartitionStates.ContainsKey(partition) && m_SelectedPartitionStates[partition] == control.IsOpen)
 						m_SelectedPartitionStates.Remove(partition);

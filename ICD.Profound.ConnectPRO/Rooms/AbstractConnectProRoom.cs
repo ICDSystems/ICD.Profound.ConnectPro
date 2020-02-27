@@ -406,6 +406,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <param name="isInMeeting"></param>
 		protected virtual void HandleIsInMeetingChanged(bool isInMeeting)
 		{
+			// Clear the focus source
+			FocusSource = null;
 		}
 
 		/// <summary>
@@ -416,6 +418,17 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			base.HandleCombineState();
 
 			// End the meeting whenever the combine state changes
+			EndMeeting(false);
+		}
+
+		/// <summary>
+		/// Called before this combine space is destroyed as part of an uncombine operation.
+		/// </summary>
+		public override void HandlePreUncombine()
+		{
+			base.HandlePreUncombine();
+
+			// End the meeting before the room is torn down.
 			EndMeeting(false);
 		}
 
