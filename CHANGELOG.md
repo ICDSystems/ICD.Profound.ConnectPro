@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Zoom camera layout buttons will enable/disable based on availability
  - Inverted camera pan buttons
  - ZoomSettings controls "MuteParticipantsOnEntry" on zoom room itself now, and marks settings dirty to save XML
+ - Privacy Mute floating action is only visible when privacy mute is supported in the current context
 
 ## [11.4.1] - 2020-02-27
 ### Changed
