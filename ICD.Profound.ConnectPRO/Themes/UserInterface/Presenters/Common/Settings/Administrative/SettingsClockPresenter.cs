@@ -186,7 +186,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			// When the view is about to be shown we update the current date
 			if (args.Data)
+			{
 				m_Time = IcdEnvironment.GetLocalTime();
+				m_Am = m_Time.Hour > 12;
+			}
 		}
 
 		private void ViewOnMinuteUpButtonPressed(object sender, EventArgs eventArgs)
