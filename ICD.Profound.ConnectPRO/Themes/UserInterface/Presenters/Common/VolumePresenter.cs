@@ -10,7 +10,6 @@ using ICD.Connect.Audio.Repeaters;
 using ICD.Connect.Audio.Utils;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.EventArguments;
-using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -253,8 +252,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (m_SubscribedConferenceManager == null)
 				return;
 
-			m_SubscribedConferenceManager.OnConferenceParticipantAddedOrRemoved += ConferenceManagerOnConferenceParticipantAddedOrRemoved;
-			m_SubscribedConferenceManager.OnInCallChanged += ConferenceManagerOnInCallChanged;
+			m_SubscribedConferenceManager.Dialers.OnConferenceParticipantAddedOrRemoved += ConferenceManagerOnConferenceParticipantAddedOrRemoved;
+			m_SubscribedConferenceManager.Dialers.OnInCallChanged += ConferenceManagerOnInCallChanged;
 		}
 
 		protected override void Unsubscribe(IConnectProRoom room)
@@ -267,8 +266,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (m_SubscribedConferenceManager == null)
 				return;
 
-			m_SubscribedConferenceManager.OnConferenceParticipantAddedOrRemoved -= ConferenceManagerOnConferenceParticipantAddedOrRemoved;
-			m_SubscribedConferenceManager.OnInCallChanged -= ConferenceManagerOnInCallChanged;
+			m_SubscribedConferenceManager.Dialers.OnConferenceParticipantAddedOrRemoved -= ConferenceManagerOnConferenceParticipantAddedOrRemoved;
+			m_SubscribedConferenceManager.Dialers.OnInCallChanged -= ConferenceManagerOnInCallChanged;
 
 			m_SubscribedConferenceManager = null;
 		}

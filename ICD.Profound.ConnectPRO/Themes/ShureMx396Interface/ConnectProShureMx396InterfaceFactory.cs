@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Connect.Audio.Shure.Devices.MX;
 using ICD.Connect.Partitioning.Rooms;
-using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.ShureMx396Interface
 {
@@ -20,28 +19,18 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMx396Interface
 		}
 
 		/// <summary>
-		/// Instantiates the user interface for the given originator.
-		/// </summary>
-		/// <param name="originator"></param>
-		/// <returns></returns>
-		private ConnectProShureMx396Interface CreateUserInterface(ShureMx396Device originator)
-		{
-			return new ConnectProShureMx396Interface(originator);
-		}
-
-		/// <summary>
 		/// Creates the user interfaces for the given room.
 		/// </summary>
 		/// <param name="room"></param>
 		/// <returns></returns>
-		protected override IEnumerable<ConnectProShureMx396Interface> CreateUserInterfaces(IConnectProRoom room)
+		protected override IEnumerable<ConnectProShureMx396Interface> CreateUserInterfaces(IRoom room)
 		{
 			if (room == null)
 				throw new ArgumentNullException("room");
 
 			return room.Originators
 			           .GetInstancesRecursive<ShureMx396Device>()
-			           .Select(originator => CreateUserInterface(originator));
+					   .Select(originator => new ConnectProShureMx396Interface(originator));
 		}
 
 		/// <summary>
@@ -50,7 +39,7 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMx396Interface
 		/// <param name="room"></param>
 		/// <param name="ui"></param>
 		/// <returns></returns>
-		protected override bool RoomContainsOriginator(IRoom room, ConnectProShureMx396Interface ui)
+		protected override bool RoomContainsTarget(IRoom room, ConnectProShureMx396Interface ui)
 		{
 			return room.Originators.ContainsRecursive(ui.Microphone.Id);
 		}

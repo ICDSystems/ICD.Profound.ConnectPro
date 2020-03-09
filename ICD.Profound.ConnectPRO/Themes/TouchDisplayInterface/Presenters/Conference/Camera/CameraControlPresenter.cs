@@ -295,7 +295,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			if (m_SubscribedConferenceManager == null)
 				return;
 
-			m_SubscribedConferenceManager.OnInCallChanged += SubscribedConferenceManagerOnInCallChanged;
+			m_SubscribedConferenceManager.Dialers.OnInCallChanged += SubscribedConferenceManagerOnInCallChanged;
 		}
 
 		/// <summary>
@@ -312,7 +312,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			room.Routing.State.OnDisplaySourceChanged -= StateOnDisplaySourceChanged;
 
 			if (m_SubscribedConferenceManager != null)
-				m_SubscribedConferenceManager.OnInCallChanged -= SubscribedConferenceManagerOnInCallChanged;
+				m_SubscribedConferenceManager.Dialers.OnInCallChanged -= SubscribedConferenceManagerOnInCallChanged;
 			m_SubscribedConferenceManager = null;
 		}
 

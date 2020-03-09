@@ -9,7 +9,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 	[ViewBinding(typeof(IMenu3PlusDisplaysView))]
 	public sealed partial class Menu3PlusDisplaysView : AbstractUiView, IMenu3PlusDisplaysView
 	{
-		private List<IReferencedDisplayView> m_ChildViews;
+		private readonly List<IReferencedDisplayView> m_ChildViews;
 
 		public Menu3PlusDisplaysView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
 		{

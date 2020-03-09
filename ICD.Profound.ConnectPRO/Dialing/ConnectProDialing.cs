@@ -100,7 +100,7 @@ namespace ICD.Profound.ConnectPRO.Dialing
 			IEnumerable<IConferenceDeviceControl> dialers =
 				m_Room.ConferenceManager == null
 					? Enumerable.Empty<IConferenceDeviceControl>()
-					: m_Room.ConferenceManager.GetDialingProviders();
+					: m_Room.ConferenceManager.Dialers.GetDialingProviders();
 
 			// Build map of dialer to best number
 			IDialContext dialContext;
@@ -205,7 +205,7 @@ namespace ICD.Profound.ConnectPRO.Dialing
 			List<IConference> activeConferences =
 				m_Room.ConferenceManager == null
 					? new List<IConference>()
-					: m_Room.ConferenceManager.OnlineConferences.ToList();
+					: m_Room.ConferenceManager.Dialers.OnlineConferences.ToList();
 
 			foreach (IConference activeConference in activeConferences)
 				EndConference(activeConference);
@@ -223,7 +223,7 @@ namespace ICD.Profound.ConnectPRO.Dialing
 		public bool ConferenceActionsAvailable(eInCall minimumCallType)
 		{
 			// Are we in a conference and the source is NOT using the Hide override?
-			if (m_Room.ConferenceManager != null && m_Room.ConferenceManager.IsInCall >= minimumCallType)
+			if (m_Room.ConferenceManager != null && m_Room.ConferenceManager.Dialers.IsInCall >= minimumCallType)
 				return GetActiveConferenceSourceOverride() != eConferenceOverride.Hide;
 
 			// Is a source routed with the Show override?
@@ -265,7 +265,7 @@ namespace ICD.Profound.ConnectPRO.Dialing
 				return eConferenceOverride.None;
 
 			return
-				m_Room.ConferenceManager
+				m_Room.ConferenceManager.Dialers
 				      .GetDialingProviders()
 				      .Where(p => p.GetActiveConference() != null)
 				      .SelectMany(p => m_Room.Routing.Sources.GetSources(p))

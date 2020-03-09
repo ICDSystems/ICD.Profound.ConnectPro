@@ -1,5 +1,4 @@
-﻿using System;
-using ICD.Connect.Panels;
+﻿using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.CUE.Modes;
 

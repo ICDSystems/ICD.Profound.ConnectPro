@@ -61,10 +61,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				return false;
 
 			IFavorites favorites = Favorites;
-			if (favorites == null)
-				return false;
-
-			return favorites.GetFavorite(m_Contact) != null;
+			return favorites != null && favorites.ContainsFavorite(m_Contact);
 		}
 
 		protected override void ViewOnFavoriteButtonPressed(object sender, EventArgs eventArgs)

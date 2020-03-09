@@ -121,8 +121,8 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMicrophoneInterface
 			if (m_SubscribedConferenceManager == null)
 				return;
 
-			m_SubscribedConferenceManager.OnInCallChanged += ConferenceManagerOnInCallChanged;
-			m_SubscribedConferenceManager.OnActiveConferenceStatusChanged += ConferenceManagerOnActiveConferenceStatusChanged;
+			m_SubscribedConferenceManager.Dialers.OnInCallChanged += ConferenceManagerOnInCallChanged;
+			m_SubscribedConferenceManager.Dialers.OnActiveConferenceStatusChanged += ConferenceManagerOnActiveConferenceStatusChanged;
 			m_SubscribedConferenceManager.OnPrivacyMuteStatusChange += ConferenceManagerOnPrivacyMuteStatusChange;
 		}
 
@@ -140,8 +140,8 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMicrophoneInterface
 			if (m_SubscribedConferenceManager == null)
 				return;
 
-			m_SubscribedConferenceManager.OnInCallChanged -= ConferenceManagerOnInCallChanged;
-			m_SubscribedConferenceManager.OnActiveConferenceStatusChanged -= ConferenceManagerOnActiveConferenceStatusChanged;
+			m_SubscribedConferenceManager.Dialers.OnInCallChanged -= ConferenceManagerOnInCallChanged;
+			m_SubscribedConferenceManager.Dialers.OnActiveConferenceStatusChanged -= ConferenceManagerOnActiveConferenceStatusChanged;
 			m_SubscribedConferenceManager.OnPrivacyMuteStatusChange -= ConferenceManagerOnPrivacyMuteStatusChange;
 
 			m_SubscribedConferenceManager = null;
@@ -201,7 +201,7 @@ namespace ICD.Profound.ConnectPRO.Themes.ShureMicrophoneInterface
 			{
 				bool inCall = m_Room != null && m_Room.Dialing.ConferenceActionsAvailable(eInCall.Audio);
 				bool onHold = m_SubscribedConferenceManager != null &&
-				              m_SubscribedConferenceManager.OnlineConferences.AnyAndAll(c => c.Status == eConferenceStatus.OnHold);
+							  m_SubscribedConferenceManager.Dialers.OnlineConferences.AnyAndAll(c => c.Status == eConferenceStatus.OnHold);
 				bool privacyMuted = m_SubscribedConferenceManager != null && m_SubscribedConferenceManager.PrivacyMuted;
 
 				eLedBrightness brightness = inCall ? eLedBrightness.Default : eLedBrightness.Disabled;

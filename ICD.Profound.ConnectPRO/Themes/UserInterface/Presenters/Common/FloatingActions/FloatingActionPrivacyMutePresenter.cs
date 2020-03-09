@@ -78,7 +78,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// </summary>
 		private void UpdateVisibility()
 		{
-			bool show = Room != null && Room.Dialing.ConferenceActionsAvailable(eInCall.Audio);
+			bool show = Room != null &&
+				m_SubscribedConferenceManager != null &&
+				m_SubscribedConferenceManager.CanPrivacyMute() &&
+				Room.Dialing.ConferenceActionsAvailable(eInCall.Audio);
+
 			ShowView(show);
 		}
 
@@ -102,7 +106,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 				return;
 
 			m_SubscribedConferenceManager.OnPrivacyMuteStatusChange += ConferenceManagerOnPrivacyMuteStatusChange;
-			m_SubscribedConferenceManager.OnInCallChanged += SubscribedConferenceManagerOnInCallChanged;
+			m_SubscribedConferenceManager.Dialers.OnInCallChanged += SubscribedConferenceManagerOnInCallChanged;
 		}
 
 		/// <summary>
@@ -122,7 +126,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 				return;
 
 			m_SubscribedConferenceManager.OnPrivacyMuteStatusChange -= ConferenceManagerOnPrivacyMuteStatusChange;
-			m_SubscribedConferenceManager.OnInCallChanged -= SubscribedConferenceManagerOnInCallChanged;
+			m_SubscribedConferenceManager.Dialers.OnInCallChanged -= SubscribedConferenceManagerOnInCallChanged;
 
 			m_SubscribedConferenceManager = null;
 		}

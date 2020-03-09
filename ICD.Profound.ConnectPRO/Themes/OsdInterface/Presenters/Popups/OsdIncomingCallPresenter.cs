@@ -98,7 +98,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Popups
 			if (room == null)
 				return;
 
-			m_DialingProviders = room.ConferenceManager.GetDialingProviders();
+			m_DialingProviders = room.ConferenceManager.Dialers.GetDialingProviders();
 			
 			if (m_DialingProviders == null)
 				return;

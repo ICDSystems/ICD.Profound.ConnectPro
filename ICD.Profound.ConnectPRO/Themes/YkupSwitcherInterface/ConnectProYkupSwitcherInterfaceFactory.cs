@@ -34,7 +34,7 @@ namespace ICD.Profound.ConnectPRO.Themes.YkupSwitcherInterface
 		/// </summary>
 		/// <param name="room"></param>
 		/// <returns></returns>
-		protected override IEnumerable<ConnectProYkupSwitcherInterface> CreateUserInterfaces(IConnectProRoom room)
+		protected override IEnumerable<ConnectProYkupSwitcherInterface> CreateUserInterfaces(IRoom room)
 		{
 			if (room == null)
 				throw new ArgumentNullException("room");
@@ -50,7 +50,7 @@ namespace ICD.Profound.ConnectPRO.Themes.YkupSwitcherInterface
 		/// <param name="room"></param>
 		/// <param name="ui"></param>
 		/// <returns></returns>
-		protected override bool RoomContainsOriginator(IRoom room, ConnectProYkupSwitcherInterface ui)
+		protected override bool RoomContainsTarget(IRoom room, ConnectProYkupSwitcherInterface ui)
 		{
 			return room.Originators.ContainsRecursive(ui.Switcher.Id);
 		}

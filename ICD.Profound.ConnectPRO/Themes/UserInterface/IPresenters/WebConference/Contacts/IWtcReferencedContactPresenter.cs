@@ -1,5 +1,4 @@
 ﻿using System;
-using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Contacts;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts;

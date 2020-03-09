@@ -284,10 +284,10 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		public IEnumerable<IVolumePoint> GetContextualVolumePoints()
 		{
-			eVolumeType type = GetVolumeTypeForContext();
+			eVolumePointContext type = GetVolumeContext();
 
 			return Originators.GetInstancesRecursive<IVolumePoint>()
-			                  .Where(v => EnumUtils.HasAnyFlags(v.VolumeType, type))
+			                  .Where(v => EnumUtils.HasAnyFlags(v.Context, type))
 			                  .OrderBy(v => v, new VolumeContextComparer(type));
 		}
 
@@ -301,6 +301,8 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <param name="isInMeeting"></param>
 		protected virtual void HandleIsInMeetingChanged(bool isInMeeting)
 		{
+			// Clear the focus source
+			FocusSource = null;
 		}
 
 		/// <summary>
@@ -311,6 +313,17 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			base.HandleCombineState();
 
 			// End the meeting whenever the combine state changes
+			EndMeeting(false);
+		}
+
+		/// <summary>
+		/// Called before this combine space is destroyed as part of an uncombine operation.
+		/// </summary>
+		public override void HandlePreUncombine()
+		{
+			base.HandlePreUncombine();
+
+			// End the meeting before the room is torn down.
 			EndMeeting(false);
 		}
 
@@ -413,7 +426,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			bool inCall = Dialing.ConferenceActionsAvailable(eInCall.Audio);
 
 			if (!inCall)
-				ConferenceManager.EnablePrivacyMute(false);
+				ConferenceManager.PrivacyMuted = false;
 		}
 
 		/// <summary>
@@ -441,7 +454,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 				return true;
 
 			// If there is an active conference the room is being used.
-			if (ConferenceManager != null && ConferenceManager.IsInCall != eInCall.None)
+			if (ConferenceManager != null && ConferenceManager.Dialers.IsInCall != eInCall.None)
 				return true;
 
 			// If at least one video destination has a routed source the room is being used.
@@ -518,7 +531,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			if (conferenceManager == null)
 				return;
 
-			conferenceManager.OnInCallChanged += ConferenceManagerOnInCallChanged;
+			conferenceManager.Dialers.OnInCallChanged += ConferenceManagerOnInCallChanged;
 		}
 
 		/// <summary>
@@ -530,7 +543,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			if (conferenceManager == null)
 				return;
 
-			conferenceManager.OnInCallChanged -= ConferenceManagerOnInCallChanged;
+			conferenceManager.Dialers.OnInCallChanged -= ConferenceManagerOnInCallChanged;
 		}
 
 		/// <summary>

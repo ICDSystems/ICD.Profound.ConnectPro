@@ -111,7 +111,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Ccrm4000UserInterface
 			if (m_SubscribedConferenceManager == null)
 				return;
 
-			m_SubscribedConferenceManager.OnInCallChanged += ConferenceManagerOnInCallChanged;
+			m_SubscribedConferenceManager.Dialers.OnInCallChanged += ConferenceManagerOnInCallChanged;
 		}
 
 		/// <summary>
@@ -128,7 +128,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Ccrm4000UserInterface
 			if (m_SubscribedConferenceManager == null)
 				return;
 
-			m_SubscribedConferenceManager.OnInCallChanged -= ConferenceManagerOnInCallChanged;
+			m_SubscribedConferenceManager.Dialers.OnInCallChanged -= ConferenceManagerOnInCallChanged;
 
 			m_SubscribedConferenceManager = null;
 		}

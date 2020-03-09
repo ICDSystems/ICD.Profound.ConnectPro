@@ -1,10 +1,12 @@
 ﻿using System;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
+using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.UI.Attributes;
+using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Routing;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Sources;
@@ -25,6 +27,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly ReferencedSourceSelectPresenterCache m_Cache;
 
+		[CanBeNull]
+		private ISource m_Source;
+
+		[CanBeNull]
+		private IRoom m_RoomForSource;
+
 		#region Properties
 
 		/// <summary>
@@ -33,17 +41,38 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		[CanBeNull]
 		public ISource Source
 		{
-			get { return m_Cache.Source; }
+			get { return m_Source; }
 			set
 			{
-				if (value == m_Cache.Source)
+				if (value == m_Source)
 					return;
 
-				// Get the room that contains the source
-				IRoom room = Room == null || value == null ? null : Room.Routing.Sources.GetRoomForSource(value);
+				m_Source = value;
 
-				if (m_Cache.SetSource(room, value))
-					RefreshIfVisible();
+				// Get the room that contains the source
+				RoomForSource = Room == null || Source == null ? null : Room.Routing.Sources.GetRoomForSource(Source);
+
+				UpdateSource();
+			}
+		}
+
+		/// <summary>
+		/// Gets/sets the room for the source.
+		/// </summary>
+		[CanBeNull]
+		private IRoom RoomForSource
+		{
+			get { return m_RoomForSource; }
+			set
+			{
+				if (value == m_RoomForSource)
+					return;
+
+				UnsubscribeRoomForSource(m_RoomForSource);
+				m_RoomForSource = value;
+				SubscribeRoomForSource(m_RoomForSource);
+
+				UpdateSource();
 			}
 		}
 
@@ -99,6 +128,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		}
 
 		/// <summary>
+		/// Sets the room for this presenter to represent.
+		/// </summary>
+		/// <param name="room"></param>
+		public override void SetRoom(IConnectProRoom room)
+		{
+			base.SetRoom(room);
+
+			UpdateSource();
+		}
+
+		/// <summary>
 		/// Updates the view.
 		/// </summary>
 		/// <param name="view"></param>
@@ -122,6 +162,51 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 				m_RefreshSection.Leave();
 			}
 		}
+
+		private void UpdateSource()
+		{
+			bool combined = RoomForSource != null && (RoomForSource.CombineState || RoomForSource.IsCombineRoom());
+			if (m_Cache.SetSource(RoomForSource, Source, combined))
+				RefreshIfVisible();
+		}
+
+		#region Room For Source Callbacks
+
+		/// <summary>
+		/// Subscribe to the room for the current source.
+		/// </summary>
+		/// <param name="roomForSource"></param>
+		private void SubscribeRoomForSource(IRoom roomForSource)
+		{
+			if (roomForSource == null)
+				return;
+
+			roomForSource.OnCombineStateChanged += RoomForSourceOnCombineStateChanged;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the room for the current source.
+		/// </summary>
+		/// <param name="roomForSource"></param>
+		private void UnsubscribeRoomForSource(IRoom roomForSource)
+		{
+			if (roomForSource == null)
+				return;
+
+			roomForSource.OnCombineStateChanged -= RoomForSourceOnCombineStateChanged;
+		}
+
+		/// <summary>
+		/// Called when the room for the current source changes combine state.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void RoomForSourceOnCombineStateChanged(object sender, BoolEventArgs e)
+		{
+			UpdateSource();
+		}
+
+		#endregion
 
 		#region View Callbacks
 

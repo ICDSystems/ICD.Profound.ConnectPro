@@ -2,7 +2,7 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Zoom.SubSettings
 {
-	public interface ISettingsZoomGeneralPresenter : ISettingsZoomSubPresenter<ISettingsZoomGeneralView>
-	{
-	}
+    public interface ISettingsZoomCamerasPresenter : ISettingsZoomSubPresenter<ISettingsZoomCamerasView>
+    {
+    }
 }

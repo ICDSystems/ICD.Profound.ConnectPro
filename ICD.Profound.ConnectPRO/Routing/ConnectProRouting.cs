@@ -9,6 +9,7 @@ using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.Devices;
+using ICD.Connect.Conferencing.Zoom.Controls;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Misc.Vibe.Devices.VibeBoard;
@@ -419,7 +420,16 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (routingControl == null)
 				throw new ArgumentException("routeControl");
 
-			IRouteSourceControl sourceControl = camera.Controls.GetControl<IRouteSourceControl>();
+			// Hack - We don't actually care about routing for Zoom USB cameras
+			ZoomRoomRoutingControl zoomControl = routingControl as ZoomRoomRoutingControl;
+            if (zoomControl != null)
+            {
+                // Set the active camera
+                routingControl.SetCameraInput(0, camera.Id);
+                return;
+			}
+
+            IRouteSourceControl sourceControl = camera.Controls.GetControl<IRouteSourceControl>();
 			if (sourceControl == null)
 				throw new InvalidOperationException("Camera has no routing control");
 
@@ -452,7 +462,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				Route(sourceControl, endpoint, eConnectionType.Video);
 				Route(sourceControl, endpoint, eConnectionType.Audio);
 
-				// Start the presentation
+				// Set the active camera
 				routingControl.SetCameraInput(input, camera.Id);
 				return;
 			}

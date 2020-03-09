@@ -164,8 +164,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (room.ConferenceManager == null)
 				return;
 
-			room.ConferenceManager.OnIncomingCallAdded += ConferenceManagerOnIncomingCallAdded;
-			room.ConferenceManager.OnIncomingCallRemoved += ConferenceManagerOnIncomingCallRemoved;
+			room.ConferenceManager.Dialers.OnIncomingCallAdded += ConferenceManagerOnIncomingCallAdded;
+			room.ConferenceManager.Dialers.OnIncomingCallRemoved += ConferenceManagerOnIncomingCallRemoved;
 		}
 
 		/// <summary>
@@ -185,8 +185,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (room.ConferenceManager == null)
 				return;
 
-			room.ConferenceManager.OnIncomingCallAdded -= ConferenceManagerOnIncomingCallAdded;
-			room.ConferenceManager.OnIncomingCallRemoved -= ConferenceManagerOnIncomingCallRemoved;
+			room.ConferenceManager.Dialers.OnIncomingCallAdded -= ConferenceManagerOnIncomingCallAdded;
+			room.ConferenceManager.Dialers.OnIncomingCallRemoved -= ConferenceManagerOnIncomingCallRemoved;
 		}
 
 		/// <summary>

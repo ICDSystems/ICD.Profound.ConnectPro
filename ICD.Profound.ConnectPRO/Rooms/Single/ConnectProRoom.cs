@@ -167,7 +167,7 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 					Core.Originators.AddChild(point);
 					Originators.Add(id, combineMode);
 
-					ConferenceManager.RegisterDialingProvider(point);
+					ConferenceManager.Dialers.RegisterDialingProvider(point);
 				}
 			}
 		}

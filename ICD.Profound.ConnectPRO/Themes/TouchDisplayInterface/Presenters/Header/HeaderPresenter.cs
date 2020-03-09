@@ -344,7 +344,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 		{
 			if (!Room.IsInMeeting)
 				Room.StartMeeting();
-			else if (Room.ConferenceManager.IsInCall != eInCall.None)
+			else if (Room.ConferenceManager.Dialers.IsInCall != eInCall.None)
 				Navigation.LazyLoadPresenter<IConfirmEndMeetingPresenter>()
 					.Show("Are you sure you would like to leave your conference?", EndCall);
 			else
@@ -358,7 +358,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Header
 		{
 			if (Room != null)
 			{
-				foreach (var activeConference in Room.ConferenceManager.ActiveConferences)
+				foreach (var activeConference in Room.ConferenceManager.Dialers.ActiveConferences)
 				{
 					if (activeConference is IWebConference)
 						(activeConference as IWebConference).LeaveConference();

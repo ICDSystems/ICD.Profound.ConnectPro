@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Connect.Audio.ClockAudio.Devices.CCRM4000;
 using ICD.Connect.Partitioning.Rooms;
-using ICD.Profound.ConnectPRO.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.Ccrm4000UserInterface
 {
@@ -20,28 +19,18 @@ namespace ICD.Profound.ConnectPRO.Themes.Ccrm4000UserInterface
 		}
 
 		/// <summary>
-		/// Instantiates the user interface for the given originator.
-		/// </summary>
-		/// <param name="originator"></param>
-		/// <returns></returns>
-		private ConnectProCcrm4000UserInterface CreateUserInterface(ClockAudioCcrm4000Device originator)
-		{
-			return new ConnectProCcrm4000UserInterface(originator, Theme);
-		}
-
-		/// <summary>
 		/// Creates the user interfaces for the given room.
 		/// </summary>
 		/// <param name="room"></param>
 		/// <returns></returns>
-		protected override IEnumerable<ConnectProCcrm4000UserInterface> CreateUserInterfaces(IConnectProRoom room)
+		protected override IEnumerable<ConnectProCcrm4000UserInterface> CreateUserInterfaces(IRoom room)
 		{
 			if (room == null)
 				throw new ArgumentNullException("room");
 
 			return room.Originators
 					   .GetInstancesRecursive<ClockAudioCcrm4000Device>()
-			           .Select(originator => CreateUserInterface(originator));
+					   .Select(originator => new ConnectProCcrm4000UserInterface(originator, Theme));
 		}
 
 		/// <summary>
@@ -50,7 +39,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Ccrm4000UserInterface
 		/// <param name="room"></param>
 		/// <param name="ui"></param>
 		/// <returns></returns>
-		protected override bool RoomContainsOriginator(IRoom room, ConnectProCcrm4000UserInterface ui)
+		protected override bool RoomContainsTarget(IRoom room, ConnectProCcrm4000UserInterface ui)
 		{
 			return room.Originators.ContainsRecursive(ui.Microphone.Id);
 		}

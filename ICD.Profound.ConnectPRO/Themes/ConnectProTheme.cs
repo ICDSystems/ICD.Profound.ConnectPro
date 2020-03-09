@@ -8,7 +8,6 @@ using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.IO;
-using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.API.Commands;
 using ICD.Connect.API.Nodes;
@@ -18,7 +17,6 @@ using ICD.Connect.Partitioning.PartitionManagers;
 using ICD.Connect.Partitioning.Partitions;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings;
-using ICD.Connect.Settings.Cores;
 using ICD.Connect.Sources.TvTuner.TvPresets;
 using ICD.Connect.Themes;
 using ICD.Connect.Themes.UserInterfaceFactories;
@@ -43,12 +41,14 @@ namespace ICD.Profound.ConnectPRO.Themes
 		/// <summary>
 		/// Raised when starting to combine rooms.
 		/// </summary>
-		public event EventHandler OnStartRoomCombine;
+		public event StartRoomCombine OnStartRoomCombine;
 
 		/// <summary>
 		/// Raised when ending combining rooms.
 		/// </summary>
 		public event EventHandler<GenericEventArgs<Exception>> OnEndRoomCombine;
+
+		public delegate void StartRoomCombine(ConnectProTheme sender, int openCount, int closeCount);
 
 		public const string LOGO_DEFAULT = "Logo.png";
 
@@ -69,8 +69,6 @@ namespace ICD.Profound.ConnectPRO.Themes
 		private IPartitionManager m_SubscribedPartitionManager;
 
 		#region Properties
-
-		public ICore Core { get { return ServiceProvider.GetService<ICore>(); } }
 
 		/// <summary>
 		/// Gets/sets the configured relative or absolute path to the logo image for the splash screen.
@@ -333,7 +331,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 		}
 
 		/// <summary>
-		/// Opens and closes the given partitions to update the comine spaces.
+		/// Opens and closes the given partitions to update the combine spaces.
 		/// </summary>
 		/// <param name="open"></param>
 		/// <param name="close"></param>
@@ -343,13 +341,18 @@ namespace ICD.Profound.ConnectPRO.Themes
 				throw new ArgumentNullException("open");
 
 			if (close == null)
-				throw new ArgumentNullException("closed");
+				throw new ArgumentNullException("close");
 
-			OnStartRoomCombine.Raise(this);
+			IList<IPartition> openList = open as IList<IPartition> ?? open.ToArray();
+			IList<IPartition> closeList = close as IList<IPartition> ?? close.ToArray();
+
+			StartRoomCombine startHandler = OnStartRoomCombine;
+			if (startHandler != null)
+				startHandler(this, openList.Count, closeList.Count);
 
 			try
 			{
-				m_SubscribedPartitionManager.CombineRooms(open, close, () => new ConnectProCombineRoom());
+				m_SubscribedPartitionManager.CombineRooms(openList, closeList, () => new ConnectProCombineRoom());
 			}
 			catch (Exception e)
 			{

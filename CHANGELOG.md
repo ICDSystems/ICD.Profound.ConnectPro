@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Added TouchCUE UI
  - Added CueMotion property on ConnectProTheme for whether to use video or image backgrounds for CUEs
  - Added UI for YKUP USB switcher for automatic switching when Zoom becomes active
+ - ZoomSettings now has options to map Camera Devices to USB IDs
 
 ### Changed
  - Reworked camera presenters to allow selection and control from a single page
@@ -43,6 +44,33 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
  - No longer sorting Zoom contacts by online state
+ - Privacy Mute floating action is only visible when privacy mute is supported in the current context
+
+## [11.4.1] - 2020-02-27
+### Changed
+ - Fixed a bug where combine spaces were not unrouting when growing/shrinking
+
+## [11.4.0] - 2020-02-26
+### Changed
+ - Moved common UI factory features into Themes project
+ - Fixed a NullReferenceException in the room combine presenter
+
+## [11.3.4] - 2020-02-25
+### Changed
+ - Fixed a bug where the room Focus Source was not being cleared, preventing the same source from being opened again.
+ - "Combining Rooms" modal says "Uncombining Rooms" when uncombining
+
+## [11.3.3] - 2020-02-25
+### Changed
+ - Fixed a bug where the Event Server would not properly re-initialize when changing rooms
+
+## [11.3.2] - 2020-02-25
+### Changed
+ - Fixed a bug where sources in combine spaces were not showing their combine names
+
+## [11.3.1] - 2020-02-24
+### Changed
+ - Fixed a bug preventing the Event Server from working correctly in combined rooms
 
 ## [11.3.0] - 2020-02-21
 ### Added

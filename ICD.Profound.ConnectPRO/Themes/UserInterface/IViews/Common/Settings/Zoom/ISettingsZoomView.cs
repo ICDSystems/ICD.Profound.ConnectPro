@@ -15,6 +15,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Zo
 		event EventHandler OnAdvancedButtonPressed;
 
 		/// <summary>
+		/// Raised when the user presses the cameras button.
+		/// </summary>
+		event EventHandler OnCamerasButtonPressed;
+
+		/// <summary>
 		/// Sets the selection state of the general button.
 		/// </summary>
 		/// <param name="selected"></param>
@@ -25,5 +30,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Zo
 		/// </summary>
 		/// <param name="selected"></param>
 		void SetAdvancedButtonSelection(bool selected);
-	}
+
+		/// <summary>
+		/// Sets the selection state of the cameras button.
+		/// </summary>
+		/// <param name="selected"></param>
+        void SetCamerasButtonSelection(bool selected);
+    }
 }

@@ -726,12 +726,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <summary>
 		/// Called when the theme starts combining rooms.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="eventArgs"></param>
-		private void ThemeOnStartRoomCombine(object sender, EventArgs eventArgs)
+		/// <param name="connectProTheme"></param>
+		/// <param name="openCount"></param>
+		/// <param name="closeCount"></param>
+		private void ThemeOnStartRoomCombine(ConnectProTheme connectProTheme, int openCount, int closeCount)
 		{
+			string message = "Updating Configuration";
+
+			if (openCount == 0)
+				message = "Uncombining Rooms";
+			else if (closeCount == 0)
+				message = "Combining Rooms";
+
 			m_NavigationController.LazyLoadPresenter<IGenericLoadingSpinnerPresenter>()
-			                      .ShowView("Combining Rooms");
+			                      .ShowView(message);
 		}
 
 		/// <summary>

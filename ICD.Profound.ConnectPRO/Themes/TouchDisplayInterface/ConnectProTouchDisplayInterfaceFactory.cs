@@ -20,7 +20,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 		/// </summary>
 		/// <param name="room"></param>
 		/// <returns></returns>
-		protected override IEnumerable<ConnectProTouchDisplayInterface> CreateUserInterfaces(IConnectProRoom room)
+		protected override IEnumerable<ConnectProTouchDisplayInterface> CreateUserInterfaces(IRoom room)
 		{
 			if (room == null)
 				throw new ArgumentNullException("room");
@@ -46,7 +46,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface
 		/// <param name="room"></param>
 		/// <param name="ui"></param>
 		/// <returns></returns>
-		protected override bool RoomContainsOriginator(IRoom room, ConnectProTouchDisplayInterface ui)
+		protected override bool RoomContainsTarget(IRoom room, ConnectProTouchDisplayInterface ui)
 		{
 			return room.Originators.ContainsRecursive(ui.Panel.Id);
 		}
