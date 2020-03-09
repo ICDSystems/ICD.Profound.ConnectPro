@@ -72,6 +72,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			base.NodeChanged(node);
 
 			m_Time = Node == null ? default(TimeSpan) : Node.ClockTime;
+			m_Am = m_Time.Hours < 12;
 		}
 
 		#region Private Methods
@@ -186,7 +187,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			// When the view is about to be shown we update the current date
 			if (args.Data)
+			{
 				m_Time = IcdEnvironment.GetLocalTime().TimeOfDay;
+				m_Am = m_Time.Hours < 12;
+			}
 		}
 
 		private void ViewOnMinuteUpButtonPressed(object sender, EventArgs eventArgs)

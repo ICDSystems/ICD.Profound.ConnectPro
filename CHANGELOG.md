@@ -35,6 +35,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - ZoomSettings controls "MuteParticipantsOnEntry" on zoom room itself now, and marks settings dirty to save XML
  - Privacy Mute floating action is only visible when privacy mute is supported in the current context
 
+## [11.4.2] - 2020-03-09
+### Changed
+ - Fixed a bug where the am/pm toggle wasn't being set correctly for clock settings page
+
 ## [11.4.1] - 2020-02-27
 ### Changed
  - Fixed a bug where combine spaces were not unrouting when growing/shrinking
