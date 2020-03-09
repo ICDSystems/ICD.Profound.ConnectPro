@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [11.4.2] - 2020-03-09
 ### Changed
  - Fixed a bug where the am/pm toggle wasn't being set correctly for clock settings page
 
