@@ -241,8 +241,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 			                                   .Where(c => c.ConnectionType.HasFlag(eConnectionType.Video))
 			                                   .OrderBy(o => o.Source.Address)
 			                                   .ToArray();
-			
-			IDestinationBase[] destinations = m_Destinations.GetVideoDestinations().ToArray();
+
+			IDestination[] destinations = m_Destinations.GetVideoDestinations().SelectMany(d => d.GetDestinations(eConnectionType.Video)).ToArray();
 
 			Connection lastOutput = outputs.LastOrDefault();
 			if (lastOutput == null)
