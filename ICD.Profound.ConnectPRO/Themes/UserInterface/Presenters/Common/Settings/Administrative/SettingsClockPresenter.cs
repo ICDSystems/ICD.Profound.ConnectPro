@@ -72,6 +72,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			base.NodeChanged(node);
 
 			m_Time = Node == null ? default(TimeSpan) : Node.ClockTime;
+			m_Am = m_Time.Hours < 12;
 		}
 
 		#region Private Methods
