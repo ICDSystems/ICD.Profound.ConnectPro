@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+ - Changed VTC routing to destination groups to route to individual displays in the group in alternating output order
+
 ## [12.0.0] - 2020-03-20
 ### Added
  - Showing ConnectPRO version on the settings passcode screen
