@@ -156,9 +156,7 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 					if (ControlHasConferencePoint(control))
 						continue;
 
-					int id = IdUtils.GetNewId(Core.Originators.GetChildrenIds().Concat(factory.GetOriginatorIds()),
-					                          IdUtils.GetSubsystemId(IdUtils.SUBSYSTEM_POINTS),
-					                          Id);
+					int id = IdUtils.GetNewId(Core.Originators.GetChildrenIds().Concat(factory.GetOriginatorIds()), eSubsystems.ConferencePoints);
 					eCombineMode combineMode = Originators.GetCombineMode(source.Id);
 
 					ConferencePoint point = new ConferencePoint
