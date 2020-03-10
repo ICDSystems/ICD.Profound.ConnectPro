@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Inverted camera pan buttons
  - ZoomSettings controls "MuteParticipantsOnEntry" on zoom room itself now, and marks settings dirty to save XML
  - Privacy Mute floating action is only visible when privacy mute is supported in the current context
+ - Changed calls to IdUtils to utilize new enums
 
 ## [11.4.2] - 2020-03-09
 ### Changed
