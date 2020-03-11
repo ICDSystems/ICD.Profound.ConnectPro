@@ -81,7 +81,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 					{
 						currentTime = string.Format("Now - {0}", FormatTime(currentBooking.EndTime));
 						refreshInterval = (long)(currentBooking.EndTime -
-						                         IcdEnvironment.GetLocalTime() -
+						                         IcdEnvironment.GetUtcTime() -
 						                         TimeSpan.FromMinutes(15)).TotalMilliseconds + 1000;
 					}
 					else
@@ -96,7 +96,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 							                FormatTime(currentBooking.EndTime));
 						currentAvailability = "RESERVED";
 						refreshInterval =
-							(long)(currentBooking.EndTime - IcdEnvironment.GetLocalTime()).TotalMilliseconds +
+							(long)(currentBooking.EndTime - IcdEnvironment.GetUtcTime()).TotalMilliseconds +
 							1000;
 					}
 				}
@@ -117,7 +117,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 
 		private IEnumerable<IBooking> GetUpcomingBookingsAndAvailability()
 		{
-			DateTime now = IcdEnvironment.GetLocalTime();
+			DateTime now = IcdEnvironment.GetUtcTime();
 			DateTime tomorrow = now.AddDays(1);
 
 			List<IBooking> bookings =
@@ -209,7 +209,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Welcome
 
 		private string FormatTime(DateTime time)
 		{
-			return Theme.DateFormatting.GetShortTime(time);
+			return Theme.DateFormatting.GetShortTime(time.ToLocalTime());
 		}
 
 		#endregion

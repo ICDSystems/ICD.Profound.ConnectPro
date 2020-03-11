@@ -186,8 +186,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 					m_CalendarControl == null
 						? new List<IBooking>()
 						: m_CalendarControl.GetBookings()
-						                   .Where(b => b.EndTime > IcdEnvironment.GetLocalTime() &&
-						                               b.StartTime < IcdEnvironment.GetLocalTime().AddDays(1))
+						                   .Where(b => b.EndTime > IcdEnvironment.GetUtcTime() &&
+						                               b.StartTime < IcdEnvironment.GetUtcTime().AddDays(1))
 						                   .ToList();
 
 				first = m_Bookings.FirstOrDefault();
@@ -200,9 +200,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			// Refresh when the next meeting starts or the current meeting ends.
 			if (first != null)
 			{
-				bool started = first.StartTime <= IcdEnvironment.GetLocalTime();
+				bool started = first.StartTime <= IcdEnvironment.GetUtcTime();
 				DateTime nextRefresh = started ? first.EndTime : first.StartTime;
-				long delta = (long)(nextRefresh - IcdEnvironment.GetLocalTime()).TotalMilliseconds + 1000;
+				long delta = (long)(nextRefresh - IcdEnvironment.GetUtcTime()).TotalMilliseconds + 1000;
 
 				if (delta > 0)
 					m_BookingsRefreshTimer.Reset(delta);

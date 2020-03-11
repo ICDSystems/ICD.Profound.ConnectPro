@@ -639,7 +639,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			if (!GetIsInActiveMeeting())
 				return;
 
-			Log(eSeverity.Informational, "Meeting timeout occurring at {0}", IcdEnvironment.GetLocalTime().ToShortTimeString());
+			Log(eSeverity.Informational, "Meeting timeout occurring");
 
 			EndMeeting();
 		}

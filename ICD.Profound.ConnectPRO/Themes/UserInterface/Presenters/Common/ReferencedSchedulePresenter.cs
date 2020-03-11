@@ -134,7 +134,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 		private string GetShortTime(DateTime time)
 		{
-			return Theme.DateFormatting.GetShortTime(time);
+			return Theme.DateFormatting.GetShortTime(time.ToLocalTime());
 		}
 
 		private string GetIconForBooking(IBooking booking)

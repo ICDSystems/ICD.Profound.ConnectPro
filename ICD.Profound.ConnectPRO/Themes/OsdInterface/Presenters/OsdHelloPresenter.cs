@@ -62,7 +62,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters
 				// "So the first line we will use is 'Welcome to your meeting.'
 				// Second line when a meeting is about to start will say 'Are you here for your meeting? Let's get started.'"
 
-				DateTime now = IcdEnvironment.GetLocalTime();
+				DateTime now = IcdEnvironment.GetUtcTime();
 				IBooking nextBooking = m_CalendarControl != null
 					? m_CalendarControl.GetBookings().Where(b => b.EndTime > now)
 						.OrderBy(b => b.StartTime).FirstOrDefault()
