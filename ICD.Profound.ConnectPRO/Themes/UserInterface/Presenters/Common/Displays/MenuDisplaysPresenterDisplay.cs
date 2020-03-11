@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
+using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Connect.Routing.Groups.Endpoints.Destinations;
 using ICD.Connect.Settings.Originators;
 using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -41,6 +44,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		private bool m_CanRouteToRoomAudio;
 		private string m_Icon;
 		private bool m_CanRouteVideo;
+		private bool m_AnyDisplayOnline;
+		private IDeviceBase[] m_DestinationDevices;
 
 		private ePowerState m_PowerState;
 		private long m_PowerStateExpectedDuration;
@@ -116,6 +121,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 						: Colors.COLOR_DARK_BLUE;
 
 				return HtmlUtils.FormatColoredText(percent, color);
+			}
+		}
+
+		public bool AnyDisplayOnline
+		{
+			get { return m_AnyDisplayOnline; }
+			private set
+			{
+				if (m_AnyDisplayOnline == value)
+					return;
+
+				m_AnyDisplayOnline = value;
+
+				OnRefreshNeeded.Raise(this);
 			}
 		}
 
@@ -346,6 +365,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			OnRefreshNeeded.Raise(this);
 		}
 
+		private void UpdateDisplayOnlineState()
+		{
+			AnyDisplayOnline = m_Destination.GetDevices().Any(d => d.IsOnline);
+		}
+
 		#endregion
 
 		#region Destination Callbacks
@@ -359,9 +383,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			if (destinationBase == null)
 				return;
 
-			destinationBase.GetDevices()
-			               .SelectMany(d => d.Controls.GetControls<IPowerDeviceControl>())
-			               .ForEach(Subscribe);
+			// If this is a destination group, subscribe to the group
+			Subscribe(destinationBase as IDestinationGroup);
+
+			IDeviceBase[] devices = destinationBase.GetDevices().ToArray();
+
+			SetDevices(devices);
+
 		}
 
 		/// <summary>
@@ -373,8 +401,79 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			if (destinationBase == null)
 				return;
 
-			m_PowerStateCache.Keys.ForEach(Unsubscribe);
-			m_PowerStateCache.Clear();
+			// If this is a destination group, unsubscribe from the group
+			Unsubscribe(destinationBase as IDestinationGroup);
+
+			SetDevices(null);
+		}
+
+		#endregion
+
+		#region DestinationGroup Callbacks
+
+		private void Subscribe(IDestinationGroup destinationGroup)
+		{
+			if (destinationGroup == null)
+				return;
+
+			destinationGroup.OnItemsChanged += DestinationGroupOnOnItemsChanged;
+		}
+
+		private void Unsubscribe(IDestinationGroup destinationGroup)
+		{
+			if (destinationGroup == null)
+				return;
+
+			destinationGroup.OnItemsChanged -= DestinationGroupOnOnItemsChanged;
+		}
+
+		private void DestinationGroupOnOnItemsChanged(object sender, EventArgs e)
+		{
+			SetDevices(Destination.GetDevices());
+		}
+
+		#endregion
+
+		#region DeviceBase callbacks
+
+		private void SetDevices([CanBeNull] IEnumerable<IDeviceBase> devices)
+		{
+
+			IDeviceBase[] devicesArray = devices == null ? null : devices.ToArray();
+
+			if (m_DestinationDevices != null)
+			{
+				m_DestinationDevices.ForEach(Unsubscribe);
+
+				m_PowerStateCache.Clear();
+				m_DestinationDevices.SelectMany(d => d.Controls.GetControls<IPowerDeviceControl>())
+					.ForEach(Unsubscribe);
+			}
+
+			m_DestinationDevices = devicesArray;
+
+
+			if (devicesArray == null)
+				return;
+
+			devicesArray.ForEach(Subscribe);
+			devicesArray.SelectMany(d => d.Controls.GetControls<IPowerDeviceControl>())
+			            .ForEach(Subscribe);
+		}
+
+		private void Subscribe(IDeviceBase device)
+		{
+			device.OnIsOnlineStateChanged += DeviceOnOnIsOnlineStateChanged;
+		}
+
+		private void Unsubscribe(IDeviceBase device)
+		{
+			device.OnIsOnlineStateChanged -= DeviceOnOnIsOnlineStateChanged;
+		}
+
+		private void DeviceOnOnIsOnlineStateChanged(object sender, DeviceBaseOnlineStateApiEventArgs e)
+		{
+			UpdateDisplayOnlineState();
 		}
 
 		#endregion
