@@ -15,10 +15,12 @@ using ICD.Connect.Calendaring;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Cameras.Controls;
+using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Presentation;
+using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.IncomingCalls;
@@ -60,6 +62,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		public event EventHandler<GenericEventArgs<IIncomingCall>> OnIncomingCallRejected;
 
 		/// <summary>
+		/// Raised when the active camera for the room changes.
+		/// </summary>
+		public event EventHandler<GenericEventArgs<IDeviceBase>> OnActiveCameraChanged;
+
+		/// <summary>
 		/// Automatically end the meeting after this many milliseconds without any sources being routed
 		/// </summary>
 		private const int MEETING_TIMEOUT = 10 * 60 * 1000;
@@ -72,6 +79,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 		private readonly List<IPresentationControl> m_SubscribedPresentationControls;
 		private readonly List<IPowerDeviceControl> m_SubscribedDisplayPowerControls;
+		private IDeviceBase m_ActiveCamera;
 
 		#region Properties
 
@@ -140,6 +148,23 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			}
 		}
 
+		/// <summary>
+		/// Gets the camera that is currently active for conferencing.
+		/// </summary>
+		public IDeviceBase ActiveCamera
+		{
+			get { return m_ActiveCamera; }
+			private set
+			{
+				if (value == m_ActiveCamera)
+					return;
+
+				m_ActiveCamera = value;
+
+				OnActiveCameraChanged.Raise(this, new GenericEventArgs<IDeviceBase>(m_ActiveCamera));
+			}
+		}
+
 		#endregion
 
 		/// <summary>
@@ -164,6 +189,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			OnFocusSourceChanged = null;
 			OnIncomingCallAnswered = null;
 			OnIncomingCallRejected = null;
+			OnActiveCameraChanged = null;
 
 			base.DisposeFinal(disposing);
 
@@ -173,16 +199,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		}
 
 		#region Methods
-
-		/// <summary>
-		/// Gets the room audio volume point.
-		/// </summary>
-		/// <returns></returns>
-		[CanBeNull]
-		public IVolumePoint GetVolumePoint()
-		{
-			return Originators.GetInstanceRecursive<IVolumePoint>();
-		}
 
 		/// <summary>
 		/// Enters the meeting state.
@@ -376,6 +392,21 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			return Originators.GetInstancesRecursive<IVolumePoint>()
 			                  .Where(v => EnumUtils.HasAnyFlags(v.Context, type))
 			                  .OrderBy(v => v, new VolumeContextComparer(type));
+		}
+
+		/// <summary>
+		/// Sets the active camera for the room.
+		/// If both the selected camera and routing control are not null, attempts to route the camera.
+		/// </summary>
+		/// <param name="activeCamera"></param>
+		/// <param name="vtcDestinationControl"></param>
+		public void SetActiveCamera([CanBeNull] ICameraDevice activeCamera,
+		                            [CanBeNull] IVideoConferenceRouteControl vtcDestinationControl)
+		{
+			ActiveCamera = activeCamera;
+
+			if (activeCamera != null && vtcDestinationControl != null)
+				Routing.RouteCameraToVtc(activeCamera, vtcDestinationControl);
 		}
 
 		/// <summary>
@@ -650,6 +681,16 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		private void UpdateIsAwake()
 		{
 			IsAwake = m_SubscribedDisplayPowerControls.Any(p => p.PowerState == ePowerState.PowerOn);
+		}
+
+		/// <summary>
+		/// Gets the room audio volume point.
+		/// </summary>
+		/// <returns></returns>
+		[CanBeNull]
+		private IVolumePoint GetVolumePoint()
+		{
+			return Originators.GetInstanceRecursive<IVolumePoint>();
 		}
 
 		#endregion

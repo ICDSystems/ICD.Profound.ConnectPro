@@ -5,7 +5,6 @@ using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
-using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Cameras;
 using ICD.Connect.Cameras.Controls;
@@ -58,6 +57,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			m_PresetStoredTimer = SafeTimer.Stopped(() => ShowPresetStoredLabel(false));
 		}
 
+		#region Methods
+
 		/// <summary>
 		/// Release resources.
 		/// </summary>
@@ -105,7 +106,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 
             m_VtcDestinationControl = value;
 
-            RouteSelectedCamera();
+	        if (Room != null)
+		        Room.SetActiveCamera(m_SelectedCamera, m_VtcDestinationControl);
         }
 
 		/// <summary>
@@ -171,12 +173,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			}
 		}
 
+		#endregion
+
 		#region Private Methods
 
 		/// <summary>
 		/// Gets/sets the current camera control.
 		/// </summary>
-		private void SetSelectedCamera(ICameraDevice camera)
+		private void SetSelectedCamera([CanBeNull] ICameraDevice camera)
 		{
 			if (camera == m_SelectedCamera)
 				return;
@@ -187,21 +191,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 
 			RefreshIfVisible();
 
-            RouteSelectedCamera();
-		}
-
-        private void RouteSelectedCamera()
-        {
-            if (Room == null || m_SelectedCamera == null)
-                return;
-
-            if (m_VtcDestinationControl == null)
-            {
-                Room.Logger.AddEntry(eSeverity.Error, "Unable to route selected camera - No VTC destination assigned");
-                return;
-            }
-
-            Room.Routing.RouteCameraToVtc(m_SelectedCamera, m_VtcDestinationControl);
+			if (Room != null)
+				Room.SetActiveCamera(m_SelectedCamera, m_VtcDestinationControl);
         }
 
         private void ShowPresetStoredLabel(bool visible)
@@ -438,8 +429,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 			if (args.Data && m_SelectedCamera == null)
 			{
 				ICameraDevice defaultCamera = m_Cameras.FirstOrDefault();
-				if (defaultCamera != null)
-					SetSelectedCamera(defaultCamera);
+				SetSelectedCamera(defaultCamera);
 			}
 		}
 

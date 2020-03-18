@@ -5,9 +5,12 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.Controls;
+using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.IncomingCalls;
+using ICD.Connect.Devices;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.EventArguments;
 using ICD.Connect.Partitioning.Commercial.Rooms;
@@ -36,6 +39,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// Raised when an incoming call is rejected.
 		/// </summary>
 		event EventHandler<GenericEventArgs<IIncomingCall>> OnIncomingCallRejected;
+
+		/// <summary>
+		/// Raised when the active camera for the room changes.
+		/// </summary>
+		event EventHandler<GenericEventArgs<IDeviceBase>> OnActiveCameraChanged;
 
 		#region Properties
 
@@ -71,6 +79,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// </summary>
 		[CanBeNull]
 		ISource FocusSource { get; set; }
+
+		/// <summary>
+		/// Gets the camera that is currently active for conferencing.
+		/// </summary>
+		IDeviceBase ActiveCamera { get; }
 
 		#endregion
 
@@ -142,6 +155,15 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// Gets the ordered volume points for the current context.
 		/// </summary>
 		IEnumerable<IVolumePoint> GetContextualVolumePoints();
+
+		/// <summary>
+		/// Sets the active camera for the room.
+		/// If both the selected camera and routing control are not null, attempts to route the camera.
+		/// </summary>
+		/// <param name="activeCamera"></param>
+		/// <param name="vtcDestinationControl"></param>
+		void SetActiveCamera([CanBeNull] ICameraDevice activeCamera,
+		                     [CanBeNull] IVideoConferenceRouteControl vtcDestinationControl);
 
 		#endregion
 	}
