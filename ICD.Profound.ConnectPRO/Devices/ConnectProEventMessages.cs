@@ -36,5 +36,6 @@
 
 		public const string KEY_AUDIO_SOURCES = "audio sources";
 		public const string KEY_VIDEO_SOURCES = "video sources";
+		public const string KEY_ACTIVE_CAMERA = "active camera";
 	}
 }

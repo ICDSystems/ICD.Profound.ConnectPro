@@ -10,6 +10,7 @@ using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.IncomingCalls;
+using ICD.Connect.Devices;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Themes.UserInterfaces;
@@ -37,6 +38,7 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 		private bool m_PrivacyMuted;
 		private string m_AudioMessage;
 		private string m_VideoMessage;
+		private string m_ActiveCameraMessage;
 
 		#region Properties
 
@@ -136,10 +138,24 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 			get { return m_AudioMessage; }
 			set
 			{
-				if (value == AudioMessage)
+				if (value == m_AudioMessage)
 					return;
 
 				m_AudioMessage = value;
+
+				Refresh();
+			}
+		}
+
+		private string ActiveCameraMessage
+		{
+			get { return m_ActiveCameraMessage; }
+			set
+			{
+				if (value == m_ActiveCameraMessage)
+					return;
+
+				m_ActiveCameraMessage = value;
 
 				Refresh();
 			}
@@ -220,6 +236,7 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 				m_Device.SendMessage(ConnectProEventMessages.KEY_PRIVACY_MUTE, messagePrivacyMuted);
 				m_Device.SendMessage(ConnectProEventMessages.KEY_VIDEO_SOURCES, VideoMessage);
 				m_Device.SendMessage(ConnectProEventMessages.KEY_AUDIO_SOURCES, AudioMessage);
+				m_Device.SendMessage(ConnectProEventMessages.KEY_ACTIVE_CAMERA, ActiveCameraMessage);
 			}
 			finally
 			{
@@ -280,6 +297,7 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 			UpdateRouting();
 			UpdatePrivacyMuted();
 			UpdateIsInCall();
+			UpdateActiveCamera();
 		}
 
 		private void UpdateIsAwake()
@@ -334,6 +352,15 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 			IsInCall = m_SubscribedConferenceManager != null && m_SubscribedConferenceManager.Dialers.IsInCall != eInCall.None;
 		}
 
+		private void UpdateActiveCamera()
+		{
+			IDeviceBase activeCamera = m_Room == null ? null : m_Room.ActiveCamera;
+			ActiveCameraMessage =
+				activeCamera == null
+					? "no active camera selected"
+					: string.Format("active camera [{0}]", activeCamera.Name);
+		}
+
 		#endregion
 
 		#region Room Callbacks
@@ -355,6 +382,9 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 
 			// Source routed
 			room.Routing.State.OnSourceRoutedChanged += RoomRoutingStateOnSourceRoutedChanged;
+
+			// Active Camera
+			room.OnActiveCameraChanged += RoomOnActiveCameraChanged;
 
 			m_SubscribedConferenceManager = room.ConferenceManager;
 			if (m_SubscribedConferenceManager != null)
@@ -388,6 +418,9 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 
 			// Source routed
 			room.Routing.State.OnSourceRoutedChanged -= RoomRoutingStateOnSourceRoutedChanged;
+
+			// Active Camera
+			room.OnActiveCameraChanged -= RoomOnActiveCameraChanged;
 
 			if (m_SubscribedConferenceManager != null)
 			{
@@ -432,6 +465,16 @@ namespace ICD.Profound.ConnectPRO.Themes.EventServerUserInterface
 		private void RoomRoutingStateOnSourceRoutedChanged(object sender, EventArgs eventArgs)
 		{
 			UpdateRouting();
+		}
+
+		/// <summary>
+		/// Called when the active camera for the room changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void RoomOnActiveCameraChanged(object sender, GenericEventArgs<IDeviceBase> eventArgs)
+		{
+			UpdateActiveCamera();
 		}
 
 		/// <summary>
