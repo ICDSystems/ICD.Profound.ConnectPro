@@ -10,7 +10,25 @@ namespace ICD.Profound.ConnectPRO.Routing.Masking.ConferenceDevice
 {
 	public sealed class ZoomConferenceDeviceMaskedSourceInfo : AbstractConferenceDeviceMaskedSourceInfo
 	{
+		private ZoomRoomConferenceControl m_Control;
 		private ZoomRoomTraditionalConferenceControl m_TraditionalControl;
+
+		[CanBeNull]
+		private ZoomRoomConferenceControl Control
+		{
+			get { return m_Control; }
+			set
+			{
+				if (value == m_Control)
+					return;
+
+				Unsubscribe(m_Control);
+				m_Control = value;
+				Subscribe(m_Control);
+
+				UpdateMask();
+			}
+		}
 
 		[CanBeNull]
 		private ZoomRoomTraditionalConferenceControl TraditionalControl
@@ -42,7 +60,9 @@ namespace ICD.Profound.ConnectPRO.Routing.Masking.ConferenceDevice
 		{
 			base.UpdateControl();
 
-			var device = Source == null ? null : Room.Core.Originators.GetChild(Source.Device) as ZoomRoom;
+			ZoomRoom device = Source == null ? null : Room.Core.Originators.GetChild(Source.Device) as ZoomRoom;
+
+			Control = device == null ? null : device.Controls.GetControl<ZoomRoomConferenceControl>();
 			TraditionalControl = device == null ? null : device.Controls.GetControl<ZoomRoomTraditionalConferenceControl>();
 		}
 
@@ -58,15 +78,20 @@ namespace ICD.Profound.ConnectPRO.Routing.Masking.ConferenceDevice
 				TraditionalControl.GetConferences()
 				                  .Any(c => c.Status == eConferenceStatus.Connecting ||
 				                            c.Status == eConferenceStatus.Connected);
-			if (connectingOrConnected)
-				return false;
 
-			return base.ShouldBeMasked();
+			// In a zoom room
+			connectingOrConnected |=
+				Control != null &&
+				Control.GetConferences()
+				       .Any(c => c.Status == eConferenceStatus.Connecting ||
+				                 c.Status == eConferenceStatus.Connected);
+
+			return !connectingOrConnected && base.ShouldBeMasked();
 		}
 
 		#region Conference Control Callbacks
 
-		private void Subscribe(ZoomRoomTraditionalConferenceControl control)
+		private void Subscribe(ZoomRoomConferenceControl control)
 		{
 			if (control == null)
 				return;
@@ -78,7 +103,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Masking.ConferenceDevice
 				Subscribe(conference);
 		}
 
-		private void Unsubscribe(ZoomRoomTraditionalConferenceControl control)
+		private void Unsubscribe(ZoomRoomConferenceControl control)
 		{
 			if (control == null)
 				return;
@@ -98,6 +123,48 @@ namespace ICD.Profound.ConnectPRO.Routing.Masking.ConferenceDevice
 		}
 
 		private void ControlOnConferenceRemoved(object sender, ConferenceEventArgs e)
+		{
+			Unsubscribe(e.Data);
+
+			UpdateMask();
+		}
+
+		#endregion
+
+		#region Traditional Conference Control Callbacks
+
+		private void Subscribe(ZoomRoomTraditionalConferenceControl traditionalControl)
+		{
+			if (traditionalControl == null)
+				return;
+
+			traditionalControl.OnConferenceAdded += TraditionalControlOnConferenceAdded;
+			traditionalControl.OnConferenceRemoved += TraditionalControlOnConferenceRemoved;
+
+			foreach (var conference in traditionalControl.GetConferences())
+				Subscribe(conference);
+		}
+
+		private void Unsubscribe(ZoomRoomTraditionalConferenceControl traditionalControl)
+		{
+			if (traditionalControl == null)
+				return;
+
+			traditionalControl.OnConferenceAdded -= TraditionalControlOnConferenceAdded;
+			traditionalControl.OnConferenceRemoved -= TraditionalControlOnConferenceRemoved;
+
+			foreach (var conference in traditionalControl.GetConferences())
+				Unsubscribe(conference);
+		}
+
+		private void TraditionalControlOnConferenceAdded(object sender, ConferenceEventArgs e)
+		{
+			Subscribe(e.Data);
+
+			UpdateMask();
+		}
+
+		private void TraditionalControlOnConferenceRemoved(object sender, ConferenceEventArgs e)
 		{
 			Unsubscribe(e.Data);
 
