@@ -93,6 +93,10 @@ namespace ICD.Profound.ConnectPRO.Devices
 			if (key == null)
 				throw new ArgumentNullException("key");
 
+			// No point dealing with empty messages
+			if (string.IsNullOrEmpty(message))
+				return;
+
 			m_CacheSection.Enter();
 
 			try
@@ -108,8 +112,6 @@ namespace ICD.Profound.ConnectPRO.Devices
 				m_CacheSection.Leave();
 			}
 
-			Log(eSeverity.Informational, message);
-
 			SendMessage(message);
 		}
 
@@ -119,6 +121,7 @@ namespace ICD.Profound.ConnectPRO.Devices
 		/// <param name="message"></param>
 		public void SendMessage(string message)
 		{
+			Log(eSeverity.Informational, message);
 			m_Server.Send(message + DELIMITER);
 		}
 
