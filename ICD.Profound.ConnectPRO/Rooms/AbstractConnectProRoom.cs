@@ -638,6 +638,17 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		}
 
 		/// <summary>
+		/// Sets the privacy mute state for the cameras.
+		/// </summary>
+		/// <param name="privacyMute"></param>
+		private void PrivacyMuteCameras(bool privacyMute)
+		{
+			this.GetControlsRecursive<ICameraDeviceControl>()
+				.Where(c => c.SupportedCameraFeatures.HasFlag(eCameraFeatures.Mute))
+				.ForEach(c => c.MuteCamera(privacyMute));
+		}
+
+		/// <summary>
 		/// Returns true if a source is actively routed to a display or we are in a conference.
 		/// </summary>
 		/// <returns></returns>
@@ -766,7 +777,14 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			// Return cameras to home position when entering a video call
 			if (eventArgs.Data.HasFlag(eInCall.Video))
+			{
 				ReturnCamerasToHome();
+				PrivacyMuteCameras(false);
+			}
+			else
+			{
+				PrivacyMuteCameras(true);
+			}
 		}
 
 		#endregion

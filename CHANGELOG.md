@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Privacy Mute floating action is only visible when privacy mute is supported in the current context
  - Changed calls to IdUtils to utilize new enums
  - Using UTC for Times
+ - Cameras are muted/unmuted when call state changes
 
 ## [11.4.2] - 2020-03-09
 ### Changed
