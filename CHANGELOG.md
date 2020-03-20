@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [12.0.0] - 2020-03-20
 ### Added
  - Showing ConnectPRO version on the settings passcode screen
  - Added plugin page to the settings menu
@@ -21,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - ZoomSettings now has options to map Camera Devices to USB IDs
  - Added ActiveCamera property and event to IConnectProRoom
  - Added event server messages for active camera changes
+ - Phsyical TSW lighting button opens the lighting page
 
 ### Changed
  - Reworked camera presenters to allow selection and control from a single page
