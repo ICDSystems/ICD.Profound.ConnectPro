@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Lighting;
 using ICD.Connect.Lighting.RoomInterface;
 using ICD.Connect.UI.Attributes;
@@ -27,6 +28,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Lighting
 
 		private readonly Dictionary<int, ushort> m_PresetsIdToIndex;
 		private readonly List<LightingProcessorControl> m_PresetsOrdered;
+		private bool m_PresetsAvailable;
 
 		private ILightingRoomInterfaceDevice LightingInterface
 		{
@@ -40,7 +42,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Lighting
 				m_LightingInterface = value;
 				Subscribe(value);
 
+				UpdatePresetsAvailable();
+
 				RefreshIfVisible();
+			}
+		}
+
+		public bool PresetsAvailable
+		{
+			get { return m_PresetsAvailable; }
+			private set
+			{
+				if (value == m_PresetsAvailable)
+					return;
+
+				m_PresetsAvailable = value;
+
+				OnAvalabilityChanged.Raise(this, new BoolEventArgs(m_PresetsAvailable));
 			}
 		}
 
@@ -69,25 +87,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Lighting
 
 			try
 			{
-
-				if (LightingInterface == null)
-				{
-					view.SetPresetLabels(Enumerable.Empty<string>());
-					UpdatePresetFeedback(view, null);
-					return;
-				}
+				IEnumerable<LightingProcessorControl> presets =
+					m_LightingInterface == null
+						? Enumerable.Empty<LightingProcessorControl>()
+						: m_LightingInterface.GetPresets()
+						                   .Take(view.MaxPresets);
 
 				m_PresetsOrdered.Clear();
-				m_PresetsOrdered.AddRange(LightingInterface.GetPresets().Take(view.MaxPresets));
+				m_PresetsOrdered.AddRange(presets);
 
 				m_PresetsIdToIndex.Clear();
 				for (ushort i = 0; i < m_PresetsOrdered.Count; i++)
-				{
 					m_PresetsIdToIndex.Add(m_PresetsOrdered[i].Id, i);
-				}
 
 				view.SetPresetLabels(m_PresetsOrdered.Select(p => p.Name));
-				UpdatePresetFeedback(view, m_LightingInterface.GetPreset());
+
+				int? activePreset = m_LightingInterface == null ? null : m_LightingInterface.GetPreset();
+				UpdatePresetFeedback(view, activePreset);
 			}
 
 			finally
@@ -115,7 +131,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Lighting
 
 			if (m_PresetIndex.HasValue)
 				view.SetPresetActive(m_PresetIndex.Value, true);
-
 		}
 
 		private ushort? PresetIdToIndex(int? presetId)
@@ -211,6 +226,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Lighting
 		private void DeviceOnControlsChanged(object sender, EventArgs args)
 		{
 			RefreshIfVisible();
+			UpdatePresetsAvailable();
 		}
 
 		private void DeviceOnPresetChanged(object sender, GenericEventArgs<int?> args)
@@ -218,8 +234,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Lighting
 			UpdatePresetFeedback(args.Data);
 		}
 
-		#endregion
+		private void UpdatePresetsAvailable()
+		{
+			PresetsAvailable = m_LightingInterface != null && m_LightingInterface.GetPresets().Any();
+		}
 
-		
+		#endregion
 	}
 }

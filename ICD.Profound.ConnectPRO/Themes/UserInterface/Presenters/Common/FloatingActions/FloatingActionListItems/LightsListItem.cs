@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using ICD.Connect.Lighting.RoomInterface;
+﻿using ICD.Connect.Lighting.RoomInterface;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -44,18 +43,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// </summary>
 		public override void HandleButtonPressed()
 		{
-			// Check if any presets are available
-			ILightingRoomInterfaceDevice lightingInterface =
-				Room == null ? null : Room.Originators.GetInstanceRecursive<ILightingRoomInterfaceDevice>();
-			bool hasPresets = lightingInterface != null && lightingInterface.GetPresets().Any();
-
-			if (hasPresets)
+			if (m_ActionPresenter.PresetsAvailable)
+			{
 				base.HandleButtonPressed();
-			else
-				Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
-				          .Show("Room has no lighting presets available",
-				                10 * 1000,
-				                GenericAlertPresenterButton.Dismiss);
+				return;
+			}
+
+			Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
+			          .Show("Room has no lighting presets available",
+			                10 * 1000,
+			                GenericAlertPresenterButton.Dismiss);
 		}
 	}
 }

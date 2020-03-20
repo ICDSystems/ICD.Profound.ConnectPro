@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Lighting.Environment;
-using ICD.Connect.Lighting.RoomInterface;
 using ICD.Connect.Panels.Controls;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
@@ -79,10 +76,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 
 				bool isInMeeting = Room != null && Room.IsInMeeting;
 				bool hasVolumeControl = m_VolumePresenter.VolumeControl != null && m_VolumePresenter.VolumeControl.ControlAvailable;
+				bool hasLightControl = m_LightingPresenter.PresetsAvailable;
 
 				m_ButtonsControl.SetBacklightEnabled(ADDRESS_POWER, isInMeeting);
 				m_ButtonsControl.SetBacklightEnabled(ADDRESS_HOME, isInMeeting);
-				m_ButtonsControl.SetBacklightEnabled(ADDRESS_LIGHT, true);
+				m_ButtonsControl.SetBacklightEnabled(ADDRESS_LIGHT, hasLightControl);
 				m_ButtonsControl.SetBacklightEnabled(ADDRESS_VOL_UP, hasVolumeControl);
 				m_ButtonsControl.SetBacklightEnabled(ADDRESS_VOL_DOWN, hasVolumeControl);
 			}
@@ -169,18 +167,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="eventArgs"></param>
 		private void ViewOnLightsButtonPressed(object sender, EventArgs eventArgs)
 		{
-			// Check if any presets are available
-			ILightingRoomInterfaceDevice lightingInterface =
-				Room == null ? null : Room.Originators.GetInstanceRecursive<ILightingRoomInterfaceDevice>();
-			bool hasPresets = lightingInterface != null && lightingInterface.GetPresets().Any();
-
-			if (hasPresets)
-				m_LightingPresenter.ShowView(!m_LightingPresenter.IsViewVisible);
-			else
-				Navigation.LazyLoadPresenter<IGenericAlertPresenter>()
-						  .Show("Room has no lighting presets available",
-								10 * 1000,
-								GenericAlertPresenterButton.Dismiss);
+			if (m_LightingPresenter.IsViewVisible)
+				m_LightingPresenter.ShowView(false);
+			else if (m_LightingPresenter.PresetsAvailable)
+				m_LightingPresenter.ShowView(true);
 		}
 
 		/// <summary>
@@ -259,6 +249,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		{
 			RefreshIfVisible();
 		}
+
 		#endregion
 	}
 }
