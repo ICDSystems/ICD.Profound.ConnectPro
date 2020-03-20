@@ -10,6 +10,7 @@ using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.RoutingGraphs;
+using ICD.Profound.ConnectPRO.EventArguments;
 using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Routing.Masking;
 
@@ -30,7 +31,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <summary>
 		/// Raised when a source becomes routed for the first time or completely unrouted from all displays.
 		/// </summary>
-		public event EventHandler OnSourceRoutedChanged;
+		public event EventHandler<SourceRoutedEventArgs> OnSourceRoutedChanged;
 
 		// Keeps track of the active routing states
 		private readonly Dictionary<IDestinationBase, IcdHashSet<ISource>> m_VideoRoutingCache;
@@ -527,6 +528,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 		private void UpdateSourceRoutedStates()
 		{
+			List<ISource> routed;
+			List<ISource> unrouted;
+
 			m_CacheSection.Enter();
 
 			try
@@ -554,6 +558,18 @@ namespace ICD.Profound.ConnectPRO.Routing
 				if (routedSources.DictionaryEqual(m_SourceRoutedStates))
 					return;
 
+				// Determine the newly routed/unrouted sources
+				routed = routedSources.Where(kvp => kvp.Value == eSourceState.Active &&
+				                                    m_SourceRoutedStates.GetDefault(kvp.Key) != eSourceState.Active)
+				                      .Select(kvp => kvp.Key)
+				                      .ToList();
+
+				unrouted = m_SourceRoutedStates.Where(kvp => kvp.Value == eSourceState.Active &&
+				                                             routedSources.GetDefault(kvp.Key) != eSourceState.Active)
+				                               .Select(kvp => kvp.Key)
+				                               .ToList();
+
+				// Update the cache
 				m_SourceRoutedStates.Clear();
 				m_SourceRoutedStates.AddRange(routedSources);
 			}
@@ -562,7 +578,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				m_CacheSection.Leave();
 			}
 
-			OnSourceRoutedChanged.Raise(this);
+			OnSourceRoutedChanged.Raise(this, new SourceRoutedEventArgs(routed, unrouted));
 		}
 
 		#endregion

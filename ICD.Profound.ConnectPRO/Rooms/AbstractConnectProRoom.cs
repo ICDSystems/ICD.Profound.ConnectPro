@@ -33,6 +33,7 @@ using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.EventArguments;
+using ICD.Profound.ConnectPRO.EventArguments;
 using ICD.Profound.ConnectPRO.Routing;
 using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 
@@ -704,6 +705,71 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			return Originators.GetInstanceRecursive<IVolumePoint>();
 		}
 
+		/// <summary>
+		/// Update privacy mute and cameras when a web conferencing source is routed/unrouted.
+		/// </summary>
+		/// <param name="routed"></param>
+		/// <param name="unrouted"></param>
+		private void UpdateConferenceFeatures([NotNull] IEnumerable<ISource> routed,
+		                                      [NotNull] IEnumerable<ISource> unrouted)
+		{
+			// If we're in a video call don't mess with cameras and microphones
+			if (ConferenceManager != null && ConferenceManager.Dialers.IsInCall.HasFlag(eInCall.Video))
+				return;
+
+			// Did a new web conference source become routed?
+			ConnectProSource routedWebSource =
+				routed.OfType<ConnectProSource>()
+				      .FirstOrDefault(s => s.ConferenceOverride == eConferenceOverride.Show);
+
+			// Are there any other web conference sources currently routed?
+			bool otherWebSources =
+				Routing.State
+				       .GetRealActiveVideoSources()
+				       .SelectMany(kvp => kvp.Value)
+					   .Except(routedWebSource)
+				       .Any();
+
+			// Still routing a web source, so don't mess with cameras and microphones
+			if (otherWebSources)
+				return;
+
+			UpdateMeetingTimeoutTimer();
+			UpdatePrivacyMute();
+
+			// Return cameras to home position when entering a web conference
+			if (routedWebSource != null)
+			{
+				ReturnCamerasToHome();
+				PrivacyMuteCameras(false);
+			}
+			else
+			{
+				PrivacyMuteCameras(true);
+			}
+		}
+
+		/// <summary>
+		/// Update privacy mute and cameras when the conference manager changes call state.
+		/// </summary>
+		/// <param name="callState"></param>
+		private void UpdateConferenceFeatures(eInCall callState)
+		{
+			UpdateMeetingTimeoutTimer();
+			UpdatePrivacyMute();
+
+			// Return cameras to home position when entering a video call
+			if (callState.HasFlag(eInCall.Video))
+			{
+				ReturnCamerasToHome();
+				PrivacyMuteCameras(false);
+			}
+			else
+			{
+				PrivacyMuteCameras(true);
+			}
+		}
+
 		#endregion
 
 		#region Routing Callbacks
@@ -730,11 +796,10 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// Called when a source becomes routed/unrouted.
 		/// </summary>
 		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void StateOnSourceRoutedChanged(object sender, EventArgs e)
+		/// <param name="eventArgs"></param>
+		private void StateOnSourceRoutedChanged(object sender, SourceRoutedEventArgs eventArgs)
 		{
-			UpdateMeetingTimeoutTimer();
-			UpdatePrivacyMute();
+			UpdateConferenceFeatures(eventArgs.Routed, eventArgs.Unrouted);
 		}
 
 		#endregion
@@ -772,19 +837,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// <param name="eventArgs"></param>
 		private void ConferenceManagerOnInCallChanged(object sender, InCallEventArgs eventArgs)
 		{
-			UpdateMeetingTimeoutTimer();
-			UpdatePrivacyMute();
-
-			// Return cameras to home position when entering a video call
-			if (eventArgs.Data.HasFlag(eInCall.Video))
-			{
-				ReturnCamerasToHome();
-				PrivacyMuteCameras(false);
-			}
-			else
-			{
-				PrivacyMuteCameras(true);
-			}
+			UpdateConferenceFeatures(eventArgs.Data);
 		}
 
 		#endregion

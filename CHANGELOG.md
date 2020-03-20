@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Changed calls to IdUtils to utilize new enums
  - Using UTC for Times
  - Cameras are muted/unmuted when call state changes
+ - Cameras are muted/unmuted when a web conferencing source is routed/unrouted
 
 ## [11.4.2] - 2020-03-09
 ### Changed
