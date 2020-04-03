@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
+using ICD.Connect.Devices;
+using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.UI.Attributes;
@@ -33,6 +36,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		[CanBeNull]
 		private IRoom m_RoomForSource;
 
+		private bool m_AnySourceOnline;
+
 		#region Properties
 
 		/// <summary>
@@ -44,15 +49,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			get { return m_Source; }
 			set
 			{
-				if (value == m_Source)
-					return;
-
-				m_Source = value;
-
-				// Get the room that contains the source
-				RoomForSource = Room == null || Source == null ? null : Room.Routing.Sources.GetRoomForSource(Source);
-
-				UpdateSource();
+				SetSource(value);
 			}
 		}
 
@@ -99,6 +96,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			{
 				if (m_Cache.SetRouted(value))
 					RefreshIfVisible();
+			}
+		}
+
+		private bool AnySourceOnline
+		{
+			get { return m_AnySourceOnline; }
+			set
+			{
+				if (value == m_AnySourceOnline)
+					return;
+
+				m_AnySourceOnline = value;
+
+				RefreshIfVisible();
 			}
 		}
 
@@ -156,11 +167,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 				view.SetLine2Text(m_Cache.Line2);
 				view.SetIcon(m_Cache.Icon);
 				view.SetRoutedState(m_Cache.SourceState);
+				view.Enable(AnySourceOnline);
 			}
 			finally
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		private void UpdateAnySourceOnline()
+		{
+			AnySourceOnline = m_Source != null && m_Source.GetDevices().Any(d => d.IsOnline);
 		}
 
 		private void UpdateSource()
@@ -169,6 +186,69 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			if (m_Cache.SetSource(RoomForSource, Source, combined))
 				RefreshIfVisible();
 		}
+
+		#region Source Callbacks
+
+		private void SetSource(ISource source)
+		{
+			if (source == m_Source)
+				return;
+
+			Unsubscribe(m_Source);
+
+			m_Source = source;
+
+			Subscribe(m_Source);
+
+			// Get the room that contains the source
+			RoomForSource = Room == null || Source == null ? null : Room.Routing.Sources.GetRoomForSource(Source);
+
+			UpdateAnySourceOnline();
+			UpdateSource();
+		}
+
+		private void Subscribe(ISource source)
+		{
+			if (source == null)
+				return;
+
+			source.GetDevices().ForEach(Subscribe);
+		}
+
+		private void Unsubscribe(ISource source)
+		{
+			if (source == null)
+				return;
+
+			source.GetDevices().ForEach(Unsubscribe);
+		}
+
+		#region Source Device Callbacks
+
+		private void Subscribe(IDeviceBase sourceDevice)
+		{
+			if (sourceDevice == null)
+				return;
+
+			sourceDevice.OnIsOnlineStateChanged += SourceDeviceOnIsOnlineStateChanged;
+		}
+
+		private void Unsubscribe(IDeviceBase sourceDevice)
+		{
+			if (sourceDevice == null)
+				return;
+
+			sourceDevice.OnIsOnlineStateChanged -= SourceDeviceOnIsOnlineStateChanged;
+		}
+
+		private void SourceDeviceOnIsOnlineStateChanged(object sender, DeviceBaseOnlineStateApiEventArgs deviceBaseOnlineStateApiEventArgs)
+		{
+			UpdateAnySourceOnline();
+		}
+
+		#endregion
+
+		#endregion
 
 		#region Room For Source Callbacks
 
