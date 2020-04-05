@@ -28,6 +28,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private IWtcReferencedParticipantPresenter m_SelectedParticipant;
 
+		private IWtcReferencedParticipantPresenter SelectedParticipant
+		{
+			get { return m_SelectedParticipant; }
+			set
+			{
+				if (m_SelectedParticipant == value)
+					return;
+
+				UnsubscribeSelected(m_SelectedParticipant);
+				m_SelectedParticipant = value;
+				SubscribeSelected(m_SelectedParticipant);
+
+				m_ParticipantControls.Participant = m_SelectedParticipant == null ? null : m_SelectedParticipant.Participant;
+				RefreshIfVisible();
+			}
+		}
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -40,27 +57,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			m_RefreshSection = new SafeCriticalSection();
 			m_PresenterFactory = new WtcReferencedParticipantPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
 			m_ParticipantControls = nav.LazyLoadPresenter<IWtcParticipantControlsPresenter>();
-		}
-
-		private IWtcReferencedParticipantPresenter SelectedParticipant
-		{
-			get { return m_SelectedParticipant; }
-			set
-			{
-				if (m_SelectedParticipant == value)
-					return;
-
-				if (m_SelectedParticipant != null)
-					UnsubscribeSelected(m_SelectedParticipant);
-
-				m_SelectedParticipant = value;
-
-				if (m_SelectedParticipant != null)
-					SubscribeSelected(m_SelectedParticipant);
-
-				m_ParticipantControls.Participant = m_SelectedParticipant == null ? null : m_SelectedParticipant.Participant;
-				RefreshIfVisible();
-			}
 		}
 
 		protected override void Refresh(IWtcActiveMeetingView view)
