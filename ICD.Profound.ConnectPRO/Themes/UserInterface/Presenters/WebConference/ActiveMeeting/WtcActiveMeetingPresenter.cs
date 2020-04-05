@@ -98,7 +98,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				CallComponent component = zoomRoom == null ? null : zoomRoom.Components.GetComponent<CallComponent>();
 				view.SetMeetingNumberLabelVisibility(component != null);
 				view.SetMeetingNumberLabelText(component != null
-					? string.Format("Meeting #: {0}", component.MeetingId)
+					? string.Format("Meeting #: {0}", component.MeetingIdFormatted)
 					: string.Empty);
 
 				// Only hosts can kick/mute people
