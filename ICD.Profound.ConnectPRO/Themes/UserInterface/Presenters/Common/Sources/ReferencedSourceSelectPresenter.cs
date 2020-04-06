@@ -36,8 +36,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		[CanBeNull]
 		private IRoom m_RoomForSource;
 
-		private bool m_AnySourceOnline;
-
 		#region Properties
 
 		/// <summary>
@@ -99,17 +97,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			}
 		}
 
-		private bool AnySourceOnline
+		public bool AnySourceOnline
 		{
-			get { return m_AnySourceOnline; }
+			get { return m_Cache.SourceOnline; }
 			set
 			{
-				if (value == m_AnySourceOnline)
-					return;
-
-				m_AnySourceOnline = value;
-
-				RefreshIfVisible();
+				if(m_Cache.SetSourceOnline(value))
+					RefreshIfVisible();
 			}
 		}
 

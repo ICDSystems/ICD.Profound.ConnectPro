@@ -32,6 +32,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		public string Line1 { get; private set; }
 		public string Line2 { get; private set; }
 		public string Icon { get; private set; }
+		public bool SourceOnline { get; private set; }
 
 		#endregion
 
@@ -111,18 +112,39 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			return true;
 		}
 
+		public bool SetSourceOnline(bool sourceOnline)
+		{
+			if (sourceOnline == SourceOnline)
+				return false;
+
+			SourceOnline = sourceOnline;
+
+			UpdateColor();
+
+			return true;
+		}
+
 		#endregion
 
 		#region Private Methods
 
 		private void UpdateColor()
 		{
-			Color = Selected ? eSourceColor.Yellow : eSourceColor.White;
+
+			Color = GetColor();
 			m_HexColor = Colors.SourceColorToTextColor(Color);
 
 			UpdateText();
 			UpdateFeedback();
 			UpdateIcon();
+		}
+
+		private eSourceColor GetColor()
+		{
+			if (!SourceOnline)
+				return eSourceColor.Grey;
+
+			return Selected ? eSourceColor.Yellow : eSourceColor.White;
 		}
 
 		private void UpdateText()
