@@ -33,6 +33,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		public string Line2 { get; private set; }
 		public string Icon { get; private set; }
 		public bool SourceOnline { get; private set; }
+		public bool EnableWhenOffline { get; private set; }
+
+		public bool Enabled
+		{
+			get { return SourceOnline || EnableWhenOffline; }
+		}
 
 		#endregion
 
@@ -124,6 +130,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			return true;
 		}
 
+		public bool SetEnableWhenOffline(bool enableWhenOffline)
+		{
+			if (enableWhenOffline == EnableWhenOffline)
+				return false;
+
+			EnableWhenOffline = enableWhenOffline;
+
+			UpdateColor();
+
+			return true;
+		}
+
 		#endregion
 
 		#region Private Methods
@@ -141,7 +159,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 
 		private eSourceColor GetColor()
 		{
-			if (!SourceOnline)
+			if (!Enabled)
 				return eSourceColor.Grey;
 
 			return Selected ? eSourceColor.Yellow : eSourceColor.White;

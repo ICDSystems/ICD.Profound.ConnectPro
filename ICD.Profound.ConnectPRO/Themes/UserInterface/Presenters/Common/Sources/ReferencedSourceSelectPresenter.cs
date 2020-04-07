@@ -100,9 +100,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		public bool SourceOnline
 		{
 			get { return m_Cache.SourceOnline; }
-			set
+			private set
 			{
 				if(m_Cache.SetSourceOnline(value))
+					RefreshIfVisible();
+			}
+		}
+
+		public bool EnableWhenOffline
+		{
+			get { return m_Cache.EnableWhenOffline; }
+			private set
+			{
+				if (m_Cache.SetEnableWhenOffline(value))
 					RefreshIfVisible();
 			}
 		}
@@ -160,6 +170,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 				view.SetLine1Text(m_Cache.Line1);
 				view.SetLine2Text(m_Cache.Line2);
 				view.SetIcon(m_Cache.Icon);
+				// Use SourceOnline here, so even if EnableWhenOffline is true, icon will be red
 				view.SetRoutedState(SourceOnline ? m_Cache.SourceState : eSourceState.Error);
 				view.Enable(true);
 			}
@@ -198,6 +209,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			RoomForSource = Room == null || Source == null ? null : Room.Routing.Sources.GetRoomForSource(Source);
 
 			UpdateAnySourceOnline();
+			EnableWhenOffline = source.EnableWhenOffline;
 			UpdateSource();
 		}
 
@@ -205,6 +217,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		{
 			if (source == null)
 				return;
+
+			source.OnEnableWhenOfflineChanged += SourceOnOnEnableWhenOfflineChanged;
 
 			source.GetDevices().ForEach(Subscribe);
 		}
@@ -214,7 +228,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			if (source == null)
 				return;
 
+			source.OnEnableWhenOfflineChanged -= SourceOnOnEnableWhenOfflineChanged;
+
 			source.GetDevices().ForEach(Unsubscribe);
+		}
+
+		private void SourceOnOnEnableWhenOfflineChanged(object sender, BoolEventArgs args)
+		{
+			EnableWhenOffline = args.Data;
 		}
 
 		#region Source Device Callbacks
@@ -314,7 +335,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		private void ViewOnButtonPressed(object sender, EventArgs eventArgs)
 		{
 			//vDon't pass presses if source offline
-			if (SourceOnline)
+			if (m_Cache.Enabled)
 				OnPressed.Raise(this);
 		}
 
