@@ -127,6 +127,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		protected void DisplayButtonPressed(MenuDisplaysPresenterDisplay display)
 		{
+			// Ignore presses for offline displays
+			if (!display.AnyDisplayOnline)
+				return;
+
 			MenuDestinationPressedCallback handler = OnDestinationPressed;
 			if (handler != null)
 				handler(this, display.RoutedSource, display.Destination);
@@ -134,6 +138,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		protected void DisplaySpeakerButtonPressed(MenuDisplaysPresenterDisplay display)
 		{
+			// Ignore presses for offline displays
+			if (!display.AnyDisplayOnline)
+				return;
+
 			if (Room == null)
 				return;
 
