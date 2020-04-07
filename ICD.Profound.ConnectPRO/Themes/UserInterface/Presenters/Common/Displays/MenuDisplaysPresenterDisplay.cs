@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
+using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Devices;
@@ -44,7 +45,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		private bool m_CanRouteToRoomAudio;
 		private string m_Icon;
 		private bool m_CanRouteVideo;
-		private bool m_AnyDisplayOnline;
+		private bool m_AnyDestinationOnline;
+		private bool m_EnableWhenOffline;
 		private IDeviceBase[] m_DestinationDevices;
 
 		private ePowerState m_PowerState;
@@ -124,15 +126,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			}
 		}
 
-		public bool AnyDisplayOnline
+		public bool AnyDestinationOnline
 		{
-			get { return m_AnyDisplayOnline; }
+			get { return m_AnyDestinationOnline; }
 			private set
 			{
-				if (m_AnyDisplayOnline == value)
+				if (m_AnyDestinationOnline == value)
 					return;
 
-				m_AnyDisplayOnline = value;
+				m_AnyDestinationOnline = value;
 
 				UpdateColor();
 				UpdateLabels();
@@ -140,6 +142,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				OnRefreshNeeded.Raise(this);
 			}
 		}
+
+		public bool EnableWhenOffline
+		{
+			get { return m_EnableWhenOffline; }
+			private set
+			{
+				if (m_EnableWhenOffline == value)
+					return;
+
+				m_EnableWhenOffline = value;
+
+				UpdateColor();
+				UpdateLabels();
+
+				OnRefreshNeeded.Raise(this);
+			}
+		}
+
+		public bool Enabled { get { return EnableWhenOffline || AnyDestinationOnline; } }
 
 		#endregion
 
@@ -155,7 +176,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			m_PowerStateCache = new Dictionary<IPowerDeviceControl, ControlPowerState>();
 			m_WarmupTimer = new IcdStopwatch();
 
+			
+
 			Subscribe(m_Destination);
+			EnableWhenOffline = m_Destination.EnableWhenOffline;
+
 
 			// Update has control
 			UpdateHasControl();
@@ -275,7 +300,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private eDisplayColor GetColor()
 		{
-			if (!AnyDisplayOnline)
+			if (!Enabled)
 				return eDisplayColor.Grey;
 
 			if (m_SelectedSource == null || m_SelectedSource == m_RoutedSource)
@@ -312,7 +337,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 						: m_Destination.GetName(m_RoomCombine) ?? string.Empty;
 
 				string text;
-				if (AnyDisplayOnline)
+				if (Enabled)
 					text = m_SelectedSource == null || m_SelectedSource == m_RoutedSource
 						       ? destinationName
 						       : m_CanRouteVideo
@@ -342,7 +367,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			m_SourceName = m_RoutedSource == null ? string.Empty : m_RoutedSource.GetName(m_RoomCombine);
 
 			string hexColor = Colors.DisplayColorToTextColor(m_Color);
-			string displayColor = AnyDisplayOnline ? hexColor : Colors.COLOR_RED;
+			string displayColor = Enabled ? hexColor : Colors.COLOR_RED;
 			m_SourceName = HtmlUtils.FormatColoredText(m_SourceName, hexColor);
 			m_Line1 = HtmlUtils.FormatColoredText(m_Line1, displayColor);
 			m_Line2 = HtmlUtils.FormatColoredText(m_Line2, displayColor);
@@ -388,7 +413,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private void UpdateDisplayOnlineState()
 		{
-			AnyDisplayOnline = m_Destination.GetDevices().Any(d => d.IsOnline);
+			AnyDestinationOnline = m_Destination.GetDevices().Any(d => d.IsOnline);
 		}
 
 		#endregion
@@ -403,6 +428,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		{
 			if (destinationBase == null)
 				return;
+
+			destinationBase.OnEnableWhenOfflineChanged += DestinationBaseOnOnEnableWhenOfflineChanged;
 
 			// If this is a destination group, subscribe to the group
 			Subscribe(destinationBase as IDestinationGroup);
@@ -422,10 +449,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			if (destinationBase == null)
 				return;
 
+			destinationBase.OnEnableWhenOfflineChanged -= DestinationBaseOnOnEnableWhenOfflineChanged;
+
 			// If this is a destination group, unsubscribe from the group
 			Unsubscribe(destinationBase as IDestinationGroup);
 
 			SetDevices(null);
+		}
+
+		private void DestinationBaseOnOnEnableWhenOfflineChanged(object sender, BoolEventArgs args)
+		{
+			EnableWhenOffline = args.Data;
 		}
 
 		#endregion

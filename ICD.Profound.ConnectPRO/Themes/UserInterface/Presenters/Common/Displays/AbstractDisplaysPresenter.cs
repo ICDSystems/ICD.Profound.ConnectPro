@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils.Collections;
-using ICD.Common.Utils.Extensions;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Endpoints.Destinations;
@@ -128,7 +127,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		protected void DisplayButtonPressed(MenuDisplaysPresenterDisplay display)
 		{
 			// Ignore presses for offline displays
-			if (!display.AnyDisplayOnline)
+			if (!display.Enabled)
 				return;
 
 			MenuDestinationPressedCallback handler = OnDestinationPressed;
@@ -139,7 +138,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		protected void DisplaySpeakerButtonPressed(MenuDisplaysPresenterDisplay display)
 		{
 			// Ignore presses for offline displays
-			if (!display.AnyDisplayOnline)
+			if (!display.Enabled)
 				return;
 
 			if (Room == null)
