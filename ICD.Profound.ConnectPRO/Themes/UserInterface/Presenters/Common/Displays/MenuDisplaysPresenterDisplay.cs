@@ -134,6 +134,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 				m_AnyDisplayOnline = value;
 
+				UpdateColor();
+				UpdateLabels();
+
 				OnRefreshNeeded.Raise(this);
 			}
 		}
@@ -156,6 +159,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 			// Update has control
 			UpdateHasControl();
+
+			// Update Display Online State
+			UpdateDisplayOnlineState();
 
 			// Update the color
 			UpdateColor();
@@ -264,15 +270,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		private void UpdateColor()
 		{
-			m_Color = m_SelectedSource == null || m_SelectedSource == m_RoutedSource
-				          ? m_RoutedSource == null
-					            ? eDisplayColor.Grey
-					            : m_HasControl
-						              ? eDisplayColor.Green
-						              : eDisplayColor.White
-				          : m_CanRouteVideo
-					            ? eDisplayColor.Yellow
-					            : eDisplayColor.Grey;
+			m_Color = GetColor();
+		}
+
+		private eDisplayColor GetColor()
+		{
+			if (!AnyDisplayOnline)
+				return eDisplayColor.Grey;
+
+			if (m_SelectedSource == null || m_SelectedSource == m_RoutedSource)
+				return m_RoutedSource == null
+					       ? eDisplayColor.Grey
+					       : m_HasControl
+						       ? eDisplayColor.Green
+						       : eDisplayColor.White;
+
+			return m_CanRouteVideo
+				       ? eDisplayColor.Yellow
+				       : eDisplayColor.Grey;
 		}
 
 		private void UpdateIcon()
@@ -296,11 +311,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 						? string.Empty
 						: m_Destination.GetName(m_RoomCombine) ?? string.Empty;
 
-				string text = m_SelectedSource == null || m_SelectedSource == m_RoutedSource
-					              ? destinationName
-					              : m_CanRouteVideo
-						              ? string.Format("PRESS TO SHOW SELECTION ON {0}", destinationName)
-						              : string.Format("UNABLE TO SHOW SELECTION ON {0}", destinationName);
+				string text;
+				if (AnyDisplayOnline)
+					text = m_SelectedSource == null || m_SelectedSource == m_RoutedSource
+						       ? destinationName
+						       : m_CanRouteVideo
+							       ? string.Format("PRESS TO SHOW SELECTION ON {0}", destinationName)
+							       : string.Format("UNABLE TO SHOW SELECTION ON {0}", destinationName);
+				else
+					text = string.Format("{0} OFFLINE", destinationName).ToUpper();
+
 				text = text.ToUpper();
 
 				if (text.Length <= MAX_LINE_WIDTH)
@@ -322,9 +342,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			m_SourceName = m_RoutedSource == null ? string.Empty : m_RoutedSource.GetName(m_RoomCombine);
 
 			string hexColor = Colors.DisplayColorToTextColor(m_Color);
+			string displayColor = AnyDisplayOnline ? hexColor : Colors.COLOR_RED;
 			m_SourceName = HtmlUtils.FormatColoredText(m_SourceName, hexColor);
-			m_Line1 = HtmlUtils.FormatColoredText(m_Line1, hexColor);
-			m_Line2 = HtmlUtils.FormatColoredText(m_Line2, hexColor);
+			m_Line1 = HtmlUtils.FormatColoredText(m_Line1, displayColor);
+			m_Line2 = HtmlUtils.FormatColoredText(m_Line2, displayColor);
 		}
 
 		private void UpdateShowSpeaker()
