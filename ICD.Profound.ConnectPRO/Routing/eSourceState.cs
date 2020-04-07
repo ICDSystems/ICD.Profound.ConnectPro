@@ -5,6 +5,7 @@
 		Inactive,
 		Processing,
 		Masked,
-		Active
+		Active,
+		Error
 	}
 }

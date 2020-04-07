@@ -97,7 +97,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			}
 		}
 
-		public bool AnySourceOnline
+		public bool SourceOnline
 		{
 			get { return m_Cache.SourceOnline; }
 			set
@@ -160,8 +160,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 				view.SetLine1Text(m_Cache.Line1);
 				view.SetLine2Text(m_Cache.Line2);
 				view.SetIcon(m_Cache.Icon);
-				view.SetRoutedState(m_Cache.SourceState);
-				view.Enable(AnySourceOnline);
+				view.SetRoutedState(SourceOnline ? m_Cache.SourceState : eSourceState.Error);
+				view.Enable(true);
 			}
 			finally
 			{
@@ -171,7 +171,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 
 		private void UpdateAnySourceOnline()
 		{
-			AnySourceOnline = m_Source != null && m_Source.GetDevices().Any(d => d.IsOnline);
+			SourceOnline = m_Source != null && m_Source.GetDevices().Any(d => d.IsOnline);
 		}
 
 		private void UpdateSource()
@@ -313,7 +313,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// <param name="eventArgs"></param>
 		private void ViewOnButtonPressed(object sender, EventArgs eventArgs)
 		{
-			OnPressed.Raise(this);
+			//vDon't pass presses if source offline
+			if (SourceOnline)
+				OnPressed.Raise(this);
 		}
 
 		#endregion

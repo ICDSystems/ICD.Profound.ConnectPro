@@ -26,5 +26,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Source
 		/// Gets/sets the routed state for this presenter.
 		/// </summary>
 		eSourceState SourceState { get; set; }
+
+		/// <summary>
+		/// Gets the online state of the source
+		/// </summary>
+		bool SourceOnline { get; }
 	}
 }
