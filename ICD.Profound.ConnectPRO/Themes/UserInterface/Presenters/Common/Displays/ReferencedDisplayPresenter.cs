@@ -59,8 +59,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 				bool audioActive = Model != null && Model.AudioActive;
 				bool showSpeaker = Model != null && Model.ShowSpeaker;
 
-				view.Enable(Model != null && Model.AnyDisplayOnline);
-
 				view.SetDisplayColor(color);
 				view.SetDisplayIcon(icon);
 				view.SetDisplaySourceText(sourceName);
