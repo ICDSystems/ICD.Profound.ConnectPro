@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+ - Sources now disable when the source device is offline, unless EnableWhileOffline is set on the source
+ - Destinations now disable when all destination devices are offline, unless EnableWhileOffline is set on the destination
 
 ### Changed
  - Changed VTC routing to destination groups to route to individual displays in the group in alternating output order
