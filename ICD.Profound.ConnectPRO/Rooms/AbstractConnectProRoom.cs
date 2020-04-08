@@ -97,7 +97,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 				m_IsInMeeting = value;
 
-				Log(eSeverity.Informational, "IsInMeeting changed to {0}", m_IsInMeeting);
+				Logger.Set("In Meeting", eSeverity.Informational, m_IsInMeeting);
 
 				HandleIsInMeetingChanged(m_IsInMeeting);
 
@@ -682,7 +682,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			if (!GetIsInActiveMeeting())
 				return;
 
-			Log(eSeverity.Informational, "Meeting timeout occurring");
+			Logger.Log(eSeverity.Informational, "Meeting timeout occurring");
 
 			EndMeeting();
 		}

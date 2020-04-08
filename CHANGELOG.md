@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
  - Changed VTC routing to destination groups to route to individual displays in the group in alternating output order
+ - Using new logging context
 
 ## [12.0.0] - 2020-03-20
 ### Added

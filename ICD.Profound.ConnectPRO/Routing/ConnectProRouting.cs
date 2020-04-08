@@ -247,8 +247,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 			Connection lastOutput = outputs.LastOrDefault();
 			if (lastOutput == null)
 			{
-				m_Room.Logger.AddEntry(eSeverity.Error, "Failed to find {0} output connection for {1}",
-				                       eConnectionType.Video, source);
+				m_Room.Logger.Log(eSeverity.Error, "Failed to find {0} output connection for {1}",
+				                  eConnectionType.Video, source);
 				return;
 			}
 			
@@ -435,9 +435,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 			int[] inputs = routingControl.GetCodecInputs(eCodecInputType.Camera).ToArray();
 			if (inputs.Length == 0)
 			{
-				m_Room.Logger.AddEntry(eSeverity.Error,
-									   "Failed to route camera {0} - VTC has no inputs configured for camera.",
-									   camera);
+				m_Room.Logger.Log(eSeverity.Error,
+				                  "Failed to route camera {0} - VTC has no inputs configured for camera.",
+				                  camera);
 				return;
 			}
 
@@ -465,9 +465,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 				return;
 			}
 
-			m_Room.Logger.AddEntry(eSeverity.Error,
-								   "Failed to route camera {0} - Could not find a path to a VTC input configured for camera.",
-								   camera);
+			m_Room.Logger.Log(eSeverity.Error,
+			                  "Failed to route camera {0} - Could not find a path to a VTC input configured for camera.",
+			                  camera);
 		}
 
 		/// <summary>
@@ -492,9 +492,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 			int[] inputs = routingControl.GetCodecInputs(eCodecInputType.Content).ToArray();
 			if (inputs.Length == 0)
 			{
-				m_Room.Logger.AddEntry(eSeverity.Error,
-				                       "Failed to start presentation for {0} - VTC has no inputs configured for content.",
-									   source);
+				m_Room.Logger.Log(eSeverity.Error,
+				                  "Failed to start presentation for {0} - VTC has no inputs configured for content.",
+				                  source);
 				return;
 			}
 
@@ -522,9 +522,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 				return;
 			}
 
-			m_Room.Logger.AddEntry(eSeverity.Error,
-			                       "Failed to start presentation for {0} - Could not find a path to a VTC input configured for content.",
-			                       source);
+			m_Room.Logger.Log(eSeverity.Error,
+			                  "Failed to start presentation for {0} - Could not find a path to a VTC input configured for content.",
+			                  source);
 		}
 
 		/// <summary>
@@ -545,8 +545,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 			int[] inputs = control.GetCodecInputs(eCodecInputType.Content).ToArray();
 			if (inputs.Length == 0)
 			{
-				m_Room.Logger.AddEntry(eSeverity.Error,
-									   "Failed to end presentation - Codec has no inputs configured for content.");
+				m_Room.Logger.Log(eSeverity.Error,
+				                  "Failed to end presentation - Codec has no inputs configured for content.");
 				return;
 			}
 

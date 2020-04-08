@@ -454,7 +454,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				return presenter;
 
 			if (m_Room != null)
-				m_Room.Logger.AddEntry(eSeverity.Error, "Unable to use {0} context menu with {1}", controlOverride, control);
+				m_Room.Logger.Log(eSeverity.Error, "Unable to use {0} context menu with {1}", controlOverride, control);
 			return null;
 		}
 
