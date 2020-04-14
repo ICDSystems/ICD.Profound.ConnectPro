@@ -7,7 +7,6 @@ using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
-using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Contacts;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Directory;
@@ -52,7 +51,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private string m_ConfirmedFilter;
 
 		private bool m_ShowFavorites;
-		private IFavorites m_SubscribedFavorites;
 
 		#region Properties
 
@@ -172,6 +170,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			}
 		}
 
+		/// <summary>
+		/// Sets the room for this presenter to represent.
+		/// </summary>
+		/// <param name="room"></param>
+		public override void SetRoom(IConnectProRoom room)
+		{
+			base.SetRoom(room);
+
+			UpdateFavorites();
+		}
+
 		#region Private Methods
 
 		/// <summary>
@@ -261,54 +270,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		#region Room Callbacks
 
 		/// <summary>
-		/// Subscribe to the room events.
-		/// </summary>
-		/// <param name="room"></param>
-		protected override void Subscribe(IConnectProRoom room)
-		{
-			base.Subscribe(room);
-
-			IConferenceManager conferenceManager = room == null ? null : room.ConferenceManager;
-			m_SubscribedFavorites = conferenceManager == null ? null : conferenceManager.Favorites;
-
-			if (m_SubscribedFavorites != null)
-				m_SubscribedFavorites.OnFavoritesChanged += FavoritesOnFavoritesChanged;
-
-			UpdateFavorites();
-		}
-
-		/// <summary>
-		/// Unsubscribe from the room events.
-		/// </summary>
-		/// <param name="room"></param>
-		protected override void Unsubscribe(IConnectProRoom room)
-		{
-			base.Unsubscribe(room);
-
-			if (m_SubscribedFavorites != null)
-				m_SubscribedFavorites.OnFavoritesChanged -= FavoritesOnFavoritesChanged;
-			m_SubscribedFavorites = null;
-		}
-
-		/// <summary>
-		/// Called when the favorites change.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void FavoritesOnFavoritesChanged(object sender, EventArgs e)
-		{
-			UpdateFavorites();
-		}
-
-		/// <summary>
 		/// Updates the cached collection of favorites.
 		/// </summary>
 		private void UpdateFavorites()
 		{
 			IEnumerable<IContact> favorites =
-				m_SubscribedFavorites == null
-					? Enumerable.Empty<IContact>()
-					: m_SubscribedFavorites.GetFavorites(eDialProtocol.ZoomContact).Cast<IContact>();
+				Room == null
+				? Enumerable.Empty<IContact>()
+				: Favorite.All(Room.Id).Cast<IContact>();
 
 			m_Favorites.Clear();
 			m_Favorites.AddRange(favorites, f => f.Name);
@@ -496,8 +465,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			if (contact == null)
 				throw new ArgumentNullException("contact");
 
-			if (m_SubscribedFavorites != null)
-				m_SubscribedFavorites.ToggleFavorite(contact);
+			if (Room != null)
+				Favorite.Toggle(Room.Id, contact);
 		}
 
 		#endregion

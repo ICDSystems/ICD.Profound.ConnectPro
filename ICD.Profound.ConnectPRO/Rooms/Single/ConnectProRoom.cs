@@ -6,7 +6,6 @@ using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.ConferencePoints;
 using ICD.Connect.Conferencing.Controls.Dialing;
-using ICD.Connect.Conferencing.Favorites.SqLite;
 using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Devices;
 using ICD.Connect.Partitioning;
@@ -97,11 +96,6 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 		protected override void ApplySettingsFinal(ConnectProRoomSettings settings, IDeviceFactory factory)
 		{
 			base.ApplySettingsFinal(settings, factory);
-
-			// Favorites
-			string path = PathUtils.GetRoomDataPath(Id, "favorites");
-			if (ConferenceManager != null)
-				ConferenceManager.Favorites = new SqLiteFavorites(path);
 
 			// ATC Number
 			AtcNumber = settings.AtcNumber;

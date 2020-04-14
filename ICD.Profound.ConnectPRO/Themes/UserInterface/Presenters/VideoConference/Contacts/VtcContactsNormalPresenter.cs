@@ -4,6 +4,7 @@ using System.Linq;
 using ICD.Common.Utils;
 using ICD.Connect.Conferencing.Contacts;
 using ICD.Connect.Conferencing.Directory.Tree;
+using ICD.Connect.Conferencing.Favorites;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -129,11 +130,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 						        });
 				
 				case eDirectoryMode.Favorites:
+					if (Room == null)
+						return Enumerable.Empty<ModelPresenterTypeInfo>();
+
 					return
-						ConferenceManager == null || ConferenceManager.Favorites == null
-							? Enumerable.Empty<ModelPresenterTypeInfo>()
-							: ConferenceManager.Favorites
-								.GetFavorites()
+						Favorite.All(Room.Id)
 								.OrderBy(f => f.Name)
 								.Select(f => new ModelPresenterTypeInfo(ModelPresenterTypeInfo.ePresenterType.Favorite, f));
 				
