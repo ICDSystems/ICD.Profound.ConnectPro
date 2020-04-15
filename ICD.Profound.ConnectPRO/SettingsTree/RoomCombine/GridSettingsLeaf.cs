@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using ICD.Connect.Partitioning.Extensions;
+using ICD.Connect.Partitioning.PartitionManagers;
 
 namespace ICD.Profound.ConnectPRO.SettingsTree.RoomCombine
 {
@@ -17,9 +18,12 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.RoomCombine
 		{
 			get
 			{
+				IPartitionManager manager;
+
 				return base.Visible &&
 				       Room != null &&
-				       Room.Core.GetPartitionManager().Cells.Any();
+				       Room.Core.TryGetPartitionManager(out manager) &&
+				       manager.Cells.Any();
 			}
 		}
 
