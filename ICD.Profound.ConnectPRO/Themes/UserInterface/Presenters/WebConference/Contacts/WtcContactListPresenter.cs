@@ -113,6 +113,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			m_DirectoryBrowser.OnPathContentsChanged += DirectoryBrowserOnPathContentsChanged;
 
 			m_DebounceTimer = SafeTimer.Stopped(RefreshIfVisible);
+
+			Favorite.OnFavoritesChanged += FavoriteOnFavoritesChanged;
 		}
 
 		/// <summary>
@@ -123,6 +125,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			m_DirectoryBrowser.Dispose();
 			m_ContactFactory.Dispose();
 			m_SelectedContactFactory.Dispose();
+
+			Favorite.OnFavoritesChanged -= FavoriteOnFavoritesChanged;
 
 			base.Dispose();
 		}
@@ -267,7 +271,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		#endregion
 
-		#region Room Callbacks
+		#region Favorite Callbacks
+
+		/// <summary>
+		/// Called when the favorites change.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void FavoriteOnFavoritesChanged(object sender, IntEventArgs e)
+		{
+			if (Room != null && e.Data == Room.Id)
+				UpdateFavorites();
+		}
 
 		/// <summary>
 		/// Updates the cached collection of favorites.
@@ -276,8 +291,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		{
 			IEnumerable<IContact> favorites =
 				Room == null
-				? Enumerable.Empty<IContact>()
-				: Favorite.All(Room.Id).Cast<IContact>();
+					? Enumerable.Empty<IContact>()
+					: Favorite.All(Room.Id)
+					          .Where(f => f.DialContexts.Any(c => c.Protocol == eDialProtocol.ZoomContact))
+					          .Cast<IContact>();
 
 			m_Favorites.Clear();
 			m_Favorites.AddRange(favorites, f => f.Name);
