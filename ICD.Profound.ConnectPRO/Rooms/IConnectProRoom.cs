@@ -4,7 +4,6 @@ using ICD.Common.Properties;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Calendaring.Booking;
-using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Routing;
@@ -63,11 +62,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// Gets/sets the ATC number for dialing into the room.
 		/// </summary>
 		string AtcNumber { get; set; }
-
-		/// <summary>
-		/// Gets the CalendarControl for the room.
-		/// </summary>
-		ICalendarControl CalendarControl { get; }
 
 		/// <summary>
 		/// Gets the selected OBTP booking.

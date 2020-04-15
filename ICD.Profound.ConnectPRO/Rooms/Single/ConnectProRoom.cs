@@ -18,8 +18,6 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 {
 	public sealed class ConnectProRoom : AbstractConnectProRoom<ConnectProRoomSettings>
 	{
-		private ICalendarControl m_CalendarControl;
-
 		#region Properties
 
 		/// <summary>
@@ -31,11 +29,6 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 		/// Gets/sets the ATC number for dialing into the room.
 		/// </summary>
 		public override string AtcNumber { get; set; }
-
-		/// <summary>
-		/// Gets/sets the calendar control for the room.
-		/// </summary>
-		public override ICalendarControl CalendarControl { get { return m_CalendarControl; } }
 
 		#endregion
 
@@ -85,7 +78,7 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 
 			AtcNumber = null;
 			Passcode = null;
-			m_CalendarControl = null;
+			CalendarControl = null;
 		}
 
 		/// <summary>
@@ -108,7 +101,7 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 			{
 				var calendarDevice = factory.GetOriginatorById<IDevice>(settings.CalendarDevice.Value);
 				if (calendarDevice != null)
-					m_CalendarControl = calendarDevice.Controls.GetControl<ICalendarControl>();
+					CalendarControl = calendarDevice.Controls.GetControl<ICalendarControl>();
 			}
 
 			// Generate conference points

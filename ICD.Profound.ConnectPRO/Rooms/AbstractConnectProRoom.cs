@@ -121,11 +121,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		public abstract string AtcNumber { get; set; }
 
 		/// <summary>
-		/// Gets the CalendarControl for the room.
-		/// </summary>
-		public abstract ICalendarControl CalendarControl { get; }
-
-		/// <summary>
 		/// Gets the selected OBTP booking.
 		/// </summary>
 		public IBooking CurrentBooking { get; private set; }
