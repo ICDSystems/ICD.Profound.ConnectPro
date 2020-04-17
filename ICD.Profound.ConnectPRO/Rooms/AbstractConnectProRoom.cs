@@ -219,6 +219,33 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			// Reset mute state
 			Mute(false);
 
+			// If there is only one source route it
+			if (Routing.Sources.GetRoomSources().Count() == 1)
+			{
+				var source = Routing.Sources.GetRoomSources().FirstOrDefault() as ConnectProSource;
+
+				if (source != null)
+					switch (source.ControlOverride)
+					{
+						case eControlOverride.Default:
+						case eControlOverride.CableTv:
+							Routing.RouteToAllDisplays(source);
+							break;
+
+						case eControlOverride.Vtc:
+						case eControlOverride.WebConference:
+							Routing.RouteVtc(source);
+							break;
+
+						case eControlOverride.Atc:
+							Routing.RouteAtc(source);
+							break;
+
+						default:
+							throw new ArgumentOutOfRangeException();
+					}
+			}
+
 			UpdateMeetingTimeoutTimer();
 		}
 
