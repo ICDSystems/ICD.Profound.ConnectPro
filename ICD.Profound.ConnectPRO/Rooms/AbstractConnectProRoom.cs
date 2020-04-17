@@ -42,6 +42,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		where TSettings : IConnectProRoomSettings, new()
 	{
 		/// <summary>
+		/// Raised when a room with a single source starts a meeting.
+		/// </summary>
+		public event EventHandler<GenericEventArgs<ISource>> OnSingleSourceMeetingStarted;
+
+		/// <summary>
 		/// Raised when the room starts/stops a meeting.
 		/// </summary>
 		public event EventHandler<BoolEventArgs> OnIsInMeetingChanged;
@@ -221,30 +226,9 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			// If there is only one source route it
 			if (Routing.Sources.GetRoomSources().Count() == 1)
-			{
-				var source = Routing.Sources.GetRoomSources().FirstOrDefault() as ConnectProSource;
-
-				if (source != null)
-					switch (source.ControlOverride)
-					{
-						case eControlOverride.Default:
-						case eControlOverride.CableTv:
-							Routing.RouteToAllDisplays(source);
-							break;
-
-						case eControlOverride.Vtc:
-						case eControlOverride.WebConference:
-							Routing.RouteVtc(source);
-							break;
-
-						case eControlOverride.Atc:
-							Routing.RouteAtc(source);
-							break;
-
-						default:
-							throw new ArgumentOutOfRangeException();
-					}
-			}
+				OnSingleSourceMeetingStarted.Raise(this,
+				                                   new GenericEventArgs<ISource>(m_Routing.Sources.GetRoomSources()
+				                                                                          .First()));
 
 			UpdateMeetingTimeoutTimer();
 		}

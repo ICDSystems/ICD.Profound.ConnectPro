@@ -20,6 +20,11 @@ namespace ICD.Profound.ConnectPRO.Rooms
 	public interface IConnectProRoom : ICommercialRoom
 	{
 		/// <summary>
+		/// Raised when a room with a single source starts a meeting.
+		/// </summary>
+		event EventHandler<GenericEventArgs<ISource>> OnSingleSourceMeetingStarted;
+
+		/// <summary>
 		/// Raised when the room starts/stops a meeting.
 		/// </summary>
 		event EventHandler<BoolEventArgs> OnIsInMeetingChanged;
