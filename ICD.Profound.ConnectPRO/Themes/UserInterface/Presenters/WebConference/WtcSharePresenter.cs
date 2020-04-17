@@ -372,6 +372,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			Selected = null;
 		}
 
+		/// <summary>
+		/// Called when the view visibility is about to change.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		protected override void ViewOnPreVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			base.ViewOnPreVisibilityChanged(sender, args);
+
+			// If the view is about to be visible and there is only 1 source start presenting.
+			if (args.Data && m_Sources.Length == 1)
+			{
+				// If we are already presenting return.
+				if (IsInPresentation())
+					return;
+
+				StartPresenting(m_Sources.First());
+			}
+		}
+
 		private void ViewOnSourceButtonPressed(object sender, UShortEventArgs eventArgs)
 		{
 			ISource source;
