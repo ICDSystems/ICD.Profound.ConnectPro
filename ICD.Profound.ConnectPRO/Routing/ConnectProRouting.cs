@@ -6,9 +6,11 @@ using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Cameras.Devices;
+using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.Devices;
+using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Zoom.Controls;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
@@ -103,6 +105,36 @@ namespace ICD.Profound.ConnectPRO.Routing
 		#region Methods
 
 		/// <summary>
+		/// Handles the routing for the given source based on its device control type.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <returns>True if the source was handled, otherwise false</returns>
+		public bool RouteSourceByControl([NotNull] ISource source)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			IDeviceControl control = ConnectProRoutingSources.GetDeviceControl(source);
+			IConferenceDeviceControl dialer = control as IConferenceDeviceControl;
+
+			// Edge case - route the codec to both displays and open the context menu
+			if (dialer != null && dialer.Supports.HasFlag(eCallType.Video))
+			{ 
+				m_Room.Routing.RouteVtc(source);
+				return true;
+			}
+
+			// Edge case - open the audio conferencing context menu
+			if (dialer != null && dialer.Supports.HasFlag(eCallType.Audio))
+			{
+				m_Room.Routing.RouteAtc(source);
+				return true;
+			}
+
+			return false;
+		}
+
+		/// <summary>
 		/// Routes the source to all displays and room audio.
 		/// </summary>
 		/// <param name="source"></param>
@@ -110,6 +142,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
+
+			m_Room.FocusSource = source;
 
 			var mask = m_MaskFactory.GetMaskedSourceInfo(source);
 			if (mask == null)
@@ -132,6 +166,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
+
+			m_Room.FocusSource = source;
 
 			if (mask == null)
 				State.ClearMaskedSources();
@@ -213,6 +249,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (source == null)
 				throw new ArgumentNullException("source");
 
+			m_Room.FocusSource = source;
+
 			IMaskedSourceInfo mask = m_MaskFactory.GetMaskedSourceInfo(source);
 			if (mask == null)
 			{
@@ -234,6 +272,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
+
+			m_Room.FocusSource = source;
 
 			Connection[] outputs = RoutingGraph.Connections
 			                                   .GetOutputConnections(source.Device,
@@ -291,6 +331,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
+
+			m_Room.FocusSource = source;
 
 			IEnumerable<IDestination> singleAudioDestinations =
 				m_Destinations.GetAudioDestinations()

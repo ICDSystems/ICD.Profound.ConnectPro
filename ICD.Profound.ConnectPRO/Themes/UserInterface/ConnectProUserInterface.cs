@@ -10,8 +10,6 @@ using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.Controls.Dialing;
-using ICD.Connect.Conferencing.EventArguments;
-using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
@@ -81,6 +79,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		private readonly SafeCriticalSection m_RoutingSection;
 
+		[CanBeNull]
 		private IConnectProRoom m_Room;
 		private ISource m_SelectedSource;
 		private bool m_UserInterfaceReady;
@@ -89,8 +88,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 		public IPanelDevice Panel { get { return m_Panel; } }
 
+		[CanBeNull]
 		public override IRoom Room { get { return ConnectProRoom; } }
 
+		[CanBeNull]
 		public IConnectProRoom ConnectProRoom { get { return m_Room; } }
 
 		public override object Target { get { return m_Panel; } }
@@ -262,29 +263,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (source == null)
 				throw new ArgumentNullException("source");
 
-			IDevice device = m_Room.Core.Originators.GetChild<IDevice>(source.Device);
-			IConferenceDeviceControl dialer = device.Controls.GetControl<IConferenceDeviceControl>();
-
-			// Edge case - route the codec to both displays and open the context menu
-			if (dialer != null && dialer.Supports.HasFlag(eCallType.Video))
-			{
-				// Show the context menu before routing for UX
-				ConnectProRoom.FocusSource = source;
-				m_Room.Routing.RouteVtc(source);
-			}
-			// Edge case - open the audio conferencing context menu
-			else if (dialer != null && dialer.Supports.HasFlag(eCallType.Audio))
-			{
-				// Show the context menu before routing for UX
-				ConnectProRoom.FocusSource = source;
-				m_Room.Routing.RouteAtc(source);
-			}
-			// Typical case - continue routing
-			else
-			{
-				SetSelectedSource(source);
+			if (m_Room == null)
 				return;
-			}
+
+			if (!m_Room.Routing.RouteSourceByControl(source))
+				SetSelectedSource(source);
 
 			m_SourceSelectionTimeout.Reset(SOURCE_SELECTION_TIMEOUT);
 		}
@@ -298,30 +281,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (source == null)
 				throw new ArgumentNullException("source");
 
-			IDevice device = m_Room.Core.Originators.GetChild<IDevice>(source.Device);
-			IConferenceDeviceControl dialer = device.Controls.GetControl<IConferenceDeviceControl>();
+			if (m_Room == null)
+				return;
 
-			// Edge case - route the codec to both displays and open the context menu
-			if (dialer != null && dialer.Supports.HasFlag(eCallType.Video))
-			{
-				// Show the context menu before routing for UX
-				ConnectProRoom.FocusSource = source;
-				m_Room.Routing.RouteVtc(source);
-			}
-			// Edge case - open the audio conferencing context menu
-			else if (dialer != null && dialer.Supports.HasFlag(eCallType.Audio))
-			{
-				// Show the context menu before routing for UX
-				ConnectProRoom.FocusSource = source;
-				m_Room.Routing.RouteAtc(source);
-			}
-			// Typical case - continue routing
-			else
-			{
-				// Show the context menu before routing for UX
-				ShowSourceContextualMenu(source);
+			if (!m_Room.Routing.RouteSourceByControl(source))
 				m_Room.Routing.RouteToAllDisplays(source);
-			}
 
 			SetSelectedSource(null);
 		}

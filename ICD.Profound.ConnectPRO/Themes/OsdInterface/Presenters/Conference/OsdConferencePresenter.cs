@@ -158,8 +158,7 @@ namespace ICD.Profound.ConnectPRO.Themes.OsdInterface.Presenters.Conference
 			if (device == null)
 				return null;
 
-			return Room.Routing.Sources.GetRoomSources().FirstOrDefault(s => s.Device == device.Id)
-			       ?? Room.Routing.Sources.GetCoreSources().FirstOrDefault(s => s.Device == device.Id);
+			return Room.Routing.Sources.GetRoomSources().FirstOrDefault(s => s.Device == device.Id);
 		}
 
 		private static string FormatTime(DateTime time)

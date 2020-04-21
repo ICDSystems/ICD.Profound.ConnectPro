@@ -25,7 +25,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Presenta
 				Assert.IsTrue(roomType.Room.IsInMeeting);
 
 				var displayCount = roomType.Room.Routing.Destinations.GetVideoDestinations().Count();
-				var sources = roomType.Room.Routing.Sources.GetCoreSources().ToList();
+				var sources = roomType.Room.Routing.Sources.GetRoomSources().ToList();
 
 				// Only show the displays subpage if there are multiple displays
 				uint displaysSubpage = 112;

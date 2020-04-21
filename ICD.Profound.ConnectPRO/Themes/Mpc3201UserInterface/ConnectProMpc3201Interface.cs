@@ -274,7 +274,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		{
 			return room == null
 				       ? Enumerable.Empty<ISource>()
-				       : room.Routing.Sources.GetCoreSources();
+				       : room.Routing.Sources.GetRoomSources();
 		}
 
 		/// <summary>

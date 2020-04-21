@@ -45,20 +45,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 		#region Sources
 
 		/// <summary>
-		/// Returns all of the sources available in the core.
-		/// </summary>
-		/// <returns></returns>
-		[NotNull]
-		public IEnumerable<ISource> GetCoreSources()
-		{
-			return m_Routing.Room
-			                .Core
-			                .Originators
-			                .GetChildren<ISource>()
-			                .OrderBy(s => s.Order);
-		}
-
-		/// <summary>
 		/// Returns all of the sources available in the room.
 		/// </summary>
 		/// <returns></returns>
@@ -269,7 +255,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		}
 
 		[CanBeNull]
-		private static IDeviceControl GetDeviceControl([NotNull] ISource source)
+		public static IDeviceControl GetDeviceControl([NotNull] ISource source)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");

@@ -218,7 +218,13 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			CheckOut();
 			IsInMeeting = true;
 
-			if (resetRouting)
+			ISource[] sources = Routing.Sources.GetRoomSources().ToArray();
+
+			// If there is only one source automatically route it
+			if (sources.Length == 1)
+				Routing.RouteSourceByControl(sources[0]);
+			// Otherwise route the OSD
+			else if (resetRouting)
 				Routing.RouteOsd();
 
 			// Reset mute state
@@ -520,7 +526,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			// Route device to displays and/or audio destination
 			IDeviceBase dialerDevice = preferredDialer.Parent;
-			ISource source = Routing.Sources.GetCoreSources().FirstOrDefault(s => s.Device == dialerDevice.Id);
+			ISource source = Routing.Sources.GetRoomSources().FirstOrDefault(s => s.Device == dialerDevice.Id);
 			if (source == null)
 				return; // if we can't route a source, don't dial into conference users won't know they're in
 
