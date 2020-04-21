@@ -252,7 +252,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				return;
 			}
 			
-			IDeviceBase device = m_Room.Core.Originators.GetChild<IDeviceBase>(source.Device);
+			IDevice device = m_Room.Core.Originators.GetChild<IDevice>(source.Device);
 			IPresentationControl presentationControl = device.Controls.GetControl<IPresentationControl>();
 			bool presenting = presentationControl != null && presentationControl.PresentationActive;
 
@@ -391,7 +391,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				if (path == null)
 				{
 					// Power off the destination
-					IDeviceBase destinationDevice = m_Room.Core.Originators.GetChild<IDeviceBase>(destination.Device);
+					IDevice destinationDevice = m_Room.Core.Originators.GetChild<IDevice>(destination.Device);
 					PowerDevice(destinationDevice, false);
 
 					// Unroute the destination
@@ -630,7 +630,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		/// <param name="device"></param>
 		/// <param name="power"></param>
-		public void PowerDevice([NotNull] IDeviceBase device, bool power)
+		public void PowerDevice([NotNull] IDevice device, bool power)
 		{
 			if (device == null)
 				throw new ArgumentNullException("device");
@@ -803,8 +803,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 			IcdStopwatch.Profile(() => RoutingGraph.RoutePath(path, m_Room.Id), string.Format("Route - {0}", path));
 
 			EndpointInfo destination = path.DestinationEndpoint;
-			IDeviceBase destinationDevice =
-				m_Room.Core.Originators.GetChild<IDeviceBase>(destination.Device);
+			IDevice destinationDevice =
+				m_Room.Core.Originators.GetChild<IDevice>(destination.Device);
 
 			// Power on the destination
 			if (powerOn)

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ICD.Common.Utils;
 using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.ConferencePoints;
@@ -121,7 +120,7 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 			foreach (ISource source in Originators.GetInstances<ISource>())
 			{
 				// Does the source have a conference control?
-				IDeviceBase device = Core.Originators.GetChild<IDeviceBase>(source.Device);
+				IDevice device = Core.Originators.GetChild<IDevice>(source.Device);
 				
 				// Skip devices with multiple conference controls that already have conference points.
 				// DSPs should be configured properly in DeployAV

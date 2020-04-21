@@ -29,7 +29,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 				throw new ArgumentNullException("room");
 
 			return room.Originators
-					   .GetInstancesRecursive<IDeviceBase>()
+					   .GetInstancesRecursive<IDevice>()
 					   .SelectMany(d => d.Controls.GetControls<IMPC3x201TouchScreenControl>())
 					   .Select(o => new ConnectProMpc3201Interface(o, Theme));
 		}
@@ -43,7 +43,7 @@ namespace ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface
 		protected override bool RoomContainsTarget(IRoom room, ConnectProMpc3201Interface ui)
 		{
 			return room.Originators
-			           .GetInstancesRecursive<IDeviceBase>()
+			           .GetInstancesRecursive<IDevice>()
 			           .SelectMany(d => d.Controls.GetControls<IMPC3x201TouchScreenControl>())
 			           .Contains(ui.TouchScreen);
 		}

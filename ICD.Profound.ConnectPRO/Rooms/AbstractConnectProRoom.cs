@@ -13,7 +13,6 @@ using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Calendaring;
 using ICD.Connect.Calendaring.Booking;
-using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Cameras.Controls;
 using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.ConferenceManagers;
@@ -303,7 +302,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			// Power off displays
 			foreach (IDestinationBase destination in Routing.Destinations.GetVideoDestinations())
 			{
-				foreach (IDeviceBase device in destination.GetDevices())
+				foreach (IDevice device in destination.GetDevices())
 					Routing.PowerDevice(device, false);
 			}
 

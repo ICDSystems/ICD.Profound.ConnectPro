@@ -262,7 +262,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (source == null)
 				throw new ArgumentNullException("source");
 
-			IDeviceBase device = m_Room.Core.Originators.GetChild<IDeviceBase>(source.Device);
+			IDevice device = m_Room.Core.Originators.GetChild<IDevice>(source.Device);
 			IConferenceDeviceControl dialer = device.Controls.GetControl<IConferenceDeviceControl>();
 
 			// Edge case - route the codec to both displays and open the context menu
@@ -298,7 +298,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (source == null)
 				throw new ArgumentNullException("source");
 
-			IDeviceBase device = m_Room.Core.Originators.GetChild<IDeviceBase>(source.Device);
+			IDevice device = m_Room.Core.Originators.GetChild<IDevice>(source.Device);
 			IConferenceDeviceControl dialer = device.Controls.GetControl<IConferenceDeviceControl>();
 
 			// Edge case - route the codec to both displays and open the context menu

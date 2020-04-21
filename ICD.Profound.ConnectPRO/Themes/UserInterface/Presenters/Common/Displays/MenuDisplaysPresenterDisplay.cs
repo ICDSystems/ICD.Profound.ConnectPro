@@ -47,7 +47,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 		private bool m_CanRouteVideo;
 		private bool m_AnyDestinationOnline;
 		private bool m_EnableWhenOffline;
-		private IDeviceBase[] m_DestinationDevices;
+		private IDevice[] m_DestinationDevices;
 
 		private ePowerState m_PowerState;
 		private long m_PowerStateExpectedDuration;
@@ -434,7 +434,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 			// If this is a destination group, subscribe to the group
 			Subscribe(destinationBase as IDestinationGroup);
 
-			IDeviceBase[] devices = destinationBase.GetDevices().ToArray();
+			IDevice[] devices = destinationBase.GetDevices().ToArray();
 
 			SetDevices(devices);
 
@@ -491,10 +491,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 		#region DeviceBase callbacks
 
-		private void SetDevices([CanBeNull] IEnumerable<IDeviceBase> devices)
+		private void SetDevices([CanBeNull] IEnumerable<IDevice> devices)
 		{
-
-			IDeviceBase[] devicesArray = devices == null ? null : devices.ToArray();
+			IDevice[] devicesArray = devices == null ? null : devices.ToArray();
 
 			if (m_DestinationDevices != null)
 			{
@@ -502,7 +501,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Display
 
 				m_PowerStateCache.Clear();
 				m_DestinationDevices.SelectMany(d => d.Controls.GetControls<IPowerDeviceControl>())
-					.ForEach(Unsubscribe);
+				                    .ForEach(Unsubscribe);
 			}
 
 			m_DestinationDevices = devicesArray;

@@ -184,7 +184,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 					: Room.Routing
 					      .State
 					      .GetCachedActiveAudioSources()
-					      .Select(s => Room.Core.Originators.GetChild<IDeviceBase>(s.Device))
+					      .Select(s => Room.Core.Originators.GetChild<IDevice>(s.Device))
 					      .SelectMany(d => d.Controls.GetControls<ITraditionalConferenceDeviceControl>())
 					      .FirstOrDefault(c => c != null && c.Supports == eCallType.Audio);
 		}

@@ -97,7 +97,7 @@ namespace ICD.Profound.ConnectPRO.Routing.Masking.ConferenceDevice
 
 		protected virtual void UpdateControl()
 		{
-			IDeviceBase device = Source == null ? null : Room.Core.Originators.GetChild<IDeviceBase>(Source.Device);
+			IDevice device = Source == null ? null : Room.Core.Originators.GetChild<IDevice>(Source.Device);
 
 			ConferenceControl = device == null ? null : device.Controls.GetControl<IConferenceDeviceControl>();
 			PresentationControl = device == null ? null : device.Controls.GetControl<IPresentationControl>();
