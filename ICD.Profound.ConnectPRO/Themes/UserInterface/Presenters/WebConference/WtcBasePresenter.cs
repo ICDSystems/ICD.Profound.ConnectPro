@@ -119,7 +119,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		private static IPowerDeviceControl GetWtcPowerControl(IConferenceDeviceControl conferenceControl)
 		{
-			IDevice conferenceDevice = conferenceControl.Parent as IDevice;
+			IDevice conferenceDevice = conferenceControl.Parent;
 			return conferenceDevice == null ? null : conferenceDevice.Controls.GetControl<IPowerDeviceControl>();
 		}
 
