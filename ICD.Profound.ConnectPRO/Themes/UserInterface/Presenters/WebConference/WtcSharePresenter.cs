@@ -371,7 +371,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			// Clear the selection state when visibility changes
 			Selected = null;
 
-			// If the view is about to be visible and there is only 1 source preselect the source for sharing.
+			// If the view became visible and there is only 1 source preselect the source for sharing.
 			if (args.Data && m_Sources.Length == 1)
 			{
 				// If we are already presenting return.
@@ -393,6 +393,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				StartPresenting(source);
 				return;
 			}
+
+			// If there is only 1 source don't allow the user to deselect it.
+			if (m_Sources.Length == 1)
+				return;
 
 			Selected = source == Selected ? null : source;
 		}
