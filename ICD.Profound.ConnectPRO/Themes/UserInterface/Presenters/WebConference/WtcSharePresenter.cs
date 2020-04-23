@@ -373,13 +373,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			// If the view became visible and there is only 1 source preselect the source for sharing.
 			if (args.Data && m_Sources.Length == 1)
-			{
-				// If we are already presenting return.
-				if (IsInPresentation())
-					return;
-
 				Selected = m_Sources.FirstOrDefault();
-			}
 		}
 
 		private void ViewOnSourceButtonPressed(object sender, UShortEventArgs eventArgs)
