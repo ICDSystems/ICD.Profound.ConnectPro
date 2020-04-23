@@ -458,7 +458,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (room == null)
 				return;
 
-			room.OnSingleSourceMeetingStarted += RoomOnSingleSourceMeetingStarted;
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
 			room.OnFocusSourceChanged += RoomOnFocusSourceChanged;
 
@@ -482,7 +481,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			if (room == null)
 				return;
 
-			room.OnSingleSourceMeetingStarted -= RoomOnSingleSourceMeetingStarted;
 			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
 			room.OnFocusSourceChanged -= RoomOnFocusSourceChanged;
 
@@ -495,12 +493,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				return;
 
 			combineRoom.OnCombinedAdvancedModeChanged -= CombineRoomOnCombinedAdvancedModeChanged;
-		}
-
-		private void RoomOnSingleSourceMeetingStarted(object sender, GenericEventArgs<ISource> args)
-		{
-			if (args.Data != null)
-				HandleSelectedSource(args.Data);
 		}
 
 		/// <summary>

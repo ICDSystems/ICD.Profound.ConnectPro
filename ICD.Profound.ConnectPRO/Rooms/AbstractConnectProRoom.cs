@@ -42,11 +42,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		where TSettings : IConnectProRoomSettings, new()
 	{
 		/// <summary>
-		/// Raised when a room with a single source starts a meeting.
-		/// </summary>
-		public event EventHandler<GenericEventArgs<ISource>> OnSingleSourceMeetingStarted;
-
-		/// <summary>
 		/// Raised when the room starts/stops a meeting.
 		/// </summary>
 		public event EventHandler<BoolEventArgs> OnIsInMeetingChanged;
@@ -229,12 +224,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 			// Reset mute state
 			Mute(false);
-
-			// If there is only one source route it
-			if (Routing.Sources.GetRoomSources().Count() == 1)
-				OnSingleSourceMeetingStarted.Raise(this,
-				                                   new GenericEventArgs<ISource>(m_Routing.Sources.GetRoomSources()
-				                                                                          .First()));
 
 			UpdateMeetingTimeoutTimer();
 		}
