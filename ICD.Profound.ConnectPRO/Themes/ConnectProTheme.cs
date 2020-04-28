@@ -27,7 +27,9 @@ using ICD.Profound.ConnectPRO.Themes.Mpc3201UserInterface;
 using ICD.Profound.ConnectPRO.Themes.OsdInterface;
 using ICD.Profound.ConnectPRO.Themes.ShureMicrophoneInterface;
 using ICD.Profound.ConnectPRO.Themes.ShureMx396Interface;
+using ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface;
 using ICD.Profound.ConnectPRO.Themes.UserInterface;
+using ICD.Profound.ConnectPRO.Themes.YkupSwitcherInterface;
 using ICD.Profound.ConnectPRO.WebConferencing;
 
 namespace ICD.Profound.ConnectPRO.Themes
@@ -62,6 +64,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 		private string m_TvPresetsPath;
 		private string m_WebConferencingInstructionsPath;
 		private eCueBackgroundMode m_CueBackground;
+		private bool m_CueMotion;
 
 		private IPartitionManager m_SubscribedPartitionManager;
 
@@ -126,6 +129,20 @@ namespace ICD.Profound.ConnectPRO.Themes
 			}
 		}
 
+		public bool CueMotion
+		{
+			get { return m_CueMotion; }
+			set
+			{
+				if (m_CueMotion == value)
+					return;
+				
+				m_CueMotion = value;
+
+				OnCueBackgroundChanged.Raise(this);
+			}
+		}
+
 		/// <summary>
 		/// Gets the date formatting rules.
 		/// </summary>
@@ -152,7 +169,9 @@ namespace ICD.Profound.ConnectPRO.Themes
 				new ConnectProOsdInterfaceFactory(this),
 				new ConnectProShureMicrophoneInterfaceFactory(this),
 				new ConnectProShureMx396InterfaceFactory(this),
-				new ConnectProUserInterfaceFactory(this)
+				new ConnectProUserInterfaceFactory(this),
+				new ConnectProTouchDisplayInterfaceFactory(this),
+				new ConnectProYkupSwitcherInterfaceFactory(this)
 			};
 
 			m_UiFactoriesSection = new SafeCriticalSection();
@@ -378,6 +397,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 			m_TvPresetsPath = null;
 			m_WebConferencingInstructionsPath = null;
 			CueBackground = default(eCueBackgroundMode);
+			CueMotion = false;
 
 			Unsubscribe(m_SubscribedPartitionManager);
 			m_SubscribedPartitionManager = null;
@@ -395,6 +415,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 			settings.TvPresets = m_TvPresetsPath;
 			settings.WebConferencingInstructions = m_WebConferencingInstructionsPath;
 			settings.CueBackground = CueBackground;
+			settings.CueMotion = CueMotion;
 		}
 
 		/// <summary>
@@ -409,6 +430,7 @@ namespace ICD.Profound.ConnectPRO.Themes
 			
 			Logo = settings.Logo;
 			CueBackground = settings.CueBackground;
+			CueMotion = settings.CueMotion;
 
 			SetTvPresetsFromPath(settings.TvPresets);
 			SetWebConferencingInstructionsFromPath(settings.WebConferencingInstructions);
@@ -471,15 +493,24 @@ namespace ICD.Profound.ConnectPRO.Themes
 
 			string cueBackgroundHelp = string.Format("SetCueBackground <{0}>",
 			                                         StringUtils.ArrayFormat(EnumUtils.GetValues<eCueBackgroundMode>()));
+			string cueMotionHelp = "SetCueMotion <true,false>";
 
 			yield return new GenericConsoleCommand<eCueBackgroundMode>("SetCueBackground", cueBackgroundHelp,
 			                                                           m => ConsoleSetCueBackground(m));
+			yield return new GenericConsoleCommand<bool>("SetCueMotion", cueMotionHelp,
+				m => ConsoleSetCueMotion(m));
 		}
 
 		private string ConsoleSetCueBackground(eCueBackgroundMode cueBackgroundMode)
 		{
 			CueBackground = cueBackgroundMode;
 			return string.Format("Cue Background set to {0}", CueBackground);
+		}
+
+		private string ConsoleSetCueMotion(bool cueMotion)
+		{
+			CueMotion = cueMotion;
+			return string.Format("Cue Motion set to {0}", CueMotion);
 		}
 
 		/// <summary>

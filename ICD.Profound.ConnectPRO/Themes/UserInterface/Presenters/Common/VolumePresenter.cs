@@ -404,10 +404,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			volumePointHelper.OnVolumeControlVolumeChanged -= ControlOnVolumeChanged;
 		}
 
-		#endregion
-
-		#region Volume Control Callbacks
-
 		/// <summary>
 		/// Called when the volume control availability changes.
 		/// </summary>

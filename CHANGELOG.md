@@ -19,6 +19,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Added room combine button to the splash page
  - Zoom UI now respects "RecordEnable" and "DialOutEnable" ZoomRoom device settings
  - ZoomSettings now has options to control "RecordEnable", "DialOutEnable", and "MuteMyCameraOnStart"
+ - Added TouchCUE UI
+ - Added CueMotion property on ConnectProTheme for whether to use video or image backgrounds for CUEs
+ - Added UI for YKUP USB switcher for automatic switching when Zoom becomes active
  - ZoomSettings now has options to map Camera Devices to USB IDs
  - Added ActiveCamera property and event to IConnectProRoom
  - Added event server messages for active camera changes
@@ -37,6 +40,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Zoom camera layout buttons will enable/disable based on availability
  - Inverted camera pan buttons
  - ZoomSettings controls "MuteParticipantsOnEntry" on zoom room itself now, and marks settings dirty to save XML
+ - Genericized root settings node to allow different roots
+ - Don't power off destination when routing the osd if the display is a VibeBoard
+ - Change ClockSettingsLeaf to use DateTime instead of TimeSpan to allow for setting the date as well
+ - Background settings leaf should be visible if the system has a VibeBoard
+ - Moved room dialing features into a new ConnectProDialing class
+
+### Removed
+ - No longer sorting Zoom contacts by online state
  - Privacy Mute floating action is only visible when privacy mute is supported in the current context
  - Changed calls to IdUtils to utilize new enums
  - Using UTC for Times

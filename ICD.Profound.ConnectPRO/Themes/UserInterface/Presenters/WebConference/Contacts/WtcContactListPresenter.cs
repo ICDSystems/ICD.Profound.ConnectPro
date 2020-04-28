@@ -374,14 +374,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 			// Directory
 			return current.GetContacts()
-			              .OrderBy(c =>
-			              {
-				              var onlineContact = c as IContactWithOnlineState;
-				              if (onlineContact == null || onlineContact.OnlineState == eOnlineState.Unknown)
-					              return eOnlineState.Offline;
-				              return onlineContact.OnlineState;
-			              })
-			              .ThenBy(c => c.Name);
+			              .OrderBy(c => c.Name);
 		}
 
 		private static Func<string, double> GetWeightedTokenSearchFunc(string searchString)
@@ -618,6 +611,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// <param name="e"></param>
 		private void ViewOnInviteParticipantButtonPressed(object sender, EventArgs e)
 		{
+			if (Room == null)
+				return;
+
 			if (ActiveConferenceControl == null)
 				return;
 
@@ -633,7 +629,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 					       .FirstOrDefault(d => ActiveConferenceControl.CanDial(d) != eDialContextSupport.Unsupported);
 
 				if (bestDialContext != null)
-					ActiveConferenceControl.Dial(bestDialContext);
+					Room.Dialing.Dial(ActiveConferenceControl, bestDialContext);
 			}
 
 			ClearSelectedContacts();

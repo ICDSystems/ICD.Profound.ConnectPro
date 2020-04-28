@@ -10,7 +10,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.About
 		public AboutSettingsNode()
 		{
 			Name = "About";
-			Icon = SettingsTreeIcons.ICON_NOTIFICATION;
+			Icon = eSettingsIcon.Notification;
 		}
 
 		/// <summary>

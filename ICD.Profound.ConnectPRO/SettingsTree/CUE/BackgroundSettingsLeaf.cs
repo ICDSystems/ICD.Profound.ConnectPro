@@ -2,6 +2,7 @@
 using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils.Extensions;
+using ICD.Connect.Misc.Vibe.Devices.VibeBoard;
 using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Settings.Cores;
 using ICD.Profound.ConnectPRO.Rooms;
@@ -35,6 +36,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 				Subscribe(m_Theme);
 
 				UpdateBackgroundMode();
+				UpdateBackgroundMotion();
 			}
 		}
 
@@ -47,7 +49,8 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 			{
 				return base.Visible &&
 				       Room != null &&
-				       Room.Originators.GetInstancesRecursive<OsdPanelDevice>().Any();
+				       (Room.Originators.GetInstancesRecursive<OsdPanelDevice>().Any() 
+				        || Room.Originators.GetInstancesRecursive<VibeBoard>().Any());
 			}
 		}
 
@@ -70,6 +73,25 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 			}
 		}
 
+		/// <summary>
+		/// Gets the background motion.
+		/// </summary>
+		public bool BackgroundMotion
+		{
+			get { return Theme == null ? false : Theme.CueMotion; }
+			set
+			{
+				if (Theme == null || value == Theme.CueMotion)
+					return;
+
+				Theme.CueMotion = value;
+
+				SetDirty(true);
+
+				OnBackgroundModeChanged.Raise(this);
+			}
+		}
+
 		#endregion
 
 		/// <summary>
@@ -78,7 +100,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 		public BackgroundSettingsLeaf()
 		{
 			Name = "Background";
-			Icon = SettingsTreeIcons.ICON_BACKGROUNDS;
+			Icon = eSettingsIcon.Backgrounds;
 		}
 
 		/// <summary>
@@ -96,6 +118,11 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 		private void UpdateBackgroundMode()
 		{
 			BackgroundMode = Theme == null ? default(eCueBackgroundMode) : Theme.CueBackground;
+		}
+
+		private void UpdateBackgroundMotion()
+		{
+			BackgroundMotion = Theme == null ? false : Theme.CueMotion;
 		}
 
 		private void UpdateTheme()

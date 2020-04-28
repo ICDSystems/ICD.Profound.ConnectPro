@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using ICD.Common.Properties;
+using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.Favorites;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
@@ -76,9 +77,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		protected override void Dial()
 		{
-			var dialer = ActiveConferenceControl;
-			if (dialer != null && m_Favorite != null)
-				dialer.Dial(m_Favorite.GetDialContexts().First());
+			if (Room == null)
+				return;
+
+			IDialContext context = m_Favorite == null ? null : m_Favorite.GetDialContexts().FirstOrDefault();
+			if (ActiveConferenceControl != null && context != null)
+				Room.Dialing.Dial(ActiveConferenceControl, context);
 		}
 
 		protected override void ViewOnFavoriteButtonPressed(object sender, EventArgs eventArgs)

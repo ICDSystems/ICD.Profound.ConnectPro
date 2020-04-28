@@ -18,7 +18,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree
 		/// <summary>
 		/// The name of the icon shown in the settings menu.
 		/// </summary>
-		string Icon { get; }
+		eSettingsIcon Icon { get; }
 
 		/// <summary>
 		/// Determines if the node should be visible.

@@ -302,7 +302,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		protected virtual void ViewOnManualDialButtonPressed(object sender, EventArgs eventArgs)
+		private void ViewOnManualDialButtonPressed(object sender, EventArgs eventArgs)
 		{
 			Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>()
 			          .ShowView("Please enter number", null, KeyboardDialCallback, null, null);
@@ -314,9 +314,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="number"></param>
 		private void KeyboardDialCallback(string number)
 		{
+			if (Room == null)
+				return;
+
 			var control = ActiveConferenceControl;
 			if (control != null)
-				control.Dial(new SipDialContext { DialString = number, CallType = eCallType.Video });
+				Room.Dialing.Dial(control, new SipDialContext {DialString = number, CallType = eCallType.Video});
 
 			ShowView(true);
 		}

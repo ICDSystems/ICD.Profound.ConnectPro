@@ -24,7 +24,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		[CanBeNull]
-		private RootSettingsNode m_SettingsRoot;
+		private IRootSettingsNode m_SettingsRoot;
 
 		private ISettingsNodeBasePresenter m_CurrentPresenter;
 
@@ -39,7 +39,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// Gets the current root settings node item.
 		/// </summary>
 		[CanBeNull]
-		public RootSettingsNode RootNode { get { return m_SettingsRoot; } }
+		public IRootSettingsNode RootNode { get { return m_SettingsRoot; } }
 
 		/// <summary>
 		/// Gets the current settings node item.
@@ -117,7 +117,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				if (m_SettingsRoot != null)
 					m_SettingsRoot.Dispose();
 
-				m_SettingsRoot = room == null ? null : new RootSettingsNode(room);
+				m_SettingsRoot = room == null ? null : new ConnectProRootSettingsNode(room);
 
 				m_MenuPath.Clear();
 				HideCurrentPresenter();
@@ -239,7 +239,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		private static KeyValuePair<string, string> GetNameAndIcon(ISettingsNodeBase node)
 		{
 			string name = node.Name;
-			string icon = SettingsTreeIcons.GetIcon(node.Icon, SettingsTreeIcons.eColor.Gray);
+			string icon = Icons.GetSettingsIcon(node.Icon, eSettingsColor.Gray);
 
 			return new KeyValuePair<string, string>(name, icon);
 		}

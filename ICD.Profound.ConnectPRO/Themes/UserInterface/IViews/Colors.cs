@@ -2,6 +2,23 @@
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews
 {
+	public enum eIconColor
+	{
+		Grey,
+		LightBlue,
+		Red,
+		StandardBlue,
+		White,
+		Yellow
+	}
+
+	public enum eSettingsColor
+	{
+		LightBlue,
+		Gray,
+		White
+	}
+
 	public enum eDisplayColor
 	{
 		White, // Routed with no controls

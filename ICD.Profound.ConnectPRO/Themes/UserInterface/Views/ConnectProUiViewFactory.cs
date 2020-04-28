@@ -44,13 +44,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 		/// Instantiates a view of the given type.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
-		/// <param name="panel"></param>
+		/// <param name="smartObject"></param>
 		/// <param name="parent"></param>
 		/// <param name="index"></param>
 		/// <returns></returns>
-		protected override T InstantiateView<T>(ISmartObject panel, IVtProParent parent, ushort index)
+		protected override T InstantiateView<T>(ISmartObject smartObject, IVtProParent parent, ushort index)
 		{
-			return InstantiateView<T>(panel, m_Theme, parent, index);
+			return InstantiateView<T>(smartObject, m_Theme, parent, index);
 		}
 
 		#endregion

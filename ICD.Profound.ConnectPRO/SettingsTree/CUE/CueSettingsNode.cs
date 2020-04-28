@@ -10,7 +10,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.CUE
 		public CueSettingsNode()
 		{
 			Name = "CUE";
-			Icon = SettingsTreeIcons.ICON_CUE;
+			Icon = eSettingsIcon.Cue;
 		}
 
 		/// <summary>

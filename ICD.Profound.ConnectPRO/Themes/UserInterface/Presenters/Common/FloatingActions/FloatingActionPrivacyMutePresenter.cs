@@ -81,7 +81,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 			bool show = Room != null &&
 				m_SubscribedConferenceManager != null &&
 				m_SubscribedConferenceManager.CanPrivacyMute() &&
-				Room.ConferenceActionsAvailable(eInCall.Audio);
+				Room.Dialing.ConferenceActionsAvailable(eInCall.Audio);
 
 			ShowView(show);
 		}

@@ -17,7 +17,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Conferencing
 		public DirectorySettingsLeaf()
 		{
 			Name = "Directory";
-			Icon = SettingsTreeIcons.ICON_DIRECTORY;
+			Icon = eSettingsIcon.Directory;
 		}
 
 		/// <summary>

@@ -12,7 +12,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Admini
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings.Administrative
 {
 	[PresenterBinding(typeof(ISettingsPowerPresenter))]
-	public sealed class SettingsPowerPresenter : AbstractSettingsNodeBasePresenter<ISettingsPowerView, PowerSettingsLeaf>, ISettingsPowerPresenter
+	public sealed class SettingsPowerPresenter : AbstractSettingsNodeBasePresenter<ISettingsPowerView, WakeSleepSettingsLeaf>, ISettingsPowerPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 
@@ -263,7 +263,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// Subscribe to the node events.
 		/// </summary>
 		/// <param name="node"></param>
-		protected override void Subscribe(PowerSettingsLeaf node)
+		protected override void Subscribe(WakeSleepSettingsLeaf node)
 		{
 			base.Subscribe(node);
 
@@ -277,7 +277,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// Unsubscribe from the node events.
 		/// </summary>
 		/// <param name="node"></param>
-		protected override void Unsubscribe(PowerSettingsLeaf node)
+		protected override void Unsubscribe(WakeSleepSettingsLeaf node)
 		{
 			base.Unsubscribe(node);
 

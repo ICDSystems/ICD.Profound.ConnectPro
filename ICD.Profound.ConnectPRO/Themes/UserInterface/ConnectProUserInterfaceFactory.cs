@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ICD.Connect.Misc.Vibe.Devices.VibeBoard;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Partitioning.Rooms;
@@ -30,7 +31,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 
 			return room.Originators
 			           .GetInstancesRecursive<IPanelDevice>()
-			           .Where(o => !(o is OsdPanelDevice))
+			           .Where(o => !(o is OsdPanelDevice) && !(o is VibeBoard))
 			           .Select(o => new ConnectProUserInterface(o, Theme));
 		}
 

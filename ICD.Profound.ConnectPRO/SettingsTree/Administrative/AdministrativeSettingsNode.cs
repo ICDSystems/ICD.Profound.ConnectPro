@@ -11,7 +11,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 		{
 			Name = "Administrative";
 			Image = SettingsTreeImages.IMAGE_ADMIN;
-			Icon = SettingsTreeIcons.ICON_ADMIN;
+			Icon = eSettingsIcon.Admin;
 			Prompt = "Please choose an administrative option from the menu to the left.";
 		}
 
@@ -23,7 +23,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 		{
 			yield return new ClockSettingsLeaf();
 			yield return new PinSettingsLeaf();
-			yield return new PowerSettingsLeaf();
+			yield return new WakeSleepSettingsLeaf();
 		}
 	}
 }

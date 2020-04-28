@@ -10,7 +10,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Conferencing
 		public ConferencingSettingsNode()
 		{
 			Name = "Conferencing";
-			Icon = SettingsTreeIcons.ICON_CONFERENCE;
+			Icon = eSettingsIcon.Conference;
 		}
 
 		/// <summary>

@@ -1,16 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using ICD.Profound.ConnectPRO.SettingsTree;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews
 {
-	public enum eIconColor
-	{
-		Grey,
-		LightBlue,
-		Red,
-		StandardBlue,
-		White,
-		Yellow
-	}
 
 	public static class Icons
 	{
@@ -145,6 +138,56 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews
 				default:
 					throw new ArgumentOutOfRangeException("color");
 			}
+		}
+
+		public const string ICON_ADMIN = "admin";
+		public const string ICON_BACKGROUNDS = "backgrounds";
+		public const string ICON_CLOCK = "clock";
+		public const string ICON_CONFERENCE = "conference";
+		public const string ICON_CUE = "cue";
+		public const string ICON_DIRECTORY = "directory";
+		public const string ICON_GRID = "grid";
+		public const string ICON_NOTIFICATION = "notification";
+		public const string ICON_PHONE = "phone";
+		public const string ICON_PIN = "pin";
+		public const string ICON_POWER = "power";
+		public const string ICON_ROOM_COMBINE = "roomCombine";
+		public const string ICON_ZOOM = "zoom";
+
+		private static readonly Dictionary<eSettingsIcon, string> s_IconStrings = new Dictionary<eSettingsIcon, string>()
+		{
+			{eSettingsIcon.Admin, ICON_ADMIN},
+			{eSettingsIcon.Backgrounds, ICON_BACKGROUNDS},
+			{eSettingsIcon.Clock, ICON_CLOCK},
+			{eSettingsIcon.Conference, ICON_CONFERENCE},
+			{eSettingsIcon.Cue, ICON_CUE},
+			{eSettingsIcon.Directory, ICON_DIRECTORY},
+			{eSettingsIcon.Grid, ICON_GRID},
+			{eSettingsIcon.Notification, ICON_NOTIFICATION},
+			{eSettingsIcon.Phone, ICON_PHONE},
+			{eSettingsIcon.Pin, ICON_PIN},
+			{eSettingsIcon.WakeSleep, ICON_POWER},
+			{eSettingsIcon.RoomCombine, ICON_ROOM_COMBINE},
+			{eSettingsIcon.Zoom, ICON_ZOOM},
+		};
+
+		private static readonly Dictionary<eSettingsColor, string> s_ColorToSuffix =
+			new Dictionary<eSettingsColor, string>
+			{
+				{eSettingsColor.LightBlue, "blue"}, 
+				{eSettingsColor.Gray, "gray"}, 
+				{eSettingsColor.White, "white"}
+			};
+
+		/// <summary>
+		/// Returns the color variation for the given icon.
+		/// </summary>
+		/// <param name="icon"></param>
+		/// <param name="settingsColor"></param>
+		/// <returns></returns>
+		public static string GetSettingsIcon(eSettingsIcon icon, eSettingsColor settingsColor)
+		{
+			return string.Format("icon_set_{0}_{1}", s_IconStrings[icon], s_ColorToSuffix[settingsColor]);
 		}
 	}
 }

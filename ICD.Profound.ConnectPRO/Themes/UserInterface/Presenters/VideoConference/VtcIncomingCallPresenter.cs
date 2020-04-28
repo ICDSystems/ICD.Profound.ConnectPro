@@ -158,8 +158,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (room == null)
 				return;
 
-			room.OnIncomingCallAnswered += RoomOnIncomingCallAnswered;
-			room.OnIncomingCallRejected += RoomOnIncomingCallRejected;
+			room.Dialing.OnIncomingCallAnswered += RoomOnIncomingCallAnswered;
+			room.Dialing.OnIncomingCallRejected += RoomOnIncomingCallRejected;
 
 			if (room.ConferenceManager == null)
 				return;
@@ -179,8 +179,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (room == null)
 				return;
 
-			room.OnIncomingCallAnswered -= RoomOnIncomingCallAnswered;
-			room.OnIncomingCallRejected -= RoomOnIncomingCallRejected;
+			room.Dialing.OnIncomingCallAnswered -= RoomOnIncomingCallAnswered;
+			room.Dialing.OnIncomingCallRejected -= RoomOnIncomingCallRejected;
 
 			if (room.ConferenceManager == null)
 				return;
@@ -330,7 +330,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			IIncomingCall call = GetFirstIncomingCall();
 
 			if (call != null && Room != null)
-				Room.RejectIncomingCall(call);
+				Room.Dialing.RejectIncomingCall(call);
 
 			ShowView(false);
 		}
@@ -349,7 +349,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 					: m_IncomingCallsSection.Execute(() => m_IncomingCalls.GetDefault(call));
 
 			if (call != null && Room != null)
-				Room.AnswerIncomingCall(control, call);
+				Room.Dialing.AnswerIncomingCall(control, call);
 
 			ShowView(false);
 		}

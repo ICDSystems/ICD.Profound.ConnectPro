@@ -16,7 +16,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settin
 		/// Gets the current root settings node item.
 		/// </summary>
 		[CanBeNull]
-		RootSettingsNode RootNode { get; }
+		IRootSettingsNode RootNode { get; }
 
 		/// <summary>
 		/// Navigates to the given settings node.

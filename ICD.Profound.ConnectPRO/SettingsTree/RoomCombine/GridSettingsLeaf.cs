@@ -29,7 +29,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.RoomCombine
 		public GridSettingsLeaf()
 		{
 			Name = "Grid";
-			Icon = SettingsTreeIcons.ICON_GRID;
+			Icon = eSettingsIcon.Grid;
 		}
 	}
 }

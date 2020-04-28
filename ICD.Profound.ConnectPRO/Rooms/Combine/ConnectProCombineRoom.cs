@@ -31,19 +31,6 @@ namespace ICD.Profound.ConnectPRO.Rooms.Combine
 		}
 
 		/// <summary>
-		/// Gets/sets the ATC number for dialing into the room.
-		/// </summary>
-		public override string AtcNumber
-		{
-			get { return m_MasterRoom == null ? null : m_MasterRoom.AtcNumber; }
-			set
-			{
-				if (m_MasterRoom != null)
-					m_MasterRoom.AtcNumber = value;
-			}
-		}
-
-		/// <summary>
 		/// Gets the CalendarControl for the room.
 		/// </summary>
 		public override ICalendarControl CalendarControl { get { return m_MasterRoom == null ? null : m_MasterRoom.CalendarControl; } }
@@ -98,6 +85,7 @@ namespace ICD.Profound.ConnectPRO.Rooms.Combine
 			CombineName = m_MasterRoom == null ? null : m_MasterRoom.Name;
 			WakeSchedule = m_MasterRoom == null ? null : m_MasterRoom.WakeSchedule;
 			ConferenceManager = m_MasterRoom == null ? null : m_MasterRoom.ConferenceManager;
+			Dialing.AtcNumber = m_MasterRoom == null ? null : m_MasterRoom.Dialing.AtcNumber;
 
 			if (!Routing.SupportsSimpleMode())
 				CombinedAdvancedMode = eCombineAdvancedMode.Advanced;

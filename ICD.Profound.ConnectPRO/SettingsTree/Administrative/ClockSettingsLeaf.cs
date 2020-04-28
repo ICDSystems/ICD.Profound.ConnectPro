@@ -25,7 +25,7 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 		/// <summary>
 		/// Gets the current time of day.
 		/// </summary>
-		public TimeSpan ClockTime { get { return IcdEnvironment.GetLocalTime().TimeOfDay; } }
+		public DateTime ClockTime { get { return IcdEnvironment.GetLocalTime(); } }
 
 		/// <summary>
 		/// Constructor.
@@ -33,21 +33,15 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 		public ClockSettingsLeaf()
 		{
 			Name = "Clock";
-			Icon = SettingsTreeIcons.ICON_CLOCK;
+			Icon = eSettingsIcon.Clock;
 		}
 
 		/// <summary>
 		/// Sets the system clock time.
 		/// </summary>
-		/// <param name="time"></param>
-		public void SetClockTime(TimeSpan time)
+		/// <param name="dateTime"></param>
+		public void SetClockTime(DateTime dateTime)
 		{
-			// Keep precision
-			DateTime now = IcdEnvironment.GetLocalTime();
-			DateTime dateTime = new DateTime(now.Year, now.Month, now.Day,
-			                                 time.Hours, time.Minutes, time.Seconds,
-			                                 now.Millisecond);
-
 			IcdEnvironment.SetLocalTime(dateTime);
 		}
 
@@ -66,7 +60,6 @@ namespace ICD.Profound.ConnectPRO.SettingsTree.Administrative
 					: Localization.e24HourOverride.Override12Hour;
 
 			Room.Core.Localization.Set24HourOverride(mode);
-
 			SetDirty(true);
 		}
 	}
