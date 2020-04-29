@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ICD.Common.Logging.LoggingContexts;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
@@ -89,7 +90,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes
 				}
 				catch (Exception e)
 				{
-					Log(eSeverity.Error, "Failed to get logo path for host {0} and logo {1} - {2}", host, Logo, e.Message);
+					Logger.Log(eSeverity.Error, "Failed to get logo path for host {0} and logo {1} - {2}", host, Logo, e.Message);
 				}
 
 				return null;
@@ -236,7 +237,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes
 			}
 			catch (Exception e)
 			{
-				Log(eSeverity.Error, "Failed to load TV Presets {0} - {1}", m_TvPresetsPath, e.Message);
+				Logger.Log(eSeverity.Error, "Failed to load TV Presets {0} - {1}", m_TvPresetsPath, e.Message);
 			}
 		}
 
@@ -266,7 +267,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes
 			}
 			catch (Exception e)
 			{
-				Log(eSeverity.Error, "Failed to load Web Conferencing Instructions {0} - {1}", m_WebConferencingInstructionsPath, e.Message);
+				Logger.Log(eSeverity.Error, "Failed to load Web Conferencing Instructions {0} - {1}", m_WebConferencingInstructionsPath, e.Message);
 			}
 		}
 
@@ -348,7 +349,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes
 			}
 			catch (Exception e)
 			{
-				Log(eSeverity.Error, e, "Failed to combine rooms - " + e.Message);
+				Logger.Log(eSeverity.Error, e, "Failed to combine rooms - " + e.Message);
 
 				OnEndRoomCombine.Raise(this, new GenericEventArgs<Exception>(e));
 				return;
