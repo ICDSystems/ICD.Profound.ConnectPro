@@ -3,7 +3,7 @@ using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Popups.WebConferencing;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.WebConferencing;
-using ICD.Profound.ConnectPRO.WebConferencing;
+using ICD.Profound.ConnectPROCommon.WebConferencing;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups.WebConferencing
 {

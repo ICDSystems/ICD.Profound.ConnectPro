@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ICD.Profound.ConnectPROCommon.SettingsTree.About;
 #if SIMPLSHARP
 using Crestron.SimplSharp.Reflection;
 #else
@@ -7,7 +8,6 @@ using System.Reflection;
 #endif
 using ICD.Common.Utils;
 using ICD.Connect.UI.Attributes;
-using ICD.Profound.ConnectPRO.SettingsTree.About;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.About;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;

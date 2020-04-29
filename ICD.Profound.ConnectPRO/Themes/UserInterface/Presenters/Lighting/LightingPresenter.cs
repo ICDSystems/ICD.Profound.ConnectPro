@@ -7,7 +7,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Lighting;
 using ICD.Connect.Lighting.RoomInterface;
 using ICD.Connect.UI.Attributes;
-using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPROCommon.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Lighting;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;

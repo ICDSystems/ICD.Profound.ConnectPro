@@ -1,10 +1,10 @@
 ﻿using System;
 using ICD.Connect.UI.Attributes;
-using ICD.Profound.ConnectPRO.SettingsTree.Conferencing;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Conferencing;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Conferencing;
+using ICD.Profound.ConnectPROCommon.SettingsTree.Conferencing;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings.Conferencing
 {

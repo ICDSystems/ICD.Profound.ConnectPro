@@ -1,6 +1,6 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
-using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPROCommon.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.FloatingActions.FloatingActionListItems
 {

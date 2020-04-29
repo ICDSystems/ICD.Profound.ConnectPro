@@ -1,0 +1,330 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0B12B0E4-A3A0-4468-A614-19AEAD7619C6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ICD.Profound.ConnectPROCommon</RootNamespace>
+    <AssemblyName>ICD.Profound.ConnectPROCommon</AssemblyName>
+    <ProjectTypeGuids>{0B4745B0-194B-4BB6-8E21-E9057CA92500};{4D628B5B-2FBC-4AA6-8C16-197242AEB884};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <PlatformFamilyName>WindowsCE</PlatformFamilyName>
+    <PlatformID>E2BECB1F-8C8C-41ba-B736-9BE7D946A398</PlatformID>
+    <OSVersion>5.0</OSVersion>
+    <DeployDirSuffix>SmartDeviceProject1</DeployDirSuffix>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <NativePlatformName>Windows CE</NativePlatformName>
+    <FormFactorID>
+    </FormFactorID>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <AllowedReferenceRelatedFileExtensions>.allowedReferenceRelatedFileExtensions</AllowedReferenceRelatedFileExtensions>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SIMPLSHARP</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <FileAlignment>512</FileAlignment>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <GenerateSerializationAssemblies>off</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <AllowedReferenceRelatedFileExtensions>.allowedReferenceRelatedFileExtensions</AllowedReferenceRelatedFileExtensions>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <FileAlignment>512</FileAlignment>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <GenerateSerializationAssemblies>off</GenerateSerializationAssemblies>
+    <DefineConstants>SIMPLSHARP</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="SimplSharpCustomAttributesInterface, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1099c178b3b54c3b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\ProgramData\Crestron\SDK\SimplSharpCustomAttributesInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="SimplSharpHelperInterface, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1099c178b3b54c3b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\ProgramData\Crestron\SDK\SimplSharpHelperInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="SimplSharpReflectionInterface, Version=1.0.5583.25238, Culture=neutral, PublicKeyToken=1099c178b3b54c3b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\ProgramData\Crestron\SDK\SimplSharpReflectionInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Devices\ConnectProEventMessages.cs" />
+    <Compile Include="Devices\ConnectProEventServerDevice.cs" />
+    <Compile Include="Devices\ConnectProEventServerDeviceSettings.cs" />
+    <Compile Include="Dialing\ConferenceSetup\AbstractConferenceSetup.cs" />
+    <Compile Include="Dialing\ConferenceSetup\ConferenceSetupFactory.cs" />
+    <Compile Include="Dialing\ConferenceSetup\IConferenceSetup.cs" />
+    <Compile Include="Dialing\ConferenceSetup\ZoomConferenceSetup.cs" />
+    <Compile Include="Dialing\ConnectProDialing.cs" />
+    <Compile Include="EventArguments\SourceRoutedEventArgs.cs" />
+    <Compile Include="KrangPlugin.cs" />
+    <None Include="ObfuscationSettings.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rooms\AbstractConnectProRoom.cs" />
+    <Compile Include="Rooms\AbstractConnectProRoomSettings.cs" />
+    <Compile Include="Rooms\Combine\ConnectProCombineRoom.cs" />
+    <Compile Include="Rooms\Combine\ConnectProCombineRoomSettings.cs" />
+    <Compile Include="Rooms\Combine\eCombineAdvancedMode.cs" />
+    <Compile Include="Rooms\ConnectProRoomConsole.cs" />
+    <Compile Include="Rooms\IConnectProRoom.cs" />
+    <Compile Include="Rooms\IConnectProRoomSettings.cs" />
+    <Compile Include="Rooms\Single\ConnectProRoom.cs" />
+    <Compile Include="Rooms\Single\ConnectProRoomSettings.cs" />
+    <Compile Include="Routing\ConnectProRouting.cs" />
+    <Compile Include="Routing\ConnectProRoutingDestinations.cs" />
+    <Compile Include="Routing\ConnectProRoutingSources.cs" />
+    <Compile Include="Routing\ConnectProRoutingState.cs" />
+    <Compile Include="Routing\Endpoints\Sources\ConnectProSource.cs" />
+    <Compile Include="Routing\Endpoints\Sources\ConnectProSourceSettings.cs" />
+    <Compile Include="Routing\eSourceState.cs" />
+    <Compile Include="Routing\Masking\AbstractMaskedSourceInfo.cs" />
+    <Compile Include="Routing\Masking\ConferenceDevice\AbstractConferenceDeviceMaskedSourceInfo.cs" />
+    <Compile Include="Routing\Masking\ConferenceDevice\ConferenceDeviceMaskedSourceInfo.cs" />
+    <Compile Include="Routing\Masking\ConferenceDevice\ZoomConferenceDeviceMaskedSourceInfo.cs" />
+    <Compile Include="Routing\Masking\IMaskedSourceInfo.cs" />
+    <Compile Include="Routing\Masking\MaskedSourceInfoFactory.cs" />
+    <Compile Include="Routing\Masking\ThinMaskedSourceInfo.cs" />
+    <Compile Include="Routing\ProcessingSourceInfo.cs" />
+    <Compile Include="SettingsTree\About\AboutSettingsNode.cs" />
+    <Compile Include="SettingsTree\About\PluginsSettingsLeaf.cs" />
+    <Compile Include="SettingsTree\AbstractRootSettingsNode.cs" />
+    <Compile Include="SettingsTree\AbstractSettingsLeaf.cs" />
+    <Compile Include="SettingsTree\AbstractSettingsNode.cs" />
+    <Compile Include="SettingsTree\AbstractSettingsNodeBase.cs" />
+    <Compile Include="SettingsTree\AbstractStaticSettingsNode.cs" />
+    <Compile Include="SettingsTree\Administrative\AdministrativeSettingsNode.cs" />
+    <Compile Include="SettingsTree\Administrative\ClockSettingsLeaf.cs" />
+    <Compile Include="SettingsTree\Administrative\PinSettingsLeaf.cs" />
+    <Compile Include="SettingsTree\Administrative\WakeSleepSettingsLeaf.cs" />
+    <Compile Include="SettingsTree\Conferencing\ConferencingSettingsNode.cs" />
+    <Compile Include="SettingsTree\Conferencing\DirectorySettingsLeaf.cs" />
+    <Compile Include="SettingsTree\ConnectProRootSettingsNode.cs" />
+    <Compile Include="SettingsTree\CUE\BackgroundSettingsLeaf.cs" />
+    <Compile Include="SettingsTree\CUE\CueSettingsNode.cs" />
+    <Compile Include="SettingsTree\CUE\TouchCueSettingsNode.cs" />
+    <Compile Include="SettingsTree\IRootSettingsNode.cs" />
+    <Compile Include="SettingsTree\ISettingsLeaf.cs" />
+    <Compile Include="SettingsTree\ISettingsNode.cs" />
+    <Compile Include="SettingsTree\ISettingsNodeBase.cs" />
+    <Compile Include="SettingsTree\RoomCombine\GridSettingsLeaf.cs" />
+    <Compile Include="SettingsTree\RoomCombine\RoomCombineSettingsNode.cs" />
+    <Compile Include="SettingsTree\SettingsTreeIcons.cs" />
+    <Compile Include="SettingsTree\SettingsTreeImages.cs" />
+    <Compile Include="SettingsTree\TouchDisplayRootSettingsNode.cs" />
+    <Compile Include="SettingsTree\Zoom\ZoomSettingsLeaf.cs" />
+    <Compile Include="Themes\AbstractConnectProUserInterfaceFactory.cs" />
+    <Compile Include="Themes\Ccrm4000UserInterface\ConnectProCcrm4000UserInterface.cs" />
+    <Compile Include="Themes\Ccrm4000UserInterface\ConnectProCcrm4000UserInterfaceFactory.cs" />
+    <Compile Include="Themes\ConnectProDateFormatting.cs" />
+    <Compile Include="Themes\AbstractConnectProTheme.cs" />
+    <Compile Include="Themes\AbstractConnectProThemeSettings.cs" />
+    <Compile Include="Themes\EventServerUserInterface\ConnectProEventServerUserInterface.cs" />
+    <Compile Include="Themes\EventServerUserInterface\ConnectProEventServerUserInterfaceFactory.cs" />
+    <Compile Include="Themes\IConnectProTheme.cs" />
+    <Compile Include="Themes\IConnectProThemeSettings.cs" />
+    <Compile Include="Themes\Mpc3201UserInterface\ConnectProMpc3201Interface.cs" />
+    <Compile Include="Themes\Mpc3201UserInterface\ConnectProMpc3201InterfaceFactory.cs" />
+    <Compile Include="Themes\OsdInterface\ConnectProOsdInterface.cs" />
+    <Compile Include="Themes\OsdInterface\ConnectProOsdInterfaceFactory.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\Conference\IOsdConferencePresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\IOsdBackgroundPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\IOsdHeaderPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\IOsdHelloPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\IOsdNavigationController.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\IOsdPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\Popups\IOsdIncomingCallPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\Popups\IOsdMutePresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\Sources\IOsdSourcesPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\VisibilityTree\NotificationVisibilityNode.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\Welcome\IOsdWelcomePresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\Welcome\IReferencedSchedulePresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\Conference\IOsdConferenceView.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\IOsdBackgroundView.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\IOsdHeaderView.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\IOsdHelloView.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\IOsdView.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\IOsdViewFactory.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\Popups\IOsdIncomingCallView.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\Popups\IOsdMuteView.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\Sources\IOsdSourcesView.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\Welcome\IOsdWelcomeView.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\Welcome\IReferencedScheduleView.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\AbstractOsdComponentPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\AbstractOsdListItemFactory.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\AbstractOsdPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\Conference\OsdConferencePresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\ConnectProOsdNavigationController.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\OsdBackgroundPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\OsdHeaderPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\OsdHelloPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\Popups\OsdIncomingCallPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\Popups\OsdMutePresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\Sources\OsdSourcesPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\Welcome\OsdWelcomePresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\Welcome\ReferencedSchedulePresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\Welcome\ReferencedSchedulePresenterFactory.cs" />
+    <Compile Include="Themes\OsdInterface\Views\AbstractOsdComponentView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\AbstractOsdView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\Conference\OsdConferenceView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\Conference\OsdConferenceView.generated.cs" />
+    <Compile Include="Themes\OsdInterface\Views\ConnectProOsdViewFactory.cs" />
+    <Compile Include="Themes\OsdInterface\Views\OsdBackgroundView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\OsdBackgroundView.generated.cs" />
+    <Compile Include="Themes\OsdInterface\Views\OsdHeaderView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\OsdHeaderView.generated.cs" />
+    <Compile Include="Themes\OsdInterface\Views\OsdHelloView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\OsdHelloView.generated.cs" />
+    <Compile Include="Themes\OsdInterface\Views\Popups\OsdIncomingCallView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\Popups\OsdIncomingCallView.generated.cs" />
+    <Compile Include="Themes\OsdInterface\Views\Popups\OsdMuteView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\Popups\OsdMuteView.generated.cs" />
+    <Compile Include="Themes\OsdInterface\Views\Sources\OsdSourcesView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\Sources\OsdSourcesView.generated.cs" />
+    <Compile Include="Themes\OsdInterface\Views\Welcome\OsdWelcomeView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\Welcome\OsdWelcomeView.generated.cs" />
+    <Compile Include="Themes\OsdInterface\Views\Welcome\ReferencedScheduleView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\Welcome\ReferencedScheduleView.generated.cs" />
+    <Compile Include="Themes\Shared\Models\EmptyBooking.cs" />
+    <Compile Include="Themes\ShureMicrophoneInterface\ConnectProShureMicrophoneInterface.cs" />
+    <Compile Include="Themes\ShureMicrophoneInterface\ConnectProShureMicrophoneInterfaceFactory.cs" />
+    <Compile Include="Themes\ShureMx396Interface\ConnectProShureMx396Interface.cs" />
+    <Compile Include="Themes\ShureMx396Interface\ConnectProShureMx396InterfaceFactory.cs" />
+    <Compile Include="Themes\YkupSwitcherInterface\ConnectProYkupSwitcherInterface.cs" />
+    <Compile Include="Themes\YkupSwitcherInterface\ConnectProYkupSwitcherInterfaceFactory.cs" />
+    <Compile Include="VolumePoints\ConnectProVolumePoint.cs" />
+    <Compile Include="VolumePoints\ConnectProVolumePointSettings.cs" />
+    <Compile Include="WebConferencing\WebConferencingAppInstructions.cs" />
+    <Compile Include="WebConferencing\WebConferencingInstructions.cs" />
+    <Compile Include="WebConferencing\WebConferencingStepInstructions.cs" />
+    <None Include="Properties\ControlSystem.cfg" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ICD.Common.Utils\ICD.Common.Utils\ICD.Common.Utils_SimplSharp.csproj">
+      <Project>{CB4055C6-D59E-479E-9C56-2C92335A7D9A}</Project>
+      <Name>ICD.Common.Utils_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.API\ICD.Connect.API\ICD.Connect.API_SimplSharp.csproj">
+      <Project>{727F5820-5A61-440D-8899-E454FE8238D7}</Project>
+      <Name>ICD.Connect.API_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Audio\ICD.Connect.Audio.ClockAudio\ICD.Connect.Audio.ClockAudio_SimplSharp.csproj">
+      <Project>{DFDEA2A3-B470-4EBC-B959-338437340CAE}</Project>
+      <Name>ICD.Connect.Audio.ClockAudio_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Audio\ICD.Connect.Audio.Shure\ICD.Connect.Audio.Shure_SimplSharp.csproj">
+      <Project>{AFEEC857-710B-4F94-B982-7BD8648904DD}</Project>
+      <Name>ICD.Connect.Audio.Shure_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Audio\ICD.Connect.Audio\ICD.Connect.Audio_SimplSharp.csproj">
+      <Project>{8ED25D96-E9A5-4E9A-A890-B4EF3AB62041}</Project>
+      <Name>ICD.Connect.Audio_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Calendaring\ICD.Connect.Calendaring\ICD.Connect.Calendaring_SimplSharp.csproj">
+      <Project>{3C084F11-8810-4B87-970C-F97E2905ACEB}</Project>
+      <Name>ICD.Connect.Calendaring_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Cameras\ICD.Connect.Cameras\ICD.Connect.Cameras_SimplSharp.csproj">
+      <Project>{B13D593D-8BBF-4E20-ABD8-47C6095E7D3E}</Project>
+      <Name>ICD.Connect.Cameras_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing.Zoom\ICD.Connect.Conferencing.Zoom_SimplSharp.csproj">
+      <Project>{D86EE18A-B98A-46F0-B930-CDE4A6012E49}</Project>
+      <Name>ICD.Connect.Conferencing.Zoom_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing\ICD.Connect.Conferencing_SimplSharp.csproj">
+      <Project>{1CCA89DA-1F1C-4997-A94F-ABCE878BD6DE}</Project>
+      <Name>ICD.Connect.Conferencing_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Devices\ICD.Connect.Devices\ICD.Connect.Devices_SimplSharp.csproj">
+      <Project>{FD46A717-5836-4B73-ADD0-2706639DA8ED}</Project>
+      <Name>ICD.Connect.Devices_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Misc\ICD.Connect.Misc.Vibe\ICD.Connect.Misc.Vibe_SimplSharp.csproj">
+      <Project>{AA57A401-310F-4793-AA61-DD7EB0948B5F}</Project>
+      <Name>ICD.Connect.Misc.Vibe_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Misc\ICD.Connect.Misc.Yepkit\ICD.Connect.Misc.Yepkit_SimplSharp.csproj">
+      <Project>{89489295-B545-4CA0-B9A7-99B87B538A33}</Project>
+      <Name>ICD.Connect.Misc.Yepkit_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Misc\ICD.Connect.Misc\ICD.Connect.Misc_SimplSharp.csproj">
+      <Project>{3BAE6352-77B5-499A-9DA5-2AB198F53183}</Project>
+      <Name>ICD.Connect.Misc_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Panels\ICD.Connect.Panels.Crestron\ICD.Connect.Panels.Crestron_SimplSharp.csproj">
+      <Project>{EF71F157-ED75-4B30-ABC9-1E7811615528}</Project>
+      <Name>ICD.Connect.Panels.Crestron_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Panels\ICD.Connect.Panels.Server\ICD.Connect.Panels.Server_SimplSharp.csproj">
+      <Project>{B14DB63B-1D7B-4112-8845-8187A2C7DF90}</Project>
+      <Name>ICD.Connect.Panels.Server_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Panels\ICD.Connect.Panels\ICD.Connect.Panels_SimplSharp.csproj">
+      <Project>{A441FE98-6A8E-4EF3-98F0-D17041D2E118}</Project>
+      <Name>ICD.Connect.Panels_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Partitioning\ICD.Connect.Partitioning.Commercial\ICD.Connect.Partitioning.Commercial_SimplSharp.csproj">
+      <Project>{2501EF10-A1B8-4F3C-9ED0-D4F0E4BEE379}</Project>
+      <Name>ICD.Connect.Partitioning.Commercial_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Partitioning\ICD.Connect.Partitioning\ICD.Connect.Partitioning_SimplSharp.csproj">
+      <Project>{42FB8CF0-6AE6-4C70-AFDD-DF95F07E077F}</Project>
+      <Name>ICD.Connect.Partitioning_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Protocol\ICD.Connect.Protocol.Network\ICD.Connect.Protocol.Network_SimplSharp.csproj">
+      <Project>{5ED52F05-EA6C-4FC5-8AA0-9B9727F6AECD}</Project>
+      <Name>ICD.Connect.Protocol.Network_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Protocol\ICD.Connect.Protocol\ICD.Connect.Protocol_SimplSharp.csproj">
+      <Project>{2E4E01B8-D4EA-4FB1-9FCE-0A0DC8D83C8A}</Project>
+      <Name>ICD.Connect.Protocol_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Routing\ICD.Connect.Routing\ICD.Connect.Routing_SimplSharp.csproj">
+      <Project>{B0C0CA1C-FA55-4BEA-8A8B-EDB2141C523E}</Project>
+      <Name>ICD.Connect.Routing_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Settings\ICD.Connect.Settings\ICD.Connect.Settings_SimplSharp.csproj">
+      <Project>{5B84EB3C-1C3A-4C4D-98C2-69F67CF51D5A}</Project>
+      <Name>ICD.Connect.Settings_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Sources\ICD.Connect.Sources.TvTuner\ICD.Connect.Sources.TvTuner_SimplSharp.csproj">
+      <Project>{EE162C95-A9DB-459D-95B6-9E63D9816DC5}</Project>
+      <Name>ICD.Connect.Sources.TvTuner_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Telemetry\ICD.Connect.Telemetry\ICD.Connect.Telemetry_SimplSharp.csproj">
+      <Project>{9512C0A5-F966-4AC6-9668-62C6F343B0CD}</Project>
+      <Name>ICD.Connect.Telemetry_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Themes\ICD.Connect.Themes\ICD.Connect.Themes_SimplSharp.csproj">
+      <Project>{7D599445-C1F9-4BBD-ACC4-DC80E3311376}</Project>
+      <Name>ICD.Connect.Themes_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.UI\ICD.Connect.UI\ICD.Connect.UI_SimplSharp.csproj">
+      <Project>{89BF27D5-374B-4863-AD92-D217924D6D8F}</Project>
+      <Name>ICD.Connect.UI_SimplSharp</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if /I "$(ConfigurationName)" == "Release" Eazfuscator.NET.exe "$(TargetPath)" --msbuild-project-path "$(ProjectPath)" --msbuild-project-configuration "$(ConfigurationName)" --msbuild-project-platform "$(PlatformName)" --msbuild-solution-path "$(SolutionPath)" -n --newline-flush -v 5.2 --configuration-file="$(ProjectDir)ObfuscationSettings.cs"
+rem S# Pro preparation will execute after these operations</PostBuildEvent>
+  </PropertyGroup>
+</Project>

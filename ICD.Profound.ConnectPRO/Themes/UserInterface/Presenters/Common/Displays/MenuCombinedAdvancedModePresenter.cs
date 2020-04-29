@@ -4,12 +4,12 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
-using ICD.Profound.ConnectPRO.Rooms;
-using ICD.Profound.ConnectPRO.Rooms.Combine;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
+using ICD.Profound.ConnectPROCommon.Rooms;
+using ICD.Profound.ConnectPROCommon.Rooms.Combine;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Displays
 {

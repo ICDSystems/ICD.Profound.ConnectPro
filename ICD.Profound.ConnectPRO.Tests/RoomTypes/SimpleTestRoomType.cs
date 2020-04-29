@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using ICD.Common.Utils.Services;
-using ICD.Connect.Audio.Shure;
 using ICD.Connect.Audio.Shure.Devices.MXA;
 using ICD.Connect.Panels.Mock;
 using ICD.Connect.Panels.Server.Osd;
@@ -8,9 +7,9 @@ using ICD.Connect.Partitioning.PartitionManagers;
 using ICD.Connect.Routing.RoutingGraphs;
 using ICD.Connect.Settings.Cores;
 using ICD.Connect.Themes.UserInterfaceFactories;
-using ICD.Profound.ConnectPRO.Rooms;
-using ICD.Profound.ConnectPRO.Rooms.Single;
 using ICD.Profound.ConnectPRO.Themes;
+using ICD.Profound.ConnectPROCommon.Rooms;
+using ICD.Profound.ConnectPROCommon.Rooms.Single;
 
 namespace ICD.Profound.ConnectPRO.Tests.RoomTypes
 {

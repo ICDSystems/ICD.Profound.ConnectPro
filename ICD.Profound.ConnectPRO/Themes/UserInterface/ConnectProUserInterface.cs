@@ -21,10 +21,6 @@ using ICD.Connect.Routing.EventArguments;
 using ICD.Connect.Sources.TvTuner.Controls;
 using ICD.Connect.Themes.UserInterfaces;
 using ICD.Connect.UI.Mvp.Presenters;
-using ICD.Profound.ConnectPRO.Rooms;
-using ICD.Profound.ConnectPRO.Rooms.Combine;
-using ICD.Profound.ConnectPRO.Routing;
-using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.AudioConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
@@ -37,6 +33,11 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views;
+using ICD.Profound.ConnectPROCommon.Rooms;
+using ICD.Profound.ConnectPROCommon.Rooms.Combine;
+using ICD.Profound.ConnectPROCommon.Routing;
+using ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 {
@@ -690,10 +691,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// <summary>
 		/// Called when the theme starts combining rooms.
 		/// </summary>
-		/// <param name="connectProTheme"></param>
+		/// <param name="sender"></param>
 		/// <param name="openCount"></param>
 		/// <param name="closeCount"></param>
-		private void ThemeOnStartRoomCombine(ConnectProTheme connectProTheme, int openCount, int closeCount)
+		private void ThemeOnStartRoomCombine(IConnectProTheme sender, int openCount, int closeCount)
 		{
 			string message = "Updating Configuration";
 

@@ -28,6 +28,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\ICD.Connect.Displays\ICD.Connect.Displays.Mock\ICD.Connect.Displays.Mock_NetStandard.csproj" />
     <ProjectReference Include="..\..\ICD.Connect.Panels\ICD.Connect.Panels.Mock\ICD.Connect.Panels.Mock_NetStandard.csproj" />
+    <ProjectReference Include="..\ICD.Profound.ConnectPROCommon\ICD.Profound.ConnectPROCommon_NetStandard.csproj" />
     <ProjectReference Include="..\ICD.Profound.ConnectPRO\ICD.Profound.ConnectPRO_NetStandard.csproj" />
   </ItemGroup>
 

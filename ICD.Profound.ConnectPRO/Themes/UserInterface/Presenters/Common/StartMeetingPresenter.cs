@@ -9,14 +9,14 @@ using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
-using ICD.Profound.ConnectPRO.Rooms;
-using ICD.Profound.ConnectPRO.SettingsTree;
-using ICD.Profound.ConnectPRO.SettingsTree.RoomCombine;
+using ICD.Profound.ConnectPROCommon.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
+using ICD.Profound.ConnectPROCommon.SettingsTree;
+using ICD.Profound.ConnectPROCommon.SettingsTree.RoomCombine;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 {

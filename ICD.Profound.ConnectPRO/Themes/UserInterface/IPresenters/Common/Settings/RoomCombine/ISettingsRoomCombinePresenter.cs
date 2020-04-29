@@ -1,5 +1,5 @@
-﻿using ICD.Profound.ConnectPRO.SettingsTree.RoomCombine;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.RoomCombine;
+﻿using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.RoomCombine;
+using ICD.Profound.ConnectPROCommon.SettingsTree.RoomCombine;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.RoomCombine
 {

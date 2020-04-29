@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using ICD.Profound.ConnectPRO.SettingsTree;
+using ICD.Profound.ConnectPROCommon.SettingsTree;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews
 {
-
 	public static class Icons
 	{
 		private const string PREFIX_ICON = "icon_";

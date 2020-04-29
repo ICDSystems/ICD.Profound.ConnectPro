@@ -33,26 +33,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\ICD.Common.Utils\ICD.Common.Utils\ICD.Common.Utils_NetStandard.csproj" />
-    <ProjectReference Include="..\..\ICD.Connect.Audio\ICD.Connect.Audio.ClockAudio\ICD.Connect.Audio.ClockAudio_NetStandard.csproj" />
-    <ProjectReference Include="..\..\ICD.Connect.Audio\ICD.Connect.Audio.Shure\ICD.Connect.Audio.Shure_NetStandard.csproj" />
-    <ProjectReference Include="..\..\ICD.Connect.Cameras\ICD.Connect.Cameras\ICD.Connect.Cameras_NetStandard.csproj" />
-    <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing.Cisco\ICD.Connect.Conferencing.Cisco_NetStandard.csproj" />
     <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing.Polycom\ICD.Connect.Conferencing.Polycom_NetStandard.csproj" />
-    <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing.Zoom\ICD.Connect.Conferencing.Zoom_NetStandard.csproj" />
     <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing\ICD.Connect.Conferencing_NetStandard.csproj" />
-    <ProjectReference Include="..\..\ICD.Connect.Displays\ICD.Connect.Displays\ICD.Connect.Displays_NetStandard.csproj" />
-    <ProjectReference Include="..\..\ICD.Connect.Misc\ICD.Connect.Misc.Vibe\ICD.Connect.Misc.Vibe_NetStandard.csproj" />
     <ProjectReference Include="..\..\ICD.Connect.Lighting\ICD.Connect.Lighting\ICD.Connect.Lighting_NetStandard.csproj" />
-    <ProjectReference Include="..\..\ICD.Connect.Misc\ICD.Connect.Misc.Yepkit\ICD.Connect.Misc.Yepkit_NetStandard.csproj" />
-    <ProjectReference Include="..\..\ICD.Connect.Misc\ICD.Connect.Misc\ICD.Connect.Misc_NetStandard.csproj" />
-    <ProjectReference Include="..\..\ICD.Connect.Panels\ICD.Connect.Panels.Crestron\ICD.Connect.Panels.Crestron_NetStandard.csproj" />
-    <ProjectReference Include="..\..\ICD.Connect.Panels\ICD.Connect.Panels.Server\ICD.Connect.Panels.Server_NetStandard.csproj" />
-    <ProjectReference Include="..\..\ICD.Connect.Panels\ICD.Connect.Panels\ICD.Connect.Panels_NetStandard.csproj" />
-    <ProjectReference Include="..\..\ICD.Connect.Partitioning\ICD.Connect.Partitioning.Commercial\ICD.Connect.Partitioning.Commercial_NetStandard.csproj" />
     <ProjectReference Include="..\..\ICD.Connect.Partitioning\ICD.Connect.Partitioning\ICD.Connect.Partitioning_NetStandard.csproj" />
-    <ProjectReference Include="..\..\ICD.Connect.Sources\ICD.Connect.Sources.TvTuner\ICD.Connect.Sources.TvTuner_NetStandard.csproj" />
-    <ProjectReference Include="..\..\ICD.Connect.Themes\ICD.Connect.Themes\ICD.Connect.Themes_NetStandard.csproj" />
     <ProjectReference Include="..\..\ICD.Connect.UI\ICD.Connect.UI\ICD.Connect.UI_NetStandard.csproj" />
+    <ProjectReference Include="..\ICD.Profound.ConnectPROCommon\ICD.Profound.ConnectPROCommon_NetStandard.csproj" />
   </ItemGroup>
 
 </Project>

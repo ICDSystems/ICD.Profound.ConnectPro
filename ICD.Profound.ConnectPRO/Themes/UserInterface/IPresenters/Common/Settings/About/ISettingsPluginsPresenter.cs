@@ -1,5 +1,5 @@
-﻿using ICD.Profound.ConnectPRO.SettingsTree.About;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.About;
+﻿using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.About;
+using ICD.Profound.ConnectPROCommon.SettingsTree.About;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.About
 {
