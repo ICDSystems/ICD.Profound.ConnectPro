@@ -11,7 +11,7 @@ using ICD.Connect.Audio.Utils;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.UI.Attributes;
-using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPROCommon.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;

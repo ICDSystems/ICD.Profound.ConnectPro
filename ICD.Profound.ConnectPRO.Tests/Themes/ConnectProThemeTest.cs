@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using ICD.Connect.Partitioning;
 using ICD.Profound.ConnectPRO.Tests.RoomTypes;
-using ICD.Profound.ConnectPRO.Themes.OsdInterface;
-using ICD.Profound.ConnectPRO.Themes.ShureMicrophoneInterface;
 using ICD.Profound.ConnectPRO.Themes.UserInterface;
+using ICD.Profound.ConnectPROCommon.Themes.OsdInterface;
+using ICD.Profound.ConnectPROCommon.Themes.ShureMicrophoneInterface;
 using NUnit.Framework;
 
 namespace ICD.Profound.ConnectPRO.Tests.Themes

@@ -1,6 +1,6 @@
 ﻿using ICD.Connect.UI.Mvp.Presenters;
-using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
+using ICD.Profound.ConnectPROCommon.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters
 {

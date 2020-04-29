@@ -13,13 +13,13 @@ using ICD.Connect.Partitioning.Partitions;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Utils;
-using ICD.Profound.ConnectPRO.Rooms;
-using ICD.Profound.ConnectPRO.SettingsTree.RoomCombine;
+using ICD.Profound.ConnectPROCommon.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.RoomCombine;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.RoomCombine;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.RoomCombine;
+using ICD.Profound.ConnectPROCommon.SettingsTree.RoomCombine;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings.RoomCombine
 {

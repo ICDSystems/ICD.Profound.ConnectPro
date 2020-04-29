@@ -14,12 +14,12 @@ using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Utils;
-using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.AudioConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.AudioConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Popups;
+using ICD.Profound.ConnectPROCommon.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConference
 {

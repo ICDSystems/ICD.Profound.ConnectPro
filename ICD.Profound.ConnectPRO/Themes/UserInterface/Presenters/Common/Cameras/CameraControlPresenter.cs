@@ -13,11 +13,11 @@ using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Settings.Originators;
 using ICD.Connect.UI.Attributes;
-using ICD.Profound.ConnectPRO.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Cameras;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Cameras;
+using ICD.Profound.ConnectPROCommon.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 {

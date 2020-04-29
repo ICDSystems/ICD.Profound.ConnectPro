@@ -13,10 +13,10 @@ using ICD.Connect.Routing.Mock.Source;
 using ICD.Connect.Routing.Mock.Switcher;
 using ICD.Connect.Routing.RoutingGraphs;
 using ICD.Connect.Settings.Cores;
-using ICD.Profound.ConnectPRO.Rooms;
-using ICD.Profound.ConnectPRO.Rooms.Single;
-using ICD.Profound.ConnectPRO.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPRO.Themes;
+using ICD.Profound.ConnectPROCommon.Rooms;
+using ICD.Profound.ConnectPROCommon.Rooms.Single;
+using ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources;
 
 namespace ICD.Profound.ConnectPRO.Tests.RoomTypes
 {

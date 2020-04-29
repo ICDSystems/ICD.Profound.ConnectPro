@@ -1,0 +1,397 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{BF1CFCFB-2DFA-43A3-8D3E-20EC5BA282FE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ICD.Profound.TouchCUE</RootNamespace>
+    <AssemblyName>ICD.Profound.TouchCUE</AssemblyName>
+    <ProjectTypeGuids>{0B4745B0-194B-4BB6-8E21-E9057CA92500};{4D628B5B-2FBC-4AA6-8C16-197242AEB884};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <PlatformFamilyName>WindowsCE</PlatformFamilyName>
+    <PlatformID>E2BECB1F-8C8C-41ba-B736-9BE7D946A398</PlatformID>
+    <OSVersion>5.0</OSVersion>
+    <DeployDirSuffix>SmartDeviceProject1</DeployDirSuffix>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <NativePlatformName>Windows CE</NativePlatformName>
+    <FormFactorID>
+    </FormFactorID>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <AllowedReferenceRelatedFileExtensions>.allowedReferenceRelatedFileExtensions</AllowedReferenceRelatedFileExtensions>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SIMPLSHARP</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <FileAlignment>512</FileAlignment>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <GenerateSerializationAssemblies>off</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <AllowedReferenceRelatedFileExtensions>.allowedReferenceRelatedFileExtensions</AllowedReferenceRelatedFileExtensions>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <FileAlignment>512</FileAlignment>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <GenerateSerializationAssemblies>off</GenerateSerializationAssemblies>
+    <DefineConstants>SIMPLSHARP</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="SimplSharpCustomAttributesInterface, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1099c178b3b54c3b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\ProgramData\Crestron\SDK\SimplSharpCustomAttributesInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="SimplSharpHelperInterface, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1099c178b3b54c3b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\ProgramData\Crestron\SDK\SimplSharpHelperInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="SimplSharpReflectionInterface, Version=1.0.5583.25238, Culture=neutral, PublicKeyToken=1099c178b3b54c3b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\ProgramData\Crestron\SDK\SimplSharpReflectionInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="KrangPlugin.cs" />
+    <None Include="ObfuscationSettings.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Themes\TouchCueTheme.cs" />
+    <Compile Include="Themes\TouchCueThemeSettings.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\ConnectProTouchDisplayInterface.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\ConnectProTouchDisplayInterfaceFactory.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Background\IBackgroundPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\ActiveConference\IActiveConferencePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\ActiveConference\IParticipantControlsPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\ActiveConference\IReferencedParticipantPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\Camera\ICameraControlPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\Camera\ICameraLayoutPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\Contacts\IContactListPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\Contacts\IContactsKeyboardPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\Contacts\IReferencedContactPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\Contacts\IReferencedSelectedContactPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\ICallOutConferencePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\IConferenceBasePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\IConferencePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\IPrivacyMuteConferencePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\IRecordConferencePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\IShareConferencePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\IStartConferencePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\DeviceDrawer\IDeviceDrawerPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\DeviceDrawer\IReferencedSourcePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Header\HeaderButtonModel.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Header\IHeaderPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Header\IReferencedHeaderButtonPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\IContextualControlPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\IGenericAlertPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\IGenericLoadingSpinnerPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\IHelloPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\IMainPagePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\IPopupPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\ITouchDisplayNavigationController.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\ITouchDisplayPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\IVolumePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Notifications\IConferenceConnectingPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Notifications\IConfirmEndMeetingPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Notifications\IIncomingCallPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Schedule\IReferencedBookingPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Schedule\ISchedulePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Settings\Administrative\ISettingsClockPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Settings\Administrative\ISettingsPinPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Settings\Administrative\ISettingsPowerPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Settings\Conferencing\ISettingsDirectoryPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Settings\CUE\ISettingsCueBackgroundPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Settings\CUE\Modes\ISettingsCueBackgroundModePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Settings\CUE\Modes\ISettingsCueBackgroundSeasonalPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Settings\CUE\Modes\ISettingsCueBackgroundStaticPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Settings\ISettingsBasePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Settings\ISettingsNodeBasePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Settings\ISettingsPasscodePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Settings\ISettingsPromptPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Background\IBackgroundView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\ActiveConference\IActiveConferenceView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\ActiveConference\IParticipantControlsView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\ActiveConference\IReferencedParticipantView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\Camera\ICameraControlView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\Camera\ICameraLayoutView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\Contacts\IContactListView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\Contacts\IContactsKeyboardView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\Contacts\IReferencedContactView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\Contacts\IReferencedSelectedContactView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\ICallOutConferenceView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\IConferenceBaseView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\IPrivacyMuteConferenceView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\IRecordConferenceView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\IShareConferenceView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\IStartConferenceView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\DeviceDrawer\IDeviceDrawerView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\DeviceDrawer\IReferencedSourceView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Header\IHeaderView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Header\IReferencedHeaderButtonView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\IGenericAlertView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\IGenericLoadingSpinnerView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\IHelloView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\IPopupView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\ITouchDisplayView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\ITouchDisplayViewFactory.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\IVolumeView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Notifications\IConferenceConnectingView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Notifications\IConfirmEndMeetingView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Notifications\IIncomingCallView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Schedule\IReferencedBookingView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Schedule\IScheduleView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Settings\Administrative\ISettingsClockView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Settings\Administrative\ISettingsPinView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Settings\Administrative\ISettingsPowerView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Settings\Conferencing\ISettingsDirectoryView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Settings\CUE\ISettingsCueBackgroundView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Settings\CUE\Modes\ISettingsCueBackgroundModeView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Settings\CUE\Modes\ISettingsCueBackgroundSeasonalView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Settings\CUE\Modes\ISettingsCueBackgroundStaticView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Settings\ISettingsBaseView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Settings\ISettingsPasscodeView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\Settings\ISettingsPromptView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\AbstractPopupPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\AbstractTouchDisplayComponentPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\AbstractTouchDisplayListItemFactory.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\AbstractTouchDisplayPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Background\BackgroundPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\AbstractConferencePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\ActiveConference\ActiveConferencePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\ActiveConference\ParticipantControlsPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\ActiveConference\ReferencedParticipantPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\ActiveConference\ReferencedParticipantPresenterFactory.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\CallOutConferencePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\Camera\CameraControlPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\Camera\CameraLayoutPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\ConferenceBasePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\Contacts\ContactListPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\Contacts\ContactsKeyboardPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\Contacts\ReferencedContactPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\Contacts\ReferencedContactPresenterFactory.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\Contacts\ReferencedSelectedContactPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\Contacts\ReferencedSelectedContactPresenterFactory.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\PrivacyMuteConferencePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\RecordConferencePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\ShareConferencePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\StartConferencePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\ConnectProTouchDisplayNavigationController.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\DeviceDrawer\DeviceDrawerPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\DeviceDrawer\ReferencedSourcePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\DeviceDrawer\ReferencedSourcePresenterFactory.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\GenericAlertPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\GenericLoadingSpinnerPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Header\HeaderPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Header\ReferencedHeaderButtonPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Header\ReferencedHeaderButtonPresenterFactory.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\HelloPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Notifications\ConferenceConnectingPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Notifications\ConfirmEndMeetingPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Notifications\IncomingCallPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Schedule\ReferencedBookingPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Schedule\ReferencedBookingPresenterFactory.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Schedule\SchedulePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Settings\AbstractSettingsNodeBasePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Settings\Administrative\SettingsClockPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Settings\Administrative\SettingsPinPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Settings\Administrative\SettingsPowerPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Settings\Conferencing\SettingsDirectoryPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Settings\CUE\Modes\AbstractSettingsCueBackgroundModePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Settings\CUE\Modes\SettingsCueBackgroundSeasonalPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Settings\CUE\Modes\SettingsCueBackgroundStaticPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Settings\CUE\SettingsCueBackgroundPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Settings\SettingsBasePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Settings\SettingsPasscodePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\Settings\SettingsPromptPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\TouchCueIcons.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\VolumePresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\AbstractPopupView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\AbstractTouchDisplayComponentView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\AbstractTouchDisplayView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Background\BackgroundView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Background\BackgroundView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\ActiveConference\ActiveConferenceView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\ActiveConference\ActiveConferenceView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\ActiveConference\ParticipantControlsView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\ActiveConference\ParticipantControlsView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\ActiveConference\ReferencedParticipantView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\ActiveConference\ReferencedParticipantView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\CallOutConferenceView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\CallOutConferenceView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\Camera\CameraControlView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\Camera\CameraControlView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\Camera\CameraLayoutView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\Camera\CameraLayoutView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\ConferenceBaseView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\ConferenceBaseView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\Contacts\ContactListView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\Contacts\ContactListView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\Contacts\ContactsKeyboardView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\Contacts\ContactsKeyboardView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\Contacts\ReferencedContactView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\Contacts\ReferencedContactView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\Contacts\ReferencedSelectedContactView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\Contacts\ReferencedSelectedContactView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\PrivacyMuteConferenceView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\PrivacyMuteConferenceView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\RecordConferenceView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\RecordConferenceView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\ShareConferenceView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\ShareConferenceView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\StartConferenceView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\StartConferenceView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\ConnectProTouchDisplayViewFactory.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\DeviceDrawer\DeviceDrawerView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\DeviceDrawer\DeviceDrawerView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\DeviceDrawer\ReferencedSourceView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\DeviceDrawer\ReferencedSourceView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\GenericAlertView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\GenericAlertView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\GenericLoadingSpinnerView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\GenericLoadingSpinnerView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Header\HeaderView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Header\HeaderView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Header\ReferencedHeaderButtonView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Header\ReferencedHeaderButtonView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\HelloView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\HelloView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Notifications\ConferenceConnectingView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Notifications\ConferenceConnectingView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Notifications\ConfirmEndMeetingView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Notifications\ConfirmEndMeetingView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Notifications\IncomingCallView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Notifications\IncomingCallView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Schedule\ReferencedBookingView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Schedule\ReferencedBookingView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Schedule\ScheduleView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Schedule\ScheduleView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Settings\Administrative\SettingsClockView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Settings\Administrative\SettingsClockView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Settings\Administrative\SettingsPinView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Settings\Administrative\SettingsPinView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Settings\Administrative\SettingsPowerView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Settings\Administrative\SettingsPowerView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Settings\Conferencing\SettingsDirectoryView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Settings\Conferencing\SettingsDirectoryView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Settings\CUE\Modes\AbstractSettingsCueBackgroundModeView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Settings\CUE\Modes\SettingsCueBackgroundSeasonalView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Settings\CUE\Modes\SettingsCueBackgroundSeasonalView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Settings\CUE\Modes\SettingsCueBackgroundStaticView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Settings\CUE\Modes\SettingsCueBackgroundStaticView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Settings\CUE\SettingsCueBackgroundView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Settings\CUE\SettingsCueBackgroundView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Settings\SettingsBaseView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Settings\SettingsBaseView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Settings\SettingsPasscodeView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Settings\SettingsPasscodeView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Settings\SettingsPromptView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\Settings\SettingsPromptView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\VolumeView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\VolumeView.generated.cs" />
+    <None Include="Properties\ControlSystem.cfg" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ICD.Common.Utils\ICD.Common.Utils\ICD.Common.Utils_SimplSharp.csproj">
+      <Project>{CB4055C6-D59E-479E-9C56-2C92335A7D9A}</Project>
+      <Name>ICD.Common.Utils_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.API\ICD.Connect.API\ICD.Connect.API_SimplSharp.csproj">
+      <Project>{727F5820-5A61-440D-8899-E454FE8238D7}</Project>
+      <Name>ICD.Connect.API_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Audio\ICD.Connect.Audio\ICD.Connect.Audio_SimplSharp.csproj">
+      <Project>{8ED25D96-E9A5-4E9A-A890-B4EF3AB62041}</Project>
+      <Name>ICD.Connect.Audio_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Calendaring\ICD.Connect.Calendaring\ICD.Connect.Calendaring_SimplSharp.csproj">
+      <Project>{3C084F11-8810-4B87-970C-F97E2905ACEB}</Project>
+      <Name>ICD.Connect.Calendaring_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Cameras\ICD.Connect.Cameras\ICD.Connect.Cameras_SimplSharp.csproj">
+      <Project>{B13D593D-8BBF-4E20-ABD8-47C6095E7D3E}</Project>
+      <Name>ICD.Connect.Cameras_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing.Zoom\ICD.Connect.Conferencing.Zoom_SimplSharp.csproj">
+      <Project>{D86EE18A-B98A-46F0-B930-CDE4A6012E49}</Project>
+      <Name>ICD.Connect.Conferencing.Zoom_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Conferencing\ICD.Connect.Conferencing\ICD.Connect.Conferencing_SimplSharp.csproj">
+      <Project>{1CCA89DA-1F1C-4997-A94F-ABCE878BD6DE}</Project>
+      <Name>ICD.Connect.Conferencing_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Devices\ICD.Connect.Devices\ICD.Connect.Devices_SimplSharp.csproj">
+      <Project>{FD46A717-5836-4B73-ADD0-2706639DA8ED}</Project>
+      <Name>ICD.Connect.Devices_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Misc\ICD.Connect.Misc.Vibe\ICD.Connect.Misc.Vibe_SimplSharp.csproj">
+      <Project>{AA57A401-310F-4793-AA61-DD7EB0948B5F}</Project>
+      <Name>ICD.Connect.Misc.Vibe_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Panels\ICD.Connect.Panels.Server\ICD.Connect.Panels.Server_SimplSharp.csproj">
+      <Project>{B14DB63B-1D7B-4112-8845-8187A2C7DF90}</Project>
+      <Name>ICD.Connect.Panels.Server_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Panels\ICD.Connect.Panels\ICD.Connect.Panels_SimplSharp.csproj">
+      <Project>{A441FE98-6A8E-4EF3-98F0-D17041D2E118}</Project>
+      <Name>ICD.Connect.Panels_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Partitioning\ICD.Connect.Partitioning.Commercial\ICD.Connect.Partitioning.Commercial_SimplSharp.csproj">
+      <Project>{2501EF10-A1B8-4F3C-9ED0-D4F0E4BEE379}</Project>
+      <Name>ICD.Connect.Partitioning.Commercial_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Partitioning\ICD.Connect.Partitioning\ICD.Connect.Partitioning_SimplSharp.csproj">
+      <Project>{42FB8CF0-6AE6-4C70-AFDD-DF95F07E077F}</Project>
+      <Name>ICD.Connect.Partitioning_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Protocol\ICD.Connect.Protocol.Network\ICD.Connect.Protocol.Network_SimplSharp.csproj">
+      <Project>{5ED52F05-EA6C-4FC5-8AA0-9B9727F6AECD}</Project>
+      <Name>ICD.Connect.Protocol.Network_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Routing\ICD.Connect.Routing\ICD.Connect.Routing_SimplSharp.csproj">
+      <Project>{B0C0CA1C-FA55-4BEA-8A8B-EDB2141C523E}</Project>
+      <Name>ICD.Connect.Routing_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Settings\ICD.Connect.Settings\ICD.Connect.Settings_SimplSharp.csproj">
+      <Project>{5B84EB3C-1C3A-4C4D-98C2-69F67CF51D5A}</Project>
+      <Name>ICD.Connect.Settings_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Sources\ICD.Connect.Sources.TvTuner\ICD.Connect.Sources.TvTuner_SimplSharp.csproj">
+      <Project>{EE162C95-A9DB-459D-95B6-9E63D9816DC5}</Project>
+      <Name>ICD.Connect.Sources.TvTuner_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Telemetry\ICD.Connect.Telemetry\ICD.Connect.Telemetry_SimplSharp.csproj">
+      <Project>{9512C0A5-F966-4AC6-9668-62C6F343B0CD}</Project>
+      <Name>ICD.Connect.Telemetry_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Themes\ICD.Connect.Themes\ICD.Connect.Themes_SimplSharp.csproj">
+      <Project>{7D599445-C1F9-4BBD-ACC4-DC80E3311376}</Project>
+      <Name>ICD.Connect.Themes_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.UI\ICD.Connect.UI\ICD.Connect.UI_SimplSharp.csproj">
+      <Project>{89BF27D5-374B-4863-AD92-D217924D6D8F}</Project>
+      <Name>ICD.Connect.UI_SimplSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ICD.Profound.ConnectPROCommon\ICD.Profound.ConnectPROCommon_SimplSharp.csproj">
+      <Project>{0B12B0E4-A3A0-4468-A614-19AEAD7619C6}</Project>
+      <Name>ICD.Profound.ConnectPROCommon_SimplSharp</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if /I "$(ConfigurationName)" == "Release" Eazfuscator.NET.exe "$(TargetPath)" --msbuild-project-path "$(ProjectPath)" --msbuild-project-configuration "$(ConfigurationName)" --msbuild-project-platform "$(PlatformName)" --msbuild-solution-path "$(SolutionPath)" -n --newline-flush -v 5.2 --configuration-file="$(ProjectDir)ObfuscationSettings.cs"
+rem S# Pro preparation will execute after these operations</PostBuildEvent>
+  </PropertyGroup>
+</Project>

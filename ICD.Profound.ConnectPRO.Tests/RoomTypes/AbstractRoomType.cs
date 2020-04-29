@@ -1,7 +1,7 @@
 ﻿using System;
 using ICD.Connect.Panels.Mock;
 using ICD.Connect.Settings.Cores;
-using ICD.Profound.ConnectPRO.Rooms;
+using ICD.Profound.ConnectPROCommon.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Tests.RoomTypes
 {

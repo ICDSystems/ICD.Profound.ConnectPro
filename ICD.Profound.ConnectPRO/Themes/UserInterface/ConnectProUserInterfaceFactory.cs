@@ -5,10 +5,11 @@ using ICD.Connect.Misc.Vibe.Devices.VibeBoard;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 {
-	public sealed class ConnectProUserInterfaceFactory : AbstractConnectProUserInterfaceFactory<ConnectProUserInterface>
+	public sealed class ConnectProUserInterfaceFactory : AbstractConnectProUserInterfaceFactory<ConnectProTheme, ConnectProUserInterface>
 	{
 		/// <summary>
 		/// Constructor.
