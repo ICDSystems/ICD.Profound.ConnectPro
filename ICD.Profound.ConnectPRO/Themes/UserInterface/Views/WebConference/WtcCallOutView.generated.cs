@@ -17,7 +17,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 		private VtProButton m_CallButton;
 		private VtProButton m_BackButton;
 		private VtProButton m_ClearButton;
-		protected VtProFormattedText m_CallStatus;
+		private VtProFormattedText m_CallStatus;
 
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ICD.Common.Utils;
 using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.ConferencePoints;
 using ICD.Connect.Conferencing.Controls.Dialing;
-using ICD.Connect.Conferencing.Favorites.SqLite;
 using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Devices;
 using ICD.Connect.Partitioning;
@@ -19,19 +17,12 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 {
 	public sealed class ConnectProRoom : AbstractConnectProRoom<ConnectProRoomSettings>
 	{
-		private ICalendarControl m_CalendarControl;
-
 		#region Properties
 
 		/// <summary>
 		/// Gets/sets the passcode for the settings page.
 		/// </summary>
 		public override string Passcode { get; set; }
-
-		/// <summary>
-		/// Gets/sets the calendar control for the room.
-		/// </summary>
-		public override ICalendarControl CalendarControl { get { return m_CalendarControl; } }
 
 		#endregion
 
@@ -81,7 +72,7 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 
 			Dialing.AtcNumber = null;
 			Passcode = null;
-			m_CalendarControl = null;
+			CalendarControl = null;
 		}
 
 		/// <summary>
@@ -92,11 +83,6 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 		protected override void ApplySettingsFinal(ConnectProRoomSettings settings, IDeviceFactory factory)
 		{
 			base.ApplySettingsFinal(settings, factory);
-
-			// Favorites
-			string path = PathUtils.GetRoomDataPath(Id, "favorites");
-			if (ConferenceManager != null)
-				ConferenceManager.Favorites = new SqLiteFavorites(path);
 
 			// ATC Number
 			Dialing.AtcNumber = settings.AtcNumber;
@@ -109,7 +95,7 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 			{
 				var calendarDevice = factory.GetOriginatorById<IDevice>(settings.CalendarDevice.Value);
 				if (calendarDevice != null)
-					m_CalendarControl = calendarDevice.Controls.GetControl<ICalendarControl>();
+					CalendarControl = calendarDevice.Controls.GetControl<ICalendarControl>();
 			}
 
 			// Generate conference points
@@ -129,7 +115,7 @@ namespace ICD.Profound.ConnectPRO.Rooms.Single
 			foreach (ISource source in Originators.GetInstances<ISource>())
 			{
 				// Does the source have a conference control?
-				IDeviceBase device = Core.Originators.GetChild<IDeviceBase>(source.Device);
+				IDevice device = Core.Originators.GetChild<IDevice>(source.Device);
 				
 				// Skip devices with multiple conference controls that already have conference points.
 				// DSPs should be configured properly in DeployAV

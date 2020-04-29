@@ -246,7 +246,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Subscribe(control);
 
-			IDeviceBase parent = control == null ? null : control.Parent;
+			IDevice parent = control == null ? null : control.Parent;
 			IDirectoryControl directory = parent == null ? null : parent.Controls.GetControl<IDirectoryControl>();
 
 			DirectoryBrowser.SetControl(directory);

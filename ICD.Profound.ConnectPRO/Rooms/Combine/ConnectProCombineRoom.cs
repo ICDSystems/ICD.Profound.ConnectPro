@@ -1,6 +1,5 @@
 ﻿using System;
 using ICD.Common.Utils.Extensions;
-using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Partitioning.Rooms;
 
 namespace ICD.Profound.ConnectPRO.Rooms.Combine
@@ -29,11 +28,6 @@ namespace ICD.Profound.ConnectPRO.Rooms.Combine
 					m_MasterRoom.Passcode = value;
 			}
 		}
-
-		/// <summary>
-		/// Gets the CalendarControl for the room.
-		/// </summary>
-		public override ICalendarControl CalendarControl { get { return m_MasterRoom == null ? null : m_MasterRoom.CalendarControl; } }
 
 		/// <summary>
 		/// Gets/sets the combined advanced mode.
@@ -86,6 +80,7 @@ namespace ICD.Profound.ConnectPRO.Rooms.Combine
 			WakeSchedule = m_MasterRoom == null ? null : m_MasterRoom.WakeSchedule;
 			ConferenceManager = m_MasterRoom == null ? null : m_MasterRoom.ConferenceManager;
 			Dialing.AtcNumber = m_MasterRoom == null ? null : m_MasterRoom.Dialing.AtcNumber;
+			CalendarControl = m_MasterRoom == null ? null : m_MasterRoom.CalendarControl;
 
 			if (!Routing.SupportsSimpleMode())
 				CombinedAdvancedMode = eCombineAdvancedMode.Advanced;

@@ -150,7 +150,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private static IPowerDeviceControl GetVtcPowerControl(IConferenceDeviceControl conferenceControl)
 		{
-			IDevice conferenceDevice = conferenceControl.Parent as IDevice;
+			IDevice conferenceDevice = conferenceControl.Parent;
 			return conferenceDevice == null ? null : conferenceDevice.Controls.GetControl<IPowerDeviceControl>();
 		}
 

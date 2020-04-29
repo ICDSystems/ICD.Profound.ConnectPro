@@ -27,14 +27,14 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 
 		public event EventHandler<SourceEventArgs> OnSourcePressed;
 
-		private static readonly List<eVibeApp> s_Apps = new List<eVibeApp>()
+		private static readonly List<eVibeApps> s_Apps = new List<eVibeApps>()
 		{
-			eVibeApp.Chrome,
-			eVibeApp.Youtube,
-			eVibeApp.Slack,
-			eVibeApp.Whiteboard,
-			eVibeApp.Teams,
-			eVibeApp.WebEx
+			eVibeApps.Chrome,
+			eVibeApps.Youtube,
+			eVibeApps.Slack,
+			eVibeApps.Whiteboard,
+			eVibeApps.Teams,
+			eVibeApps.WebEx
 		};
 
 		private readonly ReferencedSourcePresenterFactory m_SourceFactory;
@@ -75,7 +75,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Device
 				}
 
 				var installedApps= m_SubscribedAppControl == null
-					? Enumerable.Empty<eVibeApp>().ToList()
+					? Enumerable.Empty<eVibeApps>().ToList()
 					: s_Apps
 						//.Where(app => m_SubscribedAppControl.IsInstalled(app)) TODO
 						.ToList();

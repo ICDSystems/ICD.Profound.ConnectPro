@@ -57,28 +57,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <returns></returns>
 		protected override bool GetIsFavorite()
 		{
-			if (m_Contact == null)
-				return false;
-
-			IFavorites favorites = Favorites;
-			return favorites != null && favorites.ContainsFavorite(m_Contact);
+			return m_Contact != null &&
+			       Room != null &&
+			       Favorite.Contains(Room.Id, m_Contact);
 		}
 
 		protected override void ViewOnFavoriteButtonPressed(object sender, EventArgs eventArgs)
 		{
 			base.ViewOnFavoriteButtonPressed(sender, eventArgs);
 
-			if (m_Contact == null)
+			if (m_Contact == null || Room == null)
 				return;
 
-			IFavorites favorites = Favorites;
-			if (favorites == null)
-				return;
-
-			if (GetIsFavorite())
-				favorites.RemoveFavorite(m_Contact);
-			else
-				favorites.SubmitFavorite(m_Contact);
+			Favorite.Toggle(Room.Id, m_Contact);
 
 			RefreshIfVisible();
 		}

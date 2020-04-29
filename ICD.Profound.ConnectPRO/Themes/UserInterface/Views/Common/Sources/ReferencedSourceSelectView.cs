@@ -19,6 +19,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 		private const ushort MODE_ROUTED_WHITE = 0;
 		private const ushort MODE_ROUTED_YELLOW = 1;
 		private const ushort MODE_ROUTED_GREEN = 2;
+		private const ushort MODE_ROUTED_RED = 3;
 
 		public event EventHandler OnButtonPressed;
 
@@ -112,6 +113,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 				case eSourceState.Masked:
 				case eSourceState.Active:
 					m_RoutedButton.SetMode(MODE_ROUTED_GREEN);
+					break;
+				case eSourceState.Error:
+					m_RoutedButton.SetMode(MODE_ROUTED_RED);
 					break;
 				default:
 					throw new ArgumentOutOfRangeException("routed");

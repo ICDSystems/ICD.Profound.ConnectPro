@@ -12,7 +12,6 @@ using ICD.Connect.API.Nodes;
 using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Calendaring.Booking;
-using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Cameras.Controls;
 using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.ConferenceManagers;
@@ -85,7 +84,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 
 				m_IsInMeeting = value;
 
-				Log(eSeverity.Informational, "IsInMeeting changed to {0}", m_IsInMeeting);
+				Logger.Set("In Meeting", eSeverity.Informational, m_IsInMeeting);
 
 				HandleIsInMeetingChanged(m_IsInMeeting);
 
@@ -107,11 +106,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// Gets/sets the passcode for the settings page.
 		/// </summary>
 		public abstract string Passcode { get; set; }
-
-		/// <summary>
-		/// Gets the CalendarControl for the room.
-		/// </summary>
-		public abstract ICalendarControl CalendarControl { get; }
 
 		/// <summary>
 		/// Gets the selected OBTP booking.
@@ -209,7 +203,13 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			CheckOut();
 			IsInMeeting = true;
 
-			if (resetRouting)
+			ISource[] sources = Routing.Sources.GetRoomSources().ToArray();
+
+			// If there is only one source automatically route it
+			if (sources.Length == 1)
+				Routing.RouteSourceByControl(sources[0]);
+			// Otherwise route the OSD
+			else if (resetRouting)
 				Routing.RouteOsd();
 
 			// Reset mute state
@@ -298,7 +298,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			// Power off displays
 			foreach (IDestinationBase destination in Routing.Destinations.GetVideoDestinations())
 			{
-				foreach (IDeviceBase device in destination.GetDevices())
+				foreach (IDevice device in destination.GetDevices())
 					Routing.PowerDevice(device, false);
 			}
 
@@ -526,7 +526,7 @@ namespace ICD.Profound.ConnectPRO.Rooms
 			if (!GetIsInActiveMeeting())
 				return;
 
-			Log(eSeverity.Informational, "Meeting timeout occurring");
+			Logger.Log(eSeverity.Informational, "Meeting timeout occurring");
 
 			EndMeeting();
 		}

@@ -47,7 +47,6 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		private string m_Filter;
 
 		private bool m_ShowFavorites;
-		private IFavorites m_SubscribedFavorites;
 
 		#region Properties
 
@@ -258,10 +257,8 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			base.Subscribe(room);
 
 			IConferenceManager conferenceManager = room == null ? null : room.ConferenceManager;
-			m_SubscribedFavorites = conferenceManager == null ? null : conferenceManager.Favorites;
 
-			if (m_SubscribedFavorites != null)
-				m_SubscribedFavorites.OnFavoritesChanged += FavoritesOnFavoritesChanged;
+			Favorite.OnFavoritesChanged += FavoritesOnFavoritesChanged;
 
 			UpdateFavorites();
 		}
@@ -274,9 +271,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		{
 			base.Unsubscribe(room);
 
-			if (m_SubscribedFavorites != null)
-				m_SubscribedFavorites.OnFavoritesChanged -= FavoritesOnFavoritesChanged;
-			m_SubscribedFavorites = null;
+			Favorite.OnFavoritesChanged -= FavoritesOnFavoritesChanged;
 		}
 
 		/// <summary>
@@ -294,10 +289,9 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 		/// </summary>
 		private void UpdateFavorites()
 		{
-			IEnumerable<IContact> favorites =
-				m_SubscribedFavorites == null
-					? Enumerable.Empty<IContact>()
-					: m_SubscribedFavorites.GetFavorites(eDialProtocol.ZoomContact).Cast<IContact>();
+			IEnumerable<IContact> favorites = Favorite.All(Room.Id)
+				.Where(f => f.GetDialContexts().Any(c => c.Protocol == eDialProtocol.ZoomContact))
+				.Cast<IContact>();
 
 			m_Favorites.Clear();
 			m_Favorites.AddRange(favorites, f => f.Name);
@@ -478,8 +472,7 @@ namespace ICD.Profound.ConnectPRO.Themes.TouchDisplayInterface.Presenters.Confer
 			if (contact == null)
 				throw new ArgumentNullException("contact");
 
-			if (m_SubscribedFavorites != null)
-				m_SubscribedFavorites.ToggleFavorite(contact);
+			Favorite.Toggle(Room.Id, contact);
 		}
 
 		#endregion

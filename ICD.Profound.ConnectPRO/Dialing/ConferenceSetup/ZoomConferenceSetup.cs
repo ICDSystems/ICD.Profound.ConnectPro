@@ -120,7 +120,7 @@ namespace ICD.Profound.ConnectPRO.Dialing.ConferenceSetup
 		/// </summary>
 		private void Timeout()
 		{
-			Room.Logger.AddEntry(eSeverity.Warning, "{0} - Conference setup timed out for {1}", Room, Control);
+			Room.Logger.Log(eSeverity.Warning, "{0} - Conference setup timed out for {1}", Room, Control);
 
 			Finish();
 		}
@@ -154,7 +154,7 @@ namespace ICD.Profound.ConnectPRO.Dialing.ConferenceSetup
 		/// <param name="eventArgs"></param>
 		private void SubscribedCameraComponentOnCamerasUpdated(object sender, EventArgs eventArgs)
 		{
-			Room.Logger.AddEntry(eSeverity.Informational, "{0} - Conference setup finished routing USB for {1}", Room, Control);
+			Room.Logger.Log(eSeverity.Informational, "{0} - Conference setup finished routing USB for {1}", Room, Control);
 
 			// Assume our USB devices were done routing
 			Finish();

@@ -45,20 +45,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 		#region Sources
 
 		/// <summary>
-		/// Returns all of the sources available in the core.
-		/// </summary>
-		/// <returns></returns>
-		[NotNull]
-		public IEnumerable<ISource> GetCoreSources()
-		{
-			return m_Routing.Room
-			                .Core
-			                .Originators
-			                .GetChildren<ISource>()
-			                .OrderBy(s => s.Order);
-		}
-
-		/// <summary>
 		/// Returns all of the sources available in the room.
 		/// </summary>
 		/// <returns></returns>
@@ -246,12 +232,14 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// <param name="source"></param>
 		/// <returns></returns>
 		[NotNull]
-		private static IDeviceBase GetDevice([NotNull] ISource source)
+		private static IDevice GetDevice([NotNull] ISource source)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
 
-			return ServiceProvider.GetService<ICore>().Originators.GetChild<IDeviceBase>(source.Device);
+			return ServiceProvider.GetService<ICore>()
+			                      .Originators
+			                      .GetChild<IDevice>(source.Device);
 		}
 
 		public static bool CanControl([NotNull] ISource source)
@@ -267,7 +255,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		}
 
 		[CanBeNull]
-		private static IDeviceControl GetDeviceControl([NotNull] ISource source)
+		public static IDeviceControl GetDeviceControl([NotNull] ISource source)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
@@ -282,12 +270,12 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (source == null)
 				throw new ArgumentNullException("source");
 
-			IDeviceBase device = GetDevice(source);
+			IDevice device = GetDevice(source);
 			return GetDeviceControl(device, controlOverride);
 		}
 
 		[CanBeNull]
-		private static IDeviceControl GetDeviceControl([NotNull] IDeviceBase device, eControlOverride controlOverride)
+		private static IDeviceControl GetDeviceControl([NotNull] IDevice device, eControlOverride controlOverride)
 		{
 			if (device == null)
 				throw new ArgumentNullException("device");

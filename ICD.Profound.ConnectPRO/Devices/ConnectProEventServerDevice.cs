@@ -121,7 +121,7 @@ namespace ICD.Profound.ConnectPRO.Devices
 		/// <param name="message"></param>
 		public void SendMessage(string message)
 		{
-			Log(eSeverity.Informational, message);
+			Logger.Log(eSeverity.Informational, message);
 			m_Server.Send(message + DELIMITER);
 		}
 

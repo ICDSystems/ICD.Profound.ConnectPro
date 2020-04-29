@@ -89,14 +89,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.ViewOnFavoriteButtonPressed(sender, eventArgs);
 
-			if (m_Favorite == null)
+			if (m_Favorite == null || Room == null)
 				return;
 
-			IFavorites favorites = Favorites;
-			if (favorites == null)
-				return;
-
-			favorites.RemoveFavorite(m_Favorite);
+			Favorite.Delete(Room.Id, m_Favorite);
 
 			Navigation.LazyLoadPresenter<IVtcContactsNormalPresenter>().RefreshIfVisible();
 			Navigation.LazyLoadPresenter<IVtcContactsPolycomPresenter>().RefreshIfVisible();

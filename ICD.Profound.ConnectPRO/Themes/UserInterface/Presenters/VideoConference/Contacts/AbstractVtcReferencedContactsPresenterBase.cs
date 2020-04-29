@@ -1,9 +1,7 @@
 using System;
-using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Controls.Dialing;
-using ICD.Connect.Conferencing.Favorites;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Contacts;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
@@ -34,18 +32,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		}
 
 		public bool HideFavoriteIcon { get; set; }
-
-		[CanBeNull]
-		protected IFavorites Favorites
-		{
-			get
-			{
-				if (Room == null)
-					return null;
-
-				return Room.ConferenceManager == null ? null : Room.ConferenceManager.Favorites;
-			}
-		}
 
 		/// <summary>
 		/// Constructor.

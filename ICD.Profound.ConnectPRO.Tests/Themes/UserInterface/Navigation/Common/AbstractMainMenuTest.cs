@@ -104,7 +104,7 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 			eControlOverride controlOverride = ConnectProRoutingSources.GetControlOverride(source);
 
 			//Source Index
-			uint sourceIndex = (uint)roomType.Room.Routing.Sources.GetCoreSources().ToList().IndexOf(source);
+			uint sourceIndex = (uint)roomType.Room.Routing.Sources.GetRoomSources().ToList().IndexOf(source);
 
 			// Get number of displays
 			var displayCount = roomType.Room.Routing.Destinations.GetVideoDestinations().Count();

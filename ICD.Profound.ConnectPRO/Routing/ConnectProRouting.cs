@@ -6,9 +6,11 @@ using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Cameras.Devices;
+using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.Devices;
+using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Zoom.Controls;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
@@ -104,6 +106,36 @@ namespace ICD.Profound.ConnectPRO.Routing
 		#region Methods
 
 		/// <summary>
+		/// Handles the routing for the given source based on its device control type.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <returns>True if the source was handled, otherwise false</returns>
+		public bool RouteSourceByControl([NotNull] ISource source)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			IDeviceControl control = ConnectProRoutingSources.GetDeviceControl(source);
+			IConferenceDeviceControl dialer = control as IConferenceDeviceControl;
+
+			// Edge case - route the codec to both displays and open the context menu
+			if (dialer != null && dialer.Supports.HasFlag(eCallType.Video))
+			{ 
+				m_Room.Routing.RouteVtc(source);
+				return true;
+			}
+
+			// Edge case - open the audio conferencing context menu
+			if (dialer != null && dialer.Supports.HasFlag(eCallType.Audio))
+			{
+				m_Room.Routing.RouteAtc(source);
+				return true;
+			}
+
+			return false;
+		}
+
+		/// <summary>
 		/// Routes the source to all displays and room audio.
 		/// </summary>
 		/// <param name="source"></param>
@@ -111,6 +143,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
+
+			m_Room.FocusSource = source;
 
 			var mask = m_MaskFactory.GetMaskedSourceInfo(source);
 			if (mask == null)
@@ -133,6 +167,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
+
+			m_Room.FocusSource = source;
 
 			if (mask == null)
 				State.ClearMaskedSources();
@@ -214,6 +250,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (source == null)
 				throw new ArgumentNullException("source");
 
+			m_Room.FocusSource = source;
+
 			IMaskedSourceInfo mask = m_MaskFactory.GetMaskedSourceInfo(source);
 			if (mask == null)
 			{
@@ -236,24 +274,26 @@ namespace ICD.Profound.ConnectPRO.Routing
 			if (source == null)
 				throw new ArgumentNullException("source");
 
+			m_Room.FocusSource = source;
+
 			Connection[] outputs = RoutingGraph.Connections
 			                                   .GetOutputConnections(source.Device,
 			                                                         source.Control)
 			                                   .Where(c => c.ConnectionType.HasFlag(eConnectionType.Video))
 			                                   .OrderBy(o => o.Source.Address)
 			                                   .ToArray();
-			
-			IDestinationBase[] destinations = m_Destinations.GetVideoDestinations().ToArray();
+
+			IDestination[] destinations = m_Destinations.GetVideoDestinations().SelectMany(d => d.GetDestinations(eConnectionType.Video)).ToArray();
 
 			Connection lastOutput = outputs.LastOrDefault();
 			if (lastOutput == null)
 			{
-				m_Room.Logger.AddEntry(eSeverity.Error, "Failed to find {0} output connection for {1}",
-				                       eConnectionType.Video, source);
+				m_Room.Logger.Log(eSeverity.Error, "Failed to find {0} output connection for {1}",
+				                  eConnectionType.Video, source);
 				return;
 			}
 			
-			IDeviceBase device = m_Room.Core.Originators.GetChild<IDeviceBase>(source.Device);
+			IDevice device = m_Room.Core.Originators.GetChild<IDevice>(source.Device);
 			IPresentationControl presentationControl = device.Controls.GetControl<IPresentationControl>();
 			bool presenting = presentationControl != null && presentationControl.PresentationActive;
 
@@ -292,6 +332,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
+
+			m_Room.FocusSource = source;
 
 			IEnumerable<IDestination> singleAudioDestinations =
 				m_Destinations.GetAudioDestinations()
@@ -392,7 +434,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 				if (path == null)
 				{
 					// Power off the destination
-					IDeviceBase destinationDevice = m_Room.Core.Originators.GetChild<IDeviceBase>(destination.Device);
+					IDevice destinationDevice = m_Room.Core.Originators.GetChild<IDevice>(destination.Device);
 					if (!(destinationDevice is VibeBoard))
 						PowerDevice(destinationDevice, false);
 
@@ -437,9 +479,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 			int[] inputs = routingControl.GetCodecInputs(eCodecInputType.Camera).ToArray();
 			if (inputs.Length == 0)
 			{
-				m_Room.Logger.AddEntry(eSeverity.Error,
-									   "Failed to route camera {0} - VTC has no inputs configured for camera.",
-									   camera);
+				m_Room.Logger.Log(eSeverity.Error,
+				                  "Failed to route camera {0} - VTC has no inputs configured for camera.",
+				                  camera);
 				return;
 			}
 
@@ -467,9 +509,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 				return;
 			}
 
-			m_Room.Logger.AddEntry(eSeverity.Error,
-								   "Failed to route camera {0} - Could not find a path to a VTC input configured for camera.",
-								   camera);
+			m_Room.Logger.Log(eSeverity.Error,
+			                  "Failed to route camera {0} - Could not find a path to a VTC input configured for camera.",
+			                  camera);
 		}
 
 		/// <summary>
@@ -494,9 +536,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 			int[] inputs = routingControl.GetCodecInputs(eCodecInputType.Content).ToArray();
 			if (inputs.Length == 0)
 			{
-				m_Room.Logger.AddEntry(eSeverity.Error,
-				                       "Failed to start presentation for {0} - VTC has no inputs configured for content.",
-									   source);
+				m_Room.Logger.Log(eSeverity.Error,
+				                  "Failed to start presentation for {0} - VTC has no inputs configured for content.",
+				                  source);
 				return;
 			}
 
@@ -524,9 +566,9 @@ namespace ICD.Profound.ConnectPRO.Routing
 				return;
 			}
 
-			m_Room.Logger.AddEntry(eSeverity.Error,
-			                       "Failed to start presentation for {0} - Could not find a path to a VTC input configured for content.",
-			                       source);
+			m_Room.Logger.Log(eSeverity.Error,
+			                  "Failed to start presentation for {0} - Could not find a path to a VTC input configured for content.",
+			                  source);
 		}
 
 		/// <summary>
@@ -547,8 +589,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 			int[] inputs = control.GetCodecInputs(eCodecInputType.Content).ToArray();
 			if (inputs.Length == 0)
 			{
-				m_Room.Logger.AddEntry(eSeverity.Error,
-									   "Failed to end presentation - Codec has no inputs configured for content.");
+				m_Room.Logger.Log(eSeverity.Error,
+				                  "Failed to end presentation - Codec has no inputs configured for content.");
 				return;
 			}
 
@@ -632,7 +674,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 		/// </summary>
 		/// <param name="device"></param>
 		/// <param name="power"></param>
-		public void PowerDevice([NotNull] IDeviceBase device, bool power)
+		public void PowerDevice([NotNull] IDevice device, bool power)
 		{
 			if (device == null)
 				throw new ArgumentNullException("device");
@@ -805,8 +847,8 @@ namespace ICD.Profound.ConnectPRO.Routing
 			IcdStopwatch.Profile(() => RoutingGraph.RoutePath(path, m_Room.Id), string.Format("Route - {0}", path));
 
 			EndpointInfo destination = path.DestinationEndpoint;
-			IDeviceBase destinationDevice =
-				m_Room.Core.Originators.GetChild<IDeviceBase>(destination.Device);
+			IDevice destinationDevice =
+				m_Room.Core.Originators.GetChild<IDevice>(destination.Device);
 
 			// Power on the destination
 			if (powerOn)

@@ -48,7 +48,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		public FloatingActionListButtonPresenter(IConnectProNavigationController nav, IUiViewFactory views,
 		                                         ConnectProTheme theme) : base(nav, views, theme)
 		{
-			m_ListItems = new List<IFloatingActionListItem>()
+			m_ListItems = new List<IFloatingActionListItem>
 			{
 				new LightsListItem(Navigation)
 			};

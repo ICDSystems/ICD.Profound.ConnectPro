@@ -63,7 +63,7 @@ namespace ICD.Profound.ConnectPRO.Dialing.ConferenceSetup
 		/// </summary>
 		public virtual void Start()
 		{
-			Room.Logger.AddEntry(eSeverity.Informational, "{0} - Starting setup of conference for {1}", Room, Control);
+			Room.Logger.Log(eSeverity.Informational, "{0} - Starting setup of conference for {1}", Room, Control);
 		}
 
 		/// <summary>
@@ -71,7 +71,7 @@ namespace ICD.Profound.ConnectPRO.Dialing.ConferenceSetup
 		/// </summary>
 		public virtual void Finish()
 		{
-			Room.Logger.AddEntry(eSeverity.Informational, "{0} - Finished setup of conference for {1}", Room, Control);
+			Room.Logger.Log(eSeverity.Informational, "{0} - Finished setup of conference for {1}", Room, Control);
 
 			m_FinishAction();
 

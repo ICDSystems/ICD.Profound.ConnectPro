@@ -109,8 +109,8 @@ namespace ICD.Profound.ConnectPRO.Dialing
 				return;
 
 			// Route device to displays and/or audio destination
-			IDeviceBase dialerDevice = preferredDialer.Parent;
-			ISource source = m_Room.Routing.Sources.GetCoreSources().FirstOrDefault(s => s.Device == dialerDevice.Id);
+			IDevice dialerDevice = preferredDialer.Parent;
+			ISource source = m_Room.Routing.Sources.GetRoomSources().FirstOrDefault(s => s.Device == dialerDevice.Id);
 			if (source == null)
 				return; // if we can't route a source, don't dial into conference users won't know they're in
 

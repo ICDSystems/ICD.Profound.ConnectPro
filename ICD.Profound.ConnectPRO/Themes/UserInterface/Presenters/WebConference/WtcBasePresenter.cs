@@ -119,7 +119,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		private static IPowerDeviceControl GetWtcPowerControl(IConferenceDeviceControl conferenceControl)
 		{
-			IDevice conferenceDevice = conferenceControl.Parent as IDevice;
+			IDevice conferenceDevice = conferenceControl.Parent;
 			return conferenceDevice == null ? null : conferenceDevice.Controls.GetControl<IPowerDeviceControl>();
 		}
 
@@ -292,8 +292,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				return;
 
 			string prompt = args.WrongAndRetry
-				? string.Format("Please re-enter password for Zoom Meeting #{0} - Incorrect password", args.MeetingNumber)
-				: string.Format("Please enter password for Zoom Meeting #{0}", args.MeetingNumber);
+				? string.Format("Please re-enter password for Zoom Meeting #{0} - Incorrect password", args.MeetingNumberFormatted)
+				: string.Format("Please enter password for Zoom Meeting #{0}", args.MeetingNumberFormatted);
 
 			Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>()
 			          .ShowView(prompt, null, p => SubmitZoomPassword(args.MeetingNumber, p), null, null);

@@ -4,7 +4,6 @@ using ICD.Common.Properties;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Calendaring.Booking;
-using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Devices;
@@ -51,11 +50,6 @@ namespace ICD.Profound.ConnectPRO.Rooms
 		/// Gets/sets the passcode for the settings page.
 		/// </summary>
 		string Passcode { get; set; }
-
-		/// <summary>
-		/// Gets the CalendarControl for the room.
-		/// </summary>
-		ICalendarControl CalendarControl { get; }
 
 		/// <summary>
 		/// Gets the selected OBTP booking.

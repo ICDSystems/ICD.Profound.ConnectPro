@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
+using ICD.Connect.Devices;
+using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.UI.Attributes;
@@ -44,15 +47,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			get { return m_Source; }
 			set
 			{
-				if (value == m_Source)
-					return;
-
-				m_Source = value;
-
-				// Get the room that contains the source
-				RoomForSource = Room == null || Source == null ? null : Room.Routing.Sources.GetRoomForSource(Source);
-
-				UpdateSource();
+				SetSource(value);
 			}
 		}
 
@@ -98,6 +93,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			set
 			{
 				if (m_Cache.SetRouted(value))
+					RefreshIfVisible();
+			}
+		}
+
+		public bool SourceOnline
+		{
+			get { return m_Cache.SourceOnline; }
+			private set
+			{
+				if(m_Cache.SetSourceOnline(value))
+					RefreshIfVisible();
+			}
+		}
+
+		public bool EnableWhenOffline
+		{
+			get { return m_Cache.EnableWhenOffline; }
+			private set
+			{
+				if (m_Cache.SetEnableWhenOffline(value))
 					RefreshIfVisible();
 			}
 		}
@@ -155,12 +170,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 				view.SetLine1Text(m_Cache.Line1);
 				view.SetLine2Text(m_Cache.Line2);
 				view.SetIcon(m_Cache.Icon);
-				view.SetRoutedState(m_Cache.SourceState);
+				// Use SourceOnline here, so even if EnableWhenOffline is true, icon will be red
+				view.SetRoutedState(SourceOnline ? m_Cache.SourceState : eSourceState.Error);
+				view.Enable(true);
 			}
 			finally
 			{
 				m_RefreshSection.Leave();
 			}
+		}
+
+		private void UpdateAnySourceOnline()
+		{
+			SourceOnline = m_Source != null && m_Source.GetDevices().Any(d => d.IsOnline);
 		}
 
 		private void UpdateSource()
@@ -169,6 +191,79 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 			if (m_Cache.SetSource(RoomForSource, Source, combined))
 				RefreshIfVisible();
 		}
+
+		#region Source Callbacks
+
+		private void SetSource(ISource source)
+		{
+			if (source == m_Source)
+				return;
+
+			Unsubscribe(m_Source);
+
+			m_Source = source;
+
+			Subscribe(m_Source);
+
+			// Get the room that contains the source
+			RoomForSource = Room == null || Source == null ? null : Room.Routing.Sources.GetRoomForSource(Source);
+
+			UpdateAnySourceOnline();
+			EnableWhenOffline = source.EnableWhenOffline;
+			UpdateSource();
+		}
+
+		private void Subscribe(ISource source)
+		{
+			if (source == null)
+				return;
+
+			source.OnEnableWhenOfflineChanged += SourceOnOnEnableWhenOfflineChanged;
+
+			source.GetDevices().ForEach(Subscribe);
+		}
+
+		private void Unsubscribe(ISource source)
+		{
+			if (source == null)
+				return;
+
+			source.OnEnableWhenOfflineChanged -= SourceOnOnEnableWhenOfflineChanged;
+
+			source.GetDevices().ForEach(Unsubscribe);
+		}
+
+		private void SourceOnOnEnableWhenOfflineChanged(object sender, BoolEventArgs args)
+		{
+			EnableWhenOffline = args.Data;
+		}
+
+		#region Source Device Callbacks
+
+		private void Subscribe(IDeviceBase sourceDevice)
+		{
+			if (sourceDevice == null)
+				return;
+
+			sourceDevice.OnIsOnlineStateChanged += SourceDeviceOnIsOnlineStateChanged;
+		}
+
+		private void Unsubscribe(IDeviceBase sourceDevice)
+		{
+			if (sourceDevice == null)
+				return;
+
+			sourceDevice.OnIsOnlineStateChanged -= SourceDeviceOnIsOnlineStateChanged;
+		}
+
+		private void SourceDeviceOnIsOnlineStateChanged(object sender, DeviceBaseOnlineStateApiEventArgs deviceBaseOnlineStateApiEventArgs)
+		{
+			UpdateAnySourceOnline();
+		}
+
+		#endregion
+
+		#endregion
 
 		#region Room For Source Callbacks
 
@@ -239,7 +334,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// <param name="eventArgs"></param>
 		private void ViewOnButtonPressed(object sender, EventArgs eventArgs)
 		{
-			OnPressed.Raise(this);
+			//vDon't pass presses if source offline
+			if (m_Cache.Enabled)
+				OnPressed.Raise(this);
 		}
 
 		#endregion
