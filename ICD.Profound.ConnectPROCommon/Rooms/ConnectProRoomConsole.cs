@@ -8,6 +8,7 @@ using ICD.Connect.API.Nodes;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings.Originators;
+using ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources;
 
 namespace ICD.Profound.ConnectPROCommon.Rooms
 {
@@ -59,8 +60,12 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			TableBuilder builder = new TableBuilder("Source", "Availability");
 
 			bool combined = instance.IsCombineRoom();
+			eSourceAppearance appearance = EnumUtils.GetFlagsAllValue<eSourceAppearance>();
 
-			IcdHashSet<ISource> visible = instance.Routing.Sources.GetRoomSourcesForUi().ToIcdHashSet();
+			IcdHashSet<ISource> visible =
+				instance.Routing
+				        .Sources.GetRoomSourcesForUi(appearance)
+				        .ToIcdHashSet();
 
 			foreach (ISource source in instance.Routing.Sources.GetRoomSources())
 			{

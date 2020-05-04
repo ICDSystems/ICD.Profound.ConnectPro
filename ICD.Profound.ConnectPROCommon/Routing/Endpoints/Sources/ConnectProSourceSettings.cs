@@ -1,4 +1,5 @@
-﻿using ICD.Common.Utils.Xml;
+﻿using ICD.Common.Utils;
+using ICD.Common.Utils.Xml;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings.Attributes;
 
@@ -9,6 +10,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources
 	{
 		private const string ICON_ELEMENT = "Icon";
 		private const string SHARE_ELEMENT = "Share";
+		private const string APPEARANCE_ELEMENT = "Appearance";
 		private const string CUE_NAME_ELEMENT = "CueName";
 		private const string CONTROL_OVERRIDE_ELEMENT = "ControlOverride";
 		private const string CONFERENCE_OVERRIDE_ELEMENT = "ConferenceOverride";
@@ -21,9 +23,9 @@ namespace ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources
 		public string Icon { get; set; }
 
 		/// <summary>
-		/// Gets/sets if the source can be shared.
+		/// Gets/sets the source appearance mask.
 		/// </summary>
-		public bool Share { get; set; }
+		public eSourceAppearance Appearance { get; set; }
 
 		/// <summary>
 		/// Gets/sets the name of this source to be displayed on the Cue.
@@ -52,7 +54,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources
 			base.WriteElements(writer);
 
 			writer.WriteElementString(ICON_ELEMENT, Icon);
-			writer.WriteElementString(SHARE_ELEMENT, IcdXmlConvert.ToString(Share));
+			writer.WriteElementString(APPEARANCE_ELEMENT, IcdXmlConvert.ToString(Appearance));
 			writer.WriteElementString(CUE_NAME_ELEMENT, CueName);
 			writer.WriteElementString(CONTROL_OVERRIDE_ELEMENT, IcdXmlConvert.ToString(ControlOverride));
 			writer.WriteElementString(CONFERENCE_OVERRIDE_ELEMENT, IcdXmlConvert.ToString(ConferenceOverride));
@@ -67,13 +69,24 @@ namespace ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources
 			base.ParseXml(xml);
 
 			Icon = XmlUtils.TryReadChildElementContentAsString(xml, ICON_ELEMENT);
-			Share = XmlUtils.TryReadChildElementContentAsBoolean(xml, SHARE_ELEMENT) ?? false;
+			Appearance = XmlUtils.TryReadChildElementContentAsEnum<eSourceAppearance>(xml, APPEARANCE_ELEMENT, true) ??
+			             EnumUtils.GetFlagsAllValue<eSourceAppearance>();
 			CueName = XmlUtils.TryReadChildElementContentAsString(xml, CUE_NAME_ELEMENT);
 			ControlOverride = XmlUtils.TryReadChildElementContentAsEnum<eControlOverride>(xml, CONTROL_OVERRIDE_ELEMENT, true) ??
 			              eControlOverride.Default;
 			ConferenceOverride =
 				XmlUtils.TryReadChildElementContentAsEnum<eConferenceOverride>(xml, CONFERENCE_OVERRIDE_ELEMENT, true) ??
 				eConferenceOverride.None;
+
+			// Backwards compatibility
+			bool? share = XmlUtils.TryReadChildElementContentAsBoolean(xml, SHARE_ELEMENT);
+			if (share != null)
+			{
+				if (share == true)
+					Appearance |= eSourceAppearance.Presentation;
+				else
+					Appearance &= ~eSourceAppearance.Presentation;
+			}
 		}
 	}
 }

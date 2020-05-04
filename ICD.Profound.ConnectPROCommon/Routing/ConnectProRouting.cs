@@ -26,6 +26,7 @@ using ICD.Connect.Routing.Extensions;
 using ICD.Connect.Routing.PathFinding;
 using ICD.Connect.Routing.RoutingGraphs;
 using ICD.Profound.ConnectPROCommon.Rooms;
+using ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPROCommon.Routing.Masking;
 
 namespace ICD.Profound.ConnectPROCommon.Routing
@@ -662,7 +663,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 		public bool SupportsSimpleMode()
 		{
 			return Sources
-			       .GetRoomSourcesForUi()
+			       .GetRoomSourcesForUi(eSourceAppearance.Routing)
 			       .Any(s => Room.Routing
 			                     .Destinations
 			                     .GetVideoDestinations()

@@ -60,14 +60,16 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 		/// <summary>
 		/// Returns all of the sources available in the room unless:
 		///		- The source is hidden
+		///		- The source appearance does not intersect the given mask
 		///		- The source is not an audio or video source
 		///		- The source is a video source and:
 		///			- In a room with a single display or combined simple mode the source can not be routed to all displays.
 		///			- In a room with multiple displays or combined advanced mode the source can not be routed to any destination.
 		/// </summary>
+		/// <param name="mask"></param>
 		/// <returns></returns>
 		[NotNull]
-		public IEnumerable<ISource> GetRoomSourcesForUi()
+		public IEnumerable<ISource> GetRoomSourcesForUi(eSourceAppearance mask)
 		{
 			IDestinationBase[] videoDestinations = m_Routing.Destinations.GetVideoDestinations().ToArray();
 			
@@ -82,6 +84,12 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 			{
 				// Hidden
 				if (s.Hide)
+					return false;
+
+				// Appearance
+				ConnectProSource connectProSource = s as ConnectProSource;
+				if (connectProSource != null &&
+				    EnumUtils.GetFlagsIntersection(connectProSource.Appearance, mask) == eSourceAppearance.None)
 					return false;
 
 				// Not audio or video
@@ -128,7 +136,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 
 				// Not sharable
 				ConnectProSource cpSource = s as ConnectProSource;
-				if (cpSource != null && !cpSource.Share)
+				if (cpSource != null && !cpSource.Appearance.HasFlag(eSourceAppearance.Presentation))
 					return false;
 
 				// Can it be routed to a content input on the route control?

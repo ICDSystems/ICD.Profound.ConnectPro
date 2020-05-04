@@ -14,6 +14,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Sources;
 using ICD.Profound.ConnectPROCommon.Rooms.Combine;
 using ICD.Profound.ConnectPROCommon.Routing;
+using ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 {
@@ -189,7 +190,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 				? Enumerable.Empty<ISource>()
 				: room.Routing
 				      .Sources
-				      .GetRoomSourcesForUi();
+				      .GetRoomSourcesForUi(eSourceAppearance.Routing);
 		}
 
 		/// <summary>

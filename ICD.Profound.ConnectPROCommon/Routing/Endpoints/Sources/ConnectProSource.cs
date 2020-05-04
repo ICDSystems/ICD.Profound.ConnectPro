@@ -1,4 +1,5 @@
-﻿using ICD.Connect.Routing.Endpoints.Sources;
+﻿using System;
+using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings;
 
 namespace ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources
@@ -34,6 +35,22 @@ namespace ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources
 		Show = 2
 	}
 
+	[Flags]
+	public enum eSourceAppearance
+	{
+		None,
+
+		/// <summary>
+		/// The source appears on pages for routing.
+		/// </summary>
+		Routing,
+
+		/// <summary>
+		/// The source appears on pages for presentation
+		/// </summary>
+		Presentation
+	}
+
 	public sealed class ConnectProSource : AbstractSource<ConnectProSourceSettings>
 	{
 		/// <summary>
@@ -42,9 +59,9 @@ namespace ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources
 		public string Icon { get; set; }
 
 		/// <summary>
-		/// Gets/sets if this source can be shared.
+		/// Gets/sets the source appearance mask.
 		/// </summary>
-		public bool Share { get; set; }
+		public eSourceAppearance Appearance { get; set; }
 
 		/// <summary>
 		/// Gets/sets the name of this source to be displayed on the Cue.
@@ -76,7 +93,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources
 			base.ClearSettingsFinal();
 
 			Icon = null;
-			Share = false;
+			Appearance = eSourceAppearance.None;
 			CueName = null;
 			ControlOverride = eControlOverride.Default;
 			ConferenceOverride = eConferenceOverride.None;
@@ -91,7 +108,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources
 			base.CopySettingsFinal(settings);
 
 			settings.Icon = Icon;
-			settings.Share = Share;
+			settings.Appearance = Appearance;
 			settings.CueName = CueName;
 			settings.ControlOverride = ControlOverride;
 			settings.ConferenceOverride = ConferenceOverride;
@@ -107,7 +124,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources
 			base.ApplySettingsFinal(settings, factory);
 
 			Icon = settings.Icon;
-			Share = settings.Share;
+			Appearance = settings.Appearance;
 			CueName = settings.CueName;
 			ControlOverride = settings.ControlOverride;
 			ConferenceOverride = settings.ConferenceOverride;
