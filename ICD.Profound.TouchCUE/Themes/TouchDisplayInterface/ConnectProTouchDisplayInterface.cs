@@ -15,6 +15,7 @@ using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.EventArguments;
 using ICD.Connect.Themes.UserInterfaces;
@@ -214,7 +215,11 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface
 
 			IDevice device = m_Room.Core.Originators.GetChild<IDevice>(source.Device);
 			IConferenceDeviceControl dialer = device.Controls.GetControl<IConferenceDeviceControl>();
-			
+
+			// show background again if source is re-selected
+			if (source.ConnectionType.HasFlag(eConnectionType.Video))
+				m_NavigationController.NavigateTo<IBackgroundPresenter>().Refresh();
+
 			// Edge case - route the codec to both displays and open the context menu
 			if (dialer != null && dialer.Supports.HasFlag(eCallType.Video))
 			{
