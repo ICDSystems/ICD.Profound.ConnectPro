@@ -11,6 +11,9 @@ using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Devices;
+using ICD.Connect.Misc.Vibe.Devices.VibeBoard;
+using ICD.Connect.Misc.Vibe.Devices.VibeBoard.Controls;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing;
 using ICD.Connect.Routing.Connections;
@@ -22,6 +25,7 @@ using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Connect.UI.Mvp.Views;
 using ICD.Profound.ConnectPROCommon.Rooms;
+using ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IPresenters.Background;
 using ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IPresenters.Conference;
 using ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IViews.Conference;
 
@@ -191,6 +195,12 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			if (Room == null || source == null)
 				return;
 
+			IDevice sourceDevice = Room.Core.Originators.GetChild(source.Device) as IDevice;
+			if (sourceDevice is VibeBoard)
+				sourceDevice.Controls.GetControl<VibeBoardAppControl>().LaunchApp(eVibeApp.Whiteboard);
+			else
+				Navigation.NavigateTo<IBackgroundPresenter>().Refresh();
+
 			Room.Routing.RouteToVtcPresentation(source, m_SubscribedPresentationComponent);
 		}
 
@@ -231,8 +241,6 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 				m_SubscribedRoutingGraph.RoutingCache.OnEndpointRouteChanged -= RoutingCacheOnEndpointRouteChanged;
 
 			m_SubscribedRoutingGraph = null;
-
-
 		}
 
 		private void RoutingCacheOnEndpointRouteChanged(object sender, EndpointRouteChangedEventArgs eventArgs)
