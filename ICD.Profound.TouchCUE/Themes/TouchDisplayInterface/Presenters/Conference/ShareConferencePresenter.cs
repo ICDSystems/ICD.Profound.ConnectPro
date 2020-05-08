@@ -210,6 +210,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 				return;
 
 			Room.Routing.UnrouteAllFromVtcPresentation(m_SubscribedPresentationComponent);
+			Navigation.NavigateTo<IBackgroundPresenter>().Refresh();
 		}
 
 		#region Room Callbacks
