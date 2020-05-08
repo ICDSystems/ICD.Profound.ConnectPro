@@ -47,7 +47,6 @@ namespace ICD.Profound.ConnectPROCommon.Themes
 		public event EventHandler<GenericEventArgs<Exception>> OnEndRoomCombine;
 
 		private readonly IcdHashSet<IUserInterfaceFactory> m_UiFactories;
-		private readonly SafeCriticalSection m_UiFactoriesSection;
 
 		private readonly XmlTvPresets m_TvPresets;
 		private readonly WebConferencingInstructions m_WebConferencingInstructions;
@@ -166,8 +165,6 @@ namespace ICD.Profound.ConnectPROCommon.Themes
 				new ConnectProYkupSwitcherInterfaceFactory(this)
 			};
 
-			m_UiFactoriesSection = new SafeCriticalSection();
-			
 			Core.Originators.OnChildrenChanged += OriginatorsOnChildrenChanged;
 		}
 
@@ -198,16 +195,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes
 		/// </summary>
 		public override IEnumerable<IUserInterfaceFactory> GetUiFactories()
 		{
-			m_UiFactoriesSection.Enter();
-
-			try
-			{
-				return m_UiFactories.ToArray(m_UiFactories.Count);
-			}
-			finally
-			{
-				m_UiFactoriesSection.Leave();
-			}
+			return m_UiFactories.ToArray(m_UiFactories.Count);
 		}
 
 		/// <summary>
@@ -275,16 +263,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes
 		/// </summary>
 		public override void ClearUserInterfaces()
 		{
-			m_UiFactoriesSection.Enter();
-
-			try
-			{
-				m_UiFactories.ForEach(f => f.Clear());
-			}
-			finally
-			{
-				m_UiFactoriesSection.Leave();
-			}
+			GetUiFactories().ForEach(f => f.Clear());
 		}
 
 		/// <summary>
@@ -292,16 +271,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes
 		/// </summary>
 		public override void BuildUserInterfaces()
 		{
-			m_UiFactoriesSection.Enter();
-
-			try
-			{
-				m_UiFactories.ForEach(f => f.BuildUserInterfaces());
-			}
-			finally
-			{
-				m_UiFactoriesSection.Leave();
-			}
+			GetUiFactories().ForEach(f => f.BuildUserInterfaces());
 		}
 
 		/// <summary>
@@ -362,16 +332,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes
 		/// </summary>
 		private void ReassignRooms()
 		{
-			m_UiFactoriesSection.Enter();
-
-			try
-			{
-				m_UiFactories.ForEach(f => f.ReassignUserInterfaces());
-			}
-			finally
-			{
-				m_UiFactoriesSection.Leave();
-			}
+			GetUiFactories().ForEach(f => f.ReassignUserInterfaces());
 		}
 
 		#endregion
