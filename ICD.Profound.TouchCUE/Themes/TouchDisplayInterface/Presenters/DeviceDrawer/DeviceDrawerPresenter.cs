@@ -124,7 +124,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.DeviceDr
 
 			return Room.Routing
 			           .Sources
-			           .GetRoomSources()
+					   .GetRoomSourcesForUi(eSourceAppearance.Routing)
 			           .Where(s =>
 			                  {
 				                  ConnectProSource source = s as ConnectProSource;
@@ -210,6 +210,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.DeviceDr
 			if (m_SubscribedAppControl == null)
 				return;
 
+			Room.Routing.UnrouteSources();
 			m_SubscribedAppControl.LaunchApp(s_Apps[e.Data]);
 		}
 

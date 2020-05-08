@@ -453,6 +453,33 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 			}
 		}
 
+		public void UnrouteSources()
+		{
+			UnrouteSources(null);
+		}
+
+		/// <summary>
+		/// Unroutes all video and audio sources from the displays.
+		/// <param name="mask">if mask is null, clears the masked sources</param>
+		/// </summary>
+		public void UnrouteSources([CanBeNull] IMaskedSourceInfo mask)
+		{
+			if (mask == null)
+				State.ClearMaskedSources();
+
+			UnrouteAudio();
+
+			foreach (IDestination destination in m_Destinations.GetVideoDestinations().SelectMany(d => d.GetDestinations()))
+			{
+				IDevice destinationDevice = m_Room.Core.Originators.GetChild<IDevice>(destination.Device);
+				if (!(destinationDevice is VibeBoard))
+					PowerDevice(destinationDevice, false);
+
+				// Unroute the destination
+				m_RoutingGraph.Unroute(destination, eConnectionType.Video, m_Room.Id);
+			}
+		}
+
 		/// <summary>
 		/// Routes the given camera to the VTC route control and sets the active camera input.
 		/// </summary>
