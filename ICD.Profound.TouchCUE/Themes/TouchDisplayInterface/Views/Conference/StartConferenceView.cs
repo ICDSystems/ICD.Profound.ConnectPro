@@ -11,6 +11,8 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Views.Conference
 	[ViewBinding(typeof(IStartConferenceView))]
 	public sealed partial class StartConferenceView : AbstractTouchDisplayView, IStartConferenceView
 	{
+		private const int NUM_OF_DIGITS = 11;
+
 		public StartConferenceView(ISigInputOutput panel, TouchCueTheme theme)
 			: base(panel, theme)
 		{
@@ -50,8 +52,8 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Views.Conference
 		public void SetMeetingIdText(string text)
 		{
 			text = text ?? string.Empty;
-			m_TextEntry.SetNumberOfItems(10);
-			for (ushort index = 0; index < 10; index++)
+			m_TextEntry.SetNumberOfItems(NUM_OF_DIGITS);
+			for (ushort index = 0; index < NUM_OF_DIGITS; index++)
 			{
 				m_TextEntry.SetItemVisible(index, true);
 

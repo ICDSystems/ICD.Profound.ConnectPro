@@ -453,6 +453,9 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 			}
 		}
 
+		/// <summary>
+		/// Unroutes all video and audio sources for the displays.
+		/// </summary>
 		public void UnrouteSources()
 		{
 			UnrouteSources(null);
