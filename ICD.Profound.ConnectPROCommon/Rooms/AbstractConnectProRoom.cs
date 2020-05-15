@@ -308,18 +308,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		}
 
 		/// <summary>
-		/// Gets the ordered volume points for the current context.
-		/// </summary>
-		public IEnumerable<IVolumePoint> GetContextualVolumePoints()
-		{
-			eVolumePointContext type = GetVolumeContext();
-
-			return Originators.GetInstancesRecursive<IVolumePoint>()
-			                  .Where(v => EnumUtils.HasAnyFlags(v.Context, type))
-			                  .OrderBy(v => v, new VolumeContextComparer(type));
-		}
-
-		/// <summary>
 		/// Sets the active camera for the room.
 		/// If both the selected camera and routing control are not null, attempts to route the camera.
 		/// </summary>

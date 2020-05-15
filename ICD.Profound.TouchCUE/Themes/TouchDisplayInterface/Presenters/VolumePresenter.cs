@@ -10,6 +10,7 @@ using ICD.Connect.Audio.Repeaters;
 using ICD.Connect.Audio.Utils;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Connect.UI.Mvp.Views;

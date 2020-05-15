@@ -4,6 +4,7 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Audio.Utils;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPROCommon.Rooms;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters;

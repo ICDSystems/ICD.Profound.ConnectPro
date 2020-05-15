@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using ICD.Common.Properties;
 using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Calendaring.Booking;
 using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.Controls.Routing;
@@ -108,11 +106,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		/// Shuts down the room.
 		/// </summary>
 		void Sleep();
-
-		/// <summary>
-		/// Gets the ordered volume points for the current context.
-		/// </summary>
-		IEnumerable<IVolumePoint> GetContextualVolumePoints();
 
 		/// <summary>
 		/// Sets the active camera for the room.
