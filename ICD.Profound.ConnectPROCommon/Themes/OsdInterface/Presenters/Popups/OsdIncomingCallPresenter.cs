@@ -162,10 +162,10 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Popups
 			source.OnAnswerStateChanged -= SourceOnAnswerStateChanged;
 		}
 
-		private void SourceOnAnswerStateChanged(object sender, IncomingCallAnswerStateEventArgs e)
+		private void SourceOnAnswerStateChanged(object sender, CallAnswerStateEventArgs e)
 		{
 			if (IncomingCall.AnswerState == eCallAnswerState.Answered ||
-			    IncomingCall.AnswerState == eCallAnswerState.Autoanswered)
+			    IncomingCall.AnswerState == eCallAnswerState.AutoAnswered)
 				RemoveSource();
 			else if (IncomingCall.AnswerState == eCallAnswerState.Ignored)
 				m_CallIgnoredTimer.Reset(REJECTED_LINGER_TIME_MS);
