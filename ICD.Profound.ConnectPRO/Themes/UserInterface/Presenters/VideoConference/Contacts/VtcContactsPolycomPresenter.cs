@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Contacts;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Directory.Tree;
@@ -125,40 +126,41 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 						return Enumerable.Empty<ModelPresenterTypeInfo>();
 
 					return current
-						.GetFolders()
-						.Cast<object>()
-						.Concat(current.GetContacts())
-						.OrderBy(c => c is IContact)
-						.ThenBy(c =>
-						        {
-							        if (c is IContact)
-								        return (c as IContact).Name;
-									if (c is IDirectoryFolder)
-										return (c as IDirectoryFolder).Name;
+					       .GetFolders()
+					       .Cast<object>()
+					       .Concat(current.GetContacts())
+					       .OrderBy(c => c is IContact)
+					       .ThenBy(c =>
+					               {
+						               if (c is IContact)
+							               return (c as IContact).Name;
+						               if (c is IDirectoryFolder)
+							               return (c as IDirectoryFolder).Name;
 
-									// This should never happen
-									throw new InvalidOperationException();
-						        })
-						.Select(c =>
-						        {
-							        ModelPresenterTypeInfo.ePresenterType type = (c is IDirectoryFolder)
-								                                                     ? ModelPresenterTypeInfo
-									                                                       .ePresenterType.Folder
-								                                                     : ModelPresenterTypeInfo
-									                                                       .ePresenterType.Contact;
-							        return new ModelPresenterTypeInfo(type, c);
-						        });
-				
+						               // This should never happen
+						               throw new InvalidOperationException();
+					               })
+					       .Select(c =>
+					               {
+						               ModelPresenterTypeInfo.ePresenterType type = (c is IDirectoryFolder)
+							                                                            ? ModelPresenterTypeInfo
+							                                                              .ePresenterType.Folder
+							                                                            : ModelPresenterTypeInfo
+							                                                              .ePresenterType.Contact;
+						               return new ModelPresenterTypeInfo(type, c);
+					               });
+
 				case ePolycomDirectoryMode.Recents:
 					return
 						ConferenceManager == null
 							? Enumerable.Empty<ModelPresenterTypeInfo>()
 							: ConferenceManager
-								  .Dialers
-								  .GetRecentCalls()
-								  .Reverse()
-								  .Distinct()
-								  .Select(r => new ModelPresenterTypeInfo(ModelPresenterTypeInfo.ePresenterType.Recent, r));
+							  .History
+							  .GetHistory()
+							  .SelectMulti(c => c.GetParticipants())
+							  .Reverse()
+							  .Distinct()
+							  .Select(r => new ModelPresenterTypeInfo(ModelPresenterTypeInfo.ePresenterType.Recent, r));
 
 				default:
 					throw new ArgumentOutOfRangeException("directoryMode");
