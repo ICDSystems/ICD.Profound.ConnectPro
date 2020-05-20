@@ -1,4 +1,4 @@
-﻿using ICD.Connect.Calendaring.Booking;
+﻿using ICD.Connect.Calendaring.Bookings;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IViews.Welcome;
 
 namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters.Welcome

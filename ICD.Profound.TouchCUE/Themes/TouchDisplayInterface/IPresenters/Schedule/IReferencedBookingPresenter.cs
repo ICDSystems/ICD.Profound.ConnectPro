@@ -1,5 +1,5 @@
 ﻿using System;
-using ICD.Connect.Calendaring.Booking;
+using ICD.Connect.Calendaring.Bookings;
 using ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IViews.Schedule;
 
 namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IPresenters.Schedule

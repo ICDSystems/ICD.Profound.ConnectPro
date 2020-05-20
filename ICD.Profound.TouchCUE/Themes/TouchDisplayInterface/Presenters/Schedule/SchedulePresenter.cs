@@ -6,7 +6,7 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Calendaring;
-using ICD.Connect.Calendaring.Booking;
+using ICD.Connect.Calendaring.Bookings;
 using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Partitioning.Rooms;

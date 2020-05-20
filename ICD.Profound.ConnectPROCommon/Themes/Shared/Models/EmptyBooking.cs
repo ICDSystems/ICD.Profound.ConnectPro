@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using ICD.Connect.Calendaring.Booking;
+using ICD.Connect.Calendaring.Bookings;
 using ICD.Connect.Conferencing.DialContexts;
 
 namespace ICD.Profound.ConnectPROCommon.Themes.Shared.Models

@@ -1,5 +1,5 @@
 ﻿using System;
-using ICD.Connect.Calendaring.Booking;
+using ICD.Connect.Calendaring.Bookings;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters.Welcome;

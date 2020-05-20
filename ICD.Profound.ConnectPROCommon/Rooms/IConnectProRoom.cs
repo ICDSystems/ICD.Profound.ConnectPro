@@ -1,7 +1,7 @@
 ﻿using System;
 using ICD.Common.Properties;
 using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Calendaring.Booking;
+using ICD.Connect.Calendaring.Bookings;
 using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Devices;

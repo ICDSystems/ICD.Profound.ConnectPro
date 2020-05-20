@@ -1,7 +1,7 @@
 ﻿using System;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
-using ICD.Connect.Calendaring.Booking;
+using ICD.Connect.Calendaring.Bookings;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPROCommon.Themes.Shared.Models;
 using ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IPresenters;

@@ -5,7 +5,7 @@ using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Calendaring;
-using ICD.Connect.Calendaring.Booking;
+using ICD.Connect.Calendaring.Bookings;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Attributes;

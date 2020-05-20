@@ -1,6 +1,6 @@
 ﻿using System;
 using ICD.Common.Utils;
-using ICD.Connect.Calendaring.Booking;
+using ICD.Connect.Calendaring.Bookings;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters.Welcome;
