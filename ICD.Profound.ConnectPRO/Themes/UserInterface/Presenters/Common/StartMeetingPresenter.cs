@@ -6,6 +6,7 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Calendaring.Bookings;
+using ICD.Connect.Calendaring.CalendarPoints;
 using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
@@ -156,7 +157,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			base.SetRoom(room);
 
 			Unsubscribe(m_CalendarControl);
-			m_CalendarControl = Room == null ? null : Room.CalendarControl;
+
+			m_CalendarControl =
+				Room == null
+					? null
+					: Room.Originators
+					      .GetInstancesRecursive<ICalendarPoint>()
+					      .Select(p => p.Control)
+					      .FirstOrDefault(c => c != null);
+
 			Subscribe(m_CalendarControl);
 
 			if (m_CalendarControl != null)

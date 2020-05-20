@@ -13,6 +13,7 @@ using ICD.Connect.Devices.Controls;
 using ICD.Connect.Misc.Vibe.Devices.VibeBoard.Controls;
 using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
+using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.EventArguments;
@@ -373,7 +374,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface
 			if (Room == null)
 				return;
 			
-			if (!ConnectProRoom.IsInMeeting && ConnectProRoom.CalendarControl != null)
+			if (!ConnectProRoom.IsInMeeting && ConnectProRoom.GetCalendarControls().Any())
 				m_NavigationController.NavigateTo<ISchedulePresenter>();
 			
 			m_NavigationController.LazyLoadPresenter<IBackgroundPresenter>().Refresh();

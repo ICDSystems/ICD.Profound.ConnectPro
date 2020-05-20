@@ -9,6 +9,7 @@ using ICD.Connect.Calendaring;
 using ICD.Connect.Calendaring.Bookings;
 using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPROCommon.Rooms;
@@ -300,7 +301,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Schedule
 			if (m_CalendarControl != null)
 				Unsubscribe(m_CalendarControl);
 
-			m_CalendarControl = room == null ? null : room.CalendarControl;
+			m_CalendarControl = room == null ? null : room.GetCalendarControls().FirstOrDefault();
 
 			if (m_CalendarControl != null)
 				Subscribe(m_CalendarControl);

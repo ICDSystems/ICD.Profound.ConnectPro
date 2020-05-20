@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ICD.Connect.Calendaring.CalendarPoints;
 using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.ConferencePoints;
@@ -9,6 +10,7 @@ using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Devices;
 using ICD.Connect.Partitioning;
 using ICD.Connect.Partitioning.Commercial;
+using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings;
 using ICD.Connect.Settings.Utils;
@@ -57,10 +59,10 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Single
 		{
 			base.CopySettingsFinal(settings);
 
-			settings.Passcode = Passcode;
+			ICalendarControl calendarControl = this.GetCalendarControls().FirstOrDefault();
 
-			if (CalendarControl != null && CalendarControl.Parent != null)
-				settings.CalendarDevice = CalendarControl.Parent.Id;
+			settings.Passcode = Passcode;
+			settings.CalendarDevice = calendarControl == null ? (int?)null : calendarControl.Parent.Id;
 		}
 
 		/// <summary>
@@ -72,7 +74,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Single
 
 			Dialing.AtcNumber = null;
 			Passcode = null;
-			CalendarControl = null;
 		}
 
 		/// <summary>
@@ -90,16 +91,38 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Single
 			// Passcode
 			Passcode = settings.Passcode;
 
-			// Calendar Device
-			if (settings.CalendarDevice != null)
-			{
-				var calendarDevice = factory.GetOriginatorById<IDevice>(settings.CalendarDevice.Value);
-				if (calendarDevice != null)
-					CalendarControl = calendarDevice.Controls.GetControl<ICalendarControl>();
-			}
+			// Generate calendar points
+			GenerateCalendarPoints(settings, factory);
 
 			// Generate conference points
 			GenerateConferencePoints(factory);
+		}
+
+		/// <summary>
+		/// Generates a calendar point for the configured calendar control.
+		/// </summary>
+		/// <param name="settings"></param>
+		/// <param name="factory"></param>
+		private void GenerateCalendarPoints(ConnectProRoomSettings settings, IDeviceFactory factory)
+		{
+			if (settings.CalendarDevice == null)
+				return;
+
+			IDevice calendarDevice = factory.GetOriginatorById<IDevice>(settings.CalendarDevice.Value);
+			ICalendarControl calendarControl = calendarDevice.Controls.GetControl<ICalendarControl>();
+
+			int id = IdUtils.GetNewId(Core.Originators.GetChildrenIds().Concat(factory.GetOriginatorIds()), eSubsystem.CalendarPoints);
+			eCombineMode combineMode = Originators.GetCombineMode(calendarDevice.Id);
+
+			CalendarPoint point = new CalendarPoint
+			{
+				Id = id,
+				Name = calendarControl.Name,
+			};
+			point.SetControl(calendarControl);
+
+			Core.Originators.AddChild(point);
+			Originators.Add(id, combineMode);
 		}
 
 		/// <summary>

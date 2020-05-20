@@ -80,7 +80,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Combine
 			WakeSchedule = m_MasterRoom == null ? null : m_MasterRoom.WakeSchedule;
 			ConferenceManager = m_MasterRoom == null ? null : m_MasterRoom.ConferenceManager;
 			Dialing.AtcNumber = m_MasterRoom == null ? null : m_MasterRoom.Dialing.AtcNumber;
-			CalendarControl = m_MasterRoom == null ? null : m_MasterRoom.CalendarControl;
 
 			if (!Routing.SupportsSimpleMode())
 				CombinedAdvancedMode = eCombineAdvancedMode.Advanced;

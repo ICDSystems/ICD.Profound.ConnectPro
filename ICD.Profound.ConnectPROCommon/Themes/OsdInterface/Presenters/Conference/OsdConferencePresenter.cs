@@ -9,6 +9,7 @@ using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Conferencing.Zoom.Components.Call;
 using ICD.Connect.Conferencing.Zoom.Components.System;
+using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources;
@@ -60,7 +61,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Conferenc
 
 				// left panel - meeting info
 				// hidden if no scheduler
-				if (Room.CalendarControl == null)
+				if (!Room.GetCalendarControls().Any())
 					view.SetCurrentBookingPanelVisibility(false);
 				// instant meeting
 				else if (Room.CurrentBooking == null)

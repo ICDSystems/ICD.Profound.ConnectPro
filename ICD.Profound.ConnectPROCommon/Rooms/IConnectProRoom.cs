@@ -98,16 +98,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		void EndMeeting();
 
 		/// <summary>
-		/// Wakes up the room.
-		/// </summary>
-		void Wake();
-
-		/// <summary>
-		/// Shuts down the room.
-		/// </summary>
-		void Sleep();
-
-		/// <summary>
 		/// Sets the active camera for the room.
 		/// If both the selected camera and routing control are not null, attempts to route the camera.
 		/// </summary>

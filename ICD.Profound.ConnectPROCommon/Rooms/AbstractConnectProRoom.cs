@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Properties;
-using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services.Logging;
@@ -12,6 +11,7 @@ using ICD.Connect.API.Nodes;
 using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Calendaring.Bookings;
+using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Cameras.Controls;
 using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.ConferenceManagers;
@@ -395,11 +395,11 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			if (booking == null)
 				throw new ArgumentNullException("booking");
 
-			if (CalendarControl == null)
-				throw new InvalidOperationException("Room has no calendar");
-
-			if (CalendarControl.CanCheckIn(booking))
-				CalendarControl.CheckIn(booking);
+			foreach (ICalendarControl control in this.GetCalendarControls())
+			{
+				if (control.CanCheckIn(booking))
+					control.CheckIn(booking);
+			}
 
 			CurrentBooking = booking;
 		}
@@ -412,11 +412,11 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			if (CurrentBooking == null)
 				return;
 
-			if (CalendarControl == null)
-				throw new InvalidOperationException("Room has no calendar");
-
-			if (CalendarControl.CanCheckOut(CurrentBooking))
-				CalendarControl.CheckOut(CurrentBooking);
+			foreach (ICalendarControl control in this.GetCalendarControls())
+			{
+				if (control.CanCheckOut(CurrentBooking))
+					control.CheckOut(CurrentBooking);
+			}
 
 			CurrentBooking = null;
 		}

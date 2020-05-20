@@ -9,6 +9,7 @@ using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Devices;
 using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
+using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings.Originators;
@@ -223,7 +224,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 				m_NavigationController.NavigateTo<IOsdConferencePresenter>();
 			else if (m_Room.IsInMeeting)
 				m_NavigationController.NavigateTo<IOsdSourcesPresenter>();
-			else if (m_Room.CalendarControl != null)
+			else if (m_Room.GetCalendarControls().Any())
 				m_NavigationController.NavigateTo<IOsdWelcomePresenter>();
 			else
 			{

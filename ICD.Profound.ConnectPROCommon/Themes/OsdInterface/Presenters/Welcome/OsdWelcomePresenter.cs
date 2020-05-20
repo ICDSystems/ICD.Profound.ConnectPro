@@ -8,6 +8,7 @@ using ICD.Connect.Calendaring;
 using ICD.Connect.Calendaring.Bookings;
 using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Conferencing.Controls.Dialing;
+using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPROCommon.Rooms;
@@ -195,7 +196,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Welcome
 			base.SetRoom(room);
 
 			Unsubscribe(m_CalendarControl);
-			m_CalendarControl = room == null ? null : room.CalendarControl;
+			m_CalendarControl = room == null ? null : room.GetCalendarControls().FirstOrDefault();
 			Subscribe(m_CalendarControl);
 
 			Refresh();

@@ -6,6 +6,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Calendaring.Bookings;
 using ICD.Connect.Calendaring.Controls;
+using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPROCommon.Rooms;
@@ -55,7 +56,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters
 			m_RefreshSection.Enter();
 			try
 			{
-				MainPageView = Room != null && Room.CalendarControl == null && !Room.IsInMeeting;
+				MainPageView = Room != null && !Room.GetCalendarControls().Any() && !Room.IsInMeeting;
 				view.SetMainPageView(MainPageView);
 
 				// Corey Geiser on Slack at 10/10/18 12:00PM -
@@ -99,7 +100,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters
 			if (m_CalendarControl != null)
 				Unsubscribe(m_CalendarControl);
 
-			m_CalendarControl = room == null ? null : room.CalendarControl;
+			m_CalendarControl = room == null ? null : room.GetCalendarControls().FirstOrDefault();
 
 			if (m_CalendarControl != null)
 				Subscribe(m_CalendarControl);
