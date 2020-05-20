@@ -43,12 +43,6 @@ namespace ICD.Profound.ConnectPROCommon.Dialing
 		#region Properties
 
 		/// <summary>
-		/// Gets/sets the ATC number for dialing into the room.
-		/// </summary>
-		[CanBeNull]
-		public string AtcNumber { get; set; }
-
-		/// <summary>
 		/// Gets the current conference setup process.
 		/// </summary>
 		[CanBeNull]

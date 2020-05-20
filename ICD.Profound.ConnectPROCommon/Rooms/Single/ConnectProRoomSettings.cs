@@ -8,11 +8,8 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Single
 	[KrangSettings("ConnectProRoom", typeof(ConnectProRoom))]
 	public sealed class ConnectProRoomSettings : AbstractConnectProRoomSettings
 	{
-		private const string ATC_NUMBER_ELEMENT = "AtcNumber";
 		private const string PASSCODE_ELEMENT = "Passcode";
 		private const string CALENDAR_DEVICE_ELEMENT = "CalendarDevice";
-
-		public string AtcNumber { get; set; }
 
 		public string Passcode { get; set; }
 
@@ -27,7 +24,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Single
 		{
 			base.WriteElements(writer);
 
-			writer.WriteElementString(ATC_NUMBER_ELEMENT, AtcNumber);
 			writer.WriteElementString(PASSCODE_ELEMENT, Passcode);
 			writer.WriteElementString(CALENDAR_DEVICE_ELEMENT, IcdXmlConvert.ToString(CalendarDevice));
 		}
@@ -40,7 +36,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Single
 		{
 			base.ParseXml(xml);
 
-			AtcNumber = XmlUtils.TryReadChildElementContentAsString(xml, ATC_NUMBER_ELEMENT);
 			Passcode = XmlUtils.TryReadChildElementContentAsString(xml, PASSCODE_ELEMENT);
 			CalendarDevice = XmlUtils.TryReadChildElementContentAsInt(xml, CALENDAR_DEVICE_ELEMENT);
 		}

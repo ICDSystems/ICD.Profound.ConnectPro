@@ -79,7 +79,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Combine
 			CombineName = m_MasterRoom == null ? null : m_MasterRoom.Name;
 			WakeSchedule = m_MasterRoom == null ? null : m_MasterRoom.WakeSchedule;
 			ConferenceManager = m_MasterRoom == null ? null : m_MasterRoom.ConferenceManager;
-			Dialing.AtcNumber = m_MasterRoom == null ? null : m_MasterRoom.Dialing.AtcNumber;
 
 			if (!Routing.SupportsSimpleMode())
 				CombinedAdvancedMode = eCombineAdvancedMode.Advanced;

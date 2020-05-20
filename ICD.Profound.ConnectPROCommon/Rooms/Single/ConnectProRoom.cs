@@ -72,7 +72,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Single
 		{
 			base.ClearSettingsFinal();
 
-			Dialing.AtcNumber = null;
 			Passcode = null;
 		}
 
@@ -84,9 +83,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Single
 		protected override void ApplySettingsFinal(ConnectProRoomSettings settings, IDeviceFactory factory)
 		{
 			base.ApplySettingsFinal(settings, factory);
-
-			// ATC Number
-			Dialing.AtcNumber = settings.AtcNumber;
 
 			// Passcode
 			Passcode = settings.Passcode;

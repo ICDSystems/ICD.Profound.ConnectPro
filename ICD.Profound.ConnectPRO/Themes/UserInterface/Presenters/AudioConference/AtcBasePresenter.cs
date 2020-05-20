@@ -103,8 +103,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 			{
 				IParticipant active = GetActiveSource();
 				eParticipantStatus status = active == null ? eParticipantStatus.Disconnected : active.Status;
+				IDialContext callInInfo = m_ActiveConferenceControl == null ? null : m_ActiveConferenceControl.CallInInfo;
 
-				string atcNumber = Room == null ? string.Empty : Room.Dialing.AtcNumber;
+				string atcNumber = callInInfo == null ? string.Empty : callInInfo.DialString;
 				string activeStatus = StringUtils.NiceName(status);
 				string dialString = m_Builder.ToString();
 				bool inACall = active != null;
@@ -200,6 +201,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 
 			dialer.OnConferenceAdded += AudioDialerOnConferenceAdded;
 			dialer.OnConferenceRemoved += AudioDialerOnConferenceRemoved;
+			dialer.OnCallInInfoChanged += AudioDialerOnCallInInfoChanged;
 
 			foreach (var conference in dialer.GetConferences())
 				Subscribe(conference);
@@ -212,6 +214,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 
 			dialer.OnConferenceAdded -= AudioDialerOnConferenceAdded;
 			dialer.OnConferenceRemoved -= AudioDialerOnConferenceRemoved;
+			dialer.OnCallInInfoChanged -= AudioDialerOnCallInInfoChanged;
 
 			foreach (var conference in dialer.GetConferences())
 				Unsubscribe(conference);
@@ -230,6 +233,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 				m_Builder.Clear();
 
 			Unsubscribe(e.Data);
+			RefreshIfVisible();
+		}
+
+		private void AudioDialerOnCallInInfoChanged(object sender, GenericEventArgs<IDialContext> genericEventArgs)
+		{
 			RefreshIfVisible();
 		}
 
