@@ -354,7 +354,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 			if (string.IsNullOrEmpty(dialString))
 				return;
 
-			var dialContext = new TraditionalDialContext { DialString = dialString, CallType = eCallType.Audio };
+			var dialContext = new DialContext { DialString = dialString, CallType = eCallType.Audio };
 			if (ActiveConferenceControl.CanDial(dialContext) != eDialContextSupport.Unsupported)
 				Room.Dialing.Dial(ActiveConferenceControl, dialContext);
 		}

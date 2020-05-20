@@ -396,8 +396,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			          .ShowView("Starting Zoom Audio Call", 10 * 1000);
 
 			// Call
-			IDialContext dialContext = new PstnDialContext
+			IDialContext dialContext = new DialContext
 			{
+				Protocol = eDialProtocol.Pstn,
 				CallType = eCallType.Audio,
 				DialString = m_StringBuilder.ToString()
 			};

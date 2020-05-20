@@ -174,7 +174,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			if (Room == null || ActiveConferenceControl == null)
 				return;
 
-			Room.Dialing.Dial(ActiveConferenceControl, new ZoomDialContext {DialString = m_Builder.ToString()});
+			Room.Dialing.Dial(ActiveConferenceControl,
+			                  new DialContext {Protocol = eDialProtocol.Zoom, DialString = m_Builder.ToString()});
 			RefreshIfVisible();
 		}
 

@@ -164,8 +164,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			if (zoomControl == null)
 				return;
 
-			ZoomDialContext context = new ZoomDialContext
+			DialContext context = new DialContext
 			{
+				Protocol = eDialProtocol.Zoom,
 				CallType = eCallType.Video,
 				DialString = meetingNumber,
 				Password = password

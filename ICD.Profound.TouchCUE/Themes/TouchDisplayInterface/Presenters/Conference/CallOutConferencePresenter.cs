@@ -386,8 +386,9 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			//          .ShowView("Starting Zoom Audio Call", 10 * 1000);
 
 			// Call
-			IDialContext dialContext = new PstnDialContext
+			IDialContext dialContext = new DialContext
 			{
+				Protocol = eDialProtocol.Pstn,
 				CallType = eCallType.Audio,
 				DialString = m_StringBuilder.ToString()
 			};

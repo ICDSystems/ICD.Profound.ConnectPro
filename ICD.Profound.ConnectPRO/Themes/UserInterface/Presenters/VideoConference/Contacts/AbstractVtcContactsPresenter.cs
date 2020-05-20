@@ -319,7 +319,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			var control = ActiveConferenceControl;
 			if (control != null)
-				Room.Dialing.Dial(control, new SipDialContext {DialString = number, CallType = eCallType.Video});
+				Room.Dialing.Dial(control,
+				                  new DialContext {Protocol = eDialProtocol.Sip, DialString = number, CallType = eCallType.Video});
 
 			ShowView(true);
 		}

@@ -157,7 +157,8 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 				return;
 
 			if (ActiveConferenceControl != null)
-				Room.Dialing.Dial(ActiveConferenceControl, new ZoomDialContext {DialString = m_Builder.ToString()});
+				Room.Dialing.Dial(ActiveConferenceControl,
+				                  new DialContext {Protocol = eDialProtocol.Zoom, DialString = m_Builder.ToString()});
 
 			RefreshIfVisible();
 		}

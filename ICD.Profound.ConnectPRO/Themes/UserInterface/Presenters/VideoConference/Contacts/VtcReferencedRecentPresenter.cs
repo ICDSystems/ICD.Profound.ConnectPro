@@ -88,7 +88,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				return;
 
 			if (ActiveConferenceControl != null && m_Recent != null)
-				Room.Dialing.Dial(ActiveConferenceControl, new SipDialContext {DialString = m_Recent.Number});
+				Room.Dialing.Dial(ActiveConferenceControl,
+				                  new DialContext {Protocol = eDialProtocol.Sip, DialString = m_Recent.Number});
 		}
 	}
 }
