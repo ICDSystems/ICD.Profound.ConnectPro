@@ -123,7 +123,6 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 		/// </summary>
 		/// <param name="prompt"></param>
 		/// <param name="text"></param>
-		/// <param name="enterCallback"></param>
 		/// <param name="closeCallback"></param>
 		/// <param name="changeCallback"></param>
 		public void ShowView(string prompt, string text, Action<string> closeCallback,

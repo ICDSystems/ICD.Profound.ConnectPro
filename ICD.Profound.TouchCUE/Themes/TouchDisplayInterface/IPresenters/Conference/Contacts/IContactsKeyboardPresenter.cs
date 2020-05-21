@@ -10,7 +10,6 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IPresenters.Confere
 		/// </summary>
 		/// <param name="prompt"></param>
 		/// <param name="text"></param>
-		/// <param name="enterCallback"></param>
 		/// <param name="closeCallback"></param>
 		/// <param name="changeCallback"></param>
 		void ShowView(string prompt, string text, Action<string> closeCallback, Action<string> changeCallback);
