@@ -48,7 +48,6 @@ namespace ICD.Profound.ConnectPROCommon.Themes
 		public event EventHandler<GenericEventArgs<Exception>> OnEndRoomCombine;
 
 		private readonly IcdHashSet<IUserInterfaceFactory> m_UiFactories;
-		private readonly SafeCriticalSection m_UiFactoriesSection;
 
 		private readonly XmlTvPresets m_TvPresets;
 		private readonly WebConferencingInstructions m_WebConferencingInstructions;
@@ -166,10 +165,6 @@ namespace ICD.Profound.ConnectPROCommon.Themes
 				new ConnectProShureMx396InterfaceFactory(this),
 				new ConnectProYkupSwitcherInterfaceFactory(this)
 			};
-
-			m_UiFactoriesSection = new SafeCriticalSection();
-			
-			Core.Originators.OnChildrenChanged += OriginatorsOnChildrenChanged;
 		}
 
 		/// <summary>
@@ -183,13 +178,6 @@ namespace ICD.Profound.ConnectPROCommon.Themes
 			OnEndRoomCombine = null;
 
 			base.DisposeFinal(disposing);
-
-			Core.Originators.OnChildrenChanged -= OriginatorsOnChildrenChanged;
-		}
-		
-		private void OriginatorsOnChildrenChanged(object sender, EventArgs args)
-		{
-			ReassignRooms();
 		}
 
 		#region Public Methods
@@ -199,16 +187,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes
 		/// </summary>
 		public override IEnumerable<IUserInterfaceFactory> GetUiFactories()
 		{
-			m_UiFactoriesSection.Enter();
-
-			try
-			{
-				return m_UiFactories.ToArray(m_UiFactories.Count);
-			}
-			finally
-			{
-				m_UiFactoriesSection.Leave();
-			}
+			return m_UiFactories.ToArray(m_UiFactories.Count);
 		}
 
 		/// <summary>
@@ -272,40 +251,6 @@ namespace ICD.Profound.ConnectPROCommon.Themes
 		}
 
 		/// <summary>
-		/// Clears the instantiated user interfaces.
-		/// </summary>
-		public override void ClearUserInterfaces()
-		{
-			m_UiFactoriesSection.Enter();
-
-			try
-			{
-				m_UiFactories.ForEach(f => f.Clear());
-			}
-			finally
-			{
-				m_UiFactoriesSection.Leave();
-			}
-		}
-
-		/// <summary>
-		/// Clears and rebuilds the user interfaces.
-		/// </summary>
-		public override void BuildUserInterfaces()
-		{
-			m_UiFactoriesSection.Enter();
-
-			try
-			{
-				m_UiFactories.ForEach(f => f.BuildUserInterfaces());
-			}
-			finally
-			{
-				m_UiFactoriesSection.Leave();
-			}
-		}
-
-		/// <summary>
 		/// Combine rooms based on the given control being open or closed.
 		/// </summary>
 		/// <param name="control"></param>
@@ -356,23 +301,6 @@ namespace ICD.Profound.ConnectPROCommon.Themes
 			}
 
 			OnEndRoomCombine.Raise(this, new GenericEventArgs<Exception>(null));
-		}
-
-		/// <summary>
-		/// Reassigns rooms to the existing user interfaces.
-		/// </summary>
-		private void ReassignRooms()
-		{
-			m_UiFactoriesSection.Enter();
-
-			try
-			{
-				m_UiFactories.ForEach(f => f.ReassignUserInterfaces());
-			}
-			finally
-			{
-				m_UiFactoriesSection.Leave();
-			}
 		}
 
 		#endregion
