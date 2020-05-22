@@ -199,7 +199,7 @@ namespace ICD.Profound.ConnectPROCommon.Dialing
 			List<IConference> activeConferences =
 				m_Room.ConferenceManager == null
 					? new List<IConference>()
-					: m_Room.ConferenceManager.Dialers.OnlineConferences.ToList();
+					: m_Room.ConferenceManager.Dialers.ActiveConferences.ToList();
 
 			foreach (IConference activeConference in activeConferences)
 				EndConference(activeConference);

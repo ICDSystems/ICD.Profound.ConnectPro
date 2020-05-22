@@ -201,7 +201,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.ShureMicrophoneInterface
 			{
 				bool inCall = m_Room != null && m_Room.Dialing.ConferenceActionsAvailable(eInCall.Audio);
 				bool onHold = m_SubscribedConferenceManager != null &&
-							  m_SubscribedConferenceManager.Dialers.OnlineConferences.AnyAndAll(c => c.Status == eConferenceStatus.OnHold);
+							  m_SubscribedConferenceManager.Dialers.ActiveConferences.AnyAndAll(c => c.Status == eConferenceStatus.OnHold);
 				bool privacyMuted = m_SubscribedConferenceManager != null && m_SubscribedConferenceManager.PrivacyMuted;
 
 				eLedBrightness brightness = inCall ? eLedBrightness.Default : eLedBrightness.Disabled;
