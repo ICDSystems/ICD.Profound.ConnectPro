@@ -37,7 +37,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		{
 			Icon = "call";
 			Enabled = true;
-			Label = "Call Out";
+			Label = "Phone";
 			State = null;
 			Selected = m_CallOutPresenter.IsViewVisible;
 
