@@ -281,7 +281,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Notifica
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		private void CallOnStatusChanged(object sender, IncomingCallAnswerStateEventArgs args)
+		private void CallOnStatusChanged(object sender, CallAnswerStateEventArgs args)
 		{
 			IIncomingCall call = sender as IIncomingCall;
 			if (call == null)

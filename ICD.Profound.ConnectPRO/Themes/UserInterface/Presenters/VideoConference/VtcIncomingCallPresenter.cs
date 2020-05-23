@@ -243,7 +243,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			call.OnNameChanged += CallOnNameChanged;
 			call.OnNumberChanged += CallOnNumberChanged;
-			call.OnAnswerStateChanged += CallOnStatusChanged;
+			call.OnAnswerStateChanged += CallOnAnswerStateChanged;
 		}
 
 		/// <summary>
@@ -254,15 +254,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			call.OnNameChanged -= CallOnNameChanged;
 			call.OnNumberChanged -= CallOnNumberChanged;
-			call.OnAnswerStateChanged -= CallOnStatusChanged;
+			call.OnAnswerStateChanged -= CallOnAnswerStateChanged;
 		}
 
 		/// <summary>
-		/// Called when the call status changes.
+		/// Called when the answer state changes.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		private void CallOnStatusChanged(object sender, IncomingCallAnswerStateEventArgs args)
+		private void CallOnAnswerStateChanged(object sender, CallAnswerStateEventArgs args)
 		{
 			IIncomingCall call = sender as IIncomingCall;
 			if (call == null)

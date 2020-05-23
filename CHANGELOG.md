@@ -15,6 +15,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Changed VTC routing to destination groups to route to individual displays in the group in alternating output order
  - Using new logging context
 
+## [13.1.0] - 2020-04-29
+### Changed
+ - Fixed a bug where certain UIs were not being instantiated
+ - Changed incoming call pages to use new answer state event args
+ - Recent Calls lists now uses ConferenceHistory
+ - VTC Contacts presenters use new ConferenceHistory for recent calls
+
 ## [13.0.0] - 2020-04-29
 ### Added
  - Added TouchCUE UI

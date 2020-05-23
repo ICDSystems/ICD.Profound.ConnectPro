@@ -22,8 +22,6 @@ namespace ICD.Profound.TouchCUE.Themes
 			};
 		}
 
-		#region Public Methods
-
 		/// <summary>
 		/// Gets the UI Factories.
 		/// </summary>
@@ -31,7 +29,5 @@ namespace ICD.Profound.TouchCUE.Themes
 		{
 			return m_UiFactories.Concat(base.GetUiFactories());
 		}
-
-		#endregion
 	}
 }
