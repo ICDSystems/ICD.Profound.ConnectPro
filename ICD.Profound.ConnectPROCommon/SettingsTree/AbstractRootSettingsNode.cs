@@ -19,7 +19,7 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree
 		protected AbstractRootSettingsNode(IConnectProRoom room)
 		{
 			Name = "Settings";
-			Room = room;
+			SetRoom(room);
 		}
 
 		/// <summary>

@@ -3,15 +3,15 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Zoom.SubSettings;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Zoom;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Zoom.SubSettings;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Zoom;
 using ICD.Profound.ConnectPROCommon.SettingsTree.Zoom;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings.Zoom.SubSettings
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings.Zoom
 {
 	[PresenterBinding(typeof(ISettingsZoomAdvancedPresenter))]
-	public sealed class SettingsZoomAdvancedPresenter : AbstractSettingsZoomSubPresenter<ISettingsZoomAdvancedView>, ISettingsZoomAdvancedPresenter
+	public sealed class SettingsZoomAdvancedPresenter : AbstractSettingsNodeBasePresenter<ISettingsZoomAdvancedView, ZoomAdvancedSettingsLeaf>, ISettingsZoomAdvancedPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 
@@ -39,8 +39,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			try
 			{
-				bool audioProcessing = Settings != null && Settings.AudioProcessing;
-				bool audioReverb = Settings != null && Settings.ReduceAudioReverb;
+				bool audioProcessing = Node != null && Node.AudioProcessing;
+				bool audioReverb = Node != null && Node.ReduceAudioReverb;
 
 				view.SetAudioProcessingButtonSelected(audioProcessing);
 				view.SetAudioReverbButtonSelected(audioReverb);
@@ -54,33 +54,33 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		#region Callbacks
 
 		/// <summary>
-		/// Subscribe to the settings events.
+		/// Subscribe to the node events.
 		/// </summary>
-		/// <param name="settings"></param>
-		protected override void Subscribe(ZoomSettingsLeaf settings)
+		/// <param name="node"></param>
+		protected override void Subscribe(ZoomAdvancedSettingsLeaf node)
 		{
-			base.Subscribe(settings);
+			base.Subscribe(node);
 
-			if (settings == null)
+			if (node == null)
 				return;
 
-			settings.OnAudioProcessingChanged += SettingsOnAudioProcessingChanged;
-			settings.OnReduceAudioReverbChanged += SettingsOnReduceAudioReverbChanged;
+			node.OnAudioProcessingChanged += SettingsOnAudioProcessingChanged;
+			node.OnReduceAudioReverbChanged += SettingsOnReduceAudioReverbChanged;
 		}
 
 		/// <summary>
-		/// Unsubscribe from the settings events.
+		/// Unsubscribe from the node events.
 		/// </summary>
-		/// <param name="settings"></param>
-		protected override void Unsubscribe(ZoomSettingsLeaf settings)
+		/// <param name="node"></param>
+		protected override void Unsubscribe(ZoomAdvancedSettingsLeaf node)
 		{
-			base.Unsubscribe(settings);
+			base.Unsubscribe(node);
 
-			if (settings == null)
+			if (node == null)
 				return;
 
-			settings.OnAudioProcessingChanged -= SettingsOnAudioProcessingChanged;
-			settings.OnReduceAudioReverbChanged -= SettingsOnReduceAudioReverbChanged;
+			node.OnAudioProcessingChanged -= SettingsOnAudioProcessingChanged;
+			node.OnReduceAudioReverbChanged -= SettingsOnReduceAudioReverbChanged;
 		}
 
 		private void SettingsOnReduceAudioReverbChanged(object sender, BoolEventArgs boolEventArgs)
@@ -123,12 +123,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 		private void ViewOnAudioReverbButtonPressed(object sender, EventArgs e)
 		{
-			Settings.SetReduceAudioReverb(!Settings.ReduceAudioReverb);
+			Node.SetReduceAudioReverb(!Node.ReduceAudioReverb);
 		}
 
 		private void ViewOnAudioProcessingButtonPressed(object sender, EventArgs e)
 		{
-			Settings.SetAudioProcessing(!Settings.AudioProcessing);
+			Node.SetAudioProcessing(!Node.AudioProcessing);
 		}
 
 		#endregion

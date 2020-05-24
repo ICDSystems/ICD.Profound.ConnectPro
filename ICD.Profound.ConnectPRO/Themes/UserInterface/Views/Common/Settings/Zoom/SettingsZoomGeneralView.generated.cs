@@ -4,7 +4,7 @@ using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Pages;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoom.SubSettings
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoom
 {
 	public sealed partial class SettingsZoomGeneralView
 	{

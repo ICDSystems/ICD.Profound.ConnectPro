@@ -3,15 +3,15 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Zoom.SubSettings;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Zoom;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Zoom.SubSettings;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Zoom;
 using ICD.Profound.ConnectPROCommon.SettingsTree.Zoom;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings.Zoom.SubSettings
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings.Zoom
 {
 	[PresenterBinding(typeof(ISettingsZoomGeneralPresenter))]
-	public sealed class SettingsZoomGeneralPresenter : AbstractSettingsZoomSubPresenter<ISettingsZoomGeneralView>, ISettingsZoomGeneralPresenter
+	public sealed class SettingsZoomGeneralPresenter : AbstractSettingsNodeBasePresenter<ISettingsZoomGeneralView, ZoomGeneralSettingsLeaf>, ISettingsZoomGeneralPresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 
@@ -39,10 +39,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			try
 			{
-				bool muteAll = Settings != null && Settings.MuteAllParticipantsAtMeetingStart;
-				bool muteMyCamera = Settings != null && Settings.MuteMyCameraAtMeetingStart;
-				bool enableDialOut = Settings != null && Settings.EnableDialOut;
-				bool enableRecording = Settings != null && Settings.EnableRecording;
+				bool muteAll = Node != null && Node.MuteAllParticipantsAtMeetingStart;
+				bool muteMyCamera = Node != null && Node.MuteMyCameraAtMeetingStart;
+				bool enableDialOut = Node != null && Node.EnableDialOut;
+				bool enableRecording = Node != null && Node.EnableRecording;
 
 				view.SetMuteAllButtonSelected(muteAll);
 				view.SetMuteMyCameraButtonSelected(muteMyCamera);
@@ -58,37 +58,37 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		#region Callbacks
 
 		/// <summary>
-		/// Subscribe to the settings events.
+		/// Subscribe to the node events.
 		/// </summary>
-		/// <param name="settings"></param>
-		protected override void Subscribe(ZoomSettingsLeaf settings)
+		/// <param name="node"></param>
+		protected override void Subscribe(ZoomGeneralSettingsLeaf node)
 		{
-			base.Subscribe(settings);
+			base.Subscribe(node);
 
-			if (settings == null)
+			if (node == null)
 				return;
 
-			settings.OnMuteAllParticipantsAtMeetingStartChanged += SettingsOnMuteAllParticipantsAtMeetingStartChanged;
-			settings.OnMuteMyCameraAtMeetingStartChanged += SettingsOnMuteMyCameraAtMeetingStartChanged;
-			settings.OnEnableRecordingChanged += SettingsOnEnableRecordingChanged;
-			settings.OnEnableDialOutChanged += SettingsOnEnableDialOutChanged;
+			node.OnMuteAllParticipantsAtMeetingStartChanged += SettingsOnMuteAllParticipantsAtMeetingStartChanged;
+			node.OnMuteMyCameraAtMeetingStartChanged += SettingsOnMuteMyCameraAtMeetingStartChanged;
+			node.OnEnableRecordingChanged += SettingsOnEnableRecordingChanged;
+			node.OnEnableDialOutChanged += SettingsOnEnableDialOutChanged;
 		}
 
 		/// <summary>
-		/// Unsubscribe from the settings events.
+		/// Unsubscribe from the node events.
 		/// </summary>
-		/// <param name="settings"></param>
-		protected override void Unsubscribe(ZoomSettingsLeaf settings)
+		/// <param name="node"></param>
+		protected override void Unsubscribe(ZoomGeneralSettingsLeaf node)
 		{
-			base.Unsubscribe(settings);
+			base.Unsubscribe(node);
 
-			if (settings == null)
+			if (node == null)
 				return;
 
-			settings.OnMuteAllParticipantsAtMeetingStartChanged -= SettingsOnMuteAllParticipantsAtMeetingStartChanged;
-			settings.OnMuteMyCameraAtMeetingStartChanged -= SettingsOnMuteMyCameraAtMeetingStartChanged;
-			settings.OnEnableRecordingChanged -= SettingsOnEnableRecordingChanged;
-			settings.OnEnableDialOutChanged -= SettingsOnEnableDialOutChanged;
+			node.OnMuteAllParticipantsAtMeetingStartChanged -= SettingsOnMuteAllParticipantsAtMeetingStartChanged;
+			node.OnMuteMyCameraAtMeetingStartChanged -= SettingsOnMuteMyCameraAtMeetingStartChanged;
+			node.OnEnableRecordingChanged -= SettingsOnEnableRecordingChanged;
+			node.OnEnableDialOutChanged -= SettingsOnEnableDialOutChanged;
 		}
 
 		private void SettingsOnMuteAllParticipantsAtMeetingStartChanged(object sender, BoolEventArgs boolEventArgs)
@@ -150,22 +150,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <param name="e"></param>
 		private void ViewOnMuteAllParticipantsButtonPressed(object sender, EventArgs e)
 		{
-			Settings.SetMuteAllParticipantsAtMeetingStart(!Settings.MuteAllParticipantsAtMeetingStart);
+			Node.SetMuteAllParticipantsAtMeetingStart(!Node.MuteAllParticipantsAtMeetingStart);
 		}
 
 		private void ViewOnMuteMyCameraButtonPressed(object sender, EventArgs eventArgs)
 		{
-			Settings.SetMuteMyCameraAtMeetingStart(!Settings.MuteMyCameraAtMeetingStart);
+			Node.SetMuteMyCameraAtMeetingStart(!Node.MuteMyCameraAtMeetingStart);
 		}
 
 		private void ViewOnEnableRecordButtonPressed(object sender, EventArgs eventArgs)
 		{
-			Settings.SetEnableRecording(!Settings.EnableRecording);
+			Node.SetEnableRecording(!Node.EnableRecording);
 		}
 
 		private void ViewOnEnableDialOutButtonPressed(object sender, EventArgs eventArgs)
 		{
-			Settings.SetEnableDialOut(!Settings.EnableDialOut);
+			Node.SetEnableDialOut(!Node.EnableDialOut);
 		}
 
 		#endregion

@@ -129,7 +129,12 @@
     <Compile Include="SettingsTree\SettingsTreeIcons.cs" />
     <Compile Include="SettingsTree\SettingsTreeImages.cs" />
     <Compile Include="SettingsTree\TouchDisplayRootSettingsNode.cs" />
-    <Compile Include="SettingsTree\Zoom\ZoomSettingsLeaf.cs" />
+    <Compile Include="SettingsTree\Zoom\ZoomSpeakerSettingsLeaf.cs" />
+    <Compile Include="SettingsTree\Zoom\ZoomGeneralSettingsLeaf.cs" />
+    <Compile Include="SettingsTree\Zoom\ZoomAdvancedSettingsLeaf.cs" />
+    <Compile Include="SettingsTree\Zoom\ZoomMicrophoneSettingsLeaf.cs" />
+    <Compile Include="SettingsTree\Zoom\ZoomCameraSettingsLeaf.cs" />
+    <Compile Include="SettingsTree\Zoom\ZoomSettingsNode.cs" />
     <Compile Include="Themes\AbstractConnectProUserInterfaceFactory.cs" />
     <Compile Include="Themes\Ccrm4000UserInterface\ConnectProCcrm4000UserInterface.cs" />
     <Compile Include="Themes\Ccrm4000UserInterface\ConnectProCcrm4000UserInterfaceFactory.cs" />

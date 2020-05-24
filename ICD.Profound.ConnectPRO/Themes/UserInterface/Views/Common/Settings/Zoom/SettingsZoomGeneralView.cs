@@ -2,12 +2,12 @@
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Zoom.SubSettings;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Zoom;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoom.SubSettings
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoom
 {
 	[ViewBinding(typeof(ISettingsZoomGeneralView))]
-	public sealed partial class SettingsZoomGeneralView : AbstractSettingsZoomSubView, ISettingsZoomGeneralView
+	public sealed partial class SettingsZoomGeneralView : AbstractUiView, ISettingsZoomGeneralView
 	{
 		/// <summary>
 		/// Raised when the user presses the mute all participants button.

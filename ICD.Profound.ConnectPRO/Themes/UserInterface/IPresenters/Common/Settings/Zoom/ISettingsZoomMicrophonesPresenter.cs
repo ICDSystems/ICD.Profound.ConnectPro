@@ -3,7 +3,7 @@ using ICD.Profound.ConnectPROCommon.SettingsTree.Zoom;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Zoom
 {
-	public interface ISettingsZoomPresenter : ISettingsNodeBasePresenter<ISettingsZoomView, ZoomSettingsLeaf>
-	{
-	}
+	public interface ISettingsZoomMicrophonesPresenter : ISettingsNodeBasePresenter<ISettingsZoomMicrophonesView, ZoomMicrophoneSettingsLeaf>
+    {
+    }
 }

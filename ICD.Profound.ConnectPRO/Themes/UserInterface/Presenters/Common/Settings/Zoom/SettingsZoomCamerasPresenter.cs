@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
@@ -6,15 +7,15 @@ using ICD.Connect.Devices;
 using ICD.Connect.Devices.Windows;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Zoom.SubSettings;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Zoom;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Zoom.SubSettings;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Zoom;
 using ICD.Profound.ConnectPROCommon.SettingsTree.Zoom;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings.Zoom.SubSettings
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings.Zoom
 {
     [PresenterBinding(typeof(ISettingsZoomCamerasPresenter))]
-    public sealed class SettingsZoomCamerasPresenter : AbstractSettingsZoomSubPresenter<ISettingsZoomCamerasView>, ISettingsZoomCamerasPresenter
+	public sealed class SettingsZoomCamerasPresenter : AbstractSettingsNodeBasePresenter<ISettingsZoomCamerasView, ZoomCameraSettingsLeaf>, ISettingsZoomCamerasPresenter
     {
         private readonly SafeCriticalSection m_RefreshSection;
 
@@ -69,7 +70,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
                 // Set the USB ID selection state.
                 WindowsDevicePathInfo? selectedUsbId =
-                    Settings == null || m_SelectedCamera == null ? null : Settings.GetUsbIdForCamera(m_SelectedCamera);
+					Node == null || m_SelectedCamera == null ? null : Node.GetUsbIdForCamera(m_SelectedCamera);
                 for (ushort index = 0; index < m_UsbIds.Length; index++)
                     view.SetZoomUsbIdButtonSelected(index, selectedUsbId == m_UsbIds[index]);
 
@@ -78,10 +79,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
                 for (ushort index = 0; index < m_UsbIds.Length; index++)
                 {
                     bool enabled =
-                        Settings != null &&
+						Node != null &&
                         m_SelectedCamera != null &&
                         m_UsbCameras.Except(m_SelectedCamera)
-                                    .All(c => Settings.GetUsbIdForCamera(c) != m_UsbIds[index]);
+									.All(c => Node.GetUsbIdForCamera(c) != m_UsbIds[index]);
 
                     anyEnabled |= enabled;
 
@@ -105,23 +106,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
         private string GetUsbLabel(WindowsDevicePathInfo usbInfo)
         {
-            return Settings.GetUsbDeviceName(usbInfo);
+			return Node.GetUsbDeviceName(usbInfo);
         }
 
         private void UpdateUsbCameras()
         {
-            m_UsbCameras = Settings == null ? new IDeviceBase[0] : Settings.GetCameraDevices().ToArray();
+			m_UsbCameras = Node == null ? new IDeviceBase[0] : Node.GetCameraDevices().ToArray();
             RefreshIfVisible();
         }
 
         private void UpdateUsbIds()
         {
-            m_UsbIds =
-                Settings == null
-                    ? new WindowsDevicePathInfo[0]
-                    : Settings.GetUsbIds()
-                              .OrderBy(u => GetUsbLabel(u))
-                              .ToArray();
+	        m_UsbIds =
+		        Node == null
+			        ? new WindowsDevicePathInfo[0]
+			        : Node.GetUsbIds()
+			              .OrderBy(u => GetUsbLabel(u))
+			              .ToArray();
             RefreshIfVisible();
         }
 
@@ -129,41 +130,41 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
         #region Settings Callbacks
 
-        protected override void Subscribe(ZoomSettingsLeaf settings)
+        protected override void Subscribe(ZoomCameraSettingsLeaf node)
         {
-            base.Subscribe(settings);
+            base.Subscribe(node);
 
-            if (settings == null)
+            if (node == null)
                 return;
 
-            settings.OnUsbCamerasChanged += SettingsOnUsbCamerasChanged;
-            settings.OnUsbIdsChanged += SettingsOnUsbIdsChanged;
+            node.OnUsbCamerasChanged += SettingsOnUsbCamerasChanged;
+            node.OnUsbIdsChanged += SettingsOnUsbIdsChanged;
 
             UpdateUsbCameras();
             UpdateUsbIds();
         }
 
-        protected override void Unsubscribe(ZoomSettingsLeaf settings)
+		protected override void Unsubscribe(ZoomCameraSettingsLeaf node)
         {
-            base.Unsubscribe(settings);
+            base.Unsubscribe(node);
 
-            if (settings == null)
+            if (node == null)
                 return;
 
-            settings.OnUsbCamerasChanged -= SettingsOnUsbCamerasChanged;
-            settings.OnUsbIdsChanged -= SettingsOnUsbIdsChanged;
+            node.OnUsbCamerasChanged -= SettingsOnUsbCamerasChanged;
+            node.OnUsbIdsChanged -= SettingsOnUsbIdsChanged;
 
             UpdateUsbCameras();
             UpdateUsbIds();
         }
 
-        private void SettingsOnUsbCamerasChanged(object sender, BoolEventArgs e)
+        private void SettingsOnUsbCamerasChanged(object sender, EventArgs eventArgs)
         {
             UpdateUsbCameras();
             RefreshIfVisible();
         }
 
-        private void SettingsOnUsbIdsChanged(object sender, BoolEventArgs e)
+        private void SettingsOnUsbIdsChanged(object sender, EventArgs eventArgs)
         {
             UpdateUsbIds();
             RefreshIfVisible();
@@ -205,10 +206,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
             if (!m_UsbIds.TryElementAt(e.Data, out usbId))
                 return;
 
-            if (usbId == Settings.GetUsbIdForCamera(m_SelectedCamera))
-                Settings.SetUsbIdForCamera(m_SelectedCamera, null);
+			if (usbId == Node.GetUsbIdForCamera(m_SelectedCamera))
+                Node.SetUsbIdForCamera(m_SelectedCamera, null);
             else
-                Settings.SetUsbIdForCamera(m_SelectedCamera, usbId);
+				Node.SetUsbIdForCamera(m_SelectedCamera, usbId);
         }
 
         protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)

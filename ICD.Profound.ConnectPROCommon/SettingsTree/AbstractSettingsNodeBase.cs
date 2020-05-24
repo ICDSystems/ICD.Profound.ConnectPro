@@ -7,25 +7,13 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree
 	{
 		private IConnectProRoom m_Room;
 
+		#region Properties
+
 		/// <summary>
 		/// The room in context for this settings node.
 		/// </summary>
 		[CanBeNull]
-		public IConnectProRoom Room
-		{
-			get { return m_Room; }
-			set
-			{
-				if (value == m_Room)
-					return;
-
-				Unsubscribe(m_Room);
-				m_Room = value;
-				Subscribe(m_Room);
-
-				Initialize(m_Room);
-			}
-		}
+		public IConnectProRoom Room { get { return m_Room; } }
 
 		/// <summary>
 		/// The name of the entry in the settings menu.
@@ -52,6 +40,8 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree
 		/// </summary>
 		public abstract bool Dirty { get; }
 
+		#endregion
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -69,11 +59,31 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree
 			Unsubscribe(m_Room);
 		}
 
+		#region Methods
+
 		/// <summary>
 		/// Sets the dirty state.
 		/// </summary>
 		/// <param name="dirty"></param>
 		public abstract void SetDirty(bool dirty);
+
+		/// <summary>
+		/// Sets the room.
+		/// </summary>
+		/// <param name="room"></param>
+		public virtual void SetRoom([CanBeNull] IConnectProRoom room)
+		{
+			if (room == m_Room)
+				return;
+
+			Unsubscribe(m_Room);
+			m_Room = room;
+			Subscribe(m_Room);
+
+			Initialize(m_Room);
+		}
+
+		#endregion
 
 		#region Room Callbacks
 

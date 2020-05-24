@@ -5,12 +5,11 @@ using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.Pages;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoom.SubSettings
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoom
 {
-	public sealed partial class SettingsZoomCamerasView
+	public sealed partial class SettingsZoomSpeakersView
 	{
-		private VtProDynamicButtonList m_CameraDeviceButtonList;
-		private VtProDynamicButtonList m_UsbIdButtonList;
+		private VtProDynamicButtonList m_SpeakerButtonList;
 		private VtProSubpage m_Subpage;
 
 		/// <summary>
@@ -23,19 +22,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoo
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 953
+				DigitalVisibilityJoin = 954
 			};
 
-            m_CameraDeviceButtonList = new VtProDynamicButtonList(18, panel as IPanelDevice, m_Subpage)
+            m_SpeakerButtonList = new VtProDynamicButtonList(23, panel as IPanelDevice, m_Subpage)
             {
 				MaxSize = 10
             };
-
-			m_UsbIdButtonList = new VtProDynamicButtonList(17, panel as IPanelDevice, m_Subpage)
-			{
-				DigitalEnableJoin = 960,
-				MaxSize = 10
-			};
         }
 
 		/// <summary>
@@ -45,8 +38,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoo
 		protected override IEnumerable<IVtProControl> GetChildren()
         {
             yield return m_Subpage;
-            yield return m_CameraDeviceButtonList;
-            yield return m_UsbIdButtonList;
+            yield return m_SpeakerButtonList;
         }
 	}
 }

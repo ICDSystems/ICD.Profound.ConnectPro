@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using ICD.Common.Utils.EventArguments;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Zoom.SubSettings
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Zoom
 {
-    public interface ISettingsZoomCamerasView : ISettingsZoomSubView
+	public interface ISettingsZoomCamerasView : IUiView
     {
         /// <summary>
         /// Raised when the user presses a camera device button from the list.

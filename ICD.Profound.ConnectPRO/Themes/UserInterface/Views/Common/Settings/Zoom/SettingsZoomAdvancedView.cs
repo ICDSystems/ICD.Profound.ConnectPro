@@ -2,12 +2,12 @@
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Zoom.SubSettings;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Zoom;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoom.SubSettings
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoom
 {
 	[ViewBinding(typeof(ISettingsZoomAdvancedView))]
-	public sealed partial class SettingsZoomAdvancedView : AbstractSettingsZoomSubView, ISettingsZoomAdvancedView
+	public sealed partial class SettingsZoomAdvancedView : AbstractUiView, ISettingsZoomAdvancedView
 	{
 		/// <summary>
 		/// Raised when the user presses the audio processing button.

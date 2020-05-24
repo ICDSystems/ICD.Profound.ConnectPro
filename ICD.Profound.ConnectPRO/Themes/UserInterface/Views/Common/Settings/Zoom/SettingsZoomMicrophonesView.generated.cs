@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using ICD.Connect.Panels;
+using ICD.Connect.Panels.Devices;
 using ICD.Connect.UI.Controls;
-using ICD.Connect.UI.Controls.Buttons;
+using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Controls.Pages;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoom.SubSettings
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoom
 {
-	public sealed partial class SettingsZoomAdvancedView
+	public sealed partial class SettingsZoomMicrophonesView
 	{
+		private VtProDynamicButtonList m_MicrophoneButtonList;
 		private VtProSubpage m_Subpage;
-		private VtProButton m_AudioProcessingButton;
-		private VtProButton m_AudioReverbButton;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -22,29 +22,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoo
 		{
 			m_Subpage = new VtProSubpage(panel, parent, index)
 			{
-				DigitalVisibilityJoin = 952
+				DigitalVisibilityJoin = 955
 			};
 
-			m_AudioProcessingButton = new VtProButton(panel, m_Subpage)
-			{
-				DigitalPressJoin = 411
-			};
-
-			m_AudioReverbButton = new VtProButton(panel, m_Subpage)
-			{
-				DigitalPressJoin = 412
-			};
-		}
+            m_MicrophoneButtonList = new VtProDynamicButtonList(24, panel as IPanelDevice, m_Subpage)
+            {
+				MaxSize = 10
+            };
+        }
 
 		/// <summary>
 		/// Gets the child controls.
 		/// </summary>
 		/// <returns></returns>
 		protected override IEnumerable<IVtProControl> GetChildren()
-		{
-			yield return m_Subpage;
-			yield return m_AudioProcessingButton;
-			yield return m_AudioReverbButton;
-		}
+        {
+            yield return m_Subpage;
+            yield return m_MicrophoneButtonList;
+        }
 	}
 }

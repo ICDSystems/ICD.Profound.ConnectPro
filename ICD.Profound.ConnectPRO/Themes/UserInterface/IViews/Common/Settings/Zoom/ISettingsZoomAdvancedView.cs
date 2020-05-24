@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Zoom.SubSettings
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Zoom
 {
-	public interface ISettingsZoomAdvancedView : ISettingsZoomSubView
+	public interface ISettingsZoomAdvancedView : IUiView
 	{
 		/// <summary>
 		/// Raised when the user presses the audio processing button.

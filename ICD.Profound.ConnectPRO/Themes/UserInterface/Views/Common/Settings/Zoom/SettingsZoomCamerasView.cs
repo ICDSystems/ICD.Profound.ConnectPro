@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
-using ICD.Connect.UI.Attributes;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Zoom.SubSettings;
 using ICD.Connect.Panels;
+using ICD.Connect.UI.Attributes;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Zoom;
 
-namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoom.SubSettings
+namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoom
 {
     [ViewBinding(typeof(ISettingsZoomCamerasView))]
-    public sealed partial class SettingsZoomCamerasView : AbstractSettingsZoomSubView, ISettingsZoomCamerasView
+    public sealed partial class SettingsZoomCamerasView : AbstractUiView, ISettingsZoomCamerasView
     {
         #region Events
 

@@ -26,7 +26,7 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree
 			yield return new ConferencingSettingsNode();
 			yield return new CueSettingsNode();
 			yield return new RoomCombineSettingsNode();
-			yield return new ZoomSettingsLeaf();
+			yield return new ZoomSettingsNode();
 		}
 	}
 }

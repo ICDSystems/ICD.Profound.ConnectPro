@@ -8,7 +8,9 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree
 		/// <summary>
 		/// The room in context for this settings node.
 		/// </summary>
-		IConnectProRoom Room { get; set; }
+		IConnectProRoom Room { get; }
+
+		void SetRoom(IConnectProRoom room);
 
 		/// <summary>
 		/// The name of the entry in the settings menu.

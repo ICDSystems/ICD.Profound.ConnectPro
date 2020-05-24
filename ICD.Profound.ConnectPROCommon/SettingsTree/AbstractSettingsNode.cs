@@ -59,7 +59,7 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree
 			base.Initialize(room);
 
 			foreach (ISettingsNodeBase child in GetChildren())
-				child.Room = room;
+				child.SetRoom(room);
 		}
 	}
 }
