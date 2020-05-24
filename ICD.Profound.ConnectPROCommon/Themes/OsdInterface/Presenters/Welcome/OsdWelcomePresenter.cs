@@ -109,7 +109,8 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Welcome
 				view.SetAvailabilityText(currentAvailability);
 
 				// Refresh again when a booking expires
-				m_RefreshTimer.Reset(refreshInterval);
+				if (Room != null)
+					m_RefreshTimer.Reset(refreshInterval);
 			}
 			finally
 			{
