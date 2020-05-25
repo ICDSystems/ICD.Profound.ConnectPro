@@ -78,12 +78,15 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters
 				else
 					view.SetLabelText("Are you here for your meeting? Let's get started.");
 
-				if (nextBooking == null)
-					m_RefreshTimer.Reset(DEFAULT_REFRESH_TIME);
-				else if (nextBooking.StartTime - TimeSpan.FromMinutes(15) > now)
-					m_RefreshTimer.Reset((long) (nextBooking.StartTime - now).TotalMilliseconds + 1000);
-				else
-					m_RefreshTimer.Reset((long) (nextBooking.EndTime - now).TotalMilliseconds + 1000);
+				if (Room != null)
+				{
+					if (nextBooking == null)
+						m_RefreshTimer.Reset(DEFAULT_REFRESH_TIME);
+					else if (nextBooking.StartTime - TimeSpan.FromMinutes(15) > now)
+						m_RefreshTimer.Reset((long)(nextBooking.StartTime - now).TotalMilliseconds + 1000);
+					else
+						m_RefreshTimer.Reset((long)(nextBooking.EndTime - now).TotalMilliseconds + 1000);
+				}
 			}
 			finally
 			{

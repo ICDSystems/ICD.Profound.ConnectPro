@@ -42,14 +42,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 		/// Gets/sets the source for the presenter.
 		/// </summary>
 		[CanBeNull]
-		public ISource Source
-		{
-			get { return m_Source; }
-			set
-			{
-				SetSource(value);
-			}
-		}
+		public ISource Source { get { return m_Source; } set { SetSource(value); } }
 
 		/// <summary>
 		/// Gets/sets the room for the source.
@@ -194,22 +187,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Sources
 
 		#region Source Callbacks
 
-		private void SetSource(ISource source)
+		private void SetSource([CanBeNull] ISource source)
 		{
 			if (source == m_Source)
 				return;
 
 			Unsubscribe(m_Source);
-
 			m_Source = source;
-
 			Subscribe(m_Source);
 
 			// Get the room that contains the source
 			RoomForSource = Room == null || Source == null ? null : Room.Routing.Sources.GetRoomForSource(Source);
 
 			UpdateAnySourceOnline();
-			EnableWhenOffline = source.EnableWhenOffline;
+			EnableWhenOffline = source != null && source.EnableWhenOffline;
 			UpdateSource();
 		}
 
