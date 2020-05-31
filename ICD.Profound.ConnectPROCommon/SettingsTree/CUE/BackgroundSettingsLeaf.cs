@@ -78,7 +78,7 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.CUE
 		/// </summary>
 		public bool BackgroundMotion
 		{
-			get { return Theme == null ? false : Theme.CueMotion; }
+			get { return Theme != null && Theme.CueMotion; }
 			set
 			{
 				if (Theme == null || value == Theme.CueMotion)
@@ -122,7 +122,7 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.CUE
 
 		private void UpdateBackgroundMotion()
 		{
-			BackgroundMotion = Theme == null ? false : Theme.CueMotion;
+			BackgroundMotion = Theme != null && Theme.CueMotion;
 		}
 
 		private void UpdateTheme()
