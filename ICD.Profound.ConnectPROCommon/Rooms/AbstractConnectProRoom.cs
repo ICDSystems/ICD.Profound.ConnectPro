@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ICD.Common.Logging.LoggingContexts;
 using ICD.Common.Properties;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
@@ -84,7 +85,10 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 
 				m_IsInMeeting = value;
 
-				Logger.Set("In Meeting", eSeverity.Informational, m_IsInMeeting);
+				Logger.LogSetTo(eSeverity.Informational, "IsInMeeting", m_IsInMeeting);
+				Activities.LogActivity(m_IsInMeeting
+					                   ? new Activity(Activity.ePriority.Medium, "In Meeting", "In Meeting", eSeverity.Informational)
+					                   : new Activity(Activity.ePriority.Low, "In Meeting", "Out Of Meeting", eSeverity.Informational));
 
 				HandleIsInMeetingChanged(m_IsInMeeting);
 
