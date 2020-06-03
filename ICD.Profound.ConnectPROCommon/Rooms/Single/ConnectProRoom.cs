@@ -113,6 +113,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Single
 			CalendarPoint point = new CalendarPoint
 			{
 				Id = id,
+				Uuid = OriginatorUtils.GenerateUuid(Core, id),
 				Name = calendarControl.Name,
 			};
 			point.SetControl(calendarControl);
