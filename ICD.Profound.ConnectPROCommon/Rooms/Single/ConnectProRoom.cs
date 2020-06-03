@@ -162,6 +162,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Single
 					ConferencePoint point = new ConferencePoint
 					{
 						Id = id,
+						Uuid = OriginatorUtils.GenerateUuid(Core, id),
 						Name = control.Name,
 						Type = control.Supports
 					};
