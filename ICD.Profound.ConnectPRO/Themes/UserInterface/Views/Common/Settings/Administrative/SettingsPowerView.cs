@@ -15,6 +15,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 
 		public event EventHandler OnWeekdaysButtonPressed;
 		public event EventHandler OnWeekendsButtonPressed;
+
 		public event EventHandler OnWakeHourIncrementButtonPressed;
 		public event EventHandler OnWakeHourDecrementButtonPressed;
 		public event EventHandler OnWakeMinuteIncrementButtonPressed;
@@ -23,10 +24,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 		public event EventHandler OnSleepHourDecrementButtonPressed;
 		public event EventHandler OnSleepMinuteIncrementButtonPressed;
 		public event EventHandler OnSleepMinuteDecrementButtonPressed;
+
+		public event EventHandler OnIncrementDecrementButtonReleased;
+
 		public event EventHandler OnDisplayPowerTogglePressed;
 		public event EventHandler OnEnableWakeTogglePressed;
 		public event EventHandler OnEnableSleepTogglePressed;
-
 
 		/// <summary>
 		/// Constructor.
@@ -53,6 +56,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 			OnSleepHourDecrementButtonPressed = null;
 			OnSleepMinuteIncrementButtonPressed = null;
 			OnSleepMinuteDecrementButtonPressed = null;
+			OnIncrementDecrementButtonReleased = null;
 			OnDisplayPowerTogglePressed = null;
 			OnEnableWakeTogglePressed = null;
 			OnEnableSleepTogglePressed = null;
@@ -135,14 +139,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 			m_DaysButtons.OnButtonPressed += DaysButtonsOnButtonPressed;
 
 			m_WakeHourIncrementButton.OnPressed += WakeHourIncrementButtonOnPressed;
+			m_WakeHourIncrementButton.OnReleased += WakeHourIncrementButtonOnReleased;
 			m_WakeHourDecrementButton.OnPressed += WakeHourDecrementButtonOnPressed;
+			m_WakeHourDecrementButton.OnReleased += WakeHourDecrementButtonOnReleased;
 			m_WakeMinuteIncrementButton.OnPressed += WakeMinuteIncrementButtonOnPressed;
+			m_WakeMinuteIncrementButton.OnReleased += WakeMinuteIncrementButtonOnReleased;
 			m_WakeMinuteDecrementButton.OnPressed += WakeMinuteDecrementButtonOnPressed;
+			m_WakeMinuteDecrementButton.OnReleased += WakeMinuteDecrementButtonOnReleased;
 
 			m_SleepHourIncrementButton.OnPressed += SleepHourIncrementButtonOnPressed;
+			m_SleepHourIncrementButton.OnReleased += SleepHourIncrementButtonOnReleased;
 			m_SleepHourDecrementButton.OnPressed += SleepHourDecrementButtonOnPressed;
+			m_SleepHourDecrementButton.OnReleased += SleepHourDecrementButtonOnReleased;
 			m_SleepMinuteIncrementButton.OnPressed += SleepMinuteIncrementButtonOnPressed;
+			m_SleepMinuteIncrementButton.OnReleased += SleepMinuteIncrementButtonOnReleased;
 			m_SleepMinuteDecrementButton.OnPressed += SleepMinuteDecrementButtonOnPressed;
+			m_SleepMinuteDecrementButton.OnReleased += SleepMinuteDecrementButtonOnReleased;
+
 
 			m_DisplayPowerToggleButton.OnPressed += DisplayPowerToggleButtonOnPressed;
 			m_EnableWakeToggleButton.OnPressed += EnableWakeToggleButtonOnPressed;
@@ -159,14 +172,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 			m_DaysButtons.OnButtonPressed -= DaysButtonsOnButtonPressed;
 
 			m_WakeHourIncrementButton.OnPressed -= WakeHourIncrementButtonOnPressed;
+			m_WakeHourIncrementButton.OnReleased -= WakeHourIncrementButtonOnReleased;
 			m_WakeHourDecrementButton.OnPressed -= WakeHourDecrementButtonOnPressed;
+			m_WakeHourDecrementButton.OnReleased -= WakeHourDecrementButtonOnReleased;
 			m_WakeMinuteIncrementButton.OnPressed -= WakeMinuteIncrementButtonOnPressed;
+			m_WakeMinuteIncrementButton.OnReleased -= WakeMinuteIncrementButtonOnReleased;
 			m_WakeMinuteDecrementButton.OnPressed -= WakeMinuteDecrementButtonOnPressed;
+			m_WakeMinuteDecrementButton.OnReleased -= WakeMinuteDecrementButtonOnReleased;
 
 			m_SleepHourIncrementButton.OnPressed -= SleepHourIncrementButtonOnPressed;
+			m_SleepHourIncrementButton.OnReleased -= SleepHourIncrementButtonOnReleased;
 			m_SleepHourDecrementButton.OnPressed -= SleepHourDecrementButtonOnPressed;
+			m_SleepHourDecrementButton.OnReleased -= SleepHourDecrementButtonOnReleased;
 			m_SleepMinuteIncrementButton.OnPressed -= SleepMinuteIncrementButtonOnPressed;
+			m_SleepMinuteIncrementButton.OnReleased -= SleepMinuteIncrementButtonOnReleased;
 			m_SleepMinuteDecrementButton.OnPressed -= SleepMinuteDecrementButtonOnPressed;
+			m_SleepMinuteDecrementButton.OnReleased -= SleepMinuteDecrementButtonOnReleased;
 
 			m_DisplayPowerToggleButton.OnPressed -= DisplayPowerToggleButtonOnPressed;
 			m_EnableWakeToggleButton.OnPressed -= EnableWakeToggleButtonOnPressed;
@@ -192,9 +213,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 			OnWakeHourIncrementButtonPressed.Raise(this);
 		}
 
+		private void WakeHourIncrementButtonOnReleased(object sender, EventArgs e)
+		{
+			OnIncrementDecrementButtonReleased.Raise(this);
+		}
+
 		private void WakeHourDecrementButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnWakeHourDecrementButtonPressed.Raise(this);
+		}
+
+		private void WakeHourDecrementButtonOnReleased(object sender, EventArgs e)
+		{
+			OnIncrementDecrementButtonReleased.Raise(this);
 		}
 
 		private void WakeMinuteIncrementButtonOnPressed(object sender, EventArgs eventArgs)
@@ -202,9 +233,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 			OnWakeMinuteIncrementButtonPressed.Raise(this);
 		}
 
+		private void WakeMinuteIncrementButtonOnReleased(object sender, EventArgs e)
+		{
+			OnIncrementDecrementButtonReleased.Raise(this);
+		}
+
 		private void WakeMinuteDecrementButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnWakeMinuteDecrementButtonPressed.Raise(this);
+		}
+
+		private void WakeMinuteDecrementButtonOnReleased(object sender, EventArgs e)
+		{
+			OnIncrementDecrementButtonReleased.Raise(this);
 		}
 
 		private void SleepHourIncrementButtonOnPressed(object sender, EventArgs eventArgs)
@@ -212,9 +253,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 			OnSleepHourIncrementButtonPressed.Raise(this);
 		}
 
+		private void SleepHourIncrementButtonOnReleased(object sender, EventArgs e)
+		{
+			OnIncrementDecrementButtonReleased.Raise(this);
+		}
+
 		private void SleepHourDecrementButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnSleepHourDecrementButtonPressed.Raise(this);
+		}
+
+		private void SleepHourDecrementButtonOnReleased(object sender, EventArgs e)
+		{
+			OnIncrementDecrementButtonReleased.Raise(this);
 		}
 
 		private void SleepMinuteIncrementButtonOnPressed(object sender, EventArgs eventArgs)
@@ -222,9 +273,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 			OnSleepMinuteIncrementButtonPressed.Raise(this);
 		}
 
+		private void SleepMinuteIncrementButtonOnReleased(object sender, EventArgs e)
+		{
+			OnIncrementDecrementButtonReleased.Raise(this);
+		}
+
 		private void SleepMinuteDecrementButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnSleepMinuteDecrementButtonPressed.Raise(this);
+		}
+
+		private void SleepMinuteDecrementButtonOnReleased(object sender, EventArgs e)
+		{
+			OnIncrementDecrementButtonReleased.Raise(this);
 		}
 
 		private void DisplayPowerToggleButtonOnPressed(object sender, EventArgs eventArgs)
@@ -236,6 +297,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 		{
 			OnEnableWakeTogglePressed.Raise(this);
 		}
+
 		private void EnableSleepToggleButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnEnableSleepTogglePressed.Raise(this);

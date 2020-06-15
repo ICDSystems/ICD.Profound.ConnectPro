@@ -1,6 +1,7 @@
 ﻿using System;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
+using ICD.Common.Utils.Timers;
 using ICD.Connect.Partitioning.Commercial;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -14,9 +15,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 	[PresenterBinding(typeof(ISettingsPowerPresenter))]
 	public sealed class SettingsPowerPresenter : AbstractSettingsNodeBasePresenter<ISettingsPowerView, WakeSleepSettingsLeaf>, ISettingsPowerPresenter
 	{
+		private readonly Repeater m_Repeater;
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private bool m_Weekend;
+		private const long BEFORE_REPEAT = 500;
+		private const long HOUR_BETWEEN_REPEAT = 250;
+		private const long MINUTE_BETWEEN_REPEAT = 220;
 
 		public bool Weekend
 		{
@@ -42,6 +47,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
+			m_Repeater = new Repeater();
 		}
 
 		/// <summary>
@@ -379,6 +385,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			view.OnSleepMinuteIncrementButtonPressed += ViewOnSleepMinuteIncrementButtonPressed;
 			view.OnSleepMinuteDecrementButtonPressed += ViewOnSleepMinuteDecrementButtonPressed;
 
+			view.OnIncrementDecrementButtonReleased += ViewOnIncrementDecrementButtonReleased;
+
 			view.OnDisplayPowerTogglePressed += ViewOnDisplayPowerTogglePressed;
 			view.OnEnableWakeTogglePressed += ViewOnEnableWakeTogglePressed;
 			view.OnEnableSleepTogglePressed += ViewOnEnableSleepTogglePressed;
@@ -405,6 +413,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			view.OnSleepMinuteIncrementButtonPressed -= ViewOnSleepMinuteIncrementButtonPressed;
 			view.OnSleepMinuteDecrementButtonPressed -= ViewOnSleepMinuteDecrementButtonPressed;
 
+			view.OnIncrementDecrementButtonReleased -= ViewOnIncrementDecrementButtonReleased;
+
 			view.OnDisplayPowerTogglePressed -= ViewOnDisplayPowerTogglePressed;
 			view.OnEnableWakeTogglePressed -= ViewOnEnableWakeTogglePressed;
 			view.OnEnableSleepTogglePressed -= ViewOnEnableSleepTogglePressed;
@@ -422,42 +432,47 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 		private void ViewOnWakeHourIncrementButtonPressed(object sender, EventArgs eventArgs)
 		{
-			IncrementWakeHours(1);
+			m_Repeater.Start(b => IncrementWakeHours(1), BEFORE_REPEAT, HOUR_BETWEEN_REPEAT);
 		}
 
 		private void ViewOnWakeHourDecrementButtonPressed(object sender, EventArgs eventArgs)
 		{
-			IncrementWakeHours(-1);
+			m_Repeater.Start(b => IncrementWakeHours(-1), BEFORE_REPEAT, HOUR_BETWEEN_REPEAT);
 		}
 
 		private void ViewOnWakeMinuteIncrementButtonPressed(object sender, EventArgs eventArgs)
 		{
-			IncrementWakeMinutes(1);
+			m_Repeater.Start(b => IncrementWakeMinutes(1), BEFORE_REPEAT, MINUTE_BETWEEN_REPEAT);
 		}
 
 		private void ViewOnWakeMinuteDecrementButtonPressed(object sender, EventArgs eventArgs)
 		{
-			IncrementWakeMinutes(-1);
+			m_Repeater.Start(b => IncrementWakeMinutes(-1), BEFORE_REPEAT, MINUTE_BETWEEN_REPEAT);
 		}
 
 		private void ViewOnSleepHourIncrementButtonPressed(object sender, EventArgs eventArgs)
 		{
-			IncrementSleepHours(1);
+			m_Repeater.Start(b => IncrementSleepHours(1), BEFORE_REPEAT, HOUR_BETWEEN_REPEAT);
 		}
 
 		private void ViewOnSleepHourDecrementButtonPressed(object sender, EventArgs eventArgs)
 		{
-			IncrementSleepHours(-1);
+			m_Repeater.Start(b => IncrementSleepHours(-1), BEFORE_REPEAT, HOUR_BETWEEN_REPEAT);
 		}
 
 		private void ViewOnSleepMinuteIncrementButtonPressed(object sender, EventArgs eventArgs)
 		{
-			IncrementSleepMinutes(1);
+			m_Repeater.Start(b => IncrementSleepMinutes(1), BEFORE_REPEAT, MINUTE_BETWEEN_REPEAT);
 		}
 
 		private void ViewOnSleepMinuteDecrementButtonPressed(object sender, EventArgs eventArgs)
 		{
-			IncrementSleepMinutes(-1);
+			m_Repeater.Start(b => IncrementSleepMinutes(-1), BEFORE_REPEAT, MINUTE_BETWEEN_REPEAT);
+		}
+
+		private void ViewOnIncrementDecrementButtonReleased(object sender, EventArgs eventArgs)
+		{
+			m_Repeater.Stop();
 		}
 
 		private void ViewOnDisplayPowerTogglePressed(object sender, EventArgs e)

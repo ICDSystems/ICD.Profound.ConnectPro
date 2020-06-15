@@ -1,4 +1,5 @@
 ﻿using System;
+using ICD.Common.Utils.EventArguments;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Administrative
 {
@@ -16,6 +17,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Ad
 		event EventHandler OnSleepHourDecrementButtonPressed;
 		event EventHandler OnSleepMinuteIncrementButtonPressed;
 		event EventHandler OnSleepMinuteDecrementButtonPressed;
+
+		event EventHandler OnIncrementDecrementButtonReleased;
 
 		event EventHandler OnDisplayPowerTogglePressed;
 		event EventHandler OnEnableWakeTogglePressed;
