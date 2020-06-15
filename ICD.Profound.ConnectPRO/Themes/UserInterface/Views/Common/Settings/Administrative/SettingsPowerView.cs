@@ -23,8 +23,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 		public event EventHandler OnSleepHourDecrementButtonPressed;
 		public event EventHandler OnSleepMinuteIncrementButtonPressed;
 		public event EventHandler OnSleepMinuteDecrementButtonPressed;
-		public event EventHandler OnIsAwakeTogglePressed;
-		public event EventHandler OnEnableTogglePressed;
+		public event EventHandler OnDisplayPowerTogglePressed;
+		public event EventHandler OnEnableWakeTogglePressed;
+		public event EventHandler OnEnableSleepTogglePressed;
+
 
 		/// <summary>
 		/// Constructor.
@@ -51,8 +53,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 			OnSleepHourDecrementButtonPressed = null;
 			OnSleepMinuteIncrementButtonPressed = null;
 			OnSleepMinuteDecrementButtonPressed = null;
-			OnIsAwakeTogglePressed = null;
-			OnEnableTogglePressed = null;
+			OnDisplayPowerTogglePressed = null;
+			OnEnableWakeTogglePressed = null;
+			OnEnableSleepTogglePressed = null;
 
 			base.Dispose();
 		}
@@ -69,16 +72,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 			m_DaysButtons.SetItemSelected(INDEX_WEEKENDS, selected);
 		}
 
-		public void SetIsAwakeToggleSelected(bool selected)
+		public void SetDisplayPowerToggleSelected(bool selected)
 		{
 			// Button graphic defaults to selected
-			m_IsAwakeToggleButton.SetSelected(!selected);
+			m_DisplayPowerToggleButton.SetSelected(!selected);
 		}
 
-		public void SetEnableToggleSelected(bool selected)
+		public void SetEnableWakeToggleSelected(bool selected)
 		{
-			// Button graphic defaults to selected
-			m_EnableToggleButton.SetSelected(!selected);
+			// Wake Toggle Button graphic defaults to selected
+			m_EnableWakeToggleButton.SetSelected(!selected);
+		}
+		public void SetEnableSleepToggleSelected(bool selected)
+		{
+			// Sleep Toggle Button graphic defaults to selected
+			m_EnableSleepToggleButton.SetSelected(!selected);
 		}
 
 		public void SetWakeHour(int hour)
@@ -99,6 +107,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 		public void SetSleepMinute(int minute)
 		{
 			m_SleepMinuteLabel.SetLabelText(minute.ToString("00"));
+		}
+
+		public void EnableWakeControls(bool enabled)
+		{
+			// All of the wake controls share the same join
+			m_WakeMinuteIncrementButton.Enable(enabled);
+		}
+
+		public void EnableSleepControls(bool enabled)
+		{
+			// All of the sleep controls share the same join
+			m_SleepMinuteIncrementButton.Enable(enabled);
 		}
 
 		#endregion
@@ -124,8 +144,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 			m_SleepMinuteIncrementButton.OnPressed += SleepMinuteIncrementButtonOnPressed;
 			m_SleepMinuteDecrementButton.OnPressed += SleepMinuteDecrementButtonOnPressed;
 
-			m_IsAwakeToggleButton.OnPressed += IsAwakeToggleButtonOnPressed;
-			m_EnableToggleButton.OnPressed += EnableToggleButtonOnPressed;
+			m_DisplayPowerToggleButton.OnPressed += DisplayPowerToggleButtonOnPressed;
+			m_EnableWakeToggleButton.OnPressed += EnableWakeToggleButtonOnPressed;
+			m_EnableSleepToggleButton.OnPressed += EnableSleepToggleButtonOnPressed;
 		}
 
 		/// <summary>
@@ -147,8 +168,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 			m_SleepMinuteIncrementButton.OnPressed -= SleepMinuteIncrementButtonOnPressed;
 			m_SleepMinuteDecrementButton.OnPressed -= SleepMinuteDecrementButtonOnPressed;
 
-			m_IsAwakeToggleButton.OnPressed -= IsAwakeToggleButtonOnPressed;
-			m_EnableToggleButton.OnPressed -= EnableToggleButtonOnPressed;
+			m_DisplayPowerToggleButton.OnPressed -= DisplayPowerToggleButtonOnPressed;
+			m_EnableWakeToggleButton.OnPressed -= EnableWakeToggleButtonOnPressed;
+			m_EnableSleepToggleButton.OnPressed -= EnableSleepToggleButtonOnPressed;
 		}
 
 		private void DaysButtonsOnButtonPressed(object sender, UShortEventArgs eventArgs)
@@ -205,14 +227,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 			OnSleepMinuteDecrementButtonPressed.Raise(this);
 		}
 
-		private void IsAwakeToggleButtonOnPressed(object sender, EventArgs eventArgs)
+		private void DisplayPowerToggleButtonOnPressed(object sender, EventArgs eventArgs)
 		{
-			OnIsAwakeTogglePressed.Raise(this);
+			OnDisplayPowerTogglePressed.Raise(this);
 		}
 
-		private void EnableToggleButtonOnPressed(object sender, EventArgs eventArgs)
+		private void EnableWakeToggleButtonOnPressed(object sender, EventArgs eventArgs)
 		{
-			OnEnableTogglePressed.Raise(this);
+			OnEnableWakeTogglePressed.Raise(this);
+		}
+		private void EnableSleepToggleButtonOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnEnableSleepTogglePressed.Raise(this);
 		}
 
 		#endregion

@@ -30,8 +30,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 		private VtProSimpleLabel m_SleepHourLabel;
 		private VtProSimpleLabel m_SleepMinuteLabel;
 
-		private VtProButton m_IsAwakeToggleButton;
-		private VtProButton m_EnableToggleButton;
+		private VtProButton m_DisplayPowerToggleButton;
+		private VtProButton m_EnableWakeToggleButton;
+		private VtProButton m_EnableSleepToggleButton;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -50,72 +51,89 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 
 			m_WakeHourIncrementButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 802
+				DigitalPressJoin = 802,
+				DigitalEnableJoin = 398
 			};
 
 			m_WakeHourDecrementButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 803
+				DigitalPressJoin = 803,
+				DigitalEnableJoin = 398
 			};
 
 			m_WakeMinuteIncrementButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 804
+				DigitalPressJoin = 804,
+				DigitalEnableJoin = 398
 			};
 
 			m_WakeMinuteDecrementButton = new VtProButton(panel, m_Subpage)
 			{
-				DigitalPressJoin = 805
-			};
-
-			m_SleepHourIncrementButton = new VtProButton(panel, m_Subpage)
-			{
-				DigitalPressJoin = 806
-			};
-
-			m_SleepHourDecrementButton = new VtProButton(panel, m_Subpage)
-			{
-				DigitalPressJoin = 807
-			};
-
-			m_SleepMinuteIncrementButton = new VtProButton(panel, m_Subpage)
-			{
-				DigitalPressJoin = 808
-			};
-
-			m_SleepMinuteDecrementButton = new VtProButton(panel, m_Subpage)
-			{
-				DigitalPressJoin = 809
+				DigitalPressJoin = 805,
+				DigitalEnableJoin = 398
 			};
 
 			m_WakeHourLabel = new VtProSimpleLabel(panel, m_Subpage)
 			{
-				IndirectTextJoin = 810
+				IndirectTextJoin = 810,
+				DigitalEnableJoin = 398
 			};
 
 			m_WakeMinuteLabel = new VtProSimpleLabel(panel, m_Subpage)
 			{
-				IndirectTextJoin = 811
+				IndirectTextJoin = 811,
+				DigitalEnableJoin = 398
+			};
+
+			m_SleepHourIncrementButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 806,
+				DigitalEnableJoin = 399
+			};
+
+			m_SleepHourDecrementButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 807,
+				DigitalEnableJoin = 399
+			};
+
+			m_SleepMinuteIncrementButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 808,
+				DigitalEnableJoin = 399
+			};
+
+			m_SleepMinuteDecrementButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 809,
+				DigitalEnableJoin = 399
 			};
 
 			m_SleepHourLabel = new VtProSimpleLabel(panel, m_Subpage)
 			{
-				IndirectTextJoin = 812
+				IndirectTextJoin = 812,
+				DigitalEnableJoin = 399
 			};
 
 			m_SleepMinuteLabel = new VtProSimpleLabel(panel, m_Subpage)
 			{
-				IndirectTextJoin = 813
+				IndirectTextJoin = 813,
+				DigitalEnableJoin = 399
 			};
 
-			m_IsAwakeToggleButton = new VtProButton(panel, m_Subpage)
+			m_DisplayPowerToggleButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 408
 			};
 
-			m_EnableToggleButton = new VtProButton(panel, m_Subpage)
+			m_EnableWakeToggleButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 406
+			};
+
+			m_EnableSleepToggleButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 407
 			};
 		}
 
@@ -145,8 +163,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 			yield return m_SleepHourLabel;
 			yield return m_SleepMinuteLabel;
 
-			yield return m_IsAwakeToggleButton;
-			yield return m_EnableToggleButton;
+			yield return m_DisplayPowerToggleButton;
+			yield return m_EnableWakeToggleButton;
+			yield return m_EnableSleepToggleButton;
 		}
 	}
 }

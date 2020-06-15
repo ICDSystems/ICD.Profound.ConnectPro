@@ -58,7 +58,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			{
 				// Power
 				bool isAwake = Node != null && Node.IsAwake;
-				view.SetIsAwakeToggleSelected(isAwake);
+				view.SetDisplayPowerToggleSelected(isAwake);
 
 				// Schedule
 				WakeSchedule wakeSchedule = Node == null ? null : Node.WakeSchedule;
@@ -89,13 +89,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				view.SetWeekendsButtonSelected(Weekend);
 				view.SetWeekdaysButtonSelected(!Weekend);
 
-				bool enabled =
+				bool wakeEnabled =
 					wakeSchedule != null &&
 					(Weekend
-						? wakeSchedule.WeekendEnable
-						: wakeSchedule.WeekdayEnable);
+						? wakeSchedule.WeekendEnableWake 
+						: wakeSchedule.WeekdayEnableWake);
 
-				view.SetEnableToggleSelected(enabled);
+				bool sleepEnabled =
+					wakeSchedule != null &&
+					(Weekend
+						? wakeSchedule.WeekendEnableSleep
+						: wakeSchedule.WeekdayEnableSleep);
+
+				view.SetEnableWakeToggleSelected(wakeEnabled);
+				view.EnableWakeControls(wakeEnabled);
+
+				view.SetEnableSleepToggleSelected(sleepEnabled);
+				view.EnableSleepControls(sleepEnabled);
 			}
 			finally
 			{
@@ -231,7 +241,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			RefreshIfVisible();
 		}
 
-		private void ToggleEnabled()
+		/*private void ToggleEnabled()
 		{
 			m_RefreshSection.Enter();
 
@@ -244,6 +254,53 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 					Node.WakeSchedule.WeekendEnable = !Node.WakeSchedule.WeekendEnable;
 				else
 					Node.WakeSchedule.WeekdayEnable = !Node.WakeSchedule.WeekdayEnable;
+
+				Node.SetDirty(true);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+
+			Refresh();
+		}
+		*/
+		private void ToggleEnabledWake()
+		{
+			m_RefreshSection.Enter();
+
+			try
+			{
+				if (Node == null)
+					return;
+
+				if (Weekend)
+					Node.WakeSchedule.WeekendEnableWake = !Node.WakeSchedule.WeekendEnableWake;
+				else
+					Node.WakeSchedule.WeekdayEnableWake = !Node.WakeSchedule.WeekdayEnableWake;
+
+				Node.SetDirty(true);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+
+			Refresh();
+		}
+		private void ToggleEnabledSleep()
+		{
+			m_RefreshSection.Enter();
+
+			try
+			{
+				if (Node == null)
+					return;
+
+				if (Weekend)
+					Node.WakeSchedule.WeekendEnableSleep = !Node.WakeSchedule.WeekendEnableSleep;
+				else
+					Node.WakeSchedule.WeekdayEnableSleep = !Node.WakeSchedule.WeekdayEnableSleep;
 
 				Node.SetDirty(true);
 			}
@@ -322,8 +379,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			view.OnSleepMinuteIncrementButtonPressed += ViewOnSleepMinuteIncrementButtonPressed;
 			view.OnSleepMinuteDecrementButtonPressed += ViewOnSleepMinuteDecrementButtonPressed;
 
-			view.OnIsAwakeTogglePressed += ViewOnIsAwakeTogglePressed;
-			view.OnEnableTogglePressed += ViewOnEnableTogglePressed;
+			view.OnDisplayPowerTogglePressed += ViewOnDisplayPowerTogglePressed;
+			view.OnEnableWakeTogglePressed += ViewOnEnableWakeTogglePressed;
+			view.OnEnableSleepTogglePressed += ViewOnEnableSleepTogglePressed;
 		}
 
 		/// <summary>
@@ -347,8 +405,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			view.OnSleepMinuteIncrementButtonPressed -= ViewOnSleepMinuteIncrementButtonPressed;
 			view.OnSleepMinuteDecrementButtonPressed -= ViewOnSleepMinuteDecrementButtonPressed;
 
-			view.OnIsAwakeTogglePressed -= ViewOnIsAwakeTogglePressed;
-			view.OnEnableTogglePressed -= ViewOnEnableTogglePressed;
+			view.OnDisplayPowerTogglePressed -= ViewOnDisplayPowerTogglePressed;
+			view.OnEnableWakeTogglePressed -= ViewOnEnableWakeTogglePressed;
+			view.OnEnableSleepTogglePressed -= ViewOnEnableSleepTogglePressed;
 		}
 
 		private void ViewOnWeekdaysButtonPressed(object sender, EventArgs eventArgs)
@@ -401,14 +460,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			IncrementSleepMinutes(-1);
 		}
 
-		private void ViewOnIsAwakeTogglePressed(object sender, EventArgs e)
+		private void ViewOnDisplayPowerTogglePressed(object sender, EventArgs e)
 		{
 			ToggleIsAwake();
 		}
 
-		private void ViewOnEnableTogglePressed(object sender, EventArgs eventArgs)
+		private void ViewOnEnableWakeTogglePressed(object sender, EventArgs eventArgs)
 		{
-			ToggleEnabled();
+			ToggleEnabledWake();
+		}
+		private void ViewOnEnableSleepTogglePressed(object sender, EventArgs eventArgs)
+		{
+			ToggleEnabledSleep();
 		}
 
 		#endregion
