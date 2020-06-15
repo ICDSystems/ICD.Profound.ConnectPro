@@ -25,6 +25,7 @@ using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.Panels.Devices;
+using ICD.Connect.Partitioning.Commercial.Controls.Occupancy;
 using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Destinations;
@@ -350,6 +351,21 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 
 			// End the meeting whenever the combine state changes
 			EndMeeting(false);
+		}
+
+		/// <summary>
+		/// Override to handle the room becoming occupied or vacated.
+		/// </summary>
+		/// <param name="occupancyState"></param>
+		protected override void HandleOccupiedChanged(eOccupancyState occupancyState)
+		{
+			base.HandleOccupiedChanged(occupancyState);
+
+			if (occupancyState != eOccupancyState.Occupied)
+				return;
+
+			if (!IsInMeeting)
+				Wake();
 		}
 
 		/// <summary>

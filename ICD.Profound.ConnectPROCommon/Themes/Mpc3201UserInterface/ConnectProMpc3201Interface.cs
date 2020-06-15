@@ -498,7 +498,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.Mpc3201UserInterface
 
 			// Reset the routing for the room when proximity is detected
 			if (m_Room != null && !m_Room.IsInMeeting)
-				m_Room.Routing.RouteOsd();
+				m_Room.Wake();
 		}
 
 		/// <summary>
