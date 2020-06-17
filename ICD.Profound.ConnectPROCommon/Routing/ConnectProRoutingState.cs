@@ -569,6 +569,10 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 						case ProcessingSourceInfo.eProcessingState.Unrouting:
 							routedSources[sourceInfo.Source] = eSourceState.Inactive;
 							break;
+
+						case ProcessingSourceInfo.eProcessingState.Failed:
+							routedSources[sourceInfo.Source] = eSourceState.Error;
+							break;
 					}
 				}
 

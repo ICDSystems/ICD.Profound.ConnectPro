@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Destinations now disable when all destination devices are offline, unless EnableWhileOffline is set on the destination
  - Rooms with one singular source will now launch that source when a meeting is started.
  - Zoom Rooms with one sharable source will now pre-select that source when the left menu sharing button is pressed.
+ - Added routing failed feedback to sources, if a device in the routing path is offline when the route is made
 
 ### Changed
  - Changed VTC routing to destination groups to route to individual displays in the group in alternating output order

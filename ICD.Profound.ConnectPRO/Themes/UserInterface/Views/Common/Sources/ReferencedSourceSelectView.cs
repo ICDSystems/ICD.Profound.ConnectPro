@@ -118,7 +118,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Sources
 					m_RoutedButton.SetMode(MODE_ROUTED_RED);
 					break;
 				default:
-					throw new ArgumentOutOfRangeException("routed");
+					throw new ArgumentOutOfRangeException("sourceState");
 			}
 		}
 
