@@ -94,6 +94,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\IHeaderPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\About\IReferencedSettingsPluginsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\About\ISettingsPluginsPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\TouchFreeConferencing\ISettingsCountdownTimerPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\ISettingsPasscodePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IReferencedSchedulePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IStartMeetingPresenter.cs" />
@@ -191,6 +192,7 @@
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmSplashPowerView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\About\IReferencedSettingsPluginsView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\About\ISettingsPluginsView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\Settings\TouchFreeConferencing\ISettingsCountdownTimerView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\ISettingsPasscodeView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IReferencedScheduleView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IStartMeetingView.cs" />
@@ -295,6 +297,7 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\About\ReferencedSettingsPluginsPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\About\ReferencedSettingsPluginsPresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\About\SettingsPluginsPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Settings\TouchFreeConferencing\SettingsCountdownTimerPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\SettingsPasscodePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ReferencedSchedulePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ReferencedSchedulePresenterFactory.cs" />
@@ -428,6 +431,7 @@
     <Compile Include="Themes\UserInterface\Views\Common\Settings\About\ReferencedSettingsPluginsView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\About\SettingsPluginsView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\About\SettingsPluginsView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Settings\TouchFreeConferencing\SettingsCountdownTimerView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsPasscodeView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsPasscodeView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\ReferencedScheduleView.cs" />
@@ -453,6 +457,7 @@
     <Compile Include="Themes\UserInterface\Views\Common\Settings\Administrative\SettingsPowerView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsPromptView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsPromptView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Settings\TouchFreeConferencing\SettingsCountdownTimerView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\Zoom\SettingsZoomSpeakersView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\Zoom\SettingsZoomSpeakersView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\Zoom\SettingsZoomMicrophonesView.cs" />

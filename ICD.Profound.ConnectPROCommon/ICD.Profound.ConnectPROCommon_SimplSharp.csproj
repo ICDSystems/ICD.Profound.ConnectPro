@@ -112,6 +112,7 @@
     <Compile Include="SettingsTree\AbstractStaticSettingsNode.cs" />
     <Compile Include="SettingsTree\Administrative\AdministrativeSettingsNode.cs" />
     <Compile Include="SettingsTree\Administrative\ClockSettingsLeaf.cs" />
+    <Compile Include="SettingsTree\Administrative\CountdownTimerSettingsLeaf.cs" />
     <Compile Include="SettingsTree\Administrative\PinSettingsLeaf.cs" />
     <Compile Include="SettingsTree\Administrative\WakeSleepSettingsLeaf.cs" />
     <Compile Include="SettingsTree\Conferencing\ConferencingSettingsNode.cs" />
