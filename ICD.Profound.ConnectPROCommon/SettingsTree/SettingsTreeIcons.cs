@@ -13,6 +13,7 @@
 		Phone,
 		Pin,
 		WakeSleep,
+		TouchFree,
 		RoomCombine,
 		Zoom
 	}

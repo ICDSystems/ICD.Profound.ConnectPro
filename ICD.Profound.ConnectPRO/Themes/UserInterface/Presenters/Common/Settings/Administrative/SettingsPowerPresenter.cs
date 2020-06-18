@@ -247,30 +247,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			RefreshIfVisible();
 		}
 
-		/*private void ToggleEnabled()
-		{
-			m_RefreshSection.Enter();
-
-			try
-			{
-				if (Node == null)
-					return;
-
-				if (Weekend)
-					Node.WakeSchedule.WeekendEnable = !Node.WakeSchedule.WeekendEnable;
-				else
-					Node.WakeSchedule.WeekdayEnable = !Node.WakeSchedule.WeekdayEnable;
-
-				Node.SetDirty(true);
-			}
-			finally
-			{
-				m_RefreshSection.Leave();
-			}
-
-			Refresh();
-		}
-		*/
 		private void ToggleEnabledWake()
 		{
 			m_RefreshSection.Enter();
@@ -294,6 +270,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			Refresh();
 		}
+
 		private void ToggleEnabledSleep()
 		{
 			m_RefreshSection.Enter();

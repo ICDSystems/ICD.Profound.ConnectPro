@@ -94,7 +94,8 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\IHeaderPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\About\IReferencedSettingsPluginsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\About\ISettingsPluginsPresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\TouchFreeConferencing\ISettingsCountdownTimerPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\TouchFreeConferencing\IReferencedSettingsTouchFreePresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\TouchFreeConferencing\ISettingsTouchFreePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\ISettingsPasscodePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IReferencedSchedulePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IStartMeetingPresenter.cs" />
@@ -298,7 +299,7 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\About\ReferencedSettingsPluginsPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\About\ReferencedSettingsPluginsPresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\About\SettingsPluginsPresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\Common\Settings\TouchFreeConferencing\SettingsCountdownTimerPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Settings\TouchFreeConferencing\SettingsTouchFreePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\SettingsPasscodePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ReferencedSchedulePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ReferencedSchedulePresenterFactory.cs" />

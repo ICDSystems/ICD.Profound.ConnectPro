@@ -112,7 +112,7 @@
     <Compile Include="SettingsTree\AbstractStaticSettingsNode.cs" />
     <Compile Include="SettingsTree\Administrative\AdministrativeSettingsNode.cs" />
     <Compile Include="SettingsTree\Administrative\ClockSettingsLeaf.cs" />
-    <Compile Include="SettingsTree\Administrative\CountdownTimerSettingsLeaf.cs" />
+    <Compile Include="SettingsTree\TouchFreeConferencing\TouchFreeSettingsLeaf.cs" />
     <Compile Include="SettingsTree\Administrative\PinSettingsLeaf.cs" />
     <Compile Include="SettingsTree\Administrative\WakeSleepSettingsLeaf.cs" />
     <Compile Include="SettingsTree\Conferencing\ConferencingSettingsNode.cs" />
@@ -130,6 +130,7 @@
     <Compile Include="SettingsTree\SettingsTreeIcons.cs" />
     <Compile Include="SettingsTree\SettingsTreeImages.cs" />
     <Compile Include="SettingsTree\TouchDisplayRootSettingsNode.cs" />
+    <Compile Include="SettingsTree\TouchFreeConferencing\TouchFreeSettingsNode.cs" />
     <Compile Include="SettingsTree\Zoom\ZoomSpeakerSettingsLeaf.cs" />
     <Compile Include="SettingsTree\Zoom\ZoomGeneralSettingsLeaf.cs" />
     <Compile Include="SettingsTree\Zoom\ZoomAdvancedSettingsLeaf.cs" />
