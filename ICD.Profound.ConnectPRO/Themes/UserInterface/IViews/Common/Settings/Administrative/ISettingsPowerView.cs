@@ -1,5 +1,4 @@
 ﻿using System;
-using ICD.Common.Utils.EventArguments;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Administrative
 {
