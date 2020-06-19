@@ -12,7 +12,7 @@ using ICD.Connect.UI.Controls.TextControls;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.TouchFreeConferencing
 {
-	public sealed partial class ReferenceSettingsTouchFreeView
+	public sealed partial class ReferencedSettingsTouchFreeView
 	{
 		private VtProSubpage m_Subpage;
 		private VtProDynamicIconObject m_Icon;

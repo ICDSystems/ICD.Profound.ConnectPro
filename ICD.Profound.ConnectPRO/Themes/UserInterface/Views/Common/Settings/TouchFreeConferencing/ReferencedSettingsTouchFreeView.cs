@@ -8,7 +8,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.TouchF
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.TouchFreeConferencing
 {
 	[ViewBinding(typeof(IReferencedSettingsTouchFreeView))]
-	public sealed partial class ReferenceSettingsTouchFreeView : AbstractComponentView, IReferencedSettingsTouchFreeView
+	public sealed partial class ReferencedSettingsTouchFreeView : AbstractComponentView, IReferencedSettingsTouchFreeView
 	{
 		public event EventHandler OnButtonPressed;
 
@@ -19,7 +19,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Tou
 		/// <param name="theme"></param>
 		/// <param name="parent"></param>
 		/// <param name="index"></param>
-		public ReferenceSettingsTouchFreeView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index)
+		public ReferencedSettingsTouchFreeView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index)
 			: base(panel, theme, parent, index)
 		{
 		}
