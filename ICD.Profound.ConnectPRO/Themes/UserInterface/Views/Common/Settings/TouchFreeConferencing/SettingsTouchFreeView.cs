@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
-using ICD.Connect.UI.Controls.Lists;
 using ICD.Connect.UI.Mvp.Views;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.TouchFreeConferencing;
 
@@ -27,6 +26,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Tou
 		public SettingsTouchFreeView(ISigInputOutput panel, ConnectProTheme theme)
 			: base(panel, theme)
 		{
+			m_ChildList = new List<IReferencedSettingsTouchFreeView>();
 		}
 
 		/// <summary>
