@@ -342,7 +342,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				                Label = "Unmute",
 				                Enabled = true,
 				                Visible = true,
-				                PressCallback = p => zoomControl.SetCameraEnabled(true)
+				                PressCallback = p => zoomControl.SetCameraMute(false)
 			                },
 			                GenericAlertPresenterButton.Dismiss);
 

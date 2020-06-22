@@ -227,7 +227,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 				}
 
 				var webConferenceControl = ActiveConferenceControl as IWebConferenceDeviceControl;
-				bool cameraActive = webConferenceControl != null && webConferenceControl.CameraEnabled;
+				bool cameraActive = webConferenceControl != null && !webConferenceControl.CameraMute;
 				m_HideCameraButton.LabelText = cameraActive ? "Hide Camera" : "Show Camera";
 				m_HideCameraButton.Icon = TouchCueIcons.GetIcon(cameraActive ? eTouchCueIcon.Hide : eTouchCueIcon.Reveal, eTouchCueColor.White);
 				
@@ -330,7 +330,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			if (webConferenceControl == null)
 				return;
 
-			webConferenceControl.SetCameraEnabled(!webConferenceControl.CameraEnabled);
+			webConferenceControl.SetCameraMute(!webConferenceControl.CameraMute);
 		}
 
 		private void ConfirmLeaveConference()
@@ -387,7 +387,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			var webConferenceControl = control as IWebConferenceDeviceControl;
 			if (webConferenceControl != null)
 			{
-				webConferenceControl.OnCameraEnabledChanged += WebConferenceControlOnOnCameraEnabledChanged;
+				webConferenceControl.OnCameraMuteChanged += WebConferenceControlOnCameraMuteChanged;
 				webConferenceControl.OnAmIHostChanged += WebConferenceControlOnOnAmIHostChanged;
 			}
 
@@ -408,7 +408,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			var webConferenceControl = control as IWebConferenceDeviceControl;
 			if (webConferenceControl != null)
 			{
-				webConferenceControl.OnCameraEnabledChanged -= WebConferenceControlOnOnCameraEnabledChanged;
+				webConferenceControl.OnCameraMuteChanged -= WebConferenceControlOnCameraMuteChanged;
 				webConferenceControl.OnAmIHostChanged -= WebConferenceControlOnOnAmIHostChanged;
 			}
 
@@ -432,7 +432,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			UpdateIsInCall();
 		}
 		
-		private void WebConferenceControlOnOnCameraEnabledChanged(object sender, BoolEventArgs e)
+		private void WebConferenceControlOnCameraMuteChanged(object sender, BoolEventArgs e)
 		{
 			RefreshIfVisible();
 		}

@@ -71,7 +71,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 					? null
 					: ActiveConferenceControl.GetActiveConference() as IWebConference;
 				
-				view.SetShowHideCameraButtonState(ActiveConferenceControl != null && ActiveConferenceControl.CameraEnabled);
+				view.SetShowHideCameraButtonState(ActiveConferenceControl != null && !ActiveConferenceControl.CameraMute);
 				view.SetLeaveMeetingButtonEnabled(activeConference != null);
 
 				List<IWebParticipant> sortedParticipants =
@@ -175,7 +175,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 			control.OnConferenceAdded += ControlOnConferenceAdded;
 			control.OnConferenceRemoved += ControlOnConferenceRemoved;
-			control.OnCameraEnabledChanged += ControlOnCameraEnabledChanged;
+			control.OnCameraMuteChanged += ControlOnCameraMuteChanged;
 			control.OnAmIHostChanged += ControlOnOnAmIHostChanged;
 			control.OnCallLockChanged += ControlOnCallLockChanged;
 
@@ -192,7 +192,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 			control.OnConferenceAdded -= ControlOnConferenceAdded;
 			control.OnConferenceRemoved -= ControlOnConferenceRemoved;
-			control.OnCameraEnabledChanged -= ControlOnCameraEnabledChanged;
+			control.OnCameraMuteChanged -= ControlOnCameraMuteChanged;
 			control.OnAmIHostChanged -= ControlOnOnAmIHostChanged;
 			control.OnCallLockChanged -= ControlOnCallLockChanged;
 			
@@ -212,7 +212,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			RefreshIfVisible();
 		}
 
-		private void ControlOnCameraEnabledChanged(object sender, BoolEventArgs args)
+		private void ControlOnCameraMuteChanged(object sender, BoolEventArgs args)
 		{
 			RefreshIfVisible();
 		}
@@ -288,7 +288,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private void ViewOnShowHideCameraButtonPressed(object sender, EventArgs eventArgs)
 		{
-			ActiveConferenceControl.SetCameraEnabled(!ActiveConferenceControl.CameraEnabled);
+			if (ActiveConferenceControl != null)
+				ActiveConferenceControl.SetCameraMute(!ActiveConferenceControl.CameraMute);
 		}
 
 		private void ViewOnLeaveMeetingButtonPressed(object sender, EventArgs eventArgs)

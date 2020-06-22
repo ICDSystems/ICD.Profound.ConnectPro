@@ -192,7 +192,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			if (webConferenceControl == null)
 				return;
 
-			webConferenceControl.OnCameraEnabledChanged += ControlOnCameraEnabledChanged;
+			webConferenceControl.OnCameraMuteChanged += ControlOnCameraMuteChanged;
 			webConferenceControl.OnAmIHostChanged += ControlOnOnAmIHostChanged;
 			webConferenceControl.OnCallLockChanged += ControlOnCallLockChanged;
 		}
@@ -214,7 +214,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			if (webConferenceControl == null)
 				return;
 
-			webConferenceControl.OnCameraEnabledChanged -= ControlOnCameraEnabledChanged;
+			webConferenceControl.OnCameraMuteChanged -= ControlOnCameraMuteChanged;
 			webConferenceControl.OnAmIHostChanged -= ControlOnOnAmIHostChanged;
 			webConferenceControl.OnCallLockChanged -= ControlOnCallLockChanged;
 		}
@@ -231,7 +231,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			RefreshIfVisible();
 		}
 
-		private void ControlOnCameraEnabledChanged(object sender, BoolEventArgs args)
+		private void ControlOnCameraMuteChanged(object sender, BoolEventArgs args)
 		{
 			RefreshIfVisible();
 		}
