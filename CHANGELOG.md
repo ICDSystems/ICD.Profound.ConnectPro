@@ -5,16 +5,31 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [14.0.0] - 2020-06-22
 ### Added
  - Sources now disable when the source device is offline, unless EnableWhileOffline is set on the source
  - Destinations now disable when all destination devices are offline, unless EnableWhileOffline is set on the destination
  - Rooms with one singular source will now launch that source when a meeting is started.
  - Zoom Rooms with one sharable source will now pre-select that source when the left menu sharing button is pressed.
  - Added routing failed feedback to sources, if a device in the routing path is offline when the route is made
+ - ConnectPRO sources can be configured to appear in the source selection list
+ - Waking the room when it becomes occupied via sensor
+ - Added settings pages for configuring Zoom Speaker and Microphone
+ - Added basic support for multiple calendar controls
 
 ### Changed
  - Changed VTC routing to destination groups to route to individual displays in the group in alternating output order
  - Using new logging context
+ - TouchCUE bookings are displayed in local time
+ - Fixes to support 11 digit Zoom meeting IDs
+ - Faking unrouting feedback to improve UX when switching sources
+ - Fixed errors on program stop related to disposed timers
+ - Changed Zoom "Call Out" wording to "Phone"
+ - ATC call-in number is populated from the device and is no longer configured at the room level
+ - Fixed an exception on program stop related to room combine grid lookup
+ - Favourite contacts are stored in the new ORM databases
+ - Zoom meeting IDs are formatted to a human readable format with dashes
 
 ## [13.1.0] - 2020-04-29
 ### Changed
