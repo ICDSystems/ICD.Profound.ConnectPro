@@ -146,7 +146,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews
 		public const string ICON_CUE = "cue";
 		public const string ICON_DIRECTORY = "directory";
 		public const string ICON_GRID = "grid";
-		public const string ICON_NOTIFICATION = "notification";
+		public const string ICON_NOTIFICATION = "notifications";
 		public const string ICON_PHONE = "phone";
 		public const string ICON_PIN = "pin";
 		public const string ICON_POWER = "power";
@@ -165,6 +165,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews
 			{eSettingsIcon.Notification, ICON_NOTIFICATION},
 			{eSettingsIcon.Phone, ICON_PHONE},
 			{eSettingsIcon.Pin, ICON_PIN},
+			{eSettingsIcon.TouchFree, ICON_CLOCK},
 			{eSettingsIcon.WakeSleep, ICON_POWER},
 			{eSettingsIcon.RoomCombine, ICON_ROOM_COMBINE},
 			{eSettingsIcon.Zoom, ICON_ZOOM},
