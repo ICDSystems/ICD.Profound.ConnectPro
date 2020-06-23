@@ -5,6 +5,7 @@ using ICD.Profound.ConnectPROCommon.SettingsTree.Administrative;
 using ICD.Profound.ConnectPROCommon.SettingsTree.Conferencing;
 using ICD.Profound.ConnectPROCommon.SettingsTree.CUE;
 using ICD.Profound.ConnectPROCommon.SettingsTree.RoomCombine;
+using ICD.Profound.ConnectPROCommon.SettingsTree.TouchFreeConferencing;
 using ICD.Profound.ConnectPROCommon.SettingsTree.Zoom;
 
 namespace ICD.Profound.ConnectPROCommon.SettingsTree
@@ -26,6 +27,7 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree
 			yield return new ConferencingSettingsNode();
 			yield return new CueSettingsNode();
 			yield return new RoomCombineSettingsNode();
+			yield return new TouchFreeSettingsNode();
 			yield return new ZoomSettingsNode();
 		}
 	}
