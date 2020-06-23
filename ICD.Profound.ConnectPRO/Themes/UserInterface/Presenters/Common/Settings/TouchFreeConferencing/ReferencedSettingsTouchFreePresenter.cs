@@ -2,14 +2,13 @@
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
-using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.TouchFreeConferencing;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.TouchFreeConferencing;
-using ICD.Profound.ConnectPROCommon.Rooms;
+using ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings.TouchFreeConferencing
 {
@@ -17,45 +16,33 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 	public sealed class ReferencedSettingsTouchFreePresenter : AbstractUiComponentPresenter<IReferencedSettingsTouchFreeView>,
 														  IReferencedSettingsTouchFreePresenter
 	{
-		private readonly SafeCriticalSection m_RefreshSection;
-
-		private readonly ReferencedSettingsTouchFreePresenterCache m_Cache;
-               
 		/// <summary>
 		/// Raised when the user presses the presenter.
 		/// </summary>
 		public event EventHandler OnPressed;
-		
-		[CanBeNull]
-		private ISource m_Source;
+
+		private readonly SafeCriticalSection m_RefreshSection;
 
 		[CanBeNull]
-		private IRoom m_RoomForSource;
+		private ISource m_Source;
+		private bool m_Selected;
 
 		#region Properties
 
 		/// <summary>
 		/// Gets/sets the source for this presenter.
 		/// </summary>
-		public ISource Source { get { return m_Source; } set { SetSource(value); } }
-             
-		/// <summary>
-		/// Gets/sets the room for the source.
-		/// </summary>
-		[CanBeNull]
-		private IRoom RoomForSource
+		public ISource Source
 		{
-			get { return m_RoomForSource; }
+			get { return m_Source; }
 			set
 			{
-				if (value == m_RoomForSource)
+				if (value == m_Source)
 					return;
 
-				UnsubscribeRoomForSource(m_RoomForSource);
-				m_RoomForSource = value;
-				SubscribeRoomForSource(m_RoomForSource);
+				m_Source = value;
 
-				UpdateSource();
+				RefreshIfVisible();
 			}
 		}
 
@@ -64,11 +51,15 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// </summary>
 		public bool Selected
 		{
-			get { return m_Cache.Selected; }
+			get { return m_Selected; }
 			set
 			{
-				if (m_Cache.SetSelected(value))
-					RefreshIfVisible();
+				if (value == m_Selected)
+					return;
+
+				m_Selected = value;
+
+				RefreshIfVisible();
 			}
 		}
 
@@ -80,9 +71,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public ReferencedSettingsTouchFreePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme, ReferencedSettingsTouchFreePresenterCache cache) : base(nav, views, theme)
+		public ReferencedSettingsTouchFreePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
 		{
-			m_Cache =  new ReferencedSettingsTouchFreePresenterCache();
 			m_RefreshSection = new SafeCriticalSection();
 		}
 
@@ -110,9 +100,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 			try
 			{
-				view.SetSelected(m_Cache.Selected);
-				view.SetText(m_Cache.Text);
-				view.SetIcon(m_Cache.Icon);
+				ConnectProSource cpSource = m_Source as ConnectProSource;
+
+				string name = m_Source == null ? null : m_Source.Name;
+				string icon = cpSource == null
+					? Icons.GetSourceIcon(null, eSourceColor.White)
+					: Icons.GetSourceIcon(cpSource.Icon, eSourceColor.White);
+
+				view.SetSelected(m_Selected);
+				view.SetText(name);
+				view.SetIcon(icon);
 				view.Enable(true);
 			}
 			finally
@@ -121,42 +118,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			}
 		}
 
-		/// <summary>
-		/// Sets the room for this presenter to represent.
-		/// </summary>
-		/// <param name="room"></param>
-		public override void SetRoom(IConnectProRoom room)
-		{
-			base.SetRoom(room);
-
-			UpdateSource();
-		}
-
-		private void SetSource(ISource value)
-		{
-			throw new NotImplementedException();
-		}
-
-		private void UpdateSource()
-		{
-			throw new NotImplementedException();
-		}
-
 		#endregion
 
-		#region Room For Source Callbacks
-
-		private void SubscribeRoomForSource(IRoom roomForSource)
-		{
-			throw new NotImplementedException();
-		}
-
-		private void UnsubscribeRoomForSource(IRoom roomForSource)
-		{
-			throw new NotImplementedException();
-		}
-
-		#endregion
 		#region View Callbacks
 
 		/// <summary>

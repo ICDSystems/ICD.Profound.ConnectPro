@@ -299,6 +299,8 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\About\ReferencedSettingsPluginsPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\About\ReferencedSettingsPluginsPresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\About\SettingsPluginsPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Settings\TouchFreeConferencing\ReferencedSettingsTouchFreePresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\Settings\TouchFreeConferencing\ReferencedSettingsTouchFreePresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\TouchFreeConferencing\SettingsTouchFreePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\SettingsPasscodePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ReferencedSchedulePresenter.cs" />
