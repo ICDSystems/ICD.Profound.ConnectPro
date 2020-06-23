@@ -44,15 +44,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Tou
 
 		#region Methods
 
-		public void SetEnableZeroTouchToggleSelected(bool selected)
+		public void SetTouchFreeToggleSelected(bool selected)
 		{
 			// Zero Touch Toggle Button graphic defaults to selected
-			m_EnableZeroTouchToggleButton.SetSelected(selected);
+			m_EnableZeroTouchToggleButton.SetSelected(!selected);
+
+			// Set the enabled state of the controls
+			m_CountDownSecondsLabel.Enable(selected);
 		}
 
 		public void SetCountDownSeconds(int seconds)
 		{
-			m_CountDownSecondsLabel.SetLabelText(seconds.ToString("0"));
+			m_CountDownSecondsLabel.SetLabelText(seconds.ToString());
 		}
 
 		/// <summary>
@@ -112,6 +115,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Tou
 		{
 			OnCountDownTimerIncrementButtonPressed.Raise(this);
 		}
+
 		private void CountDownTimerDecrementButtonOnReleased(object sender, EventArgs eventArgs)
 		{
 			OnIncrementDecrementButtonReleased.Raise(this);

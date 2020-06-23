@@ -54,7 +54,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Tou
 			m_DefaultDeviceList = new VtProSubpageReferenceList(701, panel as IPanelDevice, m_Subpage)
             {
 				MaxSize = 20,
-				DigitalEnableJoin = 813
+				DigitalEnableJoin = 813,
+				DigitalJoinIncrement = 1,
+				SerialJoinIncrement = 2
             };
 
 			m_CountDownSecondsLabel = new VtProSimpleLabel(panel, m_Subpage)

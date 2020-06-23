@@ -435,8 +435,8 @@
     <Compile Include="Themes\UserInterface\Views\Common\Settings\About\ReferencedSettingsPluginsView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\About\SettingsPluginsView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\About\SettingsPluginsView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\Common\Settings\TouchFreeConferencing\ReferenceSettingsTouchFreeView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\Common\Settings\TouchFreeConferencing\ReferenceSettingsTouchFreeView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Settings\TouchFreeConferencing\ReferencedSettingsTouchFreeView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\Settings\TouchFreeConferencing\ReferencedSettingsTouchFreeView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\TouchFreeConferencing\SettingsTouchFreeView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsPasscodeView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsPasscodeView.generated.cs" />

@@ -11,7 +11,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.To
 		event EventHandler OnIncrementDecrementButtonReleased;
 		event EventHandler OnEnableZeroTouchTogglePressed;
 
-		void SetEnableZeroTouchToggleSelected(bool selected);
+		void SetTouchFreeToggleSelected(bool selected);
 
 		void SetCountDownSeconds(int seconds);
 
