@@ -15,6 +15,7 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.TouchFreeConferencing
 		public event EventHandler<IntEventArgs> OnCountdownSecondsChanged;
 		public event EventHandler<BoolEventArgs> OnTouchFreeEnabledChanged;
 		public event EventHandler<SourceEventArgs> OnDefaultSourceChanged;
+		public event EventHandler OnSourcesChanged;
 
 		private bool m_TouchFreeEnabled;
 		private int m_CountDownSeconds;
@@ -85,6 +86,7 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.TouchFreeConferencing
 			OnCountdownSecondsChanged = null;
 			OnTouchFreeEnabledChanged = null;
 			OnDefaultSourceChanged = null;
+			OnSourcesChanged = null;
 
 			base.Dispose();
 		}
@@ -107,7 +109,9 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.TouchFreeConferencing
 
 		public void SetDefaultSource(ISource source)
 		{
-			// TODO - Set on the room
+			if (Room != null && Room.TouchFree != null)
+				Room.TouchFree.Source = source;
+
 			SetDirty(true);
 		}
 
@@ -115,20 +119,18 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.TouchFreeConferencing
 		{
 			return Room == null
 				       ? Enumerable.Empty<ISource>()
-				       : Room.Routing.Sources.GetRoomSources();
+				       : Room.Routing
+				             .Sources
+				             .GetRoomSources()
+				             .OrderBy(s => s.Name);
 		}
 
 		#endregion
 
 		#region Private Methods
 
-		/// <summary>
-		/// Override to initialize the node once a room has been assigned.
-		/// </summary>
-		protected override void Initialize(IConnectProRoom room)
+		private void Update()
 		{
-			base.Initialize(room);
-
 			UpdateEnabled();
 			UpdateCountdownSeconds();
 			UpdateSource();
@@ -149,7 +151,11 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.TouchFreeConferencing
 
 		private void UpdateSource()
 		{
-			throw new NotImplementedException();
+			if (Room == null)
+				return;
+
+			if (Room.TouchFree != null && Room.TouchFree.Source != null)
+				DefaultSource = Room.TouchFree.Source;
 		}
 
 		#endregion
@@ -164,12 +170,18 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.TouchFreeConferencing
 		{
 			base.Subscribe(room);
 
-			TouchFree touchFree = room == null ? null : room.TouchFree;
-			if (touchFree == null)
-				return;
+			if (room != null)
+				room.Originators.OnChildrenChanged += OriginatorsOnChildrenChanged;
 
-			touchFree.OnCountDownTimerChanged += TouchFreeOnCountDownTimerChanged;
-			touchFree.OnEnabledChanged += TouchFreeOnEnabledChanged;
+			TouchFree touchFree = room == null ? null : room.TouchFree;
+			if (touchFree != null)
+			{
+				touchFree.OnCountDownTimerChanged += TouchFreeOnCountDownTimerChanged;
+				touchFree.OnEnabledChanged += TouchFreeOnEnabledChanged;
+				touchFree.OnDefaultSourceChanged += TouchFreeOnDefaultSourceChanged;
+			}
+
+			Update();
 		}
 
 		/// <summary>
@@ -180,12 +192,23 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.TouchFreeConferencing
 		{
 			base.Unsubscribe(room);
 
-			TouchFree touchFree = room == null ? null : room.TouchFree;
-			if (touchFree == null)
-				return;
+			if (room != null)
+				room.Originators.OnChildrenChanged -= OriginatorsOnChildrenChanged;
 
-			touchFree.OnCountDownTimerChanged -= TouchFreeOnCountDownTimerChanged;
-			touchFree.OnEnabledChanged -= TouchFreeOnEnabledChanged;
+			TouchFree touchFree = room == null ? null : room.TouchFree;
+			if (touchFree != null)
+			{
+				touchFree.OnCountDownTimerChanged -= TouchFreeOnCountDownTimerChanged;
+				touchFree.OnEnabledChanged -= TouchFreeOnEnabledChanged;
+				touchFree.OnDefaultSourceChanged -= TouchFreeOnDefaultSourceChanged;
+			}
+
+			Update();
+		}
+
+		private void OriginatorsOnChildrenChanged(object sender, EventArgs eventArgs)
+		{
+			OnSourcesChanged.Raise(this);
 		}
 
 		private void TouchFreeOnEnabledChanged(object sender, BoolEventArgs boolEventArgs)
@@ -196,6 +219,11 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.TouchFreeConferencing
 		private void TouchFreeOnCountDownTimerChanged(object sender, IntEventArgs intEventArgs)
 		{
 			UpdateCountdownSeconds();
+		}
+
+		private void TouchFreeOnDefaultSourceChanged(object sender, SourceEventArgs sourceEventArgs)
+		{
+			UpdateSource();
 		}
 
 		#endregion

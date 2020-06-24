@@ -38,8 +38,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				Subscribe(m_Node);
 
 				NodeChanged(m_Node);
-
-				RefreshIfVisible();
 			}
 		}
 

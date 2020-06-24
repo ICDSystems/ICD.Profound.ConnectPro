@@ -60,7 +60,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 				view.SetTouchFreeToggleSelected(Node != null && Node.TouchFreeEnabled);
 
 				foreach (IReferencedSettingsTouchFreePresenter child in m_ChildrenFactory.BuildChildren(m_Sources))
+				{
 					child.Selected = Node != null && child.Source == Node.DefaultSource;
+					child.ShowView(true);
+				}
 			}
 			finally
 			{
@@ -193,12 +196,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <param name="node"></param>
 		protected override void Subscribe(TouchFreeSettingsLeaf node)
 		{
+			base.Subscribe(node);
+
 			if (node == null)
 				return;
 
 			node.OnCountdownSecondsChanged += NodeOnCountdownSecondsChanged;
 			node.OnDefaultSourceChanged += NodeOnDefaultSourceChanged;
 			node.OnTouchFreeEnabledChanged += NodeOnTouchFreeEnabledChanged;
+			node.OnSourcesChanged += NodeOnSourcesChanged;
+
+			UpdateSources();
 		}
 
 		/// <summary>
@@ -207,12 +215,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <param name="node"></param>
 		protected override void Unsubscribe(TouchFreeSettingsLeaf node)
 		{
+			base.Unsubscribe(node);
+
 			if (node == null)
 				return;
 
 			node.OnCountdownSecondsChanged -= NodeOnCountdownSecondsChanged;
 			node.OnDefaultSourceChanged -= NodeOnDefaultSourceChanged;
 			node.OnTouchFreeEnabledChanged -= NodeOnTouchFreeEnabledChanged;
+			node.OnSourcesChanged -= NodeOnSourcesChanged;
+
+			UpdateSources();
 		}
 
 		private void NodeOnTouchFreeEnabledChanged(object sender, BoolEventArgs boolEventArgs)
@@ -230,6 +243,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 			RefreshIfVisible();
 		}
 
+		private void NodeOnSourcesChanged(object sender, EventArgs eventArgs)
+		{
+			UpdateSources();
+		}
+
 		#endregion
 
 		#region View Callbacks
@@ -240,6 +258,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <param name="view"></param>
 		protected override void Subscribe(ISettingsTouchFreeView view)
 		{
+			base.Subscribe(view);
+
 			view.OnCountDownTimerDecrementButtonPressed += ViewOnCountDownTimerDecrementButtonPressed;
 			view.OnCountDownTimerIncrementButtonPressed += ViewOnCountDownTimerIncrementButtonPressed;
 			view.OnIncrementDecrementButtonReleased += ViewOnIncrementDecrementButtonReleased;
@@ -252,11 +272,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <param name="view"></param>
 		protected override void Unsubscribe(ISettingsTouchFreeView view)
 		{
+			base.Unsubscribe(view);
+
 			view.OnCountDownTimerDecrementButtonPressed -= ViewOnCountDownTimerDecrementButtonPressed;
 			view.OnCountDownTimerIncrementButtonPressed -= ViewOnCountDownTimerIncrementButtonPressed;
 			view.OnIncrementDecrementButtonReleased -= ViewOnIncrementDecrementButtonReleased;
 			view.OnEnableZeroTouchTogglePressed -= ViewOnEnableZeroTouchTogglePressed;
-
 		}
 
 		private void ViewOnEnableZeroTouchTogglePressed(object sender, EventArgs eventArgs)
