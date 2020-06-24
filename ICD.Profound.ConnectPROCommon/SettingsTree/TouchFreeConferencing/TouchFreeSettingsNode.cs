@@ -8,7 +8,7 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.TouchFreeConferencing
 		/// </summary>
 		public TouchFreeSettingsNode()
 		{
-			Name = "Touch Free Conferencing";
+			Name = "Touch Free";
 			Icon = eSettingsIcon.TouchFree;
 		}
 

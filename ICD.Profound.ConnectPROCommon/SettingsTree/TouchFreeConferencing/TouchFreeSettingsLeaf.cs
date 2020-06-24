@@ -26,7 +26,7 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.TouchFreeConferencing
 		/// </summary>
 		public TouchFreeSettingsLeaf()
 		{
-			Name = "Touch Free Conferencing";
+			Name = "Touch Free";
 			Icon = eSettingsIcon.TouchFree;
 		}
 
