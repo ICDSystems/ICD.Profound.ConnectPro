@@ -1,6 +1,7 @@
 ﻿using System;
 using ICD.Common.Properties;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Timers;
 using ICD.Connect.Calendaring.Bookings;
 using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.Controls.Routing;
@@ -32,6 +33,9 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 
 		#region Properties
 
+		/// <summary>
+		/// Gets/sets the current meeting status.
+		/// </summary>
 		bool IsInMeeting { get; }
 
 		/// <summary>
@@ -53,6 +57,11 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		/// Gets the selected OBTP booking.
 		/// </summary>
 		IBooking CurrentBooking { get; }
+
+		///<summary>
+		/// Gets the timer for grace period before automatically starting a meeting.
+		/// </summary>
+		IcdTimer MeetingStartTimer { get; }
 
 		/// <summary>
 		/// Gets/sets the source that is currently the primary focus of the room (i.e. VTC).

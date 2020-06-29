@@ -67,6 +67,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 
 		private bool m_IsInMeeting;
 		private ISource m_FocusSource;
+		private IcdTimer m_MeetingStartTimer;
 
 		private readonly List<IPresentationControl> m_SubscribedPresentationControls;
 		private readonly List<IPowerDeviceControl> m_SubscribedDisplayPowerControls;
@@ -118,6 +119,11 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		/// </summary>
 		public IBooking CurrentBooking { get; private set; }
 
+		///<summary>
+		/// Gets the timer for grace period before automatically starting a meeting.
+		/// </summary>
+		public IcdTimer MeetingStartTimer { get { return m_MeetingStartTimer; } }
+
 		/// <summary>
 		/// Gets/sets the source that is currently the primary focus of the room (i.e. VTC).
 		/// </summary>
@@ -167,9 +173,11 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			m_Routing = new ConnectProRouting(this);
 			m_Dialing = new ConnectProDialing(this);
 
+			m_MeetingStartTimer = new IcdTimer();
 			m_MeetingTimeoutTimer = SafeTimer.Stopped(MeetingTimeout);
 
 			Subscribe(m_Routing);
+			Subscribe(m_MeetingStartTimer);
 		}
 
 		/// <summary>
@@ -183,6 +191,9 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 
 			base.DisposeFinal(disposing);
 
+			Unsubscribe(m_MeetingStartTimer);
+
+			m_MeetingStartTimer.Dispose();
 			m_MeetingTimeoutTimer.Dispose();
 
 			Unsubscribe(m_Routing);
@@ -361,11 +372,34 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		{
 			base.HandleOccupiedChanged(occupancyState);
 
-			if (occupancyState != eOccupancyState.Occupied)
+			// Don't handle occupancy changes if in a meeting
+			if (IsInMeeting)
 				return;
 
-			if (!IsInMeeting)
-				Wake();
+			// Don't handle occupancy changes if TouchFree is disabled
+			if (TouchFree == null || !TouchFree.Enabled)
+				return;
+
+			// Don't handle occupancy changes if combined
+			if (CombineState)
+				return;
+
+			switch (occupancyState)
+			{
+				case eOccupancyState.Unknown:
+					break;
+
+				case eOccupancyState.Unoccupied:
+					m_MeetingStartTimer.Stop();
+					break;
+
+				case eOccupancyState.Occupied:
+					m_MeetingStartTimer.Restart(TouchFree.CountdownSeconds);
+					break;
+
+				default:
+					throw new ArgumentOutOfRangeException("occupancyState");
+			}
 		}
 
 		/// <summary>
@@ -606,6 +640,32 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			{
 				PrivacyMuteCameras(true);
 			}
+		}
+
+		#endregion
+
+		#region Meeting Start Timer Callbacks
+
+		private void Subscribe(IcdTimer meetingStartTimer)
+		{
+			meetingStartTimer.OnIsRunningChanged += MeetingStartTimerOnIsRunningChanged;
+			meetingStartTimer.OnElapsed += MeetingStartTimerOnElapsed;
+		}
+
+		private void Unsubscribe(IcdTimer meetingStartTimer)
+		{
+			meetingStartTimer.OnIsRunningChanged -= MeetingStartTimerOnIsRunningChanged;
+			meetingStartTimer.OnElapsed -= MeetingStartTimerOnElapsed;
+		}
+
+		private void MeetingStartTimerOnIsRunningChanged(object sender, BoolEventArgs boolEventArgs)
+		{
+			Wake();
+		}
+
+		private void MeetingStartTimerOnElapsed(object sender, EventArgs eventArgs)
+		{
+			StartMeeting();
 		}
 
 		#endregion
