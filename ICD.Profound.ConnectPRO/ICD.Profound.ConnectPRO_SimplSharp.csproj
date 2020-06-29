@@ -192,6 +192,7 @@
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmLeaveCallView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmEndMeetingView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\IConfirmSplashPowerView.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\ITouchFreeCancelPromptView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\About\IReferencedSettingsPluginsView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\About\ISettingsPluginsView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\TouchFreeConferencing\IReferencedSettingsTouchFreeView.cs" />
@@ -482,6 +483,8 @@
     <Compile Include="Themes\UserInterface\Views\Common\Sources\SourceSelectView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\StartMeetingView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\StartMeetingView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\TouchFreeCancelPromptView.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\TouchFreeCancelPromptView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\VolumeView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\VolumeView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\ConnectProUiViewFactory.cs" />
