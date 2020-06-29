@@ -129,6 +129,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\IGenericLoadingSpinnerPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IHardButtonsPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IConnectProNavigationController.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\ITouchFreeCancelPromptPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\IUiPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Lighting\ILightingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Popups\CableTv\IReferencedCableTvPresenter.cs" />
@@ -343,6 +344,7 @@
     <Compile Include="Themes\UserInterface\Presenters\Popups\WebConferencing\ReferencedWebConferencingAlertPresenterFactory.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\WebConferencing\WebConferencingAlertPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Popups\WebConferencing\WebConferencingStepPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\TouchFreeCancelPromptPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\AbstractVtcPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\AbstractVtcContactsPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\VideoConference\Contacts\AbstractVtcReferencedContactsPresenterBase.cs" />
