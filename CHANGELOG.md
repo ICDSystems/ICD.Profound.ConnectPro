@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
  - Added Touch Free Setting Page.
+ - Added Touch Free/ Cancel Meeting Start Prompt.
 
 ## [14.0.1] - 2020-07-14
 ### Changed
