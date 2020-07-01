@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
@@ -16,7 +17,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 
 		public void SetTimer(int seconds)
 		{
-			m_Message.SetLabelText(seconds.ToString());
+			m_Message.SetLabelTextAtJoin(m_Message.SerialLabelJoins.First(), seconds.ToString());
 		}
 
 		/// <summary>

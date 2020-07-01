@@ -43,10 +43,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public TouchFreeCancelPromptPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme, SafeCriticalSection refreshSection)
+		public TouchFreeCancelPromptPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
 			: base(nav, views, theme)
 		{
-			m_RefreshSection = refreshSection;
+			m_RefreshSection = new SafeCriticalSection();
 		}
 
 		#region Room Callbacks
@@ -62,8 +62,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (room == null)
 				return;
 
-			room.MeetingStartTimer.OnMillisecondsChanged += RoomOnMettingStartTimerChanged;
-			room.MeetingStartTimer.OnIsRunningChanged += RoomOnMettingTimerStarted;
+			room.MeetingStartTimer.OnMillisecondsChanged += RoomOnMeetingStartTimerChanged;
+			room.MeetingStartTimer.OnIsRunningChanged += RoomOnMeetingTimerStarted;
+			room.MeetingStartTimer.OnElapsed += MeetingStartTimerOnElapsed;
 		}
 
 		/// <summary>
@@ -77,16 +78,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (room == null)
 				return;
 
-			room.MeetingStartTimer.OnMillisecondsChanged -= RoomOnMettingStartTimerChanged;
-			room.MeetingStartTimer.OnIsRunningChanged -= RoomOnMettingTimerStarted;
+			room.MeetingStartTimer.OnMillisecondsChanged -= RoomOnMeetingStartTimerChanged;
+			room.MeetingStartTimer.OnIsRunningChanged -= RoomOnMeetingTimerStarted;
+			room.MeetingStartTimer.OnElapsed -= MeetingStartTimerOnElapsed;
 		}
 
-		private void RoomOnMettingStartTimerChanged(object sender, EventArgs eventArgs)
+		private void MeetingStartTimerOnElapsed(object sender, EventArgs eventArgs)
+		{
+			ShowView(false);
+		}
+
+		private void RoomOnMeetingStartTimerChanged(object sender, EventArgs eventArgs)
 		{
 			RefreshIfVisible();
 		}
 
-		private void RoomOnMettingTimerStarted(object sender, BoolEventArgs eventArgs)
+		private void RoomOnMeetingTimerStarted(object sender, BoolEventArgs eventArgs)
 		{
 			ShowView(eventArgs.Data);
 		}

@@ -134,6 +134,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			navigationController.LazyLoadPresenter<IFloatingActionListButtonPresenter>();
 			navigationController.LazyLoadPresenter<IVtcCallListTogglePresenter>();
 			navigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>();
+			navigationController.LazyLoadPresenter<ITouchFreeCancelPromptPresenter>();
 		}
 	}
 }

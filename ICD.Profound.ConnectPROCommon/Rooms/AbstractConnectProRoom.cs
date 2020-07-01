@@ -394,7 +394,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 					break;
 
 				case eOccupancyState.Occupied:
-					m_MeetingStartTimer.Restart(TouchFree.CountdownSeconds);
+					m_MeetingStartTimer.Restart(TouchFree.CountdownSeconds * 1000);
 					break;
 
 				default:
