@@ -131,7 +131,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 
 				m_FocusSource = value;
 
-				UpdateMeetingTimeoutTimer();
+				RestartMeetingTimeoutTimer();
 
 				OnFocusSourceChanged.Raise(this, new SourceEventArgs(m_FocusSource));
 			}
@@ -220,8 +220,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 
 			// Reset mute state
 			Mute(false);
-
-			UpdateMeetingTimeoutTimer();
 		}
 
 		/// <summary>
@@ -340,6 +338,8 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		{
 			// Clear the focus source
 			FocusSource = null;
+
+			RestartMeetingTimeoutTimer();
 		}
 
 		/// <summary>
@@ -457,14 +457,11 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		}
 
 		/// <summary>
-		/// Stops/resets the delayed sleep timer based on the current meeting state.
+		/// Resets the Meeting Timeout timer.
 		/// </summary>
-		private void UpdateMeetingTimeoutTimer()
+		private void RestartMeetingTimeoutTimer()
 		{
-			if (GetIsInActiveMeeting())
-				m_MeetingTimeoutTimer.Stop();
-			else
-				m_MeetingTimeoutTimer.Reset(MEETING_TIMEOUT);
+			m_MeetingTimeoutTimer.Reset(MEETING_TIMEOUT);
 		}
 
 		/// <summary>
@@ -532,7 +529,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			if (CombineState)
 				return;
 
-			if (!GetIsInActiveMeeting())
+			if (GetIsInActiveMeeting())
 				return;
 
 			Logger.Log(eSeverity.Informational, "Meeting timeout occurring");
@@ -576,8 +573,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			// Still routing a web source, so don't mess with cameras and microphones
 			if (otherWebSources)
 				return;
-
-			UpdateMeetingTimeoutTimer();
+			
 			UpdatePrivacyMute();
 
 			// Return cameras to home position when entering a web conference
@@ -598,7 +594,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		/// <param name="callState"></param>
 		private void UpdateConferenceFeatures(eInCall callState)
 		{
-			UpdateMeetingTimeoutTimer();
 			UpdatePrivacyMute();
 
 			// Return cameras to home position when entering a video call
@@ -642,6 +637,8 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		/// <param name="eventArgs"></param>
 		private void StateOnSourceRoutedChanged(object sender, SourceRoutedEventArgs eventArgs)
 		{
+			RestartMeetingTimeoutTimer();
+
 			UpdateConferenceFeatures(eventArgs.Routed, eventArgs.Unrouted);
 		}
 
@@ -680,6 +677,8 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		/// <param name="eventArgs"></param>
 		private void ConferenceManagerOnInCallChanged(object sender, InCallEventArgs eventArgs)
 		{
+			RestartMeetingTimeoutTimer();
+
 			UpdateConferenceFeatures(eventArgs.Data);
 		}
 
