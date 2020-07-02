@@ -90,7 +90,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 				Logger.LogSetTo(eSeverity.Informational, "IsInMeeting", m_IsInMeeting);
 				Activities.LogActivity(m_IsInMeeting
 					                   ? new Activity(Activity.ePriority.Medium, "In Meeting", "In Meeting", eSeverity.Informational)
-					                   : new Activity(Activity.ePriority.Low, "In Meeting", "Out Of Meeting", eSeverity.Informational));
+					                   : new Activity(Activity.ePriority.Low, "In Meeting", "Idle", eSeverity.Informational));
 
 				HandleIsInMeetingChanged(m_IsInMeeting);
 
