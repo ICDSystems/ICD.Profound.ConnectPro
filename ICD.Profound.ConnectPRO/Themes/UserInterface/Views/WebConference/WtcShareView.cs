@@ -43,11 +43,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 			m_SourceList.SetItemIcon(index, icon);
 		}
 
-		public void SetButtonVisible(ushort index, bool visible)
-		{
-			m_SourceList.SetItemVisible(index, visible);
-		}
-
 		public void SetButtonEnabled(ushort index, bool enabled)
 		{
 			m_SourceList.SetItemEnabled(index, enabled);

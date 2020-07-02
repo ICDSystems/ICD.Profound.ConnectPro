@@ -15,6 +15,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 		/// </summary>
 		event EventHandler OnShareButtonPressed;
 
+		void SetSwipeLabelsVisible(bool visible);
+
 		/// <summary>
 		/// Sets the label for the button at the given index.
 		/// </summary>
@@ -28,6 +30,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference
 		/// <param name="index"></param>
 		/// <param name="icon"></param>
 		void SetButtonIcon(ushort index, string icon);
+
+		/// <summary>
+		/// Sets the enabled state of the button at the given index.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="enabled"></param>
+		void SetButtonEnabled(ushort index, bool enabled);
 
 		/// <summary>
 		/// Sets the selection state of the button at the given index.

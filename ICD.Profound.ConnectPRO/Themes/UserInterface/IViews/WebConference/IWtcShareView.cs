@@ -26,13 +26,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference
 		void SetButtonIcon(ushort index, string icon);
 
 		/// <summary>
-		/// Sets the visibility of the button at the given index.
-		/// </summary>
-		/// <param name="index"></param>
-		/// <param name="visible"></param>
-		void SetButtonVisible(ushort index, bool visible);
-
-		/// <summary>
 		/// Sets the enabled state of the button at the given index.
 		/// </summary>
 		/// <param name="index"></param>
