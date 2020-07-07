@@ -179,7 +179,8 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 			foreach (IDestinationBase destination in destinations)
 			{
 				State.SetProcessingSource(destination, source, ProcessingSourceInfo.eProcessingState.Routing);
-				Route(source, destination, eConnectionType.Video);
+				if (!Route(source, destination, eConnectionType.Video))
+					State.SetProcessingSource(destination, source, ProcessingSourceInfo.eProcessingState.Failed);
 			}
 
 			if (source.ConnectionType.HasFlag(eConnectionType.Audio))
@@ -231,7 +232,8 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 				State.ClearMaskedSource(destination);
 
 			State.SetProcessingSource(destination, source, ProcessingSourceInfo.eProcessingState.Routing);
-			Route(source, destination, eConnectionType.Video);
+			if (!Route(source, destination, eConnectionType.Video))
+				State.SetProcessingSource(destination, source, ProcessingSourceInfo.eProcessingState.Failed);
 
 			if (!source.ConnectionType.HasFlag(eConnectionType.Audio))
 				return;
@@ -318,8 +320,10 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 				
 				if (output == null)
 					break;
-				
-				Route(output.Source, destination, eConnectionType.Video);
+
+				State.SetProcessingSource(destination, source, ProcessingSourceInfo.eProcessingState.Routing);
+				if (!Route(output.Source, destination, eConnectionType.Video))
+					State.SetProcessingSource(destination, source, ProcessingSourceInfo.eProcessingState.Failed);
 			}
 
 			RouteAtc(source);
@@ -346,7 +350,9 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 				if (audioDestination.Device == source.Device)
 					continue;
 
-				Route(source, audioDestination, eConnectionType.Audio);
+				State.SetProcessingSource(audioDestination, source, ProcessingSourceInfo.eProcessingState.Routing);
+				if (!Route(source, audioDestination, eConnectionType.Audio))
+					State.SetProcessingSource(audioDestination, source, ProcessingSourceInfo.eProcessingState.Failed);
 			}
 		}
 
@@ -754,7 +760,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 		/// <param name="source"></param>
 		/// <param name="destination"></param>
 		/// <param name="flag"></param>
-		private void Route(ISource source, IDestinationBase destination, eConnectionType flag)
+		private bool Route(ISource source, IDestinationBase destination, eConnectionType flag)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
@@ -769,10 +775,10 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 				           .OfType(flag)
 				           .With(m_PathFinder);
 
-			Route(paths);
+			return Route(paths);
 		}
 
-		private void Route(EndpointInfo sourceEndpoint, IDestinationBase destination, eConnectionType flag)
+		private bool Route(EndpointInfo sourceEndpoint, IDestinationBase destination, eConnectionType flag)
 		{
 			if (destination == null)
 				throw new ArgumentNullException("destination");
@@ -784,10 +790,10 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 				           .OfType(flag)
 				           .With(m_PathFinder);
 
-			Route(paths);
+			return Route(paths);
 		}
 
-		private void Route(ISource source, EndpointInfo destinationEndpoint, eConnectionType flag)
+		private bool Route(ISource source, EndpointInfo destinationEndpoint, eConnectionType flag)
 		{
 			if (source == null)
 				throw new ArgumentNullException("source");
@@ -799,10 +805,10 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 				           .OfType(flag)
 				           .With(m_PathFinder);
 
-			Route(paths);
+			return Route(paths);
 		}
 
-		private void Route(IRouteSourceControl sourceControl, EndpointInfo destinationEndpoint, eConnectionType flag)
+		private bool Route(IRouteSourceControl sourceControl, EndpointInfo destinationEndpoint, eConnectionType flag)
 		{
 			if (sourceControl == null)
 				throw new ArgumentNullException("sourceControl");
@@ -814,7 +820,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 				           .OfType(flag)
 				           .With(m_PathFinder);
 
-			Route(paths);
+			return Route(paths);
 		}
 
 		/// <summary>
@@ -855,15 +861,15 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 				RouteToRoomAudio(source);
 		}
 
-		private void Route(IEnumerable<ConnectionPath> paths)
+		private bool Route(IEnumerable<ConnectionPath> paths)
 		{
 			if (paths == null)
 				throw new ArgumentNullException("paths");
 
-			Route(paths, true);
+			return Route(paths, true);
 		}
 
-		private void Route(IEnumerable<ConnectionPath> paths, bool powerOn)
+		private bool Route(IEnumerable<ConnectionPath> paths, bool powerOn)
 		{
 			if (paths == null)
 				throw new ArgumentNullException("paths");
@@ -871,6 +877,8 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 			IList<ConnectionPath> pathsList = paths as IList<ConnectionPath> ?? paths.ToArray();
 			foreach (ConnectionPath path in pathsList)
 				Route(path, powerOn);
+
+			return CheckConnectionPathForOnline(pathsList);
 		}
 
 		private void Route(ConnectionPath path, bool powerOn)
@@ -914,6 +922,13 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 				foreach (IDestination audioDestination in audioDestinations)
 					RoutingGraph.Unroute(audioSource, audioDestination, eConnectionType.Audio, m_Room.Id);
 			}
+		}
+
+		private bool CheckConnectionPathForOnline(IEnumerable<ConnectionPath> paths)
+		{
+			return paths.SelectMany(p => p)
+			            .SelectMany(c => m_RoutingGraph.GetControls(c))
+			            .All(c => c.Parent.IsOnline);
 		}
 
 		#endregion

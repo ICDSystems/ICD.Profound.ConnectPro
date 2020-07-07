@@ -34,6 +34,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 			base.Dispose();
 		}
 
+		public void SetSwipeLabelsVisible(bool visible)
+		{
+			m_SwipeLabels.Show(visible);
+		}
+
 		/// <summary>
 		/// Sets the label for the button at the given index.
 		/// </summary>
@@ -52,6 +57,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference
 		public void SetButtonIcon(ushort index, string icon)
 		{
 			m_ButtonList.SetItemIcon(index, icon);
+		}
+
+		/// <summary>
+		/// Sets the enabled state of the button at the given index.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="enabled"></param>
+		public void SetButtonEnabled(ushort index, bool enabled)
+		{
+			m_ButtonList.SetItemEnabled(index, enabled);
 		}
 
 		/// <summary>

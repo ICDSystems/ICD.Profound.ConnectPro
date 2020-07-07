@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
@@ -318,25 +317,25 @@ namespace ICD.Profound.ConnectPROCommon.Themes.EventServerUserInterface
 		private void UpdateRouting()
 		{
 			// Video routing
-			List<ISource> videoSources =
+			ISource[] videoSources =
 				m_Room == null
-					? new List<ISource>()
-					: m_Room.Routing.State.GetFakeActiveVideoSources().SelectMany(kvp => kvp.Value).ToList();
+					? new ISource[0]
+					: m_Room.Routing.State.GetFakeActiveVideoSources().SelectMany(kvp => kvp.Value).Distinct().ToArray();
 
 			VideoMessage =
-				videoSources.Count == 0
+				videoSources.Length == 0
 					? "no sources routed for video"
 					: string.Format("sources routed for video {0}",
 									StringUtils.ArrayFormat(videoSources.Select(s => s.Name)));
 
 			// Audio routing
-			List<ISource> audioSources =
+			ISource[] audioSources =
 				m_Room == null
-					? new List<ISource>()
-					: m_Room.Routing.State.GetCachedActiveAudioSources().ToList();
+					? new ISource[0]
+					: m_Room.Routing.State.GetCachedActiveAudioSources().Distinct().ToArray();
 
 			AudioMessage =
-				audioSources.Count == 0
+				audioSources.Length == 0
 					? "no sources routed for audio"
 					: string.Format("sources routed for audio {0}",
 									StringUtils.ArrayFormat(audioSources.Select(s => s.Name)));

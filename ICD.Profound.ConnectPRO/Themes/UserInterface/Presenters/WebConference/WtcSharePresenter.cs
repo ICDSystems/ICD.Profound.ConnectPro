@@ -9,6 +9,8 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Devices;
+using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing;
 using ICD.Connect.Routing.Connections;
@@ -35,7 +37,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		private readonly IcdHashSet<ISource> m_RoutedSources;
 
-		private ISource[] m_Sources;
+		private readonly List<ISource> m_Sources;
 		private ISource m_Selected;
 
 		[CanBeNull]
@@ -69,7 +71,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		{
 			m_RefreshSection = new SafeCriticalSection();
 			m_RoutedSources = new IcdHashSet<ISource>();
-			m_Sources = new ISource[0];
+			m_Sources = new List<ISource>();
 		}
 
 		/// <summary>
@@ -86,12 +88,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			{
 				bool inPresentation = IsInPresentation();
 
-				for (ushort index = 0; index < m_Sources.Length; index++)
+				for (ushort index = 0; index < m_Sources.Count; index++)
 				{
 					ISource source = m_Sources[index];
 					ConnectProSource connectProSource = source as ConnectProSource;
 
-					IRoom room = Room == null || source == null ? null : Room.Routing.Sources.GetRoomForSource(source);
+					IRoom room = Room == null ? null : Room.Routing.Sources.GetRoomForSource(source);
 					bool combine = room != null && room.CombineState;
 
 					string icon =
@@ -100,7 +102,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 						: Icons.GetSourceIcon(connectProSource.Icon, eSourceColor.White);
 
 					bool select = inPresentation ? m_RoutedSources.Contains(source) : source == m_Selected;
+					bool enable = source.EnableWhenOffline || source.GetDevices().All(d => d.IsOnline); 
 
+					view.SetButtonEnabled(index, enable);
 					view.SetButtonSelected(index, select);
 					view.SetButtonIcon(index, icon);
 					view.SetButtonLabel(index, source == null ? null : source.GetName(combine));
@@ -108,9 +112,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 				bool enabled = inPresentation || m_Selected != null;
 
-				view.SetButtonCount((ushort)m_Sources.Length);
+				view.SetButtonCount((ushort)m_Sources.Count);
 				view.SetShareButtonEnabled(enabled);
 				view.SetShareButtonSelected(inPresentation);
+				view.SetSwipeLabelsVisible(m_Sources.Count > 4);
 			}
 			finally
 			{
@@ -131,7 +136,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		private void UpdateSources()
 		{
-			m_Sources = GetSources().ToArray();
+			m_Sources.SelectMany(s => s.GetDevices()).ForEach(Unsubscribe);
+
+			m_Sources.Clear();
+			m_Sources.AddRange(GetSources());
+
+			m_Sources.SelectMany(s => s.GetDevices()).ForEach(Subscribe);
+
 			RefreshIfVisible();
 		}
 
@@ -372,7 +383,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			Selected = null;
 
 			// If the view became visible and there is only 1 source preselect the source for sharing.
-			if (args.Data && m_Sources.Length == 1)
+			if (args.Data && m_Sources.Count == 1)
 				Selected = m_Sources.FirstOrDefault();
 		}
 
@@ -389,7 +400,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			}
 
 			// If there is only 1 source don't allow the user to deselect it.
-			if (m_Sources.Length == 1)
+			if (m_Sources.Count == 1)
 				return;
 
 			Selected = source == Selected ? null : source;
@@ -404,6 +415,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				StopPresenting();
 			else
 				StartPresenting(m_Selected);
+		}
+
+		#endregion
+
+		#region New region
+
+		private void Subscribe(IDeviceBase device)
+		{
+			device.OnIsOnlineStateChanged += DeviceOnIsOnlineStateChanged;
+		}
+
+		private void Unsubscribe(IDeviceBase device)
+		{
+			device.OnIsOnlineStateChanged += DeviceOnIsOnlineStateChanged;
+		}
+
+		private void DeviceOnIsOnlineStateChanged(object sender, DeviceBaseOnlineStateApiEventArgs deviceBaseOnlineStateApiEventArgs)
+		{
+			RefreshIfVisible();
 		}
 
 		#endregion

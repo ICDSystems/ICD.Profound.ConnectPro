@@ -76,7 +76,7 @@
     <Compile Include="Dialing\ConnectProDialing.cs" />
     <Compile Include="EventArguments\SourceRoutedEventArgs.cs" />
     <Compile Include="KrangPlugin.cs" />
-    <None Include="ObfuscationSettings.cs" />
+    <Compile Include="ObfuscationSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rooms\AbstractConnectProRoom.cs" />
     <Compile Include="Rooms\AbstractConnectProRoomSettings.cs" />

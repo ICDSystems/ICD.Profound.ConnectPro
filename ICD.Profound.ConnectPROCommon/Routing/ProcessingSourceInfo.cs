@@ -11,7 +11,8 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 		{
 			None,
 			Routing,
-			Unrouting
+			Unrouting,
+			Failed
 		}
 
 		/// <summary>
