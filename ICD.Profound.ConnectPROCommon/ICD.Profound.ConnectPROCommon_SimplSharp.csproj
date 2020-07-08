@@ -171,6 +171,7 @@
     <Compile Include="Themes\OsdInterface\IViews\IOsdViewFactory.cs" />
     <Compile Include="Themes\OsdInterface\IViews\Popups\IOsdIncomingCallView.cs" />
     <Compile Include="Themes\OsdInterface\IViews\Popups\IOsdMuteView.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\Popups\IOsdTouchFreeTimerView.cs" />
     <Compile Include="Themes\OsdInterface\IViews\Sources\IOsdSourcesView.cs" />
     <Compile Include="Themes\OsdInterface\IViews\Welcome\IOsdWelcomeView.cs" />
     <Compile Include="Themes\OsdInterface\IViews\Welcome\IReferencedScheduleView.cs" />
@@ -203,6 +204,8 @@
     <Compile Include="Themes\OsdInterface\Views\Popups\OsdIncomingCallView.generated.cs" />
     <Compile Include="Themes\OsdInterface\Views\Popups\OsdMuteView.cs" />
     <Compile Include="Themes\OsdInterface\Views\Popups\OsdMuteView.generated.cs" />
+    <Compile Include="Themes\OsdInterface\Views\Popups\OsdTouchFreeTimerView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\Popups\OsdTouchFreeTimerView.generated.cs" />
     <Compile Include="Themes\OsdInterface\Views\Sources\OsdSourcesView.cs" />
     <Compile Include="Themes\OsdInterface\Views\Sources\OsdSourcesView.generated.cs" />
     <Compile Include="Themes\OsdInterface\Views\Welcome\OsdWelcomeView.cs" />
