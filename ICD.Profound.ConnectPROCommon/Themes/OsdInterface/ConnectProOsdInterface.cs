@@ -104,6 +104,8 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdWelcomePresenter>());
 			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdSourcesPresenter>());
 			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdConferencePresenter>());
+			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdTouchFreeTimerPresenter>());
+
 
 			// these presenters are initially visible
 			m_NavigationController.NavigateTo<IOsdHelloPresenter>();

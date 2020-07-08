@@ -159,6 +159,7 @@
     <Compile Include="Themes\OsdInterface\IPresenters\IOsdPresenter.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\Popups\IOsdIncomingCallPresenter.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\Popups\IOsdMutePresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\Popups\IOsdTouchFreeTimerPresenter.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\Sources\IOsdSourcesPresenter.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\VisibilityTree\NotificationVisibilityNode.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\Welcome\IOsdWelcomePresenter.cs" />
@@ -185,6 +186,7 @@
     <Compile Include="Themes\OsdInterface\Presenters\OsdHelloPresenter.cs" />
     <Compile Include="Themes\OsdInterface\Presenters\Popups\OsdIncomingCallPresenter.cs" />
     <Compile Include="Themes\OsdInterface\Presenters\Popups\OsdMutePresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\Popups\OsdTouchFreeTimerPresenter.cs" />
     <Compile Include="Themes\OsdInterface\Presenters\Sources\OsdSourcesPresenter.cs" />
     <Compile Include="Themes\OsdInterface\Presenters\Welcome\OsdWelcomePresenter.cs" />
     <Compile Include="Themes\OsdInterface\Presenters\Welcome\ReferencedSchedulePresenter.cs" />
