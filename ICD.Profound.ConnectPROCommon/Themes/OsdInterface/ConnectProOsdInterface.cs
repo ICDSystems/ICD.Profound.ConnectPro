@@ -41,6 +41,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 		private IVisibilityNode m_DefaultNotification;
 		private IVisibilityNode m_MainPageVisibility;
 		private IVisibilityNode m_NotificationVisibility;
+		private IVisibilityNode m_BannerVisibility;
 
 		private IConnectProRoom m_Room;
 		private bool m_UserInterfaceReady;
@@ -94,24 +95,26 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 		/// </summary>
 		private void BuildVisibilityTree()
 		{
-			// Show "hello" when no notifications are visible
-			m_DefaultNotification = new NotificationVisibilityNode(m_NavigationController.LazyLoadPresenter<IOsdHelloPresenter>());
-			m_DefaultNotification.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdIncomingCallPresenter>());
-			m_DefaultNotification.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdMutePresenter>());
-			
-			// show "welcome" when no other main page is visible
+			// Banner notifications at the top of the CUE
+			m_BannerVisibility = new SingleVisibilityNode();
+			m_BannerVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdConferencePresenter>());
+			m_BannerVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdTouchFreeTimerPresenter>());
+
+			// Main presenters occupying the middle portion of the CUE
 			m_MainPageVisibility = new SingleVisibilityNode();
 			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdWelcomePresenter>());
 			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdSourcesPresenter>());
-			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdConferencePresenter>());
-			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdTouchFreeTimerPresenter>());
 
+			// Notifications at the bottom of the CUE
+			m_DefaultNotification = new NotificationVisibilityNode(m_NavigationController.LazyLoadPresenter<IOsdHelloPresenter>());
+			m_DefaultNotification.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdIncomingCallPresenter>());
+			m_DefaultNotification.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdMutePresenter>());
 
-			// these presenters are initially visible
+			// These presenters are initially visible
 			m_NavigationController.NavigateTo<IOsdHelloPresenter>();
 			m_NavigationController.NavigateTo<IOsdHeaderPresenter>();
 
-			// always visible
+			// Always visible
 			m_NavigationController.LazyLoadPresenter<IOsdBackgroundPresenter>();
 			
 			UpdateVisibility();
