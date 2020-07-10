@@ -97,13 +97,13 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 		{
 			// Banner notifications at the top of the CUE
 			m_BannerVisibility = new SingleVisibilityNode();
-			m_BannerVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdConferencePresenter>());
 			m_BannerVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdTouchFreeTimerPresenter>());
 
 			// Main presenters occupying the middle portion of the CUE
 			m_MainPageVisibility = new SingleVisibilityNode();
 			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdWelcomePresenter>());
 			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdSourcesPresenter>());
+			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdConferencePresenter>());
 
 			// Notifications at the bottom of the CUE
 			m_DefaultNotification = new NotificationVisibilityNode(m_NavigationController.LazyLoadPresenter<IOsdHelloPresenter>());
