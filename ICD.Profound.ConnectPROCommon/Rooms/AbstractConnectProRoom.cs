@@ -652,6 +652,8 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		/// <param name="conferenceManager"></param>
 		protected override void Subscribe(IConferenceManager conferenceManager)
 		{
+			base.Subscribe(conferenceManager);
+
 			if (conferenceManager == null)
 				return;
 
@@ -664,6 +666,8 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		/// <param name="conferenceManager"></param>
 		protected override void Unsubscribe(IConferenceManager conferenceManager)
 		{
+			base.Unsubscribe(conferenceManager);
+
 			if (conferenceManager == null)
 				return;
 
