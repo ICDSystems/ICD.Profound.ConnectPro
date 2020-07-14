@@ -6,7 +6,7 @@ using System.Reflection;
 [assembly: AssemblyCopyright("Copyright © ICD Systems 2020")]
 [assembly: AssemblyVersion("14.0.1.0")]
 
-[assembly: AssemblyInformationalVersion("1.7.0")]
+[assembly: AssemblyInformationalVersion("1.8.0")]
 #if SIMPLSHARP
-[assembly: Crestron.SimplSharp.Reflection.AssemblyInformationalVersion("1.7.0")]
+[assembly: Crestron.SimplSharp.Reflection.AssemblyInformationalVersion("1.8.0")]
 #endif
