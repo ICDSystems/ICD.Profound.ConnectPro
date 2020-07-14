@@ -135,29 +135,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Cameras
 					view.SetLayoutStyleButtonSelected(kvp.Key, kvp.Value == style);
 
 				// Set the enabled state of the controls
-				bool layoutAvailable = m_ConferenceLayoutControl != null && m_ConferenceLayoutControl.LayoutAvailable;
+				bool layoutAvailable = m_ConferenceLayoutControl != null && m_ConferenceLayoutControl.LayoutAvailable && m_LayoutComponent != null;
 				bool presentationActive = m_PresentationControl != null && m_PresentationControl.PresentationActive;
 				int participantCount = m_CallComponent == null ? 0 : m_CallComponent.GetParticipants().Count();
 
-				bool sizeEnabled = m_LayoutComponent != null && (layoutAvailable && m_LayoutComponent.LayoutAvailability.CanAdjustFloatingVideo);
-				bool contentThumbnailEnabled = m_LayoutComponent != null &&
-				                               (layoutAvailable && presentationActive && m_LayoutComponent
+				bool sizeEnabled = layoutAvailable && m_LayoutComponent.LayoutAvailability.CanAdjustFloatingVideo;
+				bool contentThumbnailEnabled = layoutAvailable && presentationActive && m_LayoutComponent
 				                                                                         .LayoutAvailability
-				                                                                         .CanSwitchFloatingShareContent
-				                               );
+				                                                                         .CanSwitchFloatingShareContent;
 				bool selfviewCameraEnabled = layoutAvailable && participantCount > 1;
-				bool thumbnailPositionEnabled = m_LayoutComponent != null &&
-				                                (layoutAvailable && size != eZoomLayoutSize.Off && m_LayoutComponent
+				bool thumbnailPositionEnabled = layoutAvailable && size != eZoomLayoutSize.Off && m_LayoutComponent
 				                                                                                   .LayoutAvailability
-				                                                                                   .CanAdjustFloatingVideo
-				                                );
+				                                                                                   .CanAdjustFloatingVideo;
 
 				bool styleEnabled = layoutAvailable;
 				bool galleryEnabled = layoutAvailable && m_LayoutComponent.LayoutAvailability.CanSwitchWallView;
 				bool speakerEnabled = layoutAvailable && m_LayoutComponent.LayoutAvailability.CanSwitchSpeakerView;
 				bool stripEnabled = layoutAvailable;
-				bool shareAllEnabled =
-					layoutAvailable && m_LayoutComponent.LayoutAvailability.CanSwitchShareOnAllScreens;
+				bool shareAllEnabled = layoutAvailable && m_LayoutComponent.LayoutAvailability.CanSwitchShareOnAllScreens;
 
 				view.SetLayoutSizeListEnabled(sizeEnabled);
 				view.SetContentThumbnailButtonEnabled(contentThumbnailEnabled);

@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [14.0.1] - 2020-07-14
+### Changed
+ - Fixed duplicate sources in event server routing feedback
+ - Changed "Out Of Meeting" activity to "Idle"
+ - Fixed a bug where meetings would time out after 10 minutes even if a source is routed
+ - Sources on the VTC/Zoom share pages are disabled if the device is offline
+ - Fixed a bug where base commercial room subscriptions were not being called
+ - Fixed a null reference exception in the camera layout subpage
+
 ## [14.0.0] - 2020-06-22
 ### Added
  - Sources now disable when the source device is offline, unless EnableWhileOffline is set on the source
