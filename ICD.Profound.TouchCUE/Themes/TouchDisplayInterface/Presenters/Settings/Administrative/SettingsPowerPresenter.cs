@@ -18,8 +18,11 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Settings
 		private TimeSpan m_WeekendWakeTime;
 		private TimeSpan m_WeekdaySleepTime;
 		private TimeSpan m_WeekendSleepTime;
-		private bool m_WeekdayEnable;
-		private bool m_WeekendEnable;
+
+		private bool m_WeekdayEnableWake;
+		private bool m_WeekendEnableWake;
+		private bool m_WeekdayEnableSleep;
+		private bool m_WeekendEnableSleep;
 
 		private bool m_Weekend;
 
@@ -46,9 +49,11 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Settings
 		public SettingsPowerPresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views, TouchCueTheme theme)
 			: base(nav, views, theme)
 		{
-			m_WeekendEnable = false;
-			m_WeekdayEnable = false;
-
+			m_WeekdayEnableWake = false;
+			m_WeekendEnableWake = false;
+			m_WeekdayEnableSleep = false;
+			m_WeekendEnableSleep = false;
+			
 			m_WeekdayWakeTime = new TimeSpan(7, 0, 0);
 			m_WeekdaySleepTime = new TimeSpan(19, 0, 0);
 
@@ -69,8 +74,10 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Settings
 
 			WakeSchedule schedule = node.WakeSchedule;
 
-			m_WeekdayEnable = schedule.WeekdayEnableSleep && schedule.WeekdayEnableWake;
-			m_WeekendEnable = schedule.WeekendEnableSleep && schedule.WeekendEnableWake;
+			m_WeekdayEnableWake = schedule.WeekdayEnableWake;
+			m_WeekendEnableWake = schedule.WeekendEnableWake;
+			m_WeekdayEnableSleep = schedule.WeekdayEnableSleep;
+			m_WeekendEnableSleep = schedule.WeekendEnableSleep;
 
 			if (schedule.WeekdayWakeTime.HasValue)
 				m_WeekdayWakeTime = schedule.WeekdayWakeTime.Value;
@@ -92,10 +99,11 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Settings
 				return;
 
 			WakeSchedule schedule = Node.WakeSchedule;
-			schedule.WeekdayEnableSleep = m_WeekdayEnable;
-			schedule.WeekdayEnableWake = m_WeekdayEnable;
-			schedule.WeekendEnableSleep = m_WeekendEnable;
-			schedule.WeekendEnableWake = m_WeekendEnable;
+
+			schedule.WeekdayEnableWake = m_WeekdayEnableWake;
+			schedule.WeekendEnableWake = m_WeekendEnableWake;
+			schedule.WeekdayEnableSleep = m_WeekdayEnableSleep;
+			schedule.WeekendEnableSleep = m_WeekendEnableSleep;
 
 			schedule.WeekdayWakeTime = m_WeekdayWakeTime;
 			schedule.WeekdaySleepTime = m_WeekdaySleepTime;
@@ -123,7 +131,8 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Settings
 				view.SetWakeHour((ushort) m_WeekendWakeTime.Hours);
 				view.SetWakeMinute((ushort) m_WeekendWakeTime.Minutes);
 
-				view.SetEnableToggleSelected(m_WeekendEnable);
+				view.SetEnableToggleSelected(m_WeekendEnableWake);
+				view.SetEnableToggleSelected(m_WeekendEnableSleep);
 			}
 			else
 			{
@@ -135,7 +144,8 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Settings
 				view.SetWakeHour((ushort) m_WeekdayWakeTime.Hours);
 				view.SetWakeMinute((ushort) m_WeekdayWakeTime.Minutes);
 
-				view.SetEnableToggleSelected(m_WeekdayEnable);
+				view.SetEnableToggleSelected(m_WeekdayEnableWake);
+				view.SetEnableToggleSelected(m_WeekdayEnableSleep);
 			}
 		}
 
@@ -182,9 +192,17 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Settings
 		private void ToggleEnabled()
 		{
 			if (Weekend)
-				m_WeekendEnable = !m_WeekendEnable;
+			{
+				m_WeekendEnableWake = !m_WeekendEnableWake;
+				m_WeekendEnableSleep = !m_WeekendEnableSleep;
+			}
+
 			else
-				m_WeekdayEnable = !m_WeekdayEnable;
+			{
+				m_WeekdayEnableWake = !m_WeekdayEnableWake;
+				m_WeekdayEnableSleep = !m_WeekdayEnableSleep;
+			}
+				
 
 			Refresh();
 		}
