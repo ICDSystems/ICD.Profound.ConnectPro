@@ -122,7 +122,9 @@ namespace ICD.Profound.ConnectPRO.Tests.Themes.UserInterface.Navigation.Common
 			CloseSettings(roomType);
 
 			Assert.AreEqual(enable,
-			                weekdays ? roomType.Room.WakeSchedule.WeekdayEnable : roomType.Room.WakeSchedule.WeekendEnable);
+			                weekdays
+				                ? roomType.Room.WakeSchedule.WeekdayEnableWake && roomType.Room.WakeSchedule.WeekdayEnableSleep
+				                : roomType.Room.WakeSchedule.WeekendEnableWake && roomType.Room.WakeSchedule.WeekendEnableSleep);
 		}
 
 		private void PowerSystemPowerSettings(TRoomType roomType, bool powerOn)

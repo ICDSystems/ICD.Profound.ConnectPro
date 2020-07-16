@@ -69,8 +69,8 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Settings
 
 			WakeSchedule schedule = node.WakeSchedule;
 
-			m_WeekdayEnable = schedule.WeekdayEnable;
-			m_WeekendEnable = schedule.WeekendEnable;
+			m_WeekdayEnable = schedule.WeekdayEnableSleep && schedule.WeekdayEnableWake;
+			m_WeekendEnable = schedule.WeekendEnableSleep && schedule.WeekendEnableWake;
 
 			if (schedule.WeekdayWakeTime.HasValue)
 				m_WeekdayWakeTime = schedule.WeekdayWakeTime.Value;
@@ -92,8 +92,10 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Settings
 				return;
 
 			WakeSchedule schedule = Node.WakeSchedule;
-			schedule.WeekdayEnable = m_WeekdayEnable;
-			schedule.WeekendEnable = m_WeekendEnable;
+			schedule.WeekdayEnableSleep = m_WeekdayEnable;
+			schedule.WeekdayEnableWake = m_WeekdayEnable;
+			schedule.WeekendEnableSleep = m_WeekendEnable;
+			schedule.WeekendEnableWake = m_WeekendEnable;
 
 			schedule.WeekdayWakeTime = m_WeekdayWakeTime;
 			schedule.WeekdaySleepTime = m_WeekdaySleepTime;
