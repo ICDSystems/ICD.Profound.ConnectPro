@@ -19,14 +19,14 @@ using ICD.Connect.UI.Mvp.VisibilityTree;
 using ICD.Profound.ConnectPROCommon.Rooms;
 using ICD.Profound.ConnectPROCommon.Routing;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters;
-using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters.Conference;
-using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters.Popups;
-using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters.Sources;
-using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters.VisibilityTree;
-using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters.Welcome;
+using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters.Bodies;
+using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters.FooterNotifications;
+using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters.HeaderNotifications;
+using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters.Headers;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IViews;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Views;
+using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.VisibilityTree;
 
 namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 {
@@ -97,21 +97,21 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 		{
 			// Banner notifications at the top of the CUE
 			m_BannerVisibility = new SingleVisibilityNode();
-			m_BannerVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdTouchFreeTimerPresenter>());
+			m_BannerVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdTouchFreeHeaderNotificationPresenter>());
 
 			// Main presenters occupying the middle portion of the CUE
 			m_MainPageVisibility = new SingleVisibilityNode();
-			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdWelcomePresenter>());
-			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdSourcesPresenter>());
-			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdConferencePresenter>());
+			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdScheduleBodyPresenter>());
+			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdSourcesBodyPresenter>());
+			m_MainPageVisibility.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdConferenceBodyPresenter>());
 
 			// Notifications at the bottom of the CUE
-			m_DefaultNotification = new NotificationVisibilityNode(m_NavigationController.LazyLoadPresenter<IOsdHelloPresenter>());
-			m_DefaultNotification.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdIncomingCallPresenter>());
-			m_DefaultNotification.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdMutePresenter>());
+			m_DefaultNotification = new NotificationVisibilityNode(m_NavigationController.LazyLoadPresenter<IOsdHelloFooterNotificationPresenter>());
+			m_DefaultNotification.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdIncomingCallFooterNotificationPresenter>());
+			m_DefaultNotification.AddPresenter(m_NavigationController.LazyLoadPresenter<IOsdMuteFooterNotificationPresenter>());
 
 			// These presenters are initially visible
-			m_NavigationController.NavigateTo<IOsdHelloPresenter>();
+			m_NavigationController.NavigateTo<IOsdHelloFooterNotificationPresenter>();
 			m_NavigationController.NavigateTo<IOsdHeaderPresenter>();
 
 			// Always visible
@@ -220,22 +220,22 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 				{
 					zoomRouted = true;
 					var control = (child as IDevice).Controls.GetControl<IConferenceDeviceControl>();
-					m_NavigationController.LazyLoadPresenter<IOsdConferencePresenter>().ActiveConferenceControl = control;
+					m_NavigationController.LazyLoadPresenter<IOsdConferenceBodyPresenter>().ActiveConferenceControl = control;
 					break;
 				}
 			}
 
 			if (zoomRouted)
-				m_NavigationController.NavigateTo<IOsdConferencePresenter>();
+				m_NavigationController.NavigateTo<IOsdConferenceBodyPresenter>();
 			else if (m_Room.IsInMeeting)
-				m_NavigationController.NavigateTo<IOsdSourcesPresenter>();
+				m_NavigationController.NavigateTo<IOsdSourcesBodyPresenter>();
 			else if (m_Room.GetCalendarControls().Any())
-				m_NavigationController.NavigateTo<IOsdWelcomePresenter>();
+				m_NavigationController.NavigateTo<IOsdScheduleBodyPresenter>();
 			else
 			{
 				m_MainPageVisibility.Hide();
 
-				m_NavigationController.NavigateTo<IOsdHelloPresenter>();
+				m_NavigationController.NavigateTo<IOsdHelloFooterNotificationPresenter>();
 				m_NavigationController.NavigateTo<IOsdHeaderPresenter>();
 			}
 		}
