@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using ICD.Common.Utils;
+using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.DialContexts;
@@ -12,6 +13,7 @@ using ICD.Connect.Conferencing.Zoom.Components.System;
 using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.UI.Attributes;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters.Conference;
@@ -23,6 +25,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Conferenc
 	[PresenterBinding(typeof(IOsdConferencePresenter))]
 	public sealed class OsdConferencePresenter : AbstractOsdPresenter<IOsdConferenceView>, IOsdConferencePresenter
 	{
+		private const string MESSAGE_CONFERENCE = "Your conference is about to begin.";
 		private const string MEETING_NUMBER_FORMAT = "<div class=\"conferenceInfoLabel\">Meeting Number: </div><div class=\"conferenceInfoField\"> {0}</div>";
 		private const string CALL_IN_FORMAT = "<span class=\"blueText\">{0}</span>";
 
@@ -231,6 +234,25 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Conferenc
 			if (zoomConference != null && zoomConference.CallInfo != null)
 				m_CachedCallInfo = zoomConference.CallInfo;
 			RefreshIfVisible();
+		}
+
+		#endregion
+
+		#region View Callbacks
+
+		/// <summary>
+		/// Called when the view visibility changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			base.ViewOnVisibilityChanged(sender, args);
+
+			if (args.Data)
+				Navigation.LazyLoadPresenter<IOsdHelloPresenter>().PushMessage(MESSAGE_CONFERENCE);
+			else
+				Navigation.LazyLoadPresenter<IOsdHelloPresenter>().PopMessage(MESSAGE_CONFERENCE);
 		}
 
 		#endregion

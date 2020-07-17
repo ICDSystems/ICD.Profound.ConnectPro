@@ -12,5 +12,17 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters
 		/// Gets whether the presenter is in the main area (true) or the notification area (false)
 		/// </summary>
 		bool MainPageView { get; }
+
+		/// <summary>
+		/// Adds the message to the top of the stack and refreshes the view.
+		/// </summary>
+		/// <param name="message"></param>
+		void PushMessage(string message);
+
+		/// <summary>
+		/// Removes the message from the stack and refreshes the view.
+		/// </summary>
+		/// <param name="message"></param>
+		void PopMessage(string message);
 	}
 }

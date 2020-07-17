@@ -11,10 +11,8 @@ using ICD.Connect.Calendaring.Comparers;
 using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.UI.Attributes;
-using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPROCommon.Rooms;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters;
-using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters.Conference;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IViews;
 
 namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters
@@ -29,6 +27,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters
 		private readonly SafeTimer m_UpdateBookingsTimer;
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly List<IBooking> m_Bookings;
+		private readonly List<string> m_Messages;
 
 		private ICalendarControl m_CalendarControl;
 		private bool m_MainPageView;
@@ -86,6 +85,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters
 			m_UpdateBookingsTimer = new SafeTimer(UpdateBookings, DEFAULT_UPDATE_TIME);
 			m_RefreshSection = new SafeCriticalSection();
 			m_Bookings = new List<IBooking>();
+			m_Messages = new List<string>();
 		}
 
 		protected override void Refresh(IOsdHelloView view)
@@ -103,9 +103,9 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters
 
 				if (Room == null)
 					labelText = string.Empty;
-				// TODO - Move to the conference presenter
-				else if (Navigation.LazyLoadPresenter<IOsdConferencePresenter>().IsViewVisible)
-					labelText = "Your conference is about to begin.";
+
+				else if (m_Messages.Count > 0)
+					labelText = m_Messages.Last();
 				else if (nextBooking == null || nextBooking.StartTime - TimeSpan.FromMinutes(15) > now || Room.IsInMeeting)
 					labelText = "Welcome to your meeting.";
 				else
@@ -119,6 +119,51 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters
 				m_RefreshSection.Leave();
 			}
 		}
+
+		#region Methods
+
+		/// <summary>
+		/// Adds the message to the top of the stack and refreshes the view.
+		/// </summary>
+		/// <param name="message"></param>
+		public void PushMessage(string message)
+		{
+			m_RefreshSection.Enter();
+
+			try
+			{
+				m_Messages.RemoveAll(m => m == message);
+				m_Messages.Add(message);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+
+			RefreshIfVisible();
+		}
+
+		/// <summary>
+		/// Removes the message from the stack and refreshes the view.
+		/// </summary>
+		/// <param name="message"></param>
+		public void PopMessage(string message)
+		{
+			m_RefreshSection.Enter();
+
+			try
+			{
+				m_Messages.RemoveAll(m => m == message);
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+
+			RefreshIfVisible();
+		}
+
+		#endregion
 
 		#region Private Methods
 
