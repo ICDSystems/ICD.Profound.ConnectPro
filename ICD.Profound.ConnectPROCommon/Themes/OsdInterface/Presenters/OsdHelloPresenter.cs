@@ -104,10 +104,13 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters
 				if (Room == null)
 					labelText = string.Empty;
 
+				// There is a custom message taking precendence
 				else if (m_Messages.Count > 0)
 					labelText = m_Messages.Last();
+				// There is no booking starting in the next 15 minutes, or we're in a meeting already
 				else if (nextBooking == null || nextBooking.StartTime - TimeSpan.FromMinutes(15) > now || Room.IsInMeeting)
 					labelText = "Welcome to your meeting.";
+				// There is a booking starting in 15 minutes
 				else
 					labelText = "Are you here for your meeting? Let's get started.";
 
