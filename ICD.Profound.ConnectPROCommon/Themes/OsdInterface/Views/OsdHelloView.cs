@@ -19,7 +19,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Views
 
 		/// <summary>
 		/// Sets whether the hello text is in the Main View (true, no scheduler and out of meeting)
-		/// or in the notification section (false, scheduler or in meeting
+		/// or in the notification section (false, scheduler or in meeting)
 		/// </summary>
 		/// <param name="mainPageView"></param>
 		public void SetMainPageView(bool mainPageView)
