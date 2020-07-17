@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
+using ICD.Connect.UI.Controls.Images;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Connect.UI.Controls.TextControls;
 
@@ -11,6 +12,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Views
 		private VtProSubpage m_Subpage;
 		private VtProSimpleLabel m_RoomName;
 		private VtProSimpleLabel m_TimeLabel;
+		private VtProImageObject m_TouchFreeFace;
 
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
@@ -25,6 +27,12 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Views
 			{
 				IndirectTextJoin = 9
 			};
+
+			m_TouchFreeFace = new VtProImageObject(panel, m_Subpage)
+			{
+				ModeAnalogJoin = 800
+			};
+
 		}
 
 		protected override IEnumerable<IVtProControl> GetChildren()
@@ -32,6 +40,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Views
 			yield return m_Subpage;
 			yield return m_RoomName;
 			yield return m_TimeLabel;
+			yield return m_TouchFreeFace;
 		}
 	}
 }

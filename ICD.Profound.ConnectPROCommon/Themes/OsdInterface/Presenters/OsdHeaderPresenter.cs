@@ -50,7 +50,11 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters
 			try
 			{
 				string roomName = Room == null ? string.Empty : Room.Name;
+
+				eTouchFreeFace faceImage = eTouchFreeFace.None;
+
 				view.SetRoomName(roomName);
+				view.SetTouchFreeFaceImage(faceImage);
 
 				RefreshTime();
 			}

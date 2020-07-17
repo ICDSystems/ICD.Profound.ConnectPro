@@ -170,6 +170,7 @@
     <Compile Include="Themes\OsdInterface\IViews\IOsdHelloView.cs" />
     <Compile Include="Themes\OsdInterface\IViews\IOsdView.cs" />
     <Compile Include="Themes\OsdInterface\IViews\IOsdViewFactory.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\OsdImages.cs" />
     <Compile Include="Themes\OsdInterface\IViews\Popups\IOsdIncomingCallView.cs" />
     <Compile Include="Themes\OsdInterface\IViews\Popups\IOsdMuteView.cs" />
     <Compile Include="Themes\OsdInterface\IViews\Popups\IOsdTouchFreeTimerView.cs" />

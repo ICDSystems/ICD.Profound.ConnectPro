@@ -21,5 +21,14 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Views
 		{
 			m_TimeLabel.SetLabelText(time);
 		}
+
+		/// <summary>
+		/// Sets the current touch-free face graphic.
+		/// </summary>
+		/// <param name="image"></param>
+		public void SetTouchFreeFaceImage(eTouchFreeFace image)
+		{
+			m_TouchFreeFace.SetMode((ushort)image);
+		}
 	}
 }
