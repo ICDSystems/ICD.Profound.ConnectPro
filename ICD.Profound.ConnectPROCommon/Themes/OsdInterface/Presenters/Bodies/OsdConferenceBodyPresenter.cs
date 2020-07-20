@@ -26,7 +26,9 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Bodies
 	[PresenterBinding(typeof(IOsdConferenceBodyPresenter))]
 	public sealed class OsdConferenceBodyPresenter : AbstractOsdPresenter<IOsdConferenceBodyView>, IOsdConferenceBodyPresenter
 	{
+		private const string KEY_MESSAGE_CONFERENCE = "Conference";
 		private const string MESSAGE_CONFERENCE = "Your conference is about to begin.";
+
 		private const string MEETING_NUMBER_FORMAT = "<div class=\"conferenceInfoLabel\">Meeting Number: </div><div class=\"conferenceInfoField\"> {0}</div>";
 		private const string CALL_IN_FORMAT = "<span class=\"blueText\">{0}</span>";
 
@@ -251,9 +253,9 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Bodies
 			base.ViewOnVisibilityChanged(sender, args);
 
 			if (args.Data)
-				Navigation.LazyLoadPresenter<IOsdHelloFooterNotificationPresenter>().PushMessage(MESSAGE_CONFERENCE);
+				Navigation.LazyLoadPresenter<IOsdHelloFooterNotificationPresenter>().PushMessage(KEY_MESSAGE_CONFERENCE, MESSAGE_CONFERENCE);
 			else
-				Navigation.LazyLoadPresenter<IOsdHelloFooterNotificationPresenter>().PopMessage(MESSAGE_CONFERENCE);
+				Navigation.LazyLoadPresenter<IOsdHelloFooterNotificationPresenter>().ClearMessages(KEY_MESSAGE_CONFERENCE);
 		}
 
 		#endregion

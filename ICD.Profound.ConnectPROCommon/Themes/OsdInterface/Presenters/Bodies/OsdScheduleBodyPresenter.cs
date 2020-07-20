@@ -11,9 +11,11 @@ using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Attributes;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPROCommon.Rooms;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters.Bodies;
+using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters.FooterNotifications;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IViews;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IViews.Bodies;
 using ICD.Profound.ConnectPROCommon.Themes.Shared.Models;
@@ -85,6 +87,8 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Bodies
 						refreshInterval = (long)(currentBooking.EndTime -
 						                         IcdEnvironment.GetUtcTime() -
 						                         TimeSpan.FromMinutes(15)).TotalMilliseconds + 1000;
+
+						Navigation.LazyLoadPresenter<IOsdHelloFooterNotificationPresenter>().ClearMessages("Meeting");
 					}
 					else
 					{
@@ -100,6 +104,8 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Bodies
 						refreshInterval =
 							(long)(currentBooking.EndTime - IcdEnvironment.GetUtcTime()).TotalMilliseconds +
 							1000;
+
+						Navigation.LazyLoadPresenter<IOsdHelloFooterNotificationPresenter>().PushMessage("Meeting", "There is a meeting about to begin in this room");
 					}
 				}
 

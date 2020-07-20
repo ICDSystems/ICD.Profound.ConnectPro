@@ -29,7 +29,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.FooterNot
 		private readonly SafeTimer m_UpdateBookingsTimer;
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly List<IBooking> m_Bookings;
-		private readonly List<string> m_Messages;
+		private readonly List<KeyValuePair<string, string>> m_Messages;
 
 		private ICalendarControl m_CalendarControl;
 		private bool m_MainPageView;
@@ -87,7 +87,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.FooterNot
 			m_UpdateBookingsTimer = new SafeTimer(UpdateBookings, DEFAULT_UPDATE_TIME);
 			m_RefreshSection = new SafeCriticalSection();
 			m_Bookings = new List<IBooking>();
-			m_Messages = new List<string>();
+			m_Messages = new List<KeyValuePair<string, string>>();
 		}
 
 		protected override void Refresh(IOsdHelloFooterNotificationView view)
@@ -108,7 +108,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.FooterNot
 
 				// There is a custom message taking precendence
 				else if (m_Messages.Count > 0)
-					labelText = m_Messages.Last();
+					labelText = m_Messages.Last().Value;
 				// There is no booking starting in the next 15 minutes, or we're in a meeting already
 				else if (nextBooking == null || nextBooking.StartTime - TimeSpan.FromMinutes(15) > now || Room.IsInMeeting)
 					labelText = "Welcome to your meeting.";
@@ -130,15 +130,16 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.FooterNot
 		/// <summary>
 		/// Adds the message to the top of the stack and refreshes the view.
 		/// </summary>
+		/// <param name="key"></param>
 		/// <param name="message"></param>
-		public void PushMessage(string message)
+		public void PushMessage(string key, string message)
 		{
 			m_RefreshSection.Enter();
 
 			try
 			{
-				m_Messages.RemoveAll(m => m == message);
-				m_Messages.Add(message);
+				m_Messages.RemoveAll(kvp => kvp.Key == key);
+				m_Messages.Add(new KeyValuePair<string, string>(key, message));
 			}
 			finally
 			{
@@ -149,16 +150,16 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.FooterNot
 		}
 
 		/// <summary>
-		/// Removes the message from the stack and refreshes the view.
+		/// Removes the messages from the stack with the given key and refreshes the view.
 		/// </summary>
-		/// <param name="message"></param>
-		public void PopMessage(string message)
+		/// <param name="key"></param>
+		public void ClearMessages(string key)
 		{
 			m_RefreshSection.Enter();
 
 			try
 			{
-				m_Messages.RemoveAll(m => m == message);
+				m_Messages.RemoveAll(kvp => kvp.Key == key);
 			}
 			finally
 			{
