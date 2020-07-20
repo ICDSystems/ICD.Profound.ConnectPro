@@ -215,6 +215,7 @@
     <Compile Include="Themes\OsdInterface\Views\Bodies\OsdScheduleBodyView.generated.cs" />
     <Compile Include="Themes\OsdInterface\Views\Bodies\ReferencedScheduleView.cs" />
     <Compile Include="Themes\OsdInterface\Views\Bodies\ReferencedScheduleView.generated.cs" />
+    <Compile Include="Themes\OsdInterface\VisibilityTree\OsdVisibilityTree.cs" />
     <Compile Include="Themes\Shared\Models\EmptyBooking.cs" />
     <Compile Include="Themes\ShureMicrophoneInterface\ConnectProShureMicrophoneInterface.cs" />
     <Compile Include="Themes\ShureMicrophoneInterface\ConnectProShureMicrophoneInterfaceFactory.cs" />
