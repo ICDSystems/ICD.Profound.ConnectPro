@@ -14,6 +14,22 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Headers
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly SafeTimer m_RefreshTimer;
 
+		private eTouchFreeFace m_TouchFreeImage;
+
+		public eTouchFreeFace FaceImage
+		{
+			get { return m_TouchFreeImage; }
+			set
+			{
+				if (value == m_TouchFreeImage)
+					return;
+
+				m_TouchFreeImage = value;
+
+				RefreshIfVisible();
+			}
+		}
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -24,6 +40,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Headers
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
+			m_TouchFreeImage = new eTouchFreeFace();
 
 			// Refresh every second to update the time
 			m_RefreshTimer = new SafeTimer(RefreshTime, 1000, 1000);
@@ -53,10 +70,8 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Headers
 			{
 				string roomName = Room == null ? string.Empty : Room.Name;
 
-				eTouchFreeFace faceImage = eTouchFreeFace.None;
-
 				view.SetRoomName(roomName);
-				view.SetTouchFreeFaceImage(faceImage);
+				view.SetTouchFreeFaceImage(FaceImage);
 
 				RefreshTime();
 			}

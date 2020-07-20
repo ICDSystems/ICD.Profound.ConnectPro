@@ -32,7 +32,6 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Views.Headers
 			{
 				ModeAnalogJoin = 800
 			};
-
 		}
 
 		protected override IEnumerable<IVtProControl> GetChildren()
