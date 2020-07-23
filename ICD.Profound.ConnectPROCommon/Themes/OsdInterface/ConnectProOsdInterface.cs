@@ -2,6 +2,7 @@
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
@@ -40,6 +41,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 		private IConnectProRoom m_Room;
 		private readonly SafeTimer m_FaceTransitionTimer;
 		private bool m_UserInterfaceReady;
+		private DateTime m_TouchFreeCancellationTime;
 
 		#region Properties
 
@@ -59,7 +61,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 		public ConnectProOsdInterface(IPanelDevice panel, IConnectProTheme theme)
 		{
 			m_Panel = panel;
-			m_FaceTransitionTimer = SafeTimer.Stopped(() => UpdateTouchFree(null));
+			m_FaceTransitionTimer = SafeTimer.Stopped(UpdateTouchFree);
 			UpdatePanelOfflineJoin();
 
 			IOsdViewFactory viewFactory = new ConnectProOsdViewFactory(panel, theme);
@@ -166,80 +168,120 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 				m_NavigationController.NavigateTo<IOsdHelloFooterNotificationPresenter>();
 			}
 
-			UpdateTouchFree(null);
+			UpdateTouchFree();
 		}
+
+		#endregion
+
+		#region TouchFree
 
 		/// <summary>
 		/// Updates the Touch-Free feedback for the header, footer notifications, etc
 		/// </summary>
-		private void UpdateTouchFree(bool? isRunningChanged)
+		private void UpdateTouchFree()
 		{
 			if (m_Room == null)
 				return;
+
+			if (m_Room.TouchFreeEnabled && !m_Room.IsInMeeting)
+			{
+				// TouchFree is counting down
+				if (m_Room.MeetingStartTimer.IsRunning && !m_Room.MeetingStartTimer.IsElapsed)
+					UpdateTouchFreeCountdown();
+				// TouchFree countdown isn't running
+				else
+					UpdateTouchFreeIdle();
+			}
+			else
+			{
+				UpdateTouchFreeDisabled();
+			}
+		}
+
+		/// <summary>
+		/// Clears the TouchFree face animation and footer notification.
+		/// </summary>
+		private void UpdateTouchFreeDisabled()
+		{
+			IcdConsole.PrintLine(eConsoleColor.Magenta, "UpdateTouchFreeDisabled");
 
 			IOsdHeaderPresenter header = m_NavigationController.LazyLoadPresenter<IOsdHeaderPresenter>();
 			IOsdHelloFooterNotificationPresenter footer =
 				m_NavigationController.LazyLoadPresenter<IOsdHelloFooterNotificationPresenter>();
 
-			bool hasTouchFree = m_Room.TouchFree != null && m_Room.TouchFree.Enabled;
+			footer.ClearMessages("TouchFree");
+			header.FaceImage = eTouchFreeFace.None;
+		}
 
-			if (m_Room.MeetingStartTimer.IsRunning && hasTouchFree)
-			{
-				// Periodically switch between sources and schedule
-				if ((m_Room.MeetingStartTimer.Milliseconds / 5000) % 2 == 0)
-				{
-					if (m_Room.GetCalendarControls().Any())
-						m_NavigationController.NavigateTo<IOsdScheduleBodyPresenter>();
-					else
-					{
-						m_VisibilityTree.BodyVisibility.Hide();
-						m_NavigationController.NavigateTo<IOsdHelloFooterNotificationPresenter>();
-					}
-				}
-				else
-					m_NavigationController.NavigateTo<IOsdSourcesBodyPresenter>();
+		/// <summary>
+		/// Updates the idle state of the footer label and makes the face periodically whistle.
+		/// </summary>
+		private void UpdateTouchFreeIdle()
+		{
+			IcdConsole.PrintLine(eConsoleColor.Magenta, "UpdateTouchFreeIdle");
 
-				// Face starts excited then goes to smiling
-				header.FaceImage = m_Room.MeetingStartTimer.Milliseconds >= 1000
-					                   ? eTouchFreeFace.Smiling
-					                   : eTouchFreeFace.Excited;
+			IOsdHeaderPresenter header = m_NavigationController.LazyLoadPresenter<IOsdHeaderPresenter>();
+			IOsdHelloFooterNotificationPresenter footer =
+				m_NavigationController.LazyLoadPresenter<IOsdHelloFooterNotificationPresenter>();
 
-				// Update message
-				if (m_NavigationController.LazyLoadPresenter<IOsdSourcesBodyPresenter>().IsViewVisible)
-					footer.PushMessage("TouchFree", "Don't forget about your other devices");
-				else
-					footer.PushMessage("TouchFree", "Are you here for this meeting?");
-			}
-			else if (!m_Room.IsInMeeting && hasTouchFree)
+			if (IcdEnvironment.GetUtcTime() - m_TouchFreeCancellationTime > TimeSpan.FromSeconds(5))
 			{
 				footer.PushMessage("TouchFree", "Come on in");
 
 				// Periodically whistle
-				Random seededRandom = new Random(IcdEnvironment.GetUtcTime().Second / 3); // Whistle for a few seconds at a time
+				int seed = (int)(IcdEnvironment.GetUtcTime().GetTotalSeconds() / 3); // Whistle for a few seconds at a time
+				Random seededRandom = new Random(seed);
+
 				header.FaceImage =
-					seededRandom.Next(0, 2) == 0 // 1 in 3 chance of whistling
+					seededRandom.Next(0, 9) == 0 // 1 in 10 chance of whistling
 						? eTouchFreeFace.Whistling
 						: eTouchFreeFace.Neutral;
-
-				m_FaceTransitionTimer.Reset(3 * 1000); // Update in 3 seconds
 			}
 			else
 			{
-				footer.ClearMessages("TouchFree");
-				header.FaceImage = eTouchFreeFace.None;
-			}
-
-			// Was TouchFree cancelled?
-			if (hasTouchFree &&
-				isRunningChanged.HasValue &&
-				!isRunningChanged.Value &&
-				!m_Room.MeetingStartTimer.IsElapsed)
-			{
 				footer.PushMessage("TouchFree", "Touch Free Instant Meeting canceled");
 				header.FaceImage = eTouchFreeFace.Crying;
-
-				m_FaceTransitionTimer.Reset(3 * 1000); // Update in 3 seconds
 			}
+
+			m_FaceTransitionTimer.Reset(1000); // Update in a second
+		}
+
+		/// <summary>
+		/// Handles the header face image, footer notification and body cycling
+		/// while the TouchFree countdown is running.
+		/// </summary>
+		private void UpdateTouchFreeCountdown()
+		{
+			IcdConsole.PrintLine(eConsoleColor.Magenta, "UpdateTouchFreeCountdown");
+
+			IOsdHeaderPresenter header = m_NavigationController.LazyLoadPresenter<IOsdHeaderPresenter>();
+			IOsdHelloFooterNotificationPresenter footer =
+				m_NavigationController.LazyLoadPresenter<IOsdHelloFooterNotificationPresenter>();
+
+			// Periodically switch between sources and schedule
+			if ((m_Room.MeetingStartTimer.Milliseconds / 5000) % 2 == 0)
+			{
+				if (m_Room.GetCalendarControls().Any())
+					m_NavigationController.NavigateTo<IOsdScheduleBodyPresenter>();
+				else
+				{
+					m_VisibilityTree.BodyVisibility.Hide();
+					m_NavigationController.NavigateTo<IOsdHelloFooterNotificationPresenter>();
+				}
+			}
+			else
+				m_NavigationController.NavigateTo<IOsdSourcesBodyPresenter>();
+
+			// Face starts excited then goes to smiling
+			header.FaceImage = m_Room.MeetingStartTimer.Milliseconds >= 1000
+				                   ? eTouchFreeFace.Smiling
+				                   : eTouchFreeFace.Excited;
+
+			// Update message
+			if (m_NavigationController.LazyLoadPresenter<IOsdSourcesBodyPresenter>().IsViewVisible)
+				footer.PushMessage("TouchFree", "Don't forget about your other devices");
+			else
+				footer.PushMessage("TouchFree", "Are you here for this meeting?");
 		}
 
 		#endregion
@@ -258,6 +300,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
 			room.Routing.State.OnSourceRoutedChanged += RoutingStateOnSourceRoutedChanged;
 
+			room.OnTouchFreeEnabledChanged += RoomOnTouchFreeEnabledChanged;
 			room.MeetingStartTimer.OnMillisecondsChanged += MeetingStartTimerOnMillisecondsChanged;
 			room.MeetingStartTimer.OnIsRunningChanged += MeetingStartTimerOnIsRunningChanged;
 			room.MeetingStartTimer.OnElapsed += MeetingStartTimerOnElapsed;
@@ -275,6 +318,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
 			room.Routing.State.OnSourceRoutedChanged -= RoutingStateOnSourceRoutedChanged;
 
+			room.OnTouchFreeEnabledChanged -= RoomOnTouchFreeEnabledChanged;
 			room.MeetingStartTimer.OnMillisecondsChanged -= MeetingStartTimerOnMillisecondsChanged;
 			room.MeetingStartTimer.OnIsRunningChanged -= MeetingStartTimerOnIsRunningChanged;
 			room.MeetingStartTimer.OnElapsed -= MeetingStartTimerOnElapsed;
@@ -290,19 +334,28 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 			UpdateBodyVisibility();
 		}
 
+		private void RoomOnTouchFreeEnabledChanged(object sender, BoolEventArgs boolEventArgs)
+		{
+			UpdateTouchFree();
+		}
+
 		private void MeetingStartTimerOnIsRunningChanged(object sender, BoolEventArgs boolEventArgs)
 		{
-			UpdateTouchFree(boolEventArgs.Data);
+			bool cancelled = m_Room != null && !m_Room.MeetingStartTimer.IsElapsed && !boolEventArgs.Data;
+			m_TouchFreeCancellationTime = cancelled ? IcdEnvironment.GetUtcTime() : DateTime.MinValue;
+			
+			// Ensure we land on the correct body presenter - calls UpdateTouchFree
+			UpdateBodyVisibility();
 		}
 
 		private void MeetingStartTimerOnMillisecondsChanged(object sender, EventArgs eventArgs)
 		{
-			UpdateTouchFree(null);
+			UpdateTouchFree();
 		}
 
 		private void MeetingStartTimerOnElapsed(object sender, EventArgs eventArgs)
 		{
-			UpdateTouchFree(null);
+			UpdateTouchFree();
 		}
 
 		#endregion

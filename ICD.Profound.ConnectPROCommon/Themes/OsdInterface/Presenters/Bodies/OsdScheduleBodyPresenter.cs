@@ -79,34 +79,37 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Bodies
 				string currentTime = " ";
 				string currentAvailability = "AVAILABLE";
 
-				if (currentBooking != null)
+				if (currentBooking == null)
 				{
-					if (isCurrentlyAvailable)
-					{
-						currentTime = string.Format("Now - {0}", FormatTime(currentBooking.EndTime));
-						refreshInterval = (long)(currentBooking.EndTime -
-						                         IcdEnvironment.GetUtcTime() -
-						                         TimeSpan.FromMinutes(15)).TotalMilliseconds + 1000;
+					Navigation.LazyLoadPresenter<IOsdHelloFooterNotificationPresenter>().ClearMessages("Meeting");
+				}
+				else if (isCurrentlyAvailable)
+				{
+					currentTime = string.Format("Now - {0}", FormatTime(currentBooking.EndTime));
+					refreshInterval = (long)(currentBooking.EndTime -
+					                         IcdEnvironment.GetUtcTime() -
+					                         TimeSpan.FromMinutes(15)).TotalMilliseconds + 1000;
 
-						Navigation.LazyLoadPresenter<IOsdHelloFooterNotificationPresenter>().ClearMessages("Meeting");
-					}
-					else
-					{
-						bool allDay = (currentBooking.EndTime - currentBooking.StartTime).TotalHours >= 23;
+					if (currentBooking.EndTime - IcdEnvironment.GetUtcTime() < TimeSpan.FromMinutes(15))
+						Navigation.LazyLoadPresenter<IOsdHelloFooterNotificationPresenter>()
+						          .PushMessage("Meeting", "There is a meeting about to begin in this room");
+				}
+				else
+				{
+					bool allDay = (currentBooking.EndTime - currentBooking.StartTime).TotalHours >= 23;
 
-						currentIcon = GetBookingIcon(currentBooking);
-						currentSubject = currentBooking.IsPrivate ? "Private Meeting" : currentBooking.MeetingName;
-						currentTime = allDay
-							? "All Day"
-							: string.Format("{0} - {1}", FormatTime(currentBooking.StartTime),
-							                FormatTime(currentBooking.EndTime));
-						currentAvailability = "RESERVED";
-						refreshInterval =
-							(long)(currentBooking.EndTime - IcdEnvironment.GetUtcTime()).TotalMilliseconds +
-							1000;
+					currentIcon = GetBookingIcon(currentBooking);
+					currentSubject = currentBooking.IsPrivate ? "Private Meeting" : currentBooking.MeetingName;
+					currentTime = allDay
+						              ? "All Day"
+						              : string.Format("{0} - {1}", FormatTime(currentBooking.StartTime),
+						                              FormatTime(currentBooking.EndTime));
+					currentAvailability = "RESERVED";
+					refreshInterval =
+						(long)(currentBooking.EndTime - IcdEnvironment.GetUtcTime()).TotalMilliseconds +
+						1000;
 
-						Navigation.LazyLoadPresenter<IOsdHelloFooterNotificationPresenter>().PushMessage("Meeting", "There is a meeting about to begin in this room");
-					}
+					Navigation.LazyLoadPresenter<IOsdHelloFooterNotificationPresenter>().ClearMessages("Meeting");
 				}
 
 				view.SetCurrentBookingIcon(currentIcon);

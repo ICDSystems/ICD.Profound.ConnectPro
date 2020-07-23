@@ -176,7 +176,7 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.TouchFreeConferencing
 			TouchFree touchFree = room == null ? null : room.TouchFree;
 			if (touchFree != null)
 			{
-				touchFree.OnCountDownTimerChanged += TouchFreeOnCountDownTimerChanged;
+				touchFree.OnCountDownSecondsChanged += TouchFreeOnCountDownSecondsChanged;
 				touchFree.OnEnabledChanged += TouchFreeOnEnabledChanged;
 				touchFree.OnDefaultSourceChanged += TouchFreeOnDefaultSourceChanged;
 			}
@@ -198,7 +198,7 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.TouchFreeConferencing
 			TouchFree touchFree = room == null ? null : room.TouchFree;
 			if (touchFree != null)
 			{
-				touchFree.OnCountDownTimerChanged -= TouchFreeOnCountDownTimerChanged;
+				touchFree.OnCountDownSecondsChanged -= TouchFreeOnCountDownSecondsChanged;
 				touchFree.OnEnabledChanged -= TouchFreeOnEnabledChanged;
 				touchFree.OnDefaultSourceChanged -= TouchFreeOnDefaultSourceChanged;
 			}
@@ -216,7 +216,7 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.TouchFreeConferencing
 			UpdateEnabled();
 		}
 
-		private void TouchFreeOnCountDownTimerChanged(object sender, IntEventArgs intEventArgs)
+		private void TouchFreeOnCountDownSecondsChanged(object sender, IntEventArgs intEventArgs)
 		{
 			UpdateCountdownSeconds();
 		}

@@ -216,6 +216,9 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		/// <param name="resetRouting"></param>
 		public void StartMeeting(bool resetRouting)
 		{
+			// Stop the meeting start timer
+			m_MeetingStartTimer.Stop();
+
 			// Change meeting state before any routing for UX
 			CheckOut();
 			IsInMeeting = true;
@@ -700,6 +703,23 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			RestartMeetingTimeoutTimer();
 
 			UpdateConferenceFeatures(eventArgs.Routed, eventArgs.Unrouted);
+		}
+
+		#endregion
+
+		#region TouchFree Callbacks
+
+		/// <summary>
+		/// Called when the TouchFree becomes enabled/disabled.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="boolEventArgs"></param>
+		protected override void TouchFreeOnEnabledChanged(object sender, BoolEventArgs boolEventArgs)
+		{
+			base.TouchFreeOnEnabledChanged(sender, boolEventArgs);
+
+			// Stop the meeting timer because TouchFree was enabled/disabled
+			m_MeetingStartTimer.Stop();
 		}
 
 		#endregion

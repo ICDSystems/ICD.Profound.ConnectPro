@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.UI.Attributes;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters.Bodies;
+using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters.FooterNotifications;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IViews;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IViews.Bodies;
 
@@ -67,6 +70,25 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Bodies
 				                     ConnectProSource source = s as ConnectProSource;
 				                     return source == null ? null : source.CueNameOrIcon;
 			                     });
+		}
+
+		/// <summary>
+		/// Called when the view visibility changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
+		{
+			base.ViewOnVisibilityChanged(sender, args);
+
+			bool isInMeeting = Room != null && Room.IsInMeeting;
+			IOsdHelloFooterNotificationPresenter footer =
+				Navigation.LazyLoadPresenter<IOsdHelloFooterNotificationPresenter>();
+
+			if (args.Data && isInMeeting)
+				footer.PushMessage("Sources", "Welcome to your meeting");
+			else
+				footer.ClearMessages("Sources");
 		}
 	}
 }
