@@ -229,18 +229,18 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 				footer.PushMessage("TouchFree", "Come on in");
 
 				// Periodically whistle
-				int seed = (int)(IcdEnvironment.GetUtcTime().GetTotalSeconds() / 3); // Whistle for a few seconds at a time
+				int seed = (int)((IcdEnvironment.GetUtcTime().GetTotalSeconds() / 3) % int.MaxValue); // Whistle for a few seconds at a time
 				Random seededRandom = new Random(seed);
 
 				header.FaceImage =
 					seededRandom.Next(0, 9) == 0 // 1 in 10 chance of whistling
-						? eTouchFreeFace.Whistling
-						: eTouchFreeFace.Neutral;
+						? new[] {eTouchFreeFace.Whistle, eTouchFreeFace.Sleepy}.Random(seededRandom)
+						: eTouchFreeFace.Daydream;
 			}
 			else
 			{
 				footer.PushMessage("TouchFree", "Touch Free Instant Meeting canceled");
-				header.FaceImage = eTouchFreeFace.Crying;
+				header.FaceImage = eTouchFreeFace.Sad;
 			}
 
 			m_FaceTransitionTimer.Reset(1000); // Update in a second
@@ -274,8 +274,8 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 
 			// Face starts excited then goes to smiling
 			header.FaceImage = m_Room.MeetingStartTimer.Milliseconds >= 1000
-				                   ? eTouchFreeFace.Smiling
-				                   : eTouchFreeFace.Excited;
+				                   ? eTouchFreeFace.Happy
+				                   : eTouchFreeFace.Surprised;
 
 			// Update message
 			if (m_NavigationController.LazyLoadPresenter<IOsdSourcesBodyPresenter>().IsViewVisible)

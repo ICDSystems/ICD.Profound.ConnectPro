@@ -3,10 +3,11 @@
 	public enum eTouchFreeFace
 	{
 		None = 0,
-		Neutral = 1,
-		Whistling = 2,
-		Excited = 3,
-		Smiling = 4,
-		Crying = 5
+		Daydream = 1,
+		Whistle = 2,
+		Sleepy = 3,
+		Surprised = 4,
+		Happy = 5,
+		Sad = 6
 	}
 }
