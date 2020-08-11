@@ -200,9 +200,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			}
 
 			if (ZoomDevice == null || !ZoomDevice.DialOutEnabled)
-				buttons = buttons.Except(typeof(IRecordWtcReferencedLeftMenuPresenter));
-			if (ZoomDevice == null || !ZoomDevice.RecordEnabled)
 				buttons = buttons.Except(typeof(ICallOutWtcReferencedLeftMenuPresenter));
+			if (ZoomDevice == null || !ZoomDevice.RecordEnabled)
+				buttons = buttons.Except(typeof(IRecordWtcReferencedLeftMenuPresenter));
 
 			return buttons;
 		}

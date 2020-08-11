@@ -45,6 +45,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Favourite contacts are stored in the new ORM databases
  - Zoom meeting IDs are formatted to a human readable format with dashes
 
+## [13.1.2] - 2020-08-11
+### Changed
+ - Fixed a bug where the call-out and record buttons were hidden if they were enabled in the settings
+
 ## [13.1.1] - 2020-07-22
 ### Changed
  - Fixed a bug where meetings would end due to inactivity while a source is routed
