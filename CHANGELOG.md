@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [13.1.2] - 2020-08-11
 ### Changed
  - Fixed a bug where the call-out and record buttons were hidden if they were enabled in the settings
 
