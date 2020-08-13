@@ -203,8 +203,6 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 		/// </summary>
 		private void UpdateTouchFreeDisabled()
 		{
-			IcdConsole.PrintLine(eConsoleColor.Magenta, "UpdateTouchFreeDisabled");
-
 			IOsdHeaderPresenter header = m_NavigationController.LazyLoadPresenter<IOsdHeaderPresenter>();
 			IOsdHelloFooterNotificationPresenter footer =
 				m_NavigationController.LazyLoadPresenter<IOsdHelloFooterNotificationPresenter>();
@@ -218,8 +216,6 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 		/// </summary>
 		private void UpdateTouchFreeIdle()
 		{
-			IcdConsole.PrintLine(eConsoleColor.Magenta, "UpdateTouchFreeIdle");
-
 			IOsdHeaderPresenter header = m_NavigationController.LazyLoadPresenter<IOsdHeaderPresenter>();
 			IOsdHelloFooterNotificationPresenter footer =
 				m_NavigationController.LazyLoadPresenter<IOsdHelloFooterNotificationPresenter>();
@@ -252,14 +248,14 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 		/// </summary>
 		private void UpdateTouchFreeCountdown()
 		{
-			IcdConsole.PrintLine(eConsoleColor.Magenta, "UpdateTouchFreeCountdown");
-
 			IOsdHeaderPresenter header = m_NavigationController.LazyLoadPresenter<IOsdHeaderPresenter>();
 			IOsdHelloFooterNotificationPresenter footer =
 				m_NavigationController.LazyLoadPresenter<IOsdHelloFooterNotificationPresenter>();
 
-			// Periodically switch between sources and schedule
-			if ((m_Room.MeetingStartTimer.Milliseconds / 5000) % 2 == 0)
+			long halfDuration = m_Room.MeetingStartTimer.Length / 2;
+
+			// Show schedule presenter for the first half of the time, then switch to sources presenter. 
+			if (m_Room.MeetingStartTimer.Milliseconds <= halfDuration)
 			{
 				if (m_Room.GetCalendarControls().Any())
 					m_NavigationController.NavigateTo<IOsdScheduleBodyPresenter>();
@@ -270,7 +266,9 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 				}
 			}
 			else
+			{
 				m_NavigationController.NavigateTo<IOsdSourcesBodyPresenter>();
+			}
 
 			// Face starts excited then goes to smiling
 			header.FaceImage = m_Room.MeetingStartTimer.Milliseconds >= 1000
