@@ -16,11 +16,11 @@ using ICD.Connect.Misc.Keypads;
 using ICD.Connect.Panels.Crestron.Controls.TouchScreens;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Connections;
-using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Themes.UserInterfaces;
+using ICD.Profound.ConnectPROCommon.EventArguments;
 using ICD.Profound.ConnectPROCommon.Rooms;
-using ICD.Profound.ConnectPROCommon.Routing;
+using ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources;
 
 namespace ICD.Profound.ConnectPROCommon.Themes.Mpc3201UserInterface
 {
@@ -38,11 +38,6 @@ namespace ICD.Profound.ConnectPROCommon.Themes.Mpc3201UserInterface
 			{5, MPC3x201TouchScreenButtons.BUTTON_ACTION_6},
 		};
 
-		private readonly Dictionary<IDestinationBase, IcdHashSet<ISource>> m_ActiveVideo;
-		private readonly Dictionary<ISource, eSourceState> m_SourceRoutedStates;
-		private readonly Dictionary<IDestinationBase, ISource> m_ProcessingSources;
-		private readonly SafeCriticalSection m_RoutingSection;
-
 		private readonly IMPC3x201TouchScreenControl m_Control;
 		private readonly IConnectProTheme m_Theme;
 		private readonly SafeCriticalSection m_RefreshSection;
@@ -52,8 +47,6 @@ namespace ICD.Profound.ConnectPROCommon.Themes.Mpc3201UserInterface
 		private readonly VolumePointHelper m_VolumePointHelper;
 
 		private bool m_IsDisposed;
-
-		private ISource[] m_Sources;
 
 		[CanBeNull]
 		private IConnectProRoom m_Room;
@@ -84,16 +77,10 @@ namespace ICD.Profound.ConnectPROCommon.Themes.Mpc3201UserInterface
 			if (theme == null)
 				throw new ArgumentNullException("theme");
 
-			m_ActiveVideo = new Dictionary<IDestinationBase, IcdHashSet<ISource>>();
-			m_SourceRoutedStates = new Dictionary<ISource, eSourceState>();
-			m_ProcessingSources = new Dictionary<IDestinationBase, ISource>();
-			m_RoutingSection = new SafeCriticalSection();
 			m_VolumeRepeater = new VolumeRepeater();
 			m_VolumePointHelper = new VolumePointHelper();
 			m_RefreshSection = new SafeCriticalSection();
 			m_HoldTimer = SafeTimer.Stopped(PowerButtonHeld);
-
-			m_Sources = new ISource[0];
 
 			m_Control = control;
 			m_Theme = theme;
@@ -147,10 +134,6 @@ namespace ICD.Profound.ConnectPROCommon.Themes.Mpc3201UserInterface
 			m_Room = room;
 			Subscribe(m_Room);
 
-			m_Sources = GetSources(room).ToArray();
-
-			UpdateRouting(EnumUtils.GetFlagsAllValue<eConnectionType>());
-
 			if (!m_IsDisposed)
 				Refresh();
 		}
@@ -172,30 +155,29 @@ namespace ICD.Profound.ConnectPROCommon.Themes.Mpc3201UserInterface
 
 			try
 			{
+				IEnumerable<ISource> sources =
+					m_Room == null
+						? Enumerable.Empty<ISource>()
+						: m_Room.Routing
+						        .Sources
+						        .GetRoomSourcesForUi(eSourceAppearance.Routing)
+						        .Take(6); // Only 6 buttons
+
 				// Sources
-				m_RoutingSection.Enter();
-
-				try
+				int index = 0;
+				foreach (ISource source in sources)
 				{
-					for (int index = 0; index < 6; index++)
-					{
-						ISource source;
-						m_Sources.TryElementAt(index, out source);
+					bool enabled = source != null;
 
-						bool enabled = source != null;
+					bool active = m_Room != null &&
+					              enabled &&
+					              m_Room.Routing.State.GetIsRoutedCached(source, eConnectionType.Video) &&
+					              m_Room.IsInMeeting;
 
-						bool active = enabled &&
-						              m_SourceRoutedStates.GetDefault(source) != eSourceState.Inactive &&
-						              m_Room != null &&
-									  m_Room.IsInMeeting;
+					m_Control.SetNumericalButtonEnabled((uint)(index + 1), enabled);
+					m_Control.SetNumericalButtonSelected((uint)(index + 1), active);
 
-						m_Control.SetNumericalButtonEnabled((uint)(index + 1), enabled);
-						m_Control.SetNumericalButtonSelected((uint)(index + 1), active);
-					}
-				}
-				finally
-				{
-					m_RoutingSection.Leave();
+					index++;
 				}
 
 				// Volume
@@ -277,141 +259,6 @@ namespace ICD.Profound.ConnectPROCommon.Themes.Mpc3201UserInterface
 				       : room.Routing.Sources.GetRoomSources();
 		}
 
-		/// <summary>
-		/// Sets the processing source for the single display destination.
-		/// </summary>
-		/// <param name="source"></param>
-		private void SetProcessingSource(ISource source)
-		{
-			// TODO - Shouldn't this be in the ConnectPRO routing classes?
-
-			IDestinationBase destination = m_Room == null ? null : m_Room.Routing.Destinations.GetVideoDestinations().FirstOrDefault();
-			if (destination == null)
-				return;
-
-			m_RoutingSection.Enter();
-
-			try
-			{
-				// No change
-				if (source == m_ProcessingSources.GetDefault(destination))
-					return;
-
-				// Is the source already routed to the destination?
-				IcdHashSet<ISource> routed;
-				if (m_ActiveVideo.TryGetValue(destination, out routed) && routed.Contains(source))
-					return;
-
-				m_ProcessingSources[destination] = source;
-
-				UpdateSourceRoutedStates();
-
-				Refresh();
-			}
-			finally
-			{
-				m_RoutingSection.Leave();
-			}
-		}
-
-		/// <summary>
-		/// Updates the routing state in the UI.
-		/// </summary>
-		/// <param name="type"></param>
-		private void UpdateRouting(eConnectionType type)
-		{
-			m_RoutingSection.Enter();
-
-			try
-			{
-				if (type.HasFlag(eConnectionType.Video) && UpdateActiveVideo())
-					Refresh();
-			}
-			finally
-			{
-				m_RoutingSection.Leave();
-			}
-		}
-
-		/// <summary>
-		/// Builds the map of destinations to active video sources.
-		/// </summary>
-		/// <returns>True if the active video sources changed.</returns>
-		private bool UpdateActiveVideo()
-		{
-			m_RoutingSection.Enter();
-
-			try
-			{
-				Dictionary<IDestinationBase, IcdHashSet<ISource>> routing =
-					(m_Room == null
-						 ? Enumerable.Empty<KeyValuePair<IDestinationBase, IcdHashSet<ISource>>>()
-						 : m_Room.Routing.State
-						       .GetFakeActiveVideoSources())
-						.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
-				if (routing.DictionaryEqual(m_ActiveVideo, (a, b) => a.SetEquals(b)))
-					return false;
-
-				m_ActiveVideo.Clear();
-				m_ActiveVideo.AddRange(routing.Keys, k => new IcdHashSet<ISource>(routing[k]));
-
-				// Remove routed items from the processing sources collection
-				foreach (KeyValuePair<IDestinationBase, IcdHashSet<ISource>> kvp in m_ActiveVideo)
-				{
-					ISource processing = m_ProcessingSources.GetDefault(kvp.Key);
-					if (processing == null)
-						continue;
-
-					if (kvp.Value.Contains(processing))
-						m_ProcessingSources.Remove(kvp.Key);
-				}
-
-				UpdateSourceRoutedStates();
-
-				Refresh();
-
-				return true;
-			}
-			finally
-			{
-				m_RoutingSection.Leave();
-			}
-		}
-
-		private bool UpdateSourceRoutedStates()
-		{
-			m_RoutingSection.Enter();
-
-			try
-			{
-				// Build a map of video sources to their routed state
-				Dictionary<ISource, eSourceState> routedSources =
-					m_ActiveVideo.Values
-					             .SelectMany(v => v)
-					             .Distinct()
-					             .ToDictionary(s => s, s => eSourceState.Active);
-
-				// A source may be processing for another display, so we override
-				foreach (ISource source in m_ProcessingSources.Values.Where(s => s != null))
-					routedSources[source] = eSourceState.Processing;
-
-				if (routedSources.DictionaryEqual(m_SourceRoutedStates))
-					return false;
-
-				m_SourceRoutedStates.Clear();
-				m_SourceRoutedStates.AddRange(routedSources);
-
-				Refresh();
-
-				return true;
-			}
-			finally
-			{
-				m_RoutingSection.Leave();
-			}
-		}
-
 		#endregion
 
 		#region Room Callbacks
@@ -427,6 +274,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.Mpc3201UserInterface
 
 			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
 			room.Routing.State.OnDisplaySourceChanged += RoutingOnDisplaySourceChanged;
+			room.Routing.State.OnSourceRoutedChanged += StateOnSourceRoutedChanged;
 		}
 
 		/// <summary>
@@ -440,6 +288,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.Mpc3201UserInterface
 
 			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
 			room.Routing.State.OnDisplaySourceChanged -= RoutingOnDisplaySourceChanged;
+			room.Routing.State.OnSourceRoutedChanged -= StateOnSourceRoutedChanged;
 		}
 
 		/// <summary>
@@ -459,7 +308,17 @@ namespace ICD.Profound.ConnectPROCommon.Themes.Mpc3201UserInterface
 		/// <param name="eventArgs"></param>
 		private void RoutingOnDisplaySourceChanged(object sender, EventArgs eventArgs)
 		{
-			UpdateRouting(eConnectionType.Video);
+			Refresh();
+		}
+
+		/// <summary>
+		/// Called when a source routing state changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="sourceRoutedEventArgs"></param>
+		private void StateOnSourceRoutedChanged(object sender, SourceRoutedEventArgs sourceRoutedEventArgs)
+		{
+			Refresh();
 		}
 
 		#endregion
@@ -589,18 +448,21 @@ namespace ICD.Profound.ConnectPROCommon.Themes.Mpc3201UserInterface
 			if (m_Room == null)
 				return;
 
+			IEnumerable<ISource> sources =
+				m_Room == null
+					? Enumerable.Empty<ISource>()
+					: m_Room.Routing
+					        .Sources
+					        .GetRoomSourcesForUi(eSourceAppearance.Routing)
+					        .Take(6); // Only 6 buttons
+
 			ISource source;
-			if (!m_Sources.TryElementAt(index, out source) || source == null)
+			if (!sources.TryElementAt(index, out source) || source == null)
 				return;
 
 			// Start the meeting if we are not currently in one
 			if (!m_Room.IsInMeeting)
-				m_Room.StartMeeting(false);
-
-			SetProcessingSource(source);
-
-			// Route the source to the display
-			m_Room.Routing.RouteToAllDisplays(source);
+				m_Room.StartMeeting(null, source);
 		}
 
 		#endregion
