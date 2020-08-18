@@ -86,7 +86,8 @@ namespace ICD.Profound.ConnectPROCommon.Dialing
 		/// Dials the given booking and routes the dialer.
 		/// </summary>
 		/// <param name="booking"></param>
-		public void DialBooking([NotNull] IBooking booking)
+		/// <returns>Returns true if we were able to dial a number associated with the booking</returns>
+		public bool DialBooking([NotNull] IBooking booking)
 		{
 			if (booking == null)
 				throw new ArgumentNullException("booking");
@@ -100,13 +101,13 @@ namespace ICD.Profound.ConnectPROCommon.Dialing
 			IDialContext dialContext;
 			IConferenceDeviceControl preferredDialer = ConferencingBookingUtils.GetBestDialer(booking, dialers, out dialContext);
 			if (preferredDialer == null)
-				return;
+				return false;
 
 			// Route device to displays and/or audio destination
 			IDevice dialerDevice = preferredDialer.Parent;
 			ISource source = m_Room.Routing.Sources.GetRoomSources().FirstOrDefault(s => s.Device == dialerDevice.Id);
 			if (source == null)
-				return; // if we can't route a source, don't dial into conference users won't know they're in
+				return false; // if we can't route a source, don't dial into conference users won't know they're in
 
 			m_Room.FocusSource = source;
 
@@ -119,6 +120,7 @@ namespace ICD.Profound.ConnectPROCommon.Dialing
 
 			// Dial booking
 			Dial(preferredDialer, dialContext);
+			return true;
 		}
 
 		/// <summary>
@@ -161,7 +163,7 @@ namespace ICD.Profound.ConnectPROCommon.Dialing
 
 			SetupCall(control, call.Answer);
 
-			m_Room.StartMeeting(false);
+			m_Room.StartMeeting(null, null);
 
 			// Focus on the dialer source
 			IDeviceBase device = control == null ? null : control.Parent;

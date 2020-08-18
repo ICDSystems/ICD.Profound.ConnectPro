@@ -254,13 +254,13 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Schedule
 		{
 			if (SelectedBooking != null && SelectedBooking.Booking != null)
 			{
-				Room.StartMeeting(SelectedBooking.Booking);
+				Room.StartMeeting(SelectedBooking.Booking, null);
 				return;
 			}
 
 			var currentBooking = m_CachedBookings.FirstOrDefault();
 			if (currentBooking != null && !(currentBooking is EmptyBooking))
-				Room.StartMeeting(currentBooking);
+				Room.StartMeeting(currentBooking, null);
 		}
 
 		private void ViewOnCloseButtonPressed(object sender, EventArgs e)

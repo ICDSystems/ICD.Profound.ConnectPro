@@ -272,6 +272,12 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 			return GetDeviceControl(source, controlOverride);
 		}
 
+		/// <summary>
+		/// Gets the most relevant contextual device control for the given source, considering the given override.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="controlOverride"></param>
+		/// <returns></returns>
 		[CanBeNull]
 		public static IDeviceControl GetDeviceControl([NotNull] ISource source, eControlOverride controlOverride)
 		{
@@ -282,6 +288,12 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 			return GetDeviceControl(device, controlOverride);
 		}
 
+		/// <summary>
+		/// Gets the most relevant contextual device control for the given device, considering the given override.
+		/// </summary>
+		/// <param name="device"></param>
+		/// <param name="controlOverride"></param>
+		/// <returns></returns>
 		[CanBeNull]
 		private static IDeviceControl GetDeviceControl([NotNull] IDevice device, eControlOverride controlOverride)
 		{
@@ -323,6 +335,11 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 			return null;
 		}
 
+		/// <summary>
+		/// Gets the configured control override for the given source.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <returns></returns>
 		public static eControlOverride GetControlOverride([NotNull] ISource source)
 		{
 			if (source == null)

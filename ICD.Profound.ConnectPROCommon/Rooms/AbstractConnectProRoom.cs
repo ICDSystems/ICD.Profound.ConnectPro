@@ -4,6 +4,7 @@ using System.Linq;
 using ICD.Common.Logging.Activities;
 using ICD.Common.Logging.LoggingContexts;
 using ICD.Common.Properties;
+using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services.Logging;
@@ -13,6 +14,7 @@ using ICD.Connect.API.Nodes;
 using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Calendaring.Bookings;
+using ICD.Connect.Calendaring.CalendarPoints;
 using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Cameras.Controls;
 using ICD.Connect.Cameras.Devices;
@@ -205,16 +207,9 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		/// <summary>
 		/// Enters the meeting state.
 		/// </summary>
-		public void StartMeeting()
-		{
-			StartMeeting(true);
-		}
-
-		/// <summary>
-		/// Enters the meeting state.
-		/// </summary>
-		/// <param name="resetRouting"></param>
-		public void StartMeeting(bool resetRouting)
+		/// <param name="booking"></param>
+		/// <param name="source"></param>
+		public void StartMeeting([CanBeNull] IBooking booking, [CanBeNull] ISource source)
 		{
 			// Stop the meeting start timer
 			m_MeetingStartTimer.Stop();
@@ -223,32 +218,28 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			CheckOut();
 			IsInMeeting = true;
 
-			ISource[] sources = Routing.Sources.GetRoomSources().ToArray();
-
-			// If there is only one source automatically route it
-			if (sources.Length == 1)
-				Routing.RouteSourceByControl(sources[0]);
-			// Otherwise route the OSD
-			else if (resetRouting)
-				Routing.RouteOsd();
-
 			// Reset mute state
 			Mute(false);
-		}
 
-		/// <summary>
-		/// Starts a meeting for the given booking.
-		/// </summary>
-		/// <param name="booking"></param>
-		public void StartMeeting([NotNull] IBooking booking)
-		{
-			if (booking == null)
-				throw new ArgumentNullException("booking");
+			// Check in and dial the booking
+			if (booking != null)
+			{
+				CheckIn(booking);
 
-			StartMeeting(false);
-			CheckIn(booking);
+				// Don't do any additional routing if we dialed something
+				if (Dialing.DialBooking(booking))
+					return;
+			}
 
-			Dialing.DialBooking(booking);
+			// If a source was specified OR there is only one source automatically route it
+			ISource[] sources = Routing.Sources.GetRoomSources().ToArray();
+			ISource automaticSource = source ?? (sources.Length == 1 ? sources[0] : null);
+
+			if (automaticSource == null)
+				Routing.RouteOsd();
+			else
+				if (!Routing.RouteSourceByControl(automaticSource))
+					Routing.RouteToAllDisplays(automaticSource);
 		}
 
 		/// <summary>
@@ -398,6 +389,8 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 
 				case eOccupancyState.Occupied:
 					m_MeetingStartTimer.Restart(TouchFree.CountdownSeconds * 1000);
+					if (!IsAwake)
+						Wake();
 					break;
 
 				default:
@@ -651,24 +644,28 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 
 		private void Subscribe(IcdTimer meetingStartTimer)
 		{
-			meetingStartTimer.OnIsRunningChanged += MeetingStartTimerOnIsRunningChanged;
 			meetingStartTimer.OnElapsed += MeetingStartTimerOnElapsed;
 		}
 
 		private void Unsubscribe(IcdTimer meetingStartTimer)
 		{
-			meetingStartTimer.OnIsRunningChanged -= MeetingStartTimerOnIsRunningChanged;
 			meetingStartTimer.OnElapsed -= MeetingStartTimerOnElapsed;
-		}
-
-		private void MeetingStartTimerOnIsRunningChanged(object sender, BoolEventArgs boolEventArgs)
-		{
-			Wake();
 		}
 
 		private void MeetingStartTimerOnElapsed(object sender, EventArgs eventArgs)
 		{
-			StartMeeting();
+			// TODO - Refactor into new calendar manager
+			IBooking booking =
+				Originators.GetInstancesRecursive<ICalendarPoint>()
+				           .Select(p => p.Control)
+				           .Where(c => c != null)
+				           .SelectMany(c => c.GetBookings())
+				           .FirstOrDefault(b => b.EndTime >= IcdEnvironment.GetUtcTime() &&
+				                                b.StartTime <= IcdEnvironment.GetUtcTime());
+
+			ISource source = TouchFree == null ? null : TouchFree.Source;
+
+			StartMeeting(booking, source);
 		}
 
 		#endregion

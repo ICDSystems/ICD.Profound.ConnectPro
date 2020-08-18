@@ -50,7 +50,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			if (instance == null)
 				throw new ArgumentNullException("instance");
 
-			yield return new ConsoleCommand("Start Meeting", "Starts the meeting", () => instance.StartMeeting());
+			yield return new ConsoleCommand("Start Meeting", "Starts the meeting", () => instance.StartMeeting(null, null));
 			yield return new ConsoleCommand("End Meeting", "Ends the meeting", () => instance.EndMeeting(false));
 			yield return new ConsoleCommand("PrintSources", "Prints a table of the sources in the room and their availability", () => PrintSources(instance));
 		}

@@ -341,7 +341,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Header
 		private void ViewOnStartEndMeetingPressed(object sender, EventArgs e)
 		{
 			if (!Room.IsInMeeting)
-				Room.StartMeeting();
+				Room.StartMeeting(null, null);
 			else if (Room.ConferenceManager.Dialers.IsInCall != eInCall.None)
 				Navigation.LazyLoadPresenter<IConfirmEndMeetingPresenter>()
 					.Show("Are you sure you would like to leave your conference?", EndCall);

@@ -403,7 +403,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			// If the room doesn't have a calendar control then start the meeting
 			if (!HasCalendarControl)
 			{
-				Room.StartMeeting();
+				Room.StartMeeting(null, null);
 				return;
 			}
 
@@ -412,7 +412,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			m_SelectedBooking = null;
 
 			if (booking != null)
-				Room.StartMeeting(booking);
+				Room.StartMeeting(booking, null);
 		}
 
 		/// <summary>
@@ -423,7 +423,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		private void ViewOnInstantMeetingButtonPressed(object sender, EventArgs eventArgs)
 		{
 			if (Room != null)
-				Room.StartMeeting();
+				Room.StartMeeting(null, null);
 		}
 
 		/// <summary>
