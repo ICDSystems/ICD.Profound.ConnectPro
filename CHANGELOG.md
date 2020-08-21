@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
  - Fixed a bug where source names were not displayed on the CUE
+ - Fixed a bug where active booking in confrecing presenter would show the meeting time in UTC and not local time.
 
 ## [13.1.2] - 2020-08-11
 ### Changed
