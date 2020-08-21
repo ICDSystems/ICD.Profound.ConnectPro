@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Added Touch Free Setting Page.
  - Added Touch Free/ Cancel Meeting Start Prompt.
  - Added OSD Touch Free Notification.
+ - Added CalendarManager Property to ConnectProRoom
 
 ## [14.1.0] - 2020-09-08
 ### Changed

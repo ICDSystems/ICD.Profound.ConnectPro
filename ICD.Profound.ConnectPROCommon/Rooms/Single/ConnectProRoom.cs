@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ICD.Connect.Calendaring.CalendarManagers;
 using ICD.Connect.Calendaring.CalendarPoints;
 using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Conferencing.ConferenceManagers;
@@ -34,6 +35,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Single
 		public ConnectProRoom()
 		{
 			ConferenceManager = new ConferenceManager();
+			CalendarManager = new CalendarManager();
 			WakeSchedule = new WakeSchedule();
 			TouchFree = new TouchFree();
 		}
@@ -47,6 +49,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Single
 			base.DisposeFinal(disposing);
 
 			ConferenceManager = null;
+			CalendarManager = null;
 			WakeSchedule = null;
 			TouchFree = null;
 		}
@@ -122,6 +125,8 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Single
 
 			Core.Originators.AddChild(point);
 			Originators.Add(id, combineMode);
+
+			CalendarManager.RegisterCalendarProvider(point);
 		}
 
 		/// <summary>
