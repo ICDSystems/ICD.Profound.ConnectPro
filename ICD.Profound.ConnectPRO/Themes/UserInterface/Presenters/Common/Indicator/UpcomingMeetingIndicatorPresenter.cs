@@ -1,5 +1,5 @@
-﻿using ICD.Common.Utils;
-using ICD.Common.Utils.EventArguments;
+﻿using ICD.Common.Utils.EventArguments;
+using ICD.Connect.Calendaring.Bookings;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Indicator;
@@ -12,35 +12,27 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Indicat
 	[PresenterBinding(typeof(IUpcomingMeetingIndicatorPresenter))]
 	public sealed class UpcomingMeetingIndicatorPresenter : AbstractUiPresenter<IUpcomingMeetingIndicatorView>, IUpcomingMeetingIndicatorPresenter
 	{
-		private readonly SafeCriticalSection m_RefreshSection;
-
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public UpcomingMeetingIndicatorPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) : base(nav, views, theme)
+		public UpcomingMeetingIndicatorPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) 
+			: base(nav, views, theme)
 		{
-			m_RefreshSection = new SafeCriticalSection();
 		}
 
-		protected override void Refresh(IUpcomingMeetingIndicatorView view)
+		/// <summary>
+		/// Called when the view visibility changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		protected override void ViewOnVisibilityChanged(object sender, BoolEventArgs args)
 		{
-			base.Refresh(view);
+			base.ViewOnVisibilityChanged(sender, args);
 
-			m_RefreshSection.Enter();
-
-			try
-			{
-				bool playSound = Room != null && Room.UpcomingMeeting;
-				view.PlaySound(playSound);
-			}
-			finally
-			{
-				m_RefreshSection.Leave();
-			}
-			
+			GetView().PlaySound(args.Data);
 		}
 
 		#region Room Callbacks
@@ -56,7 +48,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Indicat
 			if (room == null)
 				return;
 
-			room.OnIsUpcomingMeetingChanged += RoomOnUpcomingMeeting;
+			room.OnUpcomingMeeting += RoomOnUpcomingMeeting;
+			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
 		}
 
 		/// <summary>
@@ -70,15 +63,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Indicat
 			if (room == null)
 				return;
 
-			room.OnIsUpcomingMeetingChanged -= RoomOnUpcomingMeeting;
+			room.OnUpcomingMeeting -= RoomOnUpcomingMeeting;
+			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
 		}
 
-		private void RoomOnUpcomingMeeting(object sender, BoolEventArgs eventArgs)
+		private void RoomOnUpcomingMeeting(object sender, GenericEventArgs<IBooking> genericEventArgs)
 		{
-			ShowView(eventArgs.Data);
-			
-			Refresh();
+			ShowView(true);
 		}
+
+		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs e)
+		{
+			ShowView(false);
+		}
+
 		#endregion
 	}
 }

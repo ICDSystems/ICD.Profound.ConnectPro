@@ -94,6 +94,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Single
 
 			// Generate calendar points
 			GenerateCalendarPoints(settings, factory);
+			CalendarControls = Originators.GetInstancesRecursive<ICalendarPoint>().Select(p => p.Control);
 
 			// Generate conference points
 			GenerateConferencePoints(factory);
