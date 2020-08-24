@@ -6,6 +6,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Cameras;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.FloatingActions;
+using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Indicator;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Administrative;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Conferencing;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.CUE;
@@ -135,6 +136,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			navigationController.LazyLoadPresenter<IVtcCallListTogglePresenter>();
 			navigationController.LazyLoadPresenter<IVtcIncomingCallPresenter>();
 			navigationController.LazyLoadPresenter<ITouchFreeCancelPromptPresenter>();
+			navigationController.LazyLoadPresenter<IUpcomingMeetingIndicatorPresenter>();
 		}
 	}
 }
