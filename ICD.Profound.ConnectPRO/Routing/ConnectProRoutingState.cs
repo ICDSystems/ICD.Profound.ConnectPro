@@ -231,13 +231,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 				foreach (ProcessingSourceInfo processing in m_ProcessingSources.Values)
 					processing.Dispose();
 				m_ProcessingSources.Clear();
-
-				UpdateSourceRoutedStates();
 			}
 			finally
 			{
 				m_CacheSection.Leave();
 			}
+
+			UpdateSourceRoutedStates();
 
 			OnDisplaySourceChanged.Raise(this);
 		}
@@ -262,13 +262,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 					return;
 
 				processing.Source = null;
-
-				UpdateSourceRoutedStates();
 			}
 			finally
 			{
 				m_CacheSection.Leave();
 			}
+
+			UpdateSourceRoutedStates();
 
 			OnDisplaySourceChanged.Raise(this);
 		}
@@ -304,13 +304,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 				processing.ResetTimer();
 				processing.Source = source;
-
-				UpdateSourceRoutedStates();
 			}
 			finally
 			{
 				m_CacheSection.Leave();
 			}
+
+			UpdateSourceRoutedStates();
 
 			OnDisplaySourceChanged.Raise(this);
 		}
@@ -339,19 +339,19 @@ namespace ICD.Profound.ConnectPRO.Routing
 					if (currentMask == mask)
 						return;
 
-					ClearMaskedSource(destination);
+					m_MaskedSources.Remove(destination);
+					currentMask.Dispose();
 				}
 
-				if (mask == null)
-					return;
-
-				m_MaskedSources[destination] = mask;
-				UpdateSourceRoutedStates();
+				if (mask != null)
+					m_MaskedSources[destination] = mask;
 			}
 			finally
 			{
 				m_CacheSection.Leave();
 			}
+
+			UpdateSourceRoutedStates();
 
 			OnDisplaySourceChanged.Raise(this);
 		}
@@ -375,13 +375,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 				m_MaskedSources.Remove(destination);
 				maskToRemove.Dispose();
-
-				UpdateSourceRoutedStates();
 			}
 			finally
 			{
 				m_CacheSection.Leave();
 			}
+
+			UpdateSourceRoutedStates();
 
 			OnDisplaySourceChanged.Raise(this);
 		}
@@ -403,13 +403,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 					mask.Dispose();
 
 				m_MaskedSources.Clear();
-
-				UpdateSourceRoutedStates();
 			}
 			finally
 			{
 				m_CacheSection.Leave();
 			}
+
+			UpdateSourceRoutedStates();
 
 			OnDisplaySourceChanged.Raise(this);
 		}
@@ -513,13 +513,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 					processing.StopTimer();
 					processing.Source = null;
 				}
-
-				UpdateSourceRoutedStates();
 			}
 			finally
 			{
 				m_CacheSection.Leave();
 			}
+
+			UpdateSourceRoutedStates();
 
 			OnDisplaySourceChanged.Raise(this);
 		}
