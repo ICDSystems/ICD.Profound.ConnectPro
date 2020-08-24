@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+ - Fixed potential deadlocks in ConnectPro routing
+
 ## [9.1.0] - 2019-08-27
 ### Added
  - CUE background mode controlled by ConnectPRO with CueBackground config element on ConnectProTheme
