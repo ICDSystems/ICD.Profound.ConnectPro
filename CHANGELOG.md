@@ -219,6 +219,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Updated IPowerDeviceControls consumers to use PowerState
  - Updated Volume Controls to use ControlAvaliable instead of power state
 
+## [9.1.1] - 2020-08-24
+### Changed
+ - Fixed potential deadlocks in ConnectPro routing
+
 ## [9.1.0] - 2019-08-27
 ### Added
  - CUE background mode controlled by ConnectPRO with CueBackground config element on ConnectProTheme
