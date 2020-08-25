@@ -55,6 +55,8 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Bodies
 		public OsdConferenceBodyPresenter(IOsdNavigationController nav, IOsdViewFactory views, IConnectProTheme theme) : base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
+			theme.DateFormatting.OnFormatChanged += DateFormattingOnFormatChanged;
+
 		}
 
 		protected override void Refresh(IOsdConferenceBodyView view)
@@ -168,9 +170,9 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Bodies
 			return Room.Routing.Sources.GetRoomSources().FirstOrDefault(s => s.Device == device.Id);
 		}
 
-		private static string FormatTime(DateTime time)
+		private string FormatTime(DateTime time)
 		{
-			return time.ToString("h:mmt").ToLower();
+			return Theme.DateFormatting.GetShortTime(time.ToLocalTime());
 		}
 
 		#region Control Callbacks
@@ -209,6 +211,15 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Bodies
 		{
 			Unsubscribe(e.Data);
 			RefreshIfVisible();
+		}
+
+		#endregion
+
+		#region Theme Callbacks
+
+		private void DateFormattingOnFormatChanged(object sender, EventArgs eventArgs)
+		{
+			Refresh();
 		}
 
 		#endregion

@@ -40,7 +40,13 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Bodies
 			{
 				ConnectProSource proSource = source as ConnectProSource;
 
-				string name = proSource == null ? string.Empty : proSource.CueName ?? source.Name;
+				string name =
+					proSource == null
+						? string.Empty
+						: string.IsNullOrEmpty(proSource.CueName)
+							  ? source.Name
+							  : proSource.CueName;
+
 				string description = proSource == null ? string.Empty : proSource.Description;
 				string icon = proSource == null ? string.Empty : proSource.Icon;
 

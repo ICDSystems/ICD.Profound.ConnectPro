@@ -44,6 +44,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Fixed an exception on program stop related to room combine grid lookup
  - Favourite contacts are stored in the new ORM databases
  - Zoom meeting IDs are formatted to a human readable format with dashes
+ - Fixed a bug where source names were not displayed on the CUE
+ - Fixed a bug where active booking in confrecing presenter would show the meeting time in UTC and not local time.
 
 ## [13.1.2] - 2020-08-11
 ### Changed
@@ -253,6 +255,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - All keyboard usages have been changed to the generic keyboard
  - Updated IPowerDeviceControls consumers to use PowerState
  - Updated Volume Controls to use ControlAvaliable instead of power state
+
+## [9.1.1] - 2020-08-24
+### Changed
+ - Fixed potential deadlocks in ConnectPro routing
 
 ## [9.1.0] - 2019-08-27
 ### Added
