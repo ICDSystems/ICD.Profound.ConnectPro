@@ -262,13 +262,13 @@ namespace ICD.Profound.ConnectPRO.Routing
 					return;
 
 				processing.Source = null;
-
-				UpdateSourceRoutedStates();
 			}
 			finally
 			{
 				m_CacheSection.Leave();
 			}
+
+			UpdateSourceRoutedStates();
 
 			OnDisplaySourceChanged.Raise(this);
 		}
@@ -304,7 +304,6 @@ namespace ICD.Profound.ConnectPRO.Routing
 
 				processing.ResetTimer();
 				processing.Source = source;
-
 			}
 			finally
 			{
@@ -312,6 +311,7 @@ namespace ICD.Profound.ConnectPRO.Routing
 			}
 
 			UpdateSourceRoutedStates();
+
 			OnDisplaySourceChanged.Raise(this);
 		}
 
@@ -339,13 +339,12 @@ namespace ICD.Profound.ConnectPRO.Routing
 					if (currentMask == mask)
 						return;
 
-					ClearMaskedSource(destination);
+					m_MaskedSources.Remove(destination);
+					currentMask.Dispose();
 				}
 
-				if (mask == null)
-					return;
-
-				m_MaskedSources[destination] = mask;
+				if (mask != null)
+					m_MaskedSources[destination] = mask;
 			}
 			finally
 			{
