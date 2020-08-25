@@ -355,13 +355,12 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 					if (currentMask == mask)
 						return;
 
-					ClearMaskedSource(destination);
+					m_MaskedSources.Remove(destination);
+					currentMask.Dispose();
 				}
 
-				if (mask == null)
-					return;
-
-				m_MaskedSources[destination] = mask;
+				if (mask != null)
+					m_MaskedSources[destination] = mask;
 			}
 			finally
 			{
