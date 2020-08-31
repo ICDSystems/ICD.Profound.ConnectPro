@@ -33,8 +33,8 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.DeviceDr
 			eVibeApp.Youtube,
 			eVibeApp.Slack,
 			eVibeApp.Whiteboard,
-			eVibeApp.Teams,
-			eVibeApp.WebEx
+			//eVibeApp.Teams,
+			//eVibeApp.WebEx
 		};
 
 		private readonly ReferencedSourcePresenterFactory m_SourceFactory;

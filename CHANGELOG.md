@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+ - Fixed a bug where the up and down volume buttons in TouchCue were not being released.  When buttons are pressed, volume will now step 10 leves up/down instead of ramping.
+
 ## [14.0.1] - 2020-07-14
 ### Changed
  - Fixed duplicate sources in event server routing feedback
