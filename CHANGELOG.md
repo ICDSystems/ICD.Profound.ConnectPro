@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
  - Fixed a bug where the up and down volume buttons in TouchCue were not being released.  When buttons are pressed, volume will now step 10 leves up/down instead of ramping.
+ - Fixed a bug in TouchCue where: when joining a meeting by id the Keyboard would not popup to allow user plug in the password.
+ - Refactored the TouchCue keyboard by adding submiting buttons and adding a cancel button to the top of the page.
 
 ## [14.0.1] - 2020-07-14
 ### Changed
