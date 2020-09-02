@@ -546,8 +546,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 
 		private void KeyboardOnClosePressed(string text)
 		{
-			if (IsViewVisible)
-				CancelFilter();
+			CancelFilter();
 		}
 
 		#endregion
@@ -627,8 +626,8 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 		/// <param name="e"></param>
 		private void ViewOnSearchButtonPressed(object sender, EventArgs e)
 		{
-			Navigation.LazyLoadPresenter<IContactsKeyboardPresenter>()
-			          .ShowView("Filter Contacts", string.Empty, KeyboardOnClosePressed,
+			Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>()
+			          .ShowView("Filter Contacts", Filter, null, KeyboardOnClosePressed,
 			                    KeyboardOnStringChanged);
 		}
 
@@ -658,7 +657,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			ShowFavorites = false;
 			m_SelectedContacts.Clear();
 			
-			Navigation.LazyLoadPresenter<IContactsKeyboardPresenter>().ShowView(false);
+			Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>().ShowView(false);
 		}
 
 		#endregion
