@@ -7,7 +7,11 @@ using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Zoom.Components.Call;
+using ICD.Connect.Conferencing.Zoom.Controls.Conferencing;
+using ICD.Connect.Conferencing.Zoom.EventArguments;
 using ICD.Connect.UI.Attributes;
+using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IPresenters;
 using ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IPresenters.Conference;
 using ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IViews;
@@ -52,6 +56,30 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			}
 		}
 
+		#region Private Methods
+
+		private void SubmitZoomPassword(string meetingNumber, string password)
+		{
+			if (Room == null)
+				return;
+
+			ZoomRoomConferenceControl zoomControl = ActiveConferenceControl as ZoomRoomConferenceControl;
+			if (zoomControl == null)
+				return;
+
+			DialContext context = new DialContext
+			{
+				Protocol = eDialProtocol.Zoom,
+				CallType = eCallType.Video,
+				DialString = meetingNumber,
+				Password = password
+			};
+
+			Room.Dialing.Dial(zoomControl, context);
+		}
+
+		#endregion
+
 		#region Control Callbacks
 
 		protected override void Subscribe(IConferenceDeviceControl control)
@@ -63,6 +91,14 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 
 			control.OnConferenceAdded += ControlOnConferenceAdded;
 			control.OnConferenceRemoved += ControlOnConferenceRemoved;
+
+			ZoomRoomConferenceControl zoomControl = control as ZoomRoomConferenceControl;
+			CallComponent zoomCallComponent =
+				zoomControl == null ? null : zoomControl.Parent.Components.GetComponent<CallComponent>();
+			if (zoomCallComponent != null)
+			{
+				zoomCallComponent.OnPasswordRequired += ZoomControlOnPasswordRequired;
+			}
 		}
 
 		protected override void Unsubscribe(IConferenceDeviceControl control)
@@ -74,6 +110,32 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 
 			control.OnConferenceAdded -= ControlOnConferenceAdded;
 			control.OnConferenceRemoved -= ControlOnConferenceRemoved;
+
+			ZoomRoomConferenceControl zoomControl = control as ZoomRoomConferenceControl;
+			CallComponent zoomCallComponent =
+				zoomControl == null ? null : zoomControl.Parent.Components.GetComponent<CallComponent>();
+			if (zoomCallComponent != null)
+			{
+				zoomCallComponent.OnPasswordRequired -= ZoomControlOnPasswordRequired;
+			}
+		}
+
+		/// <summary>
+		/// Called when Zoom requests a password for a meeting.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void ZoomControlOnPasswordRequired(object sender, MeetingNeedsPasswordEventArgs args)
+		{
+			if (!args.NeedsPassword)
+				return;
+
+			string prompt = args.WrongAndRetry
+				                ? string.Format("Please re-enter password for Zoom Meeting #{0} - Incorrect password", args.MeetingNumberFormatted)
+				                : string.Format("Please enter password for Zoom Meeting #{0}", args.MeetingNumberFormatted);
+
+			Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>()
+			          .ShowView(prompt, null, p => SubmitZoomPassword(args.MeetingNumber, p), null, null);
 		}
 
 		private void ControlOnConferenceAdded(object sender, ConferenceEventArgs args)
@@ -159,7 +221,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			if (ActiveConferenceControl != null)
 				Room.Dialing.Dial(ActiveConferenceControl,
 				                  new DialContext {Protocol = eDialProtocol.Zoom, DialString = m_Builder.ToString()});
-
+                     
 			RefreshIfVisible();
 		}
 
