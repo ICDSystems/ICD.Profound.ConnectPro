@@ -7,7 +7,6 @@ using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
-using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Contacts;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Directory;
@@ -256,8 +255,6 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 		{
 			base.Subscribe(room);
 
-			IConferenceManager conferenceManager = room == null ? null : room.ConferenceManager;
-
 			Favorite.OnFavoritesChanged += FavoritesOnFavoritesChanged;
 
 			UpdateFavorites();
@@ -289,9 +286,12 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 		/// </summary>
 		private void UpdateFavorites()
 		{
-			IEnumerable<IContact> favorites = Favorite.All(Room.Id)
-				.Where(f => f.GetDialContexts().Any(c => c.Protocol == eDialProtocol.ZoomContact))
-				.Cast<IContact>();
+			IEnumerable<IContact> favorites =
+				Room == null
+					? Enumerable.Empty<IContact>()
+					: Favorite.All(Room.Id)
+					          .Where(f => f.GetDialContexts().Any(c => c.Protocol == eDialProtocol.ZoomContact))
+					          .Cast<IContact>();
 
 			m_Favorites.Clear();
 			m_Favorites.AddRange(favorites, f => f.Name);
@@ -546,8 +546,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 
 		private void KeyboardOnClosePressed(string text)
 		{
-			if (IsViewVisible)
-				CancelFilter();
+			CancelFilter();
 		}
 
 		#endregion
@@ -627,8 +626,8 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 		/// <param name="e"></param>
 		private void ViewOnSearchButtonPressed(object sender, EventArgs e)
 		{
-			Navigation.LazyLoadPresenter<IContactsKeyboardPresenter>()
-			          .ShowView("Filter Contacts", string.Empty, KeyboardOnClosePressed,
+			Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>()
+			          .ShowView("Filter Contacts", Filter, null, KeyboardOnClosePressed,
 			                    KeyboardOnStringChanged);
 		}
 
@@ -658,7 +657,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			ShowFavorites = false;
 			m_SelectedContacts.Clear();
 			
-			Navigation.LazyLoadPresenter<IContactsKeyboardPresenter>().ShowView(false);
+			Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>().ShowView(false);
 		}
 
 		#endregion

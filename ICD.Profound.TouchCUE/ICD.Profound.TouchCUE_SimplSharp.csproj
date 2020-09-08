@@ -80,7 +80,7 @@
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\Camera\ICameraControlPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\Camera\ICameraLayoutPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\Contacts\IContactListPresenter.cs" />
-    <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\Contacts\IContactsKeyboardPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IPresenters\IGenericKeyboardPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\Contacts\IReferencedContactPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\Contacts\IReferencedSelectedContactPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IPresenters\Conference\ICallOutConferencePresenter.cs" />
@@ -128,7 +128,7 @@
     <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\Camera\ICameraControlView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\Camera\ICameraLayoutView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\Contacts\IContactListView.cs" />
-    <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\Contacts\IContactsKeyboardView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\IViews\IGenericKeyboardView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\Contacts\IReferencedContactView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\Contacts\IReferencedSelectedContactView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\IViews\Conference\ICallOutConferenceView.cs" />
@@ -179,7 +179,7 @@
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\Camera\CameraLayoutPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\ConferenceBasePresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\Contacts\ContactListPresenter.cs" />
-    <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\Contacts\ContactsKeyboardPresenter.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Presenters\GenericKeyboardPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\Contacts\ReferencedContactPresenter.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\Contacts\ReferencedContactPresenterFactory.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Presenters\Conference\Contacts\ReferencedSelectedContactPresenter.cs" />
@@ -239,8 +239,8 @@
     <Compile Include="Themes\TouchDisplayInterface\Views\Conference\ConferenceBaseView.generated.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Conference\Contacts\ContactListView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Conference\Contacts\ContactListView.generated.cs" />
-    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\Contacts\ContactsKeyboardView.cs" />
-    <Compile Include="Themes\TouchDisplayInterface\Views\Conference\Contacts\ContactsKeyboardView.generated.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\GenericKeyboardView.cs" />
+    <Compile Include="Themes\TouchDisplayInterface\Views\GenericKeyboardView.generated.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Conference\Contacts\ReferencedContactView.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Conference\Contacts\ReferencedContactView.generated.cs" />
     <Compile Include="Themes\TouchDisplayInterface\Views\Conference\Contacts\ReferencedSelectedContactView.cs" />

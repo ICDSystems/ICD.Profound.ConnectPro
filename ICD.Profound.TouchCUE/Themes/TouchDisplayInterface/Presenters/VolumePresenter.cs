@@ -120,7 +120,10 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters
 			ShowView(true);
 			ResetVisibilityTimer();
 
-			m_VolumeRepeater.VolumeUpHold(m_VolumePointHelper.VolumePoint);
+			float percent = m_VolumePointHelper.GetVolumePercent();
+			percent = MathUtils.Clamp(percent + 0.1f, 0, 1);
+
+			m_VolumePointHelper.SetVolumePercent(percent);
 		}
 
 		/// <summary>
@@ -149,7 +152,10 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters
 			ShowView(true);
 			ResetVisibilityTimer();
 
-			m_VolumeRepeater.VolumeDownHold(m_VolumePointHelper.VolumePoint);
+			float percent = m_VolumePointHelper.GetVolumePercent();
+			percent = MathUtils.Clamp(percent - 0.1f, 0, 1);
+
+			m_VolumePointHelper.SetVolumePercent(percent);
 		}
 		
 		/// <summary>
@@ -336,7 +342,6 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters
 
 		private void ViewOnVolumeGaugePressed(object sender, UShortEventArgs e)
 		{
-			
 			float percentage = e.Data / (float)ushort.MaxValue;
 			VolumeSet(percentage);
 		}

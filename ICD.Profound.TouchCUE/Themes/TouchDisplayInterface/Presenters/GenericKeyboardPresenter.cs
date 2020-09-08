@@ -4,14 +4,12 @@ using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.EventArguments;
 using ICD.Connect.UI.Utils;
 using ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IPresenters;
-using ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IPresenters.Conference.Contacts;
 using ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IViews;
-using ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IViews.Conference.Contacts;
 
-namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conference.Contacts
+namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters
 {
-	[PresenterBinding(typeof(IContactsKeyboardPresenter))]
-	public sealed class ContactsKeyboardPresenter : AbstractTouchDisplayPresenter<IContactsKeyboardView>, IContactsKeyboardPresenter
+	[PresenterBinding(typeof(IGenericKeyboardPresenter))]
+	public sealed class GenericKeyboardPresenter : AbstractTouchDisplayPresenter<IGenericKeyboardView>, IGenericKeyboardPresenter
 	{
 		private readonly KeypadStringBuilder m_StringBuilder;
 
@@ -75,14 +73,19 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 		}
 
 		/// <summary>
-		/// Gets/sets the close callback
+		/// Gets/sets the submit callback
 		/// </summary>
-		private Action<string> CloseCallback { get; set; }
+		private Action<string> SubmitCallback { get; set; }
 
 		/// <summary>
 		/// Gets/sets the change callback
 		/// </summary>
-		private Action<string> ChangeCallback { get; set; } 
+		private Action<string> ChangeCallback { get; set; }
+
+		/// <summary>
+		/// Gets/sets the close callback.
+		/// </summary>
+		private Action<string> CloseCallback { get; set; }
 
 		#endregion
 
@@ -92,7 +95,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public ContactsKeyboardPresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views, TouchCueTheme theme) 
+		public GenericKeyboardPresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views, TouchCueTheme theme) 
 			: base(nav, views, theme)
 		{
 			m_StringBuilder = new KeypadStringBuilder();
@@ -105,7 +108,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 		/// Updates the view.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Refresh(IContactsKeyboardView view)
+		protected override void Refresh(IGenericKeyboardView view)
 		{
 			base.Refresh(view);
 			
@@ -123,16 +126,17 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 		/// </summary>
 		/// <param name="prompt"></param>
 		/// <param name="text"></param>
+		/// <param name="enterCallback"></param>
 		/// <param name="closeCallback"></param>
 		/// <param name="changeCallback"></param>
-		public void ShowView(string prompt, string text, Action<string> closeCallback,
-		              Action<string> changeCallback)
+		public void ShowView(string prompt, string text, Action<string> enterCallback, Action<string> closeCallback, Action<string> changeCallback)
 		{
 			Prompt = prompt;
 
 			m_StringBuilder.Clear();
 			m_StringBuilder.SetString(text);
-			
+
+			SubmitCallback = enterCallback;
 			CloseCallback = closeCallback;
 			ChangeCallback = changeCallback;
 
@@ -167,7 +171,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 		/// Subscribe to the view events.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Subscribe(IContactsKeyboardView view)
+		protected override void Subscribe(IGenericKeyboardView view)
 		{
 			base.Subscribe(view);
 
@@ -177,6 +181,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			view.OnShiftButtonPressed += ViewOnShiftButtonPressed;
 			view.OnSpaceButtonPressed += ViewOnSpaceButtonPressed;
 			view.OnKeyPressed += ViewOnKeyPressed;
+			view.OnSubmitButtonPressed += ViewOnSubmitButtonPressed;
 			view.OnCloseButtonPressed += ViewOnCloseButtonPressed;
 		}
 
@@ -184,7 +189,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 		/// Unsubscribe from the view events.
 		/// </summary>
 		/// <param name="view"></param>
-		protected override void Unsubscribe(IContactsKeyboardView view)
+		protected override void Unsubscribe(IGenericKeyboardView view)
 		{
 			base.Unsubscribe(view);
 
@@ -194,6 +199,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			view.OnShiftButtonPressed -= ViewOnShiftButtonPressed;
 			view.OnSpaceButtonPressed -= ViewOnSpaceButtonPressed;
 			view.OnKeyPressed -= ViewOnKeyPressed;
+			view.OnSubmitButtonPressed -= ViewOnSubmitButtonPressed;
 			view.OnCloseButtonPressed -= ViewOnCloseButtonPressed;
 		}
 
@@ -210,14 +216,14 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 		}
 
 		/// <summary>
-		/// Called when the user presses the keypad button.
+		/// Called when the user presses the submit button.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void ViewOnCloseButtonPressed(object sender, EventArgs eventArgs)
+		private void ViewOnSubmitButtonPressed(object sender, EventArgs eventArgs)
 		{
-			if (CloseCallback != null)
-				CloseCallback(m_StringBuilder.ToString());
+			if (SubmitCallback != null)
+				SubmitCallback(m_StringBuilder.ToString());
 
 			ShowView(false);
 		}
@@ -276,6 +282,19 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 		}
 
 		/// <summary>
+		/// Called when the user presses the close button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void ViewOnCloseButtonPressed(object sender, EventArgs eventArgs)
+		{
+			if (CloseCallback != null)
+				CloseCallback(m_StringBuilder.ToString());
+
+			ShowView(false);
+		}
+
+		/// <summary>
 		/// Called when the view visibility is about to change.
 		/// </summary>
 		/// <param name="sender"></param>
@@ -303,7 +322,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			if (args.Data)
 				return;
 			
-			CloseCallback = null;
+			SubmitCallback = null;
 			ChangeCallback = null;
 
 			m_StringBuilder.Clear();

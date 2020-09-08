@@ -2,9 +2,9 @@
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.UI.EventArguments;
 
-namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IViews.Conference.Contacts
+namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IViews
 {
-	public interface IContactsKeyboardView : ITouchDisplayView
+	public interface IGenericKeyboardView : ITouchDisplayView
 	{
 		/// <summary>
 		/// Raised when the user presses a key button.
@@ -35,6 +35,11 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IViews.Conference.C
 		/// Raised when the user presses the shift button.
 		/// </summary>
 		event EventHandler OnShiftButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the submit button.
+		/// </summary>
+		event EventHandler OnSubmitButtonPressed;
 
 		/// <summary>
 		/// Raised when the user presses the close button.

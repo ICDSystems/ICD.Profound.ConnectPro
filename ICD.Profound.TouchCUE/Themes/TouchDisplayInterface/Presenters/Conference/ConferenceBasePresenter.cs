@@ -32,11 +32,18 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 		private const string DISCONNECTING_TEXT = "Disconnecting... Audio and video may still be live.";
 		private const string CONNECTING_TEXT = "Please wait. Your conference is being connected...";
 
+		#region Readonly Properties
+
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly List<IConferencePresenter> m_ConferencePresenters;
 		private readonly Dictionary<HeaderButtonModel, ITouchDisplayPresenter> m_PresenterButtons;
 		private readonly List<HeaderButtonModel> m_InCallButtons;
 		private readonly List<HeaderButtonModel> m_OutOfCallButtons;
+
+		#endregion
+
+		#region Properties
+
 		private HeaderButtonModel m_HideCameraButton;
 		private HeaderButtonModel m_EndConferenceButton;
 		private IHeaderPresenter m_Header;
@@ -86,6 +93,8 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			}
 		}
 
+		#endregion
+
 		public ConferenceBasePresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views,
 			TouchCueTheme theme)
 			: base(nav, views, theme)
@@ -112,6 +121,41 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			base.Dispose();
 		}
 
+		protected override void Refresh(IConferenceBaseView view)
+		{
+			m_RefreshSection.Enter();
+			try
+			{
+				foreach (var presenterButton in m_PresenterButtons)
+				{
+					HeaderButtonModel button = presenterButton.Key;
+					ITouchDisplayPresenter presenter = presenterButton.Value;
+					button.Selected = presenter.IsViewVisible;
+				}
+
+				var webConferenceControl = ActiveConferenceControl as IWebConferenceDeviceControl;
+				bool cameraActive = webConferenceControl != null && !webConferenceControl.CameraMute;
+				m_HideCameraButton.LabelText = cameraActive ? "Hide Camera" : "Show Camera";
+				m_HideCameraButton.Icon = TouchCueIcons.GetIcon(cameraActive ? eTouchCueIcon.Hide : eTouchCueIcon.Reveal, eTouchCueColor.White);
+				
+				// Only hosts can end meeting for everyone
+				ZoomRoom zoomRoom = webConferenceControl == null ? null : webConferenceControl.Parent as ZoomRoom;
+				CallComponent component = zoomRoom == null ? null : zoomRoom.Components.GetComponent<CallComponent>();
+				
+				if (component != null && component.AmIHost && IsInCall && IsViewVisible)
+					m_Header.AddRightButton(m_EndConferenceButton);
+				else
+					m_Header.RemoveRightButton(m_EndConferenceButton);
+				m_Header.Refresh();
+			}
+			finally
+			{
+				m_RefreshSection.Leave();
+			}
+		}
+
+		#region Private Methods
+
 		private void ShowDefaultPresenter()
 		{
 			if (IsInCall && IsViewVisible)
@@ -124,6 +168,60 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 				Navigation.NavigateTo<IStartConferencePresenter>();
 			}
 				
+		}
+
+		private void UpdateIsInCall()
+		{
+			IsInCall =
+				m_SubscribedConferenceControl != null &&
+				m_SubscribedConferenceControl.GetActiveConference() != null;
+			UpdateButtonVisibility();
+			Refresh();
+		}
+
+		private void UpdateButtonVisibility()
+		{
+			if (!IsViewVisible)
+			{
+				RemoveInCallButtons();
+				RemoveOutOfCallButtons();
+			}
+			else if (IsInCall)
+			{
+				RemoveOutOfCallButtons();
+				AddInCallButtons();
+			}
+			else
+			{
+				RemoveInCallButtons();
+				AddOutOfCallButtons();
+			}
+			
+			m_Header.Refresh();
+		}
+
+		private void AddInCallButtons()
+		{
+			foreach (var button in m_InCallButtons)
+				m_Header.AddRightButton(button);
+		}
+
+		private void RemoveInCallButtons()
+		{
+			foreach (var button in m_InCallButtons)
+				m_Header.RemoveRightButton(button);
+		}
+
+		private void AddOutOfCallButtons()
+		{
+			foreach (var button in m_OutOfCallButtons)
+				m_Header.AddRightButton(button);
+		}
+
+		private void RemoveOutOfCallButtons()
+		{
+			foreach (var button in m_OutOfCallButtons)
+				m_Header.RemoveRightButton(button);
 		}
 
 		private void InitHeaderButtons()
@@ -212,40 +310,9 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			m_InCallButtons.Add(leaveConferenceButton);
 		}
 
-		protected override void Refresh(IConferenceBaseView view)
-		{
-			base.Refresh(view);
+		#endregion
 
-			m_RefreshSection.Enter();
-			try
-			{
-				foreach (var presenterButton in m_PresenterButtons)
-				{
-					HeaderButtonModel button = presenterButton.Key;
-					ITouchDisplayPresenter presenter = presenterButton.Value;
-					button.Selected = presenter.IsViewVisible;
-				}
-
-				var webConferenceControl = ActiveConferenceControl as IWebConferenceDeviceControl;
-				bool cameraActive = webConferenceControl != null && !webConferenceControl.CameraMute;
-				m_HideCameraButton.LabelText = cameraActive ? "Hide Camera" : "Show Camera";
-				m_HideCameraButton.Icon = TouchCueIcons.GetIcon(cameraActive ? eTouchCueIcon.Hide : eTouchCueIcon.Reveal, eTouchCueColor.White);
-				
-				// Only hosts can end meeting for everyone
-				ZoomRoom zoomRoom = webConferenceControl == null ? null : webConferenceControl.Parent as ZoomRoom;
-				CallComponent component = zoomRoom == null ? null : zoomRoom.Components.GetComponent<CallComponent>();
-				
-				if (component != null && component.AmIHost && IsInCall && IsViewVisible)
-					m_Header.AddRightButton(m_EndConferenceButton);
-				else
-					m_Header.RemoveRightButton(m_EndConferenceButton);
-				m_Header.Refresh();
-			}
-			finally
-			{
-				m_RefreshSection.Leave();
-			}
-		}
+		#region Protected Methods
 
 		public void SetControl(IDeviceControl control)
 		{
@@ -261,59 +328,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			return control is IWebConferenceDeviceControl;
 		}
 
-		private void UpdateIsInCall()
-		{
-			IsInCall =
-				m_SubscribedConferenceControl != null &&
-				m_SubscribedConferenceControl.GetActiveConference() != null;
-			UpdateButtonVisibility();
-			Refresh();
-		}
-
-		private void UpdateButtonVisibility()
-		{
-			if (!IsViewVisible)
-			{
-				RemoveInCallButtons();
-				RemoveOutOfCallButtons();
-			}
-			else if (IsInCall)
-			{
-				RemoveOutOfCallButtons();
-				AddInCallButtons();
-			}
-			else
-			{
-				RemoveInCallButtons();
-				AddOutOfCallButtons();
-			}
-			
-			m_Header.Refresh();
-		}
-
-		private void AddInCallButtons()
-		{
-			foreach (var button in m_InCallButtons)
-				m_Header.AddRightButton(button);
-		}
-
-		private void RemoveInCallButtons()
-		{
-			foreach (var button in m_InCallButtons)
-				m_Header.RemoveRightButton(button);
-		}
-
-		private void AddOutOfCallButtons()
-		{
-			foreach (var button in m_OutOfCallButtons)
-				m_Header.AddRightButton(button);
-		}
-
-		private void RemoveOutOfCallButtons()
-		{
-			foreach (var button in m_OutOfCallButtons)
-				m_Header.RemoveRightButton(button);
-		}
+		#endregion
 
 		#region Header Button Callbacks
 
@@ -436,7 +451,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 		{
 			RefreshIfVisible();
 		}
-
+		
 		#endregion
 
 		#region Conference Callbacks
@@ -480,6 +495,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 				case eConferenceStatus.Connected:
 					ActiveConferenceControl.Parent.Controls.GetControl<ZoomRoomLayoutControl>().SetLayoutPosition(eZoomLayoutPosition.DownRight);
 					Navigation.LazyLoadPresenter<IConferenceConnectingPresenter>().ShowView(false);
+					Navigation.LazyLoadPresenter<IGenericKeyboardPresenter>().ShowView(false);
 					break;
 				case eConferenceStatus.Disconnecting:
 					Navigation.LazyLoadPresenter<IConferenceConnectingPresenter>().Show(DISCONNECTING_TEXT);

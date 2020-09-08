@@ -8,12 +8,12 @@ using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.EventArguments;
 using ICD.Connect.UI.Utils;
-using ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IViews.Conference.Contacts;
+using ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IViews;
 
 namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Views.Conference.Contacts
 {
-	[ViewBinding(typeof(IContactsKeyboardView))]
-	public sealed partial class ContactsKeyboardView : AbstractTouchDisplayView, IContactsKeyboardView
+	[ViewBinding(typeof(IGenericKeyboardView))]
+	public sealed partial class GenericKeyboardView : AbstractTouchDisplayView, IGenericKeyboardView
 	{
 		/// <summary>
 		/// Raised when the user presses a key button.
@@ -46,7 +46,12 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Views.Conference.Co
 		public event EventHandler OnShiftButtonPressed;
 
 		/// <summary>
-		/// Raised when the user presses the close button.
+		/// Raised when the user presses the submit button.
+		/// </summary>
+		public event EventHandler OnSubmitButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the close button. 
 		/// </summary>
 		public event EventHandler OnCloseButtonPressed;
 
@@ -57,7 +62,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Views.Conference.Co
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public ContactsKeyboardView(ISigInputOutput panel, TouchCueTheme theme) 
+		public GenericKeyboardView(ISigInputOutput panel, TouchCueTheme theme) 
 			: base(panel, theme)
 		{
 		}
@@ -75,6 +80,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Views.Conference.Co
 			OnSpaceButtonPressed = null;
 			OnCapsButtonPressed = null;
 			OnShiftButtonPressed = null;
+			OnSubmitButtonPressed = null;
 			OnCloseButtonPressed = null;
 
 			base.Dispose();
@@ -196,7 +202,9 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Views.Conference.Co
 			m_SpaceButton.OnPressed += SpaceButtonOnPressed;
 			m_CapsButton.OnPressed += CapsButtonOnPressed;
 			m_ShiftButton.OnPressed += ShiftButtonOnPressed;
-			m_CloseButton.OnPressed += KeypadButtonOnPressed;
+			m_SubmitButton.OnPressed += SubmitButtonOnPressed;
+			m_CloseButton.OnPressed += CloseButtonOnPressed;
+		
 		}
 
 		/// <summary>
@@ -214,7 +222,8 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Views.Conference.Co
 			m_SpaceButton.OnPressed -= SpaceButtonOnPressed;
 			m_CapsButton.OnPressed -= CapsButtonOnPressed;
 			m_ShiftButton.OnPressed -= ShiftButtonOnPressed;
-			m_CloseButton.OnPressed -= KeypadButtonOnPressed;
+			m_SubmitButton.OnPressed -= SubmitButtonOnPressed;
+			m_CloseButton.OnPressed -= CloseButtonOnPressed;
 		}
 
 		/// <summary>
@@ -278,11 +287,21 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Views.Conference.Co
 		}
 		
 		/// <summary>
-		/// Called when the user presses the exit button.
+		/// Called when the user presses the submit button.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void KeypadButtonOnPressed(object sender, EventArgs eventArgs)
+		private void SubmitButtonOnPressed(object sender, EventArgs eventArgs)
+		{
+			OnSubmitButtonPressed.Raise(this);
+		}
+
+		/// <summary>
+		/// Called when the user presses the close button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void CloseButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnCloseButtonPressed.Raise(this);
 		}

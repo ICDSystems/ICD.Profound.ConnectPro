@@ -7,7 +7,7 @@ using ICD.Connect.UI.Controls.TextControls;
 
 namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Views.Conference.Contacts
 {
-	public sealed partial class ContactsKeyboardView
+	public sealed partial class GenericKeyboardView
 	{
 		private VtProSubpage m_Subpage;
 
@@ -64,6 +64,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Views.Conference.Co
 		private VtProButton m_ShiftButton;
 		private VtProButton m_CapsButton;
 		private VtProButton m_SpaceButton;
+		private VtProButton m_SubmitButton;
 		private VtProButton m_CloseButton;
 
 		/// <summary>
@@ -356,9 +357,14 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Views.Conference.Co
 				DigitalPressJoin = 2747
 			};
 
-			m_CloseButton = new VtProButton(panel, m_Subpage)
+			m_SubmitButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 2755
+			};
+
+			m_CloseButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 3000
 			};
 		}
 
@@ -422,6 +428,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Views.Conference.Co
 			yield return m_ShiftButton;
 			yield return m_CapsButton;
 			yield return m_SpaceButton;
+			yield return m_SubmitButton;
 			yield return m_CloseButton;
 		}
 	}
