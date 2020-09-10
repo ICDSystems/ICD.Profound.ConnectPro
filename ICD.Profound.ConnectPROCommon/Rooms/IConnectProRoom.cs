@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using ICD.Common.Properties;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Calendaring.Bookings;
-using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Devices;
@@ -34,7 +32,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		event EventHandler<GenericEventArgs<IDeviceBase>> OnActiveCameraChanged;
 
 		/// <summary>
-		/// Raised when there is an upcoming meeting (upcoming meeting starts in the next 15 mins)?
+		/// Raised when there is an upcoming meeting about to start.
 		/// </summary>
 		event EventHandler<GenericEventArgs<IBooking>> OnUpcomingMeeting;
 
@@ -80,12 +78,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		/// Gets the camera that is currently active for conferencing.
 		/// </summary>
 		IDeviceBase ActiveCamera { get; }
-
-		/// <summary>
-		/// Gets the calendar control.
-		/// </summary>
-		[CanBeNull]
-		IEnumerable<ICalendarControl> CalendarControls { get;}
 
 		#endregion
 

@@ -14,8 +14,8 @@ using ICD.Connect.API.Nodes;
 using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Calendaring.Bookings;
+using ICD.Connect.Calendaring.CalendarManagers;
 using ICD.Connect.Calendaring.CalendarPoints;
-using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Cameras.Controls;
 using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.ConferenceManagers;
@@ -82,13 +82,10 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		private ISource m_FocusSource;
 
 		private readonly IcdTimer m_MeetingStartTimer;
-		private bool m_UpcomingMeeting;
 
 		private readonly List<IPresentationControl> m_SubscribedPresentationControls;
 		private readonly List<IPowerDeviceControl> m_SubscribedDisplayPowerControls;
 		private IDeviceBase m_ActiveCamera;
-
-		private IEnumerable<ICalendarControl> m_CalendarControls;
 
 
 		#region Properties
@@ -178,28 +175,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			}
 		}
 
-		/// <summary>
-		/// Gets the calendar control.
-		/// </summary>
-		[CanBeNull]
-		public IEnumerable<ICalendarControl> CalendarControls
-		{
-			get { return m_CalendarControls; }
-			set
-			{
-				if (value == null)
-					return;
-
-				foreach (ICalendarControl control in value)
-				{
-					Unsubscribe(control);
-					Subscribe(control);
-				}
-
-				m_CalendarControls = value;
-			}
-		}
-
 		#endregion
 
 		/// <summary>
@@ -215,7 +190,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 
 			m_MeetingStartTimer = new IcdTimer();
 			m_MeetingTimeoutTimer = SafeTimer.Stopped(MeetingTimeout);
-			m_UpcomingMeetingTimer = SafeTimer.Stopped(WarnUpcomingMeeting);
+			m_UpcomingMeetingTimer = SafeTimer.Stopped(RaiseUpcomingMeeting);
 
 			Subscribe(m_Routing);
 			Subscribe(m_MeetingStartTimer);
@@ -480,35 +455,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		#region Private Methods
 
 		/// <summary>
-		/// Gets the amount of time until the next booking starts.
-		/// </summary>
-		/// <returns></returns>
-		private TimeSpan GetTimeToNextBooking()
-		{
-			IBooking next = GetNextBooking();
-			return next == null ? TimeSpan.MaxValue : next.StartTime - IcdEnvironment.GetUtcTime();
-		}
-
-		/// <summary>
-		/// Gets the next upcoming booking.
-		/// </summary>
-		/// <returns></returns>
-		[CanBeNull]
-		private IBooking GetNextBooking()
-		{
-			DateTime now = IcdEnvironment.GetUtcTime();
-
-			return
-				CalendarControls == null
-					? null
-					: CalendarControls.SelectMany(c => c.GetBookings())
-					                  .Where(b => b != CurrentBooking)
-					                  .Where(b => b.StartTime > now)
-					                  .OrderBy(b => b.StartTime)
-					                  .FirstOrDefault();
-		}
-
-		/// <summary>
 		/// Checks in to the given booking.
 		/// </summary>
 		/// <param name="booking"></param>
@@ -564,7 +510,10 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		/// </summary>
 		private void RestartUpcomingMeetingTimer()
 		{
-			TimeSpan timeToNextBooking = GetTimeToNextBooking();
+			TimeSpan timeToNextBooking =
+				CalendarManager == null
+					? TimeSpan.MaxValue
+					: CalendarManager.GetTimeToNextBooking();
 
 			// Raise 5 minutes early
 			timeToNextBooking -= TimeSpan.FromMinutes(5);
@@ -609,9 +558,9 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 				.ForEach(c => c.MuteCamera(privacyMute));
 		}
 
-		private void WarnUpcomingMeeting()
+		private void RaiseUpcomingMeeting()
 		{
-			IBooking booking = GetNextBooking();
+			IBooking booking = CalendarManager == null ? null : CalendarManager.GetNextBooking();
 			if (booking != null)
 				OnUpcomingMeeting.Raise(this, booking);
 		}
@@ -852,6 +801,22 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 
 		#endregion
 
+		#region Calendar Manager Callbacks
+
+		/// <summary>
+		/// Called when the calendar bookings change.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		protected override void CalendarManagerOnBookingsChanged(object sender, EventArgs eventArgs)
+		{
+			base.CalendarManagerOnBookingsChanged(sender, eventArgs);
+
+			RestartUpcomingMeetingTimer();
+		}
+
+		#endregion
+
 		#region Presentation Control Callbacks 
 
 		private void SetPresentationControls([NotNull] IEnumerable<IPresentationControl> presentationControls)
@@ -930,25 +895,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		private void DisplayPowerControlOnPowerStateChanged(object sender, PowerDeviceControlPowerStateApiEventArgs e)
 		{
 			UpdateIsAwake();
-		}
-
-		#endregion
-
-		#region Calendar Control Callbacks
-
-		private void Subscribe(ICalendarControl calendarControl)
-		{
-			calendarControl.OnBookingsChanged += CalendarControlOnBookingsChanged;
-		}
-		private void Unsubscribe(ICalendarControl calendarControl)
-		{
-			calendarControl.OnBookingsChanged -= CalendarControlOnBookingsChanged;
-		}
-
-		private void CalendarControlOnBookingsChanged(object sender, EventArgs eventArgs)
-		{
-			// TODO - Determine time to next booking, reset timer with deliberate amount of time
-			RestartUpcomingMeetingTimer();
 		}
 
 		#endregion
