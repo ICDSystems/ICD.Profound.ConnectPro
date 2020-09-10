@@ -6,7 +6,7 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Calendaring.Bookings;
-using ICD.Connect.Calendaring.CalendarPoints;
+using ICD.Connect.Calendaring.CalendarManagers;
 using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
@@ -36,10 +36,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 		[CanBeNull]
 		private IReferencedSchedulePresenter m_SelectedBooking;
-		private ICalendarControl m_CalendarControl;
+		private ICalendarManager m_CalendarManager;
 		private List<IBooking> m_Bookings;
 
-		private bool HasCalendarControl { get { return m_CalendarControl != null; } }
+		private bool HasCalendarControl
+		{
+			get { return m_CalendarManager != null && m_CalendarManager.GetProviders(eCalendarFeatures.ListBookings).Any(); }
+		}
 
 		/// <summary>
 		/// Constructor.
@@ -156,20 +159,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			base.SetRoom(room);
 
-			Unsubscribe(m_CalendarControl);
-
-			m_CalendarControl =
-				Room == null
-					? null
-					: Room.Originators
-					      .GetInstancesRecursive<ICalendarPoint>()
-					      .Select(p => p.Control)
-					      .FirstOrDefault(c => c != null);
-
-			Subscribe(m_CalendarControl);
-
-			if (m_CalendarControl != null)
-				m_CalendarControl.Refresh();
+			Unsubscribe(m_CalendarManager);
+			m_CalendarManager = Room == null ? null: Room.CalendarManager;
+			Subscribe(m_CalendarManager);
 
 			UpdateBookings();
 
@@ -192,9 +184,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			try
 			{
 				m_Bookings =
-					m_CalendarControl == null
+					m_CalendarManager == null
 						? new List<IBooking>()
-						: m_CalendarControl.GetBookings()
+						: m_CalendarManager.GetBookings()
 						                   .Where(b => b.EndTime > IcdEnvironment.GetUtcTime() &&
 						                               b.StartTime < IcdEnvironment.GetUtcTime().AddDays(1))
 						                   .ToList();
@@ -256,23 +248,31 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 		#region Calendar Callbacks
 
-		private void Subscribe(ICalendarControl calendarControl)
+		/// <summary>
+		/// Subscribe to the calendar manager events.
+		/// </summary>
+		/// <param name="calendarManager"></param>
+		private void Subscribe(ICalendarManager calendarManager)
 		{
-			if (calendarControl == null)
+			if (calendarManager == null)
 				return;
 
-			calendarControl.OnBookingsChanged += CalendarControlOnBookingsChanged;
+			calendarManager.OnBookingsChanged += CalendarManagerOnBookingsChanged;
 		}
 
-		private void Unsubscribe(ICalendarControl calendarControl)
+		/// <summary>
+		/// Unsubscribe from the calendar manager events.
+		/// </summary>
+		/// <param name="calendarManager"></param>
+		private void Unsubscribe(ICalendarManager calendarManager)
 		{
-			if (calendarControl == null)
+			if (calendarManager == null)
 				return;
 
-			calendarControl.OnBookingsChanged -= CalendarControlOnBookingsChanged;
+			calendarManager.OnBookingsChanged -= CalendarManagerOnBookingsChanged;
 		}
 
-		private void CalendarControlOnBookingsChanged(object sender, EventArgs eventArgs)
+		private void CalendarManagerOnBookingsChanged(object sender, EventArgs eventArgs)
 		{
 			UpdateBookings();
 		}

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ICD.Common.Utils;
 using ICD.Connect.Calendaring.CalendarManagers;
 using ICD.Connect.Calendaring.CalendarPoints;
 using ICD.Connect.Calendaring.Controls;
@@ -11,7 +12,6 @@ using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Devices;
 using ICD.Connect.Partitioning;
 using ICD.Connect.Partitioning.Commercial;
-using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings;
 using ICD.Connect.Settings.Utils;
@@ -64,7 +64,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Single
 		{
 			base.CopySettingsFinal(settings);
 
-			ICalendarControl calendarControl = this.GetCalendarControls().FirstOrDefault();
+			ICalendarControl calendarControl = CalendarManager == null ? null : CalendarManager.GetProviders().FirstOrDefault();
 
 			settings.Passcode = Passcode;
 			settings.CalendarDevice = calendarControl == null ? (int?)null : calendarControl.Parent.Id;
@@ -111,6 +111,8 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Single
 
 			IDevice calendarDevice = factory.GetOriginatorById<IDevice>(settings.CalendarDevice.Value);
 			ICalendarControl calendarControl = calendarDevice.Controls.GetControl<ICalendarControl>();
+			if (calendarControl == null)
+				return;
 
 			int id = IdUtils.GetNewId(Core.Originators.GetChildrenIds().Concat(factory.GetOriginatorIds()), eSubsystem.CalendarPoints);
 			eCombineMode combineMode = Originators.GetCombineMode(calendarDevice.Id);
@@ -120,13 +122,15 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Single
 				Id = id,
 				Uuid = OriginatorUtils.GenerateUuid(Core, id),
 				Name = calendarControl.Name,
+				Features = EnumUtils.GetFlagsAllValue<eCalendarFeatures>()
 			};
 			point.SetControl(calendarControl);
 
 			Core.Originators.AddChild(point);
 			Originators.Add(id, combineMode);
 
-			CalendarManager.RegisterCalendarProvider(point);
+			if (CalendarManager != null)
+				CalendarManager.RegisterCalendarProvider(point);
 		}
 
 		/// <summary>
@@ -179,7 +183,8 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Single
 					Core.Originators.AddChild(point);
 					Originators.Add(id, combineMode);
 
-					ConferenceManager.Dialers.RegisterDialingProvider(point);
+					if (ConferenceManager != null)
+						ConferenceManager.Dialers.RegisterDialingProvider(point);
 				}
 			}
 		}

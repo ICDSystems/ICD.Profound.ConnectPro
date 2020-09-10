@@ -15,7 +15,6 @@ using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Calendaring.Bookings;
 using ICD.Connect.Calendaring.CalendarPoints;
-using ICD.Connect.Calendaring.Controls;
 using ICD.Connect.Cameras.Controls;
 using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.ConferenceManagers;
@@ -64,12 +63,14 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		private const int MEETING_TIMEOUT = 10 * 60 * 1000;
 		private readonly SafeTimer m_MeetingTimeoutTimer;
 
+		private readonly IcdTimer m_MeetingStartTimer;
+
 		private readonly ConnectProRouting m_Routing;
 		private readonly ConnectProDialing m_Dialing;
 
 		private bool m_IsInMeeting;
 		private ISource m_FocusSource;
-		private IcdTimer m_MeetingStartTimer;
+
 
 		private readonly List<IPresentationControl> m_SubscribedPresentationControls;
 		private readonly List<IPowerDeviceControl> m_SubscribedDisplayPowerControls;
@@ -446,11 +447,8 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			if (booking == null)
 				throw new ArgumentNullException("booking");
 
-			foreach (ICalendarControl control in this.GetCalendarControls())
-			{
-				if (control.CanCheckIn(booking))
-					control.CheckIn(booking);
-			}
+			if (CalendarManager != null)
+				CalendarManager.CheckIn(booking);
 
 			CurrentBooking = booking;
 		}
@@ -463,11 +461,8 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			if (CurrentBooking == null)
 				return;
 
-			foreach (ICalendarControl control in this.GetCalendarControls())
-			{
-				if (control.CanCheckOut(CurrentBooking))
-					control.CheckOut(CurrentBooking);
-			}
+			if (CalendarManager != null)
+				CalendarManager.CheckOut(CurrentBooking);
 
 			CurrentBooking = null;
 		}

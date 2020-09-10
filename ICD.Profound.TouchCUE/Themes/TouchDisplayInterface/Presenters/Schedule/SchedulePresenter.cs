@@ -7,9 +7,8 @@ using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Calendaring;
 using ICD.Connect.Calendaring.Bookings;
-using ICD.Connect.Calendaring.Controls;
+using ICD.Connect.Calendaring.CalendarManagers;
 using ICD.Connect.Conferencing.Controls.Dialing;
-using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPROCommon.Rooms;
@@ -34,18 +33,18 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Schedule
 		private readonly List<IBooking> m_CachedBookings;
 		private readonly SafeTimer m_CacheTimer;
 
-		private ICalendarControl m_CalendarControl;
+		private ICalendarManager m_CalendarManager;
 		private IReferencedBookingPresenter m_SelectedBooking;
 
 		/// <summary>
-		///     Constructor.
+		/// Constructor.
 		/// </summary>
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
 		public SchedulePresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views,
-			TouchCueTheme theme) :
-			base(nav, views, theme)
+			TouchCueTheme theme)
+			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
 			m_ChildrenFactory = new ReferencedBookingPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
@@ -155,14 +154,14 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Schedule
 			// clear current contents
 			m_CachedBookings.Clear();
 
-			if (m_CalendarControl == null)
+			if (m_CalendarManager == null)
 				return;
 
 			var now = IcdEnvironment.GetLocalTime();
 			var tomorrow = now.AddDays(1);
 
 			var bookings =
-				m_CalendarControl.GetBookings()
+				m_CalendarManager.GetBookings()
 					.Where(b => b.EndTime > now && b.StartTime < tomorrow)
 					.OrderBy(b => b.StartTime)
 					.ToList();
@@ -298,28 +297,30 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Schedule
 		{
 			base.SetRoom(room);
 
-			if (m_CalendarControl != null)
-				Unsubscribe(m_CalendarControl);
-
-			m_CalendarControl = room == null ? null : room.GetCalendarControls().FirstOrDefault();
-
-			if (m_CalendarControl != null)
-				Subscribe(m_CalendarControl);
+			Unsubscribe(m_CalendarManager);
+			m_CalendarManager = room == null ? null : room.CalendarManager;
+			Subscribe(m_CalendarManager);
 
 			CacheBookings();
 		}
 
-		private void Subscribe(ICalendarControl control)
+		private void Subscribe(ICalendarManager calendarManager)
 		{
-			control.OnBookingsChanged += ControlOnBookingsChanged;
+			if (calendarManager == null)
+				return;
+
+			calendarManager.OnBookingsChanged += CalendarManagerOnBookingsChanged;
 		}
 
-		private void Unsubscribe(ICalendarControl control)
+		private void Unsubscribe(ICalendarManager calendarManager)
 		{
-			control.OnBookingsChanged -= ControlOnBookingsChanged;
+			if (calendarManager == null)
+				return;
+
+			calendarManager.OnBookingsChanged -= CalendarManagerOnBookingsChanged;
 		}
 
-		private void ControlOnBookingsChanged(object sender, EventArgs e)
+		private void CalendarManagerOnBookingsChanged(object sender, EventArgs e)
 		{
 			CacheBookings();
 		}

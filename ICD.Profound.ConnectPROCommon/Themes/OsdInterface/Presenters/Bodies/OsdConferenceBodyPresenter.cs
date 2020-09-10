@@ -10,7 +10,6 @@ using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Conferencing.Zoom.Components.Call;
 using ICD.Connect.Conferencing.Zoom.Components.System;
-using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
@@ -36,7 +35,6 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Bodies
 
 		private CallInfo m_CachedCallInfo;
 
-
 		private IConferenceDeviceControl m_ActiveConferenceControl;
 		public IConferenceDeviceControl ActiveConferenceControl
 		{
@@ -52,11 +50,11 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Bodies
 			}
 		}
 
-		public OsdConferenceBodyPresenter(IOsdNavigationController nav, IOsdViewFactory views, IConnectProTheme theme) : base(nav, views, theme)
+		public OsdConferenceBodyPresenter(IOsdNavigationController nav, IOsdViewFactory views, IConnectProTheme theme)
+			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
 			theme.DateFormatting.OnFormatChanged += DateFormattingOnFormatChanged;
-
 		}
 
 		protected override void Refresh(IOsdConferenceBodyView view)
@@ -69,7 +67,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Bodies
 
 				// left panel - meeting info
 				// hidden if no scheduler
-				if (!Room.GetCalendarControls().Any())
+				if (Room.CalendarManager == null || !Room.CalendarManager.GetProviders().Any())
 					view.SetCurrentBookingPanelVisibility(false);
 				// instant meeting
 				else if (Room.CurrentBooking == null)

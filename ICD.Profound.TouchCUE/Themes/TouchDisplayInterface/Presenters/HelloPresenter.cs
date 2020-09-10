@@ -3,8 +3,7 @@ using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Calendaring.Bookings;
-using ICD.Connect.Calendaring.Controls;
-using ICD.Connect.Partitioning.Commercial.Rooms;
+using ICD.Connect.Calendaring.CalendarManagers;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPROCommon.Rooms;
@@ -25,10 +24,11 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters
 		private readonly IConferenceBasePresenter m_ConferencePresenter;
 		private readonly ISchedulePresenter m_SchedulePresenter;
 
-		private ICalendarControl m_CalendarControl;
+		private ICalendarManager m_CalendarManager;
 		private bool m_BookingSelected;
 
-		public HelloPresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views, TouchCueTheme theme) : base(nav, views, theme)
+		public HelloPresenter(ITouchDisplayNavigationController nav, ITouchDisplayViewFactory views, TouchCueTheme theme)
+			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
 			m_ConferencePresenter = Navigation.LazyLoadPresenter<IConferenceBasePresenter>();
@@ -75,8 +75,8 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters
 				// Second line when a meeting is about to start will say 'Are you here for your meeting? Let's get started.'"
 
 				DateTime now = IcdEnvironment.GetLocalTime();
-				IBooking nextBooking = m_CalendarControl != null
-					? m_CalendarControl.GetBookings().Where(b => b.EndTime > now)
+				IBooking nextBooking = m_CalendarManager != null
+					? m_CalendarManager.GetBookings().Where(b => b.EndTime > now)
 						.OrderBy(b => b.StartTime).FirstOrDefault()
 					: null;
 
@@ -105,13 +105,9 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters
 		{
 			base.SetRoom(room);
 
-			if (m_CalendarControl != null)
-				Unsubscribe(m_CalendarControl);
-
-			m_CalendarControl = room == null ? null : room.GetCalendarControls().FirstOrDefault();
-
-			if (m_CalendarControl != null)
-				Subscribe(m_CalendarControl);
+			Unsubscribe(m_CalendarManager);
+			m_CalendarManager = room == null ? null : room.CalendarManager;
+			Subscribe(m_CalendarManager);
 
 			Refresh();
 		}
@@ -141,14 +137,20 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters
 			Refresh();
 		}
 
-		private void Subscribe(ICalendarControl control)
+		private void Subscribe(ICalendarManager calendarManager)
 		{
-			control.OnBookingsChanged += ControlOnBookingsChanged;
+			if (calendarManager == null)
+				return;
+
+			calendarManager.OnBookingsChanged += ControlOnBookingsChanged;
 		}
 
-		private void Unsubscribe(ICalendarControl control)
+		private void Unsubscribe(ICalendarManager calendarManager)
 		{
-			control.OnBookingsChanged -= ControlOnBookingsChanged;
+			if (calendarManager == null)
+				return;
+
+			calendarManager.OnBookingsChanged -= ControlOnBookingsChanged;
 		}
 
 		private void ControlOnBookingsChanged(object sender, EventArgs e)

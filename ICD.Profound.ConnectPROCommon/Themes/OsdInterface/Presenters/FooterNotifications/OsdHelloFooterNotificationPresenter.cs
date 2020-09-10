@@ -7,9 +7,8 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Calendaring.Bookings;
+using ICD.Connect.Calendaring.CalendarManagers;
 using ICD.Connect.Calendaring.Comparers;
-using ICD.Connect.Calendaring.Controls;
-using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPROCommon.Rooms;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters;
@@ -31,7 +30,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.FooterNot
 		private readonly List<IBooking> m_Bookings;
 		private readonly List<KeyValuePair<string, string>> m_Messages;
 
-		private ICalendarControl m_CalendarControl;
+		private ICalendarManager m_CalendarManager;
 		private bool m_MainPageView;
 
 		#region Properties
@@ -53,20 +52,20 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.FooterNot
 		}
 
 		/// <summary>
-		/// Gets the calendar control.
+		/// Gets the calendar manager.
 		/// </summary>
 		[CanBeNull]
-		public ICalendarControl CalendarControl
+		private ICalendarManager CalendarManager
 		{
-			get { return m_CalendarControl; }
-			private set
+			get { return m_CalendarManager; }
+			set
 			{
-				if (value == m_CalendarControl)
+				if (value == m_CalendarManager)
 					return;
 
-				Unsubscribe(m_CalendarControl);
-				m_CalendarControl = value;
-				Subscribe(m_CalendarControl);
+				Unsubscribe(m_CalendarManager);
+				m_CalendarManager = value;
+				Subscribe(m_CalendarManager);
 
 				UpdateBookings();
 				UpdateMainPageView();
@@ -181,9 +180,9 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.FooterNot
 			// Get the current list of bookings
 			DateTime now = IcdEnvironment.GetUtcTime();
 			IBooking[] bookings =
-				CalendarControl == null
+				CalendarManager == null
 					? new IBooking[0]
-					: CalendarControl.GetBookings()
+					: CalendarManager.GetBookings()
 					                 .Where(b => b.EndTime > now)
 					                 .OrderBy(b => b.StartTime)
 					                 .ToArray();
@@ -221,7 +220,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.FooterNot
 
 		private void UpdateMainPageView()
 		{
-			MainPageView = Room != null && CalendarControl == null && !Room.IsInMeeting;
+			MainPageView = Room != null && CalendarManager == null && !Room.IsInMeeting;
 		}
 
 		#endregion
@@ -236,7 +235,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.FooterNot
 		{
 			base.SetRoom(room);
 
-			CalendarControl = room == null ? null : room.GetCalendarControls().FirstOrDefault();
+			CalendarManager = room == null ? null : room.CalendarManager;
 
 			UpdateMainPageView();
 		}
@@ -284,35 +283,35 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.FooterNot
 		#region Calendar Callbacks
 
 		/// <summary>
-		/// Subscribe to the calendar control events.
+		/// Subscribe to the calendar manager events.
 		/// </summary>
-		/// <param name="control"></param>
-		private void Subscribe(ICalendarControl control)
+		/// <param name="calendarManager"></param>
+		private void Subscribe(ICalendarManager calendarManager)
 		{
-			if (control == null)
+			if (calendarManager == null)
 				return;
 
-			control.OnBookingsChanged += ControlOnBookingsChanged;
+			calendarManager.OnBookingsChanged += CalendarManagerOnBookingsChanged;
 		}
 
 		/// <summary>
-		/// Unsubscribe from the calendar control events.
+		/// Unsubscribe from the calendar manager events.
 		/// </summary>
-		/// <param name="control"></param>
-		private void Unsubscribe(ICalendarControl control)
+		/// <param name="calendarManager"></param>
+		private void Unsubscribe(ICalendarManager calendarManager)
 		{
-			if (control == null)
+			if (calendarManager == null)
 				return;
 
-			control.OnBookingsChanged -= ControlOnBookingsChanged;
+			calendarManager.OnBookingsChanged -= CalendarManagerOnBookingsChanged;
 		}
 
 		/// <summary>
-		/// Called when the calendar control bookings change.
+		/// Called when the calendar manager bookings change.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private void ControlOnBookingsChanged(object sender, EventArgs e)
+		private void CalendarManagerOnBookingsChanged(object sender, EventArgs e)
 		{
 			UpdateBookings();
 		}

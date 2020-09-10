@@ -10,7 +10,6 @@ using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Devices;
 using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
-using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Themes.UserInterfaces;
 using ICD.Connect.UI.Mvp.Presenters;
@@ -160,7 +159,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 				m_NavigationController.NavigateTo<IOsdConferenceBodyPresenter>().ActiveConferenceControl = activeConferenceControl;
 			else if (m_Room.IsInMeeting)
 				m_NavigationController.NavigateTo<IOsdSourcesBodyPresenter>();
-			else if (m_Room.GetCalendarControls().Any())
+			else if (m_Room.CalendarManager != null && m_Room.CalendarManager.GetProviders().Any())
 				m_NavigationController.NavigateTo<IOsdScheduleBodyPresenter>();
 			else
 			{
@@ -257,7 +256,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 			// Show schedule presenter for the first half of the time, then switch to sources presenter. 
 			if (m_Room.MeetingStartTimer.Milliseconds <= halfDuration)
 			{
-				if (m_Room.GetCalendarControls().Any())
+				if (m_Room.CalendarManager != null && m_Room.CalendarManager.GetProviders().Any())
 					m_NavigationController.NavigateTo<IOsdScheduleBodyPresenter>();
 				else
 				{

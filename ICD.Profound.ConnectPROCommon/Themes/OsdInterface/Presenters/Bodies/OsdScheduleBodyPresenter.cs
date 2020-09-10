@@ -6,9 +6,8 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Calendaring;
 using ICD.Connect.Calendaring.Bookings;
-using ICD.Connect.Calendaring.Controls;
+using ICD.Connect.Calendaring.CalendarManagers;
 using ICD.Connect.Conferencing.Controls.Dialing;
-using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
@@ -31,7 +30,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Bodies
 		private readonly ReferencedSchedulePresenterFactory m_ChildrenFactory;
 		private readonly SafeTimer m_RefreshTimer;
 
-		[CanBeNull] private ICalendarControl m_CalendarControl;
+		[CanBeNull] private ICalendarManager m_SubscribedCalendarManager;
 
 		/// <summary>
 		/// Constructor.
@@ -133,9 +132,9 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Bodies
 			DateTime tomorrow = now.AddDays(1);
 
 			List<IBooking> bookings =
-				m_CalendarControl == null
+				m_SubscribedCalendarManager == null
 					? new List<IBooking>()
-					: m_CalendarControl.GetBookings()
+					: m_SubscribedCalendarManager.GetBookings()
 					                   .Where(b => b.EndTime > now && b.StartTime < tomorrow)
 					                   .OrderBy(b => b.StartTime)
 					                   .ToList();
@@ -205,9 +204,9 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Bodies
 		{
 			base.SetRoom(room);
 
-			Unsubscribe(m_CalendarControl);
-			m_CalendarControl = room == null ? null : room.GetCalendarControls().FirstOrDefault();
-			Subscribe(m_CalendarControl);
+			Unsubscribe(m_SubscribedCalendarManager);
+			m_SubscribedCalendarManager = room == null ? null : room.CalendarManager;
+			Subscribe(m_SubscribedCalendarManager);
 
 			Refresh();
 		}
@@ -237,23 +236,23 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Bodies
 
 		#region CalendarControl Callbacks
 
-		private void Subscribe(ICalendarControl control)
+		private void Subscribe(ICalendarManager calendarManager)
 		{
-			if (control == null)
+			if (calendarManager == null)
 				return;
 
-			control.OnBookingsChanged += ControlOnBookingsChanged;
+			calendarManager.OnBookingsChanged += CalendarManagerOnBookingsChanged;
 		}
 
-		private void Unsubscribe(ICalendarControl control)
+		private void Unsubscribe(ICalendarManager calendarManager)
 		{
-			if (control == null)
+			if (calendarManager == null)
 				return;
 
-			control.OnBookingsChanged -= ControlOnBookingsChanged;
+			calendarManager.OnBookingsChanged -= CalendarManagerOnBookingsChanged;
 		}
 
-		private void ControlOnBookingsChanged(object sender, EventArgs e)
+		private void CalendarManagerOnBookingsChanged(object sender, EventArgs e)
 		{
 			RefreshIfVisible();
 		}
