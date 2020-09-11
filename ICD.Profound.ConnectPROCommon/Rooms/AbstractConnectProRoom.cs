@@ -82,19 +82,25 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			get { return m_IsInMeeting; }
 			private set
 			{
-				if (value == m_IsInMeeting)
-					return;
+				try
+				{
+					if (value == m_IsInMeeting)
+						return;
 
-				m_IsInMeeting = value;
+					m_IsInMeeting = value;
 
-				Logger.LogSetTo(eSeverity.Informational, "IsInMeeting", m_IsInMeeting);
-				Activities.LogActivity(m_IsInMeeting
-					                   ? new Activity(Activity.ePriority.Medium, "In Meeting", "In Meeting", eSeverity.Informational)
-					                   : new Activity(Activity.ePriority.Lowest, "In Meeting", "Idle", eSeverity.Informational));
+					Logger.LogSetTo(eSeverity.Informational, "IsInMeeting", m_IsInMeeting);
 
-				HandleIsInMeetingChanged(m_IsInMeeting);
+					HandleIsInMeetingChanged(m_IsInMeeting);
 
-				OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
+					OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
+				}
+				finally
+				{
+					Activities.LogActivity(m_IsInMeeting
+						                       ? new Activity(Activity.ePriority.Medium, "In Meeting", "In Meeting", eSeverity.Informational)
+						                       : new Activity(Activity.ePriority.Lowest, "In Meeting", "Idle", eSeverity.Informational));
+				}
 			}
 		}
 
@@ -170,6 +176,9 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			m_MeetingTimeoutTimer = SafeTimer.Stopped(MeetingTimeout);
 
 			Subscribe(m_Routing);
+
+			// Initialize activities
+			IsInMeeting = false;
 		}
 
 		/// <summary>
