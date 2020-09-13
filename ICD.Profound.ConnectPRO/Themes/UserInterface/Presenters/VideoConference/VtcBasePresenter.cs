@@ -10,6 +10,7 @@ using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.Polycom.Devices.Codec.Controls;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
+using ICD.Connect.Devices.Controls.Power;
 using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;

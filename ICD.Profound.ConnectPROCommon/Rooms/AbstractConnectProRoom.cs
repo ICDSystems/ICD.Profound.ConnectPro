@@ -23,6 +23,7 @@ using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
+using ICD.Connect.Devices.Controls.Power;
 using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Partitioning.Commercial.Controls.Occupancy;
