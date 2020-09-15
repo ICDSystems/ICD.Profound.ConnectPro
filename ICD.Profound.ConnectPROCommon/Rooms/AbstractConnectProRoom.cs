@@ -72,7 +72,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		/// <summary>
 		/// Check for any upcoming meetings.
 		/// </summary>
-		private const int UPCOMING_MEETING_TIMER = 1 * 60 * 1000;
 		private readonly SafeTimer m_UpcomingMeetingTimer;
 
 		private readonly ConnectProRouting m_Routing;
@@ -256,6 +255,8 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			else
 				if (!Routing.RouteSourceByControl(automaticSource))
 					Routing.RouteToAllDisplays(automaticSource);
+
+			RestartUpcomingMeetingTimer();
 		}
 
 		/// <summary>
@@ -265,6 +266,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		{
 			bool shutdown = WakeSchedule != null && WakeSchedule.IsSleepTime;
 			EndMeeting(shutdown);
+			RestartUpcomingMeetingTimer();
 		}
 
 		/// <summary>
@@ -361,7 +363,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			FocusSource = null;
 
 			RestartMeetingTimeoutTimer();
-			RestartUpcomingMeetingTimer();
 		}
 
 		/// <summary>
@@ -519,6 +520,8 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			timeToNextBooking -= TimeSpan.FromMinutes(5);
 			timeToNextBooking = timeToNextBooking > TimeSpan.Zero ? timeToNextBooking : TimeSpan.Zero;
 
+			IcdConsole.PrintLine(eConsoleColor.Magenta, "Restarting upcoming meeting timer - {0}ms", timeToNextBooking.TotalMilliseconds);
+
 			m_UpcomingMeetingTimer.Reset((long)timeToNextBooking.TotalMilliseconds);
 		}
 		
@@ -561,8 +564,15 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		private void RaiseUpcomingMeeting()
 		{
 			IBooking booking = CalendarManager == null ? null : CalendarManager.GetNextBooking();
-			if (booking != null)
+
+			IcdConsole.PrintLine(eConsoleColor.Magenta, "Upcoming meeting timer elapsed - Next booking is {0}", booking);
+
+			if (booking != null && booking != CurrentBooking)
+			{
+				IcdConsole.PrintLine(eConsoleColor.Magenta, "Raising OnUpcomingMeeting");
 				OnUpcomingMeeting.Raise(this, booking);
+			}
+
 		}
 
 		/// <summary>
