@@ -27,6 +27,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.VisibilityTree
 			// Header notifications at the top of the CUE
 			m_HeaderNotificationVisibility = new SingleVisibilityNode();
 			m_HeaderNotificationVisibility.AddPresenter(navigationController.LazyLoadPresenter<IOsdTouchFreeHeaderNotificationPresenter>());
+			m_HeaderNotificationVisibility.AddPresenter(navigationController.LazyLoadPresenter<IOsdUpcomingMeetingIndicatorPresenter>());
 
 			// Main presenters occupying the middle body portion of the CUE
 			m_BodyVisibility = new SingleVisibilityNode();
@@ -41,7 +42,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.VisibilityTree
 
 			// These presenters are initially visible
 			navigationController.NavigateTo<IOsdHelloFooterNotificationPresenter>();
-			
+
 			// Always visible
 			navigationController.LazyLoadPresenter<IOsdHeaderPresenter>();
 			navigationController.LazyLoadPresenter<IOsdBackgroundPresenter>();

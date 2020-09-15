@@ -152,6 +152,7 @@
     <Compile Include="Themes\OsdInterface\ConnectProOsdInterface.cs" />
     <Compile Include="Themes\OsdInterface\ConnectProOsdInterfaceFactory.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\Bodies\IOsdConferenceBodyPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IPresenters\HeaderNotifications\IOsdUpcomingMeetingIndicatorPresenter.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\IOsdBackgroundPresenter.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\Headers\IOsdHeaderPresenter.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\FooterNotifications\IOsdHelloFooterNotificationPresenter.cs" />
@@ -161,6 +162,10 @@
     <Compile Include="Themes\OsdInterface\IPresenters\FooterNotifications\IOsdMuteFooterNotificationPresenter.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\HeaderNotifications\IOsdTouchFreeHeaderNotificationPresenter.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\Bodies\IOsdSourcesBodyPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\IViews\HeaderNotifications\IOsdUpcomingMeetingIndicatorView.cs" />
+    <Compile Include="Themes\OsdInterface\Presenters\HeaderNotifications\OsdUpcomingMeetingIndicatorPresenter.cs" />
+    <Compile Include="Themes\OsdInterface\Views\HeaderNotifications\OsdUpcomingMeetingIndicatorView.cs" />
+    <Compile Include="Themes\OsdInterface\Views\HeaderNotifications\OsdUpcomingMeetingIndicatorView.generated.cs" />
     <Compile Include="Themes\OsdInterface\VisibilityTree\NotificationVisibilityNode.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\Bodies\IOsdScheduleBodyPresenter.cs" />
     <Compile Include="Themes\OsdInterface\IPresenters\Bodies\IReferencedSchedulePresenter.cs" />
