@@ -114,6 +114,11 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Single
 			if (calendarControl == null)
 				return;
 
+			// Is there already a calendar point for the calendar control?
+			if (Originators.GetInstances<ICalendarPoint>()
+			               .Any(p => p.DeviceId == calendarDevice.Id && p.ControlId == calendarControl.Id))
+				return;
+
 			int id = IdUtils.GetNewId(Core.Originators.GetChildrenIds().Concat(factory.GetOriginatorIds()), eSubsystem.CalendarPoints);
 			eCombineMode combineMode = Originators.GetCombineMode(calendarDevice.Id);
 
