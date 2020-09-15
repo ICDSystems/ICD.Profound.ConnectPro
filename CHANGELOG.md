@@ -11,7 +11,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Added Touch Free/ Cancel Meeting Start Prompt.
  - Added OSD Touch Free Notification.
  - Added CalendarManager Property to ConnectProRoom
- - Implement Upcoming Meeting Indicator.  An Indicator will now popup five minutes before the next meeting to warn users.
+ - Implement Upcoming Meeting Indicator for Touch Panel and CUE.  An Indicator will now popup five minutes before the next meeting to warn users.
+ - Upcoming Meeting indicator logic is now using Calendar Manager.
+ - The Upcoming meeting indicator will now only be visible for 10 seconds.
 
 ## [14.1.0] - 2020-09-08
 ### Changed
