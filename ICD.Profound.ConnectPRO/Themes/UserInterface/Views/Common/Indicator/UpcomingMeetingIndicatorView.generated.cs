@@ -24,9 +24,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Indicator
 			};
 			m_Sound = new VtProSound(panel as IPanelDevice)
 			{
-				//Figure out how to add these in VtPro.
-				JoinNumber = 23,
-				StopSoundJoin = 24
+				JoinNumber = 21,
+				StopSoundJoin = 22
 			};
 		}
 

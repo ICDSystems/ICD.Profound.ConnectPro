@@ -1,4 +1,5 @@
 ﻿using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Timers;
 using ICD.Connect.Calendaring.Bookings;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
@@ -12,6 +13,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Indicat
 	[PresenterBinding(typeof(IUpcomingMeetingIndicatorPresenter))]
 	public sealed class UpcomingMeetingIndicatorPresenter : AbstractUiPresenter<IUpcomingMeetingIndicatorView>, IUpcomingMeetingIndicatorPresenter
 	{
+		private const ushort HIDE_TIME = 10 * 1000;
+		private readonly SafeTimer m_VisibilityTimer;
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -21,6 +25,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Indicat
 		public UpcomingMeetingIndicatorPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) 
 			: base(nav, views, theme)
 		{
+			m_VisibilityTimer = SafeTimer.Stopped(() => ShowView(false));
+		}
+
+		/// <summary>
+		/// Release resources.
+		/// </summary>
+		public override void Dispose()
+		{
+			base.Dispose();
+
+			m_VisibilityTimer.Dispose();
 		}
 
 		/// <summary>
@@ -32,7 +47,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Indicat
 		{
 			base.ViewOnVisibilityChanged(sender, args);
 
+			if (!IsViewVisible)
+				GetView().PlaySound(false);
+
 			GetView().PlaySound(args.Data);
+			ResetVisibilityTimer();
+
+		}
+
+		/// <summary>
+		/// Resets the visibility timer.
+		/// </summary>
+		public void ResetVisibilityTimer()
+		{
+			m_VisibilityTimer.Reset(HIDE_TIME);
 		}
 
 		#region Room Callbacks
@@ -49,7 +77,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Indicat
 				return;
 
 			room.OnUpcomingMeeting += RoomOnUpcomingMeeting;
-			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
 		}
 
 		/// <summary>
@@ -64,17 +91,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Indicat
 				return;
 
 			room.OnUpcomingMeeting -= RoomOnUpcomingMeeting;
-			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
 		}
 
 		private void RoomOnUpcomingMeeting(object sender, GenericEventArgs<IBooking> genericEventArgs)
 		{
-			ShowView(true);
-		}
-
-		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs e)
-		{
-			ShowView(false);
+			ShowView(genericEventArgs.Data != null);
 		}
 
 		#endregion
