@@ -49,15 +49,13 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.HeaderNot
 		{
 			base.ViewOnVisibilityChanged(sender, args);
 
-			if (IsViewVisible)
-				ResetVisibilityTimer();
-
+			ResetVisibilityTimer();
 		}
 
 		/// <summary>
 		/// Resets the visibility timer.
 		/// </summary>
-		public void ResetVisibilityTimer()
+		private void ResetVisibilityTimer()
 		{
 			m_VisibilityTimer.Reset(HIDE_TIME);
 		}

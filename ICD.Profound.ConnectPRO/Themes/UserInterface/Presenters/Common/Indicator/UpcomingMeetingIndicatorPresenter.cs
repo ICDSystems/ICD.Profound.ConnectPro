@@ -47,18 +47,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Indicat
 		{
 			base.ViewOnVisibilityChanged(sender, args);
 
-			if (!IsViewVisible)
-				GetView().PlaySound(false);
-
 			GetView().PlaySound(args.Data);
 			ResetVisibilityTimer();
-
 		}
 
 		/// <summary>
 		/// Resets the visibility timer.
 		/// </summary>
-		public void ResetVisibilityTimer()
+		private void ResetVisibilityTimer()
 		{
 			m_VisibilityTimer.Reset(HIDE_TIME);
 		}

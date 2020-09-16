@@ -8,15 +8,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
  - Added Touch Free Setting Page.
- - Added Touch Free/ Cancel Meeting Start Prompt.
+ - Added Touch Free Start/Cancel Meeting Prompt.
  - Added OSD Touch Free Notification.
  - Added CalendarManager Property to ConnectProRoom
- - Implement Upcoming Meeting Indicator for Touch Panel and CUE.  An Indicator will now popup five minutes before the next meeting to warn users.
- - Upcoming Meeting indicator logic is now using Calendar Manager.
- - The Upcoming meeting indicator will now only be visible for 10 seconds.
- - Added logic for Start Meeting Now button.  Allows user to start meeting before time elapses.
- - Added new icons to match with VtPro projects.
- - Implemented meeting timeout according to occupancy state.
+ - Added Upcoming Meeting Indicator to Touch Panel and CUE.  An Indicator will popup five minutes before the next meeting for 10 seconds.
+ - Added new icons to the Touch Panel settings pages.
+
+### Changed
+ - Meetings will automatically timeout if the room is unoccupied for 10 minutes.
 
 ## [14.1.0] - 2020-09-08
 ### Changed
