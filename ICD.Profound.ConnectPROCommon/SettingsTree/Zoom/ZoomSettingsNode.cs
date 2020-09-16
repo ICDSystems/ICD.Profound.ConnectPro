@@ -10,7 +10,7 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.Zoom
 		public ZoomSettingsNode()
 		{
 			Name = "Zoom";
-			Icon = eSettingsIcon.Zoom;
+			Icon = eSettingsIcon.ZoomRoom;
 		}
 
 		/// <summary>

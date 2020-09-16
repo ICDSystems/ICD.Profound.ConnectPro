@@ -97,7 +97,7 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.Zoom
 		public ZoomSpeakerSettingsLeaf()
 		{
 			Name = "Speakers";
-			Icon = eSettingsIcon.Zoom;
+			Icon = eSettingsIcon.Speaker;
 		}
 
 		/// <summary>

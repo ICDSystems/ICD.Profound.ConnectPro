@@ -46,7 +46,7 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.Zoom
 			m_CameraComponents = new List<CameraComponent>();
 
 			Name = "Cameras";
-			Icon = eSettingsIcon.Zoom;
+			Icon = eSettingsIcon.ConferenceCamera;
 		}
 
 		/// <summary>

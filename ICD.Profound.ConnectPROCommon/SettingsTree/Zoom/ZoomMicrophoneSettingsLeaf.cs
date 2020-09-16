@@ -97,7 +97,7 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.Zoom
 		public ZoomMicrophoneSettingsLeaf()
 		{
 			Name = "Microphones";
-			Icon = eSettingsIcon.Zoom;
+			Icon = eSettingsIcon.Mic;
 		}
 
 		/// <summary>

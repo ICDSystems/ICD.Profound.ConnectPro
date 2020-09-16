@@ -78,7 +78,7 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.Zoom
 			m_AudioComponents = new List<AudioComponent>();
 
 			Name = "Advanced";
-			Icon = eSettingsIcon.Zoom;
+			Icon = eSettingsIcon.SystemAdvanced;
 		}
 
 		/// <summary>

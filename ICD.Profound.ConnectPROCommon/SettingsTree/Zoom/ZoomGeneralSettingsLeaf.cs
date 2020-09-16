@@ -110,7 +110,7 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.Zoom
 			m_ZoomRooms = new List<ZoomRoom>();
 
 			Name = "General";
-			Icon = eSettingsIcon.Zoom;
+			Icon = eSettingsIcon.ZoomRoom;
 		}
 
 		/// <summary>
