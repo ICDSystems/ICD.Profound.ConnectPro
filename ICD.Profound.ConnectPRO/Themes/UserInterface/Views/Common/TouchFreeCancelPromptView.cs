@@ -15,6 +15,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		/// </summary>
 		public event EventHandler OnCancelMeetingStartPressed;
 
+		/// <summary>
+		/// Raised when the user presses the Start Meeting Now button.
+		/// </summary>
+		public event EventHandler OnStartMeetingNowPressed;
+
 		public void SetTimer(int seconds)
 		{
 			m_Message.SetLabelTextAtJoin(m_Message.SerialLabelJoins.First(), seconds.ToString());
@@ -36,6 +41,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		public override void Dispose()
 		{
 			OnCancelMeetingStartPressed = null;
+			OnStartMeetingNowPressed = null;
 
 			base.Dispose();
 		}
@@ -50,6 +56,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			base.SubscribeControls();
 
 			m_CancelMeetingStartButton.OnPressed += CancelMeetingStartButtonOnPressed;
+			m_StartMeetingNowButton.OnPressed += StartMeetingNowButtonOnPressed;
 			
 		}
 
@@ -61,6 +68,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			base.UnsubscribeControls();
 
 			m_CancelMeetingStartButton.OnPressed -= CancelMeetingStartButtonOnPressed;
+			m_StartMeetingNowButton.OnPressed -= StartMeetingNowButtonOnPressed;
 
 		}
 
@@ -68,6 +76,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		private void CancelMeetingStartButtonOnPressed(object sender, EventArgs eventArgs)
 		{
 			OnCancelMeetingStartPressed.Raise(this);
+		}
+
+		private void StartMeetingNowButtonOnPressed(object sender, EventArgs e)
+		{
+			OnStartMeetingNowPressed.Raise(this);
 		}
 
 		#endregion

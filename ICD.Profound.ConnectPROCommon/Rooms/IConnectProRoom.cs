@@ -91,6 +91,11 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		void StartMeeting([CanBeNull] IBooking booking, [CanBeNull] ISource source);
 
 		/// <summary>
+		/// Starts meeting for the current booking and configured default source.
+		/// </summary>
+		void StartAutoMeeting();
+
+		/// <summary>
 		/// Ends the meeting state. If shutdown is true fully powers down the room.
 		/// </summary>
 		/// <param name="shutdown">true to fully power down room</param>

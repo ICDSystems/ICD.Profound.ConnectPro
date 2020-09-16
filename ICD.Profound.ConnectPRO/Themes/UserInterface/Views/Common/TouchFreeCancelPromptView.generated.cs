@@ -13,6 +13,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		private VtProSubpage m_Subpage;
 		private VtProSimpleLabel m_Message;
 		private VtProButton m_CancelMeetingStartButton;
+		private VtProButton m_StartMeetingNowButton;
 
 		/// <summary>
 		/// Instantiates the view controls.
@@ -30,13 +31,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			m_Message = new VtProSimpleLabel(panel, m_Subpage);
 
 			m_Message.SerialLabelJoins.Add(11);
-			
 
 			m_CancelMeetingStartButton = new VtProButton(panel, m_Subpage)
 			{
 				DigitalPressJoin = 609
 			};
-			
+
+			m_StartMeetingNowButton = new VtProButton(panel, m_Subpage)
+			{
+				DigitalPressJoin = 610
+			};
 		}
 
 		/// <summary>
@@ -48,6 +52,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 			yield return m_Subpage;
 			yield return m_Message;
 			yield return m_CancelMeetingStartButton;
+			yield return m_StartMeetingNowButton;
 		}
 		
 	}

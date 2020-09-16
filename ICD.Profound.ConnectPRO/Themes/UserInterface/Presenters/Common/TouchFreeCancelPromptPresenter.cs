@@ -1,6 +1,10 @@
 ﻿using System;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Connect.Calendaring.Bookings;
+using ICD.Connect.Calendaring.CalendarManagers;
+using ICD.Connect.Partitioning.Commercial;
+using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;
@@ -111,6 +115,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			base.Subscribe(view);
 
 			view.OnCancelMeetingStartPressed += ViewOnCancelMeetingStartPressed;
+			view.OnStartMeetingNowPressed += ViewOnOnStartMeetingNowPressed;
 		}
 
 		/// <summary>
@@ -122,12 +127,20 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			base.Unsubscribe(view);
 
 			view.OnCancelMeetingStartPressed -= ViewOnCancelMeetingStartPressed;
+			view.OnStartMeetingNowPressed -= ViewOnOnStartMeetingNowPressed;
 		}
 
 		private void ViewOnCancelMeetingStartPressed(object sender, EventArgs eventArgs)
 		{
 			if (Room != null)
 				Room.MeetingStartTimer.Stop();
+		}
+
+		private void ViewOnOnStartMeetingNowPressed(object sender, EventArgs e)
+		{
+			if (Room == null)
+				return;
+			Room.StartAutoMeeting();
 		}
 
 		#endregion

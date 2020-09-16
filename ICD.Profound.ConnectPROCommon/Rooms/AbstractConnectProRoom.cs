@@ -220,6 +220,17 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		#region Methods
 
 		/// <summary>
+		/// Starts meeting for the current booking and configured default source.
+		/// </summary>
+		public void StartAutoMeeting()
+		{
+			IBooking booking = CalendarManager == null ? null : CalendarManager.GetCurrentBooking();
+			ISource source = TouchFree == null ? null : TouchFree.Source;
+
+			StartMeeting(booking, source);
+		}
+
+		/// <summary>
 		/// Enters the meeting state.
 		/// </summary>
 		/// <param name="booking"></param>
@@ -700,18 +711,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 
 		private void MeetingStartTimerOnElapsed(object sender, EventArgs eventArgs)
 		{
-			// TODO - Refactor into new calendar manager
-			IBooking booking =
-				Originators.GetInstancesRecursive<ICalendarPoint>()
-				           .Select(p => p.Control)
-				           .Where(c => c != null)
-				           .SelectMany(c => c.GetBookings())
-				           .FirstOrDefault(b => b.EndTime >= IcdEnvironment.GetUtcTime() &&
-				                                b.StartTime <= IcdEnvironment.GetUtcTime());
-
-			ISource source = TouchFree == null ? null : TouchFree.Source;
-
-			StartMeeting(booking, source);
+			StartAutoMeeting();
 		}
 
 		#endregion
