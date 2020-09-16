@@ -395,16 +395,12 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		{
 			base.HandleOccupiedChanged(occupancyState);
 
-			// Don't handle occupancy changes if in a meeting
-			if (IsInMeeting)
+			// Don't handle occupancy changes if combined
+			if (CombineState)
 				return;
 
 			// Don't handle occupancy changes if TouchFree is disabled
 			if (TouchFree == null || !TouchFree.Enabled)
-				return;
-
-			// Don't handle occupancy changes if combined
-			if (CombineState)
 				return;
 
 			switch (occupancyState)
@@ -413,13 +409,19 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 					break;
 
 				case eOccupancyState.Unoccupied:
+					// Room became unoccupied - Restart the meeting timeout and stop counting down to start meeting
+					RestartMeetingTimeoutTimer();
 					m_MeetingStartTimer.Stop();
 					break;
 
 				case eOccupancyState.Occupied:
-					m_MeetingStartTimer.Restart(TouchFree.CountdownSeconds * 1000);
-					if (!IsAwake)
-						Wake();
+					// Room became occupied - Wake the room and start counting down to start meeting
+					if (!IsInMeeting)
+					{
+						m_MeetingStartTimer.Restart(TouchFree.CountdownSeconds * 1000);
+						if (!IsAwake)
+							Wake();
+					}
 					break;
 
 				default:
@@ -584,16 +586,29 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 				OnUpcomingMeeting.Raise(this, booking);
 			}
 
+
 		}
 
 		/// <summary>
-		/// Returns true if a source is actively routed to a display or we are in a conference.
+		/// Returns false if any of the following is true:
+		///		The room is not currently in a meeting
+		///		TouchFree is enabled and the room has been unoccupied for the meeting timeout duration
+		/// Otherwise, returns true if any of the following is true:
+		///		A source is actively routed to a display
+		///		A video/audio call is currently active
 		/// </summary>
 		/// <returns></returns>
 		protected override bool GetIsInActiveMeeting()
 		{
 			// Easy case!
 			if (!IsInMeeting)
+				return false;
+
+			// The room is unoccupied
+			// Subtracting a second from timeout time just in case unoccupancy triggered the timeout timer
+			// and we start running into timer precision issues.
+			if (Occupied == eOccupancyState.Unoccupied &&
+			    (IcdEnvironment.GetUtcTime() - OccupiedTime).TotalMilliseconds >= MEETING_TIMEOUT - 1000)
 				return false;
 
 			// If the user is currently on a control subpage assume that the room is being used
