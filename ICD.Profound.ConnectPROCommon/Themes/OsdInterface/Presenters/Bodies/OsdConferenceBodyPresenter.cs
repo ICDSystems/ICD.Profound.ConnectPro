@@ -47,6 +47,8 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Bodies
 				Unsubscribe(m_ActiveConferenceControl);
 				m_ActiveConferenceControl = value;
 				Subscribe(m_ActiveConferenceControl);
+
+				RefreshIfVisible();
 			}
 		}
 
