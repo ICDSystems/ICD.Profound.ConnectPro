@@ -7,7 +7,6 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Devices;
-using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Controls.Power;
 using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.Routing.Connections;

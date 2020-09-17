@@ -5,7 +5,7 @@ using NUnit.Framework;
 using System;
 using System.Linq;
 using ICD.Common.Utils.Extensions;
-using ICD.Connect.Devices.Controls;
+using ICD.Connect.Devices.Controls.Power;
 using ICD.Connect.Displays.Devices;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Routing.Endpoints.Destinations;

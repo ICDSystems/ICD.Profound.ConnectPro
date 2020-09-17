@@ -22,14 +22,13 @@ using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Devices;
-using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Controls.Power;
 using ICD.Connect.Devices.EventArguments;
+using ICD.Connect.Panels.Controls.Backlight;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Partitioning.Commercial.Controls.Occupancy;
 using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Partitioning.Rooms;
-using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.EventArguments;
 using ICD.Profound.ConnectPROCommon.Dialing;
@@ -290,9 +289,10 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			// Reset all routing
 			Routing.RouteOsd();
 
-			// Power the panels
+			// Turn on the panel backlights
 			Originators.GetInstancesRecursive<IPanelDevice>()
-			           .ForEach(p => Routing.PowerDevice(p, true));
+			           .SelectMany(p => p.Controls.GetControls<IBacklightDeviceControl>())
+			           .ForEach(c => c.BacklightOn());
 		}
 
 		/// <summary>
@@ -310,15 +310,16 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			Routing.RouteOsd(false);
 
 			// Power off displays
-			foreach (IDestinationBase destination in Routing.Destinations.GetVideoDestinations())
-			{
-				foreach (IDevice device in destination.GetDevices())
-					Routing.PowerDevice(device, false);
-			}
+			Routing.Destinations
+			       .GetVideoDestinations()
+			       .SelectMany(d => d.GetDevices())
+			       .Distinct()
+			       .ForEach(d => Routing.PowerDevice(d, false));
 
-			// Power off the panels
+			// Turn off the panel backlights
 			Originators.GetInstancesRecursive<IPanelDevice>()
-			           .ForEach(p => Routing.PowerDevice(p, false));
+					   .SelectMany(p => p.Controls.GetControls<IBacklightDeviceControl>())
+					   .ForEach(c => c.BacklightOff());
 		}
 
 		/// <summary>
