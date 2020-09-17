@@ -145,6 +145,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Updated IPowerDeviceControls consumers to use PowerState
  - Updated Volume Controls to use ControlAvaliable instead of power state
 
+## [9.1.2] - 2020-09-17
+### Changed
+ - Fixed a bug where the OSD conference page would initially show an empty rectangle
+
 ## [9.1.1] - 2020-08-24
 ### Changed
  - Fixed potential deadlocks in ConnectPro routing
