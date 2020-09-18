@@ -142,8 +142,10 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			get { return m_UpcomingBooking; }
 			private set
 			{
-				// TODO - Use IsDuplicate
-				if (value == m_UpcomingBooking)
+				if (value == null && m_UpcomingBooking == null)
+					return;
+
+				if (value != null && value.Duplicates(m_UpcomingBooking))
 					return;
 
 				m_UpcomingBooking = value;
@@ -546,7 +548,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 				CalendarManager == null
 					? null
 					: CalendarManager.GetBookings()
-					                 .Where(b => b != CurrentBooking && b.StartTime >= IcdEnvironment.GetUtcTime()) // TODO - Use IsDuplicate
+					                 .Where(b => !b.Duplicates(CurrentBooking) && b.StartTime >= IcdEnvironment.GetUtcTime())
 					                 .OrderBy(b => b.StartTime)
 					                 .FirstOrDefault();
 		}
