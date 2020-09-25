@@ -8,7 +8,6 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Displays;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.FloatingActions;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Indicator;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Administrative;
-using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Conferencing;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.CUE;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.RoomCombine;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Lighting;
@@ -116,7 +115,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 			settingsVisibility.AddPresenter(navigationController.LazyLoadPresenter<ISettingsClockPresenter>());
 			settingsVisibility.AddPresenter(navigationController.LazyLoadPresenter<ISettingsPinPresenter>());
 			settingsVisibility.AddPresenter(navigationController.LazyLoadPresenter<ISettingsPowerPresenter>());
-			settingsVisibility.AddPresenter(navigationController.LazyLoadPresenter<ISettingsDirectoryPresenter>());
 			settingsVisibility.AddPresenter(navigationController.LazyLoadPresenter<ISettingsCueBackgroundPresenter>());
 			settingsVisibility.AddPresenter(navigationController.LazyLoadPresenter<ISettingsRoomCombinePresenter>());
 

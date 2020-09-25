@@ -115,8 +115,6 @@
     <Compile Include="SettingsTree\TouchFreeConferencing\TouchFreeSettingsLeaf.cs" />
     <Compile Include="SettingsTree\Administrative\PinSettingsLeaf.cs" />
     <Compile Include="SettingsTree\Administrative\WakeSleepSettingsLeaf.cs" />
-    <Compile Include="SettingsTree\Conferencing\ConferencingSettingsNode.cs" />
-    <Compile Include="SettingsTree\Conferencing\DirectorySettingsLeaf.cs" />
     <Compile Include="SettingsTree\ConnectProRootSettingsNode.cs" />
     <Compile Include="SettingsTree\CUE\BackgroundSettingsLeaf.cs" />
     <Compile Include="SettingsTree\CUE\CueSettingsNode.cs" />

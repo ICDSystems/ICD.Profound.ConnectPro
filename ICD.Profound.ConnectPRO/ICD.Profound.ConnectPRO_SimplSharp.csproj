@@ -111,7 +111,6 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\CUE\Modes\ISettingsCueBackgroundSeasonalPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\CUE\Modes\ISettingsCueBackgroundStaticPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\ISettingsBasePresenter.cs" />
-    <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\Conferencing\ISettingsDirectoryPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\Administrative\ISettingsPinPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\ISettingsNodeBasePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Settings\ISettingsPromptPresenter.cs" />
@@ -210,7 +209,6 @@
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\CUE\Modes\ISettingsCueBackgroundStaticView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\CUE\ISettingsCueBackgroundView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\ISettingsBaseView.cs" />
-    <Compile Include="Themes\UserInterface\IViews\Common\Settings\Conferencing\ISettingsDirectoryView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\Administrative\ISettingsPinView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\ISettingsPromptView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\RoomCombine\ISettingsRoomCombineView.cs" />
@@ -317,7 +315,6 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\CUE\Modes\SettingsCueBackgroundStaticPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\CUE\SettingsCueBackgroundPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\SettingsBasePresenter.cs" />
-    <Compile Include="Themes\UserInterface\Presenters\Common\Settings\Conferencing\SettingsDirectoryPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\Administrative\SettingsPinPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\RoomCombine\SettingsRoomCombinePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Settings\Administrative\SettingsPowerPresenter.cs" />
@@ -461,8 +458,6 @@
     <Compile Include="Themes\UserInterface\Views\Common\Settings\CUE\SettingsCueBackgroundView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsBaseView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\SettingsBaseView.generated.cs" />
-    <Compile Include="Themes\UserInterface\Views\Common\Settings\Conferencing\SettingsDirectoryView.cs" />
-    <Compile Include="Themes\UserInterface\Views\Common\Settings\Conferencing\SettingsDirectoryView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\Administrative\SettingsPinView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\Administrative\SettingsPinView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Settings\RoomCombine\SettingsRoomCombineView.cs" />

@@ -25,8 +25,6 @@
     <None Remove="SIMPLSharpLogs\**" />
   </ItemGroup>
   <ItemGroup>
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="ICD.Profound.projectinfo" />
     <None Remove="Properties\ControlSystem.cfg" />
   </ItemGroup>
