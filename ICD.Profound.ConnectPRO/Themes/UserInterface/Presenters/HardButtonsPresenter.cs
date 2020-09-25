@@ -2,7 +2,7 @@
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Panels.Controls;
+using ICD.Connect.Panels.Controls.HardButtons;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPROCommon.Rooms;

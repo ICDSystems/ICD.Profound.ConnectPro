@@ -37,7 +37,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		[CanBeNull]
 		private IReferencedSchedulePresenter m_SelectedBooking;
 		private ICalendarManager m_CalendarManager;
-		private List<IBooking> m_Bookings;
+		private List<BookingGroup> m_Bookings;
 
 		private bool HasCalendarControl
 		{
@@ -55,7 +55,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		{
 			m_RefreshSection = new SafeCriticalSection();
 			m_ChildrenFactory = new ReferencedSchedulePresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
-			m_Bookings = new List<IBooking>();
+			m_Bookings = new List<BookingGroup>();
 
 			m_BookingsRefreshTimer = SafeTimer.Stopped(UpdateBookings);
 			m_TimeRefreshTimer = new SafeTimer(RefreshTime, 1000, 1000);
@@ -88,7 +88,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
-				foreach (IReferencedSchedulePresenter presenter in m_ChildrenFactory.BuildChildren(m_Bookings))
+				foreach (IReferencedSchedulePresenter presenter in m_ChildrenFactory.BuildChildren(m_Bookings.Cast<IBooking>()))
 				{
 					presenter.Selected = presenter == m_SelectedBooking;
 					presenter.ShowView(true);
@@ -185,7 +185,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			{
 				m_Bookings =
 					m_CalendarManager == null
-						? new List<IBooking>()
+						? new List<BookingGroup>()
 						: m_CalendarManager.GetBookings()
 						                   .Where(b => b.EndTime > IcdEnvironment.GetUtcTime() &&
 						                               b.StartTime < IcdEnvironment.GetUtcTime().AddDays(1))

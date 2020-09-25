@@ -12,6 +12,7 @@ using ICD.Connect.Conferencing.Zoom.EventArguments;
 using ICD.Connect.Conferencing.Zoom.Responses;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
+using ICD.Connect.Devices.Controls.Power;
 using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;

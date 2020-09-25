@@ -131,9 +131,9 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Bodies
 			DateTime now = IcdEnvironment.GetUtcTime();
 			DateTime tomorrow = now.AddDays(1);
 
-			List<IBooking> bookings =
+			List<BookingGroup> bookings =
 				m_SubscribedCalendarManager == null
-					? new List<IBooking>()
+					? new List<BookingGroup>()
 					: m_SubscribedCalendarManager.GetBookings()
 					                   .Where(b => b.EndTime > now && b.StartTime < tomorrow)
 					                   .OrderBy(b => b.StartTime)

@@ -17,6 +17,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
  - Meetings will automatically timeout if the room is unoccupied for 10 minutes.
 
+## [14.1.1] - 2020-09-24
+### Changed
+ - Fixed a bug where default room activities were not being initialized
+ - Using new panel backlight controls instead of old power controls when putting the room to sleep
+
 ## [14.1.0] - 2020-09-08
 ### Changed
  - Fixed a bug where the up and down volume buttons in TouchCue were not being released.  When buttons are pressed, volume will now step 10 leves up/down instead of ramping.

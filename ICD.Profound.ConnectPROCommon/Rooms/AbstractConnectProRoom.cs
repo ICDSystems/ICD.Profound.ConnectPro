@@ -15,7 +15,6 @@ using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Calendaring.Bookings;
 using ICD.Connect.Calendaring.CalendarManagers;
-using ICD.Connect.Calendaring.CalendarPoints;
 using ICD.Connect.Cameras.Controls;
 using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.ConferenceManagers;
@@ -24,13 +23,13 @@ using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Devices;
-using ICD.Connect.Devices.Controls;
+using ICD.Connect.Devices.Controls.Power;
 using ICD.Connect.Devices.EventArguments;
+using ICD.Connect.Panels.Controls.Backlight;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Partitioning.Commercial.Controls.Occupancy;
 using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Partitioning.Rooms;
-using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.EventArguments;
 using ICD.Profound.ConnectPROCommon.Dialing;
@@ -97,19 +96,25 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			get { return m_IsInMeeting; }
 			private set
 			{
-				if (value == m_IsInMeeting)
-					return;
+				try
+				{
+					if (value == m_IsInMeeting)
+						return;
 
-				m_IsInMeeting = value;
+					m_IsInMeeting = value;
 
-				Logger.LogSetTo(eSeverity.Informational, "IsInMeeting", m_IsInMeeting);
-				Activities.LogActivity(m_IsInMeeting
-					                   ? new Activity(Activity.ePriority.Medium, "In Meeting", "In Meeting", eSeverity.Informational)
-					                   : new Activity(Activity.ePriority.Lowest, "In Meeting", "Idle", eSeverity.Informational));
+					Logger.LogSetTo(eSeverity.Informational, "IsInMeeting", m_IsInMeeting);
 
-				HandleIsInMeetingChanged(m_IsInMeeting);
+					HandleIsInMeetingChanged(m_IsInMeeting);
 
-				OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
+					OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
+				}
+				finally
+				{
+					Activities.LogActivity(m_IsInMeeting
+						                       ? new Activity(Activity.ePriority.Medium, "In Meeting", "In Meeting", eSeverity.Informational)
+						                       : new Activity(Activity.ePriority.Lowest, "In Meeting", "Idle", eSeverity.Informational));
+				}
 			}
 		}
 
@@ -193,6 +198,9 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 
 			Subscribe(m_Routing);
 			Subscribe(m_MeetingStartTimer);
+
+			// Initialize activities
+			IsInMeeting = false;
 		}
 
 		/// <summary>
@@ -311,9 +319,10 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			// Reset all routing
 			Routing.RouteOsd();
 
-			// Power the panels
+			// Turn on the panel backlights
 			Originators.GetInstancesRecursive<IPanelDevice>()
-			           .ForEach(p => Routing.PowerDevice(p, true));
+			           .SelectMany(p => p.Controls.GetControls<IBacklightDeviceControl>())
+			           .ForEach(c => c.BacklightOn());
 		}
 
 		/// <summary>
@@ -331,15 +340,16 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			Routing.RouteOsd(false);
 
 			// Power off displays
-			foreach (IDestinationBase destination in Routing.Destinations.GetVideoDestinations())
-			{
-				foreach (IDevice device in destination.GetDevices())
-					Routing.PowerDevice(device, false);
-			}
+			Routing.Destinations
+			       .GetVideoDestinations()
+			       .SelectMany(d => d.GetDevices())
+			       .Distinct()
+			       .ForEach(d => Routing.PowerDevice(d, false));
 
-			// Power off the panels
+			// Turn off the panel backlights
 			Originators.GetInstancesRecursive<IPanelDevice>()
-			           .ForEach(p => Routing.PowerDevice(p, false));
+					   .SelectMany(p => p.Controls.GetControls<IBacklightDeviceControl>())
+					   .ForEach(c => c.BacklightOff());
 		}
 
 		/// <summary>
