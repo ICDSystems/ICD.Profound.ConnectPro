@@ -99,7 +99,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 				{
 					Activities.LogActivity(m_IsInMeeting
 						                       ? new Activity(Activity.ePriority.Medium, "In Meeting", "In Meeting", eSeverity.Informational)
-						                       : new Activity(Activity.ePriority.Lowest, "In Meeting", "Idle", eSeverity.Informational));
+						                       : new Activity(Activity.ePriority.Lowest, "In Meeting", "Not In Meeting", eSeverity.Informational));
 				}
 			}
 		}
