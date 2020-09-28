@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
  - Meetings will automatically timeout if the room is unoccupied for 10 minutes.
 
+## [14.1.2] - 2020-09-28
+### Changed
+ - Fixed room "Not In Meeting" activity priority
+
 ## [14.1.1] - 2020-09-24
 ### Changed
  - Fixed a bug where default room activities were not being initialized
