@@ -579,14 +579,24 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 				.ForEach(c => c.MuteCamera(privacyMute));
 		}
 
+		/// <summary>
+		/// Raises the upcoming meeting event if the next booking does not match the current booking.
+		/// </summary>
 		private void RaiseUpcomingMeeting()
 		{
-			IBooking booking = CalendarManager == null ? null : CalendarManager.GetNextBooking();
+			BookingGroup nextBooking = CalendarManager == null ? null : CalendarManager.GetNextBooking();
+			if (nextBooking == null)
+				return;
 
-			if (booking != null && booking != CurrentBooking)
-			{
-				OnUpcomingMeeting.Raise(this, booking);
-			}
+			// We're in this booking already
+			if (nextBooking == CurrentBooking)
+				return;
+
+			// We're in this booking already
+			if (CurrentBooking != null && nextBooking.Contains(CurrentBooking))
+				return;
+
+			OnUpcomingMeeting.Raise(this, nextBooking);
 		}
 
 		/// <summary>
