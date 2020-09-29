@@ -34,7 +34,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		/// <summary>
 		/// Raised when there is an upcoming meeting about to start.
 		/// </summary>
-		event EventHandler<GenericEventArgs<IBooking>> OnUpcomingMeeting;
+		event EventHandler<GenericEventArgs<IBooking>> OnUpcomingBookingChanged;
 
 		#region Properties
 
@@ -62,6 +62,11 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		/// Gets the selected OBTP booking.
 		/// </summary>
 		IBooking CurrentBooking { get; }
+
+		/// <summary>
+		/// Gets the upcoming booking.
+		/// </summary>
+		IBooking UpcomingBooking { get; }
 
 		///<summary>
 		/// Gets the timer for grace period before automatically starting a meeting.

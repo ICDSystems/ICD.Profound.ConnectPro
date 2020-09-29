@@ -58,20 +58,15 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		public event EventHandler<GenericEventArgs<IDeviceBase>> OnActiveCameraChanged;
 
 		/// <summary>
-		/// Raised when there is an upcoming meeting (upcoming meeting starts in the next 5 mins)?
+		/// Raised when the upcoming booking changes.
 		/// </summary>
-		public event EventHandler<GenericEventArgs<IBooking>> OnUpcomingMeeting;
+		public event EventHandler<GenericEventArgs<IBooking>> OnUpcomingBookingChanged;
 
 		/// <summary>
 		/// Automatically end the meeting after this many milliseconds without any sources being routed
 		/// </summary>
 		private const int MEETING_TIMEOUT = 10 * 60 * 1000;
 		private readonly SafeTimer m_MeetingTimeoutTimer;
-
-		/// <summary>
-		/// Check for any upcoming meetings.
-		/// </summary>
-		private readonly SafeTimer m_UpcomingMeetingTimer;
 
 		private readonly ConnectProRouting m_Routing;
 		private readonly ConnectProDialing m_Dialing;
@@ -83,8 +78,9 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 
 		private readonly List<IPresentationControl> m_SubscribedPresentationControls;
 		private readonly List<IPowerDeviceControl> m_SubscribedDisplayPowerControls;
-		private IDeviceBase m_ActiveCamera;
 
+		private IDeviceBase m_ActiveCamera;
+		private IBooking m_UpcomingBooking;
 
 		#region Properties
 
@@ -137,6 +133,24 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		/// Gets the selected OBTP booking.
 		/// </summary>
 		public IBooking CurrentBooking { get; private set; }
+
+		/// <summary>
+		/// Gets the upcoming booking.
+		/// </summary>
+		public IBooking UpcomingBooking
+		{
+			get { return m_UpcomingBooking; }
+			private set
+			{
+				// TODO - Use IsDuplicate
+				if (value == m_UpcomingBooking)
+					return;
+
+				m_UpcomingBooking = value;
+
+				OnUpcomingBookingChanged.Raise(this, new GenericEventArgs<IBooking>(m_UpcomingBooking));
+			}
+		}
 
 		///<summary>
 		/// Gets the timer for grace period before automatically starting a meeting.
@@ -194,7 +208,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 
 			m_MeetingStartTimer = new IcdTimer();
 			m_MeetingTimeoutTimer = SafeTimer.Stopped(MeetingTimeout);
-			m_UpcomingMeetingTimer = SafeTimer.Stopped(RaiseUpcomingMeeting);
 
 			Subscribe(m_Routing);
 			Subscribe(m_MeetingStartTimer);
@@ -211,7 +224,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			OnIsInMeetingChanged = null;
 			OnFocusSourceChanged = null;
 			OnActiveCameraChanged = null;
-			OnUpcomingMeeting = null;
+			OnUpcomingBookingChanged = null;
 
 			base.DisposeFinal(disposing);
 
@@ -219,7 +232,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 
 			m_MeetingStartTimer.Dispose();
 			m_MeetingTimeoutTimer.Dispose();
-			m_UpcomingMeetingTimer.Dispose();
 
 			Unsubscribe(m_Routing);
 			m_Routing.Dispose();
@@ -249,21 +261,17 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			m_MeetingStartTimer.Stop();
 
 			// Change meeting state before any routing for UX
-			CheckOut();
+			if (booking != null)
+				CheckIn(booking);
 			IsInMeeting = true;
 
 			// Reset mute state
 			Mute(false);
 
-			// Check in and dial the booking
-			if (booking != null)
-			{
-				CheckIn(booking);
-
-				// Don't do any additional routing if we dialed something
-				if (Dialing.DialBooking(booking))
-					return;
-			}
+			// Dial the booking
+			// Don't do any additional routing if we dialed something
+			if (booking != null && Dialing.DialBooking(booking))
+				return;
 
 			// If a source was specified OR there is only one source automatically route it
 			ISource[] sources = Routing.Sources.GetRoomSources().ToArray();
@@ -381,7 +389,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			FocusSource = null;
 
 			RestartMeetingTimeoutTimer();
-			RestartUpcomingMeetingTimer();
+			UpdateUpcomingBooking();
 		}
 
 		/// <summary>
@@ -485,6 +493,8 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			if (booking == null)
 				throw new ArgumentNullException("booking");
 
+			CheckOut();
+
 			if (CalendarManager != null)
 				CalendarManager.CheckIn(booking);
 
@@ -528,20 +538,17 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		}
 
 		///<summary>
-		/// Reset the UpcomingMeeting Timer.
+		/// Sets the upcoming booking to the first upcoming booking after the current booking.
 		/// </summary>
-		private void RestartUpcomingMeetingTimer()
+		private void UpdateUpcomingBooking()
 		{
-			TimeSpan timeToNextBooking =
+			UpcomingBooking =
 				CalendarManager == null
-					? TimeSpan.MaxValue
-					: CalendarManager.GetTimeToNextBooking();
-
-			// Raise 5 minutes early
-			timeToNextBooking -= TimeSpan.FromMinutes(5);
-			timeToNextBooking = timeToNextBooking > TimeSpan.Zero ? timeToNextBooking : TimeSpan.Zero;
-
-			m_UpcomingMeetingTimer.Reset((long)timeToNextBooking.TotalMilliseconds);
+					? null
+					: CalendarManager.GetBookings()
+					                 .Where(b => b != CurrentBooking && b.StartTime >= IcdEnvironment.GetUtcTime()) // TODO - Use IsDuplicate
+					                 .OrderBy(b => b.StartTime)
+					                 .FirstOrDefault();
 		}
 
 		/// <summary>
@@ -577,26 +584,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			this.GetControlsRecursive<ICameraDeviceControl>()
 				.Where(c => c.SupportedCameraFeatures.HasFlag(eCameraFeatures.Mute))
 				.ForEach(c => c.MuteCamera(privacyMute));
-		}
-
-		/// <summary>
-		/// Raises the upcoming meeting event if the next booking does not match the current booking.
-		/// </summary>
-		private void RaiseUpcomingMeeting()
-		{
-			BookingGroup nextBooking = CalendarManager == null ? null : CalendarManager.GetNextBooking();
-			if (nextBooking == null)
-				return;
-
-			// We're in this booking already
-			if (nextBooking == CurrentBooking)
-				return;
-
-			// We're in this booking already
-			if (CurrentBooking != null && nextBooking.Contains(CurrentBooking))
-				return;
-
-			OnUpcomingMeeting.Raise(this, nextBooking);
 		}
 
 		/// <summary>
@@ -847,7 +834,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		{
 			base.CalendarManagerOnBookingsChanged(sender, eventArgs);
 
-			RestartUpcomingMeetingTimer();
+			UpdateUpcomingBooking();
 		}
 
 		#endregion
