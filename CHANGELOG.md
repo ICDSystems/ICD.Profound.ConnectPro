@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [14.1.3] - 2020-09-29
 ### Changed
  - Fixed a bug where Zoom sharing feedback could get stuck in a state where the user would be unable to share a second time
 
