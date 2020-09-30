@@ -34,10 +34,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 	public sealed class WtcSharePresenter : AbstractWtcPresenter<IWtcShareView>, IWtcSharePresenter
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
-
 		private readonly IcdHashSet<ISource> m_RoutedSources;
-
 		private readonly List<ISource> m_Sources;
+
 		private ISource m_Selected;
 
 		[CanBeNull]
@@ -46,6 +45,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		[CanBeNull]
 		private IRoutingGraph m_SubscribedRoutingGraph;
 
+		#region Properties
+
+		/// <summary>
+		/// Gets/sets the selected source.
+		/// </summary>
 		private ISource Selected
 		{
 			get { return m_Selected; }
@@ -61,6 +65,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		}
 
 		/// <summary>
+		/// Returns true if we are currently presenting a source.
+		/// </summary>
+		/// <value></value>
+		private bool IsPresenting
+		{
+			get
+			{
+				return m_SubscribedPresentationComponent != null &&
+				       m_SubscribedPresentationComponent.IsNearSidePresenting();
+			}
+		}
+
+		#endregion
+
+		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="nav"></param>
@@ -74,6 +93,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			m_Sources = new List<ISource>();
 		}
 
+		#region Methods
+
 		/// <summary>
 		/// Updates the view.
 		/// </summary>
@@ -86,7 +107,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			try
 			{
-				bool inPresentation = IsInPresentation();
+				bool inPresentation = IsPresenting;
 
 				for (ushort index = 0; index < m_Sources.Count; index++)
 				{
@@ -134,6 +155,46 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			UpdateSources();
 		}
 
+		#endregion
+
+		#region Private Methods
+
+		/// <summary>
+		/// Selects the given source.
+		/// If we're already in a presentation we present this source instead.
+		/// If not in a presentation and the source is already selected, unselects the source.
+		/// </summary>
+		/// <param name="source"></param>
+		private void ToggleSelection([NotNull] ISource source)
+		{
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			if (IsPresenting)
+			{
+				StartPresenting(source);
+				return;
+			}
+
+			// Toggle the selection
+			if (source == Selected)
+				ClearSelection();
+			else
+				Selected = source;
+		}
+
+		/// <summary>
+		/// Resets the source selection to the default state.
+		/// If there is only 1 source we select it by default.
+		/// </summary>
+		private void ClearSelection()
+		{
+			Selected = m_Sources.Count == 1 ? m_Sources[0] : null;
+		}
+
+		/// <summary>
+		/// Updates the list of sources available for presentation.
+		/// </summary>
 		private void UpdateSources()
 		{
 			m_Sources.SelectMany(s => s.GetDevices()).ForEach(Unsubscribe);
@@ -165,34 +226,37 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		}
 
 		/// <summary>
-		/// Returns true if we are currently presenting a source.
+		/// Updates the sources that are currently routed to the presentation input.
 		/// </summary>
-		/// <returns></returns>
-		private bool IsInPresentation()
-		{
-			return m_SubscribedPresentationComponent != null && m_SubscribedPresentationComponent.PresentationActiveInput != null;
-		}
-
 		private void UpdatePresentationRoutedSources()
 		{
+			IcdHashSet<ISource> routed =
+				Room == null || m_SubscribedPresentationComponent == null
+					? new IcdHashSet<ISource>()
+					: Room.Routing
+					      .Sources
+					      .GetVtcPresentationSources(m_SubscribedPresentationComponent)
+					      .ToIcdHashSet();
+
+			if (routed.SetEquals(m_RoutedSources))
+				return;
+
 			m_RoutedSources.Clear();
+			m_RoutedSources.AddRange(routed);
 
-			if (IsInPresentation())
-			{
-				// Update the routed presentation source
-				IEnumerable<ISource> sources = Room == null
-					? Enumerable.Empty<ISource>()
-					: Room.Routing.Sources.GetVtcPresentationSources(m_SubscribedPresentationComponent);
+			// Update the selection to reflect the current presenting source
+			if (!IsPresenting || m_RoutedSources.Count == 0)
+				return;
 
-				m_RoutedSources.AddRange(sources);
+			if (Selected != null && m_RoutedSources.Contains(Selected))
+				return;
 
-				// Always clear selection in presentation mode
-				Selected = null;
-			}
-
-			RefreshIfVisible();
+			Selected = m_RoutedSources.First();
 		}
 
+		/// <summary>
+		/// Hides the view if we are no longer in a call.
+		/// </summary>
 		private void UpdateVisibility()
 		{
 			// Ensure we leave presentation mode when we leave a call
@@ -204,21 +268,33 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				ShowView(false);
 		}
 
-		private void StartPresenting(ISource source)
+		/// <summary>
+		/// Routes the given source and starts the presentation.
+		/// </summary>
+		/// <param name="source"></param>
+		private void StartPresenting([NotNull] ISource source)
 		{
-			if (Room == null || source == null)
+			if (source == null)
+				throw new ArgumentNullException("source");
+
+			if (Room == null || m_SubscribedPresentationComponent == null)
 				return;
 
 			Room.Routing.RouteToVtcPresentation(source, m_SubscribedPresentationComponent);
 		}
 
+		/// <summary>
+		/// Unroutes the current source and stops the active presentation.
+		/// </summary>
 		private void StopPresenting()
 		{
-			if (Room == null)
+			if (Room == null || m_SubscribedPresentationComponent == null)
 				return;
 
 			Room.Routing.UnrouteAllFromVtcPresentation(m_SubscribedPresentationComponent);
 		}
+
+		#endregion
 
 		#region Room Callbacks
 
@@ -249,10 +325,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				m_SubscribedRoutingGraph.RoutingCache.OnEndpointRouteChanged -= RoutingCacheOnEndpointRouteChanged;
 
 			m_SubscribedRoutingGraph = null;
-
-
 		}
 
+		/// <summary>
+		/// Called when any endpoint to endpoint route changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void RoutingCacheOnEndpointRouteChanged(object sender, EndpointRouteChangedEventArgs eventArgs)
 		{
 			if (eventArgs.Type.HasFlag(eConnectionType.Video))
@@ -263,6 +342,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		#region Conference Control Callbacks
 
+		/// <summary>
+		/// Subscribe to the web conference control.
+		/// </summary>
+		/// <param name="control"></param>
 		protected override void Subscribe(IWebConferenceDeviceControl control)
 		{
 			if (control != null)
@@ -271,17 +354,22 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				control.OnConferenceRemoved += VideoDialerOnConferenceRemoved;
 			}
 
-			var device = control == null ? null : control.Parent;
+			IDevice device = control == null ? null : control.Parent;
 			m_SubscribedPresentationComponent = device == null ? null : device.Controls.GetControl<IPresentationControl>();
 
-			if (m_SubscribedPresentationComponent == null)
-				return;
-
-			m_SubscribedPresentationComponent.OnPresentationActiveInputChanged += SubscribedPresentationControlOnPresentationActiveInputChanged;
+			if (m_SubscribedPresentationComponent != null)
+			{
+				m_SubscribedPresentationComponent.OnPresentationActiveInputChanged += SubscribedPresentationControlOnPresentationActiveInputChanged;
+				m_SubscribedPresentationComponent.OnPresentationActiveChanged += SubscribedPresentationComponentOnPresentationActiveChanged;
+			}
 
 			UpdateSources();
 		}
 
+		/// <summary>
+		/// Unsubscribe from the web conference control.
+		/// </summary>
+		/// <param name="control"></param>
 		protected override void Unsubscribe(IWebConferenceDeviceControl control)
 		{
 			if (control != null)
@@ -291,18 +379,42 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			}
 
 			if (m_SubscribedPresentationComponent != null)
+			{
 				m_SubscribedPresentationComponent.OnPresentationActiveInputChanged -= SubscribedPresentationControlOnPresentationActiveInputChanged;
-
+				m_SubscribedPresentationComponent.OnPresentationActiveChanged -= SubscribedPresentationComponentOnPresentationActiveChanged;
+			}
 			m_SubscribedPresentationComponent = null;
 
 			UpdateSources();
 		}
 
+		/// <summary>
+		/// Called when presentation starts/stops.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="presentationActiveApiEventArgs"></param>
+		private void SubscribedPresentationComponentOnPresentationActiveChanged(object sender, PresentationActiveApiEventArgs presentationActiveApiEventArgs)
+		{
+			RefreshIfVisible();
+		}
+
+		/// <summary>
+		/// Called when the active presentation input changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void SubscribedPresentationControlOnPresentationActiveInputChanged(object sender, EventArgs eventArgs)
 		{
 			UpdatePresentationRoutedSources();
+
+			RefreshIfVisible();
 		}
 
+		/// <summary>
+		/// Called when a video conference starts.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void VideoDialerOnConferenceAdded(object sender, ConferenceEventArgs e)
 		{
 			Subscribe(e.Data as IWebConference);
@@ -310,6 +422,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			UpdateVisibility();
 		}
 
+		/// <summary>
+		/// Called when a video conference ends.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void VideoDialerOnConferenceRemoved(object sender, ConferenceEventArgs e)
 		{
 			Unsubscribe(e.Data as IWebConference);
@@ -321,6 +438,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		#region Conference Callbacks
 
+		/// <summary>
+		/// Subscribe to the web conference events.
+		/// </summary>
+		/// <param name="conference"></param>
 		private void Subscribe(IWebConference conference)
 		{
 			if (conference == null)
@@ -329,6 +450,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			conference.OnStatusChanged += ConferenceOnStatusChanged;
 		}
 
+		/// <summary>
+		/// Unsubscribe from the web conference events.
+		/// </summary>
+		/// <param name="conference"></param>
 		private void Unsubscribe(IWebConference conference)
 		{
 			if (conference == null)
@@ -337,6 +462,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			conference.OnStatusChanged -= ConferenceOnStatusChanged;
 		}
 
+		/// <summary>
+		/// Called when a web conference status changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ConferenceOnStatusChanged(object sender, ConferenceStatusEventArgs e)
 		{
 			UpdateVisibility();
@@ -379,39 +509,32 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		{
 			base.ViewOnVisibilityChanged(sender, args);
 
-			// Clear the selection state when visibility changes
-			Selected = null;
-
-			// If the view became visible and there is only 1 source preselect the source for sharing.
-			if (args.Data && m_Sources.Count == 1)
-				Selected = m_Sources.FirstOrDefault();
+			ClearSelection();
 		}
 
+		/// <summary>
+		/// Called when the user presses a source button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void ViewOnSourceButtonPressed(object sender, UShortEventArgs eventArgs)
 		{
 			ISource source;
-			if (!m_Sources.TryElementAt(eventArgs.Data, out source))
-				return;
-
-			if (IsInPresentation())
-			{
-				StartPresenting(source);
-				return;
-			}
-
-			// If there is only 1 source don't allow the user to deselect it.
-			if (m_Sources.Count == 1)
-				return;
-
-			Selected = source == Selected ? null : source;
+			if (m_Sources.TryElementAt(eventArgs.Data, out source))
+				ToggleSelection(source);
 		}
 
+		/// <summary>
+		/// Called when the user presses the share button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void ViewOnShareButtonPressed(object sender, EventArgs eventArgs)
 		{
 			if (Room == null)
 				return;
 
-			if (IsInPresentation())
+			if (IsPresenting)
 				StopPresenting();
 			else
 				StartPresenting(m_Selected);
@@ -419,19 +542,32 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		#endregion
 
-		#region New region
+		#region Device Callbacks
 
+		/// <summary>
+		/// Subscribe to the device events.
+		/// </summary>
+		/// <param name="device"></param>
 		private void Subscribe(IDeviceBase device)
 		{
 			device.OnIsOnlineStateChanged += DeviceOnIsOnlineStateChanged;
 		}
 
+		/// <summary>
+		/// Unsubscribe from the device events.
+		/// </summary>
+		/// <param name="device"></param>
 		private void Unsubscribe(IDeviceBase device)
 		{
 			device.OnIsOnlineStateChanged += DeviceOnIsOnlineStateChanged;
 		}
 
-		private void DeviceOnIsOnlineStateChanged(object sender, DeviceBaseOnlineStateApiEventArgs deviceBaseOnlineStateApiEventArgs)
+		/// <summary>
+		/// Called when the device online state changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void DeviceOnIsOnlineStateChanged(object sender, DeviceBaseOnlineStateApiEventArgs eventArgs)
 		{
 			RefreshIfVisible();
 		}

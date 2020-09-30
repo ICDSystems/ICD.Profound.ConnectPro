@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+ - Fixed a bug where Zoom sharing feedback could get stuck in a state where the user would be unable to share a second time
+
 ## [14.1.2] - 2020-09-28
 ### Changed
  - Fixed room "Not In Meeting" activity priority
