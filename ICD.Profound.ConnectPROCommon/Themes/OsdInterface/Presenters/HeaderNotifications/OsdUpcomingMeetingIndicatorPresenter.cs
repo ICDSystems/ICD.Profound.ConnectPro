@@ -70,10 +70,18 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.HeaderNot
 		/// </summary>
 		private void RestartUpcomingBookingTimer()
 		{
-			TimeSpan timeToNextBooking =
+			IBooking nextBooking =
 				Room == null || Room.UpcomingBooking == null
-					? TimeSpan.MaxValue
-					: Room.UpcomingBooking.StartTime - IcdEnvironment.GetUtcTime();
+					? null
+					: Room.UpcomingBooking;
+
+			if (nextBooking == null)
+			{
+				m_UpcomingBookingTimer.Stop();
+				return;
+			}
+
+			TimeSpan timeToNextBooking = nextBooking.StartTime - IcdEnvironment.GetUtcTime();
 
 			// Raise 5 minutes early
 			timeToNextBooking -= TimeSpan.FromMinutes(5);

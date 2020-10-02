@@ -70,10 +70,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Indicat
 		/// </summary>
 		private void RestartUpcomingBookingTimer()
 		{
-			TimeSpan timeToNextBooking =
+			IBooking nextBooking =
 				Room == null || Room.UpcomingBooking == null
-					? TimeSpan.MaxValue
-					: Room.UpcomingBooking.StartTime - IcdEnvironment.GetUtcTime();
+					? null
+					: Room.UpcomingBooking;
+
+			if (nextBooking == null)
+			{
+				m_UpcomingBookingTimer.Stop();
+				return;
+			}
+
+			TimeSpan timeToNextBooking = nextBooking.StartTime - IcdEnvironment.GetUtcTime();
 
 			// Raise 5 minutes early
 			timeToNextBooking -= TimeSpan.FromMinutes(5);
@@ -104,7 +112,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Indicat
 				return;
 
 			room.OnUpcomingBookingChanged += RoomOnUpcomingMeeting;
-			room.OnIsInMeetingChanged += RoomOnOnIsInMeetingChanged;
+			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
 		}
 
 		/// <summary>
@@ -119,7 +127,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Indicat
 				return;
 
 			room.OnUpcomingBookingChanged -= RoomOnUpcomingMeeting;
-			room.OnIsInMeetingChanged -= RoomOnOnIsInMeetingChanged;
+			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
 		}
 
 		private void RoomOnUpcomingMeeting(object sender, GenericEventArgs<IBooking> genericEventArgs)
@@ -130,7 +138,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Indicat
 				RestartUpcomingBookingTimer();
 		}
 
-		private void RoomOnOnIsInMeetingChanged(object sender, BoolEventArgs e)
+		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs e)
 		{
 			RestartUpcomingBookingTimer();
 		}
