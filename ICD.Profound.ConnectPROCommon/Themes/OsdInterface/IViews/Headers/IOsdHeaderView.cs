@@ -19,5 +19,10 @@
 		/// </summary>
 		/// <param name="image"></param>
 		void SetTouchFreeFaceImage(eTouchFreeFace image);
+
+		/// <summary>
+		/// Sets the visibility of the Critical Devices' banner.
+		/// </summary>
+		void SetCriticalDevicesBannerVisibility(bool visible);
 	}
 }

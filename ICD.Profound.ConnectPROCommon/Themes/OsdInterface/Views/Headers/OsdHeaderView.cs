@@ -31,5 +31,14 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Views.Headers
 		{
 			m_TouchFreeFace.SetMode((ushort)image);
 		}
+
+		/// <summary>
+		/// Sets the visibility of the critical devices' banner.
+		/// </summary>
+		/// <param name="visible"></param>
+		public void SetCriticalDevicesBannerVisibility(bool visible)
+		{
+			m_CriticalDevices.Show(visible);
+		}
 	}
 }

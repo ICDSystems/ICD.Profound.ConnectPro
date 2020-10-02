@@ -11,9 +11,13 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.VisibilityTree
 	public sealed class OsdVisibilityTree
 	{
 		// ReSharper disable PrivateFieldCanBeConvertedToLocalVariable
+		private readonly IVisibilityNode m_RootVisibility;
+		private readonly IVisibilityNode m_ForegroundVisibility;
 		private readonly IVisibilityNode m_HeaderNotificationVisibility;
 		private readonly IVisibilityNode m_BodyVisibility;
 		private readonly IVisibilityNode m_FooterNotificationVisibility;
+		private readonly IVisibilityNode m_CriticalDevicesVisibility;
+
 		// ReSharper restore PrivateFieldCanBeConvertedToLocalVariable
 
 		public IVisibilityNode BodyVisibility { get { return m_BodyVisibility; } }
@@ -39,6 +43,21 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.VisibilityTree
 			m_FooterNotificationVisibility = new NotificationVisibilityNode(navigationController.LazyLoadPresenter<IOsdHelloFooterNotificationPresenter>());
 			m_FooterNotificationVisibility.AddPresenter(navigationController.LazyLoadPresenter<IOsdIncomingCallFooterNotificationPresenter>());
 			m_FooterNotificationVisibility.AddPresenter(navigationController.LazyLoadPresenter<IOsdMuteFooterNotificationPresenter>());
+
+			// Add all of the foreground subpages to the foreground node
+			m_ForegroundVisibility = new VisibilityNode();
+			m_ForegroundVisibility.AddNode(m_HeaderNotificationVisibility);
+			m_ForegroundVisibility.AddNode(m_BodyVisibility);
+			m_ForegroundVisibility.AddNode(m_FooterNotificationVisibility);
+
+			//Critical devices
+			m_CriticalDevicesVisibility = new SingleVisibilityNode();
+			m_CriticalDevicesVisibility.AddPresenter(navigationController.LazyLoadPresenter<IOsdCriticalDevicesOfflinePresenter>());
+
+			// Add everything to the root visibility node
+			m_RootVisibility = new SingleVisibilityNode();
+			m_RootVisibility.AddNode(m_ForegroundVisibility);
+			m_RootVisibility.AddNode(m_CriticalDevicesVisibility);
 
 			// These presenters are initially visible
 			navigationController.NavigateTo<IOsdHelloFooterNotificationPresenter>();

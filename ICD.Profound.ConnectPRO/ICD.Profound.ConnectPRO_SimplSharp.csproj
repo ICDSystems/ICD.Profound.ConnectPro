@@ -90,6 +90,7 @@
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmLeaveCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmEndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IConfirmSplashPowerPresenter.cs" />
+    <Compile Include="Themes\UserInterface\IPresenters\Common\ICriticalDevicesOfflinePresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IEndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\IHeaderPresenter.cs" />
     <Compile Include="Themes\UserInterface\IPresenters\Common\Indicator\IUpcomingMeetingIndicatorPresenter.cs" />
@@ -219,6 +220,7 @@
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\Zoom\ISettingsZoomCamerasView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Common\Settings\Zoom\ISettingsZoomGeneralView.cs" />
     <Compile Include="Themes\UserInterface\IViews\Icons.cs" />
+    <Compile Include="Themes\UserInterface\IViews\Common\ICriticalDevicesOfflineView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IGenericAlertView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IGenericKeyboardView.cs" />
     <Compile Include="Themes\UserInterface\IViews\IGenericLoadingSpinnerView.cs" />
@@ -277,6 +279,7 @@
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmEndMeetingPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmLeaveCallPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\ConfirmSplashPowerPresenter.cs" />
+    <Compile Include="Themes\UserInterface\Presenters\Common\CriticalDevicesOfflinePresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\AbstractDisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\Menu2DisplaysPresenter.cs" />
     <Compile Include="Themes\UserInterface\Presenters\Common\Displays\Menu3PlusDisplaysPresenter.cs" />
@@ -405,6 +408,8 @@
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmLeaveCallView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmSplashPowerView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\ConfirmSplashPowerView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\CriticalDevicesOfflineView.generated.cs" />
+    <Compile Include="Themes\UserInterface\Views\Common\CriticalDevicesOfflineView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\Menu2DisplaysView.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\Menu2DisplaysView.generated.cs" />
     <Compile Include="Themes\UserInterface\Views\Common\Displays\Menu3PlusDisplaysView.cs" />

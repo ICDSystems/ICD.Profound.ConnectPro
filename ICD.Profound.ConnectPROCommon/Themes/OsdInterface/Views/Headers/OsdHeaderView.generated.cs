@@ -13,6 +13,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Views.Headers
 		private VtProSimpleLabel m_RoomName;
 		private VtProSimpleLabel m_TimeLabel;
 		private VtProImageObject m_TouchFreeFace;
+		private VtProImageObject m_CriticalDevices;
 
 		protected override void InstantiateControls(ISigInputOutput panel, IVtProParent parent, ushort index)
 		{
@@ -32,6 +33,11 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Views.Headers
 			{
 				ModeAnalogJoin = 800
 			};
+
+			m_CriticalDevices = new VtProImageObject(panel, m_Subpage)
+			{
+				DigitalVisibilityJoin = 902
+			};
 		}
 
 		protected override IEnumerable<IVtProControl> GetChildren()
@@ -40,6 +46,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Views.Headers
 			yield return m_RoomName;
 			yield return m_TimeLabel;
 			yield return m_TouchFreeFace;
+			yield return m_CriticalDevices;
 		}
 	}
 }

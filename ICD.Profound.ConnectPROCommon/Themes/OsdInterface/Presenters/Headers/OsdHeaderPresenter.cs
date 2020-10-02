@@ -1,5 +1,7 @@
-﻿using ICD.Common.Utils;
+﻿using System.Linq;
+using ICD.Common.Utils;
 using ICD.Common.Utils.Timers;
+using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters.Headers;
@@ -72,6 +74,10 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Headers
 
 				view.SetRoomName(roomName);
 				view.SetTouchFreeFaceImage(FaceImage);
+
+				//Shows/Hides critical devices' banner.
+				bool criticalDevices = Room != null && Room.GetOfflineCriticalDevicesRecursive().Any();
+				view.SetCriticalDevicesBannerVisibility(criticalDevices);
 
 				RefreshTime();
 			}

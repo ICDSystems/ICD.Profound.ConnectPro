@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services;
@@ -8,6 +10,7 @@ using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Devices;
+using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.Panels;
 using ICD.Connect.Panels.Devices;
 using ICD.Connect.Partitioning.Rooms;
@@ -36,6 +39,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 // ReSharper disable NotAccessedField.Local
 		private readonly OsdVisibilityTree m_VisibilityTree;
 // ReSharper restore NotAccessedField.Local
+		private readonly IcdHashSet<IDevice> m_CriticalDevices;
 
 		private IConnectProRoom m_Room;
 		private readonly SafeTimer m_FaceTransitionTimer;
@@ -67,6 +71,10 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 			m_NavigationController = new ConnectProOsdNavigationController(viewFactory, theme);
 
 			m_VisibilityTree = new OsdVisibilityTree(m_NavigationController);
+			m_CriticalDevices = new IcdHashSet<IDevice>();
+
+			IOsdCriticalDevicesOfflinePresenter offlineDevicesPresenter = m_NavigationController.LazyLoadPresenter<IOsdCriticalDevicesOfflinePresenter>();
+			Subscribe(offlineDevicesPresenter);
 		}
 
 		/// <summary>
@@ -116,6 +124,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 
 			m_NavigationController.SetRoom(room);
 
+			UpdateDevices();
 			UpdatePanelOfflineJoin();
 			UpdateBodyVisibility();
 		}
@@ -169,6 +178,31 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 
 			UpdateTouchFree();
 		}
+		private void UpdateDevices()
+		{
+			IEnumerable<IDevice> devices =
+				Room == null
+					? Enumerable.Empty<IDevice>()
+					: Room.GetCriticalDevicesRecursive();
+
+			m_CriticalDevices.ForEach(Unsubscribe);
+			m_CriticalDevices.SetRange(devices);
+			m_CriticalDevices.ForEach(Subscribe);
+
+			UpdateCriticalDevicesOffline();
+		}
+
+		private void UpdateCriticalDevicesOffline()
+		{
+			bool isVisible = Room != null && Room.GetOfflineCriticalDevicesRecursive().Any();
+			m_NavigationController.LazyLoadPresenter<IOsdCriticalDevicesOfflinePresenter>().ShowView(isVisible);
+
+			if (isVisible)
+				m_NavigationController.LazyLoadPresenter<IOsdHeaderPresenter>().Refresh();
+
+			//Hides the Hello footer messages once the CriticalDevicesOffline presenter is visible.
+			m_NavigationController.LazyLoadPresenter<IOsdHelloFooterNotificationPresenter>().ShowView(!isVisible);
+		}
 
 		#endregion
 
@@ -181,12 +215,16 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 		{
 			if (m_Room == null)
 				return;
+			//If Critical devices presenter is visible, do not show allow touch free.
+			bool devicesOffline = m_NavigationController
+			                      .LazyLoadPresenter<IOsdCriticalDevicesOfflinePresenter>().IsViewVisible;
 
-			if (m_Room.TouchFreeEnabled && !m_Room.IsInMeeting)
+			if (m_Room.TouchFreeEnabled && !m_Room.IsInMeeting && !devicesOffline)
 			{
 				// TouchFree is counting down
 				if (m_Room.MeetingStartTimer.IsRunning && !m_Room.MeetingStartTimer.IsElapsed)
 					UpdateTouchFreeCountdown();
+
 				// TouchFree countdown isn't running
 				else
 					UpdateTouchFreeIdle();
@@ -216,6 +254,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 		private void UpdateTouchFreeIdle()
 		{
 			IOsdHeaderPresenter header = m_NavigationController.LazyLoadPresenter<IOsdHeaderPresenter>();
+
 			IOsdHelloFooterNotificationPresenter footer =
 				m_NavigationController.LazyLoadPresenter<IOsdHelloFooterNotificationPresenter>();
 
@@ -353,6 +392,45 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface
 		private void MeetingStartTimerOnElapsed(object sender, EventArgs eventArgs)
 		{
 			UpdateTouchFree();
+		}
+
+		#endregion
+		#region Device Callbacks
+
+		private void Subscribe(IDevice device)
+		{
+			device.OnIsOnlineStateChanged += DeviceOnIsOnlineStateChanged;
+		}
+
+		private void Unsubscribe(IDevice device)
+		{
+			device.OnIsOnlineStateChanged -= DeviceOnIsOnlineStateChanged;
+		}
+
+		private void DeviceOnIsOnlineStateChanged(object sender, DeviceBaseOnlineStateApiEventArgs eventArgs)
+		{
+			UpdateCriticalDevicesOffline();
+		}
+
+		#endregion
+
+		#region CriticalDevicesOfflinePresenter Callbacks
+
+		private void Subscribe(IOsdCriticalDevicesOfflinePresenter offlineDevicesPresenter)
+		{
+			offlineDevicesPresenter.OnViewVisibilityChanged += OfflineDevicesPresenterOnViewVisibilityChanged;
+		}
+
+		private void OfflineDevicesPresenterOnViewVisibilityChanged(object sender, BoolEventArgs boolEventArgs)
+		{
+			UpdateDevices();
+
+			//Makes sure the body visibility is back to normal once all critical devices are offline.
+			if (Room != null && !Room.GetOfflineCriticalDevicesRecursive().Any())
+			{
+				UpdateBodyVisibility();
+				m_NavigationController.LazyLoadPresenter<IOsdHeaderPresenter>().Refresh();
+			}
 		}
 
 		#endregion
