@@ -10,6 +10,7 @@ using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Endpoints.Destinations;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.RoutingGraphs;
+using ICD.Connect.Settings.Originators;
 using ICD.Profound.ConnectPROCommon.EventArguments;
 using ICD.Profound.ConnectPROCommon.Rooms;
 using ICD.Profound.ConnectPROCommon.Routing.Masking;
@@ -670,7 +671,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 			if (room == null)
 				return;
 
-			room.OnSettingsApplied += RoomOnSettingsApplied;
+			room.OnLifecycleStateChanged += RoomOnLifecycleStateChanged;
 		}
 
 		private void Unsubscribe(IConnectProRoom room)
@@ -678,12 +679,13 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 			if (room == null)
 				return;
 
-			room.OnSettingsApplied -= RoomOnSettingsApplied;
+			room.OnLifecycleStateChanged -= RoomOnLifecycleStateChanged;
 		}
 
-		private void RoomOnSettingsApplied(object sender, EventArgs eventArgs)
+		private void RoomOnLifecycleStateChanged(object sender, LifecycleStateEventArgs args)
 		{
-			UpdateRoutingCache(EnumUtils.GetFlagsAllValue<eConnectionType>());
+			if (args.Data == eLifecycleState.Started)
+				UpdateRoutingCache(EnumUtils.GetFlagsAllValue<eConnectionType>());
 		}
 
 		#endregion

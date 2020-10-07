@@ -73,8 +73,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Fixed an exception on program stop related to room combine grid lookup
  - Favourite contacts are stored in the new ORM databases
  - Zoom meeting IDs are formatted to a human readable format with dashes
+ 
+## [13.2.0] - 2020-10-06
+### Changed
  - Fixed a bug where source names were not displayed on the CUE
  - Fixed a bug where active booking in confrecing presenter would show the meeting time in UTC and not local time.
+ - Changed ConnectProRoutingState to use LifecycleState for startup actions
 
 ## [13.1.2] - 2020-08-11
 ### Changed
