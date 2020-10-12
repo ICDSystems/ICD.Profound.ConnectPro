@@ -106,7 +106,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
         private string GetUsbLabel(WindowsDevicePathInfo usbInfo)
         {
-			return Node.GetUsbDeviceName(usbInfo);
+			return Node == null ? null : Node.GetUsbDeviceName(usbInfo);
         }
 
         private void UpdateUsbCameras()
@@ -199,7 +199,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
         private void ViewOnZoomUsbIdPressed(object sender, UShortEventArgs e)
         {
-            if (m_SelectedCamera == null)
+            if (Node == null || m_SelectedCamera == null)
                 return;
 
             WindowsDevicePathInfo usbId;
