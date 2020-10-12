@@ -4,7 +4,7 @@ using System.Reflection;
 [assembly: AssemblyCompany("ICD Systems")]
 [assembly: AssemblyProduct("ICD.Profound.ConnectPRO")]
 [assembly: AssemblyCopyright("Copyright © ICD Systems 2020")]
-[assembly: AssemblyVersion("14.1.3.0")]
+[assembly: AssemblyVersion("14.1.4.0")]
 
 [assembly: AssemblyInformationalVersion("1.7.0")]
 #if SIMPLSHARP

@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [14.1.4] - 2020-10-12
 ### Changed
  - Fixed a null reference exception in the zoom camera settings
 
