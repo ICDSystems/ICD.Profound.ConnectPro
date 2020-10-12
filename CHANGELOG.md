@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
  - Removed "directory" settings menu item and subpages.
 
+## [14.1.4] - 2020-10-12
+### Changed
+ - Fixed a null reference exception in the zoom camera settings
+
 ## [14.1.3] - 2020-09-29
 ### Changed
  - Fixed a bug where Zoom sharing feedback could get stuck in a state where the user would be unable to share a second time
