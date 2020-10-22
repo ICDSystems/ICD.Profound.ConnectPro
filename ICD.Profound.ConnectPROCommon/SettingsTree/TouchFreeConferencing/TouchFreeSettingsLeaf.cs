@@ -171,7 +171,7 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.TouchFreeConferencing
 			base.Subscribe(room);
 
 			if (room != null)
-				room.Originators.OnChildrenChanged += OriginatorsOnChildrenChanged;
+				room.Originators.OnCollectionChanged += OriginatorsOnCollectionChanged;
 
 			TouchFree touchFree = room == null ? null : room.TouchFree;
 			if (touchFree != null)
@@ -193,7 +193,7 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.TouchFreeConferencing
 			base.Unsubscribe(room);
 
 			if (room != null)
-				room.Originators.OnChildrenChanged -= OriginatorsOnChildrenChanged;
+				room.Originators.OnCollectionChanged -= OriginatorsOnCollectionChanged;
 
 			TouchFree touchFree = room == null ? null : room.TouchFree;
 			if (touchFree != null)
@@ -206,7 +206,7 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.TouchFreeConferencing
 			Update();
 		}
 
-		private void OriginatorsOnChildrenChanged(object sender, EventArgs eventArgs)
+		private void OriginatorsOnCollectionChanged(object sender, EventArgs eventArgs)
 		{
 			OnSourcesChanged.Raise(this);
 		}

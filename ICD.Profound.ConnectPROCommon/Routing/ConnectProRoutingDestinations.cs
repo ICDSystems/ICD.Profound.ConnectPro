@@ -45,7 +45,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 			m_Routing = routing;
 			m_CacheSection = new SafeCriticalSection();
 
-			m_Routing.Room.Originators.OnChildrenChanged += OriginatorsOnChildrenChanged;
+			m_Routing.Room.Originators.OnCollectionChanged += OriginatorsOnCollectionChanged;
 		}
 
 		#region Methods
@@ -165,7 +165,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void OriginatorsOnChildrenChanged(object sender, EventArgs eventArgs)
+		private void OriginatorsOnCollectionChanged(object sender, EventArgs eventArgs)
 		{
 			m_CacheSection.Enter();
 

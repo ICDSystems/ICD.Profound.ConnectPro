@@ -147,7 +147,7 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.CUE
 
 			// The theme may not have loaded yet
 			ICore core = room.Core;
-			core.Originators.OnChildrenChanged += OriginatorsOnChildrenChanged;
+			core.Originators.OnCollectionChanged += OriginatorsOnCollectionChanged;
 
 			UpdateTheme();
 		}
@@ -165,12 +165,12 @@ namespace ICD.Profound.ConnectPROCommon.SettingsTree.CUE
 
 			// The theme may not have loaded yet
 			ICore core = room.Core;
-			core.Originators.OnChildrenChanged -= OriginatorsOnChildrenChanged;
+			core.Originators.OnCollectionChanged -= OriginatorsOnCollectionChanged;
 
 			UpdateTheme();
 		}
 
-		private void OriginatorsOnChildrenChanged(object sender, EventArgs e)
+		private void OriginatorsOnCollectionChanged(object sender, EventArgs e)
 		{
 			UpdateTheme();
 		}

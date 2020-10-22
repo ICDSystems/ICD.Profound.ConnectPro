@@ -129,7 +129,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (room == null)
 				return;
 
-			room.Originators.OnChildrenChanged += OriginatorsOnChildrenChanged;
+			room.Originators.OnCollectionChanged += OriginatorsOnCollectionChanged;
 		}
 
 		/// <summary>
@@ -143,7 +143,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (room == null)
 				return;
 
-			room.Originators.OnChildrenChanged -= OriginatorsOnChildrenChanged;
+			room.Originators.OnCollectionChanged -= OriginatorsOnCollectionChanged;
 		}
 
 		/// <summary>
@@ -151,7 +151,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void OriginatorsOnChildrenChanged(object sender, EventArgs eventArgs)
+		private void OriginatorsOnCollectionChanged(object sender, EventArgs eventArgs)
 		{
 			Refresh();
 		}

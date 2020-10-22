@@ -119,7 +119,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Headers
 			if (room == null)
 				return;
 
-			room.Originators.OnChildrenChanged += OriginatorsOnChildrenChanged;
+			room.Originators.OnCollectionChanged += OriginatorsOnCollectionChanged;
 		}
 
 		/// <summary>
@@ -133,10 +133,10 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Headers
 			if (room == null)
 				return;
 
-			room.Originators.OnChildrenChanged -= OriginatorsOnChildrenChanged;
+			room.Originators.OnCollectionChanged -= OriginatorsOnCollectionChanged;
 		}
 
-		private void OriginatorsOnChildrenChanged(object sender, EventArgs eventArgs)
+		private void OriginatorsOnCollectionChanged(object sender, EventArgs eventArgs)
 		{
 			UpdateDevices();
 		}

@@ -59,12 +59,12 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Combine
 			base.DisposeFinal(disposing);
 		}
 
-		protected override void OriginatorsOnChildrenChanged(object sender, EventArgs e)
+		protected override void OriginatorsOnCollectionChanged(object sender, EventArgs e)
 		{
 			// Call this before calling the base method
 			SetMasterRoom(this.GetMasterRoom() as IConnectProRoom);
 
-			base.OriginatorsOnChildrenChanged(sender, e);
+			base.OriginatorsOnCollectionChanged(sender, e);
 		}
 
 		/// <summary>

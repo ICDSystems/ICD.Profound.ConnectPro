@@ -463,9 +463,9 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		protected override void OriginatorsOnChildrenChanged(object sender, EventArgs args)
+		protected override void OriginatorsOnCollectionChanged(object sender, EventArgs args)
 		{
-			base.OriginatorsOnChildrenChanged(sender, args);
+			base.OriginatorsOnCollectionChanged(sender, args);
 
 			IEnumerable<IPresentationControl> presentationControls =
 				Routing.Sources
