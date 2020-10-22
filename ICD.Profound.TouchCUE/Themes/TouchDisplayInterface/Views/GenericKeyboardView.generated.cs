@@ -5,7 +5,7 @@ using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.Pages;
 using ICD.Connect.UI.Controls.TextControls;
 
-namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Views.Conference.Contacts
+namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Views
 {
 	public sealed partial class GenericKeyboardView
 	{

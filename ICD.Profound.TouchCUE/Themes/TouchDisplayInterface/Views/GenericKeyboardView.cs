@@ -10,7 +10,7 @@ using ICD.Connect.UI.EventArguments;
 using ICD.Connect.UI.Utils;
 using ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IViews;
 
-namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Views.Conference.Contacts
+namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Views
 {
 	[ViewBinding(typeof(IGenericKeyboardView))]
 	public sealed partial class GenericKeyboardView : AbstractTouchDisplayView, IGenericKeyboardView
