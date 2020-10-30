@@ -312,10 +312,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		}
 
 		/// <summary>
-		/// Called to update the selection state of the given destination.
+		/// Called when the user presses a display in a multi-display room.
 		/// </summary>
-		/// <param name="routedSource"></param>
-		/// <param name="destination"></param>
+		/// <param name="routedSource">The source that is currently routed to the destination.</param>
+		/// <param name="destination">The destination being routed to.</param>
 		private void HandleSelectedDisplay(ISource routedSource, IDestinationBase destination)
 		{
 			if (m_Room == null)
@@ -347,11 +347,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 				
 			routedSource = selectedSource;
 
-			if (ShowSourceContextualMenu(routedSource))
-				SetSelectedSource(null);
+			// Automatically show the context menu if we routed to all destinations
+			bool routedToAll =
+				m_Room.Routing
+				      .State
+				      .GetFakeActiveVideoSources()
+				      .All(kvp => kvp.Value.Contains(routedSource));
+
+			if (routedToAll)
+				ShowSourceContextualMenu(routedSource);
 		}
 
-		private bool ShowSourceContextualMenu(ISource source)
+		/// <summary>
+		/// Shows the contextual menu for the given source.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <returns>True if there was a context menu shown for the source.</returns>
+		private bool ShowSourceContextualMenu([CanBeNull] ISource source)
 		{
 			if (m_Room == null)
 				return false;
