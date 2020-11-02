@@ -286,7 +286,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Schedule
 
 		private string FormatTime(DateTime time)
 		{
-			return Theme.DateFormatting.GetShortTime(time);
+			return Theme.DateFormatting.GetShortTime(time.ToLocalTime());
 		}
 
 		#endregion
