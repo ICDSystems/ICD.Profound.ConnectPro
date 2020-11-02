@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [14.1.5] - 2020-11-02
 ### Changed
  - Fixed a bug where TouchCUE would show UTC for bookings
 
