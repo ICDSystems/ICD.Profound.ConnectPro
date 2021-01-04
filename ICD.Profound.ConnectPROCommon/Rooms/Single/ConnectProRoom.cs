@@ -12,6 +12,7 @@ using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Devices;
 using ICD.Connect.Partitioning;
 using ICD.Connect.Partitioning.Commercial;
+using ICD.Connect.Partitioning.Commercial.CallRatings;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings;
 using ICD.Connect.Settings.Utils;
@@ -38,6 +39,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Single
 			CalendarManager = new CalendarManager();
 			WakeSchedule = new WakeSchedule();
 			TouchFree = new TouchFree();
+			CallRatingManager = new CallRatingManager(this);
 		}
 
 		/// <summary>
@@ -52,6 +54,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Single
 			CalendarManager = null;
 			WakeSchedule = null;
 			TouchFree = null;
+			CallRatingManager = null;
 		}
 
 		#region Settings
