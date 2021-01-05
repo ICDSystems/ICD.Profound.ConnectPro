@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - Added CalendarManager Property to ConnectProRoom
  - Added Upcoming Meeting Indicator to Touch Panel and CUE.  An Indicator will popup five minutes before the next meeting for 10 seconds.
  - Added new icons to the Touch Panel settings pages.
+ - Added CallRatingManager Property to ConnectPRORoom
 
 ### Changed
  - Meetings will automatically timeout if the room is unoccupied for 10 minutes.
