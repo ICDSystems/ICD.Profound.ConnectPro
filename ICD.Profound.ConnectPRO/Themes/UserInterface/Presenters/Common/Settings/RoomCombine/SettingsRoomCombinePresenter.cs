@@ -315,7 +315,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 
 		private void ViewOnWallButtonPressed(object sender, CellDirectionEventArgs args)
 		{
-			if (Room == null)
+			if (Room == null || m_SubscribedPartitionManager == null)
 				return;
 
 			IPartition partition = m_SubscribedPartitionManager.GetPartition(args.Column, args.Row, args.Direction);
@@ -376,7 +376,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <returns></returns>
 		private IEnumerable<IPartition> GetContiguousPartitions()
 		{
-			if (Room == null)
+			if (Room == null || m_SubscribedPartitionManager == null)
 				return Enumerable.Empty<IPartition>();
 
 			IRoom start = Room.GetRoomsRecursive().FirstOrDefault(r => r.Originators.Contains(ViewFactory.Panel.Id));
@@ -394,25 +394,26 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// </summary>
 		/// <param name="room"></param>
 		/// <returns></returns>
-		private IEnumerable<IRoom> GetAdjacentRooms(IRoom room)
+		private IEnumerable<IRoom> GetAdjacentRooms([NotNull] IRoom room)
 		{
 			if (room == null)
 				throw new ArgumentNullException("room");
 
-			IcdHashSet<IRoom> adjacent =
+			if (m_SubscribedPartitionManager == null)
+				return Enumerable.Empty<IRoom>();
 
+			IcdHashSet<IRoom> adjacent =
 				m_SubscribedPartitionManager
 					.Partitions
 					.GetRoomAdjacentPartitions(room)
 					.Where(p =>
 					       {
 						       bool selection;
-						       if (m_SelectedPartitionStates.TryGetValue(p, out selection))
-							       return selection;
-
-						       return m_SubscribedPartitionManager.CombinesRoom(p);
+						       return m_SelectedPartitionStates.TryGetValue(p, out selection)
+								   ? selection
+								   : m_SubscribedPartitionManager.CombinesRoom(p);
 					       })
-					.SelectMany(p => p.GetRooms().Select(id => room.Core.Originators.GetChild<IRoom>(id)))
+					.SelectMany(p => p.GetRooms())
 					.Distinct()
 					.Where(r => r != room)
 					.ToIcdHashSet();
