@@ -3,7 +3,7 @@ using System.Reflection;
 [assembly: AssemblyTitle("ICD.Profound.ConnectPRO")]
 [assembly: AssemblyCompany("ICD Systems")]
 [assembly: AssemblyProduct("ICD.Profound.ConnectPRO")]
-[assembly: AssemblyCopyright("Copyright © ICD Systems 2020")]
+[assembly: AssemblyCopyright("Copyright © ICD Systems 2021")]
 [assembly: AssemblyVersion("14.1.5.0")]
 
 [assembly: AssemblyInformationalVersion("1.8.0")]
