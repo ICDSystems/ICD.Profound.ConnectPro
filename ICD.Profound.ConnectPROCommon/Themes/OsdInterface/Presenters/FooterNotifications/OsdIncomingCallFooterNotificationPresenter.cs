@@ -56,7 +56,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.FooterNot
 		/// <param name="theme"></param>
 		public OsdIncomingCallFooterNotificationPresenter(IOsdNavigationController nav, IOsdViewFactory views, IConnectProTheme theme) : base(nav, views, theme)
 		{
-			m_CallIgnoredTimer = new SafeTimer(RemoveSource, -1L);
+			m_CallIgnoredTimer = SafeTimer.Stopped(RemoveSource);
 		}
 
 		/// <summary>

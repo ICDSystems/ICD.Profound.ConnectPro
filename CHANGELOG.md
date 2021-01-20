@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
  - Meetings will automatically timeout if the room is unoccupied for 10 minutes.
+ - Fixed usages of SafeTimer that were broken.
 
 ### Removed
  - Removed "directory" settings menu item and subpages.

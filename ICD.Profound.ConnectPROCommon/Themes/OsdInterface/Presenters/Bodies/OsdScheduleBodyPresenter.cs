@@ -44,7 +44,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Bodies
 			m_RefreshSection = new SafeCriticalSection();
 			m_ChildrenFactory = new ReferencedSchedulePresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
 
-			m_RefreshTimer = new SafeTimer(RefreshIfVisible, DEFAULT_REFRESH_TIME);
+			m_RefreshTimer = SafeTimer.Stopped(RefreshIfVisible);
 
 			theme.DateFormatting.OnFormatChanged += DateFormattingOnFormatChanged;
 		}

@@ -83,10 +83,10 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.FooterNot
 		public OsdHelloFooterNotificationPresenter(IOsdNavigationController nav, IOsdViewFactory views, IConnectProTheme theme)
 			: base(nav, views, theme)
 		{
-			m_UpdateBookingsTimer = new SafeTimer(UpdateBookings, DEFAULT_UPDATE_TIME);
 			m_RefreshSection = new SafeCriticalSection();
 			m_Bookings = new List<IBooking>();
 			m_Messages = new List<KeyValuePair<string, string>>();
+			m_UpdateBookingsTimer = SafeTimer.Stopped(UpdateBookings);
 		}
 
 		protected override void Refresh(IOsdHelloFooterNotificationView view)
@@ -185,6 +185,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.FooterNot
 					: CalendarManager.GetBookings()
 					                 .Where(b => b.EndTime > now)
 					                 .OrderBy(b => b.StartTime)
+									 .Cast<IBooking>()
 					                 .ToArray();
 
 			// Update the timer to check bookings again later

@@ -50,7 +50,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Schedule
 			m_ChildrenFactory = new ReferencedBookingPresenterFactory(nav, ItemFactory, Subscribe, Unsubscribe);
 
 			m_CachedBookings = new List<IBooking>();
-			m_CacheTimer = new SafeTimer(CacheBookings, DEFAULT_CACHE_TIME);
+			m_CacheTimer = SafeTimer.Stopped(CacheBookings);
 			theme.DateFormatting.OnFormatChanged += DateFormattingOnFormatChanged;
 		}
 
@@ -81,10 +81,10 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Schedule
 				else
 					view.ShowSchedule(false);
 
-				var roomName = Room == null ? string.Empty : Room.Name;
+				string roomName = Room == null ? string.Empty : Room.Name;
 
 				// build presenters
-				foreach (var presenter in m_ChildrenFactory.BuildChildren(m_CachedBookings.Skip(1)))
+				foreach (IReferencedBookingPresenter presenter in m_ChildrenFactory.BuildChildren(m_CachedBookings.Skip(1)))
 				{
 					presenter.ShowView(true);
 					presenter.SetSelected(presenter == SelectedBooking);
@@ -154,19 +154,19 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Schedule
 			// clear current contents
 			m_CachedBookings.Clear();
 
-			if (m_CalendarManager == null)
-				return;
+			DateTime now = IcdEnvironment.GetLocalTime();
+			DateTime tomorrow = now.AddDays(1);
 
-			var now = IcdEnvironment.GetLocalTime();
-			var tomorrow = now.AddDays(1);
-
-			var bookings =
-				m_CalendarManager.GetBookings()
-					.Where(b => b.EndTime > now && b.StartTime < tomorrow)
-					.OrderBy(b => b.StartTime)
-					.ToList();
+			IBooking[] bookings =
+				m_CalendarManager == null
+					? new IBooking[0]
+					: m_CalendarManager.GetBookings()
+					                   .Where(b => b.EndTime > now && b.StartTime < tomorrow)
+					                   .OrderBy(b => b.StartTime)
+					                   .Cast<IBooking>()
+					                   .ToArray();
 			
-			var firstBooking = bookings.FirstOrDefault();
+			IBooking firstBooking = bookings.FirstOrDefault();
 			// find out if room is currently available
 			if (firstBooking != null && firstBooking.StartTime - now > TimeSpan.FromMinutes(15))
 				m_CachedBookings.Add(new EmptyBooking
@@ -175,14 +175,14 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Schedule
 					EndTime = firstBooking.StartTime
 				});
 			// build list of bookings and available times
-			for (var i = 0; i < bookings.Count; i++)
+			for (int i = 0; i < bookings.Length; i++)
 			{
 				if (bookings[i] == null)
 					continue;
 
 				m_CachedBookings.Add(bookings[i]);
 
-				if (i + 1 >= bookings.Count)
+				if (i + 1 >= bookings.Length)
 					m_CachedBookings.Add(new EmptyBooking
 					{
 						StartTime = bookings[i].EndTime,
@@ -212,7 +212,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Schedule
 
 		private string GetBookingIcon(IBooking booking)
 		{
-			var dialers =
+			IEnumerable<IConferenceDeviceControl> dialers =
 				Room == null
 					? Enumerable.Empty<IConferenceDeviceControl>()
 					: Room.GetControlsRecursive<IConferenceDeviceControl>();
@@ -257,7 +257,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Schedule
 				return;
 			}
 
-			var currentBooking = m_CachedBookings.FirstOrDefault();
+			IBooking currentBooking = m_CachedBookings.FirstOrDefault();
 			if (currentBooking != null && !(currentBooking is EmptyBooking))
 				Room.StartMeeting(currentBooking, null);
 		}
@@ -350,7 +350,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Schedule
 
 		private void PresenterOnBookingPressed(object sender, EventArgs e)
 		{
-			var presenter = sender as IReferencedBookingPresenter;
+			IReferencedBookingPresenter presenter = sender as IReferencedBookingPresenter;
 			if (presenter == null)
 				return;
 
