@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Mvp.Views;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contacts;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Contacts
 {
@@ -48,7 +49,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		protected AbstractVtcContactsView(ISigInputOutput panel, ConnectProTheme theme)
+		protected AbstractVtcContactsView(ISigInputOutput panel, IConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

@@ -6,6 +6,7 @@ using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.Controls.TextControls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.RoomCombine;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.RoomCombine
 {
@@ -21,7 +22,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Roo
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public SettingsRoomCombineView(ISigInputOutput panel, ConnectProTheme theme)
+		public SettingsRoomCombineView(ISigInputOutput panel, IConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

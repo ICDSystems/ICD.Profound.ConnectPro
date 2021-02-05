@@ -7,6 +7,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.Z
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Zoom;
 using ICD.Profound.ConnectPROCommon.SettingsTree.Zoom;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings.Zoom
 {
@@ -21,7 +22,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public SettingsZoomGeneralPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+		public SettingsZoomGeneralPresenter(IConnectProNavigationController nav, IUiViewFactory views, IConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

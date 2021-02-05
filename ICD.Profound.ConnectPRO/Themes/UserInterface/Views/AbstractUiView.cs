@@ -2,6 +2,7 @@
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Mvp.Views;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 {
@@ -10,16 +11,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 	/// </summary>
 	public abstract class AbstractUiView : AbstractView, IUiView
 	{
-		private readonly ConnectProTheme m_Theme;
+		private readonly IConnectProTheme m_Theme;
 
-		public ConnectProTheme Theme { get { return m_Theme; } }
+		public IConnectProTheme Theme { get { return m_Theme; } }
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		protected AbstractUiView(ISigInputOutput panel, ConnectProTheme theme)
+		protected AbstractUiView(ISigInputOutput panel, IConnectProTheme theme)
 			: this(panel, theme, null, 0)
 		{
 		}
@@ -31,7 +32,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 		/// <param name="theme"></param>
 		/// <param name="parent"></param>
 		/// <param name="index"></param>
-		protected AbstractUiView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index)
+		protected AbstractUiView(ISigInputOutput panel, IConnectProTheme theme, IVtProParent parent, ushort index)
 			: base(panel, parent, index)
 		{
 			m_Theme = theme;

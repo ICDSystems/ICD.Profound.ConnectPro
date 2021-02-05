@@ -10,6 +10,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.FloatingActions;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.FloatingActions.FloatingActionListItems;
 using ICD.Profound.ConnectPROCommon.Rooms;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.FloatingActions
 {
@@ -46,7 +47,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
 		public FloatingActionListButtonPresenter(IConnectProNavigationController nav, IUiViewFactory views,
-		                                         ConnectProTheme theme) : base(nav, views, theme)
+		                                         IConnectProTheme theme)
+			: base(nav, views, theme)
 		{
 			m_ListItems = new List<IFloatingActionListItem>
 			{

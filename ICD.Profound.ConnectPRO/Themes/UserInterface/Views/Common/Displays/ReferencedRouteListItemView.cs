@@ -2,13 +2,15 @@
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Controls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 {
 	[ViewBinding(typeof(IReferencedRouteListItemView))]
 	public sealed partial class ReferencedRouteListItemView : AbstractUiView, IReferencedRouteListItemView
 	{
-		public ReferencedRouteListItemView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index) : base(panel, theme, parent, index)
+		public ReferencedRouteListItemView(ISigInputOutput panel, IConnectProTheme theme, IVtProParent parent, ushort index)
+			: base(panel, theme, parent, index)
 		{
 		}
 

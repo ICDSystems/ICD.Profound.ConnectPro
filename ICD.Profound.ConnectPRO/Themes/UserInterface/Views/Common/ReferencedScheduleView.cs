@@ -4,6 +4,7 @@ using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Controls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 {
@@ -19,7 +20,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		/// <param name="theme"></param>
 		/// <param name="parent"></param>
 		/// <param name="index"></param>
-		public ReferencedScheduleView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index)
+		public ReferencedScheduleView(ISigInputOutput panel, IConnectProTheme theme, IVtProParent parent, ushort index)
 			: base(panel, theme, parent, index)
 		{
 		}

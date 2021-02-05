@@ -33,7 +33,8 @@ using ICD.Profound.ConnectPROCommon.WebConferencing;
 
 namespace ICD.Profound.ConnectPROCommon.Themes
 {
-	public abstract class AbstractConnectProTheme<TSettings> : AbstractTheme<TSettings>, IConnectProTheme where TSettings : IConnectProThemeSettings, new()
+	public abstract class AbstractConnectProTheme<TSettings> : AbstractTheme<TSettings>, IConnectProTheme
+		where TSettings : IConnectProThemeSettings, new()
 	{
 		public event EventHandler OnCueBackgroundChanged;
 

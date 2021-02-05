@@ -4,6 +4,7 @@ using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 {
@@ -19,7 +20,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		public event EventHandler OnDisplayButtonPressed;
 		public event EventHandler OnDisplaySpeakerButtonPressed;
 
-		public MenuCombinedSimpleModeView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
+		public MenuCombinedSimpleModeView(ISigInputOutput panel, IConnectProTheme theme)
+			: base(panel, theme)
 		{
 		}
 		

@@ -4,6 +4,7 @@ using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Displays;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 {
@@ -20,7 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Displays
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public Menu2DisplaysView(ISigInputOutput panel, ConnectProTheme theme)
+		public Menu2DisplaysView(ISigInputOutput panel, IConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

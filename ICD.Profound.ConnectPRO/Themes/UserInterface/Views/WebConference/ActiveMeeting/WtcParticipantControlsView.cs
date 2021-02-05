@@ -4,6 +4,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.ActiveMeeting;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.ActiveMeeting
 {
@@ -20,7 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Activ
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public WtcParticipantControlsView(ISigInputOutput panel, ConnectProTheme theme)
+		public WtcParticipantControlsView(ISigInputOutput panel, IConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

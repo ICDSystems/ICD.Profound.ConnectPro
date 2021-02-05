@@ -9,6 +9,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.A
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Administrative;
 using ICD.Profound.ConnectPROCommon.SettingsTree.Administrative;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings.Administrative
 {
@@ -43,7 +44,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public SettingsPowerPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+		public SettingsPowerPresenter(IConnectProNavigationController nav, IUiViewFactory views, IConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

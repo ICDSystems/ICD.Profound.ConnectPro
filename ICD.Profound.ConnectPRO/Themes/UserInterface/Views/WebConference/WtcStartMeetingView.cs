@@ -5,6 +5,7 @@ using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.EventArguments;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 {
@@ -18,7 +19,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 		public event EventHandler OnBackButtonPressed;
 		public event EventHandler<StringEventArgs> OnTextEntered;
 
-		public WtcStartMeetingView(ISigInputOutput panel, ConnectProTheme theme)
+		public WtcStartMeetingView(ISigInputOutput panel, IConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

@@ -7,6 +7,7 @@ using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.EventArguments;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.AudioConference;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference
 {
@@ -43,7 +44,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.AudioConference
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public AtcBaseView(ISigInputOutput panel, ConnectProTheme theme)
+		public AtcBaseView(ISigInputOutput panel, IConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

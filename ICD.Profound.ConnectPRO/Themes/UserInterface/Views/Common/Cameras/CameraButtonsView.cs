@@ -6,6 +6,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Cameras;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 {
@@ -27,7 +28,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public CameraButtonsView(ISigInputOutput panel, ConnectProTheme theme)
+		public CameraButtonsView(ISigInputOutput panel, IConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

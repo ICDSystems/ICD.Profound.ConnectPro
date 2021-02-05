@@ -10,6 +10,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.FloatingAc
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.FloatingActions;
 using ICD.Profound.ConnectPROCommon.Rooms;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.FloatingActions
 {
@@ -26,7 +27,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public FloatingActionCameraPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+		public FloatingActionCameraPresenter(IConnectProNavigationController nav, IUiViewFactory views, IConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_CameraButtons = Navigation.LazyLoadPresenter<ICameraButtonsPresenter>();

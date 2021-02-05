@@ -5,6 +5,7 @@ using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Views;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 {
@@ -42,7 +43,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public StartMeetingView(ISigInputOutput panel, ConnectProTheme theme)
+		public StartMeetingView(ISigInputOutput panel, IConnectProTheme theme)
 			: base(panel, theme)
 		{
 			m_ChildList = new List<IReferencedScheduleView>();

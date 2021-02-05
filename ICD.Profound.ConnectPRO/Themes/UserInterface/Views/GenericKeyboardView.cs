@@ -9,6 +9,7 @@ using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.EventArguments;
 using ICD.Connect.UI.Utils;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 {
@@ -62,7 +63,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public GenericKeyboardView(ISigInputOutput panel, ConnectProTheme theme) 
+		public GenericKeyboardView(ISigInputOutput panel, IConnectProTheme theme) 
 			: base(panel, theme)
 		{
 		}

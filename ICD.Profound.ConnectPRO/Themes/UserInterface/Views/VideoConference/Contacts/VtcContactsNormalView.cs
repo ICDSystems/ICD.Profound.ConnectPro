@@ -5,6 +5,7 @@ using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Views;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Contacts;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Contacts
 {
@@ -63,7 +64,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Con
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public VtcContactsNormalView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
+		public VtcContactsNormalView(ISigInputOutput panel, IConnectProTheme theme)
+			: base(panel, theme)
 		{
 			m_ChildList = new List<IVtcReferencedContactsView>();
 		}

@@ -3,6 +3,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.WebConferencing;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups.WebConferencing
 {
@@ -18,7 +19,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups.WebConferenc
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public WebConferencingStepView(ISigInputOutput panel, ConnectProTheme theme)
+		public WebConferencingStepView(ISigInputOutput panel, IConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

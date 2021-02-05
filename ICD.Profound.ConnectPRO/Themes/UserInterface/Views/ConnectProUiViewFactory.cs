@@ -3,6 +3,7 @@ using ICD.Connect.Panels.SmartObjects;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Mvp.Views;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 {
@@ -11,7 +12,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 	/// </summary>
 	public sealed class ConnectProUiViewFactory : AbstractViewFactory, IUiViewFactory
 	{
-		private readonly ConnectProTheme m_Theme;
+		private readonly IConnectProTheme m_Theme;
 
 		#region Constructors
 
@@ -20,7 +21,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public ConnectProUiViewFactory(IPanelDevice panel, ConnectProTheme theme)
+		public ConnectProUiViewFactory(IPanelDevice panel, IConnectProTheme theme)
 			: base(panel)
 		{
 			m_Theme = theme;

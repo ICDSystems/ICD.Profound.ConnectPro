@@ -6,6 +6,7 @@ using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPROCommon.Rooms;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 {
@@ -15,7 +16,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 	public sealed class ConnectProNavigationController : AbstractNavigationController, IConnectProNavigationController
 	{
 		private readonly IUiViewFactory m_ViewFactory;
-		private readonly ConnectProTheme m_Theme;
+		private readonly IConnectProTheme m_Theme;
 		private readonly SafeCriticalSection m_SetRoomSection;
 
 		private IConnectProRoom m_Room;
@@ -27,7 +28,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// </summary>
 		/// <param name="viewFactory"></param>
 		/// <param name="theme"></param>
-		public ConnectProNavigationController(IUiViewFactory viewFactory, ConnectProTheme theme)
+		public ConnectProNavigationController(IUiViewFactory viewFactory, IConnectProTheme theme)
 		{
 			m_ViewFactory = viewFactory;
 			m_Theme = theme;

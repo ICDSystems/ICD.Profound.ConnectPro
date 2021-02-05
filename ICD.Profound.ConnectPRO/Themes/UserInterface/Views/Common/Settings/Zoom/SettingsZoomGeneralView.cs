@@ -3,6 +3,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Zoom;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoom
 {
@@ -34,7 +35,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Zoo
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public SettingsZoomGeneralView(ISigInputOutput panel, ConnectProTheme theme)
+		public SettingsZoomGeneralView(ISigInputOutput panel, IConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

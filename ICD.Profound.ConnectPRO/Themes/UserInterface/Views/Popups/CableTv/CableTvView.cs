@@ -7,6 +7,7 @@ using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.EventArguments;
 using ICD.Connect.UI.Mvp.Views;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups.CableTv;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups.CableTv
 {
@@ -41,7 +42,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups.CableTv
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public CableTvView(ISigInputOutput panel, ConnectProTheme theme)
+		public CableTvView(ISigInputOutput panel, IConnectProTheme theme)
 			: base(panel, theme)
 		{
 			m_ChildList = new List<IReferencedCableTvView>();

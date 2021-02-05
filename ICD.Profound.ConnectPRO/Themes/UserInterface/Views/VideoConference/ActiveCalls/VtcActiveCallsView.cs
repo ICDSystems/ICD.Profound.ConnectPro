@@ -5,6 +5,7 @@ using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Views;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.ActiveCalls;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.ActiveCalls
 {
@@ -21,7 +22,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Act
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public VtcActiveCallsView(ISigInputOutput panel, ConnectProTheme theme)
+		public VtcActiveCallsView(ISigInputOutput panel, IConnectProTheme theme)
 			: base(panel, theme)
 		{
 			m_ChildList = new List<IVtcReferencedActiveCallsView>();

@@ -9,6 +9,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Indicator;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Indicator;
 using ICD.Profound.ConnectPROCommon.Rooms;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Indicator
 {
@@ -26,7 +27,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Indicat
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public UpcomingMeetingIndicatorPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme) 
+		public UpcomingMeetingIndicatorPresenter(IConnectProNavigationController nav, IUiViewFactory views, IConnectProTheme theme) 
 			: base(nav, views, theme)
 		{
 			m_VisibilityTimer = SafeTimer.Stopped(() => ShowView(false));

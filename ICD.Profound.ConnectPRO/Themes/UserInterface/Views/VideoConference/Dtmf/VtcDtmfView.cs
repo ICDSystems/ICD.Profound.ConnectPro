@@ -7,6 +7,7 @@ using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.EventArguments;
 using ICD.Connect.UI.Mvp.Views;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Dtmf;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Dtmf
 {
@@ -22,7 +23,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.VideoConference.Dtm
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public VtcDtmfView(ISigInputOutput panel, ConnectProTheme theme)
+		public VtcDtmfView(ISigInputOutput panel, IConnectProTheme theme)
 			: base(panel, theme)
 		{
 			m_ChildList = new List<IVtcReferencedDtmfView>();

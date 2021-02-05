@@ -1,6 +1,7 @@
 ﻿using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.CUE.Modes;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.CUE.Modes
 {
@@ -13,7 +14,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.CUE
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public SettingsCueBackgroundSeasonalView(ISigInputOutput panel, ConnectProTheme theme)
+		public SettingsCueBackgroundSeasonalView(ISigInputOutput panel, IConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

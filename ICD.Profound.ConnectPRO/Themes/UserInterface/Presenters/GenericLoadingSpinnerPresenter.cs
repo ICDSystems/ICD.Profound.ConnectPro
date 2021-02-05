@@ -5,6 +5,7 @@ using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 {
@@ -16,7 +17,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 
 		private string LoadingText { get; set; }
 
-		public GenericLoadingSpinnerPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+		public GenericLoadingSpinnerPresenter(IConnectProNavigationController nav, IUiViewFactory views, IConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

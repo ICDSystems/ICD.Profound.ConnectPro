@@ -1,5 +1,6 @@
 ﻿using ICD.Connect.Panels;
 using ICD.Connect.UI.Controls;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 {
@@ -15,7 +16,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views
 		/// <param name="theme"></param>
 		/// <param name="parent"></param>
 		/// <param name="index"></param>
-		protected AbstractComponentView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index)
+		protected AbstractComponentView(ISigInputOutput panel, IConnectProTheme theme, IVtProParent parent, ushort index)
 			: base(panel, theme, parent, index)
 		{
 		}

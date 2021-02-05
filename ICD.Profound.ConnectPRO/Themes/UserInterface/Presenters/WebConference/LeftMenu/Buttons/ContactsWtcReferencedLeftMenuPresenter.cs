@@ -12,6 +12,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.Con
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.LeftMenu.Buttons;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.LeftMenu;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.LeftMenu.Buttons
 {
@@ -36,7 +37,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
 		public ContactsWtcReferencedLeftMenuPresenter(IConnectProNavigationController nav, IUiViewFactory views,
-		                                              ConnectProTheme theme)
+		                                              IConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_ContactListPresenter = Navigation.LazyLoadPresenter<IWtcContactListPresenter>();

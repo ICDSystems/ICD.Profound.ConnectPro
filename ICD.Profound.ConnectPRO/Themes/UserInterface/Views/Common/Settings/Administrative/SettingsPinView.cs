@@ -5,6 +5,7 @@ using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.EventArguments;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.Administrative;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Administrative
 {
@@ -31,7 +32,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Adm
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public SettingsPinView(ISigInputOutput panel, ConnectProTheme theme)
+		public SettingsPinView(ISigInputOutput panel, IConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

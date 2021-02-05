@@ -27,6 +27,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 {
@@ -85,7 +86,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public WtcSharePresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+		public WtcSharePresenter(IConnectProNavigationController nav, IUiViewFactory views, IConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

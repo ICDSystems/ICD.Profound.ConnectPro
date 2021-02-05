@@ -3,6 +3,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 {
@@ -16,7 +17,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public EndMeetingView(ISigInputOutput panel, ConnectProTheme theme)
+		public EndMeetingView(ISigInputOutput panel, IConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

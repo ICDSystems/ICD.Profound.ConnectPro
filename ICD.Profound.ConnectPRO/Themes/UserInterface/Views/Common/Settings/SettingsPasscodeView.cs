@@ -6,6 +6,7 @@ using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.EventArguments;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 {
@@ -37,7 +38,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public SettingsPasscodeView(ISigInputOutput panel, ConnectProTheme theme)
+		public SettingsPasscodeView(ISigInputOutput panel, IConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

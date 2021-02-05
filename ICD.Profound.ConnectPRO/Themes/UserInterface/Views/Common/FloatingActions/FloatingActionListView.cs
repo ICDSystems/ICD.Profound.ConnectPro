@@ -6,6 +6,7 @@ using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Controls;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.FloatingActions;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.FloatingActions
 {
@@ -17,7 +18,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.FloatingActi
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public FloatingActionListView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
+		public FloatingActionListView(ISigInputOutput panel, IConnectProTheme theme)
+			: base(panel, theme)
 		{
 		}
 
@@ -28,7 +30,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.FloatingActi
 		/// <param name="theme"></param>
 		/// <param name="parent"></param>
 		/// <param name="index"></param>
-		public FloatingActionListView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index) : base(panel, theme, parent, index)
+		public FloatingActionListView(ISigInputOutput panel, IConnectProTheme theme, IVtProParent parent, ushort index)
+			: base(panel, theme, parent, index)
 		{
 		}
 

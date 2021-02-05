@@ -74,7 +74,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 // ReSharper restore NotAccessedField.Local
 
 		private readonly IPanelDevice m_Panel;
-		private readonly ConnectProTheme m_Theme;
+		private readonly IConnectProTheme m_Theme;
 		private readonly IConnectProNavigationController m_NavigationController;
 		private readonly SafeTimer m_SourceSelectionTimeout;
 
@@ -104,7 +104,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public ConnectProUserInterface(IPanelDevice panel, ConnectProTheme theme)
+		public ConnectProUserInterface(IPanelDevice panel, IConnectProTheme theme)
 		{
 			if (panel == null)
 				throw new ArgumentNullException("panel");
@@ -684,7 +684,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// Subscribe to the theme events.
 		/// </summary>
 		/// <param name="theme"></param>
-		private void Subscribe(ConnectProTheme theme)
+		private void Subscribe(IConnectProTheme theme)
 		{
 			theme.OnStartRoomCombine += ThemeOnStartRoomCombine;
 			theme.OnEndRoomCombine += ThemeOnEndRoomCombine;
@@ -694,7 +694,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		/// Unsubscribe from the theme events.
 		/// </summary>
 		/// <param name="theme"></param>
-		private void Unsubscribe(ConnectProTheme theme)
+		private void Unsubscribe(IConnectProTheme theme)
 		{
 			theme.OnStartRoomCombine -= ThemeOnStartRoomCombine;
 			theme.OnEndRoomCombine -= ThemeOnEndRoomCombine;

@@ -4,6 +4,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 {
@@ -13,7 +14,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference
 		public event EventHandler OnShareButtonPressed;
 		public event EventHandler<UShortEventArgs> OnSourceButtonPressed;
 
-		public WtcShareView(ISigInputOutput panel, ConnectProTheme theme)
+		public WtcShareView(ISigInputOutput panel, IConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

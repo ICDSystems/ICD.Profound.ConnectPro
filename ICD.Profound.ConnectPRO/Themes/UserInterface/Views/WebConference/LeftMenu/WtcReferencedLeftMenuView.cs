@@ -4,6 +4,7 @@ using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Controls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.LeftMenu;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.LeftMenu
 {
@@ -22,7 +23,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.LeftM
 		/// <param name="theme"></param>
 		/// <param name="parent"></param>
 		/// <param name="index"></param>
-		public WtcReferencedLeftMenuView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index)
+		public WtcReferencedLeftMenuView(ISigInputOutput panel, IConnectProTheme theme, IVtProParent parent, ushort index)
 			: base(panel, theme, parent, index)
 		{
 		}

@@ -4,6 +4,7 @@ using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPROCommon.Rooms;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 {
@@ -13,7 +14,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 	public abstract class AbstractUiPresenter<T> : AbstractPresenter<T>, IUiPresenter<T>
 		where T : class, IUiView
 	{
-		private readonly ConnectProTheme m_Theme;
+		private readonly IConnectProTheme m_Theme;
 
 		#region Properties
 
@@ -26,7 +27,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <summary>
 		/// Gets the parent theme.
 		/// </summary>
-		protected ConnectProTheme Theme { get { return m_Theme; } }
+		protected IConnectProTheme Theme { get { return m_Theme; } }
 
 		#endregion
 
@@ -36,7 +37,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		protected AbstractUiPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+		protected AbstractUiPresenter(IConnectProNavigationController nav, IUiViewFactory views, IConnectProTheme theme)
 			: base(nav, views)
 		{
 			if (theme == null)

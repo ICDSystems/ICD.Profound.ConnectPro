@@ -3,6 +3,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.FloatingActions;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.FloatingActions
 {
@@ -16,7 +17,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.FloatingActi
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public FloatingActionVolumeView(ISigInputOutput panel, ConnectProTheme theme)
+		public FloatingActionVolumeView(ISigInputOutput panel, IConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

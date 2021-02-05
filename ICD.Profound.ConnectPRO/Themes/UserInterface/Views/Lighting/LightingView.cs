@@ -7,6 +7,7 @@ using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Controls;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Lighting;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Lighting
 {
@@ -21,7 +22,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Lighting
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public LightingView(ISigInputOutput panel, ConnectProTheme theme) : base(panel, theme)
+		public LightingView(ISigInputOutput panel, IConnectProTheme theme)
+			: base(panel, theme)
 		{
 		}
 
@@ -32,7 +34,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Lighting
 		/// <param name="theme"></param>
 		/// <param name="parent"></param>
 		/// <param name="index"></param>
-		public LightingView(ISigInputOutput panel, ConnectProTheme theme, IVtProParent parent, ushort index) : base(panel, theme, parent, index)
+		public LightingView(ISigInputOutput panel, IConnectProTheme theme, IVtProParent parent, ushort index) : base(panel, theme, parent, index)
 		{
 		}
 

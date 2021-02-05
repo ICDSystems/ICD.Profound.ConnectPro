@@ -5,6 +5,7 @@ using ICD.Connect.Panels;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Views;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.Contacts;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Contacts
 {
@@ -34,7 +35,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.WebConference.Conta
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public WtcContactListView(ISigInputOutput panel, ConnectProTheme theme) 
+		public WtcContactListView(ISigInputOutput panel, IConnectProTheme theme) 
 			: base(panel, theme)
 		{
 			m_ContactViewList = new List<IWtcReferencedContactView>();

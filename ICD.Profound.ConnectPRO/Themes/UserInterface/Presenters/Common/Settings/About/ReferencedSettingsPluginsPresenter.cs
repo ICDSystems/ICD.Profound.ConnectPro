@@ -1,4 +1,5 @@
-﻿#if SIMPLSHARP
+﻿using ICD.Profound.ConnectPROCommon.Themes;
+#if SIMPLSHARP
 using Crestron.SimplSharp.Reflection;
 #else
 using System.Reflection;
@@ -44,7 +45,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public ReferencedSettingsPluginsPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+		public ReferencedSettingsPluginsPresenter(IConnectProNavigationController nav, IUiViewFactory views, IConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();

@@ -3,6 +3,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.Settings.CUE.Modes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Settings.CUE.Modes;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Settings.CUE.Modes
 {
@@ -17,7 +18,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
 		public SettingsCueBackgroundStaticPresenter(IConnectProNavigationController nav, IUiViewFactory views,
-		                                            ConnectProTheme theme)
+		                                            IConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 		}

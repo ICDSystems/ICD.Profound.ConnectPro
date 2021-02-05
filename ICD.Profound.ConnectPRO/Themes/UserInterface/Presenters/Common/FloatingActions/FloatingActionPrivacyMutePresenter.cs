@@ -8,6 +8,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common.FloatingActions;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.FloatingActions;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.FloatingActions
 {
@@ -25,7 +26,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Floatin
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
 		public FloatingActionPrivacyMutePresenter(IConnectProNavigationController nav, IUiViewFactory views,
-		                                          ConnectProTheme theme)
+		                                          IConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 		}

@@ -1,6 +1,7 @@
 ﻿using System;
 using ICD.Connect.Panels;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Popups;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 {
@@ -13,7 +14,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Popups
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		protected AbstractPopupView(ISigInputOutput panel, ConnectProTheme theme)
+		protected AbstractPopupView(ISigInputOutput panel, IConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

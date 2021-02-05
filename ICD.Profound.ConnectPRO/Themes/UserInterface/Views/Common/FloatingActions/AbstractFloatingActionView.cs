@@ -1,6 +1,7 @@
 ﻿using System;
 using ICD.Connect.Panels;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.FloatingActions;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.FloatingActions
 {
@@ -16,7 +17,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.FloatingActi
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		protected AbstractFloatingActionView(ISigInputOutput panel, ConnectProTheme theme)
+		protected AbstractFloatingActionView(ISigInputOutput panel, IConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

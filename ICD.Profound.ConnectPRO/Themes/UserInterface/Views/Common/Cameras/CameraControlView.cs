@@ -8,6 +8,7 @@ using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Controls.Buttons;
 using ICD.Connect.UI.EventArguments;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.Common.Cameras;
+using ICD.Profound.ConnectPROCommon.Themes;
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 {
@@ -62,7 +63,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Cameras
 		/// </summary>
 		/// <param name="panel"></param>
 		/// <param name="theme"></param>
-		public CameraControlView(ISigInputOutput panel, ConnectProTheme theme)
+		public CameraControlView(ISigInputOutput panel, IConnectProTheme theme)
 			: base(panel, theme)
 		{
 		}

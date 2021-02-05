@@ -45,7 +45,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// <param name="nav"></param>
 		/// <param name="views"></param>
 		/// <param name="theme"></param>
-		public SettingsCueBackgroundPresenter(IConnectProNavigationController nav, IUiViewFactory views, ConnectProTheme theme)
+		public SettingsCueBackgroundPresenter(IConnectProNavigationController nav, IUiViewFactory views, IConnectProTheme theme)
 			: base(nav, views, theme)
 		{
 			m_RefreshSection = new SafeCriticalSection();
@@ -146,7 +146,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// Subscribe to the theme events.
 		/// </summary>
 		/// <param name="theme"></param>
-		private void Subscribe(ConnectProTheme theme)
+		private void Subscribe(IConnectProTheme theme)
 		{
 			theme.OnCueBackgroundChanged += ThemeOnCueBackgroundChanged;
 		}
@@ -155,7 +155,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common.Setting
 		/// Unsubscribe from the theme events.
 		/// </summary>
 		/// <param name="theme"></param>
-		private void Unsubscribe(ConnectProTheme theme)
+		private void Unsubscribe(IConnectProTheme theme)
 		{
 			theme.OnCueBackgroundChanged -= ThemeOnCueBackgroundChanged;
 		}
