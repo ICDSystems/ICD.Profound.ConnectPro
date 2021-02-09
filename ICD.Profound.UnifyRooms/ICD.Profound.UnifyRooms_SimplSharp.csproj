@@ -100,6 +100,10 @@
       <Project>{FD46A717-5836-4B73-ADD0-2706639DA8ED}</Project>
       <Name>ICD.Connect.Devices_SimplSharp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\ICD.Connect.Lighting\ICD.Connect.Lighting\ICD.Connect.Lighting_SimplSharp.csproj">
+      <Project>{A519C705-5801-44BF-97B1-02DEA016380A}</Project>
+      <Name>ICD.Connect.Lighting_SimplSharp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ICD.Connect.Partitioning\ICD.Connect.Partitioning.Commercial\ICD.Connect.Partitioning.Commercial_SimplSharp.csproj">
       <Project>{2501EF10-A1B8-4F3C-9ED0-D4F0E4BEE379}</Project>
       <Name>ICD.Connect.Partitioning.Commercial_SimplSharp</Name>

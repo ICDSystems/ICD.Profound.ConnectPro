@@ -7,6 +7,8 @@ using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.Repeaters;
 using ICD.Connect.Audio.Utils;
 using ICD.Connect.Conferencing.ConferenceManagers;
+using ICD.Connect.Lighting;
+using ICD.Connect.Lighting.RoomInterface;
 using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Themes.UserInterfaces;
@@ -23,6 +25,7 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar
 
 		private ICommercialRoom m_Room;
 		private IConferenceManager m_SubscribedConferenceManager;
+		private ILightingRoomInterfaceDevice m_LightingInterface;
 
 		#region Properties
 
@@ -135,7 +138,12 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar
 					? m_VolumePointHelper.IsMuted
 					: (bool?)null;
 
-			bool? lights = null;
+			LightingProcessorControl[] presets =
+				m_LightingInterface == null ? null : m_LightingInterface.GetPresets().ToArray();
+			bool? lights =
+				presets == null || presets.Length != 2
+					? (bool?)null
+					: presets[1].Id == m_LightingInterface.GetPreset();
 
 			bool volumeEnabled = m_VolumePointHelper.SupportedVolumeFeatures.HasFlag(eVolumeFeatures.VolumeAssignment);
 
@@ -172,6 +180,9 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar
 			m_SubscribedConferenceManager = room.ConferenceManager;
 			if (m_SubscribedConferenceManager != null)
 				m_SubscribedConferenceManager.OnPrivacyMuteStatusChange += ConferenceManagerOnPrivacyMuteStatusChange;
+
+			m_LightingInterface = room.Originators.GetInstanceRecursive<ILightingRoomInterfaceDevice>();
+			Subscribe(m_LightingInterface);
 		}
 
 		/// <summary>
@@ -188,6 +199,9 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar
 			if (m_SubscribedConferenceManager != null)
 				m_SubscribedConferenceManager.OnPrivacyMuteStatusChange -= ConferenceManagerOnPrivacyMuteStatusChange;
 			m_SubscribedConferenceManager = null;
+
+			Unsubscribe(m_LightingInterface);
+			m_LightingInterface = null;
 		}
 
 		/// <summary>
@@ -229,6 +243,7 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar
 			unifyBar.OnVolumeDownButtonPressed += UnifyBarOnVolumeDownButtonPressed;
 			unifyBar.OnVolumeMuteButtonPressed += UnifyBarOnVolumeMuteButtonPressed;
 			unifyBar.OnPrivacyMuteButtonPressed += UnifyBarOnPrivacyMuteButtonPressed;
+			unifyBar.OnLightsButtonPressed += UnifyBarOnLightsButtonPressed;
 			unifyBar.OnPageChanged += UnifyBarOnPageChanged;
 		}
 
@@ -247,6 +262,7 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar
 			unifyBar.OnVolumeDownButtonPressed -= UnifyBarOnVolumeDownButtonPressed;
 			unifyBar.OnVolumeMuteButtonPressed -= UnifyBarOnVolumeMuteButtonPressed;
 			unifyBar.OnPrivacyMuteButtonPressed -= UnifyBarOnPrivacyMuteButtonPressed;
+			unifyBar.OnLightsButtonPressed -= UnifyBarOnLightsButtonPressed;
 			unifyBar.OnPageChanged -= UnifyBarOnPageChanged;
 		}
 
@@ -341,6 +357,32 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar
 		}
 
 		/// <summary>
+		/// Called when the user presses the lights button.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void UnifyBarOnLightsButtonPressed(object sender, BoolEventArgs e)
+		{
+			if (m_LightingInterface == null)
+				return;
+
+			if (!e.Data)
+				return;
+
+			LightingProcessorControl[] presets = m_LightingInterface.GetPresets().ToArray();
+			if (presets.Length != 2)
+				return;
+
+			LightingProcessorControl off = presets[0];
+			LightingProcessorControl on = presets[1];
+			
+			if (m_LightingInterface.GetPreset() == on.Id)
+				m_LightingInterface.SetPreset(off.Id);
+			else
+				m_LightingInterface.SetPreset(on.Id);
+		}
+
+		/// <summary>
 		/// Called when the user changes pages.
 		/// </summary>
 		/// <param name="sender"></param>
@@ -389,6 +431,56 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		private void VolumePointHelperOnVolumeControlSupportedVolumeFeaturesChanged(object sender, GenericEventArgs<eVolumeFeatures> e)
+		{
+			UpdateUnifyBar();
+		}
+
+		#endregion
+
+		#region LightingRoomInterface Callbacks
+
+		/// <summary>
+		/// Subscribe to the lighting device.
+		/// </summary>
+		/// <param name="device"></param>
+		private void Subscribe(ILightingRoomInterfaceDevice device)
+		{
+			if (device == null)
+				return;
+
+			device.OnControlsChanged += LightingDeviceOnControlsChanged;
+			device.OnPresetChanged += LightingDeviceOnPresetChanged;
+		}
+
+		/// <summary>
+		/// Unsubscribe from the lighting device.
+		/// </summary>
+		/// <param name="device"></param>
+		private void Unsubscribe(ILightingRoomInterfaceDevice device)
+		{
+			if (device == null)
+				return;
+
+			device.OnControlsChanged -= LightingDeviceOnControlsChanged;
+			device.OnPresetChanged -= LightingDeviceOnPresetChanged;
+		}
+
+		/// <summary>
+		/// Called when a lighting control is added to or removed from the lighting device.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void LightingDeviceOnControlsChanged(object sender, EventArgs args)
+		{
+			UpdateUnifyBar();
+		}
+
+		/// <summary>
+		/// Called when the lighting presets change.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void LightingDeviceOnPresetChanged(object sender, GenericEventArgs<int?> args)
 		{
 			UpdateUnifyBar();
 		}

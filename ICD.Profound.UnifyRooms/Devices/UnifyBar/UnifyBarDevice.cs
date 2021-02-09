@@ -6,7 +6,6 @@ using ICD.Connect.Protocol.Network.Attributes.Rpc;
 using ICD.Connect.Protocol.Network.Ports;
 using ICD.Connect.Protocol.Network.Ports.TcpSecure;
 using ICD.Connect.Protocol.Network.RemoteProcedure;
-using ICD.Connect.Protocol.Ports;
 
 namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 {
@@ -43,6 +42,11 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 		/// Raised when the user presses the privacy mute button.
 		/// </summary>
 		public event EventHandler<BoolEventArgs> OnPrivacyMuteButtonPressed;
+
+		/// <summary>
+		/// Raised when the user presses the lights button.
+		/// </summary>
+		public event EventHandler<BoolEventArgs> OnLightsButtonPressed;
 
 		/// <summary>
 		/// Raised when the user flips to a different page.
@@ -127,6 +131,7 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 			OnVolumeDownButtonPressed = null;
 			OnVolumeMuteButtonPressed = null;
 			OnPrivacyMuteButtonPressed = null;
+			OnLightsButtonPressed = null;
 			OnPageChanged = null;
 			OnIsConnectedChanged = null;
 
@@ -299,6 +304,16 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 		private void HandlePrivacyMuteButton(bool pressed)
 		{
 			OnPrivacyMuteButtonPressed.Raise(this, pressed);
+		}
+
+		/// <summary>
+		/// Called by the server to raise the privacy mute button event.
+		/// </summary>
+		/// <param name="pressed"></param>
+		[Rpc("SetLightsButtonPressed")]
+		private void HandleLightsButton(bool pressed)
+		{
+			OnLightsButtonPressed.Raise(this, pressed);
 		}
 
 		/// <summary>
