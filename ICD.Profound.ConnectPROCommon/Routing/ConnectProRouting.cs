@@ -417,10 +417,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 
 			UnrouteAudio();
 
-			IRouteSourceControl[] osds = m_Room.Originators
-			                                   .GetInstancesRecursive<OsdPanelDevice>()
-			                                   .Select(o => o.Controls.GetControl<IRouteSourceControl>())
-			                                   .ToArray();
+			IRouteSourceControl[] osds = m_Sources.GetOsdSourceControls().ToArray();
 
 			foreach (IDestination destination in m_Destinations.GetVideoDestinations().SelectMany(d => d.GetDestinations()))
 			{

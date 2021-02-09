@@ -53,6 +53,8 @@ namespace ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources
 
 	public sealed class ConnectProSource : AbstractSource<ConnectProSourceSettings>
 	{
+		#region Properties
+
 		/// <summary>
 		/// Gets/sets the icon serial.
 		/// </summary>
@@ -86,6 +88,15 @@ namespace ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources
 		public string CueNameOrIcon { get { return string.IsNullOrEmpty(CueName) ? Icon : CueName ; } }
 
 		/// <summary>
+		/// When enabled this source will be treated as an OSD source to be routed when the room is not in use.
+		/// </summary>
+		public bool IsOsdSource { get; set; }
+
+		#endregion
+
+		#region Settings
+
+		/// <summary>
 		/// Override to clear the instance settings.
 		/// </summary>
 		protected override void ClearSettingsFinal()
@@ -97,6 +108,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources
 			CueName = null;
 			ControlOverride = eControlOverride.Default;
 			ConferenceOverride = eConferenceOverride.None;
+			IsOsdSource = false;
 		}
 
 		/// <summary>
@@ -112,6 +124,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources
 			settings.CueName = CueName;
 			settings.ControlOverride = ControlOverride;
 			settings.ConferenceOverride = ConferenceOverride;
+			settings.IsOsdSource = IsOsdSource;
 		}
 
 		/// <summary>
@@ -128,6 +141,9 @@ namespace ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources
 			CueName = settings.CueName;
 			ControlOverride = settings.ControlOverride;
 			ConferenceOverride = settings.ConferenceOverride;
+			IsOsdSource = settings.IsOsdSource;
 		}
+
+		#endregion
 	}
 }

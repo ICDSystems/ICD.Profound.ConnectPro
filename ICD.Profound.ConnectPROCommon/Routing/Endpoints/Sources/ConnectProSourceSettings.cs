@@ -14,6 +14,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources
 		private const string CUE_NAME_ELEMENT = "CueName";
 		private const string CONTROL_OVERRIDE_ELEMENT = "ControlOverride";
 		private const string CONFERENCE_OVERRIDE_ELEMENT = "ConferenceOverride";
+		private const string IS_OSD_SOURCE = "IsOsdSource";
 
 		#region Properties
 
@@ -43,6 +44,11 @@ namespace ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources
 		/// </summary>
 		public eConferenceOverride ConferenceOverride { get; set; }
 
+		/// <summary>
+		/// When enabled this source will be treated as an OSD source to be routed when the room is not in use.
+		/// </summary>
+		public bool IsOsdSource { get; set; }
+
 		#endregion
 
 		/// <summary>
@@ -58,6 +64,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources
 			writer.WriteElementString(CUE_NAME_ELEMENT, CueName);
 			writer.WriteElementString(CONTROL_OVERRIDE_ELEMENT, IcdXmlConvert.ToString(ControlOverride));
 			writer.WriteElementString(CONFERENCE_OVERRIDE_ELEMENT, IcdXmlConvert.ToString(ConferenceOverride));
+			writer.WriteElementString(IS_OSD_SOURCE, IcdXmlConvert.ToString(IsOsdSource));
 		}
 
 		/// <summary>
@@ -77,6 +84,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources
 			ConferenceOverride =
 				XmlUtils.TryReadChildElementContentAsEnum<eConferenceOverride>(xml, CONFERENCE_OVERRIDE_ELEMENT, true) ??
 				eConferenceOverride.None;
+			IsOsdSource = XmlUtils.TryReadChildElementContentAsBoolean(xml, IS_OSD_SOURCE) ?? false;
 
 			// Backwards compatibility
 			bool? share = XmlUtils.TryReadChildElementContentAsBoolean(xml, SHARE_ELEMENT);

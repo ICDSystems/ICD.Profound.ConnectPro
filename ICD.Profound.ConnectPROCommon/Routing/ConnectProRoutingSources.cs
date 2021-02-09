@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
+using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services;
 using ICD.Connect.Conferencing.Controls.Dialing;
@@ -11,6 +12,7 @@ using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
+using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Controls;
@@ -347,6 +349,38 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 
 			ConnectProSource connectProSource = source as ConnectProSource;
 			return connectProSource == null ? eControlOverride.Default : connectProSource.ControlOverride;
+		}
+
+		/// <summary>
+		/// Gets the OSD source controls for the room.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<IRouteSourceControl> GetOsdSourceControls()
+		{
+			IcdHashSet<IRouteSourceControl> output = new IcdHashSet<IRouteSourceControl>();
+
+			// OsdPanelDevices are considered OSD sources unless they have a source that specifies otherwise
+			IEnumerable<IRouteSourceControl> osdSourceControls =
+				m_Routing.Room
+				         .Originators
+				         .GetInstancesRecursive<OsdPanelDevice>()
+				         .Select(o => o.Controls.GetControl<IRouteSourceControl>());
+			output.AddRange(osdSourceControls);
+
+			foreach (ISource source in GetRoomSources())
+			{
+				ConnectProSource cproSource = source as ConnectProSource;
+				bool isOsdSource = cproSource != null && cproSource.IsOsdSource;
+
+				IRouteSourceControl control = m_Routing.RoutingGraph.GetSourceControl(source.Device, source.Control);
+
+				if (isOsdSource)
+					output.Add(control);
+				else
+					output.Remove(control);
+			}
+			
+			return output;
 		}
 
 		#endregion
