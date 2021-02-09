@@ -126,7 +126,7 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar
 			bool? isPowered = m_Room == null ? (bool?)null : m_Room.IsAwake;
 
 			bool? isPrivacyMuted =
-				m_SubscribedConferenceManager == null || !m_SubscribedConferenceManager.CanPrivacyMute()
+				m_SubscribedConferenceManager == null //|| !m_SubscribedConferenceManager.CanPrivacyMute()
 					? (bool?)null
 					: m_SubscribedConferenceManager.PrivacyMuted;
 
