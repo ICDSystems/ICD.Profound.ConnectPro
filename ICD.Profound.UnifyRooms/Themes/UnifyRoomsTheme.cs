@@ -20,6 +20,8 @@ namespace ICD.Profound.UnifyRooms.Themes
 			m_UiFactories = new IcdHashSet<IUserInterfaceFactory>
 			{
 				new UnifyBarUserInterfaceFactory(this),
+
+				// TODO - Replace with web panel
 				new ConnectProUserInterfaceFactory(this)
 			};
 		}
@@ -29,7 +31,7 @@ namespace ICD.Profound.UnifyRooms.Themes
 		/// </summary>
 		public override IEnumerable<IUserInterfaceFactory> GetUiFactories()
 		{
-			return m_UiFactories.ToArray();
+			return m_UiFactories.Concat(base.GetUiFactories());
 		}
 	}
 }
