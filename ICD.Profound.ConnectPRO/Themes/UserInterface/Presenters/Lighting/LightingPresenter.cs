@@ -19,7 +19,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Lighting
 	[PresenterBinding(typeof(ILightingPresenter))]
 	public sealed class LightingPresenter : AbstractUiPresenter<ILightingView> , ILightingPresenter
 	{
-		public event EventHandler<BoolEventArgs> OnAvalabilityChanged;
+		public event EventHandler<BoolEventArgs> OnAvailabilityChanged;
 
 		private readonly SafeCriticalSection m_RefreshSection;
 
@@ -59,7 +59,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Lighting
 
 				m_PresetsAvailable = value;
 
-				OnAvalabilityChanged.Raise(this, new BoolEventArgs(m_PresetsAvailable));
+				OnAvailabilityChanged.Raise(this, new BoolEventArgs(m_PresetsAvailable));
 			}
 		}
 

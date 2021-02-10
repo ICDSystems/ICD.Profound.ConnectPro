@@ -6,7 +6,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Lighting
 {
 	interface ILightingPresenter : IUiPresenter<ILightingView>
 	{
-		event EventHandler<BoolEventArgs> OnAvalabilityChanged;
+		event EventHandler<BoolEventArgs> OnAvailabilityChanged;
 
 		bool PresetsAvailable { get; }
 	}

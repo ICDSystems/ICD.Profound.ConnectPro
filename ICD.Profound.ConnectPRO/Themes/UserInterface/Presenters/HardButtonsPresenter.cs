@@ -45,7 +45,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 			m_LightingPresenter = Navigation.LazyLoadPresenter<ILightingPresenter>();
 
 			m_VolumePresenter.OnControlAvailableChanged += VolumePresenterOnControlAvailableChanged;
-			m_LightingPresenter.OnAvalabilityChanged += LightingPresenterOnAvailableChanged;
+			m_LightingPresenter.OnAvailabilityChanged += LightingPresenterOnAvailableChanged;
 			
 		}
 
@@ -55,7 +55,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters
 		public override void Dispose()
 		{
 			m_VolumePresenter.OnControlAvailableChanged -= VolumePresenterOnControlAvailableChanged;
-			m_LightingPresenter.OnAvalabilityChanged -= LightingPresenterOnAvailableChanged;
+			m_LightingPresenter.OnAvailabilityChanged -= LightingPresenterOnAvailableChanged;
 
 			base.Dispose();
 		}

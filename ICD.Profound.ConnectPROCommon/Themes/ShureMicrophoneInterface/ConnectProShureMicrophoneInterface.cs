@@ -199,12 +199,12 @@ namespace ICD.Profound.ConnectPROCommon.Themes.ShureMicrophoneInterface
 
 			try
 			{
-				bool inCall = m_Room != null && m_Room.Dialing.ConferenceActionsAvailable(eInCall.Audio);
+				bool conferenceActionsAvailable = m_Room != null && m_Room.Dialing.ConferenceActionsAvailable(eInCall.Audio);
 				bool onHold = m_SubscribedConferenceManager != null &&
 							  m_SubscribedConferenceManager.Dialers.ActiveConferences.AnyAndAll(c => c.Status == eConferenceStatus.OnHold);
 				bool privacyMuted = m_SubscribedConferenceManager != null && m_SubscribedConferenceManager.PrivacyMuted;
 
-				eLedBrightness brightness = inCall ? eLedBrightness.Default : eLedBrightness.Disabled;
+				eLedBrightness brightness = conferenceActionsAvailable ? eLedBrightness.Default : eLedBrightness.Disabled;
 
 				eLedColor color =
 					onHold
