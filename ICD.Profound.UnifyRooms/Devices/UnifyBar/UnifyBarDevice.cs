@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.API.Nodes;
 using ICD.Connect.Devices;
 using ICD.Connect.Protocol.Network.Attributes.Rpc;
@@ -11,42 +14,10 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 {
 	public sealed class UnifyBarDevice : AbstractDevice<UnifyBarDeviceSettings>
 	{
-		public enum ePage
-		{
-			Unknown = 0,
-			ConferencingApp = 1,
-			UnifyApp = 2
-		}
-
 		/// <summary>
-		/// Raised when the user presses the power button.
+		/// Raised when the user presses a main button.
 		/// </summary>
-		public event EventHandler<BoolEventArgs> OnPowerButtonPressed;
-
-		/// <summary>
-		/// Raised when the user presses the volume up button.
-		/// </summary>
-		public event EventHandler<BoolEventArgs> OnVolumeUpButtonPressed;
-
-		/// <summary>
-		/// Raised when the user presses the volume down button.
-		/// </summary>
-		public event EventHandler<BoolEventArgs> OnVolumeDownButtonPressed;
-
-		/// <summary>
-		/// Raised when the user presses the volume mute button.
-		/// </summary>
-		public event EventHandler<BoolEventArgs> OnVolumeMuteButtonPressed;
-
-		/// <summary>
-		/// Raised when the user presses the privacy mute button.
-		/// </summary>
-		public event EventHandler<BoolEventArgs> OnPrivacyMuteButtonPressed;
-
-		/// <summary>
-		/// Raised when the user presses the lights button.
-		/// </summary>
-		public event EventHandler<BoolEventArgs> OnLightsButtonPressed;
+		public event EventHandler<MainButtonPressedEventArgs> OnMainButtonPressed;
 
 		/// <summary>
 		/// Raised when the user flips to a different page.
@@ -58,8 +29,15 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 		/// </summary>
 		public event EventHandler<BoolEventArgs> OnIsConnectedChanged;
 
+		/// <summary>
+		/// Raised when the main buttons collection changes.
+		/// </summary>
+		public event EventHandler OnMainButtonsChanged;
+
 		private readonly INetworkPort m_Client;
 		private readonly ClientSerialRpcController m_RpcClient;
+		private readonly List<UnifyBarMainButton> m_MainButtons;
+		private readonly SafeCriticalSection m_MainButtonsSection;
 
 		private ePage m_Page;
 		private bool m_IsConnected;
@@ -78,6 +56,13 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 					return;
 
 				m_IsConnected = value;
+
+				UpdateCachedOnlineStatus();
+
+				if (m_IsConnected)
+					Initialize();
+				else
+					Page = ePage.Unknown;
 
 				OnIsConnectedChanged.Raise(this, m_IsConnected);
 			}
@@ -107,6 +92,9 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 		/// </summary>
 		public UnifyBarDevice()
 		{
+			m_MainButtons = new List<UnifyBarMainButton>();
+			m_MainButtonsSection = new SafeCriticalSection();
+
 			m_RpcClient = new ClientSerialRpcController(this);
 			Subscribe(m_RpcClient);
 
@@ -119,6 +107,15 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 			m_RpcClient.SetPort(m_Client, false);
 		}
 
+		/// <summary>
+		/// Gets the main buttons.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<UnifyBarMainButton> GetMainButtons()
+		{
+			return m_MainButtonsSection.Execute(() => m_MainButtons.ToArray());
+		}
+
 		#region Private Methods
 
 		/// <summary>
@@ -126,14 +123,10 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 		/// </summary>
 		protected override void DisposeFinal(bool disposing)
 		{
-			OnPowerButtonPressed = null;
-			OnVolumeUpButtonPressed = null;
-			OnVolumeDownButtonPressed = null;
-			OnVolumeMuteButtonPressed = null;
-			OnPrivacyMuteButtonPressed = null;
-			OnLightsButtonPressed = null;
+			OnMainButtonPressed = null;
 			OnPageChanged = null;
 			OnIsConnectedChanged = null;
+			OnMainButtonsChanged = null;
 
 			base.DisposeFinal(disposing);
 
@@ -150,6 +143,57 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 		protected override bool GetIsOnlineStatus()
 		{
 			return m_Client != null && m_Client.IsOnline;
+		}
+
+		/// <summary>
+		/// Sets up the initial device state.
+		/// </summary>
+		private void Initialize()
+		{
+			int mainButtonCount = m_MainButtonsSection.Execute(() => m_MainButtons.Count);
+
+			SetMainButtonCount(mainButtonCount);
+			UpdatePage();
+		}
+
+		/// <summary>
+		/// Updates the buttons collection to match the given count.
+		/// </summary>
+		/// <param name="count"></param>
+		private IEnumerable<UnifyBarMainButton> BuildMainButtons(int count)
+		{
+			bool changed = false;
+
+			m_MainButtonsSection.Enter();
+
+			try
+			{
+				// Remove 
+				for (int index = m_MainButtons.Count - 1; index >= count; index--)
+				{
+					UnifyBarMainButton button = m_MainButtons[index];
+					button.Dispose();
+					m_MainButtons.RemoveAt(index);
+					changed = true;
+				}
+
+				// Add
+				for (int index = m_MainButtons.Count; index < count; index++)
+				{
+					UnifyBarMainButton button = new UnifyBarMainButton(this, index);
+					m_MainButtons.Add(button);
+					changed = true;
+				}
+			}
+			finally
+			{
+				m_MainButtonsSection.Leave();
+			}
+
+			if (changed)
+				OnMainButtonsChanged.Raise(this);
+
+			return m_MainButtons.ToArray();
 		}
 
 		#endregion
@@ -194,13 +238,6 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 		private void RpcControllerOnConnectedStateChanged(object sender, BoolEventArgs args)
 		{
 			IsConnected = m_RpcClient.IsConnected;
-
-			UpdateCachedOnlineStatus();
-
-			if (args.Data)
-				m_RpcClient.CallMethod("GetPage");
-			else
-				Page = ePage.Unknown;
 		}
 
 		#endregion
@@ -208,48 +245,80 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 		#region RPC Methods
 
 		/// <summary>
-		/// Sends the powered state to the server.
+		/// Sets the number of main buttons.
 		/// </summary>
-		/// <param name="isPowered"></param>
-		public void SetIsPoweredFeedback(bool? isPowered)
+		/// <param name="count"></param>
+		public IEnumerable<UnifyBarMainButton> SetMainButtonCount(int count)
 		{
-			m_RpcClient.CallMethod("SetIsPoweredFeedback", isPowered);
+			m_RpcClient.CallMethod("SetMainButtonCount", count);
+			return BuildMainButtons(count);
 		}
 
 		/// <summary>
-		/// Sends the muted state to the server.
+		/// Sets the selected state of the button at the given index.
 		/// </summary>
-		/// <param name="isMuted"></param>
-		public void SetIsMutedFeedback(bool? isMuted)
+		/// <param name="index"></param>
+		/// <param name="selected"></param>
+		public void SetMainButtonSelected(int index, bool selected)
 		{
-			m_RpcClient.CallMethod("SetIsMutedFeedback", isMuted);
+			m_RpcClient.CallMethod("SetMainButtonSelected", index, selected);
 		}
 
 		/// <summary>
-		/// Sends the privacy muted state to the server.
+		/// Sets the enabled state of the button at the given index.
 		/// </summary>
-		/// <param name="isPrivacyMuted"></param>
-		public void SetIsPrivacyMutedFeedback(bool? isPrivacyMuted)
+		/// <param name="index"></param>
+		/// <param name="enabled"></param>
+		public void SetMainButtonEnabled(int index, bool enabled)
 		{
-			m_RpcClient.CallMethod("SetIsPrivacyMutedFeedback", isPrivacyMuted);
+			m_RpcClient.CallMethod("SetMainButtonEnabled", index, enabled);
 		}
 
 		/// <summary>
-		/// Sends the lights state to the server.
+		/// Sets the label of the button at the given index.
 		/// </summary>
-		/// <param name="lights"></param>
-		public void SetLightsFeedback(bool? lights)
+		/// <param name="index"></param>
+		/// <param name="label"></param>
+		public void SetMainButtonLabel(int index, string label)
 		{
-			m_RpcClient.CallMethod("SetLightsFeedback", lights);
+			m_RpcClient.CallMethod("SetMainButtonLabel", index, label);
 		}
 
 		/// <summary>
-		/// Sends the volume ramp enabled state to the server.
+		/// Sets the type of button at the given index.
 		/// </summary>
-		/// <param name="volumeEnabled"></param>
-		public void SetVolumeRampEnabled(bool volumeEnabled)
+		/// <param name="index"></param>
+		/// <param name="type"></param>
+		public void SetMainButtonType(int index, eMainButtonType type)
 		{
-			m_RpcClient.CallMethod("SetVolumeRampEnabled", volumeEnabled);
+			m_RpcClient.CallMethod("SetMainButtonType", index, (int)type);
+		}
+
+		/// <summary>
+		/// Sets the icon of the button at the given index.
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="icon"></param>
+		public void SetMainButtonIcon(int index, eMainButtonIcon icon)
+		{
+			m_RpcClient.CallMethod("SetMainButtonIcon", index, (int)icon);
+		}
+
+		/// <summary>
+		/// Sets the current page.
+		/// </summary>
+		/// <param name="page"></param>
+		public void SetPage(ePage page)
+		{
+			m_RpcClient.CallMethod("SetPage", (int)page);
+		}
+		
+		/// <summary>
+		/// Asks the server for the current page.
+		/// </summary>
+		public void UpdatePage()
+		{
+			m_RpcClient.CallMethod("GetPage");
 		}
 
 		#endregion
@@ -259,61 +328,12 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 		/// <summary>
 		/// Called by the server to raise the power button event.
 		/// </summary>
+		/// <param name="index"></param>
 		/// <param name="pressed"></param>
-		[Rpc("SetPowerButtonPressed")]
-		private void HandlePowerButton(bool pressed)
+		[Rpc("SetMainButtonPressed")]
+		private void HandleMainButtonPressed(int index, bool pressed)
 		{
-			OnPowerButtonPressed.Raise(this, pressed);
-		}
-
-		/// <summary>
-		/// Called by the server to raise the volume up button event.
-		/// </summary>
-		/// <param name="pressed"></param>
-		[Rpc("SetVolumeUpButtonPressed")]
-		private void HandleVolumeUpButton(bool pressed)
-		{
-			OnVolumeUpButtonPressed.Raise(this, pressed);
-		}
-
-		/// <summary>
-		/// Called by the server to raise the volume down button event.
-		/// </summary>
-		/// <param name="pressed"></param>
-		[Rpc("SetVolumeDownButtonPressed")]
-		private void HandleVolumeDownButton(bool pressed)
-		{
-			OnVolumeDownButtonPressed.Raise(this, pressed);
-		}
-
-		/// <summary>
-		/// Called by the server to raise the volume mute button event.
-		/// </summary>
-		/// <param name="pressed"></param>
-		[Rpc("SetMuteButtonPressed")]
-		private void HandleVolumeMuteButton(bool pressed)
-		{
-			OnVolumeMuteButtonPressed.Raise(this, pressed);
-		}
-
-		/// <summary>
-		/// Called by the server to raise the privacy mute button event.
-		/// </summary>
-		/// <param name="pressed"></param>
-		[Rpc("SetPrivacyMuteButtonPressed")]
-		private void HandlePrivacyMuteButton(bool pressed)
-		{
-			OnPrivacyMuteButtonPressed.Raise(this, pressed);
-		}
-
-		/// <summary>
-		/// Called by the server to raise the privacy mute button event.
-		/// </summary>
-		/// <param name="pressed"></param>
-		[Rpc("SetLightsButtonPressed")]
-		private void HandleLightsButton(bool pressed)
-		{
-			OnLightsButtonPressed.Raise(this, pressed);
+			OnMainButtonPressed.Raise(this, new MainButtonPressedEventArgs(index, pressed));
 		}
 
 		/// <summary>
