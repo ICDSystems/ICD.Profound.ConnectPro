@@ -207,7 +207,8 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 		/// <param name="eventArgs"></param>
 		private void ParentOnMainButtonPressed(object sender, MainButtonPressedEventArgs eventArgs)
 		{
-			Pressed = eventArgs.Pressed;
+			if (eventArgs.Index == m_Index)
+				Pressed = eventArgs.Pressed;
 		}
 
 		#endregion
