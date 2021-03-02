@@ -101,7 +101,8 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 			m_Client = new IcdSecureTcpClient
 			{
 				Address = "localhost",
-				Port = 33333
+				Port = 33333,
+				Name = "UnifyBarClient"
 			};
 
 			m_RpcClient.SetPort(m_Client, false);
@@ -385,6 +386,27 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 
 			addRow("Is Connected", IsConnected);
 			addRow("Page", Page);
+		}
+
+		/// <summary>
+		/// Gets the child console nodes.
+		/// </summary>
+		/// <returns></returns>
+		public override IEnumerable<IConsoleNodeBase> GetConsoleNodes()
+		{
+			foreach (IConsoleNodeBase node in GetBaseConsoleNodes())
+				yield return node;
+
+			yield return m_Client;
+		}
+
+		/// <summary>
+		/// Workaround for "unverifiable code" warning.
+		/// </summary>
+		/// <returns></returns>
+		private IEnumerable<IConsoleNodeBase> GetBaseConsoleNodes()
+		{
+			return base.GetConsoleNodes();
 		}
 
 		#endregion
