@@ -20,7 +20,7 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar
 		private readonly UnifyRoomsTheme m_Theme;
 		private readonly VolumeRepeater m_VolumeRepeater;
 		private readonly VolumePointHelper m_VolumePointHelper;
-		private readonly List<IUnifyBarButtonUi> m_Buttons;
+		private readonly IUnifyBarButtonUi[] m_Buttons;
 
 		private ICommercialRoom m_Room;
 
@@ -61,15 +61,12 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar
 			m_VolumeRepeater = new VolumeRepeater();
 			m_VolumePointHelper = new VolumePointHelper();
 
-			m_Buttons = new List<IUnifyBarButtonUi>
-			{
-				new UnifyBarPowerButtonUi(),
-				new UnifyBarVolumeUpButtonUi(m_VolumePointHelper, m_VolumeRepeater),
-				new UnifyBarVolumeDownButtonUi(m_VolumePointHelper, m_VolumeRepeater),
-				new UnifyBarMuteButtonUi(m_VolumePointHelper, m_VolumeRepeater),
-				new UnifyBarPrivacyMuteButtonUi(),
-				new UnifyBarLightsButtonUi()
-			};
+			m_Buttons = theme.UnifyBarButtons
+			                 .Buttons
+			                 .Where(b => b != eMainButton.None)
+			                 .Take(6)
+			                 .Select(b => InstantiateButton(b))
+			                 .ToArray();
 
 			Subscribe(m_UnifyBar);
 
@@ -126,6 +123,33 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar
 		#endregion
 
 		#region Private Methods
+
+		/// <summary>
+		/// Instantiates a button for the given type.
+		/// </summary>
+		/// <param name="buttonType"></param>
+		/// <returns></returns>
+		[NotNull]
+		private IUnifyBarButtonUi InstantiateButton(eMainButton buttonType)
+		{
+			switch (buttonType)
+			{
+				case eMainButton.RoomPower:
+					return new UnifyBarPowerButtonUi();
+				case eMainButton.VolumeUp:
+					return new UnifyBarVolumeUpButtonUi(m_VolumePointHelper, m_VolumeRepeater);
+				case eMainButton.VolumeDown:
+					return new UnifyBarVolumeDownButtonUi(m_VolumePointHelper, m_VolumeRepeater);
+				case eMainButton.VolumeMute:
+					return new UnifyBarMuteButtonUi(m_VolumePointHelper, m_VolumeRepeater);
+				case eMainButton.PrivacyMute:
+					return new UnifyBarPrivacyMuteButtonUi();
+				case eMainButton.ToggleLights:
+					return new UnifyBarLightsButtonUi();
+				default:
+					throw new ArgumentOutOfRangeException("buttonType");
+			}
+		}
 
 		/// <summary>
 		/// Updates the volume point that is being manipulated by the UI.
