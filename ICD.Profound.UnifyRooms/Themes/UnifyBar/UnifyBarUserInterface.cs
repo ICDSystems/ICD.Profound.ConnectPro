@@ -146,6 +146,8 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar
 					return new UnifyBarPrivacyMuteButtonUi();
 				case eMainButton.ToggleLights:
 					return new UnifyBarLightsButtonUi();
+				case eMainButton.SwitchAccount:
+					return new UnifyBarSwitchAccountsButtonUi(m_Theme.UserAccounts);
 				default:
 					throw new ArgumentOutOfRangeException("buttonType");
 			}

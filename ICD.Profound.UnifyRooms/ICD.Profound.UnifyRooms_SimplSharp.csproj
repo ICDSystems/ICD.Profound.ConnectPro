@@ -84,12 +84,15 @@
     <Compile Include="Themes\UnifyBar\Buttons\UnifyBarMuteButtonUi.cs" />
     <Compile Include="Themes\UnifyBar\Buttons\UnifyBarPowerButtonUi.cs" />
     <Compile Include="Themes\UnifyBar\Buttons\UnifyBarPrivacyMuteButtonUi.cs" />
+    <Compile Include="Themes\UnifyBar\Buttons\UnifyBarSwitchAccountsButtonUi.cs" />
     <Compile Include="Themes\UnifyBar\Buttons\UnifyBarVolumeDownButtonUi.cs" />
     <Compile Include="Themes\UnifyBar\Buttons\UnifyBarVolumeUpButtonUi.cs" />
     <Compile Include="Themes\UnifyBar\UnifyBarUserInterface.cs" />
     <Compile Include="Themes\UnifyBar\UnifyBarUserInterfaceFactory.cs" />
     <Compile Include="Themes\UnifyRoomsTheme.cs" />
     <Compile Include="Themes\UnifyRoomsThemeSettings.cs" />
+    <Compile Include="UserAccounts\UserAccount.cs" />
+    <Compile Include="UserAccounts\UserAccountsConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\ICD.Common.Utils\ICD.Common.Utils\ICD.Common.Utils_SimplSharp.csproj">

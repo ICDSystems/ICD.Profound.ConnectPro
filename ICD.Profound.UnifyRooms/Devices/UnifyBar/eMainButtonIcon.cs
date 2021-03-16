@@ -7,6 +7,8 @@
 		VolumeDown,
 		VolumeUp,
 		PrivacyMute,
-		Lights
+		Lights,
+		Zoom,
+		Teams
 	}
 }

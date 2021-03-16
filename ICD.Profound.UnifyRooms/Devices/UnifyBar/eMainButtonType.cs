@@ -10,6 +10,11 @@
 		/// <summary>
 		/// Button goes red when activated.
 		/// </summary>
-		Mute
+		Mute,
+
+		/// <summary>
+		/// Shows a confirmation modal before performing the switch.
+		/// </summary>
+		SwitchAccount
 	}
 }
