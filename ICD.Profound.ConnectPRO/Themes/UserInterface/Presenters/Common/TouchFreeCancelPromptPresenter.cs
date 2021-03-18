@@ -1,10 +1,6 @@
 ﻿using System;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
-using ICD.Connect.Calendaring.Bookings;
-using ICD.Connect.Calendaring.CalendarManagers;
-using ICD.Connect.Partitioning.Commercial;
-using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.Common;

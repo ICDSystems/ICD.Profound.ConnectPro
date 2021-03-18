@@ -16,7 +16,6 @@ using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Controls.Power;
 using ICD.Connect.Misc.Vibe.Devices.VibeBoard;
-using ICD.Connect.Panels.Server.Osd;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Connections;
 using ICD.Connect.Routing.Controls;
