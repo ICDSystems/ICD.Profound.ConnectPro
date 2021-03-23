@@ -3,7 +3,7 @@ using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Contacts;
-using ICD.Connect.Conferencing.Zoom.Components.Directory;
+using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms.Components.Directory;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.Contacts;

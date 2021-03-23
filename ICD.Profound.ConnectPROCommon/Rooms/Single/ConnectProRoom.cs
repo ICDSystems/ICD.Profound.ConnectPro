@@ -9,6 +9,7 @@ using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.ConferencePoints;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Zoom;
+using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms;
 using ICD.Connect.Devices;
 using ICD.Connect.Partitioning;
 using ICD.Connect.Partitioning.Commercial;

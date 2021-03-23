@@ -4,7 +4,7 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Participants;
-using ICD.Connect.Conferencing.Zoom.Controls.Conferencing;
+using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms.Controls.Conferencing;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference.ActiveMeeting;

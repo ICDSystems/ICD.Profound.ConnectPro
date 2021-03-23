@@ -3,7 +3,7 @@ using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Participants;
-using ICD.Connect.Conferencing.Zoom.Controls.Conferencing;
+using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms.Controls.Conferencing;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IPresenters;
 using ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IPresenters.Conference.ActiveConference;

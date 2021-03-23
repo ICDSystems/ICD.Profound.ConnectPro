@@ -11,7 +11,7 @@ using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.Devices;
 using ICD.Connect.Conferencing.EventArguments;
-using ICD.Connect.Conferencing.Zoom.Controls;
+using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms.Controls;
 using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls;
 using ICD.Connect.Devices.Controls.Power;

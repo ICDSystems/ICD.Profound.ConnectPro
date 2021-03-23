@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using ICD.Common.Properties;
 using ICD.Connect.Conferencing.Controls.Dialing;
-using ICD.Connect.Conferencing.Zoom.Controls.Conferencing;
+using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms.Controls.Conferencing;
 using ICD.Profound.ConnectPROCommon.Rooms;
 
 namespace ICD.Profound.ConnectPROCommon.Dialing.ConferenceSetup

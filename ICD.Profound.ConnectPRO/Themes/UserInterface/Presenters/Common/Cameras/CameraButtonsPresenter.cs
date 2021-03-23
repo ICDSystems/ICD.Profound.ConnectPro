@@ -7,7 +7,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Layout;
 using ICD.Connect.Conferencing.Controls.Routing;
-using ICD.Connect.Conferencing.Zoom.Controls.Conferencing;
+using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms.Controls.Conferencing;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;

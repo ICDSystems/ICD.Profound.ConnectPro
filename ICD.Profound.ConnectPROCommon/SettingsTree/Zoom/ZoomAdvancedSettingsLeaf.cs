@@ -4,7 +4,8 @@ using System.Linq;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Zoom;
-using ICD.Connect.Conferencing.Zoom.Components.Audio;
+using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms;
+using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms.Components.Audio;
 using ICD.Profound.ConnectPROCommon.Rooms;
 
 namespace ICD.Profound.ConnectPROCommon.SettingsTree.Zoom
