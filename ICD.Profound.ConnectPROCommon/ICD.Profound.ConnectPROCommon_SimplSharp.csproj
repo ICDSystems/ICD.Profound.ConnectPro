@@ -69,6 +69,7 @@
     <Compile Include="Devices\ConnectProEventMessages.cs" />
     <Compile Include="Devices\ConnectProEventServerDevice.cs" />
     <Compile Include="Devices\ConnectProEventServerDeviceSettings.cs" />
+    <Compile Include="Devices\ConnectProEventServerEventArgs.cs" />
     <Compile Include="Dialing\ConferenceSetup\AbstractConferenceSetup.cs" />
     <Compile Include="Dialing\ConferenceSetup\ConferenceSetupFactory.cs" />
     <Compile Include="Dialing\ConferenceSetup\IConferenceSetup.cs" />
@@ -143,6 +144,17 @@
     <Compile Include="Themes\AbstractConnectProThemeSettings.cs" />
     <Compile Include="Themes\EventServerUserInterface\ConnectProEventServerUserInterface.cs" />
     <Compile Include="Themes\EventServerUserInterface\ConnectProEventServerUserInterfaceFactory.cs" />
+    <Compile Include="Themes\EventServerUserInterface\EventServerKeyHandlers\AbstractEventServerKeyHandler.cs" />
+    <Compile Include="Themes\EventServerUserInterface\EventServerKeyHandlers\AwakeEventServerKeyHandler.cs" />
+    <Compile Include="Themes\EventServerUserInterface\EventServerKeyHandlers\AudioSourcesEventServerKeyHandler.cs" />
+    <Compile Include="Themes\EventServerUserInterface\EventServerKeyHandlers\ActiveCameraEventServerKeyHandler.cs" />
+    <Compile Include="Themes\EventServerUserInterface\EventServerKeyHandlers\IEventServerKeyHandler.cs" />
+    <Compile Include="Themes\EventServerUserInterface\EventServerKeyHandlers\VideoSourcesEventServerKeyHandler.cs" />
+    <Compile Include="Themes\EventServerUserInterface\EventServerKeyHandlers\IncomingCallEventServerKeyHandler.cs" />
+    <Compile Include="Themes\EventServerUserInterface\EventServerKeyHandlers\IsInCallEventServerKeyHandler.cs" />
+    <Compile Include="Themes\EventServerUserInterface\EventServerKeyHandlers\RoomCombineEventServerKeyHandler.cs" />
+    <Compile Include="Themes\EventServerUserInterface\EventServerKeyHandlers\PrivacyMuteEventServerKeyHandler.cs" />
+    <Compile Include="Themes\EventServerUserInterface\EventServerKeyHandlers\MeetingEventServerKeyHandler.cs" />
     <Compile Include="Themes\IConnectProTheme.cs" />
     <Compile Include="Themes\IConnectProThemeSettings.cs" />
     <Compile Include="Themes\Mpc3201UserInterface\ConnectProMpc3201Interface.cs" />

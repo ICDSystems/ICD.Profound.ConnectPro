@@ -1,164 +1,41 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using ICD.Common.Properties;
-using ICD.Common.Utils;
-using ICD.Common.Utils.Collections;
-using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
-using ICD.Connect.Conferencing.ConferenceManagers;
-using ICD.Connect.Conferencing.EventArguments;
-using ICD.Connect.Conferencing.IncomingCalls;
-using ICD.Connect.Devices;
 using ICD.Connect.Partitioning.Rooms;
-using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Themes.UserInterfaces;
 using ICD.Profound.ConnectPROCommon.Devices;
 using ICD.Profound.ConnectPROCommon.Rooms;
+using ICD.Profound.ConnectPROCommon.Themes.EventServerUserInterface.EventServerKeyHandlers;
 
 namespace ICD.Profound.ConnectPROCommon.Themes.EventServerUserInterface
 {
 	public sealed class ConnectProEventServerUserInterface : AbstractUserInterface
 	{
+		private readonly List<IEventServerKeyHandler> m_Handlers; 
 		private readonly ConnectProEventServerDevice m_Device;
-		private readonly SafeCriticalSection m_RefreshSection;
-		private readonly IcdHashSet<IIncomingCall> m_IncomingCalls;
-
-		private IConferenceManager m_SubscribedConferenceManager;
 
 		[CanBeNull]
 		private IConnectProRoom m_Room;
-		private bool m_IsDisposed;
-
-		private bool m_RoomCombined;
-		private bool m_IsInCall;
-		private bool m_IsAwake;
-		private bool m_IsInMeeting;
-		private bool m_PrivacyMuted;
-		private string m_AudioMessage;
-		private string m_VideoMessage;
-		private string m_ActiveCameraMessage;
 
 		#region Properties
 
+		/// <summary>
+		/// Gets the room attached to this UI.
+		/// </summary>
 		[CanBeNull]
 		public override IRoom Room { get { return m_Room; } }
 
+		/// <summary>
+		/// Gets the event server device.
+		/// </summary>
 		public ConnectProEventServerDevice Device { get { return m_Device; } }
 
+		/// <summary>
+		/// Gets the target instance attached to this UI.
+		/// </summary>
 		public override object Target { get { return Device; } }
-
-		private bool RoomCombined
-		{
-			get { return m_RoomCombined; }
-			set
-			{
-				if (value == m_RoomCombined)
-					return;
-
-				m_RoomCombined = value;
-
-				Refresh();
-			}
-		}
-
-		private bool IsInCall
-		{
-			get { return m_IsInCall; }
-			set
-			{
-				if (value == m_IsInCall)
-					return;
-
-				m_IsInCall = value;
-
-				Refresh();
-			}
-		}
-
-		private bool IsAwake
-		{
-			get { return m_IsAwake; }
-			set
-			{
-				if (value == m_IsAwake)
-					return;
-
-				m_IsAwake = value;
-
-				Refresh();
-			}
-		}
-
-		private bool IsInMeeting
-		{
-			get { return m_IsInMeeting; }
-			set
-			{
-				if (value == m_IsInMeeting)
-					return;
-
-				m_IsInMeeting = value;
-
-				Refresh();
-			}
-		}
-
-		private bool PrivacyMuted
-		{
-			get { return m_PrivacyMuted; }
-			set
-			{
-				if (value == m_PrivacyMuted)
-					return;
-
-				m_PrivacyMuted = value;
-
-				Refresh();
-			}
-		}
-
-		private string VideoMessage
-		{
-			get { return m_VideoMessage; }
-			set
-			{
-				if (value == m_VideoMessage)
-					return;
-
-				m_VideoMessage = value;
-
-				Refresh();
-			}
-		}
-
-		private string AudioMessage
-		{
-			get { return m_AudioMessage; }
-			set
-			{
-				if (value == m_AudioMessage)
-					return;
-
-				m_AudioMessage = value;
-
-				Refresh();
-			}
-		}
-
-		private string ActiveCameraMessage
-		{
-			get { return m_ActiveCameraMessage; }
-			set
-			{
-				if (value == m_ActiveCameraMessage)
-					return;
-
-				m_ActiveCameraMessage = value;
-
-				Refresh();
-			}
-		}
 
 		#endregion
 
@@ -172,10 +49,20 @@ namespace ICD.Profound.ConnectPROCommon.Themes.EventServerUserInterface
 			if (device == null)
 				throw new ArgumentNullException("device");
 
-			m_IncomingCalls = new IcdHashSet<IIncomingCall>();
-			m_RefreshSection = new SafeCriticalSection();
-
 			m_Device = device;
+
+			m_Handlers = new List<IEventServerKeyHandler>
+			{
+				new ActiveCameraEventServerKeyHandler(theme, device),
+				new AudioSourcesEventServerKeyHandler(theme, device),
+				new AwakeEventServerKeyHandler(theme, device),
+				new IncomingCallEventServerKeyHandler(theme, device),
+				new IsInCallEventServerKeyHandler(theme, device),
+				new MeetingEventServerKeyHandler(theme, device),
+				new PrivacyMuteEventServerKeyHandler(theme, device),
+				new RoomCombineEventServerKeyHandler(theme, device),
+				new VideoSourcesEventServerKeyHandler(theme, device)
+			};
 		}
 
 		/// <summary>
@@ -183,64 +70,11 @@ namespace ICD.Profound.ConnectPROCommon.Themes.EventServerUserInterface
 		/// </summary>
 		public override void Dispose()
 		{
-			m_IsDisposed = true;
-
 			SetRoom(null);
-		}
 
-		/// <summary>
-		/// Updates the device with the current state of the room.
-		/// </summary>
-		private void Refresh()
-		{
-			m_RefreshSection.Enter();
-
-			try
-			{
-				string messageInMeeting =
-					IsInMeeting
-						? ConnectProEventMessages.MESSAGE_IN_MEETING
-						: ConnectProEventMessages.MESSAGE_OUT_OF_MEETING;
-
-				string messageIsAwake =
-					IsAwake
-						? ConnectProEventMessages.MESSAGE_WAKE
-						: ConnectProEventMessages.MESSAGE_SLEEP;
-
-				string messageInCall =
-					IsInCall
-						? ConnectProEventMessages.MESSAGE_IN_CALL
-						: ConnectProEventMessages.MESSAGE_OUT_OF_CALL;
-
-				string messageIncomingCall =
-					m_IncomingCalls.Count > 0
-						? ConnectProEventMessages.MESSAGE_INCOMING_CALL
-						: ConnectProEventMessages.MESSAGE_NO_INCOMING_CALL;
-
-				string messageRoomCombined =
-					RoomCombined
-						? ConnectProEventMessages.MESSAGE_ROOM_COMBINED
-						: ConnectProEventMessages.MESSAGE_ROOM_UNCOMBINED;
-
-				string messagePrivacyMuted =
-					PrivacyMuted
-						? ConnectProEventMessages.MESSAGE_PRIVACY_MUTED
-						: ConnectProEventMessages.MESSAGE_PRIVACY_UNMUTED;
-
-				m_Device.SendMessage(ConnectProEventMessages.KEY_MEETING, messageInMeeting);
-				m_Device.SendMessage(ConnectProEventMessages.KEY_WAKE, messageIsAwake);
-				m_Device.SendMessage(ConnectProEventMessages.KEY_CALL, messageInCall);
-				m_Device.SendMessage(ConnectProEventMessages.KEY_INCOMING_CALL, messageIncomingCall);
-				m_Device.SendMessage(ConnectProEventMessages.KEY_ROOM_COMBINED, messageRoomCombined);
-				m_Device.SendMessage(ConnectProEventMessages.KEY_PRIVACY_MUTE, messagePrivacyMuted);
-				m_Device.SendMessage(ConnectProEventMessages.KEY_VIDEO_SOURCES, VideoMessage);
-				m_Device.SendMessage(ConnectProEventMessages.KEY_AUDIO_SOURCES, AudioMessage);
-				m_Device.SendMessage(ConnectProEventMessages.KEY_ACTIVE_CAMERA, ActiveCameraMessage);
-			}
-			finally
-			{
-				m_RefreshSection.Leave();
-			}
+			foreach (IEventServerKeyHandler handler in m_Handlers)
+				handler.Dispose();
+			m_Handlers.Clear();
 		}
 
 		#region Methods
@@ -266,14 +100,10 @@ namespace ICD.Profound.ConnectPROCommon.Themes.EventServerUserInterface
 			ServiceProvider.GetService<ILoggerService>()
 			               .AddEntry(eSeverity.Informational, "{0} setting room to {1}", this, room);
 
-			Unsubscribe(m_Room);
 			m_Room = room;
-			Subscribe(m_Room);
 
-			Update();
-
-			if (!m_IsDisposed)
-				Refresh();
+			foreach (IEventServerKeyHandler handler in m_Handlers)
+				handler.SetRoom(m_Room);
 		}
 
 		/// <summary>
@@ -282,240 +112,6 @@ namespace ICD.Profound.ConnectPROCommon.Themes.EventServerUserInterface
 		/// </summary>
 		public override void Activate()
 		{
-		}
-
-		#endregion
-
-		#region Private Methods
-
-		private void Update()
-		{
-			UpdateIsAwake();
-			UpdateIsInMeeting();
-			UpdateIsCombined();
-			UpdateRouting();
-			UpdatePrivacyMuted();
-			UpdateIsInCall();
-			UpdateActiveCamera();
-		}
-
-		private void UpdateIsAwake()
-		{
-			IsAwake = m_Room != null && m_Room.IsAwake;
-		}
-
-		private void UpdateIsInMeeting()
-		{
-			IsInMeeting = m_Room != null && m_Room.IsInMeeting;
-		}
-
-		private void UpdateIsCombined()
-		{
-			RoomCombined = m_Room != null && m_Room.IsCombineRoom();
-		}
-
-		private void UpdateRouting()
-		{
-			// Video routing
-			ISource[] videoSources =
-				m_Room == null
-					? new ISource[0]
-					: m_Room.Routing.State.GetFakeActiveVideoSources().SelectMany(kvp => kvp.Value).Distinct().ToArray();
-
-			VideoMessage =
-				videoSources.Length == 0
-					? "no sources routed for video"
-					: string.Format("sources routed for video {0}",
-									StringUtils.ArrayFormat(videoSources.Select(s => s.Name)));
-
-			// Audio routing
-			ISource[] audioSources =
-				m_Room == null
-					? new ISource[0]
-					: m_Room.Routing.State.GetCachedActiveAudioSources().Distinct().ToArray();
-
-			AudioMessage =
-				audioSources.Length == 0
-					? "no sources routed for audio"
-					: string.Format("sources routed for audio {0}",
-									StringUtils.ArrayFormat(audioSources.Select(s => s.Name)));
-		}
-
-		private void UpdatePrivacyMuted()
-		{
-			PrivacyMuted = m_SubscribedConferenceManager != null && m_SubscribedConferenceManager.PrivacyMuted;
-		}
-
-		private void UpdateIsInCall()
-		{
-			IsInCall = m_SubscribedConferenceManager != null && m_SubscribedConferenceManager.Dialers.IsInCall != eInCall.None;
-		}
-
-		private void UpdateActiveCamera()
-		{
-			IDeviceBase activeCamera = m_Room == null ? null : m_Room.ActiveCamera;
-			ActiveCameraMessage =
-				activeCamera == null
-					? "no active camera selected"
-					: string.Format("active camera [{0}]", activeCamera.Name);
-		}
-
-		#endregion
-
-		#region Room Callbacks
-
-		/// <summary>
-		/// Subscribe to the room events.
-		/// </summary>
-		/// <param name="room"></param>
-		private void Subscribe(IConnectProRoom room)
-		{
-			if (room == null)
-				return;
-
-			// Awake state
-			room.OnIsAwakeStateChanged += RoomOnIsAwakeStateChanged;
-
-			// Is in meeting
-			room.OnIsInMeetingChanged += RoomOnIsInMeetingChanged;
-
-			// Source routed
-			room.Routing.State.OnSourceRoutedChanged += RoomRoutingStateOnSourceRoutedChanged;
-
-			// Active Camera
-			room.OnActiveCameraChanged += RoomOnActiveCameraChanged;
-
-			m_SubscribedConferenceManager = room.ConferenceManager;
-			if (m_SubscribedConferenceManager != null)
-			{
-				// IsInCall
-				m_SubscribedConferenceManager.Dialers.OnInCallChanged += ConferenceManagerOnInCallChanged;
-
-				// Incoming Call
-				m_SubscribedConferenceManager.Dialers.OnIncomingCallAdded += ConferenceManagerOnIncomingCallAdded;
-				m_SubscribedConferenceManager.Dialers.OnIncomingCallRemoved += ConferenceManagerOnIncomingCallRemoved;
-
-				// Privacy Mute
-				m_SubscribedConferenceManager.OnPrivacyMuteStatusChange += ConferenceManagerOnPrivacyMuteStatusChange;
-			}
-		}
-
-		/// <summary>
-		/// Unsubscribe from the room events.
-		/// </summary>
-		/// <param name="room"></param>
-		private void Unsubscribe(IConnectProRoom room)
-		{
-			if (room == null)
-				return;
-
-			// Awake state
-			room.OnIsAwakeStateChanged -= RoomOnIsAwakeStateChanged;
-
-			// Is in meeting
-			room.OnIsInMeetingChanged -= RoomOnIsInMeetingChanged;
-
-			// Source routed
-			room.Routing.State.OnSourceRoutedChanged -= RoomRoutingStateOnSourceRoutedChanged;
-
-			// Active Camera
-			room.OnActiveCameraChanged -= RoomOnActiveCameraChanged;
-
-			if (m_SubscribedConferenceManager != null)
-			{
-				// IsInCall
-				m_SubscribedConferenceManager.Dialers.OnInCallChanged -= ConferenceManagerOnInCallChanged;
-
-				// Privacy Mute
-				m_SubscribedConferenceManager.OnPrivacyMuteStatusChange -= ConferenceManagerOnPrivacyMuteStatusChange;
-
-				// Incoming Call
-				m_SubscribedConferenceManager.Dialers.OnIncomingCallAdded -= ConferenceManagerOnIncomingCallAdded;
-				m_SubscribedConferenceManager.Dialers.OnIncomingCallRemoved -= ConferenceManagerOnIncomingCallRemoved;
-			}
-			m_SubscribedConferenceManager = null;
-		}
-
-		/// <summary>
-		/// Called when the room wakes or goes to sleep.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="eventArgs"></param>
-		private void RoomOnIsAwakeStateChanged(object sender, BoolEventArgs eventArgs)
-		{
-			UpdateIsAwake();
-		}
-
-		/// <summary>
-		/// Called when the room enters/leaves a meeting.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="eventArgs"></param>
-		private void RoomOnIsInMeetingChanged(object sender, BoolEventArgs eventArgs)
-		{
-			UpdateIsInMeeting();
-		}
-
-		/// <summary>
-		/// Called when a source becomes routed/unrouted.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="eventArgs"></param>
-		private void RoomRoutingStateOnSourceRoutedChanged(object sender, EventArgs eventArgs)
-		{
-			UpdateRouting();
-		}
-
-		/// <summary>
-		/// Called when the active camera for the room changes.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="eventArgs"></param>
-		private void RoomOnActiveCameraChanged(object sender, GenericEventArgs<IDeviceBase> eventArgs)
-		{
-			UpdateActiveCamera();
-		}
-
-		/// <summary>
-		/// Called when we enable/disable privacy mute.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		private void ConferenceManagerOnPrivacyMuteStatusChange(object sender, BoolEventArgs args)
-		{
-			UpdatePrivacyMuted();
-		}
-
-		/// <summary>
-		/// Called when we enter a call, or leave all calls.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		private void ConferenceManagerOnInCallChanged(object sender, InCallEventArgs args)
-		{
-			UpdateIsInCall();
-		}
-
-		/// <summary>
-		/// Called when an incoming call starts.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void ConferenceManagerOnIncomingCallAdded(object sender, ConferenceControlIncomingCallEventArgs e)
-		{
-			m_IncomingCalls.Add(e.IncomingCall);
-			Refresh();
-		}
-
-		/// <summary>
-		/// Called when an incoming call stops.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void ConferenceManagerOnIncomingCallRemoved(object sender, ConferenceControlIncomingCallEventArgs e)
-		{
-			m_IncomingCalls.Remove(e.IncomingCall);
-			Refresh();
 		}
 
 		#endregion

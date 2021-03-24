@@ -2,6 +2,20 @@
 {
 	public static class ConnectProEventMessages
 	{
+		// Zoom Room Controls example
+		/*
+		"rules": {
+			"meeting_started": ["meeting:in meeting"],
+			"meeting_stopped": ["meeting:out of meeting"],
+			"microphone_muted": ["privacy mute:privacy muted"],
+			"microphone_unmuted": ["privacy mute:privacy unmuted"],
+			"video_started": ["camera privacy mute:privacy unmuted"],
+			"video_stopped": ["camera privacy mute:privacy muted"],
+			"operation_time_started": ["wake:wake"],
+			"operation_time_ended": ["wake:sleep"]
+		}
+		*/
+
 		// Keys are completely arbitrary, but unique
 
 		// In/out of meeting
@@ -34,6 +48,12 @@
 		public const string MESSAGE_PRIVACY_MUTED = "privacy muted";
 		public const string MESSAGE_PRIVACY_UNMUTED = "privacy unmuted";
 
+		// Camera privacy mute/unmute
+		public const string KEY_CAMERA_PRIVACY_MUTE = "camera privacy mute";
+		public const string MESSAGE_CAMERA_PRIVACY_MUTED = "privacy muted";
+		public const string MESSAGE_CAMERA_PRIVACY_UNMUTED = "privacy unmuted";
+
+		// Lists
 		public const string KEY_AUDIO_SOURCES = "audio sources";
 		public const string KEY_VIDEO_SOURCES = "video sources";
 		public const string KEY_ACTIVE_CAMERA = "active camera";
