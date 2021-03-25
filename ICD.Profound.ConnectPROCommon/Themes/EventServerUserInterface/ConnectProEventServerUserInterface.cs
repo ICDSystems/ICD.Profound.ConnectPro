@@ -56,6 +56,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.EventServerUserInterface
 				new ActiveCameraEventServerKeyHandler(theme, device),
 				new AudioSourcesEventServerKeyHandler(theme, device),
 				new AwakeEventServerKeyHandler(theme, device),
+				new CameraPrivacyMuteEventServerKeyHandler(theme, device),
 				new IncomingCallEventServerKeyHandler(theme, device),
 				new IsInCallEventServerKeyHandler(theme, device),
 				new MeetingEventServerKeyHandler(theme, device),

@@ -1,5 +1,4 @@
-﻿using System;
-using ICD.Common.Utils.EventArguments;
+﻿using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Devices;

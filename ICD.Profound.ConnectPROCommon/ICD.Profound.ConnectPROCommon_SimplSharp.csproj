@@ -148,6 +148,7 @@
     <Compile Include="Themes\EventServerUserInterface\EventServerKeyHandlers\AwakeEventServerKeyHandler.cs" />
     <Compile Include="Themes\EventServerUserInterface\EventServerKeyHandlers\AudioSourcesEventServerKeyHandler.cs" />
     <Compile Include="Themes\EventServerUserInterface\EventServerKeyHandlers\ActiveCameraEventServerKeyHandler.cs" />
+    <Compile Include="Themes\EventServerUserInterface\EventServerKeyHandlers\CameraPrivacyMuteEventServerKeyHandler.cs" />
     <Compile Include="Themes\EventServerUserInterface\EventServerKeyHandlers\IEventServerKeyHandler.cs" />
     <Compile Include="Themes\EventServerUserInterface\EventServerKeyHandlers\VideoSourcesEventServerKeyHandler.cs" />
     <Compile Include="Themes\EventServerUserInterface\EventServerKeyHandlers\IncomingCallEventServerKeyHandler.cs" />
