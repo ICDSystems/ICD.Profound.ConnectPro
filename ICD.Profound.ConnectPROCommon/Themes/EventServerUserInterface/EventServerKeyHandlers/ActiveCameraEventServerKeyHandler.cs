@@ -1,4 +1,7 @@
-﻿using ICD.Common.Utils.EventArguments;
+﻿using System;
+using ICD.Common.Utils.EventArguments;
+using ICD.Connect.Cameras.Devices;
+using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Devices;
 using ICD.Profound.ConnectPROCommon.Devices;
 using ICD.Profound.ConnectPROCommon.Rooms;
@@ -7,6 +10,8 @@ namespace ICD.Profound.ConnectPROCommon.Themes.EventServerUserInterface.EventSer
 {
 	public sealed class ActiveCameraEventServerKeyHandler : AbstractEventServerKeyHandler
 	{
+		private IConferenceManager m_ConferenceManager;
+
 		/// <summary>
 		/// Gets the key for the message handler.
 		/// </summary>
@@ -30,7 +35,11 @@ namespace ICD.Profound.ConnectPROCommon.Themes.EventServerUserInterface.EventSer
 		{
 			base.Update();
 
-			IDeviceBase activeCamera = Room == null ? null : Room.ActiveCamera;
+			IDeviceBase activeCamera =
+				m_ConferenceManager == null
+					? null
+					: m_ConferenceManager.Cameras.ActiveCamera;
+
 			Message =
 				activeCamera == null
 					? "no active camera selected"
@@ -47,10 +56,11 @@ namespace ICD.Profound.ConnectPROCommon.Themes.EventServerUserInterface.EventSer
 		{
 			base.Subscribe(room);
 
-			if (room == null)
+			m_ConferenceManager = room == null ? null : room.ConferenceManager;
+			if (m_ConferenceManager == null)
 				return;
 
-			room.OnActiveCameraChanged += RoomOnActiveCameraChanged;
+			m_ConferenceManager.Cameras.OnActiveCameraChanged += CamerasOnActiveCameraChanged;
 		}
 
 		/// <summary>
@@ -64,15 +74,18 @@ namespace ICD.Profound.ConnectPROCommon.Themes.EventServerUserInterface.EventSer
 			if (room == null)
 				return;
 
-			room.OnActiveCameraChanged -= RoomOnActiveCameraChanged;
+			if (m_ConferenceManager != null)
+				m_ConferenceManager.Cameras.OnActiveCameraChanged -= CamerasOnActiveCameraChanged;
+
+			m_ConferenceManager = null;
 		}
 
 		/// <summary>
-		/// Called when the active camera for the room changes.
+		/// Called when the active camera changes.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="eventArgs"></param>
-		private void RoomOnActiveCameraChanged(object sender, GenericEventArgs<IDeviceBase> eventArgs)
+		private void CamerasOnActiveCameraChanged(object sender, GenericEventArgs<ICameraDevice> eventArgs)
 		{
 			Update();
 		}

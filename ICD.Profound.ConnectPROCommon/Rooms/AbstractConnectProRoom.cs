@@ -53,11 +53,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		public event EventHandler<SourceEventArgs> OnFocusSourceChanged;
 
 		/// <summary>
-		/// Raised when the active camera for the room changes.
-		/// </summary>
-		public event EventHandler<GenericEventArgs<IDeviceBase>> OnActiveCameraChanged;
-
-		/// <summary>
 		/// Raised when the upcoming booking changes.
 		/// </summary>
 		public event EventHandler<GenericEventArgs<IBooking>> OnUpcomingBookingChanged;
@@ -79,7 +74,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		private readonly List<IPresentationControl> m_SubscribedPresentationControls;
 		private readonly List<IPowerDeviceControl> m_SubscribedDisplayPowerControls;
 
-		private IDeviceBase m_ActiveCamera;
 		private IBooking m_UpcomingBooking;
 
 		#region Properties
@@ -178,23 +172,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			}
 		}
 
-		/// <summary>
-		/// Gets the camera that is currently active for conferencing.
-		/// </summary>
-		public IDeviceBase ActiveCamera
-		{
-			get { return m_ActiveCamera; }
-			private set
-			{
-				if (value == m_ActiveCamera)
-					return;
-
-				m_ActiveCamera = value;
-
-				OnActiveCameraChanged.Raise(this, new GenericEventArgs<IDeviceBase>(m_ActiveCamera));
-			}
-		}
-
 		#endregion
 
 		/// <summary>
@@ -225,7 +202,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		{
 			OnIsInMeetingChanged = null;
 			OnFocusSourceChanged = null;
-			OnActiveCameraChanged = null;
 			OnUpcomingBookingChanged = null;
 
 			base.DisposeFinal(disposing);
@@ -371,7 +347,8 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		public void SetActiveCamera([CanBeNull] ICameraDevice activeCamera,
 		                            [CanBeNull] IVideoConferenceRouteControl vtcDestinationControl)
 		{
-			ActiveCamera = activeCamera;
+			if (ConferenceManager != null)
+				ConferenceManager.Cameras.SetActiveCamera(activeCamera);
 
 			if (activeCamera != null && vtcDestinationControl != null)
 				Routing.RouteCameraToVtc(activeCamera, vtcDestinationControl);

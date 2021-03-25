@@ -27,11 +27,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		event EventHandler<SourceEventArgs> OnFocusSourceChanged;
 
 		/// <summary>
-		/// Raised when the active camera for the room changes.
-		/// </summary>
-		event EventHandler<GenericEventArgs<IDeviceBase>> OnActiveCameraChanged;
-
-		/// <summary>
 		/// Raised when there is an upcoming meeting about to start.
 		/// </summary>
 		event EventHandler<GenericEventArgs<IBooking>> OnUpcomingBookingChanged;
@@ -78,11 +73,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		/// </summary>
 		[CanBeNull]
 		ISource FocusSource { get; set; }
-
-		/// <summary>
-		/// Gets the camera that is currently active for conferencing.
-		/// </summary>
-		IDeviceBase ActiveCamera { get; }
 
 		#endregion
 
