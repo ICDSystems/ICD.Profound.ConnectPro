@@ -560,9 +560,8 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		/// <param name="privacyMute"></param>
 		private void PrivacyMuteCameras(bool privacyMute)
 		{
-			this.GetControlsRecursive<ICameraDeviceControl>()
-				.Where(c => c.SupportedCameraFeatures.HasFlag(eCameraFeatures.Mute))
-				.ForEach(c => c.MuteCamera(privacyMute));
+			if (ConferenceManager != null)
+				ConferenceManager.CameraPrivacyMuted = privacyMute;
 		}
 
 		/// <summary>
