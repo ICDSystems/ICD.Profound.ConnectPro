@@ -1,8 +1,6 @@
 using System;
 #if !SIMPLSHARP
 using System.Linq;
-using System.Management;
-using System.Security.Principal;
 using ICD.Connect.Misc.Windows.Utils;
 #endif
 using ICD.Common.Properties;
