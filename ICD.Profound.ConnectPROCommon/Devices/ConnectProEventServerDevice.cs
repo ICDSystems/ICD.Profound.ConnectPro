@@ -41,12 +41,12 @@ namespace ICD.Profound.ConnectPROCommon.Devices
 		/// <summary>
 		/// States from the control system to the connected clients.
 		/// </summary>
-		private readonly IcdOrderedDictionary<string, string> m_OutputCache;
+		private readonly IcdSortedDictionary<string, string> m_OutputCache;
 
 		/// <summary>
 		/// States from the connected clients to the control system.
 		/// </summary>
-		private readonly IcdOrderedDictionary<string, string> m_InputCache;
+		private readonly IcdSortedDictionary<string, string> m_InputCache;
 
 		/// <summary>
 		/// Registered callbacks for input key changes.
@@ -87,8 +87,8 @@ namespace ICD.Profound.ConnectPROCommon.Devices
 		/// </summary>
 		public ConnectProEventServerDevice()
 		{
-			m_InputCache = new IcdOrderedDictionary<string, string>();
-			m_OutputCache = new IcdOrderedDictionary<string, string>();
+			m_InputCache = new IcdSortedDictionary<string, string>();
+			m_OutputCache = new IcdSortedDictionary<string, string>();
 			m_InputCallbacks = new Dictionary<string, IcdHashSet<InputCallback>>();
 			m_CacheSection = new SafeCriticalSection();
 

@@ -35,8 +35,8 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Header
 		private readonly ReferencedHeaderButtonPresenterFactory m_LeftButtonsFactory;
 		private readonly ReferencedHeaderButtonPresenterFactory m_RightButtonsFactory;
 
-		private readonly IcdOrderedDictionary<HeaderButtonModel, object> m_LeftButtons;
-		private readonly IcdOrderedDictionary<HeaderButtonModel, object> m_RightButtons;
+		private readonly IcdSortedDictionary<HeaderButtonModel, object> m_LeftButtons;
+		private readonly IcdSortedDictionary<HeaderButtonModel, object> m_RightButtons;
 
 		private readonly HeaderButtonModel m_SettingsButton;
 		private readonly HeaderButtonModel m_EndMeetingButton;
@@ -92,8 +92,8 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Header
 			m_LeftButtonsFactory = new ReferencedHeaderButtonPresenterFactory(nav, LeftButtonsViewFactory, EmptySub, EmptyUnsub);
 			m_RightButtonsFactory = new ReferencedHeaderButtonPresenterFactory(nav, RightButtonsViewFactory, EmptySub, EmptyUnsub);
 
-			m_LeftButtons = new IcdOrderedDictionary<HeaderButtonModel, object>();
-			m_RightButtons = new IcdOrderedDictionary<HeaderButtonModel, object>();
+			m_LeftButtons = new IcdSortedDictionary<HeaderButtonModel, object>();
+			m_RightButtons = new IcdSortedDictionary<HeaderButtonModel, object>();
 
 			m_SettingsButton = new HeaderButtonModel(0, 0, OpenSettings)
 			{

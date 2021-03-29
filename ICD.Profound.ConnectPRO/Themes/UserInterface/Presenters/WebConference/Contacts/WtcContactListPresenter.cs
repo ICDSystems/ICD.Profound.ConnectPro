@@ -41,8 +41,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		private readonly DirectoryControlBrowser m_DirectoryBrowser;
 
 		private readonly List<IContact> m_Contacts;
-		private readonly IcdOrderedDictionary<string, IContact> m_Favorites;
-		private readonly IcdOrderedDictionary<string, IContact> m_SelectedContacts;
+		private readonly IcdSortedDictionary<string, IContact> m_Favorites;
+		private readonly IcdSortedDictionary<string, IContact> m_SelectedContacts;
 
 		private string m_Filter;
 
@@ -107,8 +107,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			m_SelectedContactFactory = new WtcReferencedSelectedContactPresenterFactory(nav, SelectedContactItemFactory, Subscribe, Unsubscribe);
 			
 			m_Contacts = new List<IContact>();
-			m_SelectedContacts = new IcdOrderedDictionary<string, IContact>();
-			m_Favorites = new IcdOrderedDictionary<string, IContact>();
+			m_SelectedContacts = new IcdSortedDictionary<string, IContact>();
+			m_Favorites = new IcdSortedDictionary<string, IContact>();
 
 			m_DirectoryBrowser = new DirectoryControlBrowser();
 			m_DirectoryBrowser.OnPathContentsChanged += DirectoryBrowserOnPathContentsChanged;
