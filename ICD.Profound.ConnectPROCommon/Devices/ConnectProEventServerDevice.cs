@@ -160,7 +160,7 @@ namespace ICD.Profound.ConnectPROCommon.Devices
 
 			string data = FormatMessage(key, message);
 
-			Logger.Log(eSeverity.Informational, "Output - {0}", data);
+			Logger.Log(eSeverity.Informational, "Output - {0}", data.Substring(0, data.Length - 1));
 			m_Server.Send(data);
 		}
 
