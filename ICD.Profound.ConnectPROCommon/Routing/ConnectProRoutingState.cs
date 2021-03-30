@@ -462,7 +462,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 					         .SelectMany(d => d.GetDestinations())
 					         .SelectMany(d => m_Routing.RoutingGraph
 					                                   .RoutingCache
-					                                   .GetSourcesForDestination(d, eConnectionType.Audio))
+					                                   .GetSourcesForDestination(d, eConnectionType.Audio, false, true))
 					         .ToIcdHashSet();
 
 				if (activeAudio.SetEquals(m_AudioRoutingCache))
