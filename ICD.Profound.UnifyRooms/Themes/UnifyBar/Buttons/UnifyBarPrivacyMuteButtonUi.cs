@@ -41,8 +41,6 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar.Buttons
 			Icon = eMainButtonIcon.PrivacyMute;
 			Type = eMainButtonType.Mute;
 			Label = "PRIVACY";
-
-			UpdatePrivacyMuteState();
 		}
 
 		#region Private Methods
@@ -56,6 +54,9 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar.Buttons
 			base.SetRoom(room);
 
 			ConferenceManager = room == null ? null : room.ConferenceManager;
+
+			UpdatePrivacyMuteState();
+			UpdateVisibility();
 		}
 
 		/// <summary>
