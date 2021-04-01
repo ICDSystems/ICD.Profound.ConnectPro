@@ -8,6 +8,7 @@ using ICD.Common.Utils.Timers;
 using ICD.Connect.Calendaring;
 using ICD.Connect.Calendaring.Bookings;
 using ICD.Connect.Calendaring.CalendarManagers;
+using ICD.Connect.Calendaring.Utils;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.UI.Attributes;
@@ -161,7 +162,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Schedule
 				m_CalendarManager == null
 					? new IBooking[0]
 					: m_CalendarManager.GetBookings()
-					                   .Where(b => b.EndTime > now && b.StartTime < tomorrow)
+					                   .Where(b => CalendarUtils.IsInRange(b, now, tomorrow))
 					                   .OrderBy(b => b.StartTime)
 					                   .Cast<IBooking>()
 					                   .ToArray();

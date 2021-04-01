@@ -8,6 +8,7 @@ using ICD.Common.Utils.Timers;
 using ICD.Connect.Calendaring.Bookings;
 using ICD.Connect.Calendaring.CalendarManagers;
 using ICD.Connect.Calendaring.Controls;
+using ICD.Connect.Calendaring.Utils;
 using ICD.Connect.UI.Attributes;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPROCommon.Rooms;
@@ -188,8 +189,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 					m_CalendarManager == null
 						? new List<BookingGroup>()
 						: m_CalendarManager.GetBookings()
-						                   .Where(b => b.EndTime > IcdEnvironment.GetUtcTime() &&
-						                               b.StartTime < IcdEnvironment.GetUtcTime().AddDays(1))
+						                   .Where(b =>
+						                          CalendarUtils.IsInRange(b, IcdEnvironment.GetUtcTime(),
+						                                                  IcdEnvironment.GetUtcTime().AddDays(1)))
 						                   .ToList();
 
 				first = m_Bookings.FirstOrDefault();
