@@ -22,7 +22,6 @@ using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Presentation;
 using ICD.Connect.Conferencing.Controls.Routing;
 using ICD.Connect.Conferencing.EventArguments;
-using ICD.Connect.Devices;
 using ICD.Connect.Devices.Controls.Power;
 using ICD.Connect.Devices.EventArguments;
 using ICD.Connect.Panels.Controls.Backlight;

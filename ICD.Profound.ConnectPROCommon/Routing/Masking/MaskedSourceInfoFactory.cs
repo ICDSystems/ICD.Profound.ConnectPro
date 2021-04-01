@@ -1,5 +1,4 @@
-﻿using ICD.Connect.Conferencing.Zoom;
-using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms;
+﻿using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPROCommon.Rooms;
 using ICD.Profound.ConnectPROCommon.Routing.Masking.ConferenceDevice;

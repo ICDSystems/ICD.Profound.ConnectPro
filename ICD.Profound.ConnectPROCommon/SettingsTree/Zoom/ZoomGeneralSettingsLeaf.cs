@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
-using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms;
 using ICD.Profound.ConnectPROCommon.Rooms;
 

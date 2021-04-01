@@ -5,7 +5,6 @@ using ICD.Common.Properties;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Services;
 using ICD.Common.Utils.Services.Logging;
-using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms;
 using ICD.Connect.Misc.Vibe.Devices.VibeBoard;
 using ICD.Connect.Misc.Vibe.Devices.VibeBoard.Controls;

@@ -4,7 +4,6 @@ using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.Cameras.Devices;
-using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms;
 using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms.Components.Camera;
 using ICD.Connect.Devices;

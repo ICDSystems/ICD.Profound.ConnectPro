@@ -6,7 +6,6 @@ using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Layout;
 using ICD.Connect.Conferencing.EventArguments;
-using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms;
 using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms.Components.Call;
 using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms.Controls;
@@ -47,11 +46,11 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 
 		private HeaderButtonModel m_HideCameraButton;
 		private HeaderButtonModel m_EndConferenceButton;
-		private IHeaderPresenter m_Header;
+		private readonly IHeaderPresenter m_Header;
 		
 		private IConferenceDeviceControl m_SubscribedConferenceControl;
 		private bool m_IsInCall;
-		private ICameraLayoutPresenter m_CameraLayoutPresenter;
+		private readonly ICameraLayoutPresenter m_CameraLayoutPresenter;
 
 		public IConferenceDeviceControl ActiveConferenceControl
 		{

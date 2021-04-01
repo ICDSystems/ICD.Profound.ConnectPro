@@ -6,7 +6,6 @@ using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Connect.Devices;
-using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPROCommon.Routing.Endpoints.Sources;
 using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IPresenters;
@@ -22,7 +21,6 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Headers
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 		private IDevice m_Device;
-		private ISource m_Source;
 
 		[CanBeNull]
 		public IDevice Device

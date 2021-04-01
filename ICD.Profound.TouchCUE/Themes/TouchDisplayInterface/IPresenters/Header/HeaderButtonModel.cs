@@ -15,9 +15,9 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IPresenters.Header
 		private readonly HeaderButtonPressedCallback m_Callback;
 
 		// Menu level of the buttons. e.g. 0 is top level buttons, 1 is buttons that appear when you click that button, etc.
-		private int m_Level;
+		private readonly int m_Level;
 		// Button order within a level. Lower number appears in list first.
-		private int m_Order;
+		private readonly int m_Order;
 		
 		private bool m_Enabled;
 		private bool m_Selected;

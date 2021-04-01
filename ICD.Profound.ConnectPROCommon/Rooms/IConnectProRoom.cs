@@ -5,7 +5,6 @@ using ICD.Common.Utils.Timers;
 using ICD.Connect.Calendaring.Bookings;
 using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.Controls.Routing;
-using ICD.Connect.Devices;
 using ICD.Connect.Partitioning.Commercial.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Routing.EventArguments;

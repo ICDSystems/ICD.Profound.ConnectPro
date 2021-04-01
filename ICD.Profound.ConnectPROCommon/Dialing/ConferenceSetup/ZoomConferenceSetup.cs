@@ -4,7 +4,6 @@ using ICD.Common.Utils;
 using ICD.Common.Utils.Services.Logging;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.Controls.Dialing;
-using ICD.Connect.Conferencing.Zoom;
 using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms;
 using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms.Components.Camera;
 using ICD.Connect.Misc.Yepkit.Devices.YkupSwitcher;

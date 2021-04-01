@@ -5,13 +5,13 @@
 		/// <summary>
 		/// Sets the current room name.
 		/// </summary>
-		/// <param name="name"></param
+		/// <param name="name"></param>
 		void SetRoomName(string name);
 
 		/// <summary>
 		/// Sets the current time.
 		/// </summary>
-		/// <param name="time"></param
+		/// <param name="time"></param>
 		void SetTimeLabel(string time);
 
 		/// <summary>
