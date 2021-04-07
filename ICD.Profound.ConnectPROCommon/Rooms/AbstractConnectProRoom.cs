@@ -42,11 +42,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		where TSettings : IConnectProRoomSettings, new()
 	{
 		/// <summary>
-		/// Raised when the room starts/stops a meeting.
-		/// </summary>
-		public event EventHandler<BoolEventArgs> OnIsInMeetingChanged;
-
-		/// <summary>
 		/// Raised when the source that is currently the primary focus of the room (i.e. VTC) changes.
 		/// </summary>
 		public event EventHandler<SourceEventArgs> OnFocusSourceChanged;
@@ -76,36 +71,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		private IBooking m_UpcomingBooking;
 
 		#region Properties
-
-		/// <summary>
-		/// Gets/sets the current meeting status.
-		/// </summary>
-		public bool IsInMeeting
-		{
-			get { return m_IsInMeeting; }
-			private set
-			{
-				try
-				{
-					if (value == m_IsInMeeting)
-						return;
-
-					m_IsInMeeting = value;
-
-					Logger.LogSetTo(eSeverity.Informational, "IsInMeeting", m_IsInMeeting);
-
-					HandleIsInMeetingChanged(m_IsInMeeting);
-
-					OnIsInMeetingChanged.Raise(this, new BoolEventArgs(m_IsInMeeting));
-				}
-				finally
-				{
-					Activities.LogActivity(m_IsInMeeting
-						                       ? new Activity(Activity.ePriority.Medium, "In Meeting", "In Meeting", eSeverity.Informational)
-						                       : new Activity(Activity.ePriority.Lowest, "In Meeting", "Not In Meeting", eSeverity.Informational));
-				}
-			}
-		}
 
 		/// <summary>
 		/// Gets the routing features for this room.
@@ -199,7 +164,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		/// </summary>
 		protected override void DisposeFinal(bool disposing)
 		{
-			OnIsInMeetingChanged = null;
 			OnFocusSourceChanged = null;
 			OnUpcomingBookingChanged = null;
 
@@ -221,7 +185,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		/// </summary>
 		public void StartAutoMeeting()
 		{
-			IBooking booking = CalendarManager == null ? null : CalendarManager.GetCurrentBooking();
+			IBooking booking = CalendarManager == null ? null : CalendarManager.CurrentBooking;
 			ISource source = TouchFree == null ? null : TouchFree.Source;
 
 			StartMeeting(booking, source);
@@ -361,8 +325,10 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		/// Called when the meeting state is changed
 		/// </summary>
 		/// <param name="isInMeeting"></param>
-		protected virtual void HandleIsInMeetingChanged(bool isInMeeting)
+		protected override void HandleIsInMeetingChanged(bool isInMeeting)
 		{
+			base.HandleIsInMeetingChanged(isInMeeting);
+
 			// Clear the focus source
 			FocusSource = null;
 

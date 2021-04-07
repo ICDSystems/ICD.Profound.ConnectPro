@@ -16,11 +16,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 	public interface IConnectProRoom : ICommercialRoom
 	{
 		/// <summary>
-		/// Raised when the room starts/stops a meeting.
-		/// </summary>
-		event EventHandler<BoolEventArgs> OnIsInMeetingChanged;
-
-		/// <summary>
 		/// Raised when the source that is currently the primary focus of the room (i.e. VTC) changes.
 		/// </summary>
 		event EventHandler<SourceEventArgs> OnFocusSourceChanged;
@@ -31,11 +26,6 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		event EventHandler<GenericEventArgs<IBooking>> OnUpcomingBookingChanged;
 
 		#region Properties
-
-		/// <summary>
-		/// Gets/sets the current meeting status.
-		/// </summary>
-		bool IsInMeeting { get; }
 
 		/// <summary>
 		/// Gets the routing features for this room.
