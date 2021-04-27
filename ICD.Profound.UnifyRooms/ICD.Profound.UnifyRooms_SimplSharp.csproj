@@ -75,6 +75,7 @@
     <Compile Include="Devices\UnifyBar\UnifyBarDeviceSettings.cs" />
     <Compile Include="Devices\UnifyBar\UnifyBarMainButton.cs" />
     <Compile Include="KrangPlugin.cs" />
+    <Compile Include="MoreControls\MoreControlsPanelConfiguration.cs" />
     <Compile Include="ObfuscationSettings.cs" />
     <Compile Include="Devices\UnifyBar\UnifyBarButtonsConfiguration.cs" />
     <Compile Include="Themes\UnifyBar\Buttons\AbstractUnifyBarButtonUi.cs" />

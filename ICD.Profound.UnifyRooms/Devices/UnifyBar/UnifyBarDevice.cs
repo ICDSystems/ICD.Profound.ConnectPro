@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
@@ -9,6 +10,7 @@ using ICD.Connect.Protocol.Network.Attributes.Rpc;
 using ICD.Connect.Protocol.Network.Ports;
 using ICD.Connect.Protocol.Network.Ports.TcpSecure;
 using ICD.Connect.Protocol.Network.RemoteProcedure;
+using ICD.Profound.UnifyRooms.MoreControls;
 
 namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 {
@@ -320,6 +322,20 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 		public void UpdatePage()
 		{
 			m_RpcClient.CallMethod("GetPage");
+		}
+
+		/// <summary>
+		/// Configures the custom programmed XPanel.
+		/// </summary>
+		/// <param name="configuration"></param>
+		public void ConfigurePanel([NotNull] MoreControlsPanelConfiguration configuration)
+		{
+			m_RpcClient.CallMethod("ConfigureXPanel",
+			                       configuration.Enabled,
+			                       configuration.Path,
+			                       configuration.Hostname,
+			                       configuration.Port,
+			                       configuration.Ipid);
 		}
 
 		#endregion

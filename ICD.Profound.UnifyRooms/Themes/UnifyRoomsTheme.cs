@@ -6,6 +6,7 @@ using ICD.Connect.Themes.UserInterfaceFactories;
 using ICD.Profound.ConnectPRO.Themes.UserInterface;
 using ICD.Profound.ConnectPROCommon.Themes;
 using ICD.Profound.UnifyRooms.Devices.UnifyBar;
+using ICD.Profound.UnifyRooms.MoreControls;
 using ICD.Profound.UnifyRooms.Themes.UnifyBar;
 using ICD.Profound.UnifyRooms.UserAccounts;
 
@@ -13,9 +14,18 @@ namespace ICD.Profound.UnifyRooms.Themes
 {
 	public sealed class UnifyRoomsTheme : AbstractConnectProTheme<UnifyRoomsThemeSettings>
 	{
+		private readonly MoreControlsPanelConfiguration m_MoreControlsPanel;
 		private readonly UnifyBarButtonsConfiguration m_UnifyBarButtons;
 		private readonly UserAccountsConfiguration m_UserAccounts;
+
 		private readonly IcdHashSet<IUserInterfaceFactory> m_UiFactories;
+
+		#region Properties
+
+		/// <summary>
+		/// Gets the more controls panel configuration.
+		/// </summary>
+		public MoreControlsPanelConfiguration MoreControlsPanel { get { return m_MoreControlsPanel; } }
 
 		/// <summary>
 		/// Gets the UnifyBar buttons configuration.
@@ -27,11 +37,14 @@ namespace ICD.Profound.UnifyRooms.Themes
 		/// </summary>
 		public UserAccountsConfiguration UserAccounts { get { return m_UserAccounts; } }
 
+		#endregion
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		public UnifyRoomsTheme()
 		{
+			m_MoreControlsPanel = new MoreControlsPanelConfiguration();
 			m_UnifyBarButtons = new UnifyBarButtonsConfiguration();
 			m_UserAccounts = new UserAccountsConfiguration();
 
@@ -65,6 +78,7 @@ namespace ICD.Profound.UnifyRooms.Themes
 		/// <param name="factory"></param>
 		protected override void ApplySettingsFinal(UnifyRoomsThemeSettings settings, IDeviceFactory factory)
 		{
+			m_MoreControlsPanel.Copy(settings.MoreControlsPanel);
 			m_UnifyBarButtons.Copy(settings.UnifyBarButtons);
 			m_UserAccounts.Copy(settings.UserAccounts);
 
@@ -78,6 +92,7 @@ namespace ICD.Profound.UnifyRooms.Themes
 		{
 			base.ClearSettingsFinal();
 
+			m_MoreControlsPanel.Clear();
 			m_UnifyBarButtons.Clear();
 			m_UserAccounts.Clear();
 		}
@@ -90,6 +105,7 @@ namespace ICD.Profound.UnifyRooms.Themes
 		{
 			base.CopySettingsFinal(settings);
 
+			settings.MoreControlsPanel.Copy(m_MoreControlsPanel);
 			settings.UnifyBarButtons.Copy(m_UnifyBarButtons);
 			settings.UserAccounts.Copy(m_UserAccounts);
 		}

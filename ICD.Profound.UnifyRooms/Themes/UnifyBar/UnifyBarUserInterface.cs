@@ -71,6 +71,7 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar
 			Subscribe(m_UnifyBar);
 
 			UpdateButtons();
+			UpdateMoreControlsPanel();
 		}
 
 		#region Methods
@@ -178,6 +179,14 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar
 				kvp.Key.SetButton(kvp.Value);
 		}
 
+		/// <summary>
+		/// Configures the UnifyBar to use the "More Controls" panel.
+		/// </summary>
+		private void UpdateMoreControlsPanel()
+		{
+			m_UnifyBar.ConfigurePanel(m_Theme.MoreControlsPanel);
+		}
+
 		#endregion
 
 		#region Unify Bar Callbacks
@@ -216,6 +225,7 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar
 		private void UnifyBarOnIsConnectedChanged(object sender, BoolEventArgs eventArgs)
 		{
 			UpdateButtons();
+			UpdateMoreControlsPanel();
 		}
 
 		/// <summary>
