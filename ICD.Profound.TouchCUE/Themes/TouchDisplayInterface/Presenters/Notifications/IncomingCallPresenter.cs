@@ -8,7 +8,7 @@ using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
 using ICD.Connect.Conferencing.IncomingCalls;
-using ICD.Connect.Conferencing.Participants;
+using ICD.Connect.Conferencing.Participants.Enums;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPROCommon.Rooms;
 using ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IPresenters;
