@@ -10,7 +10,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConferen
 		/// Returns the current active sources.
 		/// </summary>
 		/// <returns></returns>
-		IEnumerable<ITraditionalParticipant> GetSources();
+		IEnumerable<IParticipant> GetSources();
 
 		/// <summary>
 		/// Hangs up all of the active sources.

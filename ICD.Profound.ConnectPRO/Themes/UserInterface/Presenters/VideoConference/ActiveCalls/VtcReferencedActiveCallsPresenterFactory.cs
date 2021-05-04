@@ -8,7 +8,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.VideoConference.Active
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConference.ActiveCalls
 {
 	public sealed class VtcReferencedActiveCallsPresenterFactory :
-		AbstractUiListItemFactory<ITraditionalParticipant, IVtcReferencedActiveCallsPresenter, IVtcReferencedActiveCallsView>
+		AbstractUiListItemFactory<IParticipant, IVtcReferencedActiveCallsPresenter, IVtcReferencedActiveCallsView>
 	{
 		/// <summary>
 		/// Constructor.
@@ -31,7 +31,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="model"></param>
 		/// <param name="presenter"></param>
 		/// <param name="view"></param>
-		protected override void BindMvpTriad(ITraditionalParticipant model, IVtcReferencedActiveCallsPresenter presenter,
+		protected override void BindMvpTriad(IParticipant model, IVtcReferencedActiveCallsPresenter presenter,
 		                                     IVtcReferencedActiveCallsView view)
 		{
 			presenter.SetView(view);

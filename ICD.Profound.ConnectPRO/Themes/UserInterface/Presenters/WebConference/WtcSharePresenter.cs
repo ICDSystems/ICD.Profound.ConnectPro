@@ -418,7 +418,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// <param name="e"></param>
 		private void VideoDialerOnConferenceAdded(object sender, ConferenceEventArgs e)
 		{
-			Subscribe(e.Data as IWebConference);
+			Subscribe(e.Data);
 
 			UpdateVisibility();
 		}
@@ -430,7 +430,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// <param name="e"></param>
 		private void VideoDialerOnConferenceRemoved(object sender, ConferenceEventArgs e)
 		{
-			Unsubscribe(e.Data as IWebConference);
+			Unsubscribe(e.Data);
 
 			UpdateVisibility();
 		}
@@ -443,7 +443,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// Subscribe to the web conference events.
 		/// </summary>
 		/// <param name="conference"></param>
-		private void Subscribe(IWebConference conference)
+		private void Subscribe(IConference conference)
 		{
 			if (conference == null)
 				return;
@@ -455,7 +455,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// Unsubscribe from the web conference events.
 		/// </summary>
 		/// <param name="conference"></param>
-		private void Unsubscribe(IWebConference conference)
+		private void Unsubscribe(IConference conference)
 		{
 			if (conference == null)
 				return;

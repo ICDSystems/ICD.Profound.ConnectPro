@@ -7,6 +7,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference
 	public interface IWtcParticipantControlsPresenter : IWtcPresenter<IWtcParticipantControlsView>
 	{
 		[CanBeNull]
-		IWebParticipant Participant { get; set; }
+		IParticipant Participant { get; set; }
 	}
 }

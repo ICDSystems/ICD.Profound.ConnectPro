@@ -36,13 +36,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private IWebParticipant m_Participant;
+		private IParticipant m_Participant;
 
 		/// <summary>
 		/// Gets/sets the active participant for this presenter.
 		/// </summary>
 		[CanBeNull]
-		public IWebParticipant Participant
+		public IParticipant Participant
 		{
 			get { return m_Participant; }
 			set
@@ -88,7 +88,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				view.SetButtonLabel(INDEX_MUTE, isMuted ? "Unmute Participant" : s_ButtonLabels[INDEX_MUTE]);
 
 				// Record
-				ZoomWebParticipant zoomParticipant = Participant as ZoomWebParticipant;
+				ZoomParticipant zoomParticipant = Participant as ZoomParticipant;
 				bool canRecord = zoomParticipant != null && zoomParticipant.CanRecord;
 				view.SetButtonIcon(INDEX_RECORD, canRecord ? s_ButtonIcons[INDEX_RECORD] : "icon_tcRecord_white");
 				view.SetButtonLabel(INDEX_RECORD, canRecord ? "Disallow Recording" : s_ButtonLabels[INDEX_RECORD]);
@@ -129,7 +129,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 					Participant.Mute(!Participant.IsMuted);
 					break;
 				case INDEX_RECORD:
-					ZoomWebParticipant zoomParticipant = Participant as ZoomWebParticipant;
+					ZoomParticipant zoomParticipant = Participant as ZoomParticipant;
 					if (zoomParticipant != null)
 						zoomParticipant.AllowParticipantRecord(!zoomParticipant.CanRecord);
 					break;
@@ -144,12 +144,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// Subscribe to the participant events.
 		/// </summary>
 		/// <param name="participant"></param>
-		private void Subscribe(IWebParticipant participant)
+		private void Subscribe(IParticipant participant)
 		{
 			if (participant != null)
 				participant.OnIsMutedChanged += ParticipantOnIsMuted;
 
-			ZoomWebParticipant zoomParticipant = participant as ZoomWebParticipant;
+			ZoomParticipant zoomParticipant = participant as ZoomParticipant;
 			if (zoomParticipant != null)
 				zoomParticipant.OnCanRecordChanged += ZoomParticipantOnCanRecordChanged;
 		}
@@ -158,12 +158,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// Unsubscribe from the participant events.
 		/// </summary>
 		/// <param name="participant"></param>
-		private void Unsubscribe(IWebParticipant participant)
+		private void Unsubscribe(IParticipant participant)
 		{
 			if (participant != null)
 				participant.OnIsMutedChanged -= ParticipantOnIsMuted;
 
-			ZoomWebParticipant zoomParticipant = participant as ZoomWebParticipant;
+			ZoomParticipant zoomParticipant = participant as ZoomParticipant;
 			if (zoomParticipant != null)
 				zoomParticipant.OnCanRecordChanged -= ZoomParticipantOnCanRecordChanged;
 		}

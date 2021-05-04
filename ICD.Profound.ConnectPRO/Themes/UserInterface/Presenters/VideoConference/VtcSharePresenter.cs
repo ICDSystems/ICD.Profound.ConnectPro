@@ -39,7 +39,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private readonly SafeCriticalSection m_RefreshSection;
 
 		private readonly IcdHashSet<ISource> m_RoutedSources;
-		private readonly TraditionalParticipantEventHelper m_ParticipantEventHelper;
+		private readonly ParticipantEventHelper m_ParticipantEventHelper;
 		private readonly List<ISource> m_Sources;
 
 		private ISource m_Selected;
@@ -77,7 +77,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_RoutedSources = new IcdHashSet<ISource>();
 			m_Sources = new List<ISource>();
 			
-			m_ParticipantEventHelper = new TraditionalParticipantEventHelper(_ => UpdateVisibility());
+			m_ParticipantEventHelper = new ParticipantEventHelper(_ => UpdateVisibility());
 		}
 
 		/// <summary>
@@ -283,14 +283,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void VideoDialerOnConferenceAdded(object sender, ConferenceEventArgs e)
 		{
-			Subscribe(e.Data as ITraditionalConference);
+			Subscribe(e.Data);
 
 			UpdateVisibility();
 		}
 
 		private void VideoDialerOnConferenceRemoved(object sender, ConferenceEventArgs e)
 		{
-			Unsubscribe(e.Data as ITraditionalConference);
+			Unsubscribe(e.Data);
 
 			UpdateVisibility();
 		}
@@ -312,7 +312,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		#region Conference Callbacks
 
-		private void Subscribe(ITraditionalConference conference)
+		private void Subscribe(IConference conference)
 		{
 			if (conference == null)
 				return;
@@ -324,7 +324,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				m_ParticipantEventHelper.Subscribe(participant);
 		}
 
-		private void Unsubscribe(ITraditionalConference conference)
+		private void Unsubscribe(IConference conference)
 		{
 			if (conference == null)
 				return;
@@ -338,12 +338,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void ConferenceOnParticipantAdded(object sender, ParticipantEventArgs e)
 		{
-			m_ParticipantEventHelper.Subscribe(e.Data as ITraditionalParticipant);
+			m_ParticipantEventHelper.Subscribe(e.Data);
 		}
 
 		private void ConferenceOnParticipantRemoved(object sender, ParticipantEventArgs e)
 		{
-			m_ParticipantEventHelper.Unsubscribe(e.Data as ITraditionalParticipant);
+			m_ParticipantEventHelper.Unsubscribe(e.Data);
 		}
 
 		#endregion

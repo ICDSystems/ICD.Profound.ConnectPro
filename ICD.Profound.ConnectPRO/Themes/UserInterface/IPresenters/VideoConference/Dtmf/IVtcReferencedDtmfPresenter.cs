@@ -11,7 +11,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConferen
 		/// </summary>
 		event EventHandler OnPressed;
 
-		ITraditionalParticipant Source { get; set; }
+		IParticipant Source { get; set; }
 
 		bool Selected { get; set; }
 	}

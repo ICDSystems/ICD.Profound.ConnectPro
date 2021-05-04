@@ -59,8 +59,8 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 					SubscribeSelected(m_SelectedParticipant);
 
 				m_ParticipantControls.Participant =
-					m_SelectedParticipant != null && m_SelectedParticipant.Participant is IWebParticipant
-						? m_SelectedParticipant.Participant as IWebParticipant
+					m_SelectedParticipant != null
+						? m_SelectedParticipant.Participant
 						: null;
 
 				RefreshIfVisible();
@@ -86,12 +86,10 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 					activeConference == null
 						? Enumerable.Empty<IParticipant>()
 						: activeConference.GetParticipants();
-				List<IParticipant> sortedParticipants = (activeConference is IWebConference
-						? unsortedParticipants.OrderByDescending(p => ((IWebParticipant) p).IsHost)
-							.ThenByDescending(p => ((IWebParticipant) p).IsSelf)
-							.ThenBy(p => p.Name)
-						: unsortedParticipants.OrderBy(p => p.Name))
-					.ToList();
+				List<IParticipant> sortedParticipants = unsortedParticipants.OrderByDescending(p => p.IsHost)
+				                                                            .ThenByDescending(p => p.IsSelf)
+				                                                            .ThenBy(p => p.Name)
+				                                                            .ToList();
 
 				foreach (IReferencedParticipantPresenter presenter in m_PresenterFactory.BuildChildren(sortedParticipants))
 				{
@@ -113,9 +111,8 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 
 				// Only hosts can kick/mute people
 				bool isHost = webConferenceControl != null && webConferenceControl.AmIHost;
-				bool isNotSelf = SelectedParticipant != null 
-				                 && SelectedParticipant.Participant is IWebParticipant
-				                 && !((IWebParticipant)SelectedParticipant.Participant).IsSelf;
+				bool isNotSelf = SelectedParticipant != null
+				                 && !SelectedParticipant.Participant.IsSelf;
 				bool kickMuteEnabled = isHost && isNotSelf;
 				m_ParticipantControls.ShowView(kickMuteEnabled);
 
@@ -221,13 +218,13 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 
 		private void ControlOnConferenceRemoved(object sender, ConferenceEventArgs args)
 		{
-			Unsubscribe(args.Data as IWebConference);
+			Unsubscribe(args.Data);
 			RefreshIfVisible();
 		}
 
 		private void ControlOnConferenceAdded(object sender, ConferenceEventArgs args)
 		{
-			Subscribe(args.Data as IWebConference);
+			Subscribe(args.Data);
 			RefreshIfVisible();
 		}
 

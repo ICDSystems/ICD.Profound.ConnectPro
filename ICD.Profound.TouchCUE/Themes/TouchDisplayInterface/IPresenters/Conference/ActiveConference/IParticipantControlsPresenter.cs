@@ -7,6 +7,6 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IPresenters.Confere
 	public interface IParticipantControlsPresenter : ITouchDisplayPresenter<IParticipantControlsView>
 	{
 		[CanBeNull]
-		IWebParticipant Participant { get; set; }
+		IParticipant Participant { get; set; }
 	}
 }

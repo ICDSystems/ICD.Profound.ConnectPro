@@ -58,7 +58,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 			try
 			{
-				ITraditionalParticipant[] sources = GetSources().ToArray();
+				IParticipant[] sources = GetSources().ToArray();
 				foreach (IVtcReferencedActiveCallsPresenter presenter in m_ChildrenFactory.BuildChildren(sources))
 					presenter.ShowView(true);
 			}
@@ -83,11 +83,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Returns the current active sources.
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<ITraditionalParticipant> GetSources()
+		public IEnumerable<IParticipant> GetSources()
 		{
-			var conference = ActiveConferenceControl == null ? null : ActiveConferenceControl.GetActiveConference() as ITraditionalConference;
+			var conference = ActiveConferenceControl == null ? null : ActiveConferenceControl.GetActiveConference();
 			return conference == null
-				? Enumerable.Empty<ITraditionalParticipant>()
+				? Enumerable.Empty<IParticipant>()
 				: conference.GetParticipants().Where(s => s.GetIsActive());
 		}
 
@@ -99,7 +99,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (ActiveConferenceControl == null)
 				return;
 
-			var active = ActiveConferenceControl.GetActiveConference() as ITraditionalConference;
+			var active = ActiveConferenceControl.GetActiveConference();
 
 			if(active != null)
 				active.Hangup();
@@ -149,25 +149,25 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void DialerOnConferenceAdded(object sender, ConferenceEventArgs e)
 		{
-			Subscribe(e.Data as ITraditionalConference);
+			Subscribe(e.Data);
 		}
 
 		private void DialerOnConferenceRemoved(object sender, ConferenceEventArgs e)
 		{
-			Unsubscribe(e.Data as ITraditionalConference);
+			Unsubscribe(e.Data);
 		}
 
 		#endregion
 
 		#region Conference Callbacks 
 
-		private void Subscribe(ITraditionalConference conference)
+		private void Subscribe(IConference conference)
 		{
 			conference.OnParticipantAdded += ConferenceOnParticipantAdded;
 			conference.OnParticipantRemoved += ConferenceOnParticipantRemoved;
 		}
 
-		private void Unsubscribe(ITraditionalConference conference)
+		private void Unsubscribe(IConference conference)
 		{
 			conference.OnParticipantAdded -= ConferenceOnParticipantAdded;
 			conference.OnParticipantRemoved -= ConferenceOnParticipantRemoved;

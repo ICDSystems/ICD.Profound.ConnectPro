@@ -358,10 +358,8 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Header
 			{
 				foreach (var activeConference in Room.ConferenceManager.Dialers.ActiveConferences)
 				{
-					if (activeConference is IWebConference)
-						(activeConference as IWebConference).LeaveConference();
-					if (activeConference is ITraditionalConference)
-						(activeConference as ITraditionalConference).Hangup();
+					activeConference.LeaveConference();
+					activeConference.Hangup();
 				}
 			}
 

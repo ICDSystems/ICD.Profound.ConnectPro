@@ -243,14 +243,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private void ControlOnOnConferenceAdded(object sender, ConferenceEventArgs e)
 		{
-			Subscribe(e.Data as ITraditionalConference);
+			Subscribe(e.Data);
 
 			UpdateVisibility();
 		}
 
 		private void ControlOnOnConferenceRemoved(object sender, ConferenceEventArgs e)
 		{
-			Unsubscribe(e.Data as ITraditionalConference);
+			Unsubscribe(e.Data);
 
 			UpdateVisibility();
 		}
@@ -259,13 +259,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		#region Conference Callbacks
 
-		private void Subscribe(ITraditionalConference conference)
+		private void Subscribe(IConference conference)
 		{
 			conference.OnParticipantAdded += ConferenceOnParticipantsChanged;
 			conference.OnParticipantRemoved += ConferenceOnParticipantsChanged;
 			conference.OnStatusChanged += ConferenceOnStatusChanged;
 		}
-		private void Unsubscribe(ITraditionalConference conference)
+		private void Unsubscribe(IConference conference)
 		{
 			conference.OnParticipantAdded -= ConferenceOnParticipantsChanged;
 			conference.OnParticipantRemoved -= ConferenceOnParticipantsChanged;
@@ -347,7 +347,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 				if (ActiveConferenceControl != null)
 				{
-					var active = ActiveConferenceControl.GetActiveConference() as ITraditionalConference;
+					var active = ActiveConferenceControl.GetActiveConference();
 					if (active != null)
 						active.Hangup();
 				}

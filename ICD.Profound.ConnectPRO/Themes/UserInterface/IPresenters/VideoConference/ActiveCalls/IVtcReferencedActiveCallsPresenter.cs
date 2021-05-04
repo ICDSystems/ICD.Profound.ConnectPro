@@ -9,6 +9,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConferen
 		/// Sets the conference source for this presenter.
 		/// </summary>
 		/// <value></value>
-		ITraditionalParticipant Participant { get; set; }
+		IParticipant Participant { get; set; }
 	}
 }

@@ -28,13 +28,13 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private IWebParticipant m_Participant;
+		private IParticipant m_Participant;
 
 		/// <summary>
 		/// Gets/sets the active participant for this presenter.
 		/// </summary>
 		[CanBeNull]
-		public IWebParticipant Participant
+		public IParticipant Participant
 		{
 			get { return m_Participant; }
 			set
@@ -82,7 +82,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 				view.SetButtonVisible(INDEX_MUTE, true);
 
 				// Record
-				ZoomWebParticipant zoomParticipant = Participant as ZoomWebParticipant;
+				ZoomParticipant zoomParticipant = Participant as ZoomParticipant;
 				bool canRecord = zoomParticipant != null && zoomParticipant.CanRecord;
 				view.SetButtonLabel(INDEX_RECORD, canRecord ? "Disallow Recording" : s_ButtonLabels[INDEX_RECORD]);
 				view.SetButtonVisible(INDEX_RECORD, true);
@@ -123,7 +123,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 					Participant.Mute(!Participant.IsMuted);
 					break;
 				case INDEX_RECORD:
-					ZoomWebParticipant zoomParticipant = Participant as ZoomWebParticipant;
+					ZoomParticipant zoomParticipant = Participant as ZoomParticipant;
 					if (zoomParticipant != null)
 						zoomParticipant.AllowParticipantRecord(!zoomParticipant.CanRecord);
 					break;
@@ -138,12 +138,12 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 		/// Subscribe to the participant events.
 		/// </summary>
 		/// <param name="participant"></param>
-		private void Subscribe(IWebParticipant participant)
+		private void Subscribe(IParticipant participant)
 		{
 			if (participant != null)
 				participant.OnIsMutedChanged += ParticipantOnIsMuted;
 
-			ZoomWebParticipant zoomParticipant = participant as ZoomWebParticipant;
+			ZoomParticipant zoomParticipant = participant as ZoomParticipant;
 			if (zoomParticipant != null)
 				zoomParticipant.OnCanRecordChanged += ZoomParticipantOnCanRecordChanged;
 		}
@@ -152,12 +152,12 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 		/// Unsubscribe from the participant events.
 		/// </summary>
 		/// <param name="participant"></param>
-		private void Unsubscribe(IWebParticipant participant)
+		private void Unsubscribe(IParticipant participant)
 		{
 			if (participant != null)
 				participant.OnIsMutedChanged -= ParticipantOnIsMuted;
 
-			ZoomWebParticipant zoomParticipant = participant as ZoomWebParticipant;
+			ZoomParticipant zoomParticipant = participant as ZoomParticipant;
 			if (zoomParticipant != null)
 				zoomParticipant.OnCanRecordChanged -= ZoomParticipantOnCanRecordChanged;
 		}

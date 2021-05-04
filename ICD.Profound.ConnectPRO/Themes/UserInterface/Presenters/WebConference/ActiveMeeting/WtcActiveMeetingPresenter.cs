@@ -70,14 +70,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			{
 				var activeConference = ActiveConferenceControl == null
 					? null
-					: ActiveConferenceControl.GetActiveConference() as IWebConference;
+					: ActiveConferenceControl.GetActiveConference();
 				
 				view.SetShowHideCameraButtonState(ActiveConferenceControl != null && !ActiveConferenceControl.CameraMute);
 				view.SetLeaveMeetingButtonEnabled(activeConference != null);
 
-				List<IWebParticipant> sortedParticipants =
+				List<IParticipant> sortedParticipants =
 					activeConference == null
-						? new List<IWebParticipant>()
+						? new List<IParticipant>()
 						: activeConference.GetParticipants()
 						                  .OrderByDescending(p => p.IsHost)
 						                  .ThenByDescending(p => p.IsSelf)
@@ -180,7 +180,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			control.OnAmIHostChanged += ControlOnOnAmIHostChanged;
 			control.OnCallLockChanged += ControlOnCallLockChanged;
 
-			foreach (IWebConference conference in control.GetConferences())
+			foreach (IConference conference in control.GetConferences())
 				Subscribe(conference);
 		}
 
@@ -197,19 +197,19 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			control.OnAmIHostChanged -= ControlOnOnAmIHostChanged;
 			control.OnCallLockChanged -= ControlOnCallLockChanged;
 			
-			foreach (IWebConference conference in control.GetConferences())
+			foreach (IConference conference in control.GetConferences())
 				Unsubscribe(conference);
 		}
 
 		private void ControlOnConferenceRemoved(object sender, ConferenceEventArgs args)
 		{
-			Unsubscribe(args.Data as IWebConference);
+			Unsubscribe(args.Data);
 			RefreshIfVisible();
 		}
 
 		private void ControlOnConferenceAdded(object sender, ConferenceEventArgs args)
 		{
-			Subscribe(args.Data as IWebConference);
+			Subscribe(args.Data);
 			RefreshIfVisible();
 		}
 
@@ -232,14 +232,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		#region Conference Callbacks
 
-		private void Subscribe(IWebConference conference)
+		private void Subscribe(IConference conference)
 		{
 			conference.OnParticipantAdded += ConferenceOnParticipantAdded;
 			conference.OnParticipantRemoved += ConferenceOnParticipantRemoved;
 			conference.OnStatusChanged += ConferenceOnStatusChanged;
 		}
 
-		private void Unsubscribe(IWebConference conference)
+		private void Unsubscribe(IConference conference)
 		{
 			conference.OnParticipantAdded -= ConferenceOnParticipantAdded;
 			conference.OnParticipantRemoved -= ConferenceOnParticipantRemoved;
@@ -298,7 +298,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			if (ActiveConferenceControl == null)
 				return;
 
-			var conference = ActiveConferenceControl.GetActiveConference() as IWebConference;
+			var conference = ActiveConferenceControl.GetActiveConference();
 			if (conference == null)
 				return;
 
@@ -311,7 +311,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			if (ActiveConferenceControl == null)
 				return;
 
-			var conference = ActiveConferenceControl.GetActiveConference() as IWebConference;
+			var conference = ActiveConferenceControl.GetActiveConference();
 			if (conference == null)
 				return;
 

@@ -21,11 +21,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private IWebParticipant m_Participant;
+		private IParticipant m_Participant;
 		private bool m_Selected;
 
 		[CanBeNull]
-		public IWebParticipant Participant
+		public IParticipant Participant
 		{
 			get { return m_Participant; }
 			set
@@ -102,7 +102,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				view.SetButtonSelected(Selected);
 				view.SetMuteIconVisibility(Participant != null && Participant.IsMuted);
 
-				var zoomParticipant = Participant as ZoomWebParticipant;
+				var zoomParticipant = Participant as ZoomParticipant;
 				view.SetAvatarImageVisibility(zoomParticipant != null && !string.IsNullOrEmpty(zoomParticipant.AvatarUrl));
 				view.SetAvatarImagePath(zoomParticipant == null ? null : zoomParticipant.AvatarUrl);
 			}
@@ -114,13 +114,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		#region Participant Callbacks
 
-		private void Subscribe(IWebParticipant participant)
+		private void Subscribe(IParticipant participant)
 		{
 			participant.OnIsMutedChanged += ParticipantOnIsMutedChanged;
 			participant.OnIsHostChanged += ParticipantOnIsHostChanged;
 		}
 
-		private void Unsubscribe(IWebParticipant participant)
+		private void Unsubscribe(IParticipant participant)
 		{
 			participant.OnIsMutedChanged -= ParticipantOnIsMutedChanged;
 			participant.OnIsHostChanged -= ParticipantOnIsHostChanged;

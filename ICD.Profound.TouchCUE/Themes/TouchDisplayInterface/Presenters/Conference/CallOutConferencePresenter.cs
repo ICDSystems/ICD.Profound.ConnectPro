@@ -50,13 +50,13 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			get { return GetTraditionalConferenceControl(ActiveConferenceControl); }
 		}
 
-		private ITraditionalConference ActiveConference
+		private IConference ActiveConference
 		{
 			get
 			{
 				return TraditionalControl == null
 					? null
-					: TraditionalControl.GetActiveConference() as ITraditionalConference;
+					: TraditionalControl.GetActiveConference();
 			}
 		}
 
@@ -83,7 +83,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 
 			try
 			{
-				ITraditionalConference active = ActiveConference;
+				var active = ActiveConference;
 				bool isInCall = active != null;
 
 				// TODO
@@ -192,7 +192,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			callOut.OnConferenceRemoved += TraditionalControlOnConferenceRemoved;
 			callOut.OnCallOutFailed += TraditionalControlOnCallOutFailed;
 
-			foreach (ITraditionalConference conference in callOut.GetConferences())
+			foreach (IConference conference in callOut.GetConferences())
 				Subscribe(conference);
 
 			TraditionalCallComponent callComponent = GetCallComponent(callOut);
@@ -225,7 +225,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			callOut.OnConferenceRemoved -= TraditionalControlOnConferenceRemoved;
 			callOut.OnCallOutFailed -= TraditionalControlOnCallOutFailed;
 
-			foreach (ITraditionalConference conference in callOut.GetConferences())
+			foreach (IConference conference in callOut.GetConferences())
 				Unsubscribe(conference);
 
 			TraditionalCallComponent callComponent = GetCallComponent(callOut);
@@ -374,7 +374,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 				return;
 
 			// Hang up
-			ITraditionalConference active = control.GetActiveConference() as ITraditionalConference;
+			var active = control.GetActiveConference();
 			if (active != null)
 			{
 				active.Hangup();

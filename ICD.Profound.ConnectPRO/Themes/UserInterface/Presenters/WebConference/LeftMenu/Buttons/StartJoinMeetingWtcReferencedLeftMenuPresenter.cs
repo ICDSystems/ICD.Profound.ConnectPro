@@ -159,7 +159,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			control.OnConferenceAdded += ControlOnConferenceAdded;
 			control.OnConferenceRemoved += ControlOnConferenceRemoved;
 
-			foreach (IWebConference conference in control.GetConferences())
+			foreach (IConference conference in control.GetConferences())
 				Subscribe(conference);
 
 			ZoomRoomTraditionalConferenceControl callOut = GetTraditionalConferenceControl(control);
@@ -169,7 +169,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			callOut.OnConferenceAdded += TraditionalControlOnConferenceAdded;
 			callOut.OnConferenceRemoved += TraditionalControlOnConferenceRemoved;
 
-			foreach (ITraditionalConference conference in callOut.GetConferences())
+			foreach (IConference conference in callOut.GetConferences())
 				Subscribe(conference);
 		}
 
@@ -187,7 +187,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			control.OnConferenceAdded -= ControlOnConferenceAdded;
 			control.OnConferenceRemoved -= ControlOnConferenceRemoved;
 
-			foreach (IWebConference conference in control.GetConferences())
+			foreach (IConference conference in control.GetConferences())
 				Unsubscribe(conference);
 
 			ZoomRoomTraditionalConferenceControl callOut = GetTraditionalConferenceControl(control);
@@ -197,7 +197,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			callOut.OnConferenceAdded -= TraditionalControlOnConferenceAdded;
 			callOut.OnConferenceRemoved -= TraditionalControlOnConferenceRemoved;
 
-			foreach (ITraditionalConference conference in callOut.GetConferences())
+			foreach (IConference conference in callOut.GetConferences())
 				Unsubscribe(conference);
 		}
 

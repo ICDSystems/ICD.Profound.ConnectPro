@@ -24,13 +24,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private ITraditionalParticipant m_Source;
+		private IParticipant m_Source;
 		private bool m_Selected;
 
 		#region Properties
 
 		[CanBeNull]
-		public ITraditionalParticipant Source
+		public IParticipant Source
 		{
 			get { return m_Source; }
 			set
@@ -123,7 +123,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Subscribe to the source events.
 		/// </summary>
 		/// <param name="source"></param>
-		private void Subscribe(ITraditionalParticipant source)
+		private void Subscribe(IParticipant source)
 		{
 			if (source == null)
 				return;
@@ -136,7 +136,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Unsubscribe from the source events.
 		/// </summary>
 		/// <param name="source"></param>
-		private void Unsubscribe(ITraditionalParticipant source)
+		private void Unsubscribe(IParticipant source)
 		{
 			if (source == null)
 				return;

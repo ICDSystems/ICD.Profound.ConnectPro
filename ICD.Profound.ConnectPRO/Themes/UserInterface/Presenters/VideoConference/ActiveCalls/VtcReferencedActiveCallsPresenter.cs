@@ -20,14 +20,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly SafeTimer m_RefreshTimer;
 
-		private ITraditionalParticipant m_Source;
+		private IParticipant m_Source;
 
 		/// <summary>
 		/// Sets the conference source for this presenter.
 		/// </summary>
 		/// <value></value>
 		[CanBeNull]
-		public ITraditionalParticipant Participant
+		public IParticipant Participant
 		{
 			get { return m_Source; }
 			set
@@ -90,7 +90,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			}
 		}
 
-		private static string GetLabelText(ITraditionalParticipant source)
+		private static string GetLabelText(IParticipant source)
 		{
 			if (source == null)
 				return string.Empty;
@@ -116,7 +116,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Subscribe to the source events.
 		/// </summary>
 		/// <param name="source"></param>
-		private void Subscribe(ITraditionalParticipant source)
+		private void Subscribe(IParticipant source)
 		{
 			if (source == null)
 				return;
@@ -129,7 +129,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Unsubscribe from the source events.
 		/// </summary>
 		/// <param name="source"></param>
-		private void Unsubscribe(ITraditionalParticipant source)
+		private void Unsubscribe(IParticipant source)
 		{
 			if (source == null)
 				return;

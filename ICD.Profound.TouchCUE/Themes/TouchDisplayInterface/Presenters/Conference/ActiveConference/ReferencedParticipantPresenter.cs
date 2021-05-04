@@ -90,7 +90,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			{
 				string tags;
 
-				var webParticipant = Participant as IWebParticipant;
+				var webParticipant = Participant;
 				if (webParticipant == null)
 					tags = string.Empty;
 				else if (webParticipant.IsHost && webParticipant.IsSelf)
@@ -110,7 +110,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 				view.SetButtonSelected(Selected);
 				view.SetMuteIconVisibility(webParticipant != null && webParticipant.IsMuted);
 
-				var zoomParticipant = webParticipant as ZoomWebParticipant;
+				var zoomParticipant = webParticipant as ZoomParticipant;
 				view.SetAvatarImageVisibility(true);
 				view.SetAvatarImagePath(zoomParticipant == null || string.IsNullOrEmpty(zoomParticipant.AvatarUrl) 
 					? "ic_zoom_participants_head"
@@ -127,25 +127,15 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 		private void Subscribe(IParticipant participant)
 		{
 			participant.OnNameChanged += ParticipantOnOnNameChanged;
-
-			var webParticipant = participant as IWebParticipant;
-			if (webParticipant == null)
-				return;
-
-			webParticipant.OnIsMutedChanged += ParticipantOnIsMutedChanged;
-			webParticipant.OnIsHostChanged += ParticipantOnIsHostChanged;
+			participant.OnIsMutedChanged += ParticipantOnIsMutedChanged;
+			participant.OnIsHostChanged += ParticipantOnIsHostChanged;
 		}
 
 		private void Unsubscribe(IParticipant participant)
 		{
 			participant.OnNameChanged -= ParticipantOnOnNameChanged;
-
-			var webParticipant = participant as IWebParticipant;
-			if (webParticipant == null)
-				return;
-
-			webParticipant.OnIsMutedChanged -= ParticipantOnIsMutedChanged;
-			webParticipant.OnIsHostChanged -= ParticipantOnIsHostChanged;
+			participant.OnIsMutedChanged -= ParticipantOnIsMutedChanged;
+			participant.OnIsHostChanged -= ParticipantOnIsHostChanged;
 		}
 
 		private void ParticipantOnOnNameChanged(object sender, StringEventArgs e)

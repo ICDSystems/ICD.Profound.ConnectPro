@@ -241,14 +241,8 @@ namespace ICD.Profound.ConnectPROCommon.Dialing
 			if (conference == null)
 				throw new ArgumentNullException("conference");
 
-			// TODO - Actually use polymorphism like a good developer
-			var traditional = conference as ITraditionalConference;
-			if (traditional != null)
-				traditional.Hangup();
-
-			var web = conference as IWebConference;
-			if (web != null)
-				web.LeaveConference();
+			conference.Hangup();
+			conference.LeaveConference();
 		}
 
 		/// <summary>

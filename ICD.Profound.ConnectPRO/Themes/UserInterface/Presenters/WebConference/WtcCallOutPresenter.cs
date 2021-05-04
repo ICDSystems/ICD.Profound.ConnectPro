@@ -50,13 +50,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			get { return GetTraditionalConferenceControl(ActiveConferenceControl); }
 		}
 
-		private ITraditionalConference ActiveConference
+		private IConference ActiveConference
 		{
 			get
 			{
 				return TraditionalControl == null
 					? null
-					: TraditionalControl.GetActiveConference() as ITraditionalConference;
+					: TraditionalControl.GetActiveConference();
 			}
 		}
 
@@ -83,7 +83,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			try
 			{
-				ITraditionalConference active = ActiveConference;
+				var active = ActiveConference;
 				bool isInCall = active != null;
 
 				if (isInCall)
@@ -184,7 +184,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			control.OnConferenceAdded += ControlOnConferenceAdded;
 			control.OnConferenceRemoved += ControlOnConferenceRemoved;
 
-			foreach (IWebConference conference in control.GetConferences())
+			foreach (IConference conference in control.GetConferences())
 				Subscribe(conference);
 
 			ZoomRoomTraditionalConferenceControl callOut = GetTraditionalConferenceControl(control);
@@ -195,7 +195,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			callOut.OnConferenceRemoved += TraditionalControlOnConferenceRemoved;
 			callOut.OnCallOutFailed += TraditionalControlOnCallOutFailed;
 
-			foreach (ITraditionalConference conference in callOut.GetConferences())
+			foreach (IConference conference in callOut.GetConferences())
 				Subscribe(conference);
 
 			TraditionalCallComponent callComponent = GetCallComponent(callOut);
@@ -217,7 +217,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			control.OnConferenceAdded -= ControlOnConferenceAdded;
 			control.OnConferenceRemoved -= ControlOnConferenceRemoved;
 
-			foreach (IWebConference conference in control.GetConferences())
+			foreach (IConference conference in control.GetConferences())
 				Unsubscribe(conference);
 
 			ZoomRoomTraditionalConferenceControl callOut = GetTraditionalConferenceControl(control);
@@ -228,7 +228,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			callOut.OnConferenceRemoved -= TraditionalControlOnConferenceRemoved;
 			callOut.OnCallOutFailed -= TraditionalControlOnCallOutFailed;
 
-			foreach (ITraditionalConference conference in callOut.GetConferences())
+			foreach (IConference conference in callOut.GetConferences())
 				Unsubscribe(conference);
 
 			TraditionalCallComponent callComponent = GetCallComponent(callOut);
@@ -386,7 +386,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				return;
 
 			// Hang up
-			ITraditionalConference active = control.GetActiveConference() as ITraditionalConference;
+			IConference active = control.GetActiveConference();
 			if (active != null)
 			{
 				active.Hangup();

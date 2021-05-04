@@ -365,7 +365,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			if (ActiveConferenceControl == null)
 				return;
 
-			var conference = ActiveConferenceControl.GetActiveConference() as IWebConference;
+			var conference = ActiveConferenceControl.GetActiveConference();
 			if (conference == null)
 				return;
 
@@ -377,7 +377,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			if (ActiveConferenceControl == null)
 				return;
 
-			var conference = ActiveConferenceControl.GetActiveConference() as IWebConference;
+			var conference = ActiveConferenceControl.GetActiveConference();
 			if (conference == null)
 				return;
 
