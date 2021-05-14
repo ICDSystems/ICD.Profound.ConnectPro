@@ -5,11 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Changed
- - IsInMeeting property & event moved up a layer in abstraction from ConnectProRoom to CommercialRoom
 
+## [15.0.0] - 2021-05-14
 ### Added
  - Added IsOsdSource property to ConnectProSource for treating non-OSD devices as visible while room asleep
+ - Added UnifyRooms plugin
+ - Event server supports duplex for controlling the room externally
+
+### Changed
+ - IsInMeeting property & event moved up a layer in abstraction from ConnectProRoom to CommercialRoom
 
 ## [14.2.0] - 2021-01-21
 ### Added
