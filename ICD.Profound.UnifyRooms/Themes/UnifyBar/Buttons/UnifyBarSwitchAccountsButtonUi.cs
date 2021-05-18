@@ -52,7 +52,7 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar.Buttons
 
 			Icon = teams ? eMainButtonIcon.Teams : zoom ? eMainButtonIcon.Zoom : default(eMainButtonIcon);
 			Type = eMainButtonType.SwitchAccount;
-			Label = name == null ? string.Empty : name.ToUpper();
+			Label = name.ToUpper();
 			Visible = other != null;
 			Enabled = true;
 		}
@@ -63,6 +63,9 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar.Buttons
 		/// <param name="pressed"></param>
 		protected override void HandleButtonPress(bool pressed)
 		{
+			if (!pressed)
+				return;
+
 #if !SIMPLSHARP
 			UserAccount other = GetOtherAccount();
 			if (other != null)

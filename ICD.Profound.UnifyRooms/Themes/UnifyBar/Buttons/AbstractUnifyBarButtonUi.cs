@@ -251,7 +251,7 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar.Buttons
 			if (button == null)
 				return;
 
-			button.OnPressedChanged += ButtonOnPressedChanged;
+			button.OnPressedChanged -= ButtonOnPressedChanged;
 		}
 
 		/// <summary>
