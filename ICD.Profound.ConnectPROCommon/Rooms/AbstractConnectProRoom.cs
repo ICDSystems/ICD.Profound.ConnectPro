@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ICD.Common.Logging.Activities;
-using ICD.Common.Logging.LoggingContexts;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
@@ -14,7 +12,6 @@ using ICD.Connect.API.Nodes;
 using ICD.Connect.Audio.Controls.Volume;
 using ICD.Connect.Audio.VolumePoints;
 using ICD.Connect.Calendaring.Bookings;
-using ICD.Connect.Calendaring.CalendarManagers;
 using ICD.Connect.Cameras.Controls;
 using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.ConferenceManagers;
@@ -60,15 +57,13 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		private readonly ConnectProRouting m_Routing;
 		private readonly ConnectProDialing m_Dialing;
 
-		private bool m_IsInMeeting;
-		private ISource m_FocusSource;
-
 		private readonly IcdTimer m_MeetingStartTimer;
 
 		private readonly List<IPresentationControl> m_SubscribedPresentationControls;
 		private readonly List<IPowerDeviceControl> m_SubscribedDisplayPowerControls;
 
 		private IBooking m_UpcomingBooking;
+		private ISource m_FocusSource;
 
 		#region Properties
 
@@ -799,16 +794,29 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 				Subscribe(presentationControl);
 		}
 
+		/// <summary>
+		/// Subscribe to the presentation control events.
+		/// </summary>
+		/// <param name="presentationControl"></param>
 		private void Subscribe(IPresentationControl presentationControl)
 		{
 			presentationControl.OnPresentationActiveChanged += PresentationControlOnPresentationActiveChanged;
 		}
 
+		/// <summary>
+		/// Unsubscribe from the presentation control events.
+		/// </summary>
+		/// <param name="presentationControl"></param>
 		private void Unsubscribe(IPresentationControl presentationControl)
 		{
 			presentationControl.OnPresentationActiveChanged -= PresentationControlOnPresentationActiveChanged;
 		}
 
+		/// <summary>
+		/// Called when a presentation becomes active/inactive.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void PresentationControlOnPresentationActiveChanged(object sender, PresentationActiveApiEventArgs args)
 		{
 			if (!this.IsCombineRoom())
@@ -847,16 +855,29 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			UpdateIsAwake();
 		}
 
+		/// <summary>
+		/// Subscribe to the display power control events.
+		/// </summary>
+		/// <param name="displayPowerControl"></param>
 		private void Subscribe(IPowerDeviceControl displayPowerControl)
 		{
 			displayPowerControl.OnPowerStateChanged += DisplayPowerControlOnPowerStateChanged;
 		}
 
+		/// <summary>
+		/// Unsubscribe from the display power control events.
+		/// </summary>
+		/// <param name="displayPowerControl"></param>
 		private void Unsubscribe(IPowerDeviceControl displayPowerControl)
 		{
 			displayPowerControl.OnPowerStateChanged -= DisplayPowerControlOnPowerStateChanged;
 		}
 
+		/// <summary>
+		/// Called when a display power state changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void DisplayPowerControlOnPowerStateChanged(object sender, PowerDeviceControlPowerStateApiEventArgs e)
 		{
 			UpdateIsAwake();
