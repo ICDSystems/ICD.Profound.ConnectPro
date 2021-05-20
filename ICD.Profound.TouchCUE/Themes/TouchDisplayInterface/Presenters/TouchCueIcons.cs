@@ -10,17 +10,18 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters
 {
 	public static class TouchCueIcons
 	{
-		private static readonly Dictionary<eSettingsIcon, eTouchCueIcon> s_SettingsIcons = new Dictionary<eSettingsIcon, eTouchCueIcon>()
-		{
-			{ eSettingsIcon.Admin, eTouchCueIcon.Settings },
-			{ eSettingsIcon.Backgrounds, eTouchCueIcon.ConnectPro },
-			{ eSettingsIcon.Clock, eTouchCueIcon.Clock },
-			{ eSettingsIcon.Conference, eTouchCueIcon.VideoConference },
-			{ eSettingsIcon.Cue, eTouchCueIcon.TouchCue },
-			{ eSettingsIcon.Directory, eTouchCueIcon.Directory },
-			{ eSettingsIcon.Pin, eTouchCueIcon.Security },
-			{ eSettingsIcon.WakeSleep, eTouchCueIcon.WakeSleep },
-		};
+		private static readonly Dictionary<eSettingsIcon, eTouchCueIcon> s_SettingsIcons =
+			new Dictionary<eSettingsIcon, eTouchCueIcon>
+			{
+				{eSettingsIcon.Admin, eTouchCueIcon.Settings},
+				{eSettingsIcon.Backgrounds, eTouchCueIcon.ConnectPro},
+				{eSettingsIcon.Clock, eTouchCueIcon.Clock},
+				{eSettingsIcon.Conference, eTouchCueIcon.VideoConference},
+				{eSettingsIcon.Cue, eTouchCueIcon.TouchCue},
+				{eSettingsIcon.Directory, eTouchCueIcon.Directory},
+				{eSettingsIcon.Pin, eTouchCueIcon.Security},
+				{eSettingsIcon.WakeSleep, eTouchCueIcon.WakeSleep},
+			};
 
 		public static string GetIcon(eTouchCueIcon icon)
 		{

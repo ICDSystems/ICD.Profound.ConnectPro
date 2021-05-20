@@ -5,7 +5,7 @@ using ICD.Connect.Conferencing.DialContexts;
 
 namespace ICD.Profound.ConnectPROCommon.Themes.Shared.Models
 {
-	public class EmptyBooking : IBooking
+	public sealed class EmptyBooking : IBooking
 	{
 		/// <summary>
 		/// Returns the name of the meeting.

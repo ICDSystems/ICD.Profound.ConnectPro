@@ -9,7 +9,7 @@ using ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IViews;
 
 namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters
 {
-	public class ConnectProTouchDisplayNavigationController : AbstractNavigationController,
+	public sealed class ConnectProTouchDisplayNavigationController : AbstractNavigationController,
 		ITouchDisplayNavigationController
 	{
 		private readonly SafeCriticalSection m_SetRoomSection;

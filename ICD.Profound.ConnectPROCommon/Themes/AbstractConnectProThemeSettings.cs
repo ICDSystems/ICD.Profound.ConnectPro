@@ -29,7 +29,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public AbstractConnectProThemeSettings()
+		protected AbstractConnectProThemeSettings()
 		{
 			Logo = LOGO_DEFAULT;
 		}

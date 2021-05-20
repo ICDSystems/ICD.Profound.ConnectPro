@@ -7,7 +7,7 @@ using ICD.Profound.ConnectPRO.Themes.UserInterface.IViews.WebConference.ActiveMe
 
 namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.ActiveMeeting
 {
-	public class WtcReferencedParticipantPresenterFactory : AbstractUiListItemFactory<IWebParticipant, IWtcReferencedParticipantPresenter, IWtcReferencedParticipantView>
+	public sealed class WtcReferencedParticipantPresenterFactory : AbstractUiListItemFactory<IWebParticipant, IWtcReferencedParticipantPresenter, IWtcReferencedParticipantView>
 	{
 		public WtcReferencedParticipantPresenterFactory(IConnectProNavigationController navigationController,
 		                                                ListItemFactory<IWtcReferencedParticipantView> viewFactory,

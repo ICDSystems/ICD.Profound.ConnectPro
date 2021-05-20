@@ -122,7 +122,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Roo
 				direction = eCellDirection.Top;
 			}
 
-			int wallsPerRow = 2 * COLUMNS + 1; // COLUMNS number of top walls, COLUMNS number of left walls, 1 right wall
+			const int wallsPerRow = 2 * COLUMNS + 1; // COLUMNS number of top walls, COLUMNS number of left walls, 1 right wall
 
 			int topWall = row * wallsPerRow + column; // get index of top wall
 			int index = topWall + (direction == eCellDirection.Left ? COLUMNS : 0); // left wall is offset from top wall by COLUMNS index
@@ -135,7 +135,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Views.Common.Settings.Roo
 		{
 			// todo - you could return the cell/direction on either side
 			int index = m_WallButtons.GetKey(wallButton);
-			int wallsPerRow = 2 * COLUMNS + 1;
+			const int wallsPerRow = 2 * COLUMNS + 1;
 			row = index / wallsPerRow;
 			if (row >= ROWS) // handle the bottom walls of the last row
 			{

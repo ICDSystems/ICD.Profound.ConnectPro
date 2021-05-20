@@ -27,7 +27,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.DeviceDr
 
 		public event EventHandler<SourceEventArgs> OnSourcePressed;
 
-		private static readonly List<eVibeApp> s_Apps = new List<eVibeApp>()
+		private static readonly List<eVibeApp> s_Apps = new List<eVibeApp>
 		{
 			eVibeApp.Chrome,
 			eVibeApp.Youtube,

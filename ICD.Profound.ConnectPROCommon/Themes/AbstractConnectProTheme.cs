@@ -415,7 +415,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes
 
 			string cueBackgroundHelp = string.Format("SetCueBackground <{0}>",
 			                                         StringUtils.ArrayFormat(EnumUtils.GetValues<eCueBackgroundMode>()));
-			string cueMotionHelp = "SetCueMotion <true,false>";
+			const string cueMotionHelp = "SetCueMotion <true,false>";
 
 			yield return new GenericConsoleCommand<eCueBackgroundMode>("SetCueBackground", cueBackgroundHelp,
 			                                                           m => ConsoleSetCueBackground(m));

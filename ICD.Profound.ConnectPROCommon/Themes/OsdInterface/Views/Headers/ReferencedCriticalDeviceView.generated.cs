@@ -7,7 +7,7 @@ using ICD.Connect.UI.Controls.TextControls;
 
 namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Views.Headers
 {
-	public partial class ReferencedCriticalDeviceView
+	public sealed partial class ReferencedCriticalDeviceView
 	{
 		private VtProSubpage m_Subpage;
 		private VtProDynamicIconObject m_SubjectIcon;

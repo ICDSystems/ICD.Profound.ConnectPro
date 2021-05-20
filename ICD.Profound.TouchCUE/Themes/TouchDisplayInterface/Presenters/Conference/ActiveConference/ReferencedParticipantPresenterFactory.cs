@@ -7,7 +7,7 @@ using ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.IViews.Conference.Activ
 
 namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conference.ActiveConference
 {
-	public class ReferencedParticipantPresenterFactory : AbstractTouchDisplayListItemFactory<IParticipant, IReferencedParticipantPresenter, IReferencedParticipantView>
+	public sealed class ReferencedParticipantPresenterFactory : AbstractTouchDisplayListItemFactory<IParticipant, IReferencedParticipantPresenter, IReferencedParticipantView>
 	{
 		public ReferencedParticipantPresenterFactory(ITouchDisplayNavigationController navigationController,
 		                                                ListItemFactory<IReferencedParticipantView> viewFactory,

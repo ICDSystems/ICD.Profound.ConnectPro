@@ -6,7 +6,7 @@ using ICD.Profound.ConnectPROCommon.Themes.OsdInterface.IViews.Headers;
 namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Views.Headers
 {
 	[ViewBinding(typeof(IReferencedCriticalDeviceView))]
-	public partial class  ReferencedCriticalDeviceView : AbstractOsdView, IReferencedCriticalDeviceView
+	public sealed partial class ReferencedCriticalDeviceView : AbstractOsdView, IReferencedCriticalDeviceView
 	{
 		public ReferencedCriticalDeviceView(ISigInputOutput panel, IConnectProTheme theme)
 			: base(panel, theme)
