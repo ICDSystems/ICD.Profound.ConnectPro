@@ -167,7 +167,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		#region Control Callbacks
 
-		protected override void Subscribe(IWebConferenceDeviceControl control)
+		protected override void Subscribe(IConferenceDeviceControl control)
 		{
 			base.Subscribe(control);
 
@@ -184,7 +184,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 				Subscribe(conference);
 		}
 
-		protected override void Unsubscribe(IWebConferenceDeviceControl control)
+		protected override void Unsubscribe(IConferenceDeviceControl control)
 		{
 			base.Unsubscribe(control);
 

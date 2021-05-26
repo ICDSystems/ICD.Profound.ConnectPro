@@ -52,7 +52,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface
 		private static readonly Dictionary<Type, List<Type>> s_ControlToPresenterType =
 			new Dictionary<Type, List<Type>>
 			{
-				{typeof(IWebConferenceDeviceControl), new List<Type> {typeof(IConferenceBasePresenter)}},
+				{typeof(IConferenceDeviceControl), new List<Type> {typeof(IConferenceBasePresenter)}},
 			};
 
 		private readonly ITouchDisplayNavigationController m_NavigationController;

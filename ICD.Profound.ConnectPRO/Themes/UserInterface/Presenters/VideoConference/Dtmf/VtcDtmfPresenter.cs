@@ -119,7 +119,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Subscribe to the active conference control events.
 		/// </summary>
 		/// <param name="control"></param>
-		protected override void Subscribe(ITraditionalConferenceDeviceControl control)
+		protected override void Subscribe(IConferenceDeviceControl control)
 		{
 			base.Subscribe(control);
 
@@ -137,7 +137,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Unsubscribe from the active conference control events.
 		/// </summary>
 		/// <param name="control"></param>
-		protected override void Unsubscribe(ITraditionalConferenceDeviceControl control)
+		protected override void Unsubscribe(IConferenceDeviceControl control)
 		{
 			base.Unsubscribe(control);
 

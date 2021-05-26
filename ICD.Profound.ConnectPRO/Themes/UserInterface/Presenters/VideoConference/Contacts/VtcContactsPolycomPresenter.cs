@@ -201,7 +201,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		#region Conference Control Callbacks
 
-		protected override void Subscribe(ITraditionalConferenceDeviceControl control)
+		protected override void Subscribe(IConferenceDeviceControl control)
 		{
 			base.Subscribe(control);
 
@@ -211,7 +211,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_ButtonComponent = videoDialerDevice == null ? null : videoDialerDevice.Components.GetComponent<ButtonComponent>();
 		}
 
-		protected override void Unsubscribe(ITraditionalConferenceDeviceControl control)
+		protected override void Unsubscribe(IConferenceDeviceControl control)
 		{
 			base.Unsubscribe(control);
 

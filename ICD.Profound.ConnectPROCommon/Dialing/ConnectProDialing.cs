@@ -140,15 +140,15 @@ namespace ICD.Profound.ConnectPROCommon.Dialing
 		}
 
 		/// <summary>
-		/// Starts a personal meeting using the given web conference control.
+		/// Starts a personal meeting using the given conference control.
 		/// </summary>
-		/// <param name="webConferenceControl"></param>
-		public void StartPersonalMeeting([NotNull] IWebConferenceDeviceControl webConferenceControl)
+		/// <param name="conferenceControl"></param>
+		public void StartPersonalMeeting([NotNull] IConferenceDeviceControl conferenceControl)
 		{
-			if (webConferenceControl == null)
-				throw new ArgumentNullException("webConferenceControl");
+			if (conferenceControl == null)
+				throw new ArgumentNullException("conferenceControl");
 
-			SetupCall(webConferenceControl, webConferenceControl.StartPersonalMeeting);
+			SetupCall(conferenceControl, conferenceControl.StartPersonalMeeting);
 		}
 
 		/// <summary>

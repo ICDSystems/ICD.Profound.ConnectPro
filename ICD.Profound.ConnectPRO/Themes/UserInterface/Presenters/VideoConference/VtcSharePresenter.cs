@@ -241,7 +241,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		#region Conference Control Callbacks
 
-		protected override void Subscribe(ITraditionalConferenceDeviceControl control)
+		protected override void Subscribe(IConferenceDeviceControl control)
 		{
 			if (control != null)
 			{
@@ -260,7 +260,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			UpdateSources();
 		}
 
-		protected override void Unsubscribe(ITraditionalConferenceDeviceControl control)
+		protected override void Unsubscribe(IConferenceDeviceControl control)
 		{
 			if (control != null)
 			{

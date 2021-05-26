@@ -133,7 +133,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// Subscribe to the conference control events.
 		/// </summary>
 		/// <param name="control"></param>
-		protected override void Subscribe(IWebConferenceDeviceControl control)
+		protected override void Subscribe(IConferenceDeviceControl control)
 		{
 			base.Subscribe(control);
 
@@ -153,7 +153,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// Unsubscribe from the conference control events.
 		/// </summary>
 		/// <param name="control"></param>
-		protected override void Unsubscribe(IWebConferenceDeviceControl control)
+		protected override void Unsubscribe(IConferenceDeviceControl control)
 		{
 			base.Unsubscribe(control);
 

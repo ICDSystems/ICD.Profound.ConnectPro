@@ -45,18 +45,18 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// Gets the zoom traditional control for call out.
 		/// </summary>
 		[CanBeNull]
-		private ZoomRoomTraditionalConferenceControl TraditionalControl
+		private ZoomRoomConferenceControl ZoomConferenceControl
 		{
-			get { return GetTraditionalConferenceControl(ActiveConferenceControl); }
+			get { return GetZoomConferenceControl(ActiveConferenceControl); }
 		}
 
 		private IConference ActiveConference
 		{
 			get
 			{
-				return TraditionalControl == null
+				return ZoomConferenceControl == null
 					? null
-					: TraditionalControl.GetActiveConference();
+					: ZoomConferenceControl.GetActiveConference();
 			}
 		}
 
@@ -118,21 +118,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// Gets the zoom traditional control for call out from the given conference control.
 		/// </summary>
 		[CanBeNull]
-		private static ZoomRoomTraditionalConferenceControl GetTraditionalConferenceControl(
-			[CanBeNull] IWebConferenceDeviceControl control)
+		private static ZoomRoomConferenceControl GetZoomConferenceControl(
+			[CanBeNull] IConferenceDeviceControl control)
 		{
 			if (control == null)
 				return null;
 
 			ZoomRoom device = control.Parent as ZoomRoom;
-			return device == null ? null : device.Controls.GetControl<ZoomRoomTraditionalConferenceControl>();
+			return device == null ? null : device.Controls.GetControl<ZoomRoomConferenceControl>();
 		}
 
 		/// <summary>
 		/// Gets the zoom traditional call component from the given conference control.
 		/// </summary>
 		[CanBeNull]
-		private TraditionalCallComponent GetCallComponent([CanBeNull] ZoomRoomTraditionalConferenceControl control)
+		private TraditionalCallComponent GetCallComponent([CanBeNull] ZoomRoomConferenceControl control)
 		{
 			return control == null ? null : control.Parent.Components.GetComponent<TraditionalCallComponent>();
 		}
@@ -174,7 +174,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// Subscribe to the conference control events.
 		/// </summary>
 		/// <param name="control"></param>
-		protected override void Subscribe(IWebConferenceDeviceControl control)
+		protected override void Subscribe(IConferenceDeviceControl control)
 		{
 			base.Subscribe(control);
 
@@ -187,7 +187,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			foreach (IConference conference in control.GetConferences())
 				Subscribe(conference);
 
-			ZoomRoomTraditionalConferenceControl callOut = GetTraditionalConferenceControl(control);
+			ZoomRoomConferenceControl callOut = GetZoomConferenceControl(control);
 			if (callOut == null)
 				return;
 
@@ -207,7 +207,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// Unsubscribe from the conference control events.
 		/// </summary>
 		/// <param name="control"></param>
-		protected override void Unsubscribe(IWebConferenceDeviceControl control)
+		protected override void Unsubscribe(IConferenceDeviceControl control)
 		{
 			base.Unsubscribe(control);
 
@@ -220,7 +220,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			foreach (IConference conference in control.GetConferences())
 				Unsubscribe(conference);
 
-			ZoomRoomTraditionalConferenceControl callOut = GetTraditionalConferenceControl(control);
+			ZoomRoomConferenceControl callOut = GetZoomConferenceControl(control);
 			if (callOut == null)
 				return;
 
@@ -381,7 +381,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			if (Room == null)
 				return;
 
-			ZoomRoomTraditionalConferenceControl control = TraditionalControl;
+			ZoomRoomConferenceControl control = ZoomConferenceControl;
 			if (control == null)
 				return;
 

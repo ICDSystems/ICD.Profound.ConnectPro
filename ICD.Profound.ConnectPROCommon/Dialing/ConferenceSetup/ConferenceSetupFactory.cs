@@ -13,8 +13,7 @@ namespace ICD.Profound.ConnectPROCommon.Dialing.ConferenceSetup
 			s_Factories = new Dictionary<Type, Func<IConnectProRoom, IConferenceDeviceControl, Action, IConferenceSetup>>
 			{
 				// Zoom
-				{typeof(ZoomRoomConferenceControl), (room, control, action) => new ZoomConferenceSetup(room, control, action)},
-				{typeof(ZoomRoomTraditionalConferenceControl), (room, control, action) => new ZoomConferenceSetup(room, control, action)},
+				{typeof(ZoomRoomConferenceControl), (room, control, action) => new ZoomConferenceSetup(room, control, action)}
 			};
 
 		/// <summary>

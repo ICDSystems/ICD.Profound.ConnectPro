@@ -144,6 +144,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		#endregion
 
-		public ITraditionalConferenceDeviceControl ActiveConferenceControl { set; protected get; }
+		public IConferenceDeviceControl ActiveConferenceControl { set; protected get; }
 	}
 }

@@ -6,6 +6,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.AudioConferen
 {
 	public interface IAtcBasePresenter : IPopupPresenter<IAtcBaseView>, IContextualControlPresenter
 	{
-		ITraditionalConferenceDeviceControl ActiveConferenceControl { get;set; }
+		IConferenceDeviceControl ActiveConferenceControl { get;set; }
 	}
 }

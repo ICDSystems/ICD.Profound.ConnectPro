@@ -208,9 +208,8 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			if (Room == null)
 				return;
 
-			IWebConferenceDeviceControl webControl = ActiveConferenceControl as IWebConferenceDeviceControl;
-			if (webControl != null)
-				Room.Dialing.StartPersonalMeeting(webControl);
+			if (ActiveConferenceControl != null)
+				Room.Dialing.StartPersonalMeeting(ActiveConferenceControl);
 		}
 
 		private void ViewOnJoinByIdButtonPressed(object sender, EventArgs eventArgs)

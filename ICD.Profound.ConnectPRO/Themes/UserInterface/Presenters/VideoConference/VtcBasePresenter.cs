@@ -38,12 +38,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private readonly List<IVtcPresenter> m_VtcPresenters;
 
 		private IPowerDeviceControl m_SubscribedPowerControl;
-		private ITraditionalConferenceDeviceControl m_SubscribedConferenceControl;
+		private IConferenceDeviceControl m_SubscribedConferenceControl;
 
 		private bool m_IsInCall;
 		private bool m_AboutToShowCameraButtons;
 
-		public ITraditionalConferenceDeviceControl ActiveConferenceControl
+		public IConferenceDeviceControl ActiveConferenceControl
 		{
 			get { return m_SubscribedConferenceControl; }
 			set
@@ -124,7 +124,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <param name="control"></param>
 		public void SetControl(IDeviceControl control)
 		{
-			ActiveConferenceControl = control as ITraditionalConferenceDeviceControl;
+			ActiveConferenceControl = control as IConferenceDeviceControl;
 		}
 
 		/// <summary>
@@ -134,7 +134,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <returns></returns>
 		public bool SupportsControl(IDeviceControl control)
 		{
-			ITraditionalConferenceDeviceControl dialer = control as ITraditionalConferenceDeviceControl;
+			IConferenceDeviceControl dialer = control as IConferenceDeviceControl;
 			return dialer != null && dialer.Supports.HasFlag(eCallType.Video);
 		}
 
@@ -189,7 +189,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			}
 		}
 
-		private void SetVtcPresentersActiveConferenceControl(ITraditionalConferenceDeviceControl value)
+		private void SetVtcPresentersActiveConferenceControl(IConferenceDeviceControl value)
 		{
 			foreach (IVtcPresenter presenter in m_VtcPresenters)
 				presenter.ActiveConferenceControl = value;
@@ -208,7 +208,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		#region Conference Control Callbacks
 
-		private void Subscribe(ITraditionalConferenceDeviceControl control)
+		private void Subscribe(IConferenceDeviceControl control)
 		{
 			if (control == null)
 				return;
@@ -226,7 +226,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			m_SubscribedPowerControl.OnPowerStateChanged += SubscribedPowerControlOnPowerStateChanged;
 		}
 
-		private void Unsubscribe(ITraditionalConferenceDeviceControl control)
+		private void Unsubscribe(IConferenceDeviceControl control)
 		{
 			if (control == null)
 				return;

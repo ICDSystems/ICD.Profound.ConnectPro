@@ -8,8 +8,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 {
 	public abstract class AbstractVtcPresenter<T> : AbstractUiPresenter<T>, IVtcPresenter where T : class, IUiView
 	{
-		private ITraditionalConferenceDeviceControl m_ActiveConferenceControl;
-		public ITraditionalConferenceDeviceControl ActiveConferenceControl
+		private IConferenceDeviceControl m_ActiveConferenceControl;
+		public IConferenceDeviceControl ActiveConferenceControl
 		{
 			protected get { return m_ActiveConferenceControl; }
 			set
@@ -34,11 +34,11 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 		}
 
-		protected virtual void Subscribe(ITraditionalConferenceDeviceControl control)
+		protected virtual void Subscribe(IConferenceDeviceControl control)
 		{
 		}
 
-		protected virtual void Unsubscribe(ITraditionalConferenceDeviceControl control)
+		protected virtual void Unsubscribe(IConferenceDeviceControl control)
 		{
 		}
 	}

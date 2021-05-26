@@ -4,6 +4,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConferen
 {
 	public interface IVtcPresenter : IUiPresenter
 	{
-		ITraditionalConferenceDeviceControl ActiveConferenceControl { set; }
+		IConferenceDeviceControl ActiveConferenceControl { set; }
 	}
 }

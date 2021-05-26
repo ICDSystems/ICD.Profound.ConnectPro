@@ -10,13 +10,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 	public abstract class AbstractWtcPresenter<T> : AbstractUiPresenter<T>, IWtcPresenter<T>
 		where T : class, IUiView
 	{
-		private IWebConferenceDeviceControl m_ConferenceControl;
+		private IConferenceDeviceControl m_ConferenceControl;
 
 		/// <summary>
 		/// Gets/sets the active conference control for this presenter.
 		/// </summary>
 		[CanBeNull]
-		public virtual IWebConferenceDeviceControl ActiveConferenceControl
+		public virtual IConferenceDeviceControl ActiveConferenceControl
 		{
 			get { return m_ConferenceControl; }
 			set
@@ -47,7 +47,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// Subscribe to the conference control events.
 		/// </summary>
 		/// <param name="control"></param>
-		protected virtual void Subscribe(IWebConferenceDeviceControl control)
+		protected virtual void Subscribe(IConferenceDeviceControl control)
 		{
 		}
 
@@ -55,7 +55,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// Unsubscribe from the conference control events.
 		/// </summary>
 		/// <param name="control"></param>
-		protected virtual void Unsubscribe(IWebConferenceDeviceControl control)
+		protected virtual void Unsubscribe(IConferenceDeviceControl control)
 		{
 		}
 	}

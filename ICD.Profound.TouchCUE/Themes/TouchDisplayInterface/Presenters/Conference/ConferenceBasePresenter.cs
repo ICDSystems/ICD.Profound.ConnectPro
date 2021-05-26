@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Layout;
@@ -133,13 +134,12 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 					button.Selected = presenter.IsViewVisible;
 				}
 
-				var webConferenceControl = ActiveConferenceControl as IWebConferenceDeviceControl;
-				bool cameraActive = webConferenceControl != null && !webConferenceControl.CameraMute;
+				bool cameraActive = ActiveConferenceControl != null && !ActiveConferenceControl.CameraMute;
 				m_HideCameraButton.LabelText = cameraActive ? "Hide Camera" : "Show Camera";
 				m_HideCameraButton.Icon = TouchCueIcons.GetIcon(cameraActive ? eTouchCueIcon.Hide : eTouchCueIcon.Reveal, eTouchCueColor.White);
 				
 				// Only hosts can end meeting for everyone
-				ZoomRoom zoomRoom = webConferenceControl == null ? null : webConferenceControl.Parent as ZoomRoom;
+				ZoomRoom zoomRoom = ActiveConferenceControl == null ? null : ActiveConferenceControl.Parent as ZoomRoom;
 				CallComponent component = zoomRoom == null ? null : zoomRoom.Components.GetComponent<CallComponent>();
 				
 				if (component != null && component.AmIHost && IsInCall && IsViewVisible)
@@ -325,7 +325,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 
 		public bool SupportsControl(IDeviceControl control)
 		{
-			return control is IWebConferenceDeviceControl;
+			return control is IConferenceDeviceControl;
 		}
 
 		#endregion
@@ -341,11 +341,10 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 
 		private void HideCameraCallback()
 		{
-			var webConferenceControl = ActiveConferenceControl as IWebConferenceDeviceControl;
-			if (webConferenceControl == null)
+			if (ActiveConferenceControl == null || !ActiveConferenceControl.SupportedConferenceControlFeatures.HasFlag(eConferenceControlFeatures.CameraMute))
 				return;
 
-			webConferenceControl.SetCameraMute(!webConferenceControl.CameraMute);
+			ActiveConferenceControl.SetCameraMute(!ActiveConferenceControl.CameraMute);
 		}
 
 		private void ConfirmLeaveConference()
@@ -395,16 +394,11 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 
 			control.OnConferenceAdded += ControlOnOnConferenceAdded;
 			control.OnConferenceRemoved += ControlOnOnConferenceRemoved;
+			control.OnCameraMuteChanged += WebConferenceControlOnCameraMuteChanged;
+			control.OnAmIHostChanged += WebConferenceControlOnOnAmIHostChanged;
 
 			foreach (var conference in control.GetConferences())
 				Subscribe(conference);
-
-			var webConferenceControl = control as IWebConferenceDeviceControl;
-			if (webConferenceControl != null)
-			{
-				webConferenceControl.OnCameraMuteChanged += WebConferenceControlOnCameraMuteChanged;
-				webConferenceControl.OnAmIHostChanged += WebConferenceControlOnOnAmIHostChanged;
-			}
 
 			UpdateIsInCall();
 		}
@@ -416,16 +410,11 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 
 			control.OnConferenceAdded -= ControlOnOnConferenceAdded;
 			control.OnConferenceRemoved -= ControlOnOnConferenceRemoved;
+			control.OnCameraMuteChanged -= WebConferenceControlOnCameraMuteChanged;
+			control.OnAmIHostChanged -= WebConferenceControlOnOnAmIHostChanged;
 
 			foreach (var conference in control.GetConferences())
 				Unsubscribe(conference);
-
-			var webConferenceControl = control as IWebConferenceDeviceControl;
-			if (webConferenceControl != null)
-			{
-				webConferenceControl.OnCameraMuteChanged -= WebConferenceControlOnCameraMuteChanged;
-				webConferenceControl.OnAmIHostChanged -= WebConferenceControlOnOnAmIHostChanged;
-			}
 
 			UpdateIsInCall();
 		}

@@ -25,7 +25,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// <summary>
 		/// Gets the zoom traditional control for call out.
 		/// </summary>
-		private ZoomRoomTraditionalConferenceControl TraditionalControl
+		private ZoomRoomConferenceControl ZoomConferenceControl
 		{
 			get { return GetTraditionalConferenceControl(ActiveConferenceControl); }
 		}
@@ -63,7 +63,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			Icon = "list";
 			Label = "Contacts";
 			State = null;
-			Enabled = TraditionalControl == null || TraditionalControl.GetActiveConference() == null;
+			Enabled = ZoomConferenceControl == null || ZoomConferenceControl.GetActiveConference() == null;
 			Selected = m_ContactListPresenter.IsViewVisible;
 
 			base.Refresh(view);
@@ -78,14 +78,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// Gets the zoom traditional control for call out from the given conference control.
 		/// </summary>
 		[CanBeNull]
-		private static ZoomRoomTraditionalConferenceControl GetTraditionalConferenceControl(
-			[CanBeNull] IWebConferenceDeviceControl control)
+		private static ZoomRoomConferenceControl GetTraditionalConferenceControl(
+			[CanBeNull] IConferenceDeviceControl control)
 		{
 			if (control == null)
 				return null;
 
 			ZoomRoom device = control.Parent as ZoomRoom;
-			return device == null ? null : device.Controls.GetControl<ZoomRoomTraditionalConferenceControl>();
+			return device == null ? null : device.Controls.GetControl<ZoomRoomConferenceControl>();
 		}
 
 		#region Presenter Callbacks
@@ -113,7 +113,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// Subscribe to the conference control events.
 		/// </summary>
 		/// <param name="control"></param>
-		protected override void Subscribe(IWebConferenceDeviceControl control)
+		protected override void Subscribe(IConferenceDeviceControl control)
 		{
 			base.Subscribe(control);
 
@@ -126,7 +126,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			foreach (IConference conference in control.GetConferences())
 				Subscribe(conference);
 
-			ZoomRoomTraditionalConferenceControl callOut = GetTraditionalConferenceControl(control);
+			ZoomRoomConferenceControl callOut = GetTraditionalConferenceControl(control);
 			if (callOut == null)
 				return;
 
@@ -141,7 +141,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// Unsubscribe from the conference control events.
 		/// </summary>
 		/// <param name="control"></param>
-		protected override void Unsubscribe(IWebConferenceDeviceControl control)
+		protected override void Unsubscribe(IConferenceDeviceControl control)
 		{
 			base.Unsubscribe(control);
 
@@ -154,7 +154,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			foreach (IConference conference in control.GetConferences())
 				Unsubscribe(conference);
 
-			ZoomRoomTraditionalConferenceControl callOut = GetTraditionalConferenceControl(control);
+			ZoomRoomConferenceControl callOut = GetTraditionalConferenceControl(control);
 			if (callOut == null)
 				return;
 

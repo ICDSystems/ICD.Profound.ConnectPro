@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.EventArguments;
@@ -80,8 +81,6 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 
 				var activeConference = ActiveConferenceControl.GetActiveConference();
 
-				var webConferenceControl = ActiveConferenceControl as IWebConferenceDeviceControl;
-
 				IEnumerable<IParticipant> unsortedParticipants =
 					activeConference == null
 						? Enumerable.Empty<IParticipant>()
@@ -102,7 +101,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 				view.SetInviteButtonVisibility(sortedParticipants.Count == 0);
 
 				// This may change if other web conferences have meeting info to display
-				ZoomRoom zoomRoom = webConferenceControl == null ? null : webConferenceControl.Parent as ZoomRoom;
+				ZoomRoom zoomRoom = ActiveConferenceControl == null ? null : ActiveConferenceControl.Parent as ZoomRoom;
 				CallComponent component = zoomRoom == null ? null : zoomRoom.Components.GetComponent<CallComponent>();
 				view.SetMeetingNumberLabelVisibility(component != null);
 				view.SetMeetingNumberLabelText(component != null
@@ -110,14 +109,14 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 					: string.Empty);
 
 				// Only hosts can kick/mute people
-				bool isHost = webConferenceControl != null && webConferenceControl.AmIHost;
+				bool isHost = ActiveConferenceControl != null && ActiveConferenceControl.AmIHost;
 				bool isNotSelf = SelectedParticipant != null
 				                 && !SelectedParticipant.Participant.IsSelf;
 				bool kickMuteEnabled = isHost && isNotSelf;
 				m_ParticipantControls.ShowView(kickMuteEnabled);
 
 				// Call lock
-				bool locked = webConferenceControl != null && webConferenceControl.CallLock;
+				bool locked = ActiveConferenceControl != null && ActiveConferenceControl.CallLock;
 				view.SetLockButtonSelected(locked);
 			}
 			finally
@@ -181,17 +180,12 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 
 			control.OnConferenceAdded += ControlOnConferenceAdded;
 			control.OnConferenceRemoved += ControlOnConferenceRemoved;
-			
+			control.OnCameraMuteChanged += ControlOnCameraMuteChanged;
+			control.OnAmIHostChanged += ControlOnOnAmIHostChanged;
+			control.OnCallLockChanged += ControlOnCallLockChanged;
+
 			foreach (IConference conference in control.GetConferences())
 				Subscribe(conference);
-
-			var webConferenceControl = control as IWebConferenceDeviceControl;
-			if (webConferenceControl == null)
-				return;
-
-			webConferenceControl.OnCameraMuteChanged += ControlOnCameraMuteChanged;
-			webConferenceControl.OnAmIHostChanged += ControlOnOnAmIHostChanged;
-			webConferenceControl.OnCallLockChanged += ControlOnCallLockChanged;
 		}
 
 		protected override void Unsubscribe(IConferenceDeviceControl control)
@@ -203,17 +197,12 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 
 			control.OnConferenceAdded -= ControlOnConferenceAdded;
 			control.OnConferenceRemoved -= ControlOnConferenceRemoved;
-			
+			control.OnCameraMuteChanged -= ControlOnCameraMuteChanged;
+			control.OnAmIHostChanged -= ControlOnOnAmIHostChanged;
+			control.OnCallLockChanged -= ControlOnCallLockChanged;
+
 			foreach (IConference conference in control.GetConferences())
 				Unsubscribe(conference);
-
-			var webConferenceControl = control as IWebConferenceDeviceControl;
-			if (webConferenceControl == null)
-				return;
-
-			webConferenceControl.OnCameraMuteChanged -= ControlOnCameraMuteChanged;
-			webConferenceControl.OnAmIHostChanged -= ControlOnOnAmIHostChanged;
-			webConferenceControl.OnCallLockChanged -= ControlOnCallLockChanged;
 		}
 
 		private void ControlOnConferenceRemoved(object sender, ConferenceEventArgs args)
@@ -303,11 +292,10 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 
 		private void ViewOnLockButtonPressed(object sender, EventArgs eventArgs)
 		{
-			var webConferenceControl = ActiveConferenceControl as IWebConferenceDeviceControl;
-			if (webConferenceControl == null)
+			if (ActiveConferenceControl == null || !ActiveConferenceControl.SupportedConferenceControlFeatures.HasFlag(eConferenceControlFeatures.CallLock))
 				return;
 
-			webConferenceControl.EnableCallLock(!webConferenceControl.CallLock);
+			ActiveConferenceControl.EnableCallLock(!ActiveConferenceControl.CallLock);
 		}
 
 		protected override void ViewOnPreVisibilityChanged(object sender, BoolEventArgs args)

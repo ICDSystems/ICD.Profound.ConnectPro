@@ -325,10 +325,8 @@ namespace ICD.Profound.ConnectPROCommon.Routing
 
 				case eControlOverride.Atc:
 				case eControlOverride.Vtc:
-					return device.Controls.GetControls<ITraditionalConferenceDeviceControl>().FirstOrDefault();
-
 				case eControlOverride.WebConference:
-					return device.Controls.GetControls<IWebConferenceDeviceControl>().FirstOrDefault();
+					return device.Controls.GetControls<IConferenceDeviceControl>().FirstOrDefault();
 
 				default:
 					throw new ArgumentOutOfRangeException("controlOverride");

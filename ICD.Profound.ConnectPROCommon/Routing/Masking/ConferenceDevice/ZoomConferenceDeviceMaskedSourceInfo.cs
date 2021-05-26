@@ -11,7 +11,6 @@ namespace ICD.Profound.ConnectPROCommon.Routing.Masking.ConferenceDevice
 	public sealed class ZoomConferenceDeviceMaskedSourceInfo : AbstractConferenceDeviceMaskedSourceInfo
 	{
 		private ZoomRoomConferenceControl m_Control;
-		private ZoomRoomTraditionalConferenceControl m_TraditionalControl;
 
 		[CanBeNull]
 		private ZoomRoomConferenceControl Control
@@ -25,23 +24,6 @@ namespace ICD.Profound.ConnectPROCommon.Routing.Masking.ConferenceDevice
 				Unsubscribe(m_Control);
 				m_Control = value;
 				Subscribe(m_Control);
-
-				UpdateMask();
-			}
-		}
-
-		[CanBeNull]
-		private ZoomRoomTraditionalConferenceControl TraditionalControl
-		{
-			get { return m_TraditionalControl; }
-			set
-			{
-				if (value == m_TraditionalControl)
-					return;
-				
-				Unsubscribe(m_TraditionalControl);
-				m_TraditionalControl = value;
-				Subscribe(m_TraditionalControl);
 
 				UpdateMask();
 			}
@@ -63,7 +45,6 @@ namespace ICD.Profound.ConnectPROCommon.Routing.Masking.ConferenceDevice
 			ZoomRoom device = Source == null ? null : Room.Core.Originators.GetChild(Source.Device) as ZoomRoom;
 
 			Control = device == null ? null : device.Controls.GetControl<ZoomRoomConferenceControl>();
-			TraditionalControl = device == null ? null : device.Controls.GetControl<ZoomRoomTraditionalConferenceControl>();
 		}
 
 		/// <summary>
@@ -72,15 +53,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing.Masking.ConferenceDevice
 		/// <returns></returns>
 		protected override bool ShouldBeMasked()
 		{
-			// In a call-out call
 			bool connectingOrConnected =
-				TraditionalControl != null &&
-				TraditionalControl.GetConferences()
-				                  .Any(c => c.Status == eConferenceStatus.Connecting ||
-				                            c.Status == eConferenceStatus.Connected);
-
-			// In a zoom room
-			connectingOrConnected |=
 				Control != null &&
 				Control.GetConferences()
 				       .Any(c => c.Status == eConferenceStatus.Connecting ||
@@ -123,48 +96,6 @@ namespace ICD.Profound.ConnectPROCommon.Routing.Masking.ConferenceDevice
 		}
 
 		private void ControlOnConferenceRemoved(object sender, ConferenceEventArgs e)
-		{
-			Unsubscribe(e.Data);
-
-			UpdateMask();
-		}
-
-		#endregion
-
-		#region Traditional Conference Control Callbacks
-
-		private void Subscribe(ZoomRoomTraditionalConferenceControl traditionalControl)
-		{
-			if (traditionalControl == null)
-				return;
-
-			traditionalControl.OnConferenceAdded += TraditionalControlOnConferenceAdded;
-			traditionalControl.OnConferenceRemoved += TraditionalControlOnConferenceRemoved;
-
-			foreach (var conference in traditionalControl.GetConferences())
-				Subscribe(conference);
-		}
-
-		private void Unsubscribe(ZoomRoomTraditionalConferenceControl traditionalControl)
-		{
-			if (traditionalControl == null)
-				return;
-
-			traditionalControl.OnConferenceAdded -= TraditionalControlOnConferenceAdded;
-			traditionalControl.OnConferenceRemoved -= TraditionalControlOnConferenceRemoved;
-
-			foreach (var conference in traditionalControl.GetConferences())
-				Unsubscribe(conference);
-		}
-
-		private void TraditionalControlOnConferenceAdded(object sender, ConferenceEventArgs e)
-		{
-			Subscribe(e.Data);
-
-			UpdateMask();
-		}
-
-		private void TraditionalControlOnConferenceRemoved(object sender, ConferenceEventArgs e)
 		{
 			Unsubscribe(e.Data);
 

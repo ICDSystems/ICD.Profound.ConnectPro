@@ -64,8 +64,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface
 		private static readonly Dictionary<Type, List<Type>> s_ControlToPresenterType =
 			new Dictionary<Type, List<Type>>
 			{
-				{typeof(ITraditionalConferenceDeviceControl), new List<Type> {typeof(IVtcBasePresenter), typeof(IAtcBasePresenter)}},
-				{typeof(IWebConferenceDeviceControl), new List<Type> {typeof(IWtcBasePresenter)}},
+				{typeof(IConferenceDeviceControl), new List<Type> {typeof(IVtcBasePresenter), typeof(IAtcBasePresenter), typeof(IWtcBasePresenter)}},
 				{typeof(ITvTunerControl), new List<Type> {typeof(ICableTvPresenter)}}
 			};
 

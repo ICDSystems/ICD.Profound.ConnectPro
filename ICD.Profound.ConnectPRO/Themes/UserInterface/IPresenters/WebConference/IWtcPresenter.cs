@@ -9,6 +9,6 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.WebConference
 
 	public interface IWtcPresenter : IUiPresenter
 	{
-		IWebConferenceDeviceControl ActiveConferenceControl { set; }
+		IConferenceDeviceControl ActiveConferenceControl { set; }
 	}
 }

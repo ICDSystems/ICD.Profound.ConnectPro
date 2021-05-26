@@ -45,18 +45,18 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 		/// Gets the zoom traditional control for call out.
 		/// </summary>
 		[CanBeNull]
-		private ZoomRoomTraditionalConferenceControl TraditionalControl
+		private ZoomRoomConferenceControl ZoomConferenceControl
 		{
-			get { return GetTraditionalConferenceControl(ActiveConferenceControl); }
+			get { return GetZoomConferenceControl(ActiveConferenceControl); }
 		}
 
 		private IConference ActiveConference
 		{
 			get
 			{
-				return TraditionalControl == null
+				return ZoomConferenceControl == null
 					? null
-					: TraditionalControl.GetActiveConference();
+					: ZoomConferenceControl.GetActiveConference();
 			}
 		}
 
@@ -118,21 +118,21 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 		/// Gets the zoom traditional control for call out from the given conference control.
 		/// </summary>
 		[CanBeNull]
-		private static ZoomRoomTraditionalConferenceControl GetTraditionalConferenceControl(
+		private static ZoomRoomConferenceControl GetZoomConferenceControl(
 			[CanBeNull] IConferenceDeviceControl control)
 		{
 			if (control == null)
 				return null;
 
 			ZoomRoom device = control.Parent as ZoomRoom;
-			return device == null ? null : device.Controls.GetControl<ZoomRoomTraditionalConferenceControl>();
+			return device == null ? null : device.Controls.GetControl<ZoomRoomConferenceControl>();
 		}
 
 		/// <summary>
 		/// Gets the zoom traditional call component from the given conference control.
 		/// </summary>
 		[CanBeNull]
-		private TraditionalCallComponent GetCallComponent([CanBeNull] ZoomRoomTraditionalConferenceControl control)
+		private TraditionalCallComponent GetCallComponent([CanBeNull] ZoomRoomConferenceControl control)
 		{
 			return control == null ? null : control.Parent.Components.GetComponent<TraditionalCallComponent>();
 		}
@@ -184,7 +184,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			foreach (IConference conference in control.GetConferences())
 				Subscribe(conference);
 
-			ZoomRoomTraditionalConferenceControl callOut = GetTraditionalConferenceControl(control);
+			ZoomRoomConferenceControl callOut = GetZoomConferenceControl(control);
 			if (callOut == null)
 				return;
 
@@ -217,7 +217,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			foreach (IConference conference in control.GetConferences())
 				Unsubscribe(conference);
 
-			ZoomRoomTraditionalConferenceControl callOut = GetTraditionalConferenceControl(control);
+			ZoomRoomConferenceControl callOut = GetZoomConferenceControl(control);
 			if (callOut == null)
 				return;
 
@@ -369,7 +369,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 		/// <param name="eventArgs"></param>
 		private void ViewOnCallButtonPressed(object sender, EventArgs eventArgs)
 		{
-			ZoomRoomTraditionalConferenceControl control = TraditionalControl;
+			ZoomRoomConferenceControl control = ZoomConferenceControl;
 			if (control == null)
 				return;
 

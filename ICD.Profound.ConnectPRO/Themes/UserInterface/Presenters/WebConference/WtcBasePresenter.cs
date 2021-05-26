@@ -1,11 +1,13 @@
 ﻿using System;
 using ICD.Common.Utils.EventArguments;
+using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
+using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms.Components.Call;
 using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms.Controls.Conferencing;
 using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms.EventArguments;
@@ -36,12 +38,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		private readonly SafeTimer m_ConnectingTimer;
 
 		private IPowerDeviceControl m_SubscribedPowerControl;
-		private IWebConferenceDeviceControl m_SubscribedConferenceControl;
+		private IConferenceDeviceControl m_SubscribedConferenceControl;
 
 		private bool m_IsInCall;
 		private bool m_AboutToShowCameraButtons;
 
-		public IWebConferenceDeviceControl ActiveConferenceControl
+		public IConferenceDeviceControl ActiveConferenceControl
 		{
 			get { return m_SubscribedConferenceControl; }
 			set
@@ -107,12 +109,12 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		public void SetControl(IDeviceControl control)
 		{
-			ActiveConferenceControl = control as IWebConferenceDeviceControl;
+			ActiveConferenceControl = control as IConferenceDeviceControl;
 		}
 
 		public bool SupportsControl(IDeviceControl control)
 		{
-			return control is IWebConferenceDeviceControl;
+			return control is IConferenceDeviceControl;
 		}
 
 		#endregion
@@ -149,7 +151,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				m_SubscribedConferenceControl.GetActiveConference() != null;
 		}
 
-		private void SetWtcPresenterConferenceControls(IWebConferenceDeviceControl value)
+		private void SetWtcPresenterConferenceControls(IConferenceDeviceControl value)
 		{
 			foreach (IWtcPresenter presenter in Navigation.LazyLoadPresenters<IWtcPresenter>())
 				presenter.ActiveConferenceControl = value;
@@ -185,7 +187,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// Subscribe to the conference control events.
 		/// </summary>
 		/// <param name="control"></param>
-		private void Subscribe(IWebConferenceDeviceControl control)
+		private void Subscribe(IConferenceDeviceControl control)
 		{
 			if (control == null)
 				return;
@@ -220,7 +222,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		/// Unsubscribe from the conference control events.
 		/// </summary>
 		/// <param name="control"></param>
-		private void Unsubscribe(IWebConferenceDeviceControl control)
+		private void Unsubscribe(IConferenceDeviceControl control)
 		{
 			if (control == null)
 				return;
@@ -465,18 +467,16 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				// End the active conference
 				if (ActiveConferenceControl != null)
 				{
-					// Web Conference
-					var conference = ActiveConferenceControl.GetActiveConference();
+					IConference conference = ActiveConferenceControl.GetActiveConference();
 					if (conference != null)
-						conference.LeaveConference();
-
-					// Call Out
-					ZoomRoomTraditionalConferenceControl callOut =
-						ActiveConferenceControl.Parent.Controls.GetControl<ZoomRoomTraditionalConferenceControl>();
-					var traditional = callOut == null ? null : callOut.GetActiveConference();
-					if (traditional != null)
-						traditional.Hangup();
+					{
+						if (conference.SupportedConferenceFeatures.HasFlag(eConferenceFeatures.LeaveConference))
+							conference.LeaveConference();
+						else
+							conference.Hangup();
+					}
 				}
+
 				ActiveConferenceControl = null;
 
 				// Hide all of the WTC presenters

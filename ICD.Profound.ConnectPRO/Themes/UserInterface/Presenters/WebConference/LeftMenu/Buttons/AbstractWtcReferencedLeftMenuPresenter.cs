@@ -21,14 +21,14 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private IWebConferenceDeviceControl m_ConferenceControl;
+		private IConferenceDeviceControl m_ConferenceControl;
 
 		#region Properties
 
 		/// <summary>
 		/// Gets/sets the active conference control for this presenter.
 		/// </summary>
-		public IWebConferenceDeviceControl ActiveConferenceControl
+		public IConferenceDeviceControl ActiveConferenceControl
 		{
 			get { return m_ConferenceControl; }
 			set
@@ -170,7 +170,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// Subscribe to the conference control events.
 		/// </summary>
 		/// <param name="control"></param>
-		protected virtual void Subscribe(IWebConferenceDeviceControl control)
+		protected virtual void Subscribe(IConferenceDeviceControl control)
 		{
 		}
 
@@ -178,7 +178,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		/// Unsubscribe from the conference control events.
 		/// </summary>
 		/// <param name="control"></param>
-		protected virtual void Unsubscribe(IWebConferenceDeviceControl control)
+		protected virtual void Unsubscribe(IConferenceDeviceControl control)
 		{
 		}
 

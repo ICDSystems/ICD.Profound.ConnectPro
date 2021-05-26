@@ -30,9 +30,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		private readonly KeypadStringBuilder m_Builder;
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private ITraditionalConferenceDeviceControl m_ActiveConferenceControl;
+		private IConferenceDeviceControl m_ActiveConferenceControl;
 
-		public ITraditionalConferenceDeviceControl ActiveConferenceControl
+		public IConferenceDeviceControl ActiveConferenceControl
 		{
 			get { return m_ActiveConferenceControl; }
 			set
@@ -66,7 +66,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		/// <param name="control"></param>
 		public void SetControl(IDeviceControl control)
 		{
-			ActiveConferenceControl = control as ITraditionalConferenceDeviceControl;
+			ActiveConferenceControl = control as IConferenceDeviceControl;
 		}
 
 		/// <summary>
@@ -76,7 +76,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		/// <returns></returns>
 		public bool SupportsControl(IDeviceControl control)
 		{
-			ITraditionalConferenceDeviceControl dialer = control as ITraditionalConferenceDeviceControl;
+			IConferenceDeviceControl dialer = control as IConferenceDeviceControl;
 			return dialer != null && dialer.Supports.HasFlag(eCallType.Audio);
 		}
 
@@ -187,7 +187,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 					      .State
 					      .GetCachedActiveAudioSources()
 					      .Select(s => Room.Core.Originators.GetChild<IDevice>(s.Device))
-					      .SelectMany(d => d.Controls.GetControls<ITraditionalConferenceDeviceControl>())
+					      .SelectMany(d => d.Controls.GetControls<IConferenceDeviceControl>())
 					      .FirstOrDefault(c => c != null && c.Supports == eCallType.Audio);
 		}
 
@@ -195,7 +195,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 
 		#region Conference Control Callbacks
 
-		private void Subscribe(ITraditionalConferenceDeviceControl dialer)
+		private void Subscribe(IConferenceDeviceControl dialer)
 		{
 			if (dialer == null)
 				return;
@@ -208,7 +208,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 				Subscribe(conference);
 		}
 
-		private void Unsubscribe(ITraditionalConferenceDeviceControl dialer)
+		private void Unsubscribe(IConferenceDeviceControl dialer)
 		{
 			if (dialer == null)
 				return;
