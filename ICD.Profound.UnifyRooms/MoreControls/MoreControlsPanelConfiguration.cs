@@ -1,6 +1,7 @@
 ﻿using System;
 using ICD.Common.Properties;
 using ICD.Common.Utils.Xml;
+using ICD.Connect.Settings.Attributes.SettingsProperties;
 
 namespace ICD.Profound.UnifyRooms.MoreControls
 {
@@ -22,11 +23,13 @@ namespace ICD.Profound.UnifyRooms.MoreControls
 		/// <summary>
 		/// Gets/sets the path to the XPanel.
 		/// </summary>
+		[PathSettingsProperty(".c3p")]
 		public string Path { get; set; }
 
 		/// <summary>
 		/// Gets/sets the hostname.
 		/// </summary>
+		[IpAddressSettingsProperty]
 		public string Hostname { get; set; }
 
 		/// <summary>
@@ -37,6 +40,7 @@ namespace ICD.Profound.UnifyRooms.MoreControls
 		/// <summary>
 		/// Gets/sets the Ipid.
 		/// </summary>
+		[CrestronByteSettingsProperty]
 		public byte Ipid { get; set; }
 
 		#endregion
