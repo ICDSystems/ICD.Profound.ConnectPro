@@ -1,5 +1,6 @@
 ﻿using System;
 using ICD.Common.Properties;
+using ICD.Common.Utils;
 using ICD.Common.Utils.Xml;
 using ICD.Connect.Settings.Attributes.SettingsProperties;
 
@@ -112,7 +113,7 @@ namespace ICD.Profound.UnifyRooms.MoreControls
 				writer.WriteElementString(ELEMENT_PATH, Path);
 				writer.WriteElementString(ELEMENT_HOSTNAME, Hostname);
 				writer.WriteElementString(ELEMENT_PORT, IcdXmlConvert.ToString(Port));
-				writer.WriteElementString(ELEMENT_IPID, IcdXmlConvert.ToString(Ipid));
+				writer.WriteElementString(ELEMENT_IPID, StringUtils.ToIpIdString(Ipid));
 			}
 			writer.WriteEndElement();
 		}
