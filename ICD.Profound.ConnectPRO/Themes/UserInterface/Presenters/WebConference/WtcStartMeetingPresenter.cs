@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
@@ -24,7 +25,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 		private bool IsInConference
 		{
-			get { return ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConference() != null; }
+			get { return ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConferences().Any(); }
 		}
 
 		/// <summary>

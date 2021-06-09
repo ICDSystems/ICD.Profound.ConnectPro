@@ -185,7 +185,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			if (m_SubscribedPresentationComponent != null)
 				StopPresenting();
 
-			bool isInCall = ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConference() != null;
+			bool isInCall = ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConferences().Any();
 			if (!isInCall)
 				ShowView(false);
 		}

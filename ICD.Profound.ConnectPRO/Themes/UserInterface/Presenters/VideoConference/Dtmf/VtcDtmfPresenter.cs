@@ -81,17 +81,17 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <returns></returns>
 		private IEnumerable<IParticipant> GetSources()
 		{
-			var conference = GetActiveConference();
-			return conference == null
+			var conferences = GetActiveConference().ToArray();
+			return !conferences.Any()
 					   ? Enumerable.Empty<IParticipant>()
-					   : conference.GetParticipants().Where(s => s.GetIsOnline());
+					   : conferences.SelectMany(c => c.GetParticipants()).Where(p => p.GetIsOnline());
 		}
 
-		private IConference GetActiveConference()
+		private IEnumerable<IConference> GetActiveConference()
 		{
 			return ActiveConferenceControl == null
-				? null
-				: ActiveConferenceControl.GetActiveConference();
+				? Enumerable.Empty<IConference>()
+				: ActiveConferenceControl.GetActiveConferences();
 		}
 
 		private IEnumerable<IVtcReferencedDtmfView> ItemFactory(ushort count)

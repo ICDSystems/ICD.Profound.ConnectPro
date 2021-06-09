@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
@@ -50,13 +51,14 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			get { return GetZoomConferenceControl(ActiveConferenceControl); }
 		}
 
-		private IConference ActiveConference
+		[NotNull]
+		private IEnumerable<IConference> ActiveConferences
 		{
 			get
 			{
 				return ZoomConferenceControl == null
-					? null
-					: ZoomConferenceControl.GetActiveConference();
+					? Enumerable.Empty<IConference>()
+					: ZoomConferenceControl.GetActiveConferences();
 			}
 		}
 
@@ -83,8 +85,8 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 
 			try
 			{
-				var active = ActiveConference;
-				bool isInCall = active != null;
+				var active = ActiveConferences.ToArray();
+				bool isInCall = active.Any();
 
 				// TODO
 				//if (isInCall)
@@ -92,9 +94,9 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 
 				string dialText = m_StringBuilder.ToString();
 				string callLabel = isInCall ? "END CALL" : "CALL";
-				string callStatusLabel = active == null ? DISCONNECTED_MESSAGE : StringUtils.NiceName(active.Status);
-				bool backEnabled = active == null && dialText.Length > 0;
-				bool clearEnabled = active == null && dialText.Length > 0;
+				string callStatusLabel = !active.Any() ? DISCONNECTED_MESSAGE : StringUtils.NiceName(active.First().Status);
+				bool backEnabled = !active.Any() && dialText.Length > 0;
+				bool clearEnabled = !active.Any() && dialText.Length > 0;
 				bool callEnabled = dialText.Length > 0;
 				bool callSelected = isInCall;
 
@@ -247,7 +249,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 
 		private void TraditionalControlOnConferenceRemoved(object sender, ConferenceEventArgs args)
 		{
-			if (ActiveConference == null)
+			if (!ActiveConferences.Any())
 				m_StringBuilder.Clear();
 
 			Unsubscribe(args.Data);
@@ -285,7 +287,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 
 		private void ConferenceOnStatusChanged(object sender, ConferenceStatusEventArgs args)
 		{
-			if (ActiveConference == null)
+			if (!ActiveConferences.Any())
 				m_StringBuilder.Clear();
 
 			RefreshIfVisible();
@@ -298,7 +300,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 
 		private void ConferenceOnParticipantRemoved(object sender, ParticipantEventArgs participantEventArgs)
 		{
-			if (ActiveConference == null)
+			if (!ActiveConferences.Any())
 				m_StringBuilder.Clear();
 
 			RefreshIfVisible();
@@ -343,12 +345,12 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 		/// <param name="charEventArgs"></param>
 		private void ViewOnKeypadButtonPressed(object sender, CharEventArgs charEventArgs)
 		{
-			if (ActiveConference == null && !(charEventArgs.Data == '#' || charEventArgs.Data == '*'))
+			if (!ActiveConferences.Any() && !(charEventArgs.Data == '#' || charEventArgs.Data == '*'))
 				m_StringBuilder.AppendCharacter(charEventArgs.Data);
 
 			// DTMF
-			if (ActiveConference != null)
-				ActiveConference.GetParticipants().ForEach(p => p.SendDtmf(charEventArgs.Data));
+			if (ActiveConferences.Any())
+				ActiveConferences.SelectMany(c => c.GetParticipants()).ForEach(p => p.SendDtmf(charEventArgs.Data));
 		}
 
 		/// <summary>
@@ -358,7 +360,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 		/// <param name="eventArgs"></param>
 		private void ViewOnClearButtonPressed(object sender, EventArgs eventArgs)
 		{
-			if (ActiveConference == null)
+			if (!ActiveConferences.Any())
 				m_StringBuilder.Clear();
 		}
 
@@ -374,10 +376,12 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 				return;
 
 			// Hang up
-			var active = control.GetActiveConference();
-			if (active != null)
+			IEnumerable<IConference> active = control.GetActiveConferences().ToArray();
+			if (active.Any())
 			{
-				active.Hangup();
+				foreach (IConference conference in active)
+					conference.Hangup();
+
 				return;
 			}
 

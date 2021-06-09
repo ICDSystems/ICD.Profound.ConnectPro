@@ -79,12 +79,12 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 				if (ActiveConferenceControl == null)
 					return;
 
-				var activeConference = ActiveConferenceControl.GetActiveConference();
+				var activeConference = ActiveConferenceControl.GetActiveConferences().ToArray();
 
 				IEnumerable<IParticipant> unsortedParticipants =
-					activeConference == null
+					!activeConference.Any()
 						? Enumerable.Empty<IParticipant>()
-						: activeConference.GetParticipants();
+						: activeConference.SelectMany(c => c.GetParticipants());
 				List<IParticipant> sortedParticipants = unsortedParticipants.OrderByDescending(p => p.IsHost)
 				                                                            .ThenByDescending(p => p.IsSelf)
 				                                                            .ThenBy(p => p.Name)

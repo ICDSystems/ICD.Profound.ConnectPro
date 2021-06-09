@@ -1,4 +1,5 @@
-﻿using ICD.Common.Properties;
+﻿using System.Linq;
+using ICD.Common.Properties;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
@@ -30,7 +31,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			{
 				return
 					ActiveConferenceControl != null &&
-					ActiveConferenceControl.GetActiveConference() != null;
+					ActiveConferenceControl.GetActiveConferences().Any();
 			}
 		}
 
@@ -77,7 +78,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		protected override void Refresh(IWtcReferencedLeftMenuView view)
 		{
 			Icon = "videoConference";
-			Enabled = ZoomConferenceControl == null || ZoomConferenceControl.GetActiveConference() == null;
+			Enabled = ZoomConferenceControl == null || !ZoomConferenceControl.GetActiveConferences().Any();
 			Selected = m_StartMeetingPresenter.IsViewVisible || m_ActiveMeetingPresenter.IsViewVisible;
 			Label = IsInWebConference ? "Active Meeting" : "Start/Join Meeting";
 			State = IsInWebConference ? eLightState.Green : eLightState.None;

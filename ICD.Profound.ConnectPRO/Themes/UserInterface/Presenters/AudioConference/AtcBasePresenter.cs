@@ -145,7 +145,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 		{
 			return ActiveConferenceControl == null
 				       ? null
-				       : ActiveConferenceControl.GetActiveConference();
+				       : ActiveConferenceControl.GetActiveConferences().FirstOrDefault();
 		}
 
 		#region Room Callbacks

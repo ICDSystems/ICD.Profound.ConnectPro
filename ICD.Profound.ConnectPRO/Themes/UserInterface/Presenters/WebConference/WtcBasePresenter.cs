@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
@@ -148,7 +149,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 		{
 			IsInCall =
 				m_SubscribedConferenceControl != null &&
-				m_SubscribedConferenceControl.GetActiveConference() != null;
+				m_SubscribedConferenceControl.GetActiveConferences().Any();
 		}
 
 		private void SetWtcPresenterConferenceControls(IConferenceDeviceControl value)
@@ -467,8 +468,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 				// End the active conference
 				if (ActiveConferenceControl != null)
 				{
-					IConference conference = ActiveConferenceControl.GetActiveConference();
-					if (conference != null)
+					var conferences = ActiveConferenceControl.GetActiveConferences().ToArray();
+					foreach (IConference conference in conferences)
 					{
 						if (conference.SupportedConferenceFeatures.HasFlag(eConferenceFeatures.LeaveConference))
 							conference.LeaveConference();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.Collections;
 using ICD.Common.Utils.EventArguments;
@@ -67,7 +68,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Header
 					Navigation.LazyLoadPresenter<IVolumePresenter>().ShowView(false);
 					conferenceBase.ShowView(false);
 				}
-				else if (conferenceBase.ActiveConferenceControl != null && conferenceBase.ActiveConferenceControl.GetActiveConference() != null)
+				else if (conferenceBase.ActiveConferenceControl != null && conferenceBase.ActiveConferenceControl.GetActiveConferences().Any())
 					conferenceBase.ShowView(true);
 
 				Refresh();

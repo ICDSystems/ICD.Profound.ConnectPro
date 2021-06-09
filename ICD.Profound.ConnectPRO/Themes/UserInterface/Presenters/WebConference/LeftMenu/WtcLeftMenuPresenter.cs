@@ -222,7 +222,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 		{
 			IsInWebConference =
 				ActiveConferenceControl != null &&
-				ActiveConferenceControl.GetActiveConference() != null;
+				ActiveConferenceControl.GetActiveConferences().Any();
 		}
 
 		private void ShowDefaultPresenterForMode()

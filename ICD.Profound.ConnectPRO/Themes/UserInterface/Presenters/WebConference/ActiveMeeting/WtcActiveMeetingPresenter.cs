@@ -68,21 +68,21 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 
 			try
 			{
-				var activeConference = ActiveConferenceControl == null
+				var activeConferences = ActiveConferenceControl == null
 					? null
-					: ActiveConferenceControl.GetActiveConference();
+					: ActiveConferenceControl.GetActiveConferences();
 				
 				view.SetShowHideCameraButtonState(ActiveConferenceControl != null && !ActiveConferenceControl.CameraMute);
-				view.SetLeaveMeetingButtonEnabled(activeConference != null);
+				view.SetLeaveMeetingButtonEnabled(activeConferences != null);
 
 				List<IParticipant> sortedParticipants =
-					activeConference == null
+					activeConferences == null
 						? new List<IParticipant>()
-						: activeConference.GetParticipants()
-						                  .OrderByDescending(p => p.IsHost)
-						                  .ThenByDescending(p => p.IsSelf)
-						                  .ThenBy(p => p.Name)
-						                  .ToList();
+						: activeConferences.SelectMany(c => c.GetParticipants())
+						                   .OrderByDescending(p => p.IsHost)
+						                   .ThenByDescending(p => p.IsSelf)
+						                   .ThenBy(p => p.Name)
+						                   .ToList();
 
 				foreach (IWtcReferencedParticipantPresenter presenter in m_PresenterFactory.BuildChildren(sortedParticipants))
 				{
@@ -298,11 +298,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			if (ActiveConferenceControl == null)
 				return;
 
-			var conference = ActiveConferenceControl.GetActiveConference();
-			if (conference == null)
+			var conferences = ActiveConferenceControl.GetActiveConferences().ToArray();
+			if (!conferences.Any())
 				return;
 
-			conference.LeaveConference();
+			foreach (IConference conference in conferences)
+				conference.LeaveConference();
+
 			SelectedParticipant = null;
 		}
 
@@ -311,11 +313,13 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			if (ActiveConferenceControl == null)
 				return;
 
-			var conference = ActiveConferenceControl.GetActiveConference();
-			if (conference == null)
+			var conferences = ActiveConferenceControl.GetActiveConferences().ToArray();
+			if (!conferences.Any())
 				return;
 
-			conference.EndConference();
+			foreach (IConference conference in conferences)
+				conference.EndConference();
+
 			SelectedParticipant = null;
 		}
 

@@ -201,7 +201,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			IsInCall =
 				m_SubscribedConferenceControl != null &&
-				m_SubscribedConferenceControl.GetActiveConference() != null;
+				m_SubscribedConferenceControl.GetActiveConferences().Any();
 		}
 
 		#endregion
@@ -347,9 +347,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 				if (ActiveConferenceControl != null)
 				{
-					var active = ActiveConferenceControl.GetActiveConference();
-					if (active != null)
-						active.Hangup();
+					var active = ActiveConferenceControl.GetActiveConferences();
+					foreach (IConference conference in active)
+						conference.Hangup();
 				}
 
 				ActiveConferenceControl = null;

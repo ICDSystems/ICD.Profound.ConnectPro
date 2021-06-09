@@ -613,7 +613,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			          .Show("Invitation sent.", 1000);
 
 			// If we're in a meeting navigate back to the active meeting page
-			if (ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConference() != null)
+			if (ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConferences().Any())
 				Navigation.NavigateTo<IActiveConferencePresenter>();
 
 			RefreshIfVisible();

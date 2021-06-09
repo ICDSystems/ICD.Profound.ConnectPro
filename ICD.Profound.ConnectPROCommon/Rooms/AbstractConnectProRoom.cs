@@ -824,7 +824,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 
 			var presentationControl = sender as IPresentationControl;
 			var conferenceControl = presentationControl == null ? null : presentationControl.Parent.Controls.GetControl<IConferenceDeviceControl>();
-			if (conferenceControl == null || conferenceControl.GetActiveConference() == null)
+			if (conferenceControl == null || !conferenceControl.GetActiveConferences().Any())
 				return;
 			
 			var conferenceSource = Originators.GetInstancesRecursive<ISource>().FirstOrDefault(s => s.Device == presentationControl.Parent.Id);

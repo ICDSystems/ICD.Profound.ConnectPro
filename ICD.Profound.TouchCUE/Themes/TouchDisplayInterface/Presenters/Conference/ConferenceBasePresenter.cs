@@ -174,7 +174,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 		{
 			IsInCall =
 				m_SubscribedConferenceControl != null &&
-				m_SubscribedConferenceControl.GetActiveConference() != null;
+				m_SubscribedConferenceControl.GetActiveConferences().Any();
 			UpdateButtonVisibility();
 			Refresh();
 		}
@@ -364,11 +364,9 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			if (ActiveConferenceControl == null)
 				return;
 
-			var conference = ActiveConferenceControl.GetActiveConference();
-			if (conference == null)
-				return;
-
-			conference.LeaveConference();
+			IEnumerable<IConference> conferences = ActiveConferenceControl.GetActiveConferences().ToArray();
+			foreach (IConference conference in conferences)
+				conference.LeaveConference();
 		}
 
 		private void EndConferenceCallback()
@@ -376,11 +374,9 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Conferen
 			if (ActiveConferenceControl == null)
 				return;
 
-			var conference = ActiveConferenceControl.GetActiveConference();
-			if (conference == null)
-				return;
-
-			conference.EndConference();
+			IEnumerable<IConference> conferences = ActiveConferenceControl.GetActiveConferences().ToArray();
+			foreach (IConference conference in conferences)
+				conference.EndConference();
 		}
 
 		#endregion

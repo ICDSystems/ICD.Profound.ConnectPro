@@ -1,4 +1,5 @@
-﻿using ICD.Common.Properties;
+﻿using System.Linq;
+using ICD.Common.Properties;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.Controls.Presentation;
@@ -89,7 +90,7 @@ namespace ICD.Profound.ConnectPROCommon.Routing.Masking.ConferenceDevice
 				return false;
 
 			// In a call
-			if (ConferenceControl != null && ConferenceControl.GetActiveConference() != null)
+			if (ConferenceControl != null && ConferenceControl.GetActiveConferences().Any())
 				return false;
 
 			return true;

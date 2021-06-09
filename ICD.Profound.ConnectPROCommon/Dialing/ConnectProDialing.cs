@@ -257,7 +257,7 @@ namespace ICD.Profound.ConnectPROCommon.Dialing
 			return
 				m_Room.ConferenceManager.Dialers
 				      .GetDialingProviders()
-				      .Where(p => p.GetActiveConference() != null)
+				      .Where(p => p.GetActiveConferences().Any())
 				      .SelectMany(p => m_Room.Routing.Sources.GetSources(p))
 				      .OfType<ConnectProSource>()
 				      .Select(s => s.ConferenceOverride)

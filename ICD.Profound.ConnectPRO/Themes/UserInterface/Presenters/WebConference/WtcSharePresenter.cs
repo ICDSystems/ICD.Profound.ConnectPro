@@ -264,7 +264,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			if (m_SubscribedPresentationComponent != null)
 				StopPresenting();
 
-			bool isInCall = ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConference() != null;
+			bool isInCall = ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConferences().Any();
 			if (!isInCall)
 				ShowView(false);
 		}

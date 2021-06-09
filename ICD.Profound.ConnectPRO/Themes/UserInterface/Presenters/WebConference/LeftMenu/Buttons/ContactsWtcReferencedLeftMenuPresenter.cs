@@ -1,4 +1,5 @@
-﻿using ICD.Common.Properties;
+﻿using System.Linq;
+using ICD.Common.Properties;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
@@ -63,7 +64,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			Icon = "list";
 			Label = "Contacts";
 			State = null;
-			Enabled = ZoomConferenceControl == null || ZoomConferenceControl.GetActiveConference() == null;
+			Enabled = ZoomConferenceControl == null || !ZoomConferenceControl.GetActiveConferences().Any();
 			Selected = m_ContactListPresenter.IsViewVisible;
 
 			base.Refresh(view);

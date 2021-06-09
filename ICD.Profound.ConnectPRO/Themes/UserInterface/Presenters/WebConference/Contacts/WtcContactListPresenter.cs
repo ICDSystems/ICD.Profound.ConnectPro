@@ -625,7 +625,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference.
 			          .Show("Invitation sent.", 1000);
 
 			// If we're in a meeting navigate back to the active meeting page
-			if (ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConference() != null)
+			if (ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConferences().Any())
 				Navigation.NavigateTo<IWtcActiveMeetingPresenter>();
 
 			RefreshIfVisible();

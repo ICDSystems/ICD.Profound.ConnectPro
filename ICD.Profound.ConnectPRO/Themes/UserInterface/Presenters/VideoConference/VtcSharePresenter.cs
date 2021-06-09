@@ -302,8 +302,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				StopPresenting();
 
 			bool isInCall = ActiveConferenceControl != null 
-			                && ActiveConferenceControl.GetActiveConference() != null 
-			                && ActiveConferenceControl.GetActiveConference().GetParticipants().Any(s => s.GetIsOnline());
+			                && ActiveConferenceControl.GetActiveConferences().Any()
+			                && ActiveConferenceControl.GetActiveConferences().SelectMany(c => c.GetParticipants()).Any(p => p.GetIsOnline());
 			if (!isInCall)
 				ShowView(false);
 		}

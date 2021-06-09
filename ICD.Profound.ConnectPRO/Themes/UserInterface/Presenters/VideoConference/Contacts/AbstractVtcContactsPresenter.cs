@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Connect.Conferencing.ConferenceManagers;
@@ -56,7 +57,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		protected virtual bool HangupButtonEnabled
 		{
-			get { return ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConference() != null; }
+			get { return ActiveConferenceControl != null && ActiveConferenceControl.GetActiveConferences().Any(); }
 		}
 
 		protected virtual bool HideFavoriteIcons { get { return false; } }

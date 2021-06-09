@@ -85,10 +85,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// <returns></returns>
 		public IEnumerable<IParticipant> GetSources()
 		{
-			var conference = ActiveConferenceControl == null ? null : ActiveConferenceControl.GetActiveConference();
-			return conference == null
+			var conferences = ActiveConferenceControl == null ? null : ActiveConferenceControl.GetActiveConferences().ToArray();
+			return conferences == null || !conferences.Any()
 				? Enumerable.Empty<IParticipant>()
-				: conference.GetParticipants().Where(s => s.GetIsActive());
+				: conferences.SelectMany(c => c.GetParticipants()).Where(p => p.GetIsActive());
 		}
 
 		/// <summary>
@@ -99,10 +99,10 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			if (ActiveConferenceControl == null)
 				return;
 
-			var active = ActiveConferenceControl.GetActiveConference();
+			var active = ActiveConferenceControl.GetActiveConferences();
 
-			if(active != null)
-				active.Hangup();
+			foreach (IConference conference in active)
+				conference.Hangup();
 		}
 
 		#region Private Methods
