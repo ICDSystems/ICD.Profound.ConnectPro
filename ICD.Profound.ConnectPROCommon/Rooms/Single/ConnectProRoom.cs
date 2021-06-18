@@ -192,7 +192,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Single
 					Originators.Add(id, combineMode);
 
 					if (ConferenceManager != null)
-						ConferenceManager.Dialers.RegisterDialingProvider(point);
+						ConferenceManager.Dialers.RegisterConferencePoint(point);
 				}
 			}
 		}
