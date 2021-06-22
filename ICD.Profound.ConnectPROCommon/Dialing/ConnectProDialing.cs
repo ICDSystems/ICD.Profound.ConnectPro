@@ -241,8 +241,8 @@ namespace ICD.Profound.ConnectPROCommon.Dialing
 			if (conference == null)
 				throw new ArgumentNullException("conference");
 
-			conference.Hangup();
-			conference.LeaveConference();
+			if (conference.SupportsLeaveOrEnd())
+				conference.LeaveOrEndConference();
 		}
 
 		/// <summary>

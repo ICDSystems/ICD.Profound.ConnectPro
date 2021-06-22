@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Linq;
 using ICD.Common.Utils.EventArguments;
-using ICD.Common.Utils.Extensions;
 using ICD.Common.Utils.Timers;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
-using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms.Components.Call;
 using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms.Controls.Conferencing;
 using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms.EventArguments;
@@ -471,10 +469,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 					var conferences = ActiveConferenceControl.GetActiveConferences().ToArray();
 					foreach (IConference conference in conferences)
 					{
-						if (conference.SupportedConferenceFeatures.HasFlag(eConferenceFeatures.LeaveConference))
-							conference.LeaveConference();
-						else
-							conference.Hangup();
+						if (conference.SupportsLeaveOrEnd())
+							conference.LeaveOrEndConference();
 					}
 				}
 

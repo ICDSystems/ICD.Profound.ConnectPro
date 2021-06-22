@@ -359,8 +359,8 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Header
 			{
 				foreach (var activeConference in Room.ConferenceManager.Dialers.ActiveConferences)
 				{
-					activeConference.LeaveConference();
-					activeConference.Hangup();
+					if (activeConference.SupportsLeaveOrEnd())
+						activeConference.LeaveOrEndConference();
 				}
 			}
 

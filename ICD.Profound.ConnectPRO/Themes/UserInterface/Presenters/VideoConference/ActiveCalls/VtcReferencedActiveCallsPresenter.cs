@@ -169,7 +169,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		private void ViewOnHangupButtonPressed(object sender, EventArgs eventArgs)
 		{
 			if (m_Source != null)
-				m_Source.Hangup();
+				m_Source.Kick();
 		}
 
 		#endregion

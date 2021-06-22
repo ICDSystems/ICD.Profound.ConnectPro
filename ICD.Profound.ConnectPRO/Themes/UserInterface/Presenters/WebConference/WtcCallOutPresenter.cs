@@ -9,7 +9,6 @@ using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.Conferencing.Controls.Dialing;
 using ICD.Connect.Conferencing.DialContexts;
 using ICD.Connect.Conferencing.EventArguments;
-using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms;
 using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms.Components.TraditionalCall;
 using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms.Controls.Conferencing;
@@ -359,7 +358,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 
 			// DTMF
 			if (ActiveConferences.Any())
-				ActiveConferences.SelectMany(c => c.GetParticipants()).ForEach(p => p.SendDtmf(charEventArgs.Data));
+				ActiveConferences.ForEach(c => c.SendDtmf(charEventArgs.Data));
 		}
 
 		/// <summary>
@@ -392,7 +391,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.WebConference
 			if (active.Any())
 			{
 				foreach (IConference conference in active)
-					conference.Hangup();
+					if (conference.SupportsLeaveOrEnd())
+						conference.LeaveOrEndConference();
 
 				return;
 			}

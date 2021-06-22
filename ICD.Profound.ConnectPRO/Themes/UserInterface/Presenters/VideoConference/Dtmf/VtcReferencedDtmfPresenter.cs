@@ -3,7 +3,7 @@ using ICD.Common.Properties;
 using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
-using ICD.Connect.Conferencing.Participants;
+using ICD.Connect.Conferencing.Conferences;
 using ICD.Connect.UI.Attributes;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.Dtmf;
@@ -24,23 +24,23 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 
 		private readonly SafeCriticalSection m_RefreshSection;
 
-		private IParticipant m_Source;
+		private IConference m_Conference;
 		private bool m_Selected;
 
 		#region Properties
 
 		[CanBeNull]
-		public IParticipant Source
+		public IConference Conference
 		{
-			get { return m_Source; }
+			get { return m_Conference; }
 			set
 			{
-				if (value == m_Source)
+				if (value == m_Conference)
 					return;
 
-				Unsubscribe(m_Source);
-				m_Source = value;
-				Subscribe(m_Source);
+				Unsubscribe(m_Conference);
+				m_Conference = value;
+				Subscribe(m_Conference);
 
 				RefreshIfVisible();
 			}
@@ -81,7 +81,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		{
 			base.Dispose();
 
-			Source = null;
+			Conference = null;
 		}
 
 		/// <summary>
@@ -97,11 +97,9 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 			try
 			{
 				string name =
-					m_Source == null
+					m_Conference == null
 						? null
-						: string.IsNullOrEmpty(m_Source.Name)
-							  ? m_Source.Number
-							  : m_Source.Name;
+						: m_Conference.Name;
 
 				if (string.IsNullOrEmpty(name))
 					name = "Unknown";
@@ -123,31 +121,24 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 		/// Subscribe to the source events.
 		/// </summary>
 		/// <param name="source"></param>
-		private void Subscribe(IParticipant source)
+		private void Subscribe(IConference source)
 		{
 			if (source == null)
 				return;
 
 			source.OnNameChanged += SourceOnNameChanged;
-			source.OnNumberChanged += SourceOnNumberChanged;
 		}
 
 		/// <summary>
 		/// Unsubscribe from the source events.
 		/// </summary>
 		/// <param name="source"></param>
-		private void Unsubscribe(IParticipant source)
+		private void Unsubscribe(IConference source)
 		{
 			if (source == null)
 				return;
 
 			source.OnNameChanged -= SourceOnNameChanged;
-			source.OnNumberChanged -= SourceOnNumberChanged;
-		}
-
-		private void SourceOnNumberChanged(object sender, StringEventArgs stringEventArgs)
-		{
-			RefreshIfVisible();
 		}
 
 		private void SourceOnNameChanged(object sender, StringEventArgs stringEventArgs)

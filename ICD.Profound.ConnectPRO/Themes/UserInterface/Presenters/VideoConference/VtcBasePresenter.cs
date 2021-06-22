@@ -349,7 +349,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.VideoConferenc
 				{
 					var active = ActiveConferenceControl.GetActiveConferences();
 					foreach (IConference conference in active)
-						conference.Hangup();
+						if (conference.SupportsLeaveOrEnd())
+							conference.LeaveOrEndConference();
 				}
 
 				ActiveConferenceControl = null;

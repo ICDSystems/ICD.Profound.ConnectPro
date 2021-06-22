@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using ICD.Common.Properties;
 using ICD.Common.Utils;
@@ -326,14 +325,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 
 			// DTMF
 			IConference conference = GetActiveConference();
-			IEnumerable<IParticipant> participants =
-				conference == null
-					? Enumerable.Empty<IParticipant>()
-					: conference.GetParticipants()
-					            .Where(s => s.GetIsOnline());
-
-			foreach (IParticipant source in participants)
-				source.SendDtmf(eventArgs.Data);
+			conference.SendDtmf(eventArgs.Data);
 
 			m_Builder.AppendCharacter(eventArgs.Data);
 		}
@@ -344,8 +336,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.AudioConferenc
 				return;
 
 			var activeConference = GetActiveConference();
-			if (activeConference != null)
-				activeConference.Hangup();
+			if (activeConference != null && activeConference.SupportsLeaveOrEnd())
+				activeConference.LeaveOrEndConference();
 		}
 
 		private void ViewOnDialButtonPressed(object sender, EventArgs eventArgs)
