@@ -449,12 +449,10 @@ namespace ICD.Profound.ConnectPROCommon.Themes.Mpc3201UserInterface
 				return;
 
 			IEnumerable<ISource> sources =
-				m_Room == null
-					? Enumerable.Empty<ISource>()
-					: m_Room.Routing
-					        .Sources
-					        .GetRoomSourcesForUi(eSourceAppearance.Routing)
-					        .Take(6); // Only 6 buttons
+				m_Room.Routing
+				      .Sources
+				      .GetRoomSourcesForUi(eSourceAppearance.Routing)
+				      .Take(6); // Only 6 buttons
 
 			ISource source;
 			if (!sources.TryElementAt(index, out source) || source == null)

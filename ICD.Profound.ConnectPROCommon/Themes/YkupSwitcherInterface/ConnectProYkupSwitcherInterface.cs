@@ -165,11 +165,11 @@ namespace ICD.Profound.ConnectPROCommon.Themes.YkupSwitcherInterface
 				      .GetFakeActiveVideoSources()
 				      .SelectMany(kvp => kvp.Value);
 
-			foreach (ISource source in active)
-			{
-				Switcher.Route(IsZoom(source) ? ZOOM_OUTPUT : VIBE_OUTPUT);
+			ISource source = active.FirstOrDefault();
+			if (source == null)
 				return;
-			}
+
+			Switcher.Route(IsZoom(source) ? ZOOM_OUTPUT : VIBE_OUTPUT);
 		}
 
 		/// <summary>
