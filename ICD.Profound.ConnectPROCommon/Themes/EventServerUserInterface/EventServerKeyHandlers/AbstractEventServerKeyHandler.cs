@@ -1,5 +1,6 @@
 ﻿using System;
 using ICD.Common.Properties;
+using ICD.Common.Utils.EventArguments;
 using ICD.Profound.ConnectPROCommon.Devices;
 using ICD.Profound.ConnectPROCommon.Rooms;
 
@@ -92,6 +93,8 @@ namespace ICD.Profound.ConnectPROCommon.Themes.EventServerUserInterface.EventSer
 			Unsubscribe(m_Room);
 			m_Room = value;
 			Subscribe(m_Room);
+
+			Update();
 		}
 
 		/// <summary>
@@ -111,6 +114,10 @@ namespace ICD.Profound.ConnectPROCommon.Themes.EventServerUserInterface.EventSer
 		/// <param name="room"></param>
 		protected virtual void Subscribe([CanBeNull] IConnectProRoom room)
 		{
+			if (room == null)
+				return;
+
+			room.OnCombineStateChanged += RoomOnCombineStateChanged;
 		}
 
 		/// <summary>
@@ -119,6 +126,20 @@ namespace ICD.Profound.ConnectPROCommon.Themes.EventServerUserInterface.EventSer
 		/// <param name="room"></param>
 		protected virtual void Unsubscribe([CanBeNull] IConnectProRoom room)
 		{
+			if (room == null)
+				return;
+
+			room.OnCombineStateChanged -= RoomOnCombineStateChanged;
+		}
+
+		/// <summary>
+		/// Called when the room combine state changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void RoomOnCombineStateChanged(object sender, BoolEventArgs e)
+		{
+			Update();
 		}
 
 		#endregion

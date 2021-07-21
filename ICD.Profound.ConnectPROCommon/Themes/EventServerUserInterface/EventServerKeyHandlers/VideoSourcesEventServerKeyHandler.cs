@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using ICD.Common.Utils;
+using ICD.Connect.Partitioning.Rooms;
 using ICD.Connect.Routing.Endpoints.Sources;
+using ICD.Connect.Settings.Originators;
 using ICD.Profound.ConnectPROCommon.Devices;
 using ICD.Profound.ConnectPROCommon.EventArguments;
 using ICD.Profound.ConnectPROCommon.Rooms;
@@ -42,11 +44,13 @@ namespace ICD.Profound.ConnectPROCommon.Themes.EventServerUserInterface.EventSer
 					      .Distinct()
 					      .ToArray();
 
+			bool combined = Room != null && (Room.CombineState || Room.IsCombineRoom());
+
 			Message =
 				videoSources.Length == 0
 					? "no sources routed for video"
 					: string.Format("sources routed for video {0}",
-									StringUtils.ArrayFormat(videoSources.Select(s => s.Name)));
+									StringUtils.ArrayFormat(videoSources.Select(s => s.GetName(combined))));
 		}
 
 		#region Room Callbacks

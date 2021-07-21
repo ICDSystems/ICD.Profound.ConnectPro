@@ -2,6 +2,8 @@
 using ICD.Connect.Cameras.Devices;
 using ICD.Connect.Conferencing.ConferenceManagers;
 using ICD.Connect.Devices;
+using ICD.Connect.Partitioning.Rooms;
+using ICD.Connect.Settings.Originators;
 using ICD.Profound.ConnectPROCommon.Devices;
 using ICD.Profound.ConnectPROCommon.Rooms;
 
@@ -39,10 +41,12 @@ namespace ICD.Profound.ConnectPROCommon.Themes.EventServerUserInterface.EventSer
 					? null
 					: m_ConferenceManager.Cameras.ActiveCamera;
 
+			bool combined = Room != null && (Room.CombineState || Room.IsCombineRoom());
+
 			Message =
 				activeCamera == null
 					? "no active camera selected"
-					: string.Format("active camera [{0}]", activeCamera.Name);
+					: string.Format("active camera [{0}]", activeCamera.GetName(combined));
 		}
 
 		#region Room Callbacks

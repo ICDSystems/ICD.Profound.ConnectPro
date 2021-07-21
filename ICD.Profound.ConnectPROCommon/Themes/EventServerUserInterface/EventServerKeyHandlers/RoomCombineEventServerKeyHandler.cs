@@ -31,7 +31,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.EventServerUserInterface.EventSer
 			base.Update();
 
 			Message =
-				Room != null && Room.IsCombineRoom()
+				Room != null && (Room.IsCombineRoom() || Room.CombineState)
 					? ConnectProEventMessages.MESSAGE_ROOM_COMBINED
 					: ConnectProEventMessages.MESSAGE_ROOM_UNCOMBINED;
 		}
