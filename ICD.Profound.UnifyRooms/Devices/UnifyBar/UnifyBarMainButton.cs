@@ -11,6 +11,31 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 		/// </summary>
 		public event EventHandler<BoolEventArgs> OnPressedChanged;
 
+		/// <summary>
+		/// Raised when the button selection state changes.
+		/// </summary>
+		public event EventHandler<BoolEventArgs> OnSelectedChanged;
+
+		/// <summary>
+		/// Raised when the enabled state changes.
+		/// </summary>
+		public event EventHandler<BoolEventArgs> OnEnabledStateChanged;
+
+		/// <summary>
+		/// Raised when the label changes.
+		/// </summary>
+		public event EventHandler<StringEventArgs> OnLabelChanged;
+
+		/// <summary>
+		/// Raised when the icon changes.
+		/// </summary>
+		public event EventHandler<GenericEventArgs<eMainButtonIcon>> OnIconChanged;
+
+		/// <summary>
+		/// Raised when the type changes.
+		/// </summary>
+		public event EventHandler<GenericEventArgs<eMainButtonType>> OnTypeChanged;
+
 		private readonly UnifyBarDevice m_Parent;
 		private readonly int m_Index;
 
@@ -22,6 +47,11 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 		private eMainButtonType m_Type;
 
 		#region Properties
+
+		/// <summary>
+		/// Gets the index for the button.
+		/// </summary>
+		public int Index { get { return m_Index; } }
 
 		/// <summary>
 		/// Gets the button presses state.
@@ -53,8 +83,7 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 
 				m_Selected = value;
 
-				if (m_Parent.IsConnected)
-					m_Parent.SetMainButtonSelected(m_Index, m_Selected);
+				OnSelectedChanged.Raise(this, m_Selected);
 			}
 		}
 
@@ -71,8 +100,7 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 
 				m_Enabled = value;
 
-				if (m_Parent.IsConnected)
-					m_Parent.SetMainButtonEnabled(m_Index, m_Enabled);
+				OnEnabledStateChanged.Raise(this, m_Enabled);
 			}
 		}
 
@@ -89,8 +117,7 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 
 				m_Label = value;
 
-				if (m_Parent.IsConnected)
-					m_Parent.SetMainButtonLabel(m_Index, m_Label);
+				OnLabelChanged.Raise(this, m_Label);
 			}
 		}
 
@@ -107,8 +134,7 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 
 				m_Icon = value;
 
-				if (m_Parent.IsConnected)
-					m_Parent.SetMainButtonIcon(m_Index, m_Icon);
+				OnIconChanged.Raise(this, m_Icon);
 			}
 		}
 
@@ -125,8 +151,7 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 
 				m_Type = value;
 
-				if (m_Parent.IsConnected)
-					m_Parent.SetMainButtonType(m_Index, m_Type);
+				OnTypeChanged.Raise(this, m_Type);
 			}
 		}
 
@@ -154,6 +179,11 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 		public void Dispose()
 		{
 			OnPressedChanged = null;
+			OnSelectedChanged = null;
+			OnEnabledStateChanged = null;
+			OnLabelChanged = null;
+			OnIconChanged = null;
+			OnTypeChanged = null;
 
 			Unsubscribe(m_Parent);
 		}
@@ -189,15 +219,6 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 		{
 			// Stop ramping
 			Pressed = false;
-
-			if (!m_Parent.IsConnected)
-				return;
-
-			m_Parent.SetMainButtonSelected(m_Index, m_Selected);
-			m_Parent.SetMainButtonEnabled(m_Index, m_Enabled);
-			m_Parent.SetMainButtonLabel(m_Index, m_Label);
-			m_Parent.SetMainButtonIcon(m_Index, m_Icon);
-			m_Parent.SetMainButtonType(m_Index, m_Type);
 		}
 
 		/// <summary>

@@ -172,7 +172,8 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar
 				button.SetButton(null);
 
 			IUnifyBarButtonUi[] buttonUis = m_Buttons.Where(b => b.Visible).ToArray();
-			UnifyBarMainButton[] deviceButtons = m_UnifyBar.SetMainButtonCount(buttonUis.Length).ToArray();
+			m_UnifyBar.SetMainButtonCount(buttonUis.Length);
+			UnifyBarMainButton[] deviceButtons = m_UnifyBar.GetMainButtons().Take(buttonUis.Length).ToArray();
 
 			// Bind 
 			foreach (KeyValuePair<IUnifyBarButtonUi, UnifyBarMainButton> kvp in buttonUis.Zip(deviceButtons))
@@ -201,7 +202,6 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar
 				throw new ArgumentNullException("unifyBar");
 
 			unifyBar.OnIsConnectedChanged += UnifyBarOnIsConnectedChanged;
-			unifyBar.OnMainButtonsChanged += UnifyBarOnMainButtonsChanged;
 		}
 
 		/// <summary>
@@ -214,7 +214,6 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar
 				throw new ArgumentNullException("unifyBar");
 
 			unifyBar.OnIsConnectedChanged -= UnifyBarOnIsConnectedChanged;
-			unifyBar.OnMainButtonsChanged -= UnifyBarOnMainButtonsChanged;
 		}
 
 		/// <summary>
@@ -226,16 +225,6 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar
 		{
 			UpdateButtons();
 			UpdateMoreControlsPanel();
-		}
-
-		/// <summary>
-		/// Called when the buttons change.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void UnifyBarOnMainButtonsChanged(object sender, EventArgs e)
-		{
-			UpdateButtons();
 		}
 
 		#endregion

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ICD.Common.Properties;
-using ICD.Common.Utils;
 using ICD.Common.Utils.EventArguments;
 using ICD.Common.Utils.Extensions;
 using ICD.Connect.API.Nodes;
@@ -31,18 +31,14 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 		/// </summary>
 		public event EventHandler<BoolEventArgs> OnIsConnectedChanged;
 
-		/// <summary>
-		/// Raised when the main buttons collection changes.
-		/// </summary>
-		public event EventHandler OnMainButtonsChanged;
-
 		private readonly INetworkPort m_Client;
 		private readonly ClientSerialRpcController m_RpcClient;
-		private readonly List<UnifyBarMainButton> m_MainButtons;
-		private readonly SafeCriticalSection m_MainButtonsSection;
+		private readonly UnifyBarMainButton[] m_MainButtons;
 
 		private ePage m_Page;
 		private bool m_IsConnected;
+		private int m_MainButtonCount;
+		private MoreControlsPanelConfiguration m_XPanelConfiguration;
 
 		#region Properties
 
@@ -63,8 +59,6 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 
 				if (m_IsConnected)
 					Initialize();
-				else
-					Page = ePage.Unknown;
 
 				OnIsConnectedChanged.Raise(this, m_IsConnected);
 			}
@@ -94,8 +88,8 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 		/// </summary>
 		public UnifyBarDevice()
 		{
-			m_MainButtons = new List<UnifyBarMainButton>();
-			m_MainButtonsSection = new SafeCriticalSection();
+			m_MainButtons = Enumerable.Range(0, 6).Select(i => new UnifyBarMainButton(this, i)).ToArray();
+			m_XPanelConfiguration = new MoreControlsPanelConfiguration();
 
 			m_RpcClient = new ClientSerialRpcController(this);
 			Subscribe(m_RpcClient);
@@ -108,7 +102,12 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 			};
 
 			m_RpcClient.SetPort(m_Client, false);
+
+			foreach (UnifyBarMainButton button in m_MainButtons)
+				Subscribe(button);
 		}
+
+		#region Methods
 
 		/// <summary>
 		/// Gets the main buttons.
@@ -116,8 +115,30 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 		/// <returns></returns>
 		public IEnumerable<UnifyBarMainButton> GetMainButtons()
 		{
-			return m_MainButtonsSection.Execute(() => m_MainButtons.ToArray());
+			return m_MainButtons.ToArray();
 		}
+
+		/// <summary>
+		/// Sets the number of main buttons.
+		/// </summary>
+		/// <param name="count"></param>
+		public void SetMainButtonCount(int count)
+		{
+			m_MainButtonCount = count;
+			SetMainButtonCountRpc(m_MainButtonCount);
+		}
+
+		/// <summary>
+		/// Configures the custom programmed XPanel.
+		/// </summary>
+		/// <param name="configuration"></param>
+		public void ConfigurePanel([NotNull] MoreControlsPanelConfiguration configuration)
+		{
+			m_XPanelConfiguration = configuration;
+			ConfigurePanelRpc(m_XPanelConfiguration);
+		}
+
+		#endregion
 
 		#region Private Methods
 
@@ -129,7 +150,9 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 			OnMainButtonPressed = null;
 			OnPageChanged = null;
 			OnIsConnectedChanged = null;
-			OnMainButtonsChanged = null;
+
+			foreach (UnifyBarMainButton button in m_MainButtons)
+				button.Dispose();
 
 			base.DisposeFinal(disposing);
 
@@ -153,50 +176,68 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 		/// </summary>
 		private void Initialize()
 		{
-			int mainButtonCount = m_MainButtonsSection.Execute(() => m_MainButtons.Count);
+			SetMainButtonCountRpc(m_MainButtonCount);
 
-			SetMainButtonCount(mainButtonCount);
-			UpdatePage();
+			foreach (UnifyBarMainButton button in m_MainButtons)
+			{
+				SetMainButtonSelectedRpc(button.Index, button.Selected);
+				SetMainButtonEnabledRpc(button.Index, button.Enabled);
+				SetMainButtonLabelRpc(button.Index, button.Label);
+				SetMainButtonTypeRpc(button.Index, button.Type);
+				SetMainButtonIconRpc(button.Index, button.Icon);
+			}
+
+			if (m_Page != ePage.Unknown)
+				SetPageRpc(m_Page);
+
+			ConfigurePanelRpc(m_XPanelConfiguration);
 		}
 
+		#endregion
+
+		#region Button Callbacks
+
 		/// <summary>
-		/// Updates the buttons collection to match the given count.
+		/// Subscribe to the button events.
 		/// </summary>
-		/// <param name="count"></param>
-		private IEnumerable<UnifyBarMainButton> BuildMainButtons(int count)
+		/// <param name="button"></param>
+		private void Subscribe(UnifyBarMainButton button)
 		{
-			bool changed = false;
+			button.OnSelectedChanged += ButtonOnSelectedChanged;
+			button.OnEnabledStateChanged += ButtonOnEnabledStateChanged;
+			button.OnLabelChanged += ButtonOnLabelChanged;
+			button.OnIconChanged += ButtonOnIconChanged;
+			button.OnTypeChanged += ButtonOnTypeChanged;
+		}
 
-			m_MainButtonsSection.Enter();
+		private void ButtonOnTypeChanged(object sender, GenericEventArgs<eMainButtonType> e)
+		{
+			UnifyBarMainButton button = (UnifyBarMainButton)sender;
+			SetMainButtonTypeRpc(button.Index, button.Type);
+		}
 
-			try
-			{
-				// Remove 
-				for (int index = m_MainButtons.Count - 1; index >= count; index--)
-				{
-					UnifyBarMainButton button = m_MainButtons[index];
-					button.Dispose();
-					m_MainButtons.RemoveAt(index);
-					changed = true;
-				}
+		private void ButtonOnIconChanged(object sender, GenericEventArgs<eMainButtonIcon> e)
+		{
+			UnifyBarMainButton button = (UnifyBarMainButton)sender;
+			SetMainButtonIconRpc(button.Index, button.Icon);
+		}
 
-				// Add
-				for (int index = m_MainButtons.Count; index < count; index++)
-				{
-					UnifyBarMainButton button = new UnifyBarMainButton(this, index);
-					m_MainButtons.Add(button);
-					changed = true;
-				}
-			}
-			finally
-			{
-				m_MainButtonsSection.Leave();
-			}
+		private void ButtonOnLabelChanged(object sender, StringEventArgs e)
+		{
+			UnifyBarMainButton button = (UnifyBarMainButton)sender;
+			SetMainButtonLabelRpc(button.Index, button.Label);
+		}
 
-			if (changed)
-				OnMainButtonsChanged.Raise(this);
+		private void ButtonOnEnabledStateChanged(object sender, BoolEventArgs e)
+		{
+			UnifyBarMainButton button = (UnifyBarMainButton)sender;
+			SetMainButtonEnabledRpc(button.Index, button.Enabled);
+		}
 
-			return m_MainButtons.ToArray();
+		private void ButtonOnSelectedChanged(object sender, BoolEventArgs e)
+		{
+			UnifyBarMainButton button = (UnifyBarMainButton)sender;
+			SetMainButtonSelectedRpc(button.Index, button.Selected);
 		}
 
 		#endregion
@@ -247,14 +288,10 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 
 		#region RPC Methods
 
-		/// <summary>
-		/// Sets the number of main buttons.
-		/// </summary>
-		/// <param name="count"></param>
-		public IEnumerable<UnifyBarMainButton> SetMainButtonCount(int count)
+		private void SetMainButtonCountRpc(int count)
 		{
-			m_RpcClient.CallMethod("SetMainButtonCount", count);
-			return BuildMainButtons(count);
+			if (m_RpcClient.IsConnected)
+				m_RpcClient.CallMethod("SetMainButtonCount", count);
 		}
 
 		/// <summary>
@@ -262,9 +299,10 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 		/// </summary>
 		/// <param name="index"></param>
 		/// <param name="selected"></param>
-		public void SetMainButtonSelected(int index, bool selected)
+		private void SetMainButtonSelectedRpc(int index, bool selected)
 		{
-			m_RpcClient.CallMethod("SetMainButtonSelected", index, selected);
+			if (m_RpcClient.IsConnected)
+				m_RpcClient.CallMethod("SetMainButtonSelected", index, selected);
 		}
 
 		/// <summary>
@@ -272,9 +310,10 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 		/// </summary>
 		/// <param name="index"></param>
 		/// <param name="enabled"></param>
-		public void SetMainButtonEnabled(int index, bool enabled)
+		private void SetMainButtonEnabledRpc(int index, bool enabled)
 		{
-			m_RpcClient.CallMethod("SetMainButtonEnabled", index, enabled);
+			if (m_RpcClient.IsConnected)
+				m_RpcClient.CallMethod("SetMainButtonEnabled", index, enabled);
 		}
 
 		/// <summary>
@@ -282,9 +321,10 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 		/// </summary>
 		/// <param name="index"></param>
 		/// <param name="label"></param>
-		public void SetMainButtonLabel(int index, string label)
+		private void SetMainButtonLabelRpc(int index, string label)
 		{
-			m_RpcClient.CallMethod("SetMainButtonLabel", index, label);
+			if (m_RpcClient.IsConnected)
+				m_RpcClient.CallMethod("SetMainButtonLabel", index, label);
 		}
 
 		/// <summary>
@@ -292,9 +332,10 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 		/// </summary>
 		/// <param name="index"></param>
 		/// <param name="type"></param>
-		public void SetMainButtonType(int index, eMainButtonType type)
+		private void SetMainButtonTypeRpc(int index, eMainButtonType type)
 		{
-			m_RpcClient.CallMethod("SetMainButtonType", index, (int)type);
+			if (m_RpcClient.IsConnected)
+				m_RpcClient.CallMethod("SetMainButtonType", index, (int)type);
 		}
 
 		/// <summary>
@@ -302,40 +343,40 @@ namespace ICD.Profound.UnifyRooms.Devices.UnifyBar
 		/// </summary>
 		/// <param name="index"></param>
 		/// <param name="icon"></param>
-		public void SetMainButtonIcon(int index, eMainButtonIcon icon)
+		private void SetMainButtonIconRpc(int index, eMainButtonIcon icon)
 		{
-			m_RpcClient.CallMethod("SetMainButtonIcon", index, (int)icon);
+			if (m_RpcClient.IsConnected)
+				m_RpcClient.CallMethod("SetMainButtonIcon", index, (int)icon);
 		}
 
 		/// <summary>
 		/// Sets the current page.
 		/// </summary>
 		/// <param name="page"></param>
-		public void SetPage(ePage page)
+		private void SetPageRpc(ePage page)
 		{
-			m_RpcClient.CallMethod("SetPage", (int)page);
-		}
-		
-		/// <summary>
-		/// Asks the server for the current page.
-		/// </summary>
-		public void UpdatePage()
-		{
-			m_RpcClient.CallMethod("GetPage");
+			if (m_RpcClient.IsConnected)
+				m_RpcClient.CallMethod("SetPage", (int)page);
 		}
 
 		/// <summary>
-		/// Configures the custom programmed XPanel.
+		/// Asks the server for the current page.
 		/// </summary>
-		/// <param name="configuration"></param>
-		public void ConfigurePanel([NotNull] MoreControlsPanelConfiguration configuration)
+		private void UpdatePageRpc()
 		{
-			m_RpcClient.CallMethod("ConfigureXPanel",
-			                       configuration.Enabled,
-			                       configuration.Path,
-			                       configuration.Hostname,
-			                       configuration.Port,
-			                       configuration.Ipid);
+			if (m_RpcClient.IsConnected)
+				m_RpcClient.CallMethod("GetPage");
+		}
+
+		private void ConfigurePanelRpc([NotNull] MoreControlsPanelConfiguration configuration)
+		{
+			if (m_RpcClient.IsConnected)
+				m_RpcClient.CallMethod("ConfigureXPanel",
+				                       configuration.Enabled,
+				                       configuration.Path,
+				                       configuration.Hostname,
+				                       configuration.Port,
+				                       configuration.Ipid);
 		}
 
 		#endregion
