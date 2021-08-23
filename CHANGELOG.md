@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [15.0.1] - 2021-08-23
+### Changed
+ - Fixed a bug where Unify Bar button presses would conflict
+ - Fixed a bug where Unify Bar "More Controls" XPanel settings were not always saving correctly
+ - Fixed event server feedback for room combine state changes
+
 ## [15.0.0] - 2021-05-14
 ### Added
  - Added IsOsdSource property to ConnectProSource for treating non-OSD devices as visible while room asleep
