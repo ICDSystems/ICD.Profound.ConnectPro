@@ -15,6 +15,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Headers
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly SafeTimer m_RefreshTimer;
+		private bool m_Refreshing;
 
 		private eTouchFreeFace m_TouchFreeImage;
 
@@ -70,6 +71,8 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Headers
 
 			try
 			{
+				m_Refreshing = true;
+
 				string roomName = Room == null ? string.Empty : Room.Name;
 
 				view.SetRoomName(roomName);
@@ -83,6 +86,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Headers
 			}
 			finally
 			{
+				m_Refreshing = false;
 				m_RefreshSection.Leave();
 			}
 		}
@@ -96,7 +100,7 @@ namespace ICD.Profound.ConnectPROCommon.Themes.OsdInterface.Presenters.Headers
 			if (view == null)
 				return;
 
-			if (!m_RefreshSection.TryEnter())
+			if (m_Refreshing)
 				return;
 
 			try

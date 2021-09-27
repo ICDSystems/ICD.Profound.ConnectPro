@@ -20,6 +20,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly SafeTimer m_RefreshTimer;
+		private bool m_Refreshing;
 
 		/// <summary>
 		/// Constructor.
@@ -58,6 +59,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
+				m_Refreshing = true;
 				IRoom room = GetRoomForPanel();
 				string roomName = room == null ? null : room.Name;
 
@@ -70,6 +72,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			}
 			finally
 			{
+				m_Refreshing = false;
 				m_RefreshSection.Leave();
 			}
 		}
@@ -83,7 +86,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (view == null)
 				return;
 
-			if (!m_RefreshSection.TryEnter())
+			if (m_Refreshing)
 				return;
 
 			try

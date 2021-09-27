@@ -35,6 +35,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 		private readonly SafeTimer m_BookingsRefreshTimer;
 		private readonly SafeTimer m_TimeRefreshTimer;
 		private readonly SafeTimer m_BookingSelectionTimeout;
+		private bool m_Refreshing;
 
 		[CanBeNull]
 		private IReferencedSchedulePresenter m_SelectedBooking;
@@ -90,6 +91,8 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 
 			try
 			{
+				m_Refreshing = true;
+
 				foreach (IReferencedSchedulePresenter presenter in m_ChildrenFactory.BuildChildren(m_Bookings.Cast<IBooking>()))
 				{
 					presenter.Selected = presenter == m_SelectedBooking;
@@ -124,6 +127,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			}
 			finally
 			{
+				m_Refreshing = false;
 				m_RefreshSection.Leave();
 			}
 		}
@@ -137,7 +141,7 @@ namespace ICD.Profound.ConnectPRO.Themes.UserInterface.Presenters.Common
 			if (view == null)
 				return;
 
-			if (!m_RefreshSection.TryEnter())
+			if (m_Refreshing)
 				return;
 
 			try
