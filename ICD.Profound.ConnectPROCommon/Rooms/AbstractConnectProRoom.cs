@@ -191,7 +191,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		/// </summary>
 		/// <param name="booking"></param>
 		/// <param name="source"></param>
-		public void StartMeeting([CanBeNull] IBooking booking, [CanBeNull] ISource source)
+		public void StartMeeting(IBooking booking, ISource source)
 		{
 			// Stop the meeting start timer
 			m_MeetingStartTimer.Stop();
@@ -302,8 +302,8 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 		/// </summary>
 		/// <param name="activeCamera"></param>
 		/// <param name="vtcDestinationControl"></param>
-		public void SetActiveCamera([CanBeNull] ICameraDevice activeCamera,
-		                            [CanBeNull] IVideoConferenceRouteControl vtcDestinationControl)
+		public void SetActiveCamera(ICameraDevice activeCamera,
+		                            IVideoConferenceRouteControl vtcDestinationControl)
 		{
 			if (ConferenceManager != null)
 				ConferenceManager.Cameras.SetActiveCamera(activeCamera);
@@ -542,8 +542,8 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			// The room is unoccupied
 			// Subtracting a second from timeout time just in case unoccupancy triggered the timeout timer
 			// and we start running into timer precision issues.
-			if (Occupied == eOccupancyState.Unoccupied &&
-			    (IcdEnvironment.GetUtcTime() - OccupiedTime).TotalMilliseconds >= MEETING_TIMEOUT - 1000)
+			if (OccupancyManager != null && OccupancyManager.OccupancyState == eOccupancyState.Unoccupied &&
+			    (IcdEnvironment.GetUtcTime() - OccupancyManager.OccupancyChangeTime).TotalMilliseconds >= MEETING_TIMEOUT - 1000)
 				return false;
 
 			// If the user is currently on a control subpage assume that the room is being used

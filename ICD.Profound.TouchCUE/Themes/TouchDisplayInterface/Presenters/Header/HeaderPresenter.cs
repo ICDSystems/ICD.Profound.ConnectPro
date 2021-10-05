@@ -32,6 +32,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Header
 	{
 		private readonly SafeCriticalSection m_RefreshSection;
 		private readonly SafeTimer m_RefreshTimer;
+		private bool m_Refreshing;
 
 		private readonly ReferencedHeaderButtonPresenterFactory m_LeftButtonsFactory;
 		private readonly ReferencedHeaderButtonPresenterFactory m_RightButtonsFactory;
@@ -147,6 +148,8 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Header
 
 			try
 			{
+				m_Refreshing = true;
+
 				var roomName = Room == null ? string.Empty : Room.Name;
 				view.SetRoomName(roomName);
 				
@@ -175,6 +178,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Header
 			}
 			finally
 			{
+				m_Refreshing = false;
 				m_RefreshSection.Leave();
 			}
 		}
@@ -188,7 +192,7 @@ namespace ICD.Profound.TouchCUE.Themes.TouchDisplayInterface.Presenters.Header
 			if (view == null)
 				return;
 
-			if (!m_RefreshSection.TryEnter())
+			if (m_Refreshing)
 				return;
 
 			try

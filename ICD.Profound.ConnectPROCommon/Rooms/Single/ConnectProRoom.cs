@@ -12,7 +12,9 @@ using ICD.Connect.Conferencing.Zoom.Devices.ZoomRooms;
 using ICD.Connect.Devices;
 using ICD.Connect.Partitioning;
 using ICD.Connect.Partitioning.Commercial;
+using ICD.Connect.Partitioning.Commercial.CalendarOccupancyManagers;
 using ICD.Connect.Partitioning.Commercial.CallRatings;
+using ICD.Connect.Partitioning.Commercial.OccupancyManagers;
 using ICD.Connect.Routing.Endpoints.Sources;
 using ICD.Connect.Settings;
 using ICD.Connect.Settings.Utils;
@@ -37,6 +39,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Single
 		{
 			ConferenceManager = new ConferenceManager();
 			CalendarManager = new CalendarManager();
+			OccupancyManager = new OccupancyManager(this);
 			WakeSchedule = new WakeSchedule();
 			TouchFree = new TouchFree();
 			CallRatingManager = new CallRatingManager(this);

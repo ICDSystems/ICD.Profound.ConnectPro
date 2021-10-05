@@ -1,5 +1,6 @@
 ﻿using System;
 using ICD.Common.Utils.Extensions;
+using ICD.Connect.Partitioning.Commercial.CalendarOccupancyManagers;
 using ICD.Connect.Partitioning.Rooms;
 
 namespace ICD.Profound.ConnectPROCommon.Rooms.Combine
@@ -81,6 +82,7 @@ namespace ICD.Profound.ConnectPROCommon.Rooms.Combine
 			TouchFree = m_MasterRoom == null ? null : m_MasterRoom.TouchFree;
 			CallRatingManager = m_MasterRoom == null ? null : m_MasterRoom.CallRatingManager;
 			ConferenceManager = m_MasterRoom == null ? null : m_MasterRoom.ConferenceManager;
+			OccupancyManager = m_MasterRoom == null ? null : m_MasterRoom.OccupancyManager;
 
 			if (!Routing.SupportsSimpleMode())
 				CombinedAdvancedMode = eCombineAdvancedMode.Advanced;
