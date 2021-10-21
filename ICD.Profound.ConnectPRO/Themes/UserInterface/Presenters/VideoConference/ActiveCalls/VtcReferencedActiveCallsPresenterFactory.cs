@@ -1,5 +1,5 @@
 ﻿using System;
-﻿using ICD.Connect.Conferencing.Participants;
+using ICD.Connect.Conferencing.Participants;
 using ICD.Connect.UI.Mvp.Presenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters;
 using ICD.Profound.ConnectPRO.Themes.UserInterface.IPresenters.VideoConference.ActiveCalls;
