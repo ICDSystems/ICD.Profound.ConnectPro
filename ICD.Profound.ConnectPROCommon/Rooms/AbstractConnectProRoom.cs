@@ -569,6 +569,9 @@ namespace ICD.Profound.ConnectPROCommon.Rooms
 			if (GetIsInActiveMeeting())
 				return;
 
+			if (!IsAwake)
+				return;
+
 			Logger.Log(eSeverity.Informational, "Meeting timeout occurring");
 
 			EndMeeting();
