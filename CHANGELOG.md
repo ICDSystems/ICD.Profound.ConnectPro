@@ -5,10 +5,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [15.1.0] - 2021-11-09
 ### Changed
  - Removed instances of TryEnter from presenters
  - Adding OccupancyManager to rooms
  - Using new OccupancyManager features for occupancy state
+ - Fixed AbstractConnectProRoom to not wake up via meeting timeout timer if asleep
 
 ## [15.0.1] - 2021-08-23
 ### Changed

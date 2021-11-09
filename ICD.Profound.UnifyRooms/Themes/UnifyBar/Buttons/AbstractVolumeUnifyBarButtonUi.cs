@@ -87,6 +87,7 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar.Buttons
 		{
 			volumePointHelper.OnVolumeControlChanged += VolumePointHelperOnVolumeControlChanged;
 			volumePointHelper.OnVolumeControlAvailableChanged += VolumePointHelperOnVolumeControlAvailableChanged;
+			volumePointHelper.OnVolumeControlSupportedVolumeFeaturesChanged += VolumePointHelperOnVolumeControlSupportedVolumeFeaturesChanged;
 		}
 
 		/// <summary>
@@ -97,6 +98,7 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar.Buttons
 		{
 			volumePointHelper.OnVolumeControlChanged -= VolumePointHelperOnVolumeControlChanged;
 			volumePointHelper.OnVolumeControlAvailableChanged -= VolumePointHelperOnVolumeControlAvailableChanged;
+			volumePointHelper.OnVolumeControlSupportedVolumeFeaturesChanged -= VolumePointHelperOnVolumeControlSupportedVolumeFeaturesChanged;
 		}
 
 		/// <summary>
@@ -107,6 +109,7 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar.Buttons
 		private void VolumePointHelperOnVolumeControlAvailableChanged(object sender, BoolEventArgs e)
 		{
 			UpdateState();
+			UpdateVisibility();
 		}
 
 		/// <summary>
@@ -116,6 +119,18 @@ namespace ICD.Profound.UnifyRooms.Themes.UnifyBar.Buttons
 		/// <param name="eventArgs"></param>
 		private void VolumePointHelperOnVolumeControlChanged(object sender, GenericEventArgs<IVolumeDeviceControl> eventArgs)
 		{
+			UpdateState();
+			UpdateVisibility();
+		}
+
+		/// <summary>
+		/// Called when the underlying volume control changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
+		private void VolumePointHelperOnVolumeControlSupportedVolumeFeaturesChanged(object sender, GenericEventArgs<eVolumeFeatures> eventArgs)
+		{
+			UpdateState();
 			UpdateVisibility();
 		}
 
